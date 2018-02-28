@@ -1,6 +1,6 @@
 # SmartPioneerBaseServer Component
 
-![SmartPioneerBaseServer-ComponentImage](https://github.com/Servicerobotics-Ulm/ComponentRepository/SmartPioneerBaseServer/model/SmartPioneerBaseServer.jpg)
+![SmartPioneerBaseServer-ComponentImage](https://github.com/Servicerobotics-Ulm/ComponentRepository/blob/master/SmartPioneerBaseServer/model/SmartPioneerBaseServer.jpg)
 
 The SmartPioneerBaseServer makes P2OS-based robot platforms available. It handles all the communication with the hardware. It offers several services for controlling the robot, such as sending navigation commands to the base and providing access to the robot's odometry. Position updates can be sent to the component to overcome odometry failures.
 
