@@ -24,10 +24,10 @@
 int CurMapTaskCore::execute_protected_region()
 {
 	if(useDefaultState) {
-		Smart::StatusCode status = COMP->stateSlave->acquire("active");
+		Smart::StatusCode status = COMP->stateSlave->acquire("currMap");
 		if(status != Smart::SMART_OK) {
 			std::cerr << "CurMapTaskCore: ERROR acquiring state active: " << status << std::endl;
-			return -1;
+			return 0;
 		}
 	}
 	
@@ -46,7 +46,7 @@ int CurMapTaskCore::execute_protected_region()
 	currentUpdateCount++;
 	
 	if(useDefaultState) {
-		COMP->stateSlave->release("active");
+		COMP->stateSlave->release("currMap");
 	}
 	return retval;
 }

@@ -23,13 +23,6 @@
 
 int RobotTaskCore::execute_protected_region()
 {
-	if(useDefaultState) {
-		Smart::StatusCode status = COMP->stateSlave->acquire("active");
-		if(status != Smart::SMART_OK) {
-			std::cerr << "RobotTaskCore: ERROR acquiring state active: " << status << std::endl;
-			return -1;
-		}
-	}
 	
 	// update of comm-objects must be within the protected region to prevent aged comm-object values
 	this->updateAllCommObjects();
@@ -45,9 +38,6 @@ int RobotTaskCore::execute_protected_region()
 	// increment current currentUpdateCount for the next iteration
 	currentUpdateCount++;
 	
-	if(useDefaultState) {
-		COMP->stateSlave->release("active");
-	}
 	return retval;
 }
 

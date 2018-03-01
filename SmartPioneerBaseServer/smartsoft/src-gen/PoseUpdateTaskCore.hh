@@ -22,8 +22,8 @@
 
 // include communication-objects for output ports
 #include <CommBasicObjects/CommBaseState.hh>
-#include <CommBasicObjects/CommBatteryParameter.hh>
 #include <CommBasicObjects/CommBatteryEvent.hh>
+#include <CommBasicObjects/CommBatteryParameter.hh>
 #include <CommBasicObjects/CommBatteryState.hh>
 
 // forward declaration of RobotTask

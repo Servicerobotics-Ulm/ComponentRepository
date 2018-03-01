@@ -30,8 +30,8 @@
 
 // include communication-objects for output ports
 #include <CommNavigationObjects/CdlGoalEventState.hh>
-#include <CommNavigationObjects/CommCdlGoalEventResult.hh>
 #include <CommNavigationObjects/CommCdlGoalEventParameter.hh>
+#include <CommNavigationObjects/CommCdlGoalEventResult.hh>
 #include <CommBasicObjects/CommNavigationVelocity.hh>
 #include <CommNavigationObjects/CommCdlRobotBlockedEventParameter.hh>
 #include <CommNavigationObjects/CommCdlRobotBlockedEventResult.hh>
