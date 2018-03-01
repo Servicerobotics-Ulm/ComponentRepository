@@ -1,0 +1,11 @@
+ComponentParameter SmartJoystickNavigationParameters component SmartJoystickNavigation
+{
+	InternalParameter Settings
+	{
+		/** Defines the maximum velocity. This is the velocity [m/s] which will be sent when the joystick axis is at full peak.  */
+		max_velocity : Double = 1.0
+		
+		/** Defines the minimum steering angle. This is the angle [rad] which will be sent as omega when the joystick axis is at full peak. */
+		max_steering : Double = 1.2
+	}
+}

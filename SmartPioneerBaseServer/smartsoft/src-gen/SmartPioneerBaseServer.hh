@@ -23,27 +23,27 @@
 #include "SmartPioneerBaseServerImpl.hh"
 
 // include communication objects
-#include <CommBasicObjects/CommNavigationVelocity.hh>
-#include <CommBasicObjects/CommNavigationVelocityACE.hh>
 #include <CommBasicObjects/CommBasePositionUpdate.hh>
 #include <CommBasicObjects/CommBasePositionUpdateACE.hh>
-#include <CommBasicObjects/CommBatteryState.hh>
-#include <CommBasicObjects/CommBatteryStateACE.hh>
-#include <CommBasicObjects/CommBatteryParameter.hh>
-#include <CommBasicObjects/CommBatteryParameterACE.hh>
-#include <CommBasicObjects/CommVoid.hh>
-#include <CommBasicObjects/CommVoidACE.hh>
-#include <CommBasicObjects/CommBatteryEvent.hh>
-#include <CommBasicObjects/CommBatteryEventACE.hh>
 #include <CommBasicObjects/CommBaseState.hh>
 #include <CommBasicObjects/CommBaseStateACE.hh>
+#include <CommBasicObjects/CommBatteryEvent.hh>
+#include <CommBasicObjects/CommBatteryEventACE.hh>
+#include <CommBasicObjects/CommBatteryParameter.hh>
+#include <CommBasicObjects/CommBatteryParameterACE.hh>
+#include <CommBasicObjects/CommBatteryState.hh>
+#include <CommBasicObjects/CommBatteryStateACE.hh>
+#include <CommBasicObjects/CommNavigationVelocity.hh>
+#include <CommBasicObjects/CommNavigationVelocityACE.hh>
+#include <CommBasicObjects/CommVoid.hh>
+#include <CommBasicObjects/CommVoidACE.hh>
 
 // include tasks
 #include "PoseUpdateTask.hh"
 #include "RobotTask.hh"
 // include UpcallManagers
-#include "NavVelInUpcallManager.hh"
 #include "LocalizationUpdateUpcallManager.hh"
+#include "NavVelInUpcallManager.hh"
 
 // include input-handler
 // include input-handler
@@ -88,8 +88,6 @@ public:
 	{
 		return paramHandler.getGlobalState();
 	}
-
-	ParamUpdateHandler paramHandler;
 	
 	// define tasks
 	Smart::TaskTriggerSubject* poseUpdateTaskTrigger;
@@ -98,14 +96,14 @@ public:
 	RobotTask *robotTask;
 	
 	// define input-ports
-	// InputPort NavVelIn
-	Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> *navVelIn;
-	Smart::InputTaskTrigger<CommBasicObjects::CommNavigationVelocity> *navVelInInputTaskTrigger;
-	NavVelInUpcallManager *navVelInUpcallManager;
 	// InputPort LocalizationUpdate
 	Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> *localizationUpdate;
 	Smart::InputTaskTrigger<CommBasicObjects::CommBasePositionUpdate> *localizationUpdateInputTaskTrigger;
 	LocalizationUpdateUpcallManager *localizationUpdateUpcallManager;
+	// InputPort NavVelIn
+	Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> *navVelIn;
+	Smart::InputTaskTrigger<CommBasicObjects::CommNavigationVelocity> *navVelInInputTaskTrigger;
+	NavVelInUpcallManager *navVelInUpcallManager;
 	
 	// define request-ports
 	
@@ -127,6 +125,7 @@ public:
 	SmartACE::StateSlave *stateSlave;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
+	ParamUpdateHandler paramHandler;
 	SmartACE::ParameterSlave *param;
 	
 	void init(int argc, char *argv[]);
@@ -184,6 +183,9 @@ public:
 		//--- upcall parameter ---
 		
 		//--- server port parameter ---
+		struct BasePositionOut_struct {
+				std::string serviceName;
+		} basePositionOut;
 		struct BaseStateQueryServer_struct {
 				std::string serviceName;
 		} baseStateQueryServer;
@@ -196,9 +198,6 @@ public:
 		struct NavVelIn_struct {
 				std::string serviceName;
 		} navVelIn;
-		struct BasePositionOut_struct {
-				std::string serviceName;
-		} basePositionOut;
 	
 		//--- client port parameter ---
 	} connections;

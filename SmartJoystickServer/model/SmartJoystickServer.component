@@ -1,0 +1,16 @@
+ComponentDefinition SmartJoystickServer {
+	BehaviorSlaveInterface SlavePort implements CommBasicObjects.DefaultCoordinationService
+	
+	PreemptiveTask JoystickTask
+	{
+		ActivationConstraints {
+				configurable = false
+				minActFreq = 1.0 Hz
+				maxActFreq = 50.0 Hz
+		}
+	}
+	OutputPort JoystickServcieOut implements CommBasicObjects.JoystickService realizedBy JoystickTask {
+//		Middleware OpcUaSeRoNet
+	}
+	ComponentParameters SmartJoystickServerParameters
+}

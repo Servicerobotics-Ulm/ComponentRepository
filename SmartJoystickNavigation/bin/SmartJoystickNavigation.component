@@ -1,0 +1,16 @@
+ComponentDefinition SmartJoystickNavigation {
+	BehaviorSlaveInterface SlavePort implements CommBasicObjects.DefaultCoordinationService;
+	
+	InputPort JoystickServiceIn implements CommBasicObjects.JoystickService {
+//		Middleware OpcUaSeRoNet
+	}
+
+	PreemptiveTask JoystickNavTask
+	{
+		InputLinkExtension JoystickServiceIn { oversamplingOk undersamplingOk }
+		DefaultTaskTrigger InputTrigger JoystickServiceIn;
+	}
+	OutputPort NavVelServiceOut implements CommNavigationObjects.NavigationVelocityService realizedBy JoystickNavTask { }
+
+	ComponentParameters SmartJoystickNavigationParameters;
+}

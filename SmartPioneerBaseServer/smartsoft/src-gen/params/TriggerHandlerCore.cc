@@ -33,10 +33,10 @@
 		this->handleCommBasicObjects_BaseParams_BASE_SONAR();
 	}
 
-	// handle SIGNAL_STATE_IDLE
-	void TriggerHandlerCore::handleCommBasicObjects_BaseParams_SIGNAL_STATE_IDLECore()
+	// handle SIGNAL_STATE_BUSY
+	void TriggerHandlerCore::handleCommBasicObjects_BaseParams_SIGNAL_STATE_BUSYCore()
 	{
-		this->handleCommBasicObjects_BaseParams_SIGNAL_STATE_IDLE();
+		this->handleCommBasicObjects_BaseParams_SIGNAL_STATE_BUSY();
 	}
 
 	// handle SIGNAL_STATE_ERROR
@@ -45,10 +45,10 @@
 		this->handleCommBasicObjects_BaseParams_SIGNAL_STATE_ERROR();
 	}
 
-	// handle SIGNAL_STATE_BUSY
-	void TriggerHandlerCore::handleCommBasicObjects_BaseParams_SIGNAL_STATE_BUSYCore()
+	// handle SIGNAL_STATE_IDLE
+	void TriggerHandlerCore::handleCommBasicObjects_BaseParams_SIGNAL_STATE_IDLECore()
 	{
-		this->handleCommBasicObjects_BaseParams_SIGNAL_STATE_BUSY();
+		this->handleCommBasicObjects_BaseParams_SIGNAL_STATE_IDLE();
 	}
 
 	// handle SIGNAL_STATE_LOCALIZATION_ERROR

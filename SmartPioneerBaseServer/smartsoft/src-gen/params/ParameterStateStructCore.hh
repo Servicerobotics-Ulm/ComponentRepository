@@ -44,28 +44,28 @@ public:
 			 */
 			bool enable_motors;
 			bool enable_sonar;
-			int maxVel;
-			int maxVelAcc;
-			int maxVelDecel;
 			int maxRotVel;
 			int maxRotVelAcc;
 			int maxRotVelDecel;
-			std::string serialport;
+			int maxVel;
+			int maxVelAcc;
+			int maxVelDecel;
 			std::string robotType;
+			std::string serialport;
 		
 		public:
 			// default constructor
 			RobotType() {
 				enable_motors = true;
 				enable_sonar = false;
-				maxVel = 1000;
-				maxVelAcc = 300;
-				maxVelDecel = 300;
 				maxRotVel = 300;
 				maxRotVelAcc = 100;
 				maxRotVelDecel = 100;
-				serialport = "/dev/ttyS0";
+				maxVel = 1000;
+				maxVelAcc = 300;
+				maxVelDecel = 300;
 				robotType = "p3dx";
+				serialport = "/dev/ttyS0";
 			}
 		
 			/**
@@ -73,28 +73,28 @@ public:
 			 */
 			inline bool getEnable_motors() const { return enable_motors; }
 			inline bool getEnable_sonar() const { return enable_sonar; }
-			inline int getMaxVel() const { return maxVel; }
-			inline int getMaxVelAcc() const { return maxVelAcc; }
-			inline int getMaxVelDecel() const { return maxVelDecel; }
 			inline int getMaxRotVel() const { return maxRotVel; }
 			inline int getMaxRotVelAcc() const { return maxRotVelAcc; }
 			inline int getMaxRotVelDecel() const { return maxRotVelDecel; }
-			inline std::string getSerialport() const { return serialport; }
+			inline int getMaxVel() const { return maxVel; }
+			inline int getMaxVelAcc() const { return maxVelAcc; }
+			inline int getMaxVelDecel() const { return maxVelDecel; }
 			inline std::string getRobotType() const { return robotType; }
+			inline std::string getSerialport() const { return serialport; }
 			
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Robot(";
 				os << "enable_motors = " << enable_motors << ", ";
 				os << "enable_sonar = " << enable_sonar << ", ";
-				os << "maxVel = " << maxVel << ", ";
-				os << "maxVelAcc = " << maxVelAcc << ", ";
-				os << "maxVelDecel = " << maxVelDecel << ", ";
 				os << "maxRotVel = " << maxRotVel << ", ";
 				os << "maxRotVelAcc = " << maxRotVelAcc << ", ";
 				os << "maxRotVelDecel = " << maxRotVelDecel << ", ";
-				os << "serialport = " << serialport << ", ";
+				os << "maxVel = " << maxVel << ", ";
+				os << "maxVelAcc = " << maxVelAcc << ", ";
+				os << "maxVelDecel = " << maxVelDecel << ", ";
 				os << "robotType = " << robotType << ", ";
+				os << "serialport = " << serialport << ", ";
 				os << ")\n";
 			}
 			

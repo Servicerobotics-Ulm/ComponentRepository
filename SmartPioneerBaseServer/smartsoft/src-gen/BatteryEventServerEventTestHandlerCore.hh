@@ -18,9 +18,9 @@
 		
 #include "aceSmartSoft.hh"
 
-#include <CommBasicObjects/CommBatteryState.hh>
-#include <CommBasicObjects/CommBatteryParameter.hh>
 #include <CommBasicObjects/CommBatteryEvent.hh>
+#include <CommBasicObjects/CommBatteryParameter.hh>
+#include <CommBasicObjects/CommBatteryState.hh>
 
 class BatteryEventServerEventTestHandlerCore : public SmartACE::EventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>
 {

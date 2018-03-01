@@ -40,13 +40,13 @@ public:
 		virtual void handleCommBasicObjects_BaseParams_BASE_SONAR() = 0;
 	
 		
-		virtual void handleCommBasicObjects_BaseParams_SIGNAL_STATE_IDLE() = 0;
+		virtual void handleCommBasicObjects_BaseParams_SIGNAL_STATE_BUSY() = 0;
 	
 		
 		virtual void handleCommBasicObjects_BaseParams_SIGNAL_STATE_ERROR() = 0;
 	
 		
-		virtual void handleCommBasicObjects_BaseParams_SIGNAL_STATE_BUSY() = 0;
+		virtual void handleCommBasicObjects_BaseParams_SIGNAL_STATE_IDLE() = 0;
 	
 		
 		virtual void handleCommBasicObjects_BaseParams_SIGNAL_STATE_LOCALIZATION_ERROR() = 0;
@@ -60,9 +60,9 @@ private:
 	// trigger internal methods
 	void handleCommBasicObjects_BaseParams_BASE_RESETCore();
 	void handleCommBasicObjects_BaseParams_BASE_SONARCore();
-	void handleCommBasicObjects_BaseParams_SIGNAL_STATE_IDLECore();
-	void handleCommBasicObjects_BaseParams_SIGNAL_STATE_ERRORCore();
 	void handleCommBasicObjects_BaseParams_SIGNAL_STATE_BUSYCore();
+	void handleCommBasicObjects_BaseParams_SIGNAL_STATE_ERRORCore();
+	void handleCommBasicObjects_BaseParams_SIGNAL_STATE_IDLECore();
 	void handleCommBasicObjects_BaseParams_SIGNAL_STATE_LOCALIZATION_ERRORCore();
 	void handleCommBasicObjects_BaseParams_SIGNAL_STATE_SAFETY_FIELDCore();
 	

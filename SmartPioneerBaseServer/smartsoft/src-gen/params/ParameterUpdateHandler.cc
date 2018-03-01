@@ -58,13 +58,13 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 			);
 		}
 	}
-	else if (tag == "COMMBASICOBJECTS.BASEPARAMS.SIGNAL_STATE_IDLE")
+	else if (tag == "COMMBASICOBJECTS.BASEPARAMS.SIGNAL_STATE_BUSY")
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK);
 		
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
-			triggerHandler.handleCommBasicObjects_BaseParams_SIGNAL_STATE_IDLECore(
+			triggerHandler.handleCommBasicObjects_BaseParams_SIGNAL_STATE_BUSYCore(
 			);
 		}
 	}
@@ -78,13 +78,13 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 			);
 		}
 	}
-	else if (tag == "COMMBASICOBJECTS.BASEPARAMS.SIGNAL_STATE_BUSY")
+	else if (tag == "COMMBASICOBJECTS.BASEPARAMS.SIGNAL_STATE_IDLE")
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK);
 		
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
-			triggerHandler.handleCommBasicObjects_BaseParams_SIGNAL_STATE_BUSYCore(
+			triggerHandler.handleCommBasicObjects_BaseParams_SIGNAL_STATE_IDLECore(
 			);
 		}
 	}
@@ -163,18 +163,6 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.Robot.enable_sonar = commitState.Robot.enable_sonar;
 		}
-		if(parameter.getDouble("Robot", "maxVel", commitState.Robot.maxVel))
-		{
-			globalState.Robot.maxVel = commitState.Robot.maxVel;
-		}
-		if(parameter.getDouble("Robot", "maxVelAcc", commitState.Robot.maxVelAcc))
-		{
-			globalState.Robot.maxVelAcc = commitState.Robot.maxVelAcc;
-		}
-		if(parameter.getDouble("Robot", "maxVelDecel", commitState.Robot.maxVelDecel))
-		{
-			globalState.Robot.maxVelDecel = commitState.Robot.maxVelDecel;
-		}
 		if(parameter.getDouble("Robot", "maxRotVel", commitState.Robot.maxRotVel))
 		{
 			globalState.Robot.maxRotVel = commitState.Robot.maxRotVel;
@@ -187,13 +175,25 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.Robot.maxRotVelDecel = commitState.Robot.maxRotVelDecel;
 		}
-		if(parameter.getString("Robot", "serialport", commitState.Robot.serialport))
+		if(parameter.getDouble("Robot", "maxVel", commitState.Robot.maxVel))
 		{
-			globalState.Robot.serialport = commitState.Robot.serialport;
+			globalState.Robot.maxVel = commitState.Robot.maxVel;
+		}
+		if(parameter.getDouble("Robot", "maxVelAcc", commitState.Robot.maxVelAcc))
+		{
+			globalState.Robot.maxVelAcc = commitState.Robot.maxVelAcc;
+		}
+		if(parameter.getDouble("Robot", "maxVelDecel", commitState.Robot.maxVelDecel))
+		{
+			globalState.Robot.maxVelDecel = commitState.Robot.maxVelDecel;
 		}
 		if(parameter.getString("Robot", "robotType", commitState.Robot.robotType))
 		{
 			globalState.Robot.robotType = commitState.Robot.robotType;
+		}
+		if(parameter.getString("Robot", "serialport", commitState.Robot.serialport))
+		{
+			globalState.Robot.serialport = commitState.Robot.serialport;
 		}
 		
 		//

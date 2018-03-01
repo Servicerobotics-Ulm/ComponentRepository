@@ -19,16 +19,16 @@
 #include "aceSmartSoft.hh"
 
 // include upcall interface
-#include "NavVelInUpcallInterface.hh"
 #include "LocalizationUpdateUpcallInterface.hh"
+#include "NavVelInUpcallInterface.hh"
 
 // include communication-objects for output ports
 
 	
 class RobotTaskCore
 :	public SmartACE::ManagedTask
-,	public NavVelInUpcallInterface
 ,	public LocalizationUpdateUpcallInterface
+,	public NavVelInUpcallInterface
 {
 private:
 	bool useDefaultState; 
@@ -37,10 +37,10 @@ private:
 	unsigned int currentUpdateCount;
 	
 	
-	Smart::StatusCode navVelInStatus;
-	CommBasicObjects::CommNavigationVelocity navVelInObject;
 	Smart::StatusCode localizationUpdateStatus;
 	CommBasicObjects::CommBasePositionUpdate localizationUpdateObject;
+	Smart::StatusCode navVelInStatus;
+	CommBasicObjects::CommNavigationVelocity navVelInObject;
 	
 protected:
 	virtual int execute_protected_region();
@@ -52,18 +52,6 @@ protected:
 	void triggerLogEntry(const int& idOffset);
 	
 	
-	// overload and implement this method in derived classes to immediately get all incoming updates from NavVelIn (as soon as they arrive)
-	virtual void on_NavVelIn(const CommBasicObjects::CommNavigationVelocity &input) {
-		// no-op
-	}
-	
-	// this method can be safely used from the thread in derived classes
-	inline Smart::StatusCode navVelInGetUpdate(CommBasicObjects::CommNavigationVelocity &navVelInObject) const
-	{
-		// copy local object buffer and return the last status code
-		navVelInObject = this->navVelInObject;
-		return navVelInStatus;
-	}
 	// overload and implement this method in derived classes to immediately get all incoming updates from LocalizationUpdate (as soon as they arrive)
 	virtual void on_LocalizationUpdate(const CommBasicObjects::CommBasePositionUpdate &input) {
 		// no-op
@@ -76,6 +64,18 @@ protected:
 		localizationUpdateObject = this->localizationUpdateObject;
 		return localizationUpdateStatus;
 	}
+	// overload and implement this method in derived classes to immediately get all incoming updates from NavVelIn (as soon as they arrive)
+	virtual void on_NavVelIn(const CommBasicObjects::CommNavigationVelocity &input) {
+		// no-op
+	}
+	
+	// this method can be safely used from the thread in derived classes
+	inline Smart::StatusCode navVelInGetUpdate(CommBasicObjects::CommNavigationVelocity &navVelInObject) const
+	{
+		// copy local object buffer and return the last status code
+		navVelInObject = this->navVelInObject;
+		return navVelInStatus;
+	}
 	
 
 public:
@@ -85,10 +85,10 @@ public:
 	,	useLogging(false)
 	,	taskLoggingId(0)
 	,	currentUpdateCount(0)
-	,	navVelInStatus(Smart::SMART_DISCONNECTED)
-	,	navVelInObject()
 	,	localizationUpdateStatus(Smart::SMART_DISCONNECTED)
 	,	localizationUpdateObject()
+	,	navVelInStatus(Smart::SMART_DISCONNECTED)
+	,	navVelInObject()
 	{  }
 	virtual ~RobotTaskCore()
 	{  }

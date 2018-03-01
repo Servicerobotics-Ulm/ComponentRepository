@@ -27,7 +27,7 @@ int RobotTaskCore::execute_protected_region()
 		Smart::StatusCode status = COMP->stateSlave->acquire("active");
 		if(status != Smart::SMART_OK) {
 			std::cerr << "RobotTaskCore: ERROR acquiring state active: " << status << std::endl;
-			return 0;
+			return -1;
 		}
 	}
 	
@@ -54,8 +54,8 @@ int RobotTaskCore::execute_protected_region()
 
 void RobotTaskCore::updateAllCommObjects()
 {
-	navVelInStatus = COMP->navVelInInputTaskTrigger->getUpdate(navVelInObject);
 	localizationUpdateStatus = COMP->localizationUpdateInputTaskTrigger->getUpdate(localizationUpdateObject);
+	navVelInStatus = COMP->navVelInInputTaskTrigger->getUpdate(navVelInObject);
 }
 
 

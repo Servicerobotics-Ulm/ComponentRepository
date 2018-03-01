@@ -55,16 +55,16 @@ SmartPioneerBaseServer::SmartPioneerBaseServer()
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
+	connections.basePositionOut.serviceName = "BasePositionOut";
 	connections.baseStateQueryServer.serviceName = "BaseStateQueryServer";
 	connections.batteryEventServer.serviceName = "BatteryEventServer";
 	connections.localizationUpdate.serviceName = "LocalizationUpdate";
 	connections.navVelIn.serviceName = "NavVelIn";
-	connections.basePositionOut.serviceName = "BasePositionOut";
 	connections.poseUpdateTask.minActFreq = 10.0;
 	connections.poseUpdateTask.maxActFreq = 40.0;
+	connections.poseUpdateTask.prescale = 1;
 	connections.poseUpdateTask.trigger = "PeriodicTimer";
 	connections.poseUpdateTask.periodicActFreq = 10.0;
-	connections.poseUpdateTask.prescale = 1;
 	// scheduling default parameters
 	connections.poseUpdateTask.scheduler = "DEFAULT";
 	connections.poseUpdateTask.priority = -1;
@@ -146,12 +146,9 @@ void SmartPioneerBaseServer::startAllTimers() {
 
 Smart::TaskTriggerSubject* SmartPioneerBaseServer::getInputTaskTriggerFromString(const std::string &client)
 {
-	if(client == "NavVelIn") {
-		return navVelInInputTaskTrigger;
-	}
-	else if(client == "LocalizationUpdate") {
-		return localizationUpdateInputTaskTrigger;
-	}
+	if(client == "LocalizationUpdate") return localizationUpdateInputTaskTrigger;
+	if(client == "NavVelIn") return navVelInInputTaskTrigger;
+	
 	return NULL;
 }
 
@@ -196,20 +193,20 @@ void SmartPioneerBaseServer::init(int argc, char *argv[])
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
+		basePositionOut = new SmartACE::PushServer<CommBasicObjects::CommBaseState>(component, connections.basePositionOut.serviceName);
 		baseStateQueryServer = new SmartACE::QueryServer<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>(component, connections.baseStateQueryServer.serviceName);
 		baseStateQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState,SmartACE::QueryId>(baseStateQueryServer);
 		batteryEventServer = new SmartACE::EventServer<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>(component, connections.batteryEventServer.serviceName, batteryEventServerEventTestHandler);
 		localizationUpdate = new SmartACE::SendServer<CommBasicObjects::CommBasePositionUpdate>(component, connections.localizationUpdate.serviceName);
 		navVelIn = new SmartACE::SendServer<CommBasicObjects::CommNavigationVelocity>(component, connections.navVelIn.serviceName);
-		basePositionOut = new SmartACE::PushServer<CommBasicObjects::CommBaseState>(component, connections.basePositionOut.serviceName);
 		
 		// create client ports
 		
 		// create InputTaskTriggers and UpcallManagers
-		navVelInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommNavigationVelocity>(navVelIn);
-		navVelInUpcallManager = new NavVelInUpcallManager(navVelIn);
 		localizationUpdateInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBasePositionUpdate>(localizationUpdate);
 		localizationUpdateUpcallManager = new LocalizationUpdateUpcallManager(localizationUpdate);
+		navVelInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommNavigationVelocity>(navVelIn);
+		navVelInUpcallManager = new NavVelInUpcallManager(navVelIn);
 		
 		// create input-handler
 		
@@ -238,14 +235,16 @@ void SmartPioneerBaseServer::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.poseUpdateTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int nanoseconds = 1000*1000 / connections.poseUpdateTask.periodicActFreq;
-			//double fractpart, intpart;
-			//fractpart = modf(cycle, &intpart);
-			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-			component->getTimerManager()->scheduleTimer(triggerPtr, std::chrono::nanoseconds(nanoseconds), std::chrono::nanoseconds(nanoseconds));
-			triggerPtr->attach(poseUpdateTask);
-			// store trigger in class member
-			poseUpdateTaskTrigger = triggerPtr;
+			int microseconds = 1000*1000 / connections.poseUpdateTask.periodicActFreq;
+			if(microseconds > 0) {
+				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
+				triggerPtr->attach(poseUpdateTask);
+				component->getTimerManager()->scheduleTimer(triggerPtr, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				// store trigger in class member
+				poseUpdateTaskTrigger = triggerPtr;
+			} else {
+				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task PoseUpdateTask" << std::endl;
+			}
 		} else if(connections.poseUpdateTask.trigger == "DataTriggered") {
 			poseUpdateTaskTrigger = getInputTaskTriggerFromString(connections.poseUpdateTask.inPortRef);
 			if(poseUpdateTaskTrigger != NULL) {
@@ -257,18 +256,22 @@ void SmartPioneerBaseServer::init(int argc, char *argv[])
 		{
 			// setup default task-trigger as PeriodicTimer
 			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-			int nanoseconds = 1000*1000 / 10.0;
-			component->getTimerManager()->scheduleTimer(triggerPtr, std::chrono::nanoseconds(nanoseconds), std::chrono::nanoseconds(nanoseconds));
-			triggerPtr->attach(poseUpdateTask);
-			// store trigger in class member
-			poseUpdateTaskTrigger = triggerPtr;
+			int microseconds = 1000*1000 / 10.0;
+			if(microseconds > 0) {
+				component->getTimerManager()->scheduleTimer(triggerPtr, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				triggerPtr->attach(poseUpdateTask);
+				// store trigger in class member
+				poseUpdateTaskTrigger = triggerPtr;
+			} else {
+				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task PoseUpdateTask" << std::endl;
+			}
 		}
 		
 		// create Task RobotTask
 		robotTask = new RobotTask(component);
 		// configure input-links
-		navVelInUpcallManager->attach(robotTask);
 		localizationUpdateUpcallManager->attach(robotTask);
+		navVelInUpcallManager->attach(robotTask);
 		// configure task-trigger (if task is configurable)
 		
 		
@@ -310,8 +313,8 @@ void SmartPioneerBaseServer::run()
 	poseUpdateTaskTrigger->detach(poseUpdateTask);
 	delete poseUpdateTask;
 	// unlink all UpcallManagers
-	navVelInUpcallManager->detach(robotTask);
 	localizationUpdateUpcallManager->detach(robotTask);
+	navVelInUpcallManager->detach(robotTask);
 	// unlink the TaskTrigger
 	robotTaskTrigger->detach(robotTask);
 	delete robotTask;
@@ -319,20 +322,20 @@ void SmartPioneerBaseServer::run()
 	// destroy all input-handler
 
 	// destroy InputTaskTriggers and UpcallManagers
-	delete navVelInInputTaskTrigger;
-	delete navVelInUpcallManager;
 	delete localizationUpdateInputTaskTrigger;
 	delete localizationUpdateUpcallManager;
+	delete navVelInInputTaskTrigger;
+	delete navVelInUpcallManager;
 
 	// destroy client ports
 
 	// destroy server ports
+	delete basePositionOut;
 	delete baseStateQueryServer;
 	delete baseStateQueryServerInputTaskTrigger;
 	delete batteryEventServer;
 	delete localizationUpdate;
 	delete navVelIn;
-	delete basePositionOut;
 	// destroy event-test handlers (if needed)
 	delete batteryEventServerEventTestHandler;
 	
@@ -425,6 +428,8 @@ void SmartPioneerBaseServer::loadParameter(int argc, char *argv[])
 		}
 		
 		
+		// load parameters for server BasePositionOut
+		parameter.getString("basePositionOut", "serviceName", connections.basePositionOut.serviceName);
 		// load parameters for server BaseStateQueryServer
 		parameter.getString("baseStateQueryServer", "serviceName", connections.baseStateQueryServer.serviceName);
 		// load parameters for server BatteryEventServer
@@ -433,8 +438,6 @@ void SmartPioneerBaseServer::loadParameter(int argc, char *argv[])
 		parameter.getString("localizationUpdate", "serviceName", connections.localizationUpdate.serviceName);
 		// load parameters for server NavVelIn
 		parameter.getString("navVelIn", "serviceName", connections.navVelIn.serviceName);
-		// load parameters for server BasePositionOut
-		parameter.getString("basePositionOut", "serviceName", connections.basePositionOut.serviceName);
 		
 		// load parameters for task PoseUpdateTask
 		parameter.getDouble("PoseUpdateTask", "minActFreqHz", connections.poseUpdateTask.minActFreq);

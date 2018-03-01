@@ -28,7 +28,7 @@ int PoseUpdateTaskCore::execute_protected_region()
 		Smart::StatusCode status = COMP->stateSlave->acquire("active");
 		if(status != Smart::SMART_OK) {
 			std::cerr << "PoseUpdateTaskCore: ERROR acquiring state active: " << status << std::endl;
-			return 0;
+			return -1;
 		}
 	}
 	

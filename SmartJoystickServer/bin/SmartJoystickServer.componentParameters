@@ -1,0 +1,21 @@
+ComponentParameter SmartJoystickServerParameters component SmartJoystickServer {
+	InternalParameter General {
+		/** Path to joystick device. */
+		device : String = "/dev/input/js0"
+		
+		/** Invert Y axis.  */
+		invert_y1_axis : Boolean = false
+		invert_y2_axis : Boolean = false
+		invert_x1_axis : Boolean = false
+		invert_x2_axis : Boolean = false
+		
+		/** Specifies the boundary for timeout when reading joystick data.  */
+		interval_min : Double = 0.040
+		
+		/** Specifies the boundary for timeout when reading joystick data.  */
+		interval_max : Double = 0.500
+		
+		/** Display every input command read from joystick device.  */
+		verbose : Boolean = true
+	}
+}

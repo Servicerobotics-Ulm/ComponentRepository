@@ -18,8 +18,8 @@
 		
 #include "aceSmartSoft.hh"
 
-#include <CommBasicObjects/CommVoid.hh>
 #include <CommBasicObjects/CommBaseState.hh>
+#include <CommBasicObjects/CommVoid.hh>
 
 // forward declaration of RobotTask
 class RobotTask;

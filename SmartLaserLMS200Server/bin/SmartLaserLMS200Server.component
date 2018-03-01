@@ -1,0 +1,20 @@
+ComponentDefinition SmartLaserLMS200Server {
+	BehaviorSlaveInterface SlavePort implements CommBasicObjects.DefaultCoordinationService
+	
+	InputPort BaseStateIn implements CommBasicObjects.BaseStateService { }
+	
+	PreemptiveTask LaserTask {
+		InputLinkExtension BaseStateIn {
+			optional oversamplingOk undersamplingOk
+		}
+		ActivationConstraints {
+			configurable=false minActFreq = 33.0 Hz maxActFreq = 40.0 Hz
+		}
+	}
+	
+	OutputPort LaserScanOut implements CommBasicObjects.LaserService realizedBy LaserTask { } 
+	AnswerPort LaserQueryServiceAnsw implements CommBasicObjects.LaserQueryService { } 
+	RequestHandler LaserQueryServiceAnswHandler triggeredFrom LaserQueryServiceAnsw { Observe LaserTask }
+	
+	ComponentParameters SmartLaserLMS200ServerParams
+}

@@ -60,6 +60,9 @@ periodicActFreqHz 10.0
 ##########################
 # server port parameter
 
+[BasePositionOut]
+serviceName BasePositionOut
+
 [BaseStateQueryServer]
 serviceName BaseStateQueryServer
 
@@ -71,9 +74,6 @@ serviceName LocalizationUpdate
 
 [NavVelIn]
 serviceName NavVelIn
-
-[BasePositionOut]
-serviceName BasePositionOut
 
 ##########################
 # client port parameter
