@@ -23,8 +23,8 @@
 #include "CurMapClientUpcallInterface.hh"
 
 // include communication-objects for output ports
-#include <CommNavigationObjects/CommPlannerEventParameter.hh>
 #include <CommNavigationObjects/CommPlannerEventResult.hh>
+#include <CommNavigationObjects/CommPlannerEventParameter.hh>
 #include <CommNavigationObjects/PlannerEventState.hh>
 #include <CommNavigationObjects/CommPlannerGoal.hh>
 

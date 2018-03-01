@@ -23,8 +23,8 @@
 
 // include communication-objects for output ports
 #include <CommLocalizationObjects/CommLocalizationEventParameter.hh>
-#include <CommLocalizationObjects/LocalizationEventState.hh>
 #include <CommLocalizationObjects/CommLocalizationEventResult.hh>
+#include <CommLocalizationObjects/LocalizationEventState.hh>
 #include <CommBasicObjects/CommBasePositionUpdate.hh>
 
 	

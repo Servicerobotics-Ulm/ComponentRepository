@@ -29,13 +29,13 @@
 #include "TrackingClientUpcallInterface.hh"
 
 // include communication-objects for output ports
-#include <CommNavigationObjects/CommCdlGoalEventParameter.hh>
 #include <CommNavigationObjects/CdlGoalEventState.hh>
 #include <CommNavigationObjects/CommCdlGoalEventResult.hh>
+#include <CommNavigationObjects/CommCdlGoalEventParameter.hh>
 #include <CommBasicObjects/CommNavigationVelocity.hh>
 #include <CommNavigationObjects/CommCdlRobotBlockedEventParameter.hh>
-#include <CommNavigationObjects/CommCdlRobotBlockedState.hh>
 #include <CommNavigationObjects/CommCdlRobotBlockedEventResult.hh>
+#include <CommNavigationObjects/CommCdlRobotBlockedState.hh>
 
 	
 class CdlTaskCore

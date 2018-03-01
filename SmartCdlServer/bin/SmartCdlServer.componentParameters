@@ -16,7 +16,7 @@ ComponentParameter SmartCdlServerParams component SmartCdlServer {
 	}
 	
  	InternalParameter Cdl {
- 		dataDir: String= "data/curvature-files/"
+ 		dataDir: String= "data/lookup-files/"
  		
  		/** File with the curvature indices as produced by cdlCalculate. Relative to current dir or absolute. See also parameter LOOKUPTABLE().*/
  		curvature_default_file: String= "CDLindex_P3DX.dat"

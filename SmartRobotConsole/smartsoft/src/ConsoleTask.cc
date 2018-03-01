@@ -1555,8 +1555,8 @@ int ConsoleTask::on_execute()
 				SmartACE::NSKeyType searchPattern;
 				searchPattern.names[SmartACE::NSKeyType::PATTERN_NAME] = ACE_TEXT("Query");
 				searchPattern.names[SmartACE::NSKeyType::SERVICE_NAME] = ACE_TEXT("state");
-				searchPattern.names[SmartACE::NSKeyType::COMMOBJ1_NAME] = ACE_TEXT("Smart::SMARTStateRequest");
-				searchPattern.names[SmartACE::NSKeyType::COMMOBJ2_NAME] = ACE_TEXT("Smart::SMARTStateResponse");
+				searchPattern.names[SmartACE::NSKeyType::COMMOBJ1_NAME] = ACE_TEXT("SmartACE::smartStateRequest");
+				searchPattern.names[SmartACE::NSKeyType::COMMOBJ2_NAME] = ACE_TEXT("SmartACE::smartStateResponse");
 
 				ACE_Unbounded_Queue<SmartACE::NSKeyType> state_comps = SmartACE::NAMING::instance()->getEntriesForMatchingPattern(searchPattern);
 
@@ -1791,7 +1791,7 @@ int ConsoleTask::on_execute()
 					COMP->paramMaster->sendParameterWait(lispParamToParameterRequest("COMMIT"), response, "SmartMapperGridMap", "param");
 
 					// set build both Map
-					COMP->stateMaster->setWaitState("buildbothmaps", "SmartMapperGridMap", "state");
+					COMP->stateMaster->setWaitState("BuildBothMaps", "SmartMapperGridMap", "state");
 
 					// CDL SETUP
 
@@ -1805,7 +1805,7 @@ int ConsoleTask::on_execute()
 
 
 					// Planner Setup
-					COMP->stateMaster->setWaitState("pathplanning", "SmartPlannerBreadthFirstSearch", "state");
+					COMP->stateMaster->setWaitState("PathPlanning", "SmartPlannerBreadthFirstSearch", "state");
 
 					////////////////////
 					//Goal 1 first goal
@@ -1831,7 +1831,7 @@ int ConsoleTask::on_execute()
 					itemNumber = 2;
 
 					// CDL State --> GO!
-					COMP->stateMaster->setWaitState("moverobot", "SmartCdlServer", "state");
+					COMP->stateMaster->setWaitState("MoveRobot", "SmartCdlServer", "state");
 
 					////////////////////////////
 					//Goal X

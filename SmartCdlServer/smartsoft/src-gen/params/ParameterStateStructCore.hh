@@ -135,7 +135,7 @@ public:
 				contour_second_file = "CDLcontour_P3DX.dat";
 				curvature_default_file = "CDLindex_P3DX.dat";
 				curvature_second_file = "CDLindex_P3DX.dat";
-				dataDir = "data/curvature-files/";
+				dataDir = "data/lookup-files/";
 				delta_t_calc = 0.35;
 				delta_t_trigger = 0.1;
 				followHysteresis = false;

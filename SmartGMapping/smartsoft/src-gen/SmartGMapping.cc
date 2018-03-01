@@ -41,7 +41,7 @@ SmartGMapping::SmartGMapping()
 	
 	// set default ini parameter values
 	connections.component.name = "SmartGMapping";
-	connections.component.initialMainState = "Active";
+	connections.component.initialMainState = "Neutral";
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
@@ -217,8 +217,7 @@ void SmartGMapping::init(int argc, char *argv[])
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
 		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
-		// create one default main state called Active which should be entered by default
-		if (stateSlave->defineStates("Active" ,"active") != Smart::SMART_OK) std::cerr << "ERROR: define state" << std::endl;
+		if (stateSlave->defineStates("Active" ,"active") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion Active.active" << std::endl;
 		if (stateSlave->setUpInitialState(connections.component.initialMainState) != Smart::SMART_OK) std::cerr << "ERROR: setUpInitialState" << std::endl;
 		// activate state slave
 		status = stateSlave->activate();
