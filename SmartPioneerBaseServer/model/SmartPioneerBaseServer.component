@@ -14,7 +14,7 @@ ComponentDefinition SmartPioneerBaseServer {
 		}
 		DefaultTaskTrigger PeriodicTimer 10.0 Hz;
 	}
-	PreemptiveTask RobotTask 
+	PreemptiveTask RobotTask
 	{
 		InputLinkExtension NavVelIn { oversamplingOk undersamplingOk }
 		InputLinkExtension LocalizationUpdate { optional oversamplingOk undersamplingOk }

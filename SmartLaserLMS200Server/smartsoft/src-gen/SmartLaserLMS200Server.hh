@@ -110,6 +110,7 @@ public:
 	ParamUpdateHandler paramHandler;
 	SmartACE::ParameterSlave *param;
 	
+	
 	void init(int argc, char *argv[]);
 	void run();
 	

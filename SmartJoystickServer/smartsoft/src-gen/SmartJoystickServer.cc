@@ -175,6 +175,7 @@ void SmartJoystickServer::init(int argc, char *argv[])
 		// create parameter slave
 		param = new SmartACE::ParameterSlave(component, &paramHandler);
 		
+		
 		// create Task JoystickTask
 		joystickTask = new JoystickTask(component);
 		// configure input-links
@@ -235,6 +236,7 @@ void SmartJoystickServer::run()
 	// delete all master/slave ports
 	delete wiringSlave;
 	delete param;
+	
 
 	// clean-up component's internally used resources (internally used communication middleware) 
 	component->cleanUpComponentResources();

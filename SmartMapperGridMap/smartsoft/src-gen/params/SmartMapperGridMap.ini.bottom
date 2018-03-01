@@ -1,0 +1,38 @@
+##########################
+# internal parameters
+[CurrentMap]
+growing star16
+id 0
+interval 10
+xpos -10000
+xsize 20000
+ypos -10000
+ysize 20000
+
+[General]
+cellsize 50
+connectLaser true
+mapDataDir data/maps/
+verbose false
+
+[LtmMap]
+id 0
+kalman 100
+xpos -10000
+xsize 20000
+ypos -10000
+ysize 20000
+
+
+##########################
+# extended parameters
+
+##########################
+# instance parameters
+[CommNavigationObjects.MapperParams.CUREMPTY]
+mapmode ACCUMULATE
+
+[CommNavigationObjects.MapperParams.CURLTM]
+preoccupation DISABLE
+threshold 20
+

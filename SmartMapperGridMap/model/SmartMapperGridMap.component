@@ -1,0 +1,47 @@
+ComponentDefinition SmartMapperGridMap {
+	BehaviorSlaveInterface SlavePort implements CommNavigationObjects.MapperCoordinationService;
+	
+	InputPort LaserServiceIn implements CommBasicObjects.LaserService { }
+	AnswerPort CurrQueryServer implements CommNavigationObjects.CurrGridMapQueryService { }
+	AnswerPort LtmQueryServer implements CommNavigationObjects.LongTermGridMapQueryService { }
+	
+	PreemptiveTask CurMapTask {
+		InputLinkExtension LaserServiceIn { 
+			oversamplingOk undersamplingOk
+		}
+		ActivationConstraints {
+			configurable=true minActFreq = 10.0 Hz maxActFreq = 20.0 Hz
+		}
+		SubStateBinding currMap;
+	}
+	PreemptiveTask LtmMapTask {
+		InputLinkExtension LaserServiceIn {
+			oversamplingOk undersamplingOk
+		}
+		ActivationConstraints {
+			configurable=true minActFreq = 2.0 Hz maxActFreq = 10.0 Hz
+		}
+		DefaultTaskTrigger PeriodicTimer 2.0 Hz;
+		SubStateBinding ltmMap;
+	}
+	
+	OutputPort CurrMapOut implements CommNavigationObjects.CurrGridMapPushService realizedBy CurMapTask { } 
+	RequestHandler CurrQueryServerHandler triggeredFrom CurrQueryServer { Observe CurMapTask } 
+	RequestHandler LtmQueryServerHandler triggeredFrom LtmQueryServer { Observe LtmMapTask }
+	
+	ComponentParameters SmartMapperGridMapParams;
+	
+	StateAutomaton SmartMapperGridMapStates implementsExtendedMSC CommNavigationObjects.MapperStates {
+		SubState currMap;
+		SubState ltmMap;
+		MainStateInstance BuildCurrMap {
+			subStates currMap
+		}
+		MainStateInstance BuildLtmMap {
+			subStates ltmMap
+		}
+		MainStateInstance BuildBothMaps {
+			subStates currMap, ltmMap
+		}
+	}
+}

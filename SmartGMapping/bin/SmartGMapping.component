@@ -1,0 +1,23 @@
+ComponentDefinition SmartGMapping 
+{
+	InputPort LaserServiceIn implements CommBasicObjects.LaserService { }
+
+	PreemptiveTask GMappingTask
+	{
+		InputLinkExtension LaserServiceIn { oversamplingOk undersamplingOk }
+		DefaultTaskTrigger InputTrigger LaserServiceIn;
+		SubStateBinding active;
+	}
+	OutputPort LocalizationUpdateServiceOut implements CommNavigationObjects.LocalizationUpdateService realizedBy GMappingTask {
+	}
+	OutputPort CurrGridMapPushServiceOut implements CommNavigationObjects.CurrGridMapPushService realizedBy GMappingTask {
+	}
+	ComponentParameters SmartGMappingParams;
+	
+	StateAutomaton SmartGMappingStates implementsDefaultMSC ComponentLifecycle.Alive {
+		SubState active;
+		CustomMainState Active implements ComponentLifecycle.Alive.Active {
+			subStates active
+		}
+	}
+}

@@ -213,6 +213,7 @@ void SmartLaserLMS200Server::init(int argc, char *argv[])
 		// create parameter slave
 		param = new SmartACE::ParameterSlave(component, &paramHandler);
 		
+		
 		// create Task LaserTask
 		laserTask = new LaserTask(component);
 		// configure input-links
@@ -282,6 +283,7 @@ void SmartLaserLMS200Server::run()
 	// delete all master/slave ports
 	delete wiringSlave;
 	delete param;
+	
 
 	// clean-up component's internally used resources (internally used communication middleware) 
 	component->cleanUpComponentResources();

@@ -1,0 +1,22 @@
+ComponentDefinition SmartAmcl 
+{
+	BehaviorSlaveInterface SlavePort implements CommNavigationObjects.AmclCoordinationService;
+	
+	InputPort LaserServiceIn implements CommBasicObjects.LaserService { }
+	PreemptiveTask AmclTask
+	{
+		InputLinkExtension LaserServiceIn { oversamplingOk undersamplingOk }
+		SubStateBinding active;
+		DefaultTaskTrigger InputTrigger LaserServiceIn;
+	}
+	OutputPort LocalizationUpdateServiceOut implements CommNavigationObjects.LocalizationUpdateService realizedBy AmclTask { }
+	OutputPort LocalizationEventServiceOut implements CommLocalizationObjects.LocalizationEventService realizedBy AmclTask { }
+	
+	StateAutomaton SmartAmclStates implementsDefaultMSC ComponentLifecycle.Alive {
+		SubState active;
+		CustomMainState Active implements ComponentLifecycle.Alive.Active {
+			subStates active
+		}
+	}
+	ComponentParameters SmartAmclParams;
+}

@@ -67,6 +67,8 @@ ADD_EXECUTABLE(${PROJECT_NAME} ${SRC} ${SRC_GEN} ${SRC_GEN_PARAMS}) # add ${USER
 # link your external libraries here (if there are any)
 #TARGET_LINK_LIBRARIES(${PROJECT_NAME} <your-libs>)
 
+INSTALL(FILES ${PROJECT_SOURCE_DIR}/src-gen/${PROJECT_NAME}.ini.template DESTINATION etc)
+
 ## end user-code                                                               ##
 #################################################################################
 
