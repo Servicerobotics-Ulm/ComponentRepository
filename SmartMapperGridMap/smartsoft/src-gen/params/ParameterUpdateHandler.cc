@@ -97,24 +97,24 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK);
 		
-		int temp_id = 0.0;
-		if(request.getDouble("1", temp_id) != 0) {
+		int temp_xsize = 0.0;
+		if(request.getDouble("1", temp_xsize) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+		}
+		int temp_ysize = 0.0;
+		if(request.getDouble("2", temp_ysize) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
 		int temp_xpos = 0.0;
-		if(request.getDouble("2", temp_xpos) != 0) {
-			answer.setResponse(SmartACE::ParamResponseType::INVALID);
-		}
-		int temp_xsize = 0.0;
-		if(request.getDouble("3", temp_xsize) != 0) {
+		if(request.getDouble("3", temp_xpos) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
 		int temp_ypos = 0.0;
 		if(request.getDouble("4", temp_ypos) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
-		int temp_ysize = 0.0;
-		if(request.getDouble("5", temp_ysize) != 0) {
+		int temp_id = 0.0;
+		if(request.getDouble("5", temp_id) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
 		
@@ -207,24 +207,24 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK);
 		
-		int temp_id = 0.0;
-		if(request.getDouble("1", temp_id) != 0) {
+		int temp_xsize = 0.0;
+		if(request.getDouble("1", temp_xsize) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+		}
+		int temp_ysize = 0.0;
+		if(request.getDouble("2", temp_ysize) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
 		int temp_xpos = 0.0;
-		if(request.getDouble("2", temp_xpos) != 0) {
-			answer.setResponse(SmartACE::ParamResponseType::INVALID);
-		}
-		int temp_xsize = 0.0;
-		if(request.getDouble("3", temp_xsize) != 0) {
+		if(request.getDouble("3", temp_xpos) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
 		int temp_ypos = 0.0;
 		if(request.getDouble("4", temp_ypos) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
-		int temp_ysize = 0.0;
-		if(request.getDouble("5", temp_ysize) != 0) {
+		int temp_id = 0.0;
+		if(request.getDouble("5", temp_id) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
 		

@@ -42,16 +42,16 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK);
 		
-		int temp_a = 0.0;
-		if(request.getDouble("1", temp_a) != 0) {
-			answer.setResponse(SmartACE::ParamResponseType::INVALID);
-		}
 		int temp_x = 0.0;
-		if(request.getDouble("2", temp_x) != 0) {
+		if(request.getDouble("1", temp_x) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
 		int temp_y = 0.0;
-		if(request.getDouble("3", temp_y) != 0) {
+		if(request.getDouble("2", temp_y) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+		}
+		int temp_a = 0.0;
+		if(request.getDouble("3", temp_a) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
 		

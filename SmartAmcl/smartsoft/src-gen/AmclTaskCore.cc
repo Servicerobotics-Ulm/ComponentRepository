@@ -27,7 +27,7 @@ int AmclTaskCore::execute_protected_region()
 		Smart::StatusCode status = COMP->stateSlave->acquire("active");
 		if(status != Smart::SMART_OK) {
 			std::cerr << "AmclTaskCore: ERROR acquiring state active: " << status << std::endl;
-			return -1;
+			return 0;
 		}
 	}
 	

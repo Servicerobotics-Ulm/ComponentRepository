@@ -78,21 +78,21 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK); // TODO: this should be decided according to validation checks defined in the model (not yet implemented)
 		
-		double temp_goalA = 0.0;
-		if(request.getDouble("1", temp_goalA) == 0) {
-			commitState.CommNavigationObjects.CdlParameter.GOALREGION.goalA = temp_goalA;
-		} else {
-			answer.setResponse(SmartACE::ParamResponseType::INVALID);
-		}
 		double temp_goalX = 0.0;
-		if(request.getDouble("2", temp_goalX) == 0) {
+		if(request.getDouble("1", temp_goalX) == 0) {
 			commitState.CommNavigationObjects.CdlParameter.GOALREGION.goalX = temp_goalX;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
 		double temp_goalY = 0.0;
-		if(request.getDouble("3", temp_goalY) == 0) {
+		if(request.getDouble("2", temp_goalY) == 0) {
 			commitState.CommNavigationObjects.CdlParameter.GOALREGION.goalY = temp_goalY;
+		} else {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+		}
+		double temp_goalA = 0.0;
+		if(request.getDouble("3", temp_goalA) == 0) {
+			commitState.CommNavigationObjects.CdlParameter.GOALREGION.goalA = temp_goalA;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
@@ -138,15 +138,15 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK); // TODO: this should be decided according to validation checks defined in the model (not yet implemented)
 		
-		double temp_wmax = 0.0;
-		if(request.getDouble("1", temp_wmax) == 0) {
-			commitState.CommNavigationObjects.CdlParameter.ROTVEL.wmax = temp_wmax;
+		double temp_wmin = 0.0;
+		if(request.getDouble("1", temp_wmin) == 0) {
+			commitState.CommNavigationObjects.CdlParameter.ROTVEL.wmin = temp_wmin;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
-		double temp_wmin = 0.0;
-		if(request.getDouble("2", temp_wmin) == 0) {
-			commitState.CommNavigationObjects.CdlParameter.ROTVEL.wmin = temp_wmin;
+		double temp_wmax = 0.0;
+		if(request.getDouble("2", temp_wmax) == 0) {
+			commitState.CommNavigationObjects.CdlParameter.ROTVEL.wmax = temp_wmax;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
@@ -213,15 +213,15 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK); // TODO: this should be decided according to validation checks defined in the model (not yet implemented)
 		
-		double temp_vmax = 0.0;
-		if(request.getDouble("1", temp_vmax) == 0) {
-			commitState.CommNavigationObjects.CdlParameter.TRANSVEL.vmax = temp_vmax;
+		double temp_vmin = 0.0;
+		if(request.getDouble("1", temp_vmin) == 0) {
+			commitState.CommNavigationObjects.CdlParameter.TRANSVEL.vmin = temp_vmin;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
-		double temp_vmin = 0.0;
-		if(request.getDouble("2", temp_vmin) == 0) {
-			commitState.CommNavigationObjects.CdlParameter.TRANSVEL.vmin = temp_vmin;
+		double temp_vmax = 0.0;
+		if(request.getDouble("2", temp_vmax) == 0) {
+			commitState.CommNavigationObjects.CdlParameter.TRANSVEL.vmax = temp_vmax;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
