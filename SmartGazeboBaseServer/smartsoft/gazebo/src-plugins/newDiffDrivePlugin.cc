@@ -69,6 +69,9 @@ namespace gazebo
       	this->sub = this->node->Subscribe(topicName, &NewDiffDrivePlugin::OnMsg, this);
 
 		this->updateConnection = event::Events::ConnectWorldUpdateBegin(std::bind(&NewDiffDrivePlugin::OnUpdate, this));
+
+		this->leftWheelSpeed = 0;
+		this->rightWheelSpeed = 0;
     }
 
     public: void setVelocity(const double &_velLeft, const double &_velRight)
