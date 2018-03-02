@@ -15,7 +15,6 @@ ComponentDocumentation SmartPlannerBreadthFirstSearch{
 	HardwareRequirements : "-"
 	Purpose : "	Navigation"
 	
-	
 	NeutralMainState : "The path planning execution cycle is stopped. No path planning is performed, no intermediate waypoints and goal points are sent."
 	ComponentMainState PathPlanning : "The component will continuously (every 1 second) plan a path to the goalpoints. Intermediate waypoints and goals are sent."
 	
