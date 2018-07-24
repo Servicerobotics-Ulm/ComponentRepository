@@ -1,0 +1,74 @@
+Stampfer, July 2018
+
+This component is tested with gazebo version 8.0. Get version 8-family as follows:
+
+$ wget https://bitbucket.org/osrf/release-tools/raw/default/one-line-installations/gazebo.sh
+$ sh gazebo.sh
+
+This will install gazebo9. This component has not been tested with gazebo9, so 
+remove it and install gazebo 8. The above shell script will add the necessary repositories.
+
+$ sudo apt-get remove libgazebo9:amd64 libgazebo9-dev:amd64 gazebo9-plugin-base  gazebo9-common gazebo9
+$ sudo apt-get install gazebo8 gazebo8-common gazebo8-plugin-base libgazebo8:amd64 libgazebo8-dev:amd64
+
+
+
+You also need the DataRepository checked out into $SMART_ROOT_ACE/repos/DataRepository/. 
+Do this according to the official installation instructions. To test the installation / run gazebo:
+
+$ cd $SMART_ROOT_ACE/repos/DataRepository/gazebo
+$ bash startGazebo.sh <world_file>
+
+e.g. (tiago wihtout arm, for navigation only):
+
+$ bash startGazebo.sh worlds/tiagoOffice_nav.world
+
+
+
+
+=========================================================
+Below is an outdated version of installation instructions that was valid till 
+July 2018 and v2-generation of the SmartSoft World
+=========================================================
+
+Lutz, Blender
+
+
+1. This component is tested with gazebo version 8.0.
+   To install gazebo, download the installation bash script for ubuntu 16.04: gazebo8_install.sh from: http://gazebosim.org/download
+   Then execute: sh ~/Downloads/gazebo8_install.sh to perform the installation.
+
+
+[OPTIONAL if not started via script $SMART_ROOT_ACE/data/gazebo/startGazebo.sh]:
+
+  2. Make sure that GAZEBO_RESOURCE_PATH points to ~/.gazebo/ (is used as a prefix 
+     for the uri tags in the robot description (tiago/model.sdf) referring to the 
+     different files needed.
+   
+     You can use the following commands (if GAZEBO_RESOURCE_PATH is 
+     initially not set):
+
+       export GAZEBO_RESOURCE_PATH=/usr/share/gazebo-8/  (Can be different 
+       depending on your installation)
+	   
+	   export GAZEBO_RESOURCE_PATH=$GAZEBO_RESOURCE_PATH:~/.gazebo/
+
+  3. Ensure that all model files of the example office environment are located in
+     ~/.gazebo/models/
+
+[/OPTIONAL]
+
+4. Ensure that LD_LIBRARY_PATH points to $SMART_ROOT_ACE/lib:
+       
+      export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SMART_ROOT_ACE/lib
+
+5. Start the simulation with:
+	cd $SMART_ROOT_ACE/data/gazebo
+        bash startGazebo.sh <world_file>
+
+        e.g. (tiago wihtout arm, for navigation only) bash startGazebo.sh worlds/tiagoOffice_nav.world
+   
+
+6. Start the SmartGazeboBaseServer or a SmartSoft deployment containing 
+   SmartGazeboBaseServer, respectively.
+
