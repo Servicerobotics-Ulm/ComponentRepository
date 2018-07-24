@@ -1,0 +1,82 @@
+Stampfer, 10/2014
+Lutz, 03/2017
+Stampfer, 12/2017
+Stampfer, 7/2018
+
+
+## Notes ##
+
+Tested on Ubuntu 16.04 LTS with: Player 3.1.0 + Stage 4.1.1
+
+Links:
+- https://playerproject.github.io/
+- http://playerstage-manual.readthedocs.io/en/latest/INTRO/
+
+Player removed the laser driver and replaced it with a generic ranger device. The current version of world files and configuration is updated accordingly. Past versions of SmartPlayerStageSimulator contain the old configuration that has been tested in Ubuntu 12.04 with player-3.0.2 and Stage-4.1. See below.
+
+
+## required packages:
+libgeos++-dev
+libgeos-dev
+
+
+
+## Installing Player / Stage ##
+
+wget https://github.com/playerproject/player/archive/release-3-1-0.tar.gz -O player-3.1.0.tar.gz
+tar xzvf player-3.1.0.tar.gz
+cd player-release-3-1-0/
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
+
+sudo apt-get install libfltk1.1-dev
+wget https://github.com/rtv/Stage/archive/v4.1.1.tar.gz
+tar xzvf v4.1.1.tar.gz 
+mkdir -p Stage-4.1.1/build
+cd Stage-4.1.1/build
+cmake .. -Wno-dev
+make
+sudo make install
+
+# Player and Stage put libs in different paths:
+echo "export LD_LIBRARY_PATH=\${LD_LIBRARY_PATH}:/usr/local/lib" >> ~/.profile 
+echo "export LD_LIBRARY_PATH=\${LD_LIBRARY_PATH}:/usr/local/lib64/" >> ~/.profile 
+
+
+
+## Test the installation ##
+
+cd $SMART_ROOT_ACE
+cd src/components/SmartPlayerStageSimulator/player_stage/
+
+
+
+
+
+##################################################################
+Formerly tested with Ubuntu 12.04:
+player-3.0.2 and Stage-4.1, built from sources.
+
+required packages: 
+libfltk-1.1-dev
+freeglut3-dev (OpenGL)
+libgtk2.0-dev
+libltdl7-dev
+libpng12-0-dev
+libxmu-dev
+libltdl-dev
+libguile-ltdl-1
+
+
+##################################################################
+Formerly tested with: (before 10/2014):
+
+Requires Player >= 2.0.5 < 3.x and Stage >= 2.0.4. <3.x
+http://playerstage.sourceforge.net/
+
+working ubuntu packages 10.04: player-2.1.2 stage-2.1.1
+
+

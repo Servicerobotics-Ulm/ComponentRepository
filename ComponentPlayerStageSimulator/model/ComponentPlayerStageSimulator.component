@@ -1,0 +1,29 @@
+ComponentDefinition ComponentPlayerStageSimulator {
+
+AnswerPort BaseStateAnswerer implements CommBasicObjects.BaseStateQueryService {
+	}
+	RequestHandler BaseStateQueryHandler triggeredFrom BaseStateAnswerer {
+	}
+	PreemptiveTask PlayerTask
+	{
+	}
+	
+	PreemptiveTask BatteryEventTask
+	{
+	}
+	
+	
+	OutputPort LaserServiceOut implements CommBasicObjects.LaserService realizedBy PlayerTask {
+	}
+	OutputPort BatteryEventServiceOut implements CommNavigationObjects.BatteryEventService realizedBy BatteryEventTask {
+	}
+	InputPort NavigationVelocityServiceIn implements CommNavigationObjects.NavigationVelocityService {
+	}
+	InputHandler NavigationVelocityHandler triggeredFrom NavigationVelocityServiceIn
+	InputPort LocalizationUpdateServiceIn implements CommNavigationObjects.LocalizationUpdateService {
+	}
+	InputHandler LocalizationUpdateHandler triggeredFrom LocalizationUpdateServiceIn
+	OutputPort BaseStateServiceOut implements CommBasicObjects.BaseStateService realizedBy PlayerTask {
+	}
+ComponentParameters ComponentPlayerStageSimulatorParams
+}
