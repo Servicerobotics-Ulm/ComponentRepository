@@ -23,6 +23,7 @@ libgeos-dev
 
 ## Installing Player / Stage ##
 
+cd ~/SOFTWARE/
 wget https://github.com/playerproject/player/archive/release-3-1-0.tar.gz -O player-3.1.0.tar.gz
 tar xzvf player-3.1.0.tar.gz
 cd player-release-3-1-0/
@@ -33,6 +34,7 @@ make
 sudo make install
 
 sudo apt-get install libfltk1.1-dev
+cd ~/SOFTWARE/
 wget https://github.com/rtv/Stage/archive/v4.1.1.tar.gz
 tar xzvf v4.1.1.tar.gz 
 mkdir -p Stage-4.1.1/build
