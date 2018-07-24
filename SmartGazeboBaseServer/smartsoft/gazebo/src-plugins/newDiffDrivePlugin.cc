@@ -33,8 +33,8 @@ namespace gazebo
     {
 		this->model = _model;
 
-    	this->leftWheelJoint = _model->GetJoint("tiago::wheel_left_joint");
-  		this->rightWheelJoint = _model->GetJoint("tiago::wheel_right_joint");
+    	this->leftWheelJoint = _model->GetJoint("robot::wheel_left_joint");
+  		this->rightWheelJoint = _model->GetJoint("robot::wheel_right_joint");
 	
   		if (!this->leftWheelJoint) {
     		std::cout << "Unable to find left wheel joint" << std::endl;

@@ -47,6 +47,7 @@
 // include input-handler
 #include "BaseStateQueryHandler.hh"
 
+
 // include handler
 #include "CompHandler.hh"
 
@@ -119,6 +120,7 @@ public:
 	
 	// define request-handlers
 	BaseStateQueryHandler *baseStateQueryHandler;
+	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
@@ -206,6 +208,7 @@ public:
 		} navVelServiceIn;
 	
 		//--- client port parameter ---
+		
 	} connections;
 };
 #endif

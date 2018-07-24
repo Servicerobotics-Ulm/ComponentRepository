@@ -50,10 +50,10 @@ public:
 		public:
 			// default constructor
 			SettingsType() {
-				basePoseTopic = "~/tiago/basePose";
-				baseVelTopic = "~/tiago::tiago::base_footprint";
-				laserTopic = "~/tiago/tiago/base_footprint/base_laser/scan";
-				sendVelTopic = "~/tiago/vel_cmd";
+				basePoseTopic = "~/robot/basePose";
+				baseVelTopic = "~/robot::robot::base_footprint";
+				laserTopic = "~/robot/robot/base_footprint/base_laser/scan";
+				sendVelTopic = "~/robot/vel_cmd";
 			}
 		
 			/**

@@ -11,7 +11,8 @@ add_library(NewDiffDrivePlugin SHARED newDiffDrivePlugin.cc)
 
 add_library(PubBasePosePlugin SHARED pubBasePosePlugin.cc)
 
-INSTALL(TARGETS PubBasePosePlugin NewDiffDrivePlugin DESTINATION "${CMAKE_INSTALL_PREFIX}/lib")
-INSTALL(DIRECTORY "${PROJECT_SOURCE_DIR}/../resources/tiago" DESTINATION "$ENV{HOME}/.gazebo/models")
 
 
+
+INSTALL(TARGETS NewDiffDrivePlugin PubBasePosePlugin DESTINATION "${CMAKE_INSTALL_PREFIX}/lib")
+INSTALL(TARGETS NewDiffDrivePlugin PubBasePosePlugin DESTINATION "$ENV{HOME}/.gazebo/plugins")

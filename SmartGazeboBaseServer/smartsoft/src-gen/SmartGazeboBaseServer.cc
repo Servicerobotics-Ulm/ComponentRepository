@@ -49,6 +49,7 @@ SmartGazeboBaseServer::SmartGazeboBaseServer()
 	wiringSlave = NULL;
 	param = NULL;
 	
+	
 	// set default ini parameter values
 	connections.component.name = "SmartGazeboBaseServer";
 	connections.component.defaultScheduler = "DEFAULT";
@@ -99,7 +100,6 @@ void SmartGazeboBaseServer::setStartupFinished() {
  */
 Smart::StatusCode SmartGazeboBaseServer::connectAndStartAllServices() {
 	Smart::StatusCode status = Smart::SMART_OK;
-	
 	
 	return status;
 }
@@ -215,6 +215,7 @@ void SmartGazeboBaseServer::init(int argc, char *argv[])
 		// create request-handlers
 		baseStateQueryHandler = new BaseStateQueryHandler(baseSatateQueryAnsw);
 		
+		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
 		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
@@ -287,6 +288,7 @@ void SmartGazeboBaseServer::run()
 {
 	compHandler.onStartup();
 	
+	
 	// coponent will now start running and will continue (block in the run method) until it is commanded to shutdown (i.e. by a SIGINT signal)
 	component->run();
 	// component was signalled to shutdown
@@ -300,6 +302,7 @@ void SmartGazeboBaseServer::run()
 	}
 	
 	compHandler.onShutdown();
+	
 	
 	// unlink all observers
 	
@@ -334,20 +337,22 @@ void SmartGazeboBaseServer::run()
 	delete navVelServiceIn;
 	// destroy event-test handlers (if needed)
 	
-	// create request-handlers
+	// destroy request-handlers
 	delete baseStateQueryHandler;
+	
 
 	delete stateSlave;
-	// delete state-change-handler
+	// destroy state-change-handler
 	delete stateChangeHandler;
 	
-	// delete all master/slave ports
+	// destroy all master/slave ports
 	delete wiringSlave;
 	delete param;
 	
 
 	// clean-up component's internally used resources (internally used communication middleware) 
 	component->cleanUpComponentResources();
+	
 	
 	// finally delete the component itself
 	delete component;
@@ -424,16 +429,17 @@ void SmartGazeboBaseServer::loadParameter(int argc, char *argv[])
 		}
 		
 		
+		
 		// load parameters for server BaseSatateQueryAnsw
-		parameter.getString("baseSatateQueryAnsw", "serviceName", connections.baseSatateQueryAnsw.serviceName);
+		parameter.getString("BaseSatateQueryAnsw", "serviceName", connections.baseSatateQueryAnsw.serviceName);
 		// load parameters for server BaseStateServiceOut
-		parameter.getString("baseStateServiceOut", "serviceName", connections.baseStateServiceOut.serviceName);
+		parameter.getString("BaseStateServiceOut", "serviceName", connections.baseStateServiceOut.serviceName);
 		// load parameters for server LaserServiceOut
-		parameter.getString("laserServiceOut", "serviceName", connections.laserServiceOut.serviceName);
+		parameter.getString("LaserServiceOut", "serviceName", connections.laserServiceOut.serviceName);
 		// load parameters for server LocalizationUpdateServiceIn
-		parameter.getString("localizationUpdateServiceIn", "serviceName", connections.localizationUpdateServiceIn.serviceName);
+		parameter.getString("LocalizationUpdateServiceIn", "serviceName", connections.localizationUpdateServiceIn.serviceName);
 		// load parameters for server NavVelServiceIn
-		parameter.getString("navVelServiceIn", "serviceName", connections.navVelServiceIn.serviceName);
+		parameter.getString("NavVelServiceIn", "serviceName", connections.navVelServiceIn.serviceName);
 		
 		// load parameters for task BaseStateTask
 		parameter.getDouble("BaseStateTask", "minActFreqHz", connections.baseStateTask.minActFreq);
