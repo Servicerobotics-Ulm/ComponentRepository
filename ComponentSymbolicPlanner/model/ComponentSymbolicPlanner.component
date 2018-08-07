@@ -1,0 +1,8 @@
+ComponentDefinition ComponentSymbolicPlanner {
+
+AnswerPort SymbolicPlannerQueryServer implements DomainSymbolicPlanner.SymbolicPannerService {
+	}
+	RequestHandler SymbolicPannerQueryHandler triggeredFrom SymbolicPlannerQueryServer {
+	}
+CoordinationSlavePort CoordinationPort implements DomainSymbolicPlanner.DefaultService { }
+}
