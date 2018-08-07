@@ -1,9 +1,9 @@
 ComponentParameter SmartGazeboBaseServerParams component SmartGazeboBaseServer {
 	InternalParameter Settings {
-		sendVelTopic :String = "~/tiago/vel_cmd"
-		basePoseTopic:String = "~/tiago/basePose"
-  	    baseVelTopic:String = "~/tiago::tiago::base_footprint"
-		laserTopic: String = "~/tiago/tiago/base_footprint/base_laser/scan"
+		sendVelTopic :String = "~/robot/vel_cmd"
+		basePoseTopic:String = "~/robot/basePose"
+  	    baseVelTopic:String = "~/robot::robot::base_footprint"
+		laserTopic: String = "~/robot/robot/base_footprint/base_laser/scan"
 			
 	}
 }

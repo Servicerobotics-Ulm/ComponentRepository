@@ -9,6 +9,8 @@ pre-start)
 	echo -e "\n\n\n"
 	bash $SMART_ROOT_ACE/repos/DataRepository/gazebo/startGazebo.sh worlds/tiagoOffice_nav.world
 
+	echo "Wait for Simulator to start..."
+	sleep 10
 	
 ;;
 
