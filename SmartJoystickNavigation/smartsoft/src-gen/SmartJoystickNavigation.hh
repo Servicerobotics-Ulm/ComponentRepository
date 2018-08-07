@@ -36,6 +36,7 @@
 // include input-handler
 // include input-handler
 
+
 // include handler
 #include "CompHandler.hh"
 
@@ -70,6 +71,7 @@ private:
 public:
 	// component
 	SmartJoystickNavigationImpl *component;
+	Smart::ITask *opcUaComponentTask;
 	
 	ParameterStateStruct getGlobalState() const
 	{
@@ -96,6 +98,7 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
+	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
@@ -130,7 +133,7 @@ public:
 		{
 			// the name of the component
 			std::string name;
-			std::string initialMainState;
+			std::string initialComponentMode;
 			std::string defaultScheduler;
 			bool useLogger;
 		} component;
@@ -171,6 +174,7 @@ public:
 			std::string wiringName;
 			long interval;
 		} navVelServiceOut;
+		
 	} connections;
 };
 #endif

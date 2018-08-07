@@ -17,6 +17,8 @@
 #include "smartTimedTaskTrigger.h"
 //FIXME: implement logging
 //#include "smartGlobalLogger.hh"
+#include "OpcUaComponentTask.hh"
+#include <SeRoNetSDK/SeRoNet/Utils/Component.hpp>
 
 
 // constructor
@@ -25,18 +27,23 @@ SmartJoystickServer::SmartJoystickServer()
 	std::cout << "constructor of SmartJoystickServer\n";
 	
 	component = NULL;
+	opcUaComponentTask = NULL;
 	
 	// set all pointer members to NULL
+	//coordinationPort = NULL;
 	joystickServcieOut = NULL;
 	joystickTask = NULL;
 	joystickTaskTrigger = NULL;
+	//smartJoystickServerParameters = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
 	
+	
 	// set default ini parameter values
 	connections.component.name = "SmartJoystickServer";
+	connections.component.initialComponentMode = "Neutral";
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
@@ -70,7 +77,6 @@ void SmartJoystickServer::setStartupFinished() {
  */
 Smart::StatusCode SmartJoystickServer::connectAndStartAllServices() {
 	Smart::StatusCode status = Smart::SMART_OK;
-	
 	
 	return status;
 }
@@ -135,6 +141,8 @@ void SmartJoystickServer::init(int argc, char *argv[])
 			component = new SmartJoystickServerImpl(connections.component.name, argc, argv);
 		}
 		
+		opcUaComponentTask = new OpcUa::ComponentTask(component);
+		SeRoNet::Utils::Component *opcuaComponent = dynamic_cast<SeRoNet::Utils::Component*>(opcUaComponentTask->getOpcUaComponent());
 		
 		std::cout << "ComponentDefinition SmartJoystickServer is named " << connections.component.name << std::endl;
 		
@@ -148,7 +156,7 @@ void SmartJoystickServer::init(int argc, char *argv[])
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
-		joystickServcieOut = new SmartACE::PushServer<CommBasicObjects::CommJoystick>(component, connections.joystickServcieOut.serviceName);
+		joystickServcieOut = new SeRoNet::OPCUA::Server::PushServer<CommBasicObjects::CommJoystick>(opcuaComponent, connections.joystickServcieOut.serviceName);
 		
 		// create client ports
 		
@@ -158,10 +166,12 @@ void SmartJoystickServer::init(int argc, char *argv[])
 		
 		// create request-handlers
 		
+		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
 		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
-		if (stateSlave->setUpInitialState(connections.component.initialMainState) != Smart::SMART_OK) std::cerr << "ERROR: setUpInitialState" << std::endl;
+		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
+		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
 		status = stateSlave->activate();
 		if(status != Smart::SMART_OK) std::cerr << "ERROR: activate state" << std::endl;
@@ -192,6 +202,8 @@ void SmartJoystickServer::run()
 {
 	compHandler.onStartup();
 	
+	opcUaComponentTask->start();
+	
 	// coponent will now start running and will continue (block in the run method) until it is commanded to shutdown (i.e. by a SIGINT signal)
 	component->run();
 	// component was signalled to shutdown
@@ -205,6 +217,8 @@ void SmartJoystickServer::run()
 	}
 	
 	compHandler.onShutdown();
+	
+	opcUaComponentTask->stop();
 	
 	// unlink all observers
 	
@@ -224,19 +238,22 @@ void SmartJoystickServer::run()
 	delete joystickServcieOut;
 	// destroy event-test handlers (if needed)
 	
-	// create request-handlers
+	// destroy request-handlers
+	
 
 	delete stateSlave;
-	// delete state-change-handler
+	// destroy state-change-handler
 	delete stateChangeHandler;
 	
-	// delete all master/slave ports
+	// destroy all master/slave ports
 	delete wiringSlave;
 	delete param;
 	
 
 	// clean-up component's internally used resources (internally used communication middleware) 
 	component->cleanUpComponentResources();
+	
+	delete opcUaComponentTask;
 	
 	// finally delete the component itself
 	delete component;
@@ -304,7 +321,7 @@ void SmartJoystickServer::loadParameter(int argc, char *argv[])
 		//--- server port // client port // other parameter ---
 		// load parameter
 		parameter.getString("component", "name", connections.component.name);
-		parameter.getString("component", "initialMainState", connections.component.initialMainState);
+		parameter.getString("component", "initialComponentMode", connections.component.initialComponentMode);
 		if(parameter.checkIfParameterExists("component", "defaultScheduler")) {
 			parameter.getString("component", "defaultScheduler", connections.component.defaultScheduler);
 		}
@@ -313,8 +330,9 @@ void SmartJoystickServer::loadParameter(int argc, char *argv[])
 		}
 		
 		
+		
 		// load parameters for server JoystickServcieOut
-		parameter.getString("joystickServcieOut", "serviceName", connections.joystickServcieOut.serviceName);
+		parameter.getString("JoystickServcieOut", "serviceName", connections.joystickServcieOut.serviceName);
 		
 		// load parameters for task JoystickTask
 		if(parameter.checkIfParameterExists("JoystickTask", "scheduler")) {

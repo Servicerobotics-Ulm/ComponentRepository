@@ -80,7 +80,7 @@ ENDIF(WITH_OPENCV_CDL_LOOKUP_DEBUG)
 # install curvature files
 INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/../lookup-files DESTINATION data)
 
-INSTALL(FILES ${PROJECT_SOURCE_DIR}/src-gen/${PROJECT_NAME}.ini.template DESTINATION etc)
+#INSTALL(FILES ${PROJECT_SOURCE_DIR}/src-gen/${PROJECT_NAME}.ini.template DESTINATION etc)
 
 ## end user-code                                                               ##
 #################################################################################

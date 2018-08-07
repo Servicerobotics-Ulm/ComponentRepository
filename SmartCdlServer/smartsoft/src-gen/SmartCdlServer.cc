@@ -34,6 +34,7 @@ SmartCdlServer::SmartCdlServer()
 	baseStateClientUpcallManager = NULL;
 	cdlTask = NULL;
 	cdlTaskTrigger = NULL;
+	//coordinationPort = NULL;
 	goalEventServer = NULL;
 	goalEventServerEventTestHandler = NULL; 
 	iRClient = NULL;
@@ -57,6 +58,7 @@ SmartCdlServer::SmartCdlServer()
 	plannerClientUpcallManager = NULL;
 	robotBlockedEventServer = NULL;
 	robotBlockedEventServerEventTestHandler = NULL; 
+	//smartCdlServerParams = NULL;
 	trackingClient = NULL;
 	trackingClientInputTaskTrigger = NULL;
 	trackingClientUpcallManager = NULL;
@@ -65,9 +67,10 @@ SmartCdlServer::SmartCdlServer()
 	wiringSlave = NULL;
 	param = NULL;
 	
+	
 	// set default ini parameter values
 	connections.component.name = "SmartCdlServer";
-	connections.component.initialMainState = "Neutral";
+	connections.component.initialComponentMode = "Neutral";
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
@@ -75,39 +78,46 @@ SmartCdlServer::SmartCdlServer()
 	connections.navVelSendServer.serviceName = "NavVelSendServer";
 	connections.robotBlockedEventServer.serviceName = "RobotBlockedEventServer";
 	connections.baseStateClient.initialConnect = false;
+	connections.baseStateClient.wiringName = "BaseStateClient";
 	connections.baseStateClient.serverName = "unknown";
 	connections.baseStateClient.serviceName = "unknown";
 	connections.baseStateClient.interval = 1;
 	connections.iRClient.initialConnect = false;
+	connections.iRClient.wiringName = "IRClient";
 	connections.iRClient.serverName = "unknown";
 	connections.iRClient.serviceName = "unknown";
 	connections.iRClient.interval = 1;
+	connections.laserClient.wiringName = "LaserClient";
 	connections.laserClient.serverName = "unknown";
 	connections.laserClient.serviceName = "unknown";
 	connections.laserClient.interval = 1;
 	connections.laserClient2.initialConnect = false;
+	connections.laserClient2.wiringName = "LaserClient2";
 	connections.laserClient2.serverName = "unknown";
 	connections.laserClient2.serviceName = "unknown";
 	connections.laserClient2.interval = 1;
 	connections.navVelSendClient.initialConnect = false;
+	connections.navVelSendClient.wiringName = "NavVelSendClient";
 	connections.navVelSendClient.serverName = "unknown";
 	connections.navVelSendClient.serviceName = "unknown";
 	connections.navVelSendClient.interval = 1;
 	connections.pathNavigationGoalClient.initialConnect = false;
+	connections.pathNavigationGoalClient.wiringName = "PathNavigationGoalClient";
 	connections.pathNavigationGoalClient.serverName = "unknown";
 	connections.pathNavigationGoalClient.serviceName = "unknown";
 	connections.pathNavigationGoalClient.interval = 1;
 	connections.plannerClient.initialConnect = false;
+	connections.plannerClient.wiringName = "PlannerClient";
 	connections.plannerClient.serverName = "unknown";
 	connections.plannerClient.serviceName = "unknown";
 	connections.plannerClient.interval = 1;
 	connections.trackingClient.initialConnect = false;
+	connections.trackingClient.wiringName = "TrackingClient";
 	connections.trackingClient.serverName = "unknown";
 	connections.trackingClient.serviceName = "unknown";
 	connections.trackingClient.interval = 1;
 	connections.cdlTask.minActFreq = 5.0;
 	connections.cdlTask.maxActFreq = 40.0;
-	connections.cdlTask.prescale = 1;
 	connections.cdlTask.trigger = "PeriodicTimer";
 	connections.cdlTask.periodicActFreq = 20.0;
 	// scheduling default parameters
@@ -288,7 +298,6 @@ Smart::StatusCode SmartCdlServer::connectAndStartAllServices() {
 	if(status != Smart::SMART_OK) return status;
 	status = connectTrackingClient(connections.trackingClient.serverName, connections.trackingClient.serviceName);
 	if(status != Smart::SMART_OK) return status;
-	
 	return status;
 }
 
@@ -411,11 +420,13 @@ void SmartCdlServer::init(int argc, char *argv[])
 		
 		// create request-handlers
 		
+		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
 		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
 		if (stateSlave->defineStates("MoveRobot" ,"moveRobot") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion MoveRobot.moveRobot" << std::endl;
-		if (stateSlave->setUpInitialState(connections.component.initialMainState) != Smart::SMART_OK) std::cerr << "ERROR: setUpInitialState" << std::endl;
+		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
+		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
 		status = stateSlave->activate();
 		if(status != Smart::SMART_OK) std::cerr << "ERROR: activate state" << std::endl;
@@ -495,6 +506,7 @@ void SmartCdlServer::run()
 {
 	compHandler.onStartup();
 	
+	
 	// coponent will now start running and will continue (block in the run method) until it is commanded to shutdown (i.e. by a SIGINT signal)
 	component->run();
 	// component was signalled to shutdown
@@ -508,6 +520,7 @@ void SmartCdlServer::run()
 	}
 	
 	compHandler.onShutdown();
+	
 	
 	// unlink all observers
 	
@@ -563,19 +576,21 @@ void SmartCdlServer::run()
 	delete goalEventServerEventTestHandler;
 	delete robotBlockedEventServerEventTestHandler;
 	
-	// create request-handlers
+	// destroy request-handlers
+	
 
 	delete stateSlave;
-	// delete state-change-handler
+	// destroy state-change-handler
 	delete stateChangeHandler;
 	
-	// delete all master/slave ports
+	// destroy all master/slave ports
 	delete wiringSlave;
 	delete param;
 	
 
 	// clean-up component's internally used resources (internally used communication middleware) 
 	component->cleanUpComponentResources();
+	
 	
 	// finally delete the component itself
 	delete component;
@@ -643,7 +658,7 @@ void SmartCdlServer::loadParameter(int argc, char *argv[])
 		//--- server port // client port // other parameter ---
 		// load parameter
 		parameter.getString("component", "name", connections.component.name);
-		parameter.getString("component", "initialMainState", connections.component.initialMainState);
+		parameter.getString("component", "initialComponentMode", connections.component.initialComponentMode);
 		if(parameter.checkIfParameterExists("component", "defaultScheduler")) {
 			parameter.getString("component", "defaultScheduler", connections.component.defaultScheduler);
 		}
@@ -652,58 +667,59 @@ void SmartCdlServer::loadParameter(int argc, char *argv[])
 		}
 		
 		// load parameters for client BaseStateClient
-		parameter.getBoolean("baseStateClient", "initialConnect", connections.baseStateClient.initialConnect);
-		parameter.getString("baseStateClient", "serviceName", connections.baseStateClient.serviceName);
-		parameter.getString("baseStateClient", "serverName", connections.baseStateClient.serverName);
-		parameter.getString("baseStateClient", "wiringName", connections.baseStateClient.wiringName);
-		parameter.getInteger("baseStateClient", "interval", connections.baseStateClient.interval);
+		parameter.getBoolean("BaseStateClient", "initialConnect", connections.baseStateClient.initialConnect);
+		parameter.getString("BaseStateClient", "serviceName", connections.baseStateClient.serviceName);
+		parameter.getString("BaseStateClient", "serverName", connections.baseStateClient.serverName);
+		parameter.getString("BaseStateClient", "wiringName", connections.baseStateClient.wiringName);
+		parameter.getInteger("BaseStateClient", "interval", connections.baseStateClient.interval);
 		// load parameters for client IRClient
-		parameter.getBoolean("iRClient", "initialConnect", connections.iRClient.initialConnect);
-		parameter.getString("iRClient", "serviceName", connections.iRClient.serviceName);
-		parameter.getString("iRClient", "serverName", connections.iRClient.serverName);
-		parameter.getString("iRClient", "wiringName", connections.iRClient.wiringName);
-		parameter.getInteger("iRClient", "interval", connections.iRClient.interval);
+		parameter.getBoolean("IRClient", "initialConnect", connections.iRClient.initialConnect);
+		parameter.getString("IRClient", "serviceName", connections.iRClient.serviceName);
+		parameter.getString("IRClient", "serverName", connections.iRClient.serverName);
+		parameter.getString("IRClient", "wiringName", connections.iRClient.wiringName);
+		parameter.getInteger("IRClient", "interval", connections.iRClient.interval);
 		// load parameters for client LaserClient
-		parameter.getString("laserClient", "serviceName", connections.laserClient.serviceName);
-		parameter.getString("laserClient", "serverName", connections.laserClient.serverName);
-		parameter.getString("laserClient", "wiringName", connections.laserClient.wiringName);
-		parameter.getInteger("laserClient", "interval", connections.laserClient.interval);
+		parameter.getString("LaserClient", "serviceName", connections.laserClient.serviceName);
+		parameter.getString("LaserClient", "serverName", connections.laserClient.serverName);
+		parameter.getString("LaserClient", "wiringName", connections.laserClient.wiringName);
+		parameter.getInteger("LaserClient", "interval", connections.laserClient.interval);
 		// load parameters for client LaserClient2
-		parameter.getBoolean("laserClient2", "initialConnect", connections.laserClient2.initialConnect);
-		parameter.getString("laserClient2", "serviceName", connections.laserClient2.serviceName);
-		parameter.getString("laserClient2", "serverName", connections.laserClient2.serverName);
-		parameter.getString("laserClient2", "wiringName", connections.laserClient2.wiringName);
-		parameter.getInteger("laserClient2", "interval", connections.laserClient2.interval);
+		parameter.getBoolean("LaserClient2", "initialConnect", connections.laserClient2.initialConnect);
+		parameter.getString("LaserClient2", "serviceName", connections.laserClient2.serviceName);
+		parameter.getString("LaserClient2", "serverName", connections.laserClient2.serverName);
+		parameter.getString("LaserClient2", "wiringName", connections.laserClient2.wiringName);
+		parameter.getInteger("LaserClient2", "interval", connections.laserClient2.interval);
 		// load parameters for client NavVelSendClient
-		parameter.getBoolean("navVelSendClient", "initialConnect", connections.navVelSendClient.initialConnect);
-		parameter.getString("navVelSendClient", "serviceName", connections.navVelSendClient.serviceName);
-		parameter.getString("navVelSendClient", "serverName", connections.navVelSendClient.serverName);
-		parameter.getString("navVelSendClient", "wiringName", connections.navVelSendClient.wiringName);
+		parameter.getBoolean("NavVelSendClient", "initialConnect", connections.navVelSendClient.initialConnect);
+		parameter.getString("NavVelSendClient", "serviceName", connections.navVelSendClient.serviceName);
+		parameter.getString("NavVelSendClient", "serverName", connections.navVelSendClient.serverName);
+		parameter.getString("NavVelSendClient", "wiringName", connections.navVelSendClient.wiringName);
 		// load parameters for client PathNavigationGoalClient
-		parameter.getBoolean("pathNavigationGoalClient", "initialConnect", connections.pathNavigationGoalClient.initialConnect);
-		parameter.getString("pathNavigationGoalClient", "serviceName", connections.pathNavigationGoalClient.serviceName);
-		parameter.getString("pathNavigationGoalClient", "serverName", connections.pathNavigationGoalClient.serverName);
-		parameter.getString("pathNavigationGoalClient", "wiringName", connections.pathNavigationGoalClient.wiringName);
-		parameter.getInteger("pathNavigationGoalClient", "interval", connections.pathNavigationGoalClient.interval);
+		parameter.getBoolean("PathNavigationGoalClient", "initialConnect", connections.pathNavigationGoalClient.initialConnect);
+		parameter.getString("PathNavigationGoalClient", "serviceName", connections.pathNavigationGoalClient.serviceName);
+		parameter.getString("PathNavigationGoalClient", "serverName", connections.pathNavigationGoalClient.serverName);
+		parameter.getString("PathNavigationGoalClient", "wiringName", connections.pathNavigationGoalClient.wiringName);
+		parameter.getInteger("PathNavigationGoalClient", "interval", connections.pathNavigationGoalClient.interval);
 		// load parameters for client PlannerClient
-		parameter.getBoolean("plannerClient", "initialConnect", connections.plannerClient.initialConnect);
-		parameter.getString("plannerClient", "serviceName", connections.plannerClient.serviceName);
-		parameter.getString("plannerClient", "serverName", connections.plannerClient.serverName);
-		parameter.getString("plannerClient", "wiringName", connections.plannerClient.wiringName);
-		parameter.getInteger("plannerClient", "interval", connections.plannerClient.interval);
+		parameter.getBoolean("PlannerClient", "initialConnect", connections.plannerClient.initialConnect);
+		parameter.getString("PlannerClient", "serviceName", connections.plannerClient.serviceName);
+		parameter.getString("PlannerClient", "serverName", connections.plannerClient.serverName);
+		parameter.getString("PlannerClient", "wiringName", connections.plannerClient.wiringName);
+		parameter.getInteger("PlannerClient", "interval", connections.plannerClient.interval);
 		// load parameters for client TrackingClient
-		parameter.getBoolean("trackingClient", "initialConnect", connections.trackingClient.initialConnect);
-		parameter.getString("trackingClient", "serviceName", connections.trackingClient.serviceName);
-		parameter.getString("trackingClient", "serverName", connections.trackingClient.serverName);
-		parameter.getString("trackingClient", "wiringName", connections.trackingClient.wiringName);
-		parameter.getInteger("trackingClient", "interval", connections.trackingClient.interval);
+		parameter.getBoolean("TrackingClient", "initialConnect", connections.trackingClient.initialConnect);
+		parameter.getString("TrackingClient", "serviceName", connections.trackingClient.serviceName);
+		parameter.getString("TrackingClient", "serverName", connections.trackingClient.serverName);
+		parameter.getString("TrackingClient", "wiringName", connections.trackingClient.wiringName);
+		parameter.getInteger("TrackingClient", "interval", connections.trackingClient.interval);
+		
 		
 		// load parameters for server GoalEventServer
-		parameter.getString("goalEventServer", "serviceName", connections.goalEventServer.serviceName);
+		parameter.getString("GoalEventServer", "serviceName", connections.goalEventServer.serviceName);
 		// load parameters for server NavVelSendServer
-		parameter.getString("navVelSendServer", "serviceName", connections.navVelSendServer.serviceName);
+		parameter.getString("NavVelSendServer", "serviceName", connections.navVelSendServer.serviceName);
 		// load parameters for server RobotBlockedEventServer
-		parameter.getString("robotBlockedEventServer", "serviceName", connections.robotBlockedEventServer.serviceName);
+		parameter.getString("RobotBlockedEventServer", "serviceName", connections.robotBlockedEventServer.serviceName);
 		
 		// load parameters for task CdlTask
 		parameter.getDouble("CdlTask", "minActFreqHz", connections.cdlTask.minActFreq);

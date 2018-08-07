@@ -27,9 +27,12 @@
 #include <CommLocalizationObjects/LocalizationEventState.hh>
 #include <CommBasicObjects/CommBasePositionUpdate.hh>
 
+// include all interaction-observer interfaces
+#include <AmclTaskObserverInterface.hh>
 	
 class AmclTaskCore
 :	public SmartACE::ManagedTask
+,	public Smart::TaskTriggerSubject
 ,	public LaserServiceInUpcallInterface
 {
 private:
@@ -37,7 +40,6 @@ private:
 	bool useLogging;
 	int taskLoggingId;
 	unsigned int currentUpdateCount;
-	
 	
 	Smart::StatusCode laserServiceInStatus;
 	CommBasicObjects::CommMobileLaserScan laserServiceInObject;
@@ -69,6 +71,18 @@ protected:
 	Smart::StatusCode localizationEventServiceOutPut(CommLocalizationObjects::LocalizationEventState &eventState);
 	// this method is meant to be used in derived classes
 	Smart::StatusCode localizationUpdateServiceOutPut(CommBasicObjects::CommBasePositionUpdate &localizationUpdateServiceOutDataObject);
+	
+/**
+ * Implementation of the Subject part of an InteractionObserver
+ */
+private:
+	std::mutex interaction_observers_mutex;
+	std::list<AmclTaskObserverInterface*> interaction_observers;
+protected:
+	void notify_all_interaction_observers();
+public:
+	void attach_interaction_observer(AmclTaskObserverInterface *observer);
+	void detach_interaction_observer(AmclTaskObserverInterface *observer);
 
 public:
 	AmclTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true)

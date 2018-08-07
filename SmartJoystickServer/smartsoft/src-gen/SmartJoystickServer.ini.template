@@ -23,8 +23,8 @@
 # the name of the component for the naming service
 name SmartJoystickServer
 
-# the initial MainState of the component
-
+# the initial ComponentMode
+initialComponentMode Neutral
 #defaultScheduler FIFO
 #useLogger true
 
@@ -48,8 +48,12 @@ serviceName JoystickServcieOut
 
 ##########################
 # client port parameter
-##########################
+
+#####################
 # internal parameters
+#####################
+##########################
+# InternalParameter General
 [General]
 device /dev/input/js0
 interval_max 0.5
@@ -61,8 +65,10 @@ invert_y2_axis false
 verbose true
 
 
-##########################
+#####################
 # extended parameters
+#####################
 
-##########################
+#####################
 # instance parameters
+#####################

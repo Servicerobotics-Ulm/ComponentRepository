@@ -24,16 +24,18 @@
 #include <CommBasicObjects/CommBaseState.hh>
 #include <CommBasicObjects/CommMobileLaserScan.hh>
 
+// include all interaction-observer interfaces
+#include <PlayerTaskObserverInterface.hh>
 	
 class PlayerTaskCore
 :	public SmartACE::ManagedTask
+,	public Smart::TaskTriggerSubject
 {
 private:
 	bool useDefaultState; 
 	bool useLogging;
 	int taskLoggingId;
 	unsigned int currentUpdateCount;
-	
 	
 	
 protected:
@@ -51,6 +53,18 @@ protected:
 	Smart::StatusCode baseStateServiceOutPut(CommBasicObjects::CommBaseState &baseStateServiceOutDataObject);
 	// this method is meant to be used in derived classes
 	Smart::StatusCode laserServiceOutPut(CommBasicObjects::CommMobileLaserScan &laserServiceOutDataObject);
+	
+/**
+ * Implementation of the Subject part of an InteractionObserver
+ */
+private:
+	std::mutex interaction_observers_mutex;
+	std::list<PlayerTaskObserverInterface*> interaction_observers;
+protected:
+	void notify_all_interaction_observers();
+public:
+	void attach_interaction_observer(PlayerTaskObserverInterface *observer);
+	void detach_interaction_observer(PlayerTaskObserverInterface *observer);
 
 public:
 	PlayerTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true)

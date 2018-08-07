@@ -23,8 +23,8 @@
 # the name of the component for the naming service
 name SmartJoystickNavigation
 
-# the initial MainState of the component
-
+# the initial ComponentMode
+initialComponentMode Neutral
 #defaultScheduler FIFO
 #useLogger true
 
@@ -71,15 +71,21 @@ serverName unknown
 serviceName unknown
 wiringName NavVelServiceOut
 interval 1
-##########################
+
+#####################
 # internal parameters
+#####################
+##########################
+# InternalParameter Settings
 [Settings]
 max_steering 1.2
 max_velocity 1.0
 
 
-##########################
+#####################
 # extended parameters
+#####################
 
-##########################
+#####################
 # instance parameters
+#####################

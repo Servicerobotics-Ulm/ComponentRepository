@@ -23,9 +23,8 @@
 # the name of the component for the naming service
 name SmartGMapping
 
-# the initial MainState of the component
-initialMainState Neutral
-
+# the initial ComponentMode
+initialComponentMode Neutral
 #defaultScheduler FIFO
 #useLogger true
 
@@ -75,8 +74,12 @@ serverName unknown
 serviceName unknown
 wiringName LocalizationUpdateServiceOut
 interval 1
-##########################
+
+#####################
 # internal parameters
+#####################
+##########################
+# InternalParameter gfs
 [gfs]
 angularUpdate 0.5
 astep 0.05
@@ -106,6 +109,8 @@ xmin -20.0
 ymax 20.0
 ymin -20.0
 
+##########################
+# InternalParameter settings
 [settings]
 initial_pose_azimuth 0.0
 initial_pose_x 0.0
@@ -113,8 +118,12 @@ initial_pose_y 0.0
 verbose false
 
 
-##########################
+#####################
 # extended parameters
+#####################
 
-##########################
+#####################
 # instance parameters
+#####################
+##########################
+# ParameterSet GMappingParameter

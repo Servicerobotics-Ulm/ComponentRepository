@@ -23,16 +23,20 @@
 // include communication-objects for output ports
 #include <CommBasicObjects/CommBaseState.hh>
 
+// include all interaction-observer interfaces
+#include <BaseStateTaskObserverInterface.hh>
+#include <LocalizationUpdateHandlerObserverInterface.hh>
 	
 class BaseStateTaskCore
 :	public SmartACE::ManagedTask
+,	public Smart::TaskTriggerSubject
+,	public LocalizationUpdateHandlerObserverInterface
 {
 private:
 	bool useDefaultState; 
 	bool useLogging;
 	int taskLoggingId;
 	unsigned int currentUpdateCount;
-	
 	
 	
 protected:
@@ -44,10 +48,26 @@ protected:
 	
 	void triggerLogEntry(const int& idOffset);
 	
+	// overload this method in derived classes!
+	virtual void on_update_from(const LocalizationUpdateHandler* subject) {
+		// no-op
+	}
 	
 	
 	// this method is meant to be used in derived classes
 	Smart::StatusCode baseStateServiceOutPut(CommBasicObjects::CommBaseState &baseStateServiceOutDataObject);
+	
+/**
+ * Implementation of the Subject part of an InteractionObserver
+ */
+private:
+	std::mutex interaction_observers_mutex;
+	std::list<BaseStateTaskObserverInterface*> interaction_observers;
+protected:
+	void notify_all_interaction_observers();
+public:
+	void attach_interaction_observer(BaseStateTaskObserverInterface *observer);
+	void detach_interaction_observer(BaseStateTaskObserverInterface *observer);
 
 public:
 	BaseStateTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true)

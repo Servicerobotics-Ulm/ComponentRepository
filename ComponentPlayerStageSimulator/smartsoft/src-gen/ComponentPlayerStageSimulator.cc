@@ -36,6 +36,8 @@ ComponentPlayerStageSimulator::ComponentPlayerStageSimulator()
 	batteryEventServiceOutEventTestHandler = NULL; 
 	batteryEventTask = NULL;
 	batteryEventTaskTrigger = NULL;
+	//componentPlayerStageSimulatorParams = NULL;
+	//coordinationPort = NULL;
 	laserServiceOut = NULL;
 	localizationUpdateHandler = NULL;
 	localizationUpdateServiceIn = NULL;
@@ -55,6 +57,7 @@ ComponentPlayerStageSimulator::ComponentPlayerStageSimulator()
 	
 	// set default ini parameter values
 	connections.component.name = "ComponentPlayerStageSimulator";
+	connections.component.initialComponentMode = "Neutral";
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
@@ -66,14 +69,12 @@ ComponentPlayerStageSimulator::ComponentPlayerStageSimulator()
 	connections.navigationVelocityServiceIn.serviceName = "NavigationVelocityServiceIn";
 	connections.batteryEventTask.minActFreq = 0.0;
 	connections.batteryEventTask.maxActFreq = 0.0;
-	connections.batteryEventTask.prescale = 1;
 	// scheduling default parameters
 	connections.batteryEventTask.scheduler = "DEFAULT";
 	connections.batteryEventTask.priority = -1;
 	connections.batteryEventTask.cpuAffinity = -1;
 	connections.playerTask.minActFreq = 0.0;
 	connections.playerTask.maxActFreq = 0.0;
-	connections.playerTask.prescale = 1;
 	// scheduling default parameters
 	connections.playerTask.scheduler = "DEFAULT";
 	connections.playerTask.priority = -1;
@@ -226,7 +227,8 @@ void ComponentPlayerStageSimulator::init(int argc, char *argv[])
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
 		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
-		if (stateSlave->setUpInitialState(connections.component.initialMainState) != Smart::SMART_OK) std::cerr << "ERROR: setUpInitialState" << std::endl;
+		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
+		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
 		status = stateSlave->activate();
 		if(status != Smart::SMART_OK) std::cerr << "ERROR: activate state" << std::endl;
@@ -436,7 +438,7 @@ void ComponentPlayerStageSimulator::loadParameter(int argc, char *argv[])
 		//--- server port // client port // other parameter ---
 		// load parameter
 		parameter.getString("component", "name", connections.component.name);
-		parameter.getString("component", "initialMainState", connections.component.initialMainState);
+		parameter.getString("component", "initialComponentMode", connections.component.initialComponentMode);
 		if(parameter.checkIfParameterExists("component", "defaultScheduler")) {
 			parameter.getString("component", "defaultScheduler", connections.component.defaultScheduler);
 		}

@@ -14,6 +14,7 @@
 // running the code generator.
 //--------------------------------------------------------------------------
 #include "BaseStateQueryHandlerCore.hh"
+#include "BaseStateQueryHandler.hh"
 
 // include observers
 #include "RobotTask.hh"
@@ -29,10 +30,27 @@ BaseStateQueryHandlerCore::~BaseStateQueryHandlerCore()
 	
 }
 
-void BaseStateQueryHandlerCore::update_from(const Smart::TaskInteractionSubject* subject)
+void BaseStateQueryHandlerCore::updateAllCommObjects()
 {
-	// try typecasting into according Task or Upcall class
-	 if(const RobotTask* robotTask = dynamic_cast<const RobotTask*>(subject)) {
-		this->on_update_from(robotTask);
+}
+
+void BaseStateQueryHandlerCore::notify_all_interaction_observers() {
+	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
+	// try dynamically down-casting this class to the derived class 
+	// (we can do it safely here as we exactly know the derived class)
+	if(const BaseStateQueryHandler* baseStateQueryHandler = dynamic_cast<const BaseStateQueryHandler*>(this)) {
+		for(auto it=interaction_observers.begin(); it!=interaction_observers.end(); it++) {
+			(*it)->on_update_from(baseStateQueryHandler);
+		}
 	}
+}
+
+void BaseStateQueryHandlerCore::attach_interaction_observer(BaseStateQueryHandlerObserverInterface *observer) {
+	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
+	interaction_observers.push_back(observer);
+}
+
+void BaseStateQueryHandlerCore::detach_interaction_observer(BaseStateQueryHandlerObserverInterface *observer) {
+	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
+	interaction_observers.remove(observer);
 }

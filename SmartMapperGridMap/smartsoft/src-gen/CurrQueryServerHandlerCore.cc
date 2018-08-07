@@ -14,6 +14,7 @@
 // running the code generator.
 //--------------------------------------------------------------------------
 #include "CurrQueryServerHandlerCore.hh"
+#include "CurrQueryServerHandler.hh"
 
 // include observers
 #include "CurMapTask.hh"
@@ -29,10 +30,27 @@ CurrQueryServerHandlerCore::~CurrQueryServerHandlerCore()
 	
 }
 
-void CurrQueryServerHandlerCore::update_from(const Smart::TaskInteractionSubject* subject)
+void CurrQueryServerHandlerCore::updateAllCommObjects()
 {
-	// try typecasting into according Task or Upcall class
-	 if(const CurMapTask* curMapTask = dynamic_cast<const CurMapTask*>(subject)) {
-		this->on_update_from(curMapTask);
+}
+
+void CurrQueryServerHandlerCore::notify_all_interaction_observers() {
+	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
+	// try dynamically down-casting this class to the derived class 
+	// (we can do it safely here as we exactly know the derived class)
+	if(const CurrQueryServerHandler* currQueryServerHandler = dynamic_cast<const CurrQueryServerHandler*>(this)) {
+		for(auto it=interaction_observers.begin(); it!=interaction_observers.end(); it++) {
+			(*it)->on_update_from(currQueryServerHandler);
+		}
 	}
+}
+
+void CurrQueryServerHandlerCore::attach_interaction_observer(CurrQueryServerHandlerObserverInterface *observer) {
+	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
+	interaction_observers.push_back(observer);
+}
+
+void CurrQueryServerHandlerCore::detach_interaction_observer(CurrQueryServerHandlerObserverInterface *observer) {
+	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
+	interaction_observers.remove(observer);
 }

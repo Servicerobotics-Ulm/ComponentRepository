@@ -23,16 +23,18 @@
 // include communication-objects for output ports
 #include <CommBasicObjects/CommJoystick.hh>
 
+// include all interaction-observer interfaces
+#include <JoystickTaskObserverInterface.hh>
 	
 class JoystickTaskCore
 :	public SmartACE::ManagedTask
+,	public Smart::TaskTriggerSubject
 {
 private:
 	bool useDefaultState; 
 	bool useLogging;
 	int taskLoggingId;
 	unsigned int currentUpdateCount;
-	
 	
 	
 protected:
@@ -48,6 +50,18 @@ protected:
 	
 	// this method is meant to be used in derived classes
 	Smart::StatusCode joystickServcieOutPut(CommBasicObjects::CommJoystick &joystickServcieOutDataObject);
+	
+/**
+ * Implementation of the Subject part of an InteractionObserver
+ */
+private:
+	std::mutex interaction_observers_mutex;
+	std::list<JoystickTaskObserverInterface*> interaction_observers;
+protected:
+	void notify_all_interaction_observers();
+public:
+	void attach_interaction_observer(JoystickTaskObserverInterface *observer);
+	void detach_interaction_observer(JoystickTaskObserverInterface *observer);
 
 public:
 	JoystickTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true)

@@ -23,9 +23,8 @@
 # the name of the component for the naming service
 name SmartAmcl
 
-# the initial MainState of the component
-initialMainState Neutral
-
+# the initial ComponentMode
+initialComponentMode Neutral
 #defaultScheduler FIFO
 #useLogger true
 
@@ -75,3 +74,4 @@ serverName unknown
 serviceName unknown
 wiringName LocalizationUpdateServiceOut
 interval 1
+

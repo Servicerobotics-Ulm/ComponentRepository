@@ -7,19 +7,19 @@ ComponentDocumentation SmartGazeboBaseServer{
 	Purpose : "Simulation"
 	
 	
-	ComponentService LocalizationUpdateServiceIn {
+	ComponentPort LocalizationUpdateServiceIn {
 		Description : "Port to receive corrections of base pose to overcome the odometry failure. Accepts a pair of old uncorrected pose and new corrected pose. The deviation between these two poses is applied to correct the current pose of the robot."
 	}
-	ComponentService NavVelServiceIn {
+	ComponentPort NavVelServiceIn {
 		Description : "Send new navigation velocity commands v and omega to the Gazebo Simulator."
 	}
-	ComponentService BaseStateServiceOut {
+	ComponentPort BaseStateServiceOut {
 		Description : "Push the base state containing current information about the robot's velocity, pose and raw pose. Should be used when a continuous base pose is required."
 	}
-	ComponentService BaseSatateQueryAnsw {
+	ComponentPort BaseSatateQueryAnsw {
 		Description : "Query port to request the base state. Analogous to basePositionPushTimedServer, but a query service. Should be used when the base pose is needed sporadically, for example by a behavior component which explicitly needs to query the base pose from time to time."
 	}
-	ComponentService LaserServiceOut {
+	ComponentPort LaserServiceOut {
 		Description : "Push latest laser scan. The rate with which the server pushes is the same as in the basePositionPushTimedServer."
 	}
 }

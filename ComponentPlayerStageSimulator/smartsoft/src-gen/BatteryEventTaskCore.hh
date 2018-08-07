@@ -25,16 +25,18 @@
 #include <CommBasicObjects/CommBatteryParameter.hh>
 #include <CommBasicObjects/CommBatteryState.hh>
 
+// include all interaction-observer interfaces
+#include <BatteryEventTaskObserverInterface.hh>
 	
 class BatteryEventTaskCore
 :	public SmartACE::ManagedTask
+,	public Smart::TaskTriggerSubject
 {
 private:
 	bool useDefaultState; 
 	bool useLogging;
 	int taskLoggingId;
 	unsigned int currentUpdateCount;
-	
 	
 	
 protected:
@@ -50,6 +52,18 @@ protected:
 	
 	// this method is meant to be used in derived classes
 	Smart::StatusCode batteryEventServiceOutPut(CommBasicObjects::CommBatteryState &eventState);
+	
+/**
+ * Implementation of the Subject part of an InteractionObserver
+ */
+private:
+	std::mutex interaction_observers_mutex;
+	std::list<BatteryEventTaskObserverInterface*> interaction_observers;
+protected:
+	void notify_all_interaction_observers();
+public:
+	void attach_interaction_observer(BatteryEventTaskObserverInterface *observer);
+	void detach_interaction_observer(BatteryEventTaskObserverInterface *observer);
 
 public:
 	BatteryEventTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true)

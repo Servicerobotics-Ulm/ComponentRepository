@@ -9,16 +9,16 @@ ComponentDocumentation SmartLaserLMS200Server{
 	Purpose : "Hardware-Driver"
 	
 	
-	ComponentService BaseStateIn {
+	ComponentPort BaseStateIn {
 		Description : "Typically connected to the robot base (e.g. SmartPioneerBaseServer) to receive the base state which is included in the laser scan. Whether this port is connected or not can be configured via the ini file. Used to stamp every laser scan with the base state where the scan was recorded, if laser is mounted on a mobile platform. If this port is not connected, the pose where recorded will contain the values configured in the ini file."
 	}
-	ComponentService LaserQueryServiceAnsw {
+	ComponentPort LaserQueryServiceAnsw {
 		Description : " Query to request the latest laser scan. Scan will be stamped invalid if it was not possible to get the base state but the baseClient port is connected."
 	}
-	ComponentService LaserScanOut {
+	ComponentPort LaserScanOut {
 		Description : "Push latest laser scan. The rate with which the server pushes depends on the parametrization of the laser scanner, especially baudrate and resolution. A typical rate is 38 Hz (500000 bps, 0.5 degree resolution). Scan will be stamped invalid if it was not possible to get the base state but the baseClient port is connected."
 	}
-	BehaviorSlaveInterface SlavePort {
+	CoordinationSlavePort CoordinationPort {
 		DynamicWiringPort : "Slave part of wiring pattern. It is responsible for changing the port connections within the component."
 	}
 }

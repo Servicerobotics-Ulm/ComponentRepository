@@ -26,20 +26,20 @@
 #include <CommBasicObjects/CommBatteryParameter.hh>
 #include <CommBasicObjects/CommBatteryState.hh>
 
-// forward declaration of RobotTask
-class RobotTask;
+// include all interaction-observer interfaces
+#include <PoseUpdateTaskObserverInterface.hh>
+#include <RobotTaskObserverInterface.hh>
 	
 class PoseUpdateTaskCore
 :	public SmartACE::ManagedTask
-,	public Smart::ITaskInteractionObserver
+,	public Smart::TaskTriggerSubject
+,	public RobotTaskObserverInterface
 {
 private:
 	bool useDefaultState; 
 	bool useLogging;
 	int taskLoggingId;
 	unsigned int currentUpdateCount;
-	
-	virtual void update_from(const Smart::TaskInteractionSubject* subject);
 	
 	
 protected:
@@ -51,14 +51,28 @@ protected:
 	
 	void triggerLogEntry(const int& idOffset);
 	
-	// implement this method in derived classes!
-	virtual void on_update_from(const RobotTask* robotTask) = 0;
+	// overload this method in derived classes!
+	virtual void on_update_from(const RobotTask* subject) {
+		// no-op
+	}
 	
 	
 	// this method is meant to be used in derived classes
 	Smart::StatusCode basePositionOutPut(CommBasicObjects::CommBaseState &basePositionOutDataObject);
 	// this method is meant to be used in derived classes
 	Smart::StatusCode batteryEventServerPut(CommBasicObjects::CommBatteryState &eventState);
+	
+/**
+ * Implementation of the Subject part of an InteractionObserver
+ */
+private:
+	std::mutex interaction_observers_mutex;
+	std::list<PoseUpdateTaskObserverInterface*> interaction_observers;
+protected:
+	void notify_all_interaction_observers();
+public:
+	void attach_interaction_observer(PoseUpdateTaskObserverInterface *observer);
+	void detach_interaction_observer(PoseUpdateTaskObserverInterface *observer);
 
 public:
 	PoseUpdateTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true)

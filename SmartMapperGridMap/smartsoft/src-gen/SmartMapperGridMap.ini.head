@@ -23,9 +23,8 @@
 # the name of the component for the naming service
 name SmartMapperGridMap
 
-# the initial MainState of the component
-initialMainState Neutral
-
+# the initial ComponentMode
+initialComponentMode BuildCurrMap
 #defaultScheduler FIFO
 #useLogger true
 
@@ -88,3 +87,4 @@ serverName unknown
 serviceName unknown
 wiringName LaserServiceIn
 interval 1
+

@@ -23,9 +23,8 @@
 # the name of the component for the naming service
 name SmartPlannerBreadthFirstSearch
 
-# the initial MainState of the component
-initialMainState Neutral
-
+# the initial ComponentMode
+initialComponentMode Neutral
 #defaultScheduler FIFO
 #useLogger true
 
@@ -33,14 +32,14 @@ initialMainState Neutral
 # Task parameters
 
 [PlannerTask]
-minActFreqHz 4.0
+minActFreqHz 2.0
 maxActFreqHz 10.0
 # setup default trigger as PeriodicTimer
 triggerType PeriodicTimer
 periodicActFreqHz 4.0
 # other trigger-types are:
 #triggerType PeriodicTimer
-#periodicActFreqHz 4.0
+#periodicActFreqHz 2.0
 # or alternatively:
 #triggerType DataTriggered
 #inPortRef <InPortName>
@@ -76,3 +75,4 @@ serverName unknown
 serviceName unknown
 wiringName CurMapClient
 interval 1
+

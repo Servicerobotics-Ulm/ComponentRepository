@@ -1,3 +1,6 @@
+<!--- This file is generated from the SmartCdlServer.componentDocumentation model --->
+<!--- do not modify this file manually as it will by automatically overwritten by the code generator, modify the model instead and re-generate this file --->
+
 # SmartCdlServer Component
 
 ![SmartCdlServer-ComponentImage](https://github.com/Servicerobotics-Ulm/ComponentRepository/blob/master/SmartCdlServer/model/SmartCdlServerComponentDefinition.jpg)
@@ -24,7 +27,7 @@ Christian Schlegel. Fast local obstacle avoidance under kinematic and dynamic co
 | Purpose | Navigation |
 
 
-## Coordination Port SlavePort
+## Coordination Port CoordinationPort
 
 
 ### States

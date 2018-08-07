@@ -31,6 +31,7 @@ SmartPlannerBreadthFirstSearch::SmartPlannerBreadthFirstSearch()
 	baseStateClient = NULL;
 	baseStateClientInputTaskTrigger = NULL;
 	baseStateClientUpcallManager = NULL;
+	//coordinationPort = NULL;
 	curMapClient = NULL;
 	curMapClientInputTaskTrigger = NULL;
 	curMapClientUpcallManager = NULL;
@@ -39,28 +40,31 @@ SmartPlannerBreadthFirstSearch::SmartPlannerBreadthFirstSearch()
 	plannerGoalServer = NULL;
 	plannerTask = NULL;
 	plannerTaskTrigger = NULL;
+	//smartPlannerParams = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
 	
+	
 	// set default ini parameter values
 	connections.component.name = "SmartPlannerBreadthFirstSearch";
-	connections.component.initialMainState = "Neutral";
+	connections.component.initialComponentMode = "Neutral";
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
 	connections.plannerEventServer.serviceName = "PlannerEventServer";
 	connections.plannerGoalServer.serviceName = "PlannerGoalServer";
+	connections.baseStateClient.wiringName = "BaseStateClient";
 	connections.baseStateClient.serverName = "unknown";
 	connections.baseStateClient.serviceName = "unknown";
 	connections.baseStateClient.interval = 1;
+	connections.curMapClient.wiringName = "CurMapClient";
 	connections.curMapClient.serverName = "unknown";
 	connections.curMapClient.serviceName = "unknown";
 	connections.curMapClient.interval = 1;
-	connections.plannerTask.minActFreq = 4.0;
+	connections.plannerTask.minActFreq = 2.0;
 	connections.plannerTask.maxActFreq = 10.0;
-	connections.plannerTask.prescale = 1;
 	connections.plannerTask.trigger = "PeriodicTimer";
 	connections.plannerTask.periodicActFreq = 4.0;
 	// scheduling default parameters
@@ -125,7 +129,6 @@ Smart::StatusCode SmartPlannerBreadthFirstSearch::connectAndStartAllServices() {
 	if(status != Smart::SMART_OK) return status;
 	status = connectCurMapClient(connections.curMapClient.serverName, connections.curMapClient.serviceName);
 	if(status != Smart::SMART_OK) return status;
-	
 	return status;
 }
 
@@ -222,11 +225,13 @@ void SmartPlannerBreadthFirstSearch::init(int argc, char *argv[])
 		
 		// create request-handlers
 		
+		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
 		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
-		if (stateSlave->defineStates("PathPlanning" ,"pathlanning") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion PathPlanning.pathlanning" << std::endl;
-		if (stateSlave->setUpInitialState(connections.component.initialMainState) != Smart::SMART_OK) std::cerr << "ERROR: setUpInitialState" << std::endl;
+		if (stateSlave->defineStates("PathPlanning" ,"pathplanning") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion PathPlanning.pathplanning" << std::endl;
+		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
+		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
 		status = stateSlave->activate();
 		if(status != Smart::SMART_OK) std::cerr << "ERROR: activate state" << std::endl;
@@ -294,6 +299,7 @@ void SmartPlannerBreadthFirstSearch::run()
 {
 	compHandler.onStartup();
 	
+	
 	// coponent will now start running and will continue (block in the run method) until it is commanded to shutdown (i.e. by a SIGINT signal)
 	component->run();
 	// component was signalled to shutdown
@@ -307,6 +313,7 @@ void SmartPlannerBreadthFirstSearch::run()
 	}
 	
 	compHandler.onShutdown();
+	
 	
 	// unlink all observers
 	
@@ -336,19 +343,21 @@ void SmartPlannerBreadthFirstSearch::run()
 	// destroy event-test handlers (if needed)
 	delete plannerEventServerEventTestHandler;
 	
-	// create request-handlers
+	// destroy request-handlers
+	
 
 	delete stateSlave;
-	// delete state-change-handler
+	// destroy state-change-handler
 	delete stateChangeHandler;
 	
-	// delete all master/slave ports
+	// destroy all master/slave ports
 	delete wiringSlave;
 	delete param;
 	
 
 	// clean-up component's internally used resources (internally used communication middleware) 
 	component->cleanUpComponentResources();
+	
 	
 	// finally delete the component itself
 	delete component;
@@ -416,7 +425,7 @@ void SmartPlannerBreadthFirstSearch::loadParameter(int argc, char *argv[])
 		//--- server port // client port // other parameter ---
 		// load parameter
 		parameter.getString("component", "name", connections.component.name);
-		parameter.getString("component", "initialMainState", connections.component.initialMainState);
+		parameter.getString("component", "initialComponentMode", connections.component.initialComponentMode);
 		if(parameter.checkIfParameterExists("component", "defaultScheduler")) {
 			parameter.getString("component", "defaultScheduler", connections.component.defaultScheduler);
 		}
@@ -425,20 +434,21 @@ void SmartPlannerBreadthFirstSearch::loadParameter(int argc, char *argv[])
 		}
 		
 		// load parameters for client BaseStateClient
-		parameter.getString("baseStateClient", "serviceName", connections.baseStateClient.serviceName);
-		parameter.getString("baseStateClient", "serverName", connections.baseStateClient.serverName);
-		parameter.getString("baseStateClient", "wiringName", connections.baseStateClient.wiringName);
-		parameter.getInteger("baseStateClient", "interval", connections.baseStateClient.interval);
+		parameter.getString("BaseStateClient", "serviceName", connections.baseStateClient.serviceName);
+		parameter.getString("BaseStateClient", "serverName", connections.baseStateClient.serverName);
+		parameter.getString("BaseStateClient", "wiringName", connections.baseStateClient.wiringName);
+		parameter.getInteger("BaseStateClient", "interval", connections.baseStateClient.interval);
 		// load parameters for client CurMapClient
-		parameter.getString("curMapClient", "serviceName", connections.curMapClient.serviceName);
-		parameter.getString("curMapClient", "serverName", connections.curMapClient.serverName);
-		parameter.getString("curMapClient", "wiringName", connections.curMapClient.wiringName);
-		parameter.getInteger("curMapClient", "interval", connections.curMapClient.interval);
+		parameter.getString("CurMapClient", "serviceName", connections.curMapClient.serviceName);
+		parameter.getString("CurMapClient", "serverName", connections.curMapClient.serverName);
+		parameter.getString("CurMapClient", "wiringName", connections.curMapClient.wiringName);
+		parameter.getInteger("CurMapClient", "interval", connections.curMapClient.interval);
+		
 		
 		// load parameters for server PlannerEventServer
-		parameter.getString("plannerEventServer", "serviceName", connections.plannerEventServer.serviceName);
+		parameter.getString("PlannerEventServer", "serviceName", connections.plannerEventServer.serviceName);
 		// load parameters for server PlannerGoalServer
-		parameter.getString("plannerGoalServer", "serviceName", connections.plannerGoalServer.serviceName);
+		parameter.getString("PlannerGoalServer", "serviceName", connections.plannerGoalServer.serviceName);
 		
 		// load parameters for task PlannerTask
 		parameter.getDouble("PlannerTask", "minActFreqHz", connections.plannerTask.minActFreq);

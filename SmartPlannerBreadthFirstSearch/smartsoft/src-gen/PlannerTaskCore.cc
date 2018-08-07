@@ -14,6 +14,7 @@
 // running the code generator.
 //--------------------------------------------------------------------------
 #include "PlannerTaskCore.hh"
+#include "PlannerTask.hh"
 #include "SmartPlannerBreadthFirstSearch.hh"
 
 //FIXME: use logging
@@ -21,10 +22,31 @@
 
 // include observers
 
+void PlannerTaskCore::notify_all_interaction_observers() {
+	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
+	// try dynamically down-casting this class to the derived class 
+	// (we can do it safely here as we exactly know the derived class)
+	if(const PlannerTask* plannerTask = dynamic_cast<const PlannerTask*>(this)) {
+		for(auto it=interaction_observers.begin(); it!=interaction_observers.end(); it++) {
+			(*it)->on_update_from(plannerTask);
+		}
+	}
+}
+
+void PlannerTaskCore::attach_interaction_observer(PlannerTaskObserverInterface *observer) {
+	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
+	interaction_observers.push_back(observer);
+}
+
+void PlannerTaskCore::detach_interaction_observer(PlannerTaskObserverInterface *observer) {
+	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
+	interaction_observers.remove(observer);
+}
+
 int PlannerTaskCore::execute_protected_region()
 {
 	if(useDefaultState) {
-		Smart::StatusCode status = COMP->stateSlave->acquire("pathlanning");
+		Smart::StatusCode status = COMP->stateSlave->acquire("pathplanning");
 		if(status != Smart::SMART_OK) {
 			std::cerr << "PlannerTaskCore: ERROR acquiring state active: " << status << std::endl;
 			return 0;
@@ -42,11 +64,17 @@ int PlannerTaskCore::execute_protected_region()
 	// this is the user code (should not internally use the state-pattern any more)
 	int retval = this->on_execute();
 	
+	// notify all attached interaction observers
+	this->notify_all_interaction_observers();
+	
+	// inform all associated tasks about a new update
+	this->trigger_all_tasks();
+	
 	// increment current currentUpdateCount for the next iteration
 	currentUpdateCount++;
 	
 	if(useDefaultState) {
-		COMP->stateSlave->release("pathlanning");
+		COMP->stateSlave->release("pathplanning");
 	}
 	return retval;
 }

@@ -30,36 +30,41 @@ SmartAmcl::SmartAmcl()
 	// set all pointer members to NULL
 	amclTask = NULL;
 	amclTaskTrigger = NULL;
+	//coordinationPort = NULL;
 	laserServiceIn = NULL;
 	laserServiceInInputTaskTrigger = NULL;
 	laserServiceInUpcallManager = NULL;
 	localizationEventServiceOut = NULL;
 	localizationEventServiceOutEventTestHandler = NULL; 
 	localizationUpdateServiceOut = NULL;
+	//smartAmclParams = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
 	
+	
 	// set default ini parameter values
 	connections.component.name = "SmartAmcl";
-	connections.component.initialMainState = "Neutral";
+	connections.component.initialComponentMode = "Neutral";
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
 	connections.localizationEventServiceOut.serviceName = "LocalizationEventServiceOut";
+	connections.laserServiceIn.wiringName = "LaserServiceIn";
 	connections.laserServiceIn.serverName = "unknown";
 	connections.laserServiceIn.serviceName = "unknown";
 	connections.laserServiceIn.interval = 1;
 	connections.localizationUpdateServiceOut.initialConnect = false;
+	connections.localizationUpdateServiceOut.wiringName = "LocalizationUpdateServiceOut";
 	connections.localizationUpdateServiceOut.serverName = "unknown";
 	connections.localizationUpdateServiceOut.serviceName = "unknown";
 	connections.localizationUpdateServiceOut.interval = 1;
 	connections.amclTask.minActFreq = 0.0;
 	connections.amclTask.maxActFreq = 0.0;
-	connections.amclTask.prescale = 1;
 	connections.amclTask.trigger = "DataTriggered";
 	connections.amclTask.inPortRef = "LaserServiceIn";	
+	connections.amclTask.prescale = 1;
 	// scheduling default parameters
 	connections.amclTask.scheduler = "DEFAULT";
 	connections.amclTask.priority = -1;
@@ -124,7 +129,6 @@ Smart::StatusCode SmartAmcl::connectAndStartAllServices() {
 	if(status != Smart::SMART_OK) return status;
 	status = connectLocalizationUpdateServiceOut(connections.localizationUpdateServiceOut.serverName, connections.localizationUpdateServiceOut.serviceName);
 	if(status != Smart::SMART_OK) return status;
-	
 	return status;
 }
 
@@ -217,11 +221,13 @@ void SmartAmcl::init(int argc, char *argv[])
 		
 		// create request-handlers
 		
+		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
 		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
 		if (stateSlave->defineStates("Active" ,"active") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion Active.active" << std::endl;
-		if (stateSlave->setUpInitialState(connections.component.initialMainState) != Smart::SMART_OK) std::cerr << "ERROR: setUpInitialState" << std::endl;
+		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
+		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
 		status = stateSlave->activate();
 		if(status != Smart::SMART_OK) std::cerr << "ERROR: activate state" << std::endl;
@@ -284,6 +290,7 @@ void SmartAmcl::run()
 {
 	compHandler.onStartup();
 	
+	
 	// coponent will now start running and will continue (block in the run method) until it is commanded to shutdown (i.e. by a SIGINT signal)
 	component->run();
 	// component was signalled to shutdown
@@ -297,6 +304,7 @@ void SmartAmcl::run()
 	}
 	
 	compHandler.onShutdown();
+	
 	
 	// unlink all observers
 	
@@ -322,19 +330,21 @@ void SmartAmcl::run()
 	// destroy event-test handlers (if needed)
 	delete localizationEventServiceOutEventTestHandler;
 	
-	// create request-handlers
+	// destroy request-handlers
+	
 
 	delete stateSlave;
-	// delete state-change-handler
+	// destroy state-change-handler
 	delete stateChangeHandler;
 	
-	// delete all master/slave ports
+	// destroy all master/slave ports
 	delete wiringSlave;
 	delete param;
 	
 
 	// clean-up component's internally used resources (internally used communication middleware) 
 	component->cleanUpComponentResources();
+	
 	
 	// finally delete the component itself
 	delete component;
@@ -402,7 +412,7 @@ void SmartAmcl::loadParameter(int argc, char *argv[])
 		//--- server port // client port // other parameter ---
 		// load parameter
 		parameter.getString("component", "name", connections.component.name);
-		parameter.getString("component", "initialMainState", connections.component.initialMainState);
+		parameter.getString("component", "initialComponentMode", connections.component.initialComponentMode);
 		if(parameter.checkIfParameterExists("component", "defaultScheduler")) {
 			parameter.getString("component", "defaultScheduler", connections.component.defaultScheduler);
 		}
@@ -411,18 +421,19 @@ void SmartAmcl::loadParameter(int argc, char *argv[])
 		}
 		
 		// load parameters for client LaserServiceIn
-		parameter.getString("laserServiceIn", "serviceName", connections.laserServiceIn.serviceName);
-		parameter.getString("laserServiceIn", "serverName", connections.laserServiceIn.serverName);
-		parameter.getString("laserServiceIn", "wiringName", connections.laserServiceIn.wiringName);
-		parameter.getInteger("laserServiceIn", "interval", connections.laserServiceIn.interval);
+		parameter.getString("LaserServiceIn", "serviceName", connections.laserServiceIn.serviceName);
+		parameter.getString("LaserServiceIn", "serverName", connections.laserServiceIn.serverName);
+		parameter.getString("LaserServiceIn", "wiringName", connections.laserServiceIn.wiringName);
+		parameter.getInteger("LaserServiceIn", "interval", connections.laserServiceIn.interval);
 		// load parameters for client LocalizationUpdateServiceOut
-		parameter.getBoolean("localizationUpdateServiceOut", "initialConnect", connections.localizationUpdateServiceOut.initialConnect);
-		parameter.getString("localizationUpdateServiceOut", "serviceName", connections.localizationUpdateServiceOut.serviceName);
-		parameter.getString("localizationUpdateServiceOut", "serverName", connections.localizationUpdateServiceOut.serverName);
-		parameter.getString("localizationUpdateServiceOut", "wiringName", connections.localizationUpdateServiceOut.wiringName);
+		parameter.getBoolean("LocalizationUpdateServiceOut", "initialConnect", connections.localizationUpdateServiceOut.initialConnect);
+		parameter.getString("LocalizationUpdateServiceOut", "serviceName", connections.localizationUpdateServiceOut.serviceName);
+		parameter.getString("LocalizationUpdateServiceOut", "serverName", connections.localizationUpdateServiceOut.serverName);
+		parameter.getString("LocalizationUpdateServiceOut", "wiringName", connections.localizationUpdateServiceOut.wiringName);
+		
 		
 		// load parameters for server LocalizationEventServiceOut
-		parameter.getString("localizationEventServiceOut", "serviceName", connections.localizationEventServiceOut.serviceName);
+		parameter.getString("LocalizationEventServiceOut", "serviceName", connections.localizationEventServiceOut.serviceName);
 		
 		// load parameters for task AmclTask
 		parameter.getDouble("AmclTask", "minActFreqHz", connections.amclTask.minActFreq);

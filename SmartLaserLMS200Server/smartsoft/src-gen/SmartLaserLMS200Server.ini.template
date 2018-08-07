@@ -23,8 +23,8 @@
 # the name of the component for the naming service
 name SmartLaserLMS200Server
 
-# the initial MainState of the component
-
+# the initial ComponentMode
+initialComponentMode Neutral
 #defaultScheduler FIFO
 #useLogger true
 
@@ -58,8 +58,12 @@ serverName unknown
 serviceName unknown
 wiringName BaseStateIn
 interval 1
-##########################
+
+#####################
 # internal parameters
+#####################
+##########################
+# InternalParameter Base
 [Base]
 base_a 0.0
 subscribe true
@@ -67,6 +71,8 @@ x 0.0
 y 0.0
 z 0.0
 
+##########################
+# InternalParameter Laser
 [Laser]
 azimuth 0.0
 baudrate 500000
@@ -80,8 +86,10 @@ y 0.0
 z 0.0
 
 
-##########################
+#####################
 # extended parameters
+#####################
 
-##########################
+#####################
 # instance parameters
+#####################

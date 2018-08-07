@@ -42,6 +42,7 @@
 // include input-handler
 // include input-handler
 
+
 // include handler
 #include "CompHandler.hh"
 
@@ -105,6 +106,7 @@ public:
 	
 	// define request-handlers
 	
+	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
 	SmartStateChangeHandler *stateChangeHandler;
@@ -138,7 +140,7 @@ public:
 		{
 			// the name of the component
 			std::string name;
-			std::string initialMainState;
+			std::string initialComponentMode;
 			std::string defaultScheduler;
 			bool useLogger;
 		} component;
@@ -182,6 +184,7 @@ public:
 			std::string wiringName;
 			long interval;
 		} localizationUpdateServiceOut;
+		
 	} connections;
 };
 #endif

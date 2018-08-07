@@ -1,3 +1,6 @@
+<!--- This file is generated from the SmartJoystickNavigation.componentDocumentation model --->
+<!--- do not modify this file manually as it will by automatically overwritten by the code generator, modify the model instead and re-generate this file --->
+
 # SmartJoystickNavigation Component
 
 ![SmartJoystickNavigation-ComponentImage](https://github.com/Servicerobotics-Ulm/ComponentRepository/blob/master/SmartJoystickNavigation/model/SmartJoystickNavigationComponentDefinition.jpg)
@@ -13,7 +16,7 @@ Note: This component is used in Examples.
 | Purpose | Navigation |
 
 
-## Coordination Port SlavePort
+## Coordination Port CoordinationPort
 
 
 ### States

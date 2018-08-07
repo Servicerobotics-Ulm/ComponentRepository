@@ -14,6 +14,7 @@
 // running the code generator.
 //--------------------------------------------------------------------------
 #include "LtmQueryServerHandlerCore.hh"
+#include "LtmQueryServerHandler.hh"
 
 // include observers
 #include "LtmMapTask.hh"
@@ -29,10 +30,27 @@ LtmQueryServerHandlerCore::~LtmQueryServerHandlerCore()
 	
 }
 
-void LtmQueryServerHandlerCore::update_from(const Smart::TaskInteractionSubject* subject)
+void LtmQueryServerHandlerCore::updateAllCommObjects()
 {
-	// try typecasting into according Task or Upcall class
-	 if(const LtmMapTask* ltmMapTask = dynamic_cast<const LtmMapTask*>(subject)) {
-		this->on_update_from(ltmMapTask);
+}
+
+void LtmQueryServerHandlerCore::notify_all_interaction_observers() {
+	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
+	// try dynamically down-casting this class to the derived class 
+	// (we can do it safely here as we exactly know the derived class)
+	if(const LtmQueryServerHandler* ltmQueryServerHandler = dynamic_cast<const LtmQueryServerHandler*>(this)) {
+		for(auto it=interaction_observers.begin(); it!=interaction_observers.end(); it++) {
+			(*it)->on_update_from(ltmQueryServerHandler);
+		}
 	}
+}
+
+void LtmQueryServerHandlerCore::attach_interaction_observer(LtmQueryServerHandlerObserverInterface *observer) {
+	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
+	interaction_observers.push_back(observer);
+}
+
+void LtmQueryServerHandlerCore::detach_interaction_observer(LtmQueryServerHandlerObserverInterface *observer) {
+	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
+	interaction_observers.remove(observer);
 }

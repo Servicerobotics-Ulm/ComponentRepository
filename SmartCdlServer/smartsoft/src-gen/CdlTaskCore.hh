@@ -37,9 +37,12 @@
 #include <CommNavigationObjects/CommCdlRobotBlockedEventResult.hh>
 #include <CommNavigationObjects/CommCdlRobotBlockedState.hh>
 
+// include all interaction-observer interfaces
+#include <CdlTaskObserverInterface.hh>
 	
 class CdlTaskCore
 :	public SmartACE::ManagedTask
+,	public Smart::TaskTriggerSubject
 ,	public BaseStateClientUpcallInterface
 ,	public IRClientUpcallInterface
 ,	public LaserClientUpcallInterface
@@ -54,7 +57,6 @@ private:
 	bool useLogging;
 	int taskLoggingId;
 	unsigned int currentUpdateCount;
-	
 	
 	Smart::StatusCode baseStateClientStatus;
 	CommBasicObjects::CommBaseState baseStateClientObject;
@@ -186,6 +188,18 @@ protected:
 	Smart::StatusCode navVelSendClientPut(CommBasicObjects::CommNavigationVelocity &navVelSendClientDataObject);
 	// this method is meant to be used in derived classes
 	Smart::StatusCode robotBlockedEventServerPut(CommNavigationObjects::CommCdlRobotBlockedState &eventState);
+	
+/**
+ * Implementation of the Subject part of an InteractionObserver
+ */
+private:
+	std::mutex interaction_observers_mutex;
+	std::list<CdlTaskObserverInterface*> interaction_observers;
+protected:
+	void notify_all_interaction_observers();
+public:
+	void attach_interaction_observer(CdlTaskObserverInterface *observer);
+	void detach_interaction_observer(CdlTaskObserverInterface *observer);
 
 public:
 	CdlTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true)

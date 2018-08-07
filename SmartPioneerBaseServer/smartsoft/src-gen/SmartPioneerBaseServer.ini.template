@@ -23,8 +23,8 @@
 # the name of the component for the naming service
 name SmartPioneerBaseServer
 
-# the initial MainState of the component
-
+# the initial ComponentMode
+initialComponentMode Neutral
 #defaultScheduler FIFO
 #useLogger true
 
@@ -78,8 +78,12 @@ serviceName NavVelIn
 
 ##########################
 # client port parameter
-##########################
+
+#####################
 # internal parameters
+#####################
+##########################
+# InternalParameter Robot
 [Robot]
 enable_motors true
 enable_sonar false
@@ -93,8 +97,12 @@ robotType p3dx
 serialport /dev/ttyS0
 
 
-##########################
+#####################
 # extended parameters
+#####################
 
-##########################
+#####################
 # instance parameters
+#####################
+##########################
+# ParameterSet BaseParams

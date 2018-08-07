@@ -21,19 +21,38 @@
 #include <CommNavigationObjects/CommGridMap.hh>
 #include <CommNavigationObjects/CommGridMapRequest.hh>
 
-// forward declaration of CurMapTask
-class CurMapTask;
+// include the input interfaces (if any)
+
+// include all interaction-observer interfaces
+#include <CurrQueryServerHandlerObserverInterface.hh>
+#include <CurMapTaskObserverInterface.hh>
 
 class CurrQueryServerHandlerCore 
 :	public Smart::IQueryServerHandler<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap, SmartACE::QueryId>
-,	public Smart::ITaskInteractionObserver
+,	public Smart::TaskTriggerSubject
+,	public CurMapTaskObserverInterface
 {
 private:
-	virtual void update_from(const Smart::TaskInteractionSubject* subject);
-	
+
+	virtual void updateAllCommObjects();
+
+/**
+ * Implementation of the Subject part of an InteractionObserver
+ */
+private:
+	std::mutex interaction_observers_mutex;
+	std::list<CurrQueryServerHandlerObserverInterface*> interaction_observers;
 protected:
-	// implement this method in derived classes!
-	virtual void on_update_from(const CurMapTask* curMapTask) = 0;
+	void notify_all_interaction_observers();
+public:
+	void attach_interaction_observer(CurrQueryServerHandlerObserverInterface *observer);
+	void detach_interaction_observer(CurrQueryServerHandlerObserverInterface *observer);
+
+protected:
+	// overload this method in derived classes!
+	virtual void on_update_from(const CurMapTask* subject) {
+		// no-op
+	}
 	
 public:
 	CurrQueryServerHandlerCore(Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap, SmartACE::QueryId>* server);

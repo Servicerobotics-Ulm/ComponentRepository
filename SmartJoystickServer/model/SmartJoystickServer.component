@@ -1,7 +1,7 @@
 ComponentDefinition SmartJoystickServer {
-	BehaviorSlaveInterface SlavePort implements CommBasicObjects.DefaultCoordinationService
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService { }
 	
-	PreemptiveTask JoystickTask
+	Activity JoystickTask
 	{
 		ActivationConstraints {
 				configurable = false
@@ -10,7 +10,9 @@ ComponentDefinition SmartJoystickServer {
 		}
 	}
 	OutputPort JoystickServcieOut implements CommBasicObjects.JoystickService realizedBy JoystickTask {
-//		Middleware OpcUaSeRoNet
+		SupportedMiddleware default ACE_SmartSoft
+		SupportedMiddleware OpcUa_SeRoNet
 	}
-	ComponentParameters SmartJoystickServerParameters
+
+	ComponentParameters SmartJoystickServerParameters slave CoordinationPort;
 }

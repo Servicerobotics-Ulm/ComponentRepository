@@ -49,6 +49,7 @@
 // include input-handler
 #include "BaseStateQueryHandler.hh"
 
+
 // include handler
 #include "CompHandler.hh"
 
@@ -121,6 +122,7 @@ public:
 	// define request-handlers
 	BaseStateQueryHandler *baseStateQueryHandler;
 	
+	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
 	SmartStateChangeHandler *stateChangeHandler;
@@ -152,7 +154,7 @@ public:
 		{
 			// the name of the component
 			std::string name;
-			std::string initialMainState;
+			std::string initialComponentMode;
 			std::string defaultScheduler;
 			bool useLogger;
 		} component;
@@ -201,6 +203,7 @@ public:
 		} navVelIn;
 	
 		//--- client port parameter ---
+		
 	} connections;
 };
 #endif

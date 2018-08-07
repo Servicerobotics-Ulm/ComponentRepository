@@ -25,9 +25,12 @@
 #include <CommNavigationObjects/CommGridMap.hh>
 #include <CommBasicObjects/CommBasePositionUpdate.hh>
 
+// include all interaction-observer interfaces
+#include <GMappingTaskObserverInterface.hh>
 	
 class GMappingTaskCore
 :	public SmartACE::ManagedTask
+,	public Smart::TaskTriggerSubject
 ,	public LaserServiceInUpcallInterface
 {
 private:
@@ -35,7 +38,6 @@ private:
 	bool useLogging;
 	int taskLoggingId;
 	unsigned int currentUpdateCount;
-	
 	
 	Smart::StatusCode laserServiceInStatus;
 	CommBasicObjects::CommMobileLaserScan laserServiceInObject;
@@ -67,6 +69,18 @@ protected:
 	Smart::StatusCode currGridMapPushServiceOutPut(CommNavigationObjects::CommGridMap &currGridMapPushServiceOutDataObject);
 	// this method is meant to be used in derived classes
 	Smart::StatusCode localizationUpdateServiceOutPut(CommBasicObjects::CommBasePositionUpdate &localizationUpdateServiceOutDataObject);
+	
+/**
+ * Implementation of the Subject part of an InteractionObserver
+ */
+private:
+	std::mutex interaction_observers_mutex;
+	std::list<GMappingTaskObserverInterface*> interaction_observers;
+protected:
+	void notify_all_interaction_observers();
+public:
+	void attach_interaction_observer(GMappingTaskObserverInterface *observer);
+	void detach_interaction_observer(GMappingTaskObserverInterface *observer);
 
 public:
 	GMappingTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true)

@@ -23,9 +23,8 @@
 # the name of the component for the naming service
 name SmartCdlServer
 
-# the initial MainState of the component
-initialMainState Neutral
-
+# the initial ComponentMode
+initialComponentMode Neutral
 #defaultScheduler FIFO
 #useLogger true
 
@@ -122,8 +121,12 @@ serverName unknown
 serviceName unknown
 wiringName TrackingClient
 interval 1
-##########################
+
+#####################
 # internal parameters
+#####################
+##########################
+# InternalParameter Cdl
 [Cdl]
 accel_default_file CDLacc_P3DX.dat
 accel_second_file CDLacc_P3DX.dat
@@ -145,9 +148,13 @@ rotation_acc 100.0
 translation_acc 400.0
 use_obstacle_history false
 
+##########################
+# InternalParameter CdlRotate
 [CdlRotate]
 error 5.0
 
+##########################
+# InternalParameter PathNav
 [PathNav]
 pathNavPredictedGoalPose_controll1_dist 200.0
 pathNavPredictedGoalPose_controll1_speed 100.0
@@ -159,6 +166,8 @@ pathNavPredictedGoalPose_minDist 200
 pathNavRecover_max_dist 2000
 robotBlocked_event_timeout 15
 
+##########################
+# InternalParameter Server
 [Server]
 baseClientInit false
 irClientInit false
@@ -168,42 +177,66 @@ plannerInit true
 trackerInit false
 
 
-##########################
+#####################
 # extended parameters
+#####################
 
-##########################
+#####################
 # instance parameters
-[CommNavigationObjects.CdlParameter.APPROACHDIST]
+#####################
+##########################
+# ParameterSet CdlParameter
+##########################
+# ParameterInstance APPROACHDIST
+[APPROACHDIST]
 approachDistance 100.0
 
-[CommNavigationObjects.CdlParameter.FREEBEHAVIOR]
+##########################
+# ParameterInstance FREEBEHAVIOR
+[FREEBEHAVIOR]
 free DEACTIVATE
 
-[CommNavigationObjects.CdlParameter.GOALMODE]
+##########################
+# ParameterInstance GOALMODE
+[GOALMODE]
 gm NEUTRAL
 
-[CommNavigationObjects.CdlParameter.GOALREGION]
+##########################
+# ParameterInstance GOALREGION
+[GOALREGION]
 goalX 0.0
 goalY 0.0
 goalA 0.0
 
-[CommNavigationObjects.CdlParameter.ID]
+##########################
+# ParameterInstance ID
+[ID]
 id 0
 
-[CommNavigationObjects.CdlParameter.LOOKUPTABLE]
+##########################
+# ParameterInstance LOOKUPTABLE
+[LOOKUPTABLE]
 lt DEFAULT
 
-[CommNavigationObjects.CdlParameter.PATHNAVFREEBEHAVIOR]
+##########################
+# ParameterInstance PATHNAVFREEBEHAVIOR
+[PATHNAVFREEBEHAVIOR]
 free DEACTIVATE
 
-[CommNavigationObjects.CdlParameter.ROTVEL]
+##########################
+# ParameterInstance ROTVEL
+[ROTVEL]
 wmin -40.0
 wmax 40.0
 
-[CommNavigationObjects.CdlParameter.SAFETYCL]
+##########################
+# ParameterInstance SAFETYCL
+[SAFETYCL]
 safetyClearance 200
 
-[CommNavigationObjects.CdlParameter.TRANSVEL]
+##########################
+# ParameterInstance TRANSVEL
+[TRANSVEL]
 vmin 0.0
 vmax 400.0
 

@@ -34,6 +34,7 @@ SmartPioneerBaseServer::SmartPioneerBaseServer()
 	baseStateQueryServerInputTaskTrigger = NULL;
 	batteryEventServer = NULL;
 	batteryEventServerEventTestHandler = NULL; 
+	//coordinationPort = NULL;
 	localizationUpdate = NULL;
 	localizationUpdateInputTaskTrigger = NULL;
 	localizationUpdateUpcallManager = NULL;
@@ -44,13 +45,16 @@ SmartPioneerBaseServer::SmartPioneerBaseServer()
 	poseUpdateTaskTrigger = NULL;
 	robotTask = NULL;
 	robotTaskTrigger = NULL;
+	//smartPioneerBaseServerParams = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
 	
+	
 	// set default ini parameter values
 	connections.component.name = "SmartPioneerBaseServer";
+	connections.component.initialComponentMode = "Neutral";
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
@@ -61,7 +65,6 @@ SmartPioneerBaseServer::SmartPioneerBaseServer()
 	connections.navVelIn.serviceName = "NavVelIn";
 	connections.poseUpdateTask.minActFreq = 10.0;
 	connections.poseUpdateTask.maxActFreq = 40.0;
-	connections.poseUpdateTask.prescale = 1;
 	connections.poseUpdateTask.trigger = "PeriodicTimer";
 	connections.poseUpdateTask.periodicActFreq = 10.0;
 	// scheduling default parameters
@@ -97,7 +100,6 @@ void SmartPioneerBaseServer::setStartupFinished() {
  */
 Smart::StatusCode SmartPioneerBaseServer::connectAndStartAllServices() {
 	Smart::StatusCode status = Smart::SMART_OK;
-	
 	
 	return status;
 }
@@ -212,10 +214,12 @@ void SmartPioneerBaseServer::init(int argc, char *argv[])
 		// create request-handlers
 		baseStateQueryHandler = new BaseStateQueryHandler(baseStateQueryServer);
 		
+		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
 		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
-		if (stateSlave->setUpInitialState(connections.component.initialMainState) != Smart::SMART_OK) std::cerr << "ERROR: setUpInitialState" << std::endl;
+		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
+		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
 		status = stateSlave->activate();
 		if(status != Smart::SMART_OK) std::cerr << "ERROR: activate state" << std::endl;
@@ -274,8 +278,8 @@ void SmartPioneerBaseServer::init(int argc, char *argv[])
 		
 		
 		// link observers with subjects
-		robotTask->attach(poseUpdateTask);
-		robotTask->attach(baseStateQueryHandler);
+		robotTask->attach_interaction_observer(baseStateQueryHandler);
+		robotTask->attach_interaction_observer(poseUpdateTask);
 	} catch (const std::exception &ex) {
 		std::cerr << "Uncaught std exception" << ex.what() << std::endl;
 	} catch (...) {
@@ -287,6 +291,7 @@ void SmartPioneerBaseServer::init(int argc, char *argv[])
 void SmartPioneerBaseServer::run()
 {
 	compHandler.onStartup();
+	
 	
 	// coponent will now start running and will continue (block in the run method) until it is commanded to shutdown (i.e. by a SIGINT signal)
 	component->run();
@@ -302,8 +307,10 @@ void SmartPioneerBaseServer::run()
 	
 	compHandler.onShutdown();
 	
+	
 	// unlink all observers
-	robotTask->detach(poseUpdateTask);
+	robotTask->detach_interaction_observer(baseStateQueryHandler);
+	robotTask->detach_interaction_observer(poseUpdateTask);
 	
 	// destroy all task instances
 	// unlink all UpcallManagers
@@ -337,20 +344,22 @@ void SmartPioneerBaseServer::run()
 	// destroy event-test handlers (if needed)
 	delete batteryEventServerEventTestHandler;
 	
-	// create request-handlers
+	// destroy request-handlers
 	delete baseStateQueryHandler;
+	
 
 	delete stateSlave;
-	// delete state-change-handler
+	// destroy state-change-handler
 	delete stateChangeHandler;
 	
-	// delete all master/slave ports
+	// destroy all master/slave ports
 	delete wiringSlave;
 	delete param;
 	
 
 	// clean-up component's internally used resources (internally used communication middleware) 
 	component->cleanUpComponentResources();
+	
 	
 	// finally delete the component itself
 	delete component;
@@ -418,7 +427,7 @@ void SmartPioneerBaseServer::loadParameter(int argc, char *argv[])
 		//--- server port // client port // other parameter ---
 		// load parameter
 		parameter.getString("component", "name", connections.component.name);
-		parameter.getString("component", "initialMainState", connections.component.initialMainState);
+		parameter.getString("component", "initialComponentMode", connections.component.initialComponentMode);
 		if(parameter.checkIfParameterExists("component", "defaultScheduler")) {
 			parameter.getString("component", "defaultScheduler", connections.component.defaultScheduler);
 		}
@@ -427,16 +436,17 @@ void SmartPioneerBaseServer::loadParameter(int argc, char *argv[])
 		}
 		
 		
+		
 		// load parameters for server BasePositionOut
-		parameter.getString("basePositionOut", "serviceName", connections.basePositionOut.serviceName);
+		parameter.getString("BasePositionOut", "serviceName", connections.basePositionOut.serviceName);
 		// load parameters for server BaseStateQueryServer
-		parameter.getString("baseStateQueryServer", "serviceName", connections.baseStateQueryServer.serviceName);
+		parameter.getString("BaseStateQueryServer", "serviceName", connections.baseStateQueryServer.serviceName);
 		// load parameters for server BatteryEventServer
-		parameter.getString("batteryEventServer", "serviceName", connections.batteryEventServer.serviceName);
+		parameter.getString("BatteryEventServer", "serviceName", connections.batteryEventServer.serviceName);
 		// load parameters for server LocalizationUpdate
-		parameter.getString("localizationUpdate", "serviceName", connections.localizationUpdate.serviceName);
+		parameter.getString("LocalizationUpdate", "serviceName", connections.localizationUpdate.serviceName);
 		// load parameters for server NavVelIn
-		parameter.getString("navVelIn", "serviceName", connections.navVelIn.serviceName);
+		parameter.getString("NavVelIn", "serviceName", connections.navVelIn.serviceName);
 		
 		// load parameters for task PoseUpdateTask
 		parameter.getDouble("PoseUpdateTask", "minActFreqHz", connections.poseUpdateTask.minActFreq);

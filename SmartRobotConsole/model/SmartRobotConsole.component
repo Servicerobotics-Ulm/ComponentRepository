@@ -1,8 +1,8 @@
 ComponentDefinition SmartRobotConsole 
 {
-	PreemptiveTask ConsoleTask
+	Activity ConsoleTask
 	{
 	}
 	
-	BehaviorMasterInterface MasterPort implements CommBasicObjects.DefaultCoordinationService;
+	CoordinationMasterPort CoordinationMaster implements CommBasicObjects.DefaultCoordinationService;
 }

@@ -24,9 +24,12 @@
 // include communication-objects for output ports
 #include <CommBasicObjects/CommNavigationVelocity.hh>
 
+// include all interaction-observer interfaces
+#include <JoystickNavTaskObserverInterface.hh>
 	
 class JoystickNavTaskCore
 :	public SmartACE::ManagedTask
+,	public Smart::TaskTriggerSubject
 ,	public JoystickServiceInUpcallInterface
 {
 private:
@@ -34,7 +37,6 @@ private:
 	bool useLogging;
 	int taskLoggingId;
 	unsigned int currentUpdateCount;
-	
 	
 	Smart::StatusCode joystickServiceInStatus;
 	CommBasicObjects::CommJoystick joystickServiceInObject;
@@ -64,6 +66,18 @@ protected:
 	
 	// this method is meant to be used in derived classes
 	Smart::StatusCode navVelServiceOutPut(CommBasicObjects::CommNavigationVelocity &navVelServiceOutDataObject);
+	
+/**
+ * Implementation of the Subject part of an InteractionObserver
+ */
+private:
+	std::mutex interaction_observers_mutex;
+	std::list<JoystickNavTaskObserverInterface*> interaction_observers;
+protected:
+	void notify_all_interaction_observers();
+public:
+	void attach_interaction_observer(JoystickNavTaskObserverInterface *observer);
+	void detach_interaction_observer(JoystickNavTaskObserverInterface *observer);
 
 public:
 	JoystickNavTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true)

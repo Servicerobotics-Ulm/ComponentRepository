@@ -1,23 +1,25 @@
 ComponentDefinition SmartPioneerBaseServer {
-	BehaviorSlaveInterface SlavePort implements CommBasicObjects.BaseCoordinationService;
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.BaseCoordinationService {
+		
+	}
 	
 	// InputPorts
 	InputPort NavVelIn implements CommNavigationObjects.NavigationVelocityService { }
 	InputPort LocalizationUpdate implements CommNavigationObjects.LocalizationUpdateService { }
 
 	// Tasks
-	PreemptiveTask PoseUpdateTask 
+	Activity PoseUpdateTask 
 	{
 		Observe RobotTask;
 		ActivationConstraints {
 			configurable=true minActFreq = 10.0 Hz maxActFreq = 40.0 Hz
 		}
-		DefaultTaskTrigger PeriodicTimer 10.0 Hz;
+		DefaultTrigger PeriodicTimer 10.0 Hz;
 	}
-	PreemptiveTask RobotTask
+	Activity RobotTask
 	{
-		InputLinkExtension NavVelIn { oversamplingOk undersamplingOk }
-		InputLinkExtension LocalizationUpdate { optional oversamplingOk undersamplingOk }
+		InputPortLink NavVelIn { oversamplingOk undersamplingOk }
+		InputPortLink LocalizationUpdate { optional oversamplingOk undersamplingOk }
 		ActivationConstraints {
 			configurable=false minActFreq = 10.0 Hz maxActFreq = 40.0 Hz
 		}
@@ -30,5 +32,5 @@ ComponentDefinition SmartPioneerBaseServer {
 	AnswerPort BaseStateQueryServer implements CommBasicObjects.BaseStateQueryService { }
 	RequestHandler BaseStateQueryHandler triggeredFrom BaseStateQueryServer { Observe RobotTask; }
 	
-	ComponentParameters SmartPioneerBaseServerParams;
+	ComponentParameters SmartPioneerBaseServerParams slave CoordinationPort;
 }

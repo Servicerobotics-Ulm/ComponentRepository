@@ -22,16 +22,18 @@
 
 // include communication-objects for output ports
 
+// include all interaction-observer interfaces
+#include <ConsoleTaskObserverInterface.hh>
 	
 class ConsoleTaskCore
 :	public SmartACE::ManagedTask
+,	public Smart::TaskTriggerSubject
 {
 private:
 	bool useDefaultState; 
 	bool useLogging;
 	int taskLoggingId;
 	unsigned int currentUpdateCount;
-	
 	
 	
 protected:
@@ -45,6 +47,18 @@ protected:
 	
 	
 	
+	
+/**
+ * Implementation of the Subject part of an InteractionObserver
+ */
+private:
+	std::mutex interaction_observers_mutex;
+	std::list<ConsoleTaskObserverInterface*> interaction_observers;
+protected:
+	void notify_all_interaction_observers();
+public:
+	void attach_interaction_observer(ConsoleTaskObserverInterface *observer);
+	void detach_interaction_observer(ConsoleTaskObserverInterface *observer);
 
 public:
 	ConsoleTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true)

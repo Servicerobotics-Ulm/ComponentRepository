@@ -30,25 +30,30 @@ SmartLaserLMS200Server::SmartLaserLMS200Server()
 	baseStateIn = NULL;
 	baseStateInInputTaskTrigger = NULL;
 	baseStateInUpcallManager = NULL;
+	//coordinationPort = NULL;
 	laserQueryServiceAnsw = NULL;
 	laserQueryServiceAnswInputTaskTrigger = NULL;
 	laserQueryServiceAnswHandler = NULL;
 	laserScanOut = NULL;
 	laserTask = NULL;
 	laserTaskTrigger = NULL;
+	//smartLaserLMS200ServerParams = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
 	
+	
 	// set default ini parameter values
 	connections.component.name = "SmartLaserLMS200Server";
+	connections.component.initialComponentMode = "Neutral";
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
 	connections.laserQueryServiceAnsw.serviceName = "LaserQueryServiceAnsw";
 	connections.laserScanOut.serviceName = "LaserScanOut";
 	connections.baseStateIn.initialConnect = false;
+	connections.baseStateIn.wiringName = "BaseStateIn";
 	connections.baseStateIn.serverName = "unknown";
 	connections.baseStateIn.serviceName = "unknown";
 	connections.baseStateIn.interval = 1;
@@ -101,7 +106,6 @@ Smart::StatusCode SmartLaserLMS200Server::connectAndStartAllServices() {
 	
 	status = connectBaseStateIn(connections.baseStateIn.serverName, connections.baseStateIn.serviceName);
 	if(status != Smart::SMART_OK) return status;
-	
 	return status;
 }
 
@@ -195,10 +199,12 @@ void SmartLaserLMS200Server::init(int argc, char *argv[])
 		// create request-handlers
 		laserQueryServiceAnswHandler = new LaserQueryServiceAnswHandler(laserQueryServiceAnsw);
 		
+		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
 		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
-		if (stateSlave->setUpInitialState(connections.component.initialMainState) != Smart::SMART_OK) std::cerr << "ERROR: setUpInitialState" << std::endl;
+		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
+		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
 		status = stateSlave->activate();
 		if(status != Smart::SMART_OK) std::cerr << "ERROR: activate state" << std::endl;
@@ -219,7 +225,7 @@ void SmartLaserLMS200Server::init(int argc, char *argv[])
 		
 		
 		// link observers with subjects
-		laserTask->attach(laserQueryServiceAnswHandler);
+		laserTask->attach_interaction_observer(laserQueryServiceAnswHandler);
 	} catch (const std::exception &ex) {
 		std::cerr << "Uncaught std exception" << ex.what() << std::endl;
 	} catch (...) {
@@ -231,6 +237,7 @@ void SmartLaserLMS200Server::init(int argc, char *argv[])
 void SmartLaserLMS200Server::run()
 {
 	compHandler.onStartup();
+	
 	
 	// coponent will now start running and will continue (block in the run method) until it is commanded to shutdown (i.e. by a SIGINT signal)
 	component->run();
@@ -246,7 +253,9 @@ void SmartLaserLMS200Server::run()
 	
 	compHandler.onShutdown();
 	
+	
 	// unlink all observers
+	laserTask->detach_interaction_observer(laserQueryServiceAnswHandler);
 	
 	// destroy all task instances
 	// unlink all UpcallManagers
@@ -270,20 +279,22 @@ void SmartLaserLMS200Server::run()
 	delete laserScanOut;
 	// destroy event-test handlers (if needed)
 	
-	// create request-handlers
+	// destroy request-handlers
 	delete laserQueryServiceAnswHandler;
+	
 
 	delete stateSlave;
-	// delete state-change-handler
+	// destroy state-change-handler
 	delete stateChangeHandler;
 	
-	// delete all master/slave ports
+	// destroy all master/slave ports
 	delete wiringSlave;
 	delete param;
 	
 
 	// clean-up component's internally used resources (internally used communication middleware) 
 	component->cleanUpComponentResources();
+	
 	
 	// finally delete the component itself
 	delete component;
@@ -351,7 +362,7 @@ void SmartLaserLMS200Server::loadParameter(int argc, char *argv[])
 		//--- server port // client port // other parameter ---
 		// load parameter
 		parameter.getString("component", "name", connections.component.name);
-		parameter.getString("component", "initialMainState", connections.component.initialMainState);
+		parameter.getString("component", "initialComponentMode", connections.component.initialComponentMode);
 		if(parameter.checkIfParameterExists("component", "defaultScheduler")) {
 			parameter.getString("component", "defaultScheduler", connections.component.defaultScheduler);
 		}
@@ -360,16 +371,17 @@ void SmartLaserLMS200Server::loadParameter(int argc, char *argv[])
 		}
 		
 		// load parameters for client BaseStateIn
-		parameter.getBoolean("baseStateIn", "initialConnect", connections.baseStateIn.initialConnect);
-		parameter.getString("baseStateIn", "serviceName", connections.baseStateIn.serviceName);
-		parameter.getString("baseStateIn", "serverName", connections.baseStateIn.serverName);
-		parameter.getString("baseStateIn", "wiringName", connections.baseStateIn.wiringName);
-		parameter.getInteger("baseStateIn", "interval", connections.baseStateIn.interval);
+		parameter.getBoolean("BaseStateIn", "initialConnect", connections.baseStateIn.initialConnect);
+		parameter.getString("BaseStateIn", "serviceName", connections.baseStateIn.serviceName);
+		parameter.getString("BaseStateIn", "serverName", connections.baseStateIn.serverName);
+		parameter.getString("BaseStateIn", "wiringName", connections.baseStateIn.wiringName);
+		parameter.getInteger("BaseStateIn", "interval", connections.baseStateIn.interval);
+		
 		
 		// load parameters for server LaserQueryServiceAnsw
-		parameter.getString("laserQueryServiceAnsw", "serviceName", connections.laserQueryServiceAnsw.serviceName);
+		parameter.getString("LaserQueryServiceAnsw", "serviceName", connections.laserQueryServiceAnsw.serviceName);
 		// load parameters for server LaserScanOut
-		parameter.getString("laserScanOut", "serviceName", connections.laserScanOut.serviceName);
+		parameter.getString("LaserScanOut", "serviceName", connections.laserScanOut.serviceName);
 		
 		// load parameters for task LaserTask
 		if(parameter.checkIfParameterExists("LaserTask", "scheduler")) {

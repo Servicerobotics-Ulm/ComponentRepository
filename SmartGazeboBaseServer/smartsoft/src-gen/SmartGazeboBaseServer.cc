@@ -33,6 +33,7 @@ SmartGazeboBaseServer::SmartGazeboBaseServer()
 	baseStateServiceOut = NULL;
 	baseStateTask = NULL;
 	baseStateTaskTrigger = NULL;
+	//coordinationPort = NULL;
 	laserServiceOut = NULL;
 	laserTask = NULL;
 	laserTaskTrigger = NULL;
@@ -43,6 +44,7 @@ SmartGazeboBaseServer::SmartGazeboBaseServer()
 	navVelServiceIn = NULL;
 	navVelServiceInInputTaskTrigger = NULL;
 	navVelServiceInUpcallManager = NULL;
+	//smartGazeboBaseServerParams = NULL;
 	velocityInpuHandler = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
@@ -52,6 +54,7 @@ SmartGazeboBaseServer::SmartGazeboBaseServer()
 	
 	// set default ini parameter values
 	connections.component.name = "SmartGazeboBaseServer";
+	connections.component.initialComponentMode = "Neutral";
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
@@ -62,7 +65,6 @@ SmartGazeboBaseServer::SmartGazeboBaseServer()
 	connections.navVelServiceIn.serviceName = "NavVelServiceIn";
 	connections.baseStateTask.minActFreq = 10.0;
 	connections.baseStateTask.maxActFreq = 40.0;
-	connections.baseStateTask.prescale = 1;
 	connections.baseStateTask.trigger = "PeriodicTimer";
 	connections.baseStateTask.periodicActFreq = 20.0;
 	// scheduling default parameters
@@ -219,7 +221,8 @@ void SmartGazeboBaseServer::init(int argc, char *argv[])
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
 		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
-		if (stateSlave->setUpInitialState(connections.component.initialMainState) != Smart::SMART_OK) std::cerr << "ERROR: setUpInitialState" << std::endl;
+		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
+		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
 		status = stateSlave->activate();
 		if(status != Smart::SMART_OK) std::cerr << "ERROR: activate state" << std::endl;
@@ -276,6 +279,8 @@ void SmartGazeboBaseServer::init(int argc, char *argv[])
 		
 		
 		// link observers with subjects
+		baseStateTask->attach_interaction_observer(baseStateQueryHandler);
+		localizationUpdateHandler->attach_interaction_observer(baseStateTask);
 	} catch (const std::exception &ex) {
 		std::cerr << "Uncaught std exception" << ex.what() << std::endl;
 	} catch (...) {
@@ -305,6 +310,8 @@ void SmartGazeboBaseServer::run()
 	
 	
 	// unlink all observers
+	baseStateTask->detach_interaction_observer(baseStateQueryHandler);
+	localizationUpdateHandler->detach_interaction_observer(baseStateTask);
 	
 	// destroy all task instances
 	// unlink all UpcallManagers
@@ -420,7 +427,7 @@ void SmartGazeboBaseServer::loadParameter(int argc, char *argv[])
 		//--- server port // client port // other parameter ---
 		// load parameter
 		parameter.getString("component", "name", connections.component.name);
-		parameter.getString("component", "initialMainState", connections.component.initialMainState);
+		parameter.getString("component", "initialComponentMode", connections.component.initialComponentMode);
 		if(parameter.checkIfParameterExists("component", "defaultScheduler")) {
 			parameter.getString("component", "defaultScheduler", connections.component.defaultScheduler);
 		}

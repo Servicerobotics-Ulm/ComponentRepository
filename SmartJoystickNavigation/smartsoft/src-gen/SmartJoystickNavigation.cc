@@ -17,6 +17,8 @@
 #include "smartTimedTaskTrigger.h"
 //FIXME: implement logging
 //#include "smartGlobalLogger.hh"
+#include "OpcUaComponentTask.hh"
+#include <SeRoNetSDK/SeRoNet/Utils/Component.hpp>
 
 
 // constructor
@@ -25,36 +27,43 @@ SmartJoystickNavigation::SmartJoystickNavigation()
 	std::cout << "constructor of SmartJoystickNavigation\n";
 	
 	component = NULL;
+	opcUaComponentTask = NULL;
 	
 	// set all pointer members to NULL
+	//coordinationPort = NULL;
 	joystickNavTask = NULL;
 	joystickNavTaskTrigger = NULL;
 	joystickServiceIn = NULL;
 	joystickServiceInInputTaskTrigger = NULL;
 	joystickServiceInUpcallManager = NULL;
 	navVelServiceOut = NULL;
+	//smartJoystickNavigationParameters = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
 	
+	
 	// set default ini parameter values
 	connections.component.name = "SmartJoystickNavigation";
+	connections.component.initialComponentMode = "Neutral";
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
+	connections.joystickServiceIn.wiringName = "JoystickServiceIn";
 	connections.joystickServiceIn.serverName = "unknown";
 	connections.joystickServiceIn.serviceName = "unknown";
 	connections.joystickServiceIn.interval = 1;
 	connections.navVelServiceOut.initialConnect = false;
+	connections.navVelServiceOut.wiringName = "NavVelServiceOut";
 	connections.navVelServiceOut.serverName = "unknown";
 	connections.navVelServiceOut.serviceName = "unknown";
 	connections.navVelServiceOut.interval = 1;
 	connections.joystickNavTask.minActFreq = 0.0;
 	connections.joystickNavTask.maxActFreq = 0.0;
-	connections.joystickNavTask.prescale = 1;
 	connections.joystickNavTask.trigger = "DataTriggered";
 	connections.joystickNavTask.inPortRef = "JoystickServiceIn";	
+	connections.joystickNavTask.prescale = 1;
 	// scheduling default parameters
 	connections.joystickNavTask.scheduler = "DEFAULT";
 	connections.joystickNavTask.priority = -1;
@@ -119,7 +128,6 @@ Smart::StatusCode SmartJoystickNavigation::connectAndStartAllServices() {
 	if(status != Smart::SMART_OK) return status;
 	status = connectNavVelServiceOut(connections.navVelServiceOut.serverName, connections.navVelServiceOut.serviceName);
 	if(status != Smart::SMART_OK) return status;
-	
 	return status;
 }
 
@@ -184,6 +192,8 @@ void SmartJoystickNavigation::init(int argc, char *argv[])
 			component = new SmartJoystickNavigationImpl(connections.component.name, argc, argv);
 		}
 		
+		opcUaComponentTask = new OpcUa::ComponentTask(component);
+		SeRoNet::Utils::Component *opcuaComponent = dynamic_cast<SeRoNet::Utils::Component*>(opcUaComponentTask->getOpcUaComponent());
 		
 		std::cout << "ComponentDefinition SmartJoystickNavigation is named " << connections.component.name << std::endl;
 		
@@ -199,7 +209,7 @@ void SmartJoystickNavigation::init(int argc, char *argv[])
 		// TODO: set minCycleTime from Ini-file
 		
 		// create client ports
-		joystickServiceIn = new SmartACE::PushClient<CommBasicObjects::CommJoystick>(component);
+		joystickServiceIn = new SeRoNet::OPCUA::Server::PushClientOpcUa<CommBasicObjects::CommJoystick>(opcuaComponent);
 		navVelServiceOut = new SmartACE::SendClient<CommBasicObjects::CommNavigationVelocity>(component);
 		
 		// create InputTaskTriggers and UpcallManagers
@@ -210,17 +220,18 @@ void SmartJoystickNavigation::init(int argc, char *argv[])
 		
 		// create request-handlers
 		
+		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
 		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
-		if (stateSlave->setUpInitialState(connections.component.initialMainState) != Smart::SMART_OK) std::cerr << "ERROR: setUpInitialState" << std::endl;
+		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
+		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
 		status = stateSlave->activate();
 		if(status != Smart::SMART_OK) std::cerr << "ERROR: activate state" << std::endl;
 		
 		wiringSlave = new SmartACE::WiringSlave(component);
 		// add client port to wiring slave
-		dynamic_cast<SmartACE::PushClient<CommBasicObjects::CommJoystick>*>(joystickServiceIn)->add(wiringSlave, connections.joystickServiceIn.wiringName);
 		dynamic_cast<SmartACE::SendClient<CommBasicObjects::CommNavigationVelocity>*>(navVelServiceOut)->add(wiringSlave, connections.navVelServiceOut.wiringName);
 		
 		// create parameter slave
@@ -276,6 +287,8 @@ void SmartJoystickNavigation::run()
 {
 	compHandler.onStartup();
 	
+	opcUaComponentTask->start();
+	
 	// coponent will now start running and will continue (block in the run method) until it is commanded to shutdown (i.e. by a SIGINT signal)
 	component->run();
 	// component was signalled to shutdown
@@ -289,6 +302,8 @@ void SmartJoystickNavigation::run()
 	}
 	
 	compHandler.onShutdown();
+	
+	opcUaComponentTask->stop();
 	
 	// unlink all observers
 	
@@ -312,19 +327,22 @@ void SmartJoystickNavigation::run()
 	// destroy server ports
 	// destroy event-test handlers (if needed)
 	
-	// create request-handlers
+	// destroy request-handlers
+	
 
 	delete stateSlave;
-	// delete state-change-handler
+	// destroy state-change-handler
 	delete stateChangeHandler;
 	
-	// delete all master/slave ports
+	// destroy all master/slave ports
 	delete wiringSlave;
 	delete param;
 	
 
 	// clean-up component's internally used resources (internally used communication middleware) 
 	component->cleanUpComponentResources();
+	
+	delete opcUaComponentTask;
 	
 	// finally delete the component itself
 	delete component;
@@ -392,7 +410,7 @@ void SmartJoystickNavigation::loadParameter(int argc, char *argv[])
 		//--- server port // client port // other parameter ---
 		// load parameter
 		parameter.getString("component", "name", connections.component.name);
-		parameter.getString("component", "initialMainState", connections.component.initialMainState);
+		parameter.getString("component", "initialComponentMode", connections.component.initialComponentMode);
 		if(parameter.checkIfParameterExists("component", "defaultScheduler")) {
 			parameter.getString("component", "defaultScheduler", connections.component.defaultScheduler);
 		}
@@ -401,15 +419,16 @@ void SmartJoystickNavigation::loadParameter(int argc, char *argv[])
 		}
 		
 		// load parameters for client JoystickServiceIn
-		parameter.getString("joystickServiceIn", "serviceName", connections.joystickServiceIn.serviceName);
-		parameter.getString("joystickServiceIn", "serverName", connections.joystickServiceIn.serverName);
-		parameter.getString("joystickServiceIn", "wiringName", connections.joystickServiceIn.wiringName);
-		parameter.getInteger("joystickServiceIn", "interval", connections.joystickServiceIn.interval);
+		parameter.getString("JoystickServiceIn", "serviceName", connections.joystickServiceIn.serviceName);
+		parameter.getString("JoystickServiceIn", "serverName", connections.joystickServiceIn.serverName);
+		parameter.getString("JoystickServiceIn", "wiringName", connections.joystickServiceIn.wiringName);
+		parameter.getInteger("JoystickServiceIn", "interval", connections.joystickServiceIn.interval);
 		// load parameters for client NavVelServiceOut
-		parameter.getBoolean("navVelServiceOut", "initialConnect", connections.navVelServiceOut.initialConnect);
-		parameter.getString("navVelServiceOut", "serviceName", connections.navVelServiceOut.serviceName);
-		parameter.getString("navVelServiceOut", "serverName", connections.navVelServiceOut.serverName);
-		parameter.getString("navVelServiceOut", "wiringName", connections.navVelServiceOut.wiringName);
+		parameter.getBoolean("NavVelServiceOut", "initialConnect", connections.navVelServiceOut.initialConnect);
+		parameter.getString("NavVelServiceOut", "serviceName", connections.navVelServiceOut.serviceName);
+		parameter.getString("NavVelServiceOut", "serverName", connections.navVelServiceOut.serverName);
+		parameter.getString("NavVelServiceOut", "wiringName", connections.navVelServiceOut.wiringName);
+		
 		
 		
 		// load parameters for task JoystickNavTask

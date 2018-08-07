@@ -1,3 +1,6 @@
+<!--- This file is generated from the SmartPioneerBaseServer.componentDocumentation model --->
+<!--- do not modify this file manually as it will by automatically overwritten by the code generator, modify the model instead and re-generate this file --->
+
 # SmartPioneerBaseServer Component
 
 ![SmartPioneerBaseServer-ComponentImage](https://github.com/Servicerobotics-Ulm/ComponentRepository/blob/master/SmartPioneerBaseServer/model/SmartPioneerBaseServerComponentDefinition.jpg)
@@ -15,7 +18,7 @@ GPL-License: includes Code from the Player Project.
 | Purpose | Hardware-Driver |
 
 
-## Coordination Port SlavePort
+## Coordination Port CoordinationPort
 
 
 ### States

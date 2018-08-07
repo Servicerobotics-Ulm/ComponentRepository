@@ -14,6 +14,7 @@
 // running the code generator.
 //--------------------------------------------------------------------------
 #include "PoseUpdateTaskCore.hh"
+#include "PoseUpdateTask.hh"
 #include "SmartPioneerBaseServer.hh"
 
 //FIXME: use logging
@@ -21,6 +22,27 @@
 
 // include observers
 #include "RobotTask.hh"
+
+void PoseUpdateTaskCore::notify_all_interaction_observers() {
+	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
+	// try dynamically down-casting this class to the derived class 
+	// (we can do it safely here as we exactly know the derived class)
+	if(const PoseUpdateTask* poseUpdateTask = dynamic_cast<const PoseUpdateTask*>(this)) {
+		for(auto it=interaction_observers.begin(); it!=interaction_observers.end(); it++) {
+			(*it)->on_update_from(poseUpdateTask);
+		}
+	}
+}
+
+void PoseUpdateTaskCore::attach_interaction_observer(PoseUpdateTaskObserverInterface *observer) {
+	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
+	interaction_observers.push_back(observer);
+}
+
+void PoseUpdateTaskCore::detach_interaction_observer(PoseUpdateTaskObserverInterface *observer) {
+	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
+	interaction_observers.remove(observer);
+}
 
 int PoseUpdateTaskCore::execute_protected_region()
 {
@@ -36,19 +58,18 @@ int PoseUpdateTaskCore::execute_protected_region()
 	// this is the user code (should not internally use the state-pattern any more)
 	int retval = this->on_execute();
 	
+	// notify all attached interaction observers
+	this->notify_all_interaction_observers();
+	
+	// inform all associated tasks about a new update
+	this->trigger_all_tasks();
+	
 	// increment current currentUpdateCount for the next iteration
 	currentUpdateCount++;
 	
 	return retval;
 }
 
-void PoseUpdateTaskCore::update_from(const Smart::TaskInteractionSubject* subject)
-{
-	// try typecasting into according Task or Upcall class
-	 if(const RobotTask* robotTask = dynamic_cast<const RobotTask*>(subject)) {
-		this->on_update_from(robotTask);
-	}
-}
 
 void PoseUpdateTaskCore::updateAllCommObjects()
 {

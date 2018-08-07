@@ -29,6 +29,7 @@ SmartRobotConsole::SmartRobotConsole()
 	// set all pointer members to NULL
 	consoleTask = NULL;
 	consoleTaskTrigger = NULL;
+	//coordinationMaster = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
@@ -36,14 +37,15 @@ SmartRobotConsole::SmartRobotConsole()
 	paramMaster = NULL;
 	wiringMaster = NULL;
 	
+	
 	// set default ini parameter values
 	connections.component.name = "SmartRobotConsole";
+	connections.component.initialComponentMode = "Neutral";
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
 	connections.consoleTask.minActFreq = 0.0;
 	connections.consoleTask.maxActFreq = 0.0;
-	connections.consoleTask.prescale = 1;
 	// scheduling default parameters
 	connections.consoleTask.scheduler = "DEFAULT";
 	connections.consoleTask.priority = -1;
@@ -73,7 +75,6 @@ void SmartRobotConsole::setStartupFinished() {
  */
 Smart::StatusCode SmartRobotConsole::connectAndStartAllServices() {
 	Smart::StatusCode status = Smart::SMART_OK;
-	
 	
 	return status;
 }
@@ -158,10 +159,12 @@ void SmartRobotConsole::init(int argc, char *argv[])
 		
 		// create request-handlers
 		
+		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
 		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
-		if (stateSlave->setUpInitialState(connections.component.initialMainState) != Smart::SMART_OK) std::cerr << "ERROR: setUpInitialState" << std::endl;
+		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
+		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
 		status = stateSlave->activate();
 		if(status != Smart::SMART_OK) std::cerr << "ERROR: activate state" << std::endl;
@@ -214,6 +217,7 @@ void SmartRobotConsole::run()
 {
 	compHandler.onStartup();
 	
+	
 	// coponent will now start running and will continue (block in the run method) until it is commanded to shutdown (i.e. by a SIGINT signal)
 	component->run();
 	// component was signalled to shutdown
@@ -227,6 +231,7 @@ void SmartRobotConsole::run()
 	}
 	
 	compHandler.onShutdown();
+	
 	
 	// unlink all observers
 	
@@ -245,22 +250,24 @@ void SmartRobotConsole::run()
 	// destroy server ports
 	// destroy event-test handlers (if needed)
 	
-	// create request-handlers
+	// destroy request-handlers
+	
 
 	delete stateSlave;
-	// delete state-change-handler
+	// destroy state-change-handler
 	delete stateChangeHandler;
 	
-	// delete all master/slave ports
+	// destroy all master/slave ports
 	delete wiringSlave;
 	
-	// delete master ports
+	// destroy master ports
 	delete stateMaster;
 	delete paramMaster;
 	delete wiringMaster;
 
 	// clean-up component's internally used resources (internally used communication middleware) 
 	component->cleanUpComponentResources();
+	
 	
 	// finally delete the component itself
 	delete component;
@@ -328,13 +335,14 @@ void SmartRobotConsole::loadParameter(int argc, char *argv[])
 		//--- server port // client port // other parameter ---
 		// load parameter
 		parameter.getString("component", "name", connections.component.name);
-		parameter.getString("component", "initialMainState", connections.component.initialMainState);
+		parameter.getString("component", "initialComponentMode", connections.component.initialComponentMode);
 		if(parameter.checkIfParameterExists("component", "defaultScheduler")) {
 			parameter.getString("component", "defaultScheduler", connections.component.defaultScheduler);
 		}
 		if(parameter.checkIfParameterExists("component", "useLogger")) {
 			parameter.getBoolean("component", "useLogger", connections.component.useLogger);
 		}
+		
 		
 		
 		

@@ -14,12 +14,34 @@
 // running the code generator.
 //--------------------------------------------------------------------------
 #include "BatteryEventTaskCore.hh"
+#include "BatteryEventTask.hh"
 #include "ComponentPlayerStageSimulator.hh"
 
 //FIXME: use logging
 //#include "smartGlobalLogger.hh"
 
 // include observers
+
+void BatteryEventTaskCore::notify_all_interaction_observers() {
+	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
+	// try dynamically down-casting this class to the derived class 
+	// (we can do it safely here as we exactly know the derived class)
+	if(const BatteryEventTask* batteryEventTask = dynamic_cast<const BatteryEventTask*>(this)) {
+		for(auto it=interaction_observers.begin(); it!=interaction_observers.end(); it++) {
+			(*it)->on_update_from(batteryEventTask);
+		}
+	}
+}
+
+void BatteryEventTaskCore::attach_interaction_observer(BatteryEventTaskObserverInterface *observer) {
+	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
+	interaction_observers.push_back(observer);
+}
+
+void BatteryEventTaskCore::detach_interaction_observer(BatteryEventTaskObserverInterface *observer) {
+	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
+	interaction_observers.remove(observer);
+}
 
 int BatteryEventTaskCore::execute_protected_region()
 {
@@ -34,6 +56,12 @@ int BatteryEventTaskCore::execute_protected_region()
 	
 	// this is the user code (should not internally use the state-pattern any more)
 	int retval = this->on_execute();
+	
+	// notify all attached interaction observers
+	this->notify_all_interaction_observers();
+	
+	// inform all associated tasks about a new update
+	this->trigger_all_tasks();
 	
 	// increment current currentUpdateCount for the next iteration
 	currentUpdateCount++;

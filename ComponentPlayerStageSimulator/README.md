@@ -1,3 +1,6 @@
+<!--- This file is generated from the ComponentPlayerStageSimulator.componentDocumentation model --->
+<!--- do not modify this file manually as it will by automatically overwritten by the code generator, modify the model instead and re-generate this file --->
+
 # ComponentPlayerStageSimulator Component
 
 ![ComponentPlayerStageSimulator-ComponentImage](https://github.com/Servicerobotics-Ulm/ComponentRepository/blob/master/ComponentPlayerStageSimulator/model/ComponentPlayerStageSimulatorComponentDefinition.jpg)
@@ -6,7 +9,9 @@ The SmartPlayerStageSimulator simulates a robot in a 2D bitmapped environment us
 It offers several services for controlling the robot, such as sending navigation commands, providing access to the robot's odometry and laser scans. 
 SmartPlayerStage simulator can replace both SmartPioneerBaseServer and SmartLaserLMS200 for simulation purposes.
 
-Tested on Ubuntu 16.04. See INSTALL.txt
+Tested on Ubuntu 12.04 LTS with player-3.0.2 and Stage-3.2.2, built from sources.
+
+Note: This component is used in Tutorials (e.g. Lesson 1).
 
 GPL-License: includes Code from the Player Project.
 

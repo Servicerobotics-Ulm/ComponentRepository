@@ -27,6 +27,7 @@ SmartMapperGridMap::SmartMapperGridMap()
 	component = NULL;
 	
 	// set all pointer members to NULL
+	//coordinationPort = NULL;
 	curMapTask = NULL;
 	curMapTaskTrigger = NULL;
 	currMapOut = NULL;
@@ -41,33 +42,34 @@ SmartMapperGridMap::SmartMapperGridMap()
 	ltmQueryServer = NULL;
 	ltmQueryServerInputTaskTrigger = NULL;
 	ltmQueryServerHandler = NULL;
+	//smartMapperGridMapParams = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
 	
+	
 	// set default ini parameter values
 	connections.component.name = "SmartMapperGridMap";
-	connections.component.initialMainState = "Neutral";
+	connections.component.initialComponentMode = "BuildCurrMap";
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
 	connections.currMapOut.serviceName = "CurrMapOut";
 	connections.currQueryServer.serviceName = "CurrQueryServer";
 	connections.ltmQueryServer.serviceName = "LtmQueryServer";
+	connections.laserServiceIn.wiringName = "LaserServiceIn";
 	connections.laserServiceIn.serverName = "unknown";
 	connections.laserServiceIn.serviceName = "unknown";
 	connections.laserServiceIn.interval = 1;
 	connections.curMapTask.minActFreq = 10.0;
 	connections.curMapTask.maxActFreq = 20.0;
-	connections.curMapTask.prescale = 1;
 	// scheduling default parameters
 	connections.curMapTask.scheduler = "DEFAULT";
 	connections.curMapTask.priority = -1;
 	connections.curMapTask.cpuAffinity = -1;
 	connections.ltmMapTask.minActFreq = 2.0;
 	connections.ltmMapTask.maxActFreq = 10.0;
-	connections.ltmMapTask.prescale = 1;
 	connections.ltmMapTask.trigger = "PeriodicTimer";
 	connections.ltmMapTask.periodicActFreq = 2.0;
 	// scheduling default parameters
@@ -116,7 +118,6 @@ Smart::StatusCode SmartMapperGridMap::connectAndStartAllServices() {
 	
 	status = connectLaserServiceIn(connections.laserServiceIn.serverName, connections.laserServiceIn.serviceName);
 	if(status != Smart::SMART_OK) return status;
-	
 	return status;
 }
 
@@ -227,6 +228,7 @@ void SmartMapperGridMap::init(int argc, char *argv[])
 		currQueryServerHandler = new CurrQueryServerHandler(currQueryServer);
 		ltmQueryServerHandler = new LtmQueryServerHandler(ltmQueryServer);
 		
+		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
 		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
@@ -234,7 +236,8 @@ void SmartMapperGridMap::init(int argc, char *argv[])
 		if (stateSlave->defineStates("BuildLtmMap" ,"ltmMap") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion BuildLtmMap.ltmMap" << std::endl;
 		if (stateSlave->defineStates("BuildBothMaps" ,"currMap") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion BuildBothMaps.currMap" << std::endl;
 		if (stateSlave->defineStates("BuildBothMaps" ,"ltmMap") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion BuildBothMaps.ltmMap" << std::endl;
-		if (stateSlave->setUpInitialState(connections.component.initialMainState) != Smart::SMART_OK) std::cerr << "ERROR: setUpInitialState" << std::endl;
+		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
+		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
 		status = stateSlave->activate();
 		if(status != Smart::SMART_OK) std::cerr << "ERROR: activate state" << std::endl;
@@ -314,8 +317,8 @@ void SmartMapperGridMap::init(int argc, char *argv[])
 		
 		
 		// link observers with subjects
-		curMapTask->attach(currQueryServerHandler);
-		ltmMapTask->attach(ltmQueryServerHandler);
+		curMapTask->attach_interaction_observer(currQueryServerHandler);
+		ltmMapTask->attach_interaction_observer(ltmQueryServerHandler);
 	} catch (const std::exception &ex) {
 		std::cerr << "Uncaught std exception" << ex.what() << std::endl;
 	} catch (...) {
@@ -327,6 +330,7 @@ void SmartMapperGridMap::init(int argc, char *argv[])
 void SmartMapperGridMap::run()
 {
 	compHandler.onStartup();
+	
 	
 	// coponent will now start running and will continue (block in the run method) until it is commanded to shutdown (i.e. by a SIGINT signal)
 	component->run();
@@ -342,7 +346,10 @@ void SmartMapperGridMap::run()
 	
 	compHandler.onShutdown();
 	
+	
 	// unlink all observers
+	curMapTask->detach_interaction_observer(currQueryServerHandler);
+	ltmMapTask->detach_interaction_observer(ltmQueryServerHandler);
 	
 	// destroy all task instances
 	// unlink all UpcallManagers
@@ -373,21 +380,23 @@ void SmartMapperGridMap::run()
 	delete ltmQueryServerInputTaskTrigger;
 	// destroy event-test handlers (if needed)
 	
-	// create request-handlers
+	// destroy request-handlers
 	delete currQueryServerHandler;
 	delete ltmQueryServerHandler;
+	
 
 	delete stateSlave;
-	// delete state-change-handler
+	// destroy state-change-handler
 	delete stateChangeHandler;
 	
-	// delete all master/slave ports
+	// destroy all master/slave ports
 	delete wiringSlave;
 	delete param;
 	
 
 	// clean-up component's internally used resources (internally used communication middleware) 
 	component->cleanUpComponentResources();
+	
 	
 	// finally delete the component itself
 	delete component;
@@ -455,7 +464,7 @@ void SmartMapperGridMap::loadParameter(int argc, char *argv[])
 		//--- server port // client port // other parameter ---
 		// load parameter
 		parameter.getString("component", "name", connections.component.name);
-		parameter.getString("component", "initialMainState", connections.component.initialMainState);
+		parameter.getString("component", "initialComponentMode", connections.component.initialComponentMode);
 		if(parameter.checkIfParameterExists("component", "defaultScheduler")) {
 			parameter.getString("component", "defaultScheduler", connections.component.defaultScheduler);
 		}
@@ -464,17 +473,18 @@ void SmartMapperGridMap::loadParameter(int argc, char *argv[])
 		}
 		
 		// load parameters for client LaserServiceIn
-		parameter.getString("laserServiceIn", "serviceName", connections.laserServiceIn.serviceName);
-		parameter.getString("laserServiceIn", "serverName", connections.laserServiceIn.serverName);
-		parameter.getString("laserServiceIn", "wiringName", connections.laserServiceIn.wiringName);
-		parameter.getInteger("laserServiceIn", "interval", connections.laserServiceIn.interval);
+		parameter.getString("LaserServiceIn", "serviceName", connections.laserServiceIn.serviceName);
+		parameter.getString("LaserServiceIn", "serverName", connections.laserServiceIn.serverName);
+		parameter.getString("LaserServiceIn", "wiringName", connections.laserServiceIn.wiringName);
+		parameter.getInteger("LaserServiceIn", "interval", connections.laserServiceIn.interval);
+		
 		
 		// load parameters for server CurrMapOut
-		parameter.getString("currMapOut", "serviceName", connections.currMapOut.serviceName);
+		parameter.getString("CurrMapOut", "serviceName", connections.currMapOut.serviceName);
 		// load parameters for server CurrQueryServer
-		parameter.getString("currQueryServer", "serviceName", connections.currQueryServer.serviceName);
+		parameter.getString("CurrQueryServer", "serviceName", connections.currQueryServer.serviceName);
 		// load parameters for server LtmQueryServer
-		parameter.getString("ltmQueryServer", "serviceName", connections.ltmQueryServer.serviceName);
+		parameter.getString("LtmQueryServer", "serviceName", connections.ltmQueryServer.serviceName);
 		
 		// load parameters for task CurMapTask
 		parameter.getDouble("CurMapTask", "minActFreqHz", connections.curMapTask.minActFreq);

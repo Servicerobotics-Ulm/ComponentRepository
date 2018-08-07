@@ -21,10 +21,32 @@
 #include <CommBasicObjects/CommBaseState.hh>
 #include <CommBasicObjects/CommVoid.hh>
 
+// include the input interfaces (if any)
+
+// include all interaction-observer interfaces
+#include <BaseStateQueryHandlerObserverInterface.hh>
 
 class BaseStateQueryHandlerCore 
 :	public Smart::IQueryServerHandler<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState, SmartACE::QueryId>
+,	public Smart::TaskTriggerSubject
 {
+private:
+
+	virtual void updateAllCommObjects();
+
+/**
+ * Implementation of the Subject part of an InteractionObserver
+ */
+private:
+	std::mutex interaction_observers_mutex;
+	std::list<BaseStateQueryHandlerObserverInterface*> interaction_observers;
+protected:
+	void notify_all_interaction_observers();
+public:
+	void attach_interaction_observer(BaseStateQueryHandlerObserverInterface *observer);
+	void detach_interaction_observer(BaseStateQueryHandlerObserverInterface *observer);
+
+protected:
 	
 public:
 	BaseStateQueryHandlerCore(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState, SmartACE::QueryId>* server);

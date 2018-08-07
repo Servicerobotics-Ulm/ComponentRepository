@@ -1,3 +1,6 @@
+<!--- This file is generated from the SmartAmcl.componentDocumentation model --->
+<!--- do not modify this file manually as it will by automatically overwritten by the code generator, modify the model instead and re-generate this file --->
+
 # SmartAmcl Component
 
 ![SmartAmcl-ComponentImage](https://github.com/Servicerobotics-Ulm/ComponentRepository/blob/master/SmartAmcl/model/SmartAmclComponentDefinition.jpg)
@@ -18,7 +21,7 @@ See also: http://playerstage.sourceforge.net/doc/Player-2.0.0/player/group__driv
 | Purpose | Navigation |
 
 
-## Coordination Port SlavePort
+## Coordination Port CoordinationPort
 
 
 ### States

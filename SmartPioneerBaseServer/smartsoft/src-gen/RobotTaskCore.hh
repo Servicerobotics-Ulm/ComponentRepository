@@ -24,9 +24,12 @@
 
 // include communication-objects for output ports
 
+// include all interaction-observer interfaces
+#include <RobotTaskObserverInterface.hh>
 	
 class RobotTaskCore
 :	public SmartACE::ManagedTask
+,	public Smart::TaskTriggerSubject
 ,	public LocalizationUpdateUpcallInterface
 ,	public NavVelInUpcallInterface
 {
@@ -35,7 +38,6 @@ private:
 	bool useLogging;
 	int taskLoggingId;
 	unsigned int currentUpdateCount;
-	
 	
 	Smart::StatusCode localizationUpdateStatus;
 	CommBasicObjects::CommBasePositionUpdate localizationUpdateObject;
@@ -77,6 +79,18 @@ protected:
 		return navVelInStatus;
 	}
 	
+	
+/**
+ * Implementation of the Subject part of an InteractionObserver
+ */
+private:
+	std::mutex interaction_observers_mutex;
+	std::list<RobotTaskObserverInterface*> interaction_observers;
+protected:
+	void notify_all_interaction_observers();
+public:
+	void attach_interaction_observer(RobotTaskObserverInterface *observer);
+	void detach_interaction_observer(RobotTaskObserverInterface *observer);
 
 public:
 	RobotTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true)

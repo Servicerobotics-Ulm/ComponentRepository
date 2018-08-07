@@ -28,9 +28,12 @@
 #include <CommNavigationObjects/PlannerEventState.hh>
 #include <CommNavigationObjects/CommPlannerGoal.hh>
 
+// include all interaction-observer interfaces
+#include <PlannerTaskObserverInterface.hh>
 	
 class PlannerTaskCore
 :	public SmartACE::ManagedTask
+,	public Smart::TaskTriggerSubject
 ,	public BaseStateClientUpcallInterface
 ,	public CurMapClientUpcallInterface
 {
@@ -39,7 +42,6 @@ private:
 	bool useLogging;
 	int taskLoggingId;
 	unsigned int currentUpdateCount;
-	
 	
 	Smart::StatusCode baseStateClientStatus;
 	CommBasicObjects::CommBaseState baseStateClientObject;
@@ -85,6 +87,18 @@ protected:
 	Smart::StatusCode plannerEventServerPut(CommNavigationObjects::PlannerEventState &eventState);
 	// this method is meant to be used in derived classes
 	Smart::StatusCode plannerGoalServerPut(CommNavigationObjects::CommPlannerGoal &plannerGoalServerDataObject);
+	
+/**
+ * Implementation of the Subject part of an InteractionObserver
+ */
+private:
+	std::mutex interaction_observers_mutex;
+	std::list<PlannerTaskObserverInterface*> interaction_observers;
+protected:
+	void notify_all_interaction_observers();
+public:
+	void attach_interaction_observer(PlannerTaskObserverInterface *observer);
+	void detach_interaction_observer(PlannerTaskObserverInterface *observer);
 
 public:
 	PlannerTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true)

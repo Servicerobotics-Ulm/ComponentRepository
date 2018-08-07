@@ -21,19 +21,38 @@
 #include <CommBasicObjects/CommMobileLaserScan.hh>
 #include <CommBasicObjects/CommVoid.hh>
 
-// forward declaration of LaserTask
-class LaserTask;
+// include the input interfaces (if any)
+
+// include all interaction-observer interfaces
+#include <LaserQueryServiceAnswHandlerObserverInterface.hh>
+#include <LaserTaskObserverInterface.hh>
 
 class LaserQueryServiceAnswHandlerCore 
 :	public Smart::IQueryServerHandler<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan, SmartACE::QueryId>
-,	public Smart::ITaskInteractionObserver
+,	public Smart::TaskTriggerSubject
+,	public LaserTaskObserverInterface
 {
 private:
-	virtual void update_from(const Smart::TaskInteractionSubject* subject);
-	
+
+	virtual void updateAllCommObjects();
+
+/**
+ * Implementation of the Subject part of an InteractionObserver
+ */
+private:
+	std::mutex interaction_observers_mutex;
+	std::list<LaserQueryServiceAnswHandlerObserverInterface*> interaction_observers;
 protected:
-	// implement this method in derived classes!
-	virtual void on_update_from(const LaserTask* laserTask) = 0;
+	void notify_all_interaction_observers();
+public:
+	void attach_interaction_observer(LaserQueryServiceAnswHandlerObserverInterface *observer);
+	void detach_interaction_observer(LaserQueryServiceAnswHandlerObserverInterface *observer);
+
+protected:
+	// overload this method in derived classes!
+	virtual void on_update_from(const LaserTask* subject) {
+		// no-op
+	}
 	
 public:
 	LaserQueryServiceAnswHandlerCore(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan, SmartACE::QueryId>* server);

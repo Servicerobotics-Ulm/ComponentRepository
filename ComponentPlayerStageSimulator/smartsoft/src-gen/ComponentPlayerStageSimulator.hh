@@ -161,7 +161,7 @@ public:
 		{
 			// the name of the component
 			std::string name;
-			std::string initialMainState;
+			std::string initialComponentMode;
 			std::string defaultScheduler;
 			bool useLogger;
 		} component;

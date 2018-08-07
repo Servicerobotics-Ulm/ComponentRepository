@@ -1,33 +1,40 @@
 ComponentDefinition SmartGazeboBaseServer {
-	BehaviorSlaveInterface SlavePort implements CommBasicObjects.BaseCoordinationService;
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.BaseCoordinationService {
+		
+	}
 	
 	// Inputs and Responders
 	InputPort NavVelServiceIn implements CommNavigationObjects.NavigationVelocityService { }
 	InputPort LocalizationUpdateServiceIn implements CommNavigationObjects.LocalizationUpdateService { }
 	AnswerPort BaseSatateQueryAnsw implements CommBasicObjects.BaseStateQueryService { }
 	
-	InputHandler LocalizationUpdateHandler triggeredFrom LocalizationUpdateServiceIn;
-	RequestHandler BaseStateQueryHandler triggeredFrom BaseSatateQueryAnsw { }
-	InputHandler VelocityInpuHandler triggeredFrom NavVelServiceIn;
+	InputHandler LocalizationUpdateHandler triggeredFrom LocalizationUpdateServiceIn { }
+
+	RequestHandler BaseStateQueryHandler triggeredFrom BaseSatateQueryAnsw {
+		Observe BaseStateTask 
+	}
+	InputHandler VelocityInpuHandler triggeredFrom NavVelServiceIn {  }
 	
-	PreemptiveTask LaserTask
+	Activity LaserTask
 	{
 		ActivationConstraints {
 			configurable=false
+			minActFreq = 10.0 Hz
 		}
 	}
-	PreemptiveTask BaseStateTask
+	Activity BaseStateTask
 	{
+		Observe LocalizationUpdateHandler
 		ActivationConstraints {
 			configurable = true
 			minActFreq = 10.0 Hz
 			maxActFreq = 40.0 Hz
 		}
-		DefaultTaskTrigger PeriodicTimer 20.0 Hz;
+		DefaultTrigger PeriodicTimer 20.0 Hz;
 	}
 
 	OutputPort LaserServiceOut implements CommBasicObjects.LaserService realizedBy LaserTask { }
 	OutputPort BaseStateServiceOut implements CommBasicObjects.BaseStateService realizedBy BaseStateTask { } 
 	
-	ComponentParameters SmartGazeboBaseServerParams;
+	ComponentParameters SmartGazeboBaseServerParams slave CoordinationPort;
 }

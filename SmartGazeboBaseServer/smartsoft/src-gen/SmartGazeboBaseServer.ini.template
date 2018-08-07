@@ -23,8 +23,8 @@
 # the name of the component for the naming service
 name SmartGazeboBaseServer
 
-# the initial MainState of the component
-
+# the initial ComponentMode
+initialComponentMode Neutral
 #defaultScheduler FIFO
 #useLogger true
 
@@ -85,8 +85,11 @@ serviceName NavVelServiceIn
 ##########################
 # client port parameter
 
-##########################
+#####################
 # internal parameters
+#####################
+##########################
+# InternalParameter Settings
 [Settings]
 basePoseTopic ~/robot/basePose
 baseVelTopic ~/robot::robot::base_footprint
@@ -94,8 +97,10 @@ laserTopic ~/robot/robot/base_footprint/base_laser/scan
 sendVelTopic ~/robot/vel_cmd
 
 
-##########################
+#####################
 # extended parameters
+#####################
 
-##########################
+#####################
 # instance parameters
+#####################

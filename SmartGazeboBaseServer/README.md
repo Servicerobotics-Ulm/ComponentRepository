@@ -1,3 +1,6 @@
+<!--- This file is generated from the SmartGazeboBaseServer.componentDocumentation model --->
+<!--- do not modify this file manually as it will by automatically overwritten by the code generator, modify the model instead and re-generate this file --->
+
 # SmartGazeboBaseServer Component
 
 ![SmartGazeboBaseServer-ComponentImage](https://github.com/Servicerobotics-Ulm/ComponentRepository/blob/master/SmartGazeboBaseServer/model/SmartGazeboBaseServerComponentDefinition.jpg)

@@ -14,13 +14,38 @@
 // running the code generator.
 //--------------------------------------------------------------------------
 #include "NavigationVelocityHandlerCore.hh"
+#include "NavigationVelocityHandler.hh"
 
 NavigationVelocityHandlerCore::NavigationVelocityHandlerCore(
 	Smart::InputSubject<CommBasicObjects::CommNavigationVelocity> *subject,
 	const int &prescaleFactor)
-	:	Smart::IInputHandler<CommBasicObjects::CommNavigationVelocity>(subject, prescaleFactor)
+	:	Smart::InputTaskTrigger<CommBasicObjects::CommNavigationVelocity>(subject, prescaleFactor)
 {  
 	updateStatus = Smart::SMART_NODATA;
 }
 NavigationVelocityHandlerCore::~NavigationVelocityHandlerCore()
 {  }
+
+void NavigationVelocityHandlerCore::updateAllCommObjects() {
+}
+
+void NavigationVelocityHandlerCore::notify_all_interaction_observers() {
+	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
+	// try dynamically down-casting this class to the derived class 
+	// (we can do it safely here as we exactly know the derived class)
+	if(const NavigationVelocityHandler* navigationVelocityHandler = dynamic_cast<const NavigationVelocityHandler*>(this)) {
+		for(auto it=interaction_observers.begin(); it!=interaction_observers.end(); it++) {
+			(*it)->on_update_from(navigationVelocityHandler);
+		}
+	}
+}
+
+void NavigationVelocityHandlerCore::attach_interaction_observer(NavigationVelocityHandlerObserverInterface *observer) {
+	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
+	interaction_observers.push_back(observer);
+}
+
+void NavigationVelocityHandlerCore::detach_interaction_observer(NavigationVelocityHandlerObserverInterface *observer) {
+	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
+	interaction_observers.remove(observer);
+}

@@ -17,25 +17,50 @@
 #define _VELOCITYINPUHANDLER_CORE_HH
 
 #include <aceSmartSoft.hh>
+
+// include the main input-handler interface
 #include "NavVelServiceInUpcallInterface.hh"
+// include all other input interfaces (if any)
+
+// include all interaction-observer interfaces
+#include <VelocityInpuHandlerObserverInterface.hh>
 
 class VelocityInpuHandlerCore
-:	public Smart::IInputHandler<CommBasicObjects::CommNavigationVelocity>
-,	public Smart::TaskInteractionSubject
+:	public Smart::InputTaskTrigger<CommBasicObjects::CommNavigationVelocity>
 ,	public NavVelServiceInUpcallInterface
 {
 private:
 	Smart::StatusCode updateStatus;
 	CommBasicObjects::CommNavigationVelocity lastUpdate;
 	
+	
+	virtual void updateAllCommObjects();
+	
 	// internal input handling method
 	virtual void handle_input(const CommBasicObjects::CommNavigationVelocity& input) {
-		// inform all associated tasks about a new update
-		this->notify_all_tasks();
-		// call the input handler method (which is optionally implemented in derived classes)
+		this->updateAllCommObjects();
+		// call the input handler method (which has to be implemented in derived classes)
 		this->on_NavVelServiceIn(input);
+		// notify all attached interaction observers
+		this->notify_all_interaction_observers();
+		// call implementation of base class
+		Smart::InputTaskTrigger<CommBasicObjects::CommNavigationVelocity>::handle_input(input);
 	}
 	
+/**
+ * Implementation of the Subject part of an InteractionObserver
+ */
+private:
+	std::mutex interaction_observers_mutex;
+	std::list<VelocityInpuHandlerObserverInterface*> interaction_observers;
+protected:
+	void notify_all_interaction_observers();
+public:
+	void attach_interaction_observer(VelocityInpuHandlerObserverInterface *observer);
+	void detach_interaction_observer(VelocityInpuHandlerObserverInterface *observer);
+	
+protected:
+
 public:
 	VelocityInpuHandlerCore(
 		Smart::InputSubject<CommBasicObjects::CommNavigationVelocity> *subject,

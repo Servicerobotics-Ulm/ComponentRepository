@@ -41,6 +41,7 @@
 #include "CurrQueryServerHandler.hh"
 #include "LtmQueryServerHandler.hh"
 
+
 // include handler
 #include "CompHandler.hh"
 
@@ -110,6 +111,7 @@ public:
 	CurrQueryServerHandler *currQueryServerHandler;
 	LtmQueryServerHandler *ltmQueryServerHandler;
 	
+	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
 	SmartStateChangeHandler *stateChangeHandler;
@@ -142,7 +144,7 @@ public:
 		{
 			// the name of the component
 			std::string name;
-			std::string initialMainState;
+			std::string initialComponentMode;
 			std::string defaultScheduler;
 			bool useLogger;
 		} component;
@@ -201,6 +203,7 @@ public:
 			std::string wiringName;
 			long interval;
 		} laserServiceIn;
+		
 	} connections;
 };
 #endif

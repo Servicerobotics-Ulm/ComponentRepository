@@ -12,20 +12,20 @@ ComponentDocumentation SmartAmcl{
 	Purpose : "Navigation"
 	
 	
-	NeutralMainState : "No localization is performed. No position updates will be sent."
-	ComponentMainState Active : "Localization is performed as described, position updates are sent."
+	NeutralMode : "No localization is performed. No position updates will be sent."
+	ComponentMode Active : "Localization is performed as described, position updates are sent."
 	
-	ComponentService LocalizationUpdateServiceOut {
+	ComponentPort LocalizationUpdateServiceOut {
 		Description : "Typically connected to the robot base (e.g. SmartPioneerBaseServer). This port sends position updates."
-		NeutralMainState : "Inactive in this state."
-		ComponentMainState Active : "Sends position updates."
+		NeutralMode : "Inactive in this state."
+		ComponentMode Active : "Sends position updates."
 	}
-	ComponentService LaserServiceIn {
+	ComponentPort LaserServiceIn {
 		Description : "The laser scans that the Amcl algorithm uses for localization, e.g. from SmartLaserLMS200Server."
-		NeutralMainState  : "Port is neutral, does not consume new input while in this state."
-		ComponentMainState Active : "Considers laser scans for localization."
+		NeutralMode  : "Port is neutral, does not consume new input while in this state."
+		ComponentMode Active : "Considers laser scans for localization."
 	}
-	BehaviorSlaveInterface SlavePort {
+	CoordinationSlavePort CoordinationPort {
 		DynamicWiringPort :  "Slave part of wiring pattern. It is responsible for changing the port connections within the component."
 		StatePort : "See States for descriptions of possible states and their meaning."
 		ParameterPort : "Accepts parameters to configure and trigger localization. See Parameters."

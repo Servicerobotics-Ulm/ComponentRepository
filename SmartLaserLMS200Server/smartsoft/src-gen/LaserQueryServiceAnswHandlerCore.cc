@@ -14,6 +14,7 @@
 // running the code generator.
 //--------------------------------------------------------------------------
 #include "LaserQueryServiceAnswHandlerCore.hh"
+#include "LaserQueryServiceAnswHandler.hh"
 
 // include observers
 #include "LaserTask.hh"
@@ -29,10 +30,27 @@ LaserQueryServiceAnswHandlerCore::~LaserQueryServiceAnswHandlerCore()
 	
 }
 
-void LaserQueryServiceAnswHandlerCore::update_from(const Smart::TaskInteractionSubject* subject)
+void LaserQueryServiceAnswHandlerCore::updateAllCommObjects()
 {
-	// try typecasting into according Task or Upcall class
-	 if(const LaserTask* laserTask = dynamic_cast<const LaserTask*>(subject)) {
-		this->on_update_from(laserTask);
+}
+
+void LaserQueryServiceAnswHandlerCore::notify_all_interaction_observers() {
+	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
+	// try dynamically down-casting this class to the derived class 
+	// (we can do it safely here as we exactly know the derived class)
+	if(const LaserQueryServiceAnswHandler* laserQueryServiceAnswHandler = dynamic_cast<const LaserQueryServiceAnswHandler*>(this)) {
+		for(auto it=interaction_observers.begin(); it!=interaction_observers.end(); it++) {
+			(*it)->on_update_from(laserQueryServiceAnswHandler);
+		}
 	}
+}
+
+void LaserQueryServiceAnswHandlerCore::attach_interaction_observer(LaserQueryServiceAnswHandlerObserverInterface *observer) {
+	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
+	interaction_observers.push_back(observer);
+}
+
+void LaserQueryServiceAnswHandlerCore::detach_interaction_observer(LaserQueryServiceAnswHandlerObserverInterface *observer) {
+	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
+	interaction_observers.remove(observer);
 }
