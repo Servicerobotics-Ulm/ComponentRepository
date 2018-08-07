@@ -1,0 +1,11 @@
+ComponentDefinition ComponentLaserObstacleAvoid 
+{
+	Activity RobotTask
+	{
+		InputPortLink LaserServiceIn { oversamplingOk undersamplingOk }
+	}
+	InputPort LaserServiceIn implements CommBasicObjects.LaserService {
+	}
+	OutputPort NavigationVelocityServiceOut implements CommNavigationObjects.NavigationVelocityService realizedBy RobotTask {
+	}
+}
