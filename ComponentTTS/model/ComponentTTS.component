@@ -1,0 +1,16 @@
+ComponentDefinition ComponentTTS {
+
+InputPort SpeechSendServiceIn implements DomainSpeech.SpeechSendService {
+	}
+	InputHandler SpeechSendHandler triggeredFrom SpeechSendServiceIn { }
+	AnswerPort SpeechQueryServiceAnsw implements DomainSpeech.SpeechQueryService {
+	}
+	RequestHandler SpeechQueryHandler triggeredFrom SpeechQueryServiceAnsw {
+	}
+	Activity SpeechTask
+	{
+	}
+	ComponentParameters ComponentTTSParams
+slave CoordinationPort
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService { }
+}

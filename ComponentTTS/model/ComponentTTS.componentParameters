@@ -1,0 +1,8 @@
+ComponentParameter ComponentTTSParams component ComponentTTS 
+{
+	InternalParameter Settings 
+	{	
+		// "Speech messages are sent to stdin of the specified executable. Specify full path, e.g./bin/cat, /usr/share/mbrola/say, /usr/bin/festival --tts, spd-say -e on ubuntu, etc."
+		player : String = "/usr/bin/spd-say -e"
+	}
+}
