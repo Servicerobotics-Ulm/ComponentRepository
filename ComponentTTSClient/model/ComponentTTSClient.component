@@ -1,0 +1,14 @@
+ComponentDefinition ComponentTTSClient {
+
+	RequestPort SpeechQueryServiceReq implements DomainSpeech.SpeechQueryService {
+	}
+	Activity ConsoleTask
+	{
+	RequestPortLink SpeechQueryServiceReq
+	}
+	OutputPort SpeechSendServiceOut implements DomainSpeech.SpeechSendService realizedBy ConsoleTask {
+	}
+	ComponentParameters ComponentTTSClientParams
+slave CoordinationPort
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.BaseCoordinationService { }
+}
