@@ -17,7 +17,6 @@
 #include "RobotTask.hh"
 #include "ComponentLaserObstacleAvoid.hh"
 #include "SimpleAvoid.hh"
-#include "RandDouble.hh"
 #include <iostream>
 
 RobotTask::RobotTask(SmartACE::SmartComponent *comp) 
@@ -46,6 +45,7 @@ int RobotTask::on_entry()
 	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
 	return 0;
 }
+
 int RobotTask::on_execute()
 {
 	// this method is called from an outside loop,
@@ -54,9 +54,12 @@ int RobotTask::on_execute()
 
 	Smart::StatusCode status;
 
+	/////////////////////////////////////////////
+	// Get input data and calculate movement
+
 	// get laser scan:
-	CommBasicObjects::CommMobileLaserScan laserServiceInObject;
-	status = this->laserServiceInGetUpdate(laserServiceInObject);
+	CommBasicObjects::CommMobileLaserScan laserScan;
+	status = this->laserServiceInGetUpdate(laserScan);
 
 	if(status != Smart::SMART_OK) {
 		std::cerr << "Getting laser scan failed: " << status << std::endl;
@@ -64,20 +67,24 @@ int RobotTask::on_execute()
 		return 0;
 	}
 
-	std::cout << "Done with Receiving the Laser,  Now Sending Velocity !" << std::endl;
+	std::cout << "Laser scan received." << std::endl;
 
 
-	// process scan:
-	CommBasicObjects::CommNavigationVelocity comNavVel;
-	Smart::StatusCode status_nav;
+	// process scan
+	double velocity = 0.0;
+	double turnrate = 0.0;
+	SimpleAvoid::runCycle(laserScan, velocity, turnrate);
 
-	double velocity =0;//= RandDouble::fRand(0.0,0.02);
-	double turnrate =0;//= RandDouble::fRand(0.0,0.02);
 
-	SimpleAvoid::runCycle(laserServiceInObject,velocity,turnrate);
 
-	comNavVel.set_vX(velocity*0.5, 0.001);
-	comNavVel.set_omega(turnrate * 0.0575);
+
+	/////////////////////////////////////////////
+	// Now Provide result to service port.
+
+	// First fill the communication object
+	CommBasicObjects::CommNavigationVelocity navigationVelocity;
+	navigationVelocity.set_vX(velocity*0.5, 0.001);
+	navigationVelocity.set_omega(turnrate * 0.0575);
 
 	std::cout << "Velocity : " << velocity	<< std::endl;
 	std::cout << "turnrate :" << turnrate	<< std::endl;
@@ -89,19 +96,21 @@ int RobotTask::on_execute()
 
 
 	// Provide result to output port, thereby command the robot:
-	status_nav = this->navigationVelocityServiceOutPut(comNavVel);
+	status = this->navigationVelocityServiceOutPut(navigationVelocity);
 
-	if(status_nav != Smart::SMART_OK) {
+	if(status != Smart::SMART_OK) {
 		std::cerr << status << std::endl;
-		std::cout << "Some Error in the Conection as status is not ok " << std::endl;
+		std::cout << "Error providing navigation velocity: " << status << std::endl;
 		sleep(1);
 	} else {
-		std::cout << "Updating Velocity " << comNavVel << std::endl;
+		std::cout << "Sent navigation velocity " << navigationVelocity << std::endl;
 	}
 
 	sleep(1);
 	return 0;
 }
+
+
 int RobotTask::on_exit()
 {
 	// use this method to clean-up resources which are initialized in on_entry() and needs to be freed before the on_execute() can be called again
