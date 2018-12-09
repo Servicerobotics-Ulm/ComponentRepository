@@ -15,15 +15,18 @@
 //--------------------------------------------------------------------------
 #include <iostream>
 #include "SmartCdlServer.hh"
-	
-	
-SmartCdlServer SmartCdlServer::_smartCdlServer;
-	
+
 int main(int argc, char *argv[])
 {
 	std::cout << "main...\n";
+	// initialize component infrastructure (loading ini-file, creating ports, tasks, etc.)
 	SmartCdlServer::instance()->init(argc, argv);
+	// run component infrastructure until the component is commanded to shutdown
 	SmartCdlServer::instance()->run();
+	// clean-up component's internal resources (deleting ports, tasks, etc.)
+	SmartCdlServer::instance()->fini();
+	// destroy the component's singleton
+	SmartCdlServer::deleteInstance();
 	std::cout << "... main() end. return 0." << std::endl;
 	return 0;
 }

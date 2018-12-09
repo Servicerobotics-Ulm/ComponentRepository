@@ -22,6 +22,25 @@
 
 // include observers
 
+
+RobotTaskCore::RobotTaskCore(Smart::IComponent *comp, const bool &useDefaultState) 
+:	SmartACE::ManagedTask(comp)
+,	useDefaultState(useDefaultState)
+,	useLogging(false)
+,	taskLoggingId(0)
+,	currentUpdateCount(0)
+,	localizationUpdateStatus(Smart::SMART_DISCONNECTED)
+,	localizationUpdateObject()
+,	navVelInStatus(Smart::SMART_DISCONNECTED)
+,	navVelInObject()
+{
+}
+
+RobotTaskCore::~RobotTaskCore()
+{
+}
+
+
 void RobotTaskCore::notify_all_interaction_observers() {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
 	// try dynamically down-casting this class to the derived class 
@@ -74,6 +93,7 @@ void RobotTaskCore::updateAllCommObjects()
 {
 	localizationUpdateStatus = COMP->localizationUpdateInputTaskTrigger->getUpdate(localizationUpdateObject);
 	navVelInStatus = COMP->navVelInInputTaskTrigger->getUpdate(navVelInObject);
+	
 }
 
 

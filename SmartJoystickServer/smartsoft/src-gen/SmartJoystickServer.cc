@@ -17,17 +17,18 @@
 #include "smartTimedTaskTrigger.h"
 //FIXME: implement logging
 //#include "smartGlobalLogger.hh"
-#include "OpcUaComponentTask.hh"
-#include <SeRoNetSDK/SeRoNet/Utils/Component.hpp>
 
+// the ace port-factory is used as a default port-mapping
+#include "SmartJoystickServerAcePortFactory.hh"
+
+
+// initialize static singleton pointer to zero
+SmartJoystickServer* SmartJoystickServer::_smartJoystickServer = 0;
 
 // constructor
 SmartJoystickServer::SmartJoystickServer()
 {
 	std::cout << "constructor of SmartJoystickServer\n";
-	
-	component = NULL;
-	opcUaComponentTask = NULL;
 	
 	// set all pointer members to NULL
 	//coordinationPort = NULL;
@@ -40,7 +41,6 @@ SmartJoystickServer::SmartJoystickServer()
 	wiringSlave = NULL;
 	param = NULL;
 	
-	
 	// set default ini parameter values
 	connections.component.name = "SmartJoystickServer";
 	connections.component.initialComponentMode = "Neutral";
@@ -48,13 +48,29 @@ SmartJoystickServer::SmartJoystickServer()
 	connections.component.useLogger = false;
 	
 	connections.joystickServcieOut.serviceName = "JoystickServcieOut";
+	connections.joystickServcieOut.roboticMiddleware = "ACE_SmartSoft";
 	// scheduling default parameters
 	connections.joystickTask.scheduler = "DEFAULT";
 	connections.joystickTask.priority = -1;
 	connections.joystickTask.cpuAffinity = -1;
+	
+	// initialize members of SmartJoystickServerROSExtension
+	
+	// initialize members of SeRoNetSDKComponentGeneratorExtension
+	
+	// initialize members of PlainOpcUaSmartJoystickServerExtension
+	
 }
 
+void SmartJoystickServer::addPortFactory(const std::string &name, SmartJoystickServerPortFactoryInterface *portFactory)
+{
+	portFactoryRegistry[name] = portFactory;
+}
 
+void SmartJoystickServer::addExtension(SmartJoystickServerExtension *extension)
+{
+	componentExtensionRegistry[extension->getName()] = extension;
+}
 
 /**
  * Notify the component that setup/initialization is finished.
@@ -125,24 +141,34 @@ void SmartJoystickServer::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
-		if(connections.component.defaultScheduler != "DEFAULT") {
-			ACE_Sched_Params sched_params(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
-			if(connections.component.defaultScheduler == "FIFO") {
-				sched_params.policy(ACE_SCHED_FIFO);
-				sched_params.priority(ACE_THR_PRI_FIFO_MIN);
-			} else if(connections.component.defaultScheduler == "RR") {
-				sched_params.policy(ACE_SCHED_RR);
-				sched_params.priority(ACE_THR_PRI_RR_MIN);
-			}
-			// create new instance of the SmartSoft component with customized scheuling parameters 
-			component = new SmartJoystickServerImpl(connections.component.name, argc, argv, sched_params);
-		} else {
-			// create new instance of the SmartSoft component
-			component = new SmartJoystickServerImpl(connections.component.name, argc, argv);
+		
+		// initializations of SmartJoystickServerROSExtension
+		
+		// initializations of SeRoNetSDKComponentGeneratorExtension
+		
+		// initializations of PlainOpcUaSmartJoystickServerExtension
+		
+		
+		// initialize all registered port-factories
+		for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+		{
+			portFactory->second->initialize(this, argc, argv);
 		}
 		
-		opcUaComponentTask = new OpcUa::ComponentTask(component);
-		SeRoNet::Utils::Component *opcuaComponent = dynamic_cast<SeRoNet::Utils::Component*>(opcUaComponentTask->getOpcUaComponent());
+		// initialize all registered component-extensions
+		for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+		{
+			extension->second->initialize(this, argc, argv);
+		}
+		
+		SmartJoystickServerPortFactoryInterface *acePortFactory = portFactoryRegistry["ACE_SmartSoft"];
+		if(acePortFactory == 0) {
+			std::cerr << "ERROR: acePortFactory NOT instantiated -> exit(-1)" << std::endl;
+			exit(-1);
+		}
+		
+		// this pointer is used for backwards compatibility (deprecated: should be removed as soon as all patterns, including coordination, are moved to port-factory)
+		SmartACE::SmartComponent *component = dynamic_cast<SmartJoystickServerAcePortFactory*>(acePortFactory)->getComponentImpl();
 		
 		std::cout << "ComponentDefinition SmartJoystickServer is named " << connections.component.name << std::endl;
 		
@@ -156,7 +182,7 @@ void SmartJoystickServer::init(int argc, char *argv[])
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
-		joystickServcieOut = new SeRoNet::OPCUA::Server::PushServer<CommBasicObjects::CommJoystick>(opcuaComponent, connections.joystickServcieOut.serviceName);
+		joystickServcieOut = portFactoryRegistry[connections.joystickServcieOut.roboticMiddleware]->createJoystickServcieOut(connections.joystickServcieOut.serviceName);
 		
 		// create client ports
 		
@@ -165,7 +191,6 @@ void SmartJoystickServer::init(int argc, char *argv[])
 		// create input-handler
 		
 		// create request-handlers
-		
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
@@ -200,16 +225,37 @@ void SmartJoystickServer::init(int argc, char *argv[])
 // run the component
 void SmartJoystickServer::run()
 {
+	stateSlave->acquire("init");
+	// startup all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->onStartup();
+	}
+	
+	// startup all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->onStartup();
+	}
+	stateSlave->release("init");
+	
+	// do not call this handler within the init state (see above) as this handler internally calls setStartupFinished() (this should be fixed in future)
 	compHandler.onStartup();
 	
-	opcUaComponentTask->start();
+	// this call blocks until the component is commanded to shutdown
+	stateSlave->acquire("shutdown");
 	
-	// coponent will now start running and will continue (block in the run method) until it is commanded to shutdown (i.e. by a SIGINT signal)
-	component->run();
-	// component was signalled to shutdown
-	// 1) signall all tasks to shutdown as well (and give them 2 seconds time to cooperate)
-	// if time exceeds, component is killed without further clean-up
-	component->closeAllAssociatedTasks(2);
+	// shutdown all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->onShutdown();
+	}
+	
+	// shutdown all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->onShutdown();
+	}
 	
 	if(connections.component.useLogger == true) {
 		//FIXME: use logging
@@ -218,8 +264,12 @@ void SmartJoystickServer::run()
 	
 	compHandler.onShutdown();
 	
-	opcUaComponentTask->stop();
-	
+	stateSlave->release("shutdown");
+}
+
+// clean-up component's resources
+void SmartJoystickServer::fini()
+{
 	// unlink all observers
 	
 	// destroy all task instances
@@ -240,7 +290,6 @@ void SmartJoystickServer::run()
 	
 	// destroy request-handlers
 	
-
 	delete stateSlave;
 	// destroy state-change-handler
 	delete stateChangeHandler;
@@ -250,13 +299,24 @@ void SmartJoystickServer::run()
 	delete param;
 	
 
-	// clean-up component's internally used resources (internally used communication middleware) 
-	component->cleanUpComponentResources();
+	// destroy all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->destroy();
+	}
+
+	// destroy all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->destroy();
+	}
 	
-	delete opcUaComponentTask;
+	// destruction of SmartJoystickServerROSExtension
 	
-	// finally delete the component itself
-	delete component;
+	// destruction of SeRoNetSDKComponentGeneratorExtension
+	
+	// destruction of PlainOpcUaSmartJoystickServerExtension
+	
 }
 
 void SmartJoystickServer::loadParameter(int argc, char *argv[])
@@ -330,9 +390,11 @@ void SmartJoystickServer::loadParameter(int argc, char *argv[])
 		}
 		
 		
-		
 		// load parameters for server JoystickServcieOut
 		parameter.getString("JoystickServcieOut", "serviceName", connections.joystickServcieOut.serviceName);
+		if(parameter.checkIfParameterExists("JoystickServcieOut", "roboticMiddleware")) {
+			parameter.getString("JoystickServcieOut", "roboticMiddleware", connections.joystickServcieOut.roboticMiddleware);
+		}
 		
 		// load parameters for task JoystickTask
 		if(parameter.checkIfParameterExists("JoystickTask", "scheduler")) {
@@ -343,6 +405,19 @@ void SmartJoystickServer::loadParameter(int argc, char *argv[])
 		}
 		if(parameter.checkIfParameterExists("JoystickTask", "cpuAffinity")) {
 			parameter.getInteger("JoystickTask", "cpuAffinity", connections.joystickTask.cpuAffinity);
+		}
+		
+		// load parameters for SmartJoystickServerROSExtension
+		
+		// load parameters for SeRoNetSDKComponentGeneratorExtension
+		
+		// load parameters for PlainOpcUaSmartJoystickServerExtension
+		
+		
+		// load parameters for all registered component-extensions
+		for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+		{
+			extension->second->loadParameters(parameter);
 		}
 		
 		paramHandler.loadParameter(parameter);

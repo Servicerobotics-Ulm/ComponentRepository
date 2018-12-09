@@ -18,13 +18,17 @@
 //FIXME: implement logging
 //#include "smartGlobalLogger.hh"
 
+// the ace port-factory is used as a default port-mapping
+#include "SmartLaserLMS200ServerAcePortFactory.hh"
+
+
+// initialize static singleton pointer to zero
+SmartLaserLMS200Server* SmartLaserLMS200Server::_smartLaserLMS200Server = 0;
 
 // constructor
 SmartLaserLMS200Server::SmartLaserLMS200Server()
 {
 	std::cout << "constructor of SmartLaserLMS200Server\n";
-	
-	component = NULL;
 	
 	// set all pointer members to NULL
 	baseStateIn = NULL;
@@ -43,7 +47,6 @@ SmartLaserLMS200Server::SmartLaserLMS200Server()
 	wiringSlave = NULL;
 	param = NULL;
 	
-	
 	// set default ini parameter values
 	connections.component.name = "SmartLaserLMS200Server";
 	connections.component.initialComponentMode = "Neutral";
@@ -51,19 +54,37 @@ SmartLaserLMS200Server::SmartLaserLMS200Server()
 	connections.component.useLogger = false;
 	
 	connections.laserQueryServiceAnsw.serviceName = "LaserQueryServiceAnsw";
+	connections.laserQueryServiceAnsw.roboticMiddleware = "ACE_SmartSoft";
 	connections.laserScanOut.serviceName = "LaserScanOut";
+	connections.laserScanOut.roboticMiddleware = "ACE_SmartSoft";
 	connections.baseStateIn.initialConnect = false;
 	connections.baseStateIn.wiringName = "BaseStateIn";
 	connections.baseStateIn.serverName = "unknown";
 	connections.baseStateIn.serviceName = "unknown";
 	connections.baseStateIn.interval = 1;
+	connections.baseStateIn.roboticMiddleware = "ACE_SmartSoft";
 	// scheduling default parameters
 	connections.laserTask.scheduler = "DEFAULT";
 	connections.laserTask.priority = -1;
 	connections.laserTask.cpuAffinity = -1;
+	
+	// initialize members of SmartLaserLMS200ServerROSExtension
+	
+	// initialize members of SeRoNetSDKComponentGeneratorExtension
+	
+	// initialize members of PlainOpcUaSmartLaserLMS200ServerExtension
+	
 }
 
+void SmartLaserLMS200Server::addPortFactory(const std::string &name, SmartLaserLMS200ServerPortFactoryInterface *portFactory)
+{
+	portFactoryRegistry[name] = portFactory;
+}
 
+void SmartLaserLMS200Server::addExtension(SmartLaserLMS200ServerExtension *extension)
+{
+	componentExtensionRegistry[extension->getName()] = extension;
+}
 
 /**
  * Notify the component that setup/initialization is finished.
@@ -154,22 +175,34 @@ void SmartLaserLMS200Server::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
-		if(connections.component.defaultScheduler != "DEFAULT") {
-			ACE_Sched_Params sched_params(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
-			if(connections.component.defaultScheduler == "FIFO") {
-				sched_params.policy(ACE_SCHED_FIFO);
-				sched_params.priority(ACE_THR_PRI_FIFO_MIN);
-			} else if(connections.component.defaultScheduler == "RR") {
-				sched_params.policy(ACE_SCHED_RR);
-				sched_params.priority(ACE_THR_PRI_RR_MIN);
-			}
-			// create new instance of the SmartSoft component with customized scheuling parameters 
-			component = new SmartLaserLMS200ServerImpl(connections.component.name, argc, argv, sched_params);
-		} else {
-			// create new instance of the SmartSoft component
-			component = new SmartLaserLMS200ServerImpl(connections.component.name, argc, argv);
+		
+		// initializations of SmartLaserLMS200ServerROSExtension
+		
+		// initializations of SeRoNetSDKComponentGeneratorExtension
+		
+		// initializations of PlainOpcUaSmartLaserLMS200ServerExtension
+		
+		
+		// initialize all registered port-factories
+		for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+		{
+			portFactory->second->initialize(this, argc, argv);
 		}
 		
+		// initialize all registered component-extensions
+		for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+		{
+			extension->second->initialize(this, argc, argv);
+		}
+		
+		SmartLaserLMS200ServerPortFactoryInterface *acePortFactory = portFactoryRegistry["ACE_SmartSoft"];
+		if(acePortFactory == 0) {
+			std::cerr << "ERROR: acePortFactory NOT instantiated -> exit(-1)" << std::endl;
+			exit(-1);
+		}
+		
+		// this pointer is used for backwards compatibility (deprecated: should be removed as soon as all patterns, including coordination, are moved to port-factory)
+		SmartACE::SmartComponent *component = dynamic_cast<SmartLaserLMS200ServerAcePortFactory*>(acePortFactory)->getComponentImpl();
 		
 		std::cout << "ComponentDefinition SmartLaserLMS200Server is named " << connections.component.name << std::endl;
 		
@@ -183,12 +216,12 @@ void SmartLaserLMS200Server::init(int argc, char *argv[])
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
-		laserQueryServiceAnsw = new SmartACE::QueryServer<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan>(component, connections.laserQueryServiceAnsw.serviceName);
+		laserQueryServiceAnsw = portFactoryRegistry[connections.laserQueryServiceAnsw.roboticMiddleware]->createLaserQueryServiceAnsw(connections.laserQueryServiceAnsw.serviceName);
 		laserQueryServiceAnswInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan,SmartACE::QueryId>(laserQueryServiceAnsw);
-		laserScanOut = new SmartACE::PushServer<CommBasicObjects::CommMobileLaserScan>(component, connections.laserScanOut.serviceName);
+		laserScanOut = portFactoryRegistry[connections.laserScanOut.roboticMiddleware]->createLaserScanOut(connections.laserScanOut.serviceName);
 		
 		// create client ports
-		baseStateIn = new SmartACE::PushClient<CommBasicObjects::CommBaseState>(component);
+		baseStateIn = portFactoryRegistry[connections.baseStateIn.roboticMiddleware]->createBaseStateIn();
 		
 		// create InputTaskTriggers and UpcallManagers
 		baseStateInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(baseStateIn);
@@ -198,7 +231,6 @@ void SmartLaserLMS200Server::init(int argc, char *argv[])
 		
 		// create request-handlers
 		laserQueryServiceAnswHandler = new LaserQueryServiceAnswHandler(laserQueryServiceAnsw);
-		
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
@@ -211,7 +243,10 @@ void SmartLaserLMS200Server::init(int argc, char *argv[])
 		
 		wiringSlave = new SmartACE::WiringSlave(component);
 		// add client port to wiring slave
-		dynamic_cast<SmartACE::PushClient<CommBasicObjects::CommBaseState>*>(baseStateIn)->add(wiringSlave, connections.baseStateIn.wiringName);
+		if(connections.baseStateIn.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::PushClient<CommBasicObjects::CommBaseState>*>(baseStateIn)->add(wiringSlave, connections.baseStateIn.wiringName);
+		}
 		
 		// create parameter slave
 		param = new SmartACE::ParameterSlave(component, &paramHandler);
@@ -236,15 +271,37 @@ void SmartLaserLMS200Server::init(int argc, char *argv[])
 // run the component
 void SmartLaserLMS200Server::run()
 {
+	stateSlave->acquire("init");
+	// startup all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->onStartup();
+	}
+	
+	// startup all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->onStartup();
+	}
+	stateSlave->release("init");
+	
+	// do not call this handler within the init state (see above) as this handler internally calls setStartupFinished() (this should be fixed in future)
 	compHandler.onStartup();
 	
+	// this call blocks until the component is commanded to shutdown
+	stateSlave->acquire("shutdown");
 	
-	// coponent will now start running and will continue (block in the run method) until it is commanded to shutdown (i.e. by a SIGINT signal)
-	component->run();
-	// component was signalled to shutdown
-	// 1) signall all tasks to shutdown as well (and give them 2 seconds time to cooperate)
-	// if time exceeds, component is killed without further clean-up
-	component->closeAllAssociatedTasks(2);
+	// shutdown all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->onShutdown();
+	}
+	
+	// shutdown all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->onShutdown();
+	}
 	
 	if(connections.component.useLogger == true) {
 		//FIXME: use logging
@@ -253,7 +310,12 @@ void SmartLaserLMS200Server::run()
 	
 	compHandler.onShutdown();
 	
-	
+	stateSlave->release("shutdown");
+}
+
+// clean-up component's resources
+void SmartLaserLMS200Server::fini()
+{
 	// unlink all observers
 	laserTask->detach_interaction_observer(laserQueryServiceAnswHandler);
 	
@@ -282,7 +344,6 @@ void SmartLaserLMS200Server::run()
 	// destroy request-handlers
 	delete laserQueryServiceAnswHandler;
 	
-
 	delete stateSlave;
 	// destroy state-change-handler
 	delete stateChangeHandler;
@@ -292,12 +353,24 @@ void SmartLaserLMS200Server::run()
 	delete param;
 	
 
-	// clean-up component's internally used resources (internally used communication middleware) 
-	component->cleanUpComponentResources();
+	// destroy all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->destroy();
+	}
+
+	// destroy all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->destroy();
+	}
 	
+	// destruction of SmartLaserLMS200ServerROSExtension
 	
-	// finally delete the component itself
-	delete component;
+	// destruction of SeRoNetSDKComponentGeneratorExtension
+	
+	// destruction of PlainOpcUaSmartLaserLMS200ServerExtension
+	
 }
 
 void SmartLaserLMS200Server::loadParameter(int argc, char *argv[])
@@ -376,12 +449,20 @@ void SmartLaserLMS200Server::loadParameter(int argc, char *argv[])
 		parameter.getString("BaseStateIn", "serverName", connections.baseStateIn.serverName);
 		parameter.getString("BaseStateIn", "wiringName", connections.baseStateIn.wiringName);
 		parameter.getInteger("BaseStateIn", "interval", connections.baseStateIn.interval);
-		
+		if(parameter.checkIfParameterExists("BaseStateIn", "roboticMiddleware")) {
+			parameter.getString("BaseStateIn", "roboticMiddleware", connections.baseStateIn.roboticMiddleware);
+		}
 		
 		// load parameters for server LaserQueryServiceAnsw
 		parameter.getString("LaserQueryServiceAnsw", "serviceName", connections.laserQueryServiceAnsw.serviceName);
+		if(parameter.checkIfParameterExists("LaserQueryServiceAnsw", "roboticMiddleware")) {
+			parameter.getString("LaserQueryServiceAnsw", "roboticMiddleware", connections.laserQueryServiceAnsw.roboticMiddleware);
+		}
 		// load parameters for server LaserScanOut
 		parameter.getString("LaserScanOut", "serviceName", connections.laserScanOut.serviceName);
+		if(parameter.checkIfParameterExists("LaserScanOut", "roboticMiddleware")) {
+			parameter.getString("LaserScanOut", "roboticMiddleware", connections.laserScanOut.roboticMiddleware);
+		}
 		
 		// load parameters for task LaserTask
 		if(parameter.checkIfParameterExists("LaserTask", "scheduler")) {
@@ -392,6 +473,19 @@ void SmartLaserLMS200Server::loadParameter(int argc, char *argv[])
 		}
 		if(parameter.checkIfParameterExists("LaserTask", "cpuAffinity")) {
 			parameter.getInteger("LaserTask", "cpuAffinity", connections.laserTask.cpuAffinity);
+		}
+		
+		// load parameters for SmartLaserLMS200ServerROSExtension
+		
+		// load parameters for SeRoNetSDKComponentGeneratorExtension
+		
+		// load parameters for PlainOpcUaSmartLaserLMS200ServerExtension
+		
+		
+		// load parameters for all registered component-extensions
+		for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+		{
+			extension->second->loadParameters(parameter);
 		}
 		
 		paramHandler.loadParameter(parameter);

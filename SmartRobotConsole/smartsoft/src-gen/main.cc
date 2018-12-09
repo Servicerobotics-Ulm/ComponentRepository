@@ -15,15 +15,18 @@
 //--------------------------------------------------------------------------
 #include <iostream>
 #include "SmartRobotConsole.hh"
-	
-	
-SmartRobotConsole SmartRobotConsole::_smartRobotConsole;
-	
+
 int main(int argc, char *argv[])
 {
 	std::cout << "main...\n";
+	// initialize component infrastructure (loading ini-file, creating ports, tasks, etc.)
 	SmartRobotConsole::instance()->init(argc, argv);
+	// run component infrastructure until the component is commanded to shutdown
 	SmartRobotConsole::instance()->run();
+	// clean-up component's internal resources (deleting ports, tasks, etc.)
+	SmartRobotConsole::instance()->fini();
+	// destroy the component's singleton
+	SmartRobotConsole::deleteInstance();
 	std::cout << "... main() end. return 0." << std::endl;
 	return 0;
 }

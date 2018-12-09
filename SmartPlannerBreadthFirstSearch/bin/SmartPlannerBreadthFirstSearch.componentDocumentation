@@ -15,32 +15,32 @@ ComponentDocumentation SmartPlannerBreadthFirstSearch{
 	HardwareRequirements : "-"
 	Purpose : "	Navigation"
 	
-	NeutralMainState : "The path planning execution cycle is stopped. No path planning is performed, no intermediate waypoints and goal points are sent."
-	ComponentMainState PathPlanning : "The component will continuously (every 1 second) plan a path to the goalpoints. Intermediate waypoints and goals are sent."
+	NeutralMode : "The path planning execution cycle is stopped. No path planning is performed, no intermediate waypoints and goal points are sent."
+	ComponentMode PathPlanning : "The component will continuously (every 1 second) plan a path to the goalpoints. Intermediate waypoints and goals are sent."
 	
-	ComponentService CurMapClient {
+	ComponentPort CurMapClient {
 		Description : "The planner will plan paths in grid maps sent to this port. Typically connected to a map building component such as SmartMapperGridMap."
-		NeutralMainState : "Port is neutral, does not consume new input while in this state."
-		ComponentMainState PathPlanning : "Latest map from this port is considered for path planning."
+		NeutralMode : "Port is neutral, does not consume new input while in this state."
+		ComponentMode PathPlanning : "Latest map from this port is considered for path planning."
 	}
-	ComponentService BaseStateClient {
+	ComponentPort BaseStateClient {
 		Description : "Base states as input for path planning shall be sent to this port. The path is planned based on the current position sent through this port. Typically connected to the robot base, e.g. SmartPioneerBaseServer."
-		NeutralMainState : "Port is neutral, does not consume new input while in this state."
-		ComponentMainState PathPlanning : "The latest position is considered as the current position for path planning."
+		NeutralMode : "Port is neutral, does not consume new input while in this state."
+		ComponentMode PathPlanning : "The latest position is considered as the current position for path planning."
 	}
 	
-	BehaviorSlaveInterface SlavePort {
+	CoordinationSlavePort CoordinationPort {
 		DynamicWiringPort : "Slave part of wiring pattern. It is responsible for changing the port connections within the component."
 		StatePort : "See States for descriptions of possible states and their meaning."
 		ParameterPort : "Accepts various parameters for managing goals. See Parameters."
 	}
 	
-	ComponentService PlannerGoalServer {
+	ComponentPort PlannerGoalServer {
 		Description : "If a path was found (event PLANNER_NO_ERROR fired), this port pushes an valid (invalid flag set to false) intermediate waypoint and goal point calculated by the planner to the motion execution. If no path was found, the waypoint and goalpoint are sent with the invalid flag set to true."
-		NeutralMainState : "Port is neutral, does not send any intermediate waypoints and goal points while in this state."
-		ComponentMainState PathPlanning : "Planner goals are sent to the motion execution as intermediate waypoints and goal points."
+		NeutralMode : "Port is neutral, does not send any intermediate waypoints and goal points while in this state."
+		ComponentMode PathPlanning : "Planner goals are sent to the motion execution as intermediate waypoints and goal points."
 	}
-	ComponentService PlannerEventServer {
+	ComponentPort PlannerEventServer {
 		Description : " The event state PLANNER_UNKNOWN can be used for activation if the current state is unknown. Events are sent on every change.
 
 						The port will send the events listed below:
@@ -55,7 +55,7 @@ ComponentDocumentation SmartPlannerBreadthFirstSearch{
 						- PLANNER_WRONG_MAPID: The latest grid map is of another id than the current planner id. The planner will not plan anything and will not send intermediate waypoints and goal points.
 
 						"
-    	NeutralMainState : "Neutral, will not send any events."
-    	ComponentMainState PathPlanning : "Will send the above events."
+    	NeutralMode : "Neutral, will not send any events."
+    	ComponentMode PathPlanning : "Will send the above events."
 	}
 }

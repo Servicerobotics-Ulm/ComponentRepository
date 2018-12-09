@@ -15,12 +15,28 @@
 //--------------------------------------------------------------------------
 #ifndef _SMARTGMAPPING_HH
 #define _SMARTGMAPPING_HH
-	
+
+#include <map>
 #include <iostream>
 #include "aceSmartSoft.hh"
 #include "smartQueryServerTaskTrigger_T.h"
 #include "SmartGMappingCore.hh"
-#include "SmartGMappingImpl.hh"
+
+#include "SmartGMappingPortFactoryInterface.hh"
+#include "SmartGMappingExtension.hh"
+
+// forward declarations
+class SmartGMappingPortFactoryInterface;
+class SmartGMappingExtension;
+
+// includes for SmartGMappingROSExtension
+
+// includes for SeRoNetSDKComponentGeneratorExtension
+
+// includes for PlainOpcUaSmartGMappingExtension
+// include plain OPC UA device clients
+// include plain OPC UA status servers
+
 
 // include communication objects
 #include <CommBasicObjects/CommBasePositionUpdate.hh>
@@ -38,7 +54,6 @@
 // include input-handler
 // include input-handler
 
-
 // include handler
 #include "CompHandler.hh"
 
@@ -51,7 +66,7 @@
 
 class SmartGMapping : public SmartGMappingCore {
 private:
-	static SmartGMapping _smartGMapping;
+	static SmartGMapping *_smartGMapping;
 	
 	// constructor
 	SmartGMapping();
@@ -68,12 +83,16 @@ private:
 	// instantiate comp-handler
 	CompHandler compHandler;
 	
+	// helper method that maps a string-name to an according TaskTriggerSubject
 	Smart::TaskTriggerSubject* getInputTaskTriggerFromString(const std::string &client);
 	
-public:
-	// component
-	SmartGMappingImpl *component;
+	// internal map storing the different port-creation factories (that internally map to specific middleware implementations)
+	std::map<std::string, SmartGMappingPortFactoryInterface*> portFactoryRegistry;
 	
+	// internal map storing various extensions of this component class
+	std::map<std::string, SmartGMappingExtension*> componentExtensionRegistry;
+	
+public:
 	ParameterStateStruct getGlobalState() const
 	{
 		return paramHandler.getGlobalState();
@@ -101,6 +120,12 @@ public:
 	
 	// define request-handlers
 	
+	// definitions of SmartGMappingROSExtension
+	
+	// definitions of SeRoNetSDKComponentGeneratorExtension
+	
+	// definitions of PlainOpcUaSmartGMappingExtension
+	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
@@ -110,12 +135,41 @@ public:
 	SmartACE::ParameterSlave *param;
 	
 	
+	/// this method is used to register different PortFactory classes (one for each supported middleware framework)
+	void addPortFactory(const std::string &name, SmartGMappingPortFactoryInterface *portFactory);
+	
+	/// this method is used to register different component-extension classes
+	void addExtension(SmartGMappingExtension *extension);
+	
+	/// this method allows to access the registered component-extensions (automatically converting to the actuall implementation type)
+	template <typename T>
+	T* getExtension(const std::string &name) {
+		auto it = componentExtensionRegistry.find(name);
+		if(it != componentExtensionRegistry.end()) {
+			return dynamic_cast<T*>(it->second);
+		}
+		return 0;
+	}
+	
+	/// initialize component's internal members
 	void init(int argc, char *argv[]);
+	
+	/// execute the component's infrastructure
 	void run();
 	
+	/// clean-up component's resources
+	void fini();
+	
+	/// call this method to set the overall component into the Alive state (i.e. component is then ready to operate)
 	void setStartupFinished();
+	
+	/// connect all component's client ports
 	Smart::StatusCode connectAndStartAllServices();
+	
+	/// start all assocuated Activities
 	void startAllTasks();
+	
+	/// start all associated timers
 	void startAllTimers();
 	
 	Smart::StatusCode connectLaserServiceIn(const std::string &serverName, const std::string &serviceName);
@@ -124,7 +178,16 @@ public:
 	// return singleton instance
 	static SmartGMapping* instance()
 	{
-		return (SmartGMapping*)&_smartGMapping;
+		if(_smartGMapping == 0) {
+			_smartGMapping = new SmartGMapping();
+		}
+		return _smartGMapping;
+	}
+	
+	static void deleteInstance() {
+		if(_smartGMapping != 0) {
+			delete _smartGMapping;
+		}
 	}
 	
 	// connections parameter
@@ -163,6 +226,7 @@ public:
 		//--- server port parameter ---
 		struct CurrGridMapPushServiceOut_struct {
 				std::string serviceName;
+				std::string roboticMiddleware;
 		} currGridMapPushServiceOut;
 	
 		//--- client port parameter ---
@@ -171,6 +235,7 @@ public:
 			std::string serviceName;
 			std::string wiringName;
 			long interval;
+			std::string roboticMiddleware;
 		} laserServiceIn;
 		struct LocalizationUpdateServiceOut_struct {
 			bool initialConnect;
@@ -178,7 +243,14 @@ public:
 			std::string serviceName;
 			std::string wiringName;
 			long interval;
+			std::string roboticMiddleware;
 		} localizationUpdateServiceOut;
+		
+		// -- parameters for SmartGMappingROSExtension
+		
+		// -- parameters for SeRoNetSDKComponentGeneratorExtension
+		
+		// -- parameters for PlainOpcUaSmartGMappingExtension
 		
 	} connections;
 };

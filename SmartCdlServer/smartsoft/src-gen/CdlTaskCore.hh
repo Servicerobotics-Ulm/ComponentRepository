@@ -39,7 +39,8 @@
 
 // include all interaction-observer interfaces
 #include <CdlTaskObserverInterface.hh>
-	
+
+
 class CdlTaskCore
 :	public SmartACE::ManagedTask
 ,	public Smart::TaskTriggerSubject
@@ -74,6 +75,7 @@ private:
 	CommNavigationObjects::CommPlannerGoal plannerClientObject;
 	Smart::StatusCode trackingClientStatus;
 	CommTrackingObjects::CommTrackingGoal trackingClientObject;
+	
 	
 protected:
 	virtual int execute_protected_region();
@@ -189,6 +191,7 @@ protected:
 	// this method is meant to be used in derived classes
 	Smart::StatusCode robotBlockedEventServerPut(CommNavigationObjects::CommCdlRobotBlockedState &eventState);
 	
+	
 /**
  * Implementation of the Subject part of an InteractionObserver
  */
@@ -202,31 +205,8 @@ public:
 	void detach_interaction_observer(CdlTaskObserverInterface *observer);
 
 public:
-	CdlTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true)
-	:	SmartACE::ManagedTask(comp)
-	,	useDefaultState(useDefaultState)
-	,	useLogging(false)
-	,	taskLoggingId(0)
-	,	currentUpdateCount(0)
-	,	baseStateClientStatus(Smart::SMART_DISCONNECTED)
-	,	baseStateClientObject()
-	,	iRClientStatus(Smart::SMART_DISCONNECTED)
-	,	iRClientObject()
-	,	laserClientStatus(Smart::SMART_DISCONNECTED)
-	,	laserClientObject()
-	,	laserClient2Status(Smart::SMART_DISCONNECTED)
-	,	laserClient2Object()
-	,	navVelSendServerStatus(Smart::SMART_DISCONNECTED)
-	,	navVelSendServerObject()
-	,	pathNavigationGoalClientStatus(Smart::SMART_DISCONNECTED)
-	,	pathNavigationGoalClientObject()
-	,	plannerClientStatus(Smart::SMART_DISCONNECTED)
-	,	plannerClientObject()
-	,	trackingClientStatus(Smart::SMART_DISCONNECTED)
-	,	trackingClientObject()
-	{  }
-	virtual ~CdlTaskCore()
-	{  }
+	CdlTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true);
+	virtual ~CdlTaskCore();
 	
 	inline void setUpLogging(const int &taskNbr, const bool &useLogging=true) {
 		this->taskLoggingId = taskNbr;
@@ -244,5 +224,6 @@ public:
 	inline int getCurrentUpdateCount() const {
 		return currentUpdateCount;
 	}
+	
 };
 #endif

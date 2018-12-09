@@ -57,12 +57,15 @@ periodicActFreqHz 20.0
 
 [GoalEventServer]
 serviceName GoalEventServer
+roboticMiddleware ACE_SmartSoft
 
 [NavVelSendServer]
 serviceName NavVelSendServer
+roboticMiddleware ACE_SmartSoft
 
 [RobotBlockedEventServer]
 serviceName RobotBlockedEventServer
+roboticMiddleware ACE_SmartSoft
 
 ##########################
 # client port parameter
@@ -73,6 +76,7 @@ serverName unknown
 serviceName unknown
 wiringName BaseStateClient
 interval 1
+roboticMiddleware ACE_SmartSoft
 
 [IRClient]
 initialConnect false
@@ -80,12 +84,14 @@ serverName unknown
 serviceName unknown
 wiringName IRClient
 interval 1
+roboticMiddleware ACE_SmartSoft
 
 [LaserClient]
 serverName unknown
 serviceName unknown
 wiringName LaserClient
 interval 1
+roboticMiddleware ACE_SmartSoft
 
 [LaserClient2]
 initialConnect false
@@ -93,6 +99,7 @@ serverName unknown
 serviceName unknown
 wiringName LaserClient2
 interval 1
+roboticMiddleware ACE_SmartSoft
 
 [NavVelSendClient]
 initialConnect false
@@ -100,6 +107,7 @@ serverName unknown
 serviceName unknown
 wiringName NavVelSendClient
 interval 1
+roboticMiddleware ACE_SmartSoft
 
 [PathNavigationGoalClient]
 initialConnect false
@@ -107,6 +115,7 @@ serverName unknown
 serviceName unknown
 wiringName PathNavigationGoalClient
 interval 1
+roboticMiddleware ACE_SmartSoft
 
 [PlannerClient]
 initialConnect false
@@ -114,6 +123,7 @@ serverName unknown
 serviceName unknown
 wiringName PlannerClient
 interval 1
+roboticMiddleware ACE_SmartSoft
 
 [TrackingClient]
 initialConnect false
@@ -121,4 +131,15 @@ serverName unknown
 serviceName unknown
 wiringName TrackingClient
 interval 1
+roboticMiddleware ACE_SmartSoft
+
+##########################
+## parameters of SmartCdlServerROSExtension
+
+##########################
+## parameters of SeRoNetSDKComponentGeneratorExtension
+
+##########################
+## parameters of PlainOpcUaSmartCdlServerExtension
+
 

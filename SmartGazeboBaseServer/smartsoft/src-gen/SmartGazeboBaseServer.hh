@@ -15,12 +15,28 @@
 //--------------------------------------------------------------------------
 #ifndef _SMARTGAZEBOBASESERVER_HH
 #define _SMARTGAZEBOBASESERVER_HH
-	
+
+#include <map>
 #include <iostream>
 #include "aceSmartSoft.hh"
 #include "smartQueryServerTaskTrigger_T.h"
 #include "SmartGazeboBaseServerCore.hh"
-#include "SmartGazeboBaseServerImpl.hh"
+
+#include "SmartGazeboBaseServerPortFactoryInterface.hh"
+#include "SmartGazeboBaseServerExtension.hh"
+
+// forward declarations
+class SmartGazeboBaseServerPortFactoryInterface;
+class SmartGazeboBaseServerExtension;
+
+// includes for SmartGazeboBaseServerROSExtension
+
+// includes for SeRoNetSDKComponentGeneratorExtension
+
+// includes for PlainOpcUaSmartGazeboBaseServerExtension
+// include plain OPC UA device clients
+// include plain OPC UA status servers
+
 
 // include communication objects
 #include <CommBasicObjects/CommBasePositionUpdate.hh>
@@ -47,7 +63,6 @@
 // include input-handler
 #include "BaseStateQueryHandler.hh"
 
-
 // include handler
 #include "CompHandler.hh"
 
@@ -60,7 +75,7 @@
 
 class SmartGazeboBaseServer : public SmartGazeboBaseServerCore {
 private:
-	static SmartGazeboBaseServer _smartGazeboBaseServer;
+	static SmartGazeboBaseServer *_smartGazeboBaseServer;
 	
 	// constructor
 	SmartGazeboBaseServer();
@@ -77,12 +92,16 @@ private:
 	// instantiate comp-handler
 	CompHandler compHandler;
 	
+	// helper method that maps a string-name to an according TaskTriggerSubject
 	Smart::TaskTriggerSubject* getInputTaskTriggerFromString(const std::string &client);
 	
-public:
-	// component
-	SmartGazeboBaseServerImpl *component;
+	// internal map storing the different port-creation factories (that internally map to specific middleware implementations)
+	std::map<std::string, SmartGazeboBaseServerPortFactoryInterface*> portFactoryRegistry;
 	
+	// internal map storing various extensions of this component class
+	std::map<std::string, SmartGazeboBaseServerExtension*> componentExtensionRegistry;
+	
+public:
 	ParameterStateStruct getGlobalState() const
 	{
 		return paramHandler.getGlobalState();
@@ -121,6 +140,12 @@ public:
 	// define request-handlers
 	BaseStateQueryHandler *baseStateQueryHandler;
 	
+	// definitions of SmartGazeboBaseServerROSExtension
+	
+	// definitions of SeRoNetSDKComponentGeneratorExtension
+	
+	// definitions of PlainOpcUaSmartGazeboBaseServerExtension
+	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
@@ -130,19 +155,57 @@ public:
 	SmartACE::ParameterSlave *param;
 	
 	
+	/// this method is used to register different PortFactory classes (one for each supported middleware framework)
+	void addPortFactory(const std::string &name, SmartGazeboBaseServerPortFactoryInterface *portFactory);
+	
+	/// this method is used to register different component-extension classes
+	void addExtension(SmartGazeboBaseServerExtension *extension);
+	
+	/// this method allows to access the registered component-extensions (automatically converting to the actuall implementation type)
+	template <typename T>
+	T* getExtension(const std::string &name) {
+		auto it = componentExtensionRegistry.find(name);
+		if(it != componentExtensionRegistry.end()) {
+			return dynamic_cast<T*>(it->second);
+		}
+		return 0;
+	}
+	
+	/// initialize component's internal members
 	void init(int argc, char *argv[]);
+	
+	/// execute the component's infrastructure
 	void run();
 	
+	/// clean-up component's resources
+	void fini();
+	
+	/// call this method to set the overall component into the Alive state (i.e. component is then ready to operate)
 	void setStartupFinished();
+	
+	/// connect all component's client ports
 	Smart::StatusCode connectAndStartAllServices();
+	
+	/// start all assocuated Activities
 	void startAllTasks();
+	
+	/// start all associated timers
 	void startAllTimers();
 	
 
 	// return singleton instance
 	static SmartGazeboBaseServer* instance()
 	{
-		return (SmartGazeboBaseServer*)&_smartGazeboBaseServer;
+		if(_smartGazeboBaseServer == 0) {
+			_smartGazeboBaseServer = new SmartGazeboBaseServer();
+		}
+		return _smartGazeboBaseServer;
+	}
+	
+	static void deleteInstance() {
+		if(_smartGazeboBaseServer != 0) {
+			delete _smartGazeboBaseServer;
+		}
 	}
 	
 	// connections parameter
@@ -193,21 +256,32 @@ public:
 		//--- server port parameter ---
 		struct BaseSatateQueryAnsw_struct {
 				std::string serviceName;
+				std::string roboticMiddleware;
 		} baseSatateQueryAnsw;
 		struct BaseStateServiceOut_struct {
 				std::string serviceName;
+				std::string roboticMiddleware;
 		} baseStateServiceOut;
 		struct LaserServiceOut_struct {
 				std::string serviceName;
+				std::string roboticMiddleware;
 		} laserServiceOut;
 		struct LocalizationUpdateServiceIn_struct {
 				std::string serviceName;
+				std::string roboticMiddleware;
 		} localizationUpdateServiceIn;
 		struct NavVelServiceIn_struct {
 				std::string serviceName;
+				std::string roboticMiddleware;
 		} navVelServiceIn;
 	
 		//--- client port parameter ---
+		
+		// -- parameters for SmartGazeboBaseServerROSExtension
+		
+		// -- parameters for SeRoNetSDKComponentGeneratorExtension
+		
+		// -- parameters for PlainOpcUaSmartGazeboBaseServerExtension
 		
 	} connections;
 };

@@ -15,12 +15,28 @@
 //--------------------------------------------------------------------------
 #ifndef _SMARTPIONEERBASESERVER_HH
 #define _SMARTPIONEERBASESERVER_HH
-	
+
+#include <map>
 #include <iostream>
 #include "aceSmartSoft.hh"
 #include "smartQueryServerTaskTrigger_T.h"
 #include "SmartPioneerBaseServerCore.hh"
-#include "SmartPioneerBaseServerImpl.hh"
+
+#include "SmartPioneerBaseServerPortFactoryInterface.hh"
+#include "SmartPioneerBaseServerExtension.hh"
+
+// forward declarations
+class SmartPioneerBaseServerPortFactoryInterface;
+class SmartPioneerBaseServerExtension;
+
+// includes for SmartPioneerBaseServerROSExtension
+
+// includes for SeRoNetSDKComponentGeneratorExtension
+
+// includes for PlainOpcUaSmartPioneerBaseServerExtension
+// include plain OPC UA device clients
+// include plain OPC UA status servers
+
 
 // include communication objects
 #include <CommBasicObjects/CommBasePositionUpdate.hh>
@@ -49,7 +65,6 @@
 // include input-handler
 #include "BaseStateQueryHandler.hh"
 
-
 // include handler
 #include "CompHandler.hh"
 
@@ -62,7 +77,7 @@
 
 class SmartPioneerBaseServer : public SmartPioneerBaseServerCore {
 private:
-	static SmartPioneerBaseServer _smartPioneerBaseServer;
+	static SmartPioneerBaseServer *_smartPioneerBaseServer;
 	
 	// constructor
 	SmartPioneerBaseServer();
@@ -79,12 +94,16 @@ private:
 	// instantiate comp-handler
 	CompHandler compHandler;
 	
+	// helper method that maps a string-name to an according TaskTriggerSubject
 	Smart::TaskTriggerSubject* getInputTaskTriggerFromString(const std::string &client);
 	
-public:
-	// component
-	SmartPioneerBaseServerImpl *component;
+	// internal map storing the different port-creation factories (that internally map to specific middleware implementations)
+	std::map<std::string, SmartPioneerBaseServerPortFactoryInterface*> portFactoryRegistry;
 	
+	// internal map storing various extensions of this component class
+	std::map<std::string, SmartPioneerBaseServerExtension*> componentExtensionRegistry;
+	
+public:
 	ParameterStateStruct getGlobalState() const
 	{
 		return paramHandler.getGlobalState();
@@ -122,6 +141,12 @@ public:
 	// define request-handlers
 	BaseStateQueryHandler *baseStateQueryHandler;
 	
+	// definitions of SmartPioneerBaseServerROSExtension
+	
+	// definitions of SeRoNetSDKComponentGeneratorExtension
+	
+	// definitions of PlainOpcUaSmartPioneerBaseServerExtension
+	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
@@ -131,19 +156,57 @@ public:
 	SmartACE::ParameterSlave *param;
 	
 	
+	/// this method is used to register different PortFactory classes (one for each supported middleware framework)
+	void addPortFactory(const std::string &name, SmartPioneerBaseServerPortFactoryInterface *portFactory);
+	
+	/// this method is used to register different component-extension classes
+	void addExtension(SmartPioneerBaseServerExtension *extension);
+	
+	/// this method allows to access the registered component-extensions (automatically converting to the actuall implementation type)
+	template <typename T>
+	T* getExtension(const std::string &name) {
+		auto it = componentExtensionRegistry.find(name);
+		if(it != componentExtensionRegistry.end()) {
+			return dynamic_cast<T*>(it->second);
+		}
+		return 0;
+	}
+	
+	/// initialize component's internal members
 	void init(int argc, char *argv[]);
+	
+	/// execute the component's infrastructure
 	void run();
 	
+	/// clean-up component's resources
+	void fini();
+	
+	/// call this method to set the overall component into the Alive state (i.e. component is then ready to operate)
 	void setStartupFinished();
+	
+	/// connect all component's client ports
 	Smart::StatusCode connectAndStartAllServices();
+	
+	/// start all assocuated Activities
 	void startAllTasks();
+	
+	/// start all associated timers
 	void startAllTimers();
 	
 
 	// return singleton instance
 	static SmartPioneerBaseServer* instance()
 	{
-		return (SmartPioneerBaseServer*)&_smartPioneerBaseServer;
+		if(_smartPioneerBaseServer == 0) {
+			_smartPioneerBaseServer = new SmartPioneerBaseServer();
+		}
+		return _smartPioneerBaseServer;
+	}
+	
+	static void deleteInstance() {
+		if(_smartPioneerBaseServer != 0) {
+			delete _smartPioneerBaseServer;
+		}
 	}
 	
 	// connections parameter
@@ -188,21 +251,32 @@ public:
 		//--- server port parameter ---
 		struct BasePositionOut_struct {
 				std::string serviceName;
+				std::string roboticMiddleware;
 		} basePositionOut;
 		struct BaseStateQueryServer_struct {
 				std::string serviceName;
+				std::string roboticMiddleware;
 		} baseStateQueryServer;
 		struct BatteryEventServer_struct {
 				std::string serviceName;
+				std::string roboticMiddleware;
 		} batteryEventServer;
 		struct LocalizationUpdate_struct {
 				std::string serviceName;
+				std::string roboticMiddleware;
 		} localizationUpdate;
 		struct NavVelIn_struct {
 				std::string serviceName;
+				std::string roboticMiddleware;
 		} navVelIn;
 	
 		//--- client port parameter ---
+		
+		// -- parameters for SmartPioneerBaseServerROSExtension
+		
+		// -- parameters for SeRoNetSDKComponentGeneratorExtension
+		
+		// -- parameters for PlainOpcUaSmartPioneerBaseServerExtension
 		
 	} connections;
 };

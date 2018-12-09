@@ -26,41 +26,21 @@ SmartGMappingImpl::SmartGMappingImpl(const std::string &componentName, int & arg
 SmartGMappingImpl::~SmartGMappingImpl() 
 {  }
 
-Smart::StatusCode SmartGMappingImpl::run(void)
+int SmartGMappingImpl::startComponentInfrastructure(void)
 {
-	   Smart::StatusCode result = Smart::SMART_OK;
+	// open thread for managing all server-initiated-disconnects in this component
+	srvInitDiscHandler.start();
 
-	   // open thread for managing all server-initiated-disconnects in this component
-	   srvInitDiscHandler.start();
+	// if meanwile strg+c was called -> return immediatelly, without waiting on substate or reactor
+	if(!first_call_of_handle_signal) return -1;
 
-	   // if meanwile strg+c was called -> return immediatelly, without waiting on substate or reactor
-	   if(!first_call_of_handle_signal) return Smart::SMART_ERROR;
-
-	   componentIsRunning = true;
-
-	   ///////////////////////////////////////////////////////////
-	   //                                                       //
-	   //  component is now fully initialized and running.      //
-	   //  (untill the component is commanded to shutdown...)   //
-	   //                                                       //
-	   ///////////////////////////////////////////////////////////
-	   if(getStateSlave() != NULL)
-	   {
-	      // block this thread till component is commanded to shut down...
-	      getStateSlave()->acquire("shutdown");
-	   } else {
-	     // block this thread until component is commaned to shut down...
-	     this->waitOnRuntimeCondVar();
-	   }
-
-	   return result;
+	componentIsRunning = true;
+	return 0;
 }
-void SmartGMappingImpl::closeAllAssociatedTasks(const int &taskShutdownTimeLimit)
+
+void SmartGMappingImpl::stopComponentInfrastructure(const std::chrono::steady_clock::duration &timeoutTime)
 {
-	if(this->getStateSlave() != NULL) {
-		getStateSlave()->release("shutdown");
-	}
-	this->signalSmartTasksToStop(std::chrono::seconds(taskShutdownTimeLimit));
+	this->signalSmartTasksToStop(timeoutTime);
 }
 void SmartGMappingImpl::cleanUpComponentResources()
 {

@@ -1,23 +1,23 @@
 ComponentDefinition SmartGMapping 
 {
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService {
+		PrivateOperationMode active;
+		PublicOperationMode CommBasicObjects.BasicModes.Active {
+			activates (active)
+		}
+	}
 	InputPort LaserServiceIn implements CommBasicObjects.LaserService { }
 
-	PreemptiveTask GMappingTask
+	Activity GMappingTask
 	{
-		InputLinkExtension LaserServiceIn { oversamplingOk undersamplingOk }
-		DefaultTaskTrigger InputTrigger LaserServiceIn;
-		SubStateBinding active;
+		InputPortLink LaserServiceIn { oversamplingOk undersamplingOk }
+		DefaultTrigger InputPortTrigger LaserServiceIn;
+		OperationModeBinding CoordinationPort.active;
 	}
 	OutputPort LocalizationUpdateServiceOut implements CommNavigationObjects.LocalizationUpdateService realizedBy GMappingTask {
 	}
 	OutputPort CurrGridMapPushServiceOut implements CommNavigationObjects.CurrGridMapPushService realizedBy GMappingTask {
 	}
-	ComponentParameters SmartGMappingParams;
+	ComponentParameters SmartGMappingParams slave CoordinationPort;
 	
-	StateAutomaton SmartGMappingStates implementsDefaultMSC ComponentLifecycle.Alive {
-		SubState active;
-		CustomMainState Active implements ComponentLifecycle.Alive.Active {
-			subStates active
-		}
-	}
 }

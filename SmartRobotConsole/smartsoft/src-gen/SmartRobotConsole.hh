@@ -15,12 +15,28 @@
 //--------------------------------------------------------------------------
 #ifndef _SMARTROBOTCONSOLE_HH
 #define _SMARTROBOTCONSOLE_HH
-	
+
+#include <map>
 #include <iostream>
 #include "aceSmartSoft.hh"
 #include "smartQueryServerTaskTrigger_T.h"
 #include "SmartRobotConsoleCore.hh"
-#include "SmartRobotConsoleImpl.hh"
+
+#include "SmartRobotConsolePortFactoryInterface.hh"
+#include "SmartRobotConsoleExtension.hh"
+
+// forward declarations
+class SmartRobotConsolePortFactoryInterface;
+class SmartRobotConsoleExtension;
+
+// includes for SmartRobotConsoleROSExtension
+
+// includes for SeRoNetSDKComponentGeneratorExtension
+
+// includes for PlainOpcUaSmartRobotConsoleExtension
+// include plain OPC UA device clients
+// include plain OPC UA status servers
+
 
 // include communication objects
 
@@ -30,7 +46,6 @@
 
 // include input-handler
 // include input-handler
-
 
 // include handler
 #include "CompHandler.hh"
@@ -42,7 +57,7 @@
 
 class SmartRobotConsole : public SmartRobotConsoleCore {
 private:
-	static SmartRobotConsole _smartRobotConsole;
+	static SmartRobotConsole *_smartRobotConsole;
 	
 	// constructor
 	SmartRobotConsole();
@@ -59,12 +74,16 @@ private:
 	// instantiate comp-handler
 	CompHandler compHandler;
 	
+	// helper method that maps a string-name to an according TaskTriggerSubject
 	Smart::TaskTriggerSubject* getInputTaskTriggerFromString(const std::string &client);
 	
-public:
-	// component
-	SmartRobotConsoleImpl *component;
+	// internal map storing the different port-creation factories (that internally map to specific middleware implementations)
+	std::map<std::string, SmartRobotConsolePortFactoryInterface*> portFactoryRegistry;
 	
+	// internal map storing various extensions of this component class
+	std::map<std::string, SmartRobotConsoleExtension*> componentExtensionRegistry;
+	
+public:
 	
 	// define tasks
 	Smart::TaskTriggerSubject* consoleTaskTrigger;
@@ -82,6 +101,12 @@ public:
 	
 	// define request-handlers
 	
+	// definitions of SmartRobotConsoleROSExtension
+	
+	// definitions of SeRoNetSDKComponentGeneratorExtension
+	
+	// definitions of PlainOpcUaSmartRobotConsoleExtension
+	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
@@ -93,19 +118,57 @@ public:
 	SmartACE::ParameterMaster *paramMaster;
 	SmartACE::WiringMaster *wiringMaster;
 	
+	/// this method is used to register different PortFactory classes (one for each supported middleware framework)
+	void addPortFactory(const std::string &name, SmartRobotConsolePortFactoryInterface *portFactory);
+	
+	/// this method is used to register different component-extension classes
+	void addExtension(SmartRobotConsoleExtension *extension);
+	
+	/// this method allows to access the registered component-extensions (automatically converting to the actuall implementation type)
+	template <typename T>
+	T* getExtension(const std::string &name) {
+		auto it = componentExtensionRegistry.find(name);
+		if(it != componentExtensionRegistry.end()) {
+			return dynamic_cast<T*>(it->second);
+		}
+		return 0;
+	}
+	
+	/// initialize component's internal members
 	void init(int argc, char *argv[]);
+	
+	/// execute the component's infrastructure
 	void run();
 	
+	/// clean-up component's resources
+	void fini();
+	
+	/// call this method to set the overall component into the Alive state (i.e. component is then ready to operate)
 	void setStartupFinished();
+	
+	/// connect all component's client ports
 	Smart::StatusCode connectAndStartAllServices();
+	
+	/// start all assocuated Activities
 	void startAllTasks();
+	
+	/// start all associated timers
 	void startAllTimers();
 	
 
 	// return singleton instance
 	static SmartRobotConsole* instance()
 	{
-		return (SmartRobotConsole*)&_smartRobotConsole;
+		if(_smartRobotConsole == 0) {
+			_smartRobotConsole = new SmartRobotConsole();
+		}
+		return _smartRobotConsole;
+	}
+	
+	static void deleteInstance() {
+		if(_smartRobotConsole != 0) {
+			delete _smartRobotConsole;
+		}
 	}
 	
 	// connections parameter
@@ -144,6 +207,12 @@ public:
 		//--- server port parameter ---
 	
 		//--- client port parameter ---
+		
+		// -- parameters for SmartRobotConsoleROSExtension
+		
+		// -- parameters for SeRoNetSDKComponentGeneratorExtension
+		
+		// -- parameters for PlainOpcUaSmartRobotConsoleExtension
 		
 	} connections;
 };

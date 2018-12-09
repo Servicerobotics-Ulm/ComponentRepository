@@ -22,6 +22,25 @@
 
 // include observers
 
+
+PlannerTaskCore::PlannerTaskCore(Smart::IComponent *comp, const bool &useDefaultState) 
+:	SmartACE::ManagedTask(comp)
+,	useDefaultState(useDefaultState)
+,	useLogging(false)
+,	taskLoggingId(0)
+,	currentUpdateCount(0)
+,	baseStateClientStatus(Smart::SMART_DISCONNECTED)
+,	baseStateClientObject()
+,	curMapClientStatus(Smart::SMART_DISCONNECTED)
+,	curMapClientObject()
+{
+}
+
+PlannerTaskCore::~PlannerTaskCore()
+{
+}
+
+
 void PlannerTaskCore::notify_all_interaction_observers() {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
 	// try dynamically down-casting this class to the derived class 
@@ -84,6 +103,7 @@ void PlannerTaskCore::updateAllCommObjects()
 {
 	baseStateClientStatus = COMP->baseStateClientInputTaskTrigger->getUpdate(baseStateClientObject);
 	curMapClientStatus = COMP->curMapClientInputTaskTrigger->getUpdate(curMapClientObject);
+	
 }
 
 

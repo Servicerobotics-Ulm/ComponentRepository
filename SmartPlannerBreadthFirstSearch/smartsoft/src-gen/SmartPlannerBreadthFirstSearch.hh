@@ -15,12 +15,28 @@
 //--------------------------------------------------------------------------
 #ifndef _SMARTPLANNERBREADTHFIRSTSEARCH_HH
 #define _SMARTPLANNERBREADTHFIRSTSEARCH_HH
-	
+
+#include <map>
 #include <iostream>
 #include "aceSmartSoft.hh"
 #include "smartQueryServerTaskTrigger_T.h"
 #include "SmartPlannerBreadthFirstSearchCore.hh"
-#include "SmartPlannerBreadthFirstSearchImpl.hh"
+
+#include "SmartPlannerBreadthFirstSearchPortFactoryInterface.hh"
+#include "SmartPlannerBreadthFirstSearchExtension.hh"
+
+// forward declarations
+class SmartPlannerBreadthFirstSearchPortFactoryInterface;
+class SmartPlannerBreadthFirstSearchExtension;
+
+// includes for SmartPlannerBreadthFirstSearchROSExtension
+
+// includes for SeRoNetSDKComponentGeneratorExtension
+
+// includes for PlainOpcUaSmartPlannerBreadthFirstSearchExtension
+// include plain OPC UA device clients
+// include plain OPC UA status servers
+
 
 // include communication objects
 #include <CommBasicObjects/CommBaseState.hh>
@@ -45,7 +61,6 @@
 // include input-handler
 // include input-handler
 
-
 // include handler
 #include "CompHandler.hh"
 
@@ -58,7 +73,7 @@
 
 class SmartPlannerBreadthFirstSearch : public SmartPlannerBreadthFirstSearchCore {
 private:
-	static SmartPlannerBreadthFirstSearch _smartPlannerBreadthFirstSearch;
+	static SmartPlannerBreadthFirstSearch *_smartPlannerBreadthFirstSearch;
 	
 	// constructor
 	SmartPlannerBreadthFirstSearch();
@@ -75,12 +90,16 @@ private:
 	// instantiate comp-handler
 	CompHandler compHandler;
 	
+	// helper method that maps a string-name to an according TaskTriggerSubject
 	Smart::TaskTriggerSubject* getInputTaskTriggerFromString(const std::string &client);
 	
-public:
-	// component
-	SmartPlannerBreadthFirstSearchImpl *component;
+	// internal map storing the different port-creation factories (that internally map to specific middleware implementations)
+	std::map<std::string, SmartPlannerBreadthFirstSearchPortFactoryInterface*> portFactoryRegistry;
 	
+	// internal map storing various extensions of this component class
+	std::map<std::string, SmartPlannerBreadthFirstSearchExtension*> componentExtensionRegistry;
+	
+public:
 	ParameterStateStruct getGlobalState() const
 	{
 		return paramHandler.getGlobalState();
@@ -113,6 +132,12 @@ public:
 	
 	// define request-handlers
 	
+	// definitions of SmartPlannerBreadthFirstSearchROSExtension
+	
+	// definitions of SeRoNetSDKComponentGeneratorExtension
+	
+	// definitions of PlainOpcUaSmartPlannerBreadthFirstSearchExtension
+	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
@@ -122,12 +147,41 @@ public:
 	SmartACE::ParameterSlave *param;
 	
 	
+	/// this method is used to register different PortFactory classes (one for each supported middleware framework)
+	void addPortFactory(const std::string &name, SmartPlannerBreadthFirstSearchPortFactoryInterface *portFactory);
+	
+	/// this method is used to register different component-extension classes
+	void addExtension(SmartPlannerBreadthFirstSearchExtension *extension);
+	
+	/// this method allows to access the registered component-extensions (automatically converting to the actuall implementation type)
+	template <typename T>
+	T* getExtension(const std::string &name) {
+		auto it = componentExtensionRegistry.find(name);
+		if(it != componentExtensionRegistry.end()) {
+			return dynamic_cast<T*>(it->second);
+		}
+		return 0;
+	}
+	
+	/// initialize component's internal members
 	void init(int argc, char *argv[]);
+	
+	/// execute the component's infrastructure
 	void run();
 	
+	/// clean-up component's resources
+	void fini();
+	
+	/// call this method to set the overall component into the Alive state (i.e. component is then ready to operate)
 	void setStartupFinished();
+	
+	/// connect all component's client ports
 	Smart::StatusCode connectAndStartAllServices();
+	
+	/// start all assocuated Activities
 	void startAllTasks();
+	
+	/// start all associated timers
 	void startAllTimers();
 	
 	Smart::StatusCode connectBaseStateClient(const std::string &serverName, const std::string &serviceName);
@@ -136,7 +190,16 @@ public:
 	// return singleton instance
 	static SmartPlannerBreadthFirstSearch* instance()
 	{
-		return (SmartPlannerBreadthFirstSearch*)&_smartPlannerBreadthFirstSearch;
+		if(_smartPlannerBreadthFirstSearch == 0) {
+			_smartPlannerBreadthFirstSearch = new SmartPlannerBreadthFirstSearch();
+		}
+		return _smartPlannerBreadthFirstSearch;
+	}
+	
+	static void deleteInstance() {
+		if(_smartPlannerBreadthFirstSearch != 0) {
+			delete _smartPlannerBreadthFirstSearch;
+		}
 	}
 	
 	// connections parameter
@@ -175,9 +238,11 @@ public:
 		//--- server port parameter ---
 		struct PlannerEventServer_struct {
 				std::string serviceName;
+				std::string roboticMiddleware;
 		} plannerEventServer;
 		struct PlannerGoalServer_struct {
 				std::string serviceName;
+				std::string roboticMiddleware;
 		} plannerGoalServer;
 	
 		//--- client port parameter ---
@@ -186,13 +251,21 @@ public:
 			std::string serviceName;
 			std::string wiringName;
 			long interval;
+			std::string roboticMiddleware;
 		} baseStateClient;
 		struct CurMapClient_struct {
 			std::string serverName;
 			std::string serviceName;
 			std::string wiringName;
 			long interval;
+			std::string roboticMiddleware;
 		} curMapClient;
+		
+		// -- parameters for SmartPlannerBreadthFirstSearchROSExtension
+		
+		// -- parameters for SeRoNetSDKComponentGeneratorExtension
+		
+		// -- parameters for PlainOpcUaSmartPlannerBreadthFirstSearchExtension
 		
 	} connections;
 };

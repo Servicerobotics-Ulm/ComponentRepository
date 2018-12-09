@@ -72,12 +72,15 @@ periodicActFreqHz 2.0
 
 [CurrMapOut]
 serviceName CurrMapOut
+roboticMiddleware ACE_SmartSoft
 
 [CurrQueryServer]
 serviceName CurrQueryServer
+roboticMiddleware ACE_SmartSoft
 
 [LtmQueryServer]
 serviceName LtmQueryServer
+roboticMiddleware ACE_SmartSoft
 
 ##########################
 # client port parameter
@@ -87,4 +90,15 @@ serverName unknown
 serviceName unknown
 wiringName LaserServiceIn
 interval 1
+roboticMiddleware ACE_SmartSoft
+
+##########################
+## parameters of SmartMapperGridMapROSExtension
+
+##########################
+## parameters of SeRoNetSDKComponentGeneratorExtension
+
+##########################
+## parameters of PlainOpcUaSmartMapperGridMapExtension
+
 

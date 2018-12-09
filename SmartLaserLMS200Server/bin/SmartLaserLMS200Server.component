@@ -1,10 +1,10 @@
 ComponentDefinition SmartLaserLMS200Server {
-	BehaviorSlaveInterface SlavePort implements CommBasicObjects.DefaultCoordinationService
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService { }
 	
 	InputPort BaseStateIn implements CommBasicObjects.BaseStateService { }
 	
-	PreemptiveTask LaserTask {
-		InputLinkExtension BaseStateIn {
+	Activity LaserTask {
+		InputPortLink BaseStateIn {
 			optional oversamplingOk undersamplingOk
 		}
 		ActivationConstraints {
@@ -16,5 +16,5 @@ ComponentDefinition SmartLaserLMS200Server {
 	AnswerPort LaserQueryServiceAnsw implements CommBasicObjects.LaserQueryService { } 
 	RequestHandler LaserQueryServiceAnswHandler triggeredFrom LaserQueryServiceAnsw { Observe LaserTask }
 	
-	ComponentParameters SmartLaserLMS200ServerParams
+	ComponentParameters SmartLaserLMS200ServerParams slave CoordinationPort;
 }

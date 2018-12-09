@@ -1,6 +1,13 @@
 ComponentDefinition SmartCdlServer 
 {
-	BehaviorSlaveInterface SlavePort implements CommNavigationObjects.CdlCoordinationService;
+	CoordinationSlavePort CoordinationPort implements CommNavigationObjects.CdlCoordinationService {
+		PrivateOperationMode moveRobot;
+		
+		PublicOperationMode CommNavigationObjects.CdlStates.MoveRobot {
+			activates ( moveRobot )
+		}
+	//	with CurrGridMapQueryService mapped-to NavVelSendServer
+	}
 	
 	InputPort LaserClient implements CommBasicObjects.LaserService { }
 	InputPort LaserClient2 implements CommBasicObjects.LaserService { }
@@ -11,39 +18,33 @@ ComponentDefinition SmartCdlServer
 	InputPort PathNavigationGoalClient implements CommRobotinoObjects.PathNavigationGoalService { }
 	InputPort BaseStateClient implements CommBasicObjects.BaseStateService { }
 	
-	PreemptiveTask CdlTask {
-		InputLinkExtension LaserClient {
+	Activity CdlTask {
+		InputPortLink LaserClient {
 			oversamplingOk undersamplingOk
 		}
-		InputLinkExtension PlannerClient {
+		InputPortLink PlannerClient {
 			optional oversamplingOk undersamplingOk
 		}
-		InputLinkExtension NavVelSendServer {
+		InputPortLink NavVelSendServer {
 			optional oversamplingOk undersamplingOk
 		}
 		// several optional input ports
-		InputLinkExtension TrackingClient { optional oversamplingOk undersamplingOk } 
-		InputLinkExtension LaserClient2 { optional oversamplingOk undersamplingOk } 
-		InputLinkExtension IRClient { optional oversamplingOk undersamplingOk }
-		InputLinkExtension PathNavigationGoalClient { optional oversamplingOk undersamplingOk }
-		InputLinkExtension BaseStateClient { optional oversamplingOk undersamplingOk }
+		InputPortLink TrackingClient { optional oversamplingOk undersamplingOk } 
+		InputPortLink LaserClient2 { optional oversamplingOk undersamplingOk } 
+		InputPortLink IRClient { optional oversamplingOk undersamplingOk }
+		InputPortLink PathNavigationGoalClient { optional oversamplingOk undersamplingOk }
+		InputPortLink BaseStateClient { optional oversamplingOk undersamplingOk }
 		ActivationConstraints {
 			configurable=true minActFreq=5.0 Hz maxActFreq=40.0 Hz
 		}
-		DefaultTaskTrigger PeriodicTimer 20.0 Hz;
-		SubStateBinding moveRobot;
+		DefaultTrigger PeriodicTimer 20.0 Hz;
+		OperationModeBinding CoordinationPort.moveRobot;
 	}
 	
-	OutputPort NavVelSendClient implements CommNavigationObjects.NavigationVelocityService realizedBy CdlTask { }
+	OutputPort NavVelSendClient implements CommNavigationObjects.NavigationVelocityService realizedBy CdlTask { 
+	}
 	OutputPort GoalEventServer implements CommNavigationObjects.GoalEventService realizedBy CdlTask { }
 	OutputPort RobotBlockedEventServer implements CommNavigationObjects.RobotBlockedEventService realizedBy CdlTask { } 
 	
-	ComponentParameters SmartCdlServerParams;
-	
-	StateAutomaton SmartCdlServerStates implementsExtendedMSC CommNavigationObjects.CdlStates {
-		SubState moveRobot
-		MainStateInstance MoveRobot {
-			subStates moveRobot
-		}
-	}
+	ComponentParameters SmartCdlServerParams slave CoordinationPort;
 }

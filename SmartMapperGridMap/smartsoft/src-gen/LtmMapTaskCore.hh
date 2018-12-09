@@ -25,7 +25,8 @@
 
 // include all interaction-observer interfaces
 #include <LtmMapTaskObserverInterface.hh>
-	
+
+
 class LtmMapTaskCore
 :	public SmartACE::ManagedTask
 ,	public Smart::TaskTriggerSubject
@@ -39,6 +40,7 @@ private:
 	
 	Smart::StatusCode laserServiceInStatus;
 	CommBasicObjects::CommMobileLaserScan laserServiceInObject;
+	
 	
 protected:
 	virtual int execute_protected_region();
@@ -64,6 +66,7 @@ protected:
 	}
 	
 	
+	
 /**
  * Implementation of the Subject part of an InteractionObserver
  */
@@ -77,17 +80,8 @@ public:
 	void detach_interaction_observer(LtmMapTaskObserverInterface *observer);
 
 public:
-	LtmMapTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true)
-	:	SmartACE::ManagedTask(comp)
-	,	useDefaultState(useDefaultState)
-	,	useLogging(false)
-	,	taskLoggingId(0)
-	,	currentUpdateCount(0)
-	,	laserServiceInStatus(Smart::SMART_DISCONNECTED)
-	,	laserServiceInObject()
-	{  }
-	virtual ~LtmMapTaskCore()
-	{  }
+	LtmMapTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true);
+	virtual ~LtmMapTaskCore();
 	
 	inline void setUpLogging(const int &taskNbr, const bool &useLogging=true) {
 		this->taskLoggingId = taskNbr;
@@ -105,5 +99,6 @@ public:
 	inline int getCurrentUpdateCount() const {
 		return currentUpdateCount;
 	}
+	
 };
 #endif

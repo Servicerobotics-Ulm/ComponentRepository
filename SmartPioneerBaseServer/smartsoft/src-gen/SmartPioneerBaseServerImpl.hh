@@ -16,6 +16,7 @@
 #ifndef _SMARTPIONEERBASESERVERIMPL_HH
 #define _SMARTPIONEERBASESERVERIMPL_HH
 
+#include <chrono>
 #include "aceSmartSoft.hh"
 
 class SmartPioneerBaseServerImpl : public SmartACE::SmartComponent {
@@ -24,8 +25,8 @@ public:
 	SmartPioneerBaseServerImpl(const std::string &componentName, int & argc, char ** argv, const ACE_Sched_Params &sched_params);
 	virtual ~SmartPioneerBaseServerImpl();
 
-	Smart::StatusCode run(void);
-	void closeAllAssociatedTasks(const int &taskShutdownTimeLimit);
+	int startComponentInfrastructure();
+	void stopComponentInfrastructure(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2));
 	void cleanUpComponentResources();
 };
 

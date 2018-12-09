@@ -18,13 +18,17 @@
 //FIXME: implement logging
 //#include "smartGlobalLogger.hh"
 
+// the ace port-factory is used as a default port-mapping
+#include "SmartGazeboBaseServerAcePortFactory.hh"
+
+
+// initialize static singleton pointer to zero
+SmartGazeboBaseServer* SmartGazeboBaseServer::_smartGazeboBaseServer = 0;
 
 // constructor
 SmartGazeboBaseServer::SmartGazeboBaseServer()
 {
 	std::cout << "constructor of SmartGazeboBaseServer\n";
-	
-	component = NULL;
 	
 	// set all pointer members to NULL
 	baseSatateQueryAnsw = NULL;
@@ -51,7 +55,6 @@ SmartGazeboBaseServer::SmartGazeboBaseServer()
 	wiringSlave = NULL;
 	param = NULL;
 	
-	
 	// set default ini parameter values
 	connections.component.name = "SmartGazeboBaseServer";
 	connections.component.initialComponentMode = "Neutral";
@@ -59,10 +62,15 @@ SmartGazeboBaseServer::SmartGazeboBaseServer()
 	connections.component.useLogger = false;
 	
 	connections.baseSatateQueryAnsw.serviceName = "BaseSatateQueryAnsw";
+	connections.baseSatateQueryAnsw.roboticMiddleware = "ACE_SmartSoft";
 	connections.baseStateServiceOut.serviceName = "BaseStateServiceOut";
+	connections.baseStateServiceOut.roboticMiddleware = "ACE_SmartSoft";
 	connections.laserServiceOut.serviceName = "LaserServiceOut";
+	connections.laserServiceOut.roboticMiddleware = "ACE_SmartSoft";
 	connections.localizationUpdateServiceIn.serviceName = "LocalizationUpdateServiceIn";
+	connections.localizationUpdateServiceIn.roboticMiddleware = "ACE_SmartSoft";
 	connections.navVelServiceIn.serviceName = "NavVelServiceIn";
+	connections.navVelServiceIn.roboticMiddleware = "ACE_SmartSoft";
 	connections.baseStateTask.minActFreq = 10.0;
 	connections.baseStateTask.maxActFreq = 40.0;
 	connections.baseStateTask.trigger = "PeriodicTimer";
@@ -77,9 +85,24 @@ SmartGazeboBaseServer::SmartGazeboBaseServer()
 	connections.laserTask.cpuAffinity = -1;
 	connections.localizationUpdateHandler.prescale = 1;
 	connections.velocityInpuHandler.prescale = 1;
+	
+	// initialize members of SmartGazeboBaseServerROSExtension
+	
+	// initialize members of SeRoNetSDKComponentGeneratorExtension
+	
+	// initialize members of PlainOpcUaSmartGazeboBaseServerExtension
+	
 }
 
+void SmartGazeboBaseServer::addPortFactory(const std::string &name, SmartGazeboBaseServerPortFactoryInterface *portFactory)
+{
+	portFactoryRegistry[name] = portFactory;
+}
 
+void SmartGazeboBaseServer::addExtension(SmartGazeboBaseServerExtension *extension)
+{
+	componentExtensionRegistry[extension->getName()] = extension;
+}
 
 /**
  * Notify the component that setup/initialization is finished.
@@ -166,22 +189,34 @@ void SmartGazeboBaseServer::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
-		if(connections.component.defaultScheduler != "DEFAULT") {
-			ACE_Sched_Params sched_params(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
-			if(connections.component.defaultScheduler == "FIFO") {
-				sched_params.policy(ACE_SCHED_FIFO);
-				sched_params.priority(ACE_THR_PRI_FIFO_MIN);
-			} else if(connections.component.defaultScheduler == "RR") {
-				sched_params.policy(ACE_SCHED_RR);
-				sched_params.priority(ACE_THR_PRI_RR_MIN);
-			}
-			// create new instance of the SmartSoft component with customized scheuling parameters 
-			component = new SmartGazeboBaseServerImpl(connections.component.name, argc, argv, sched_params);
-		} else {
-			// create new instance of the SmartSoft component
-			component = new SmartGazeboBaseServerImpl(connections.component.name, argc, argv);
+		
+		// initializations of SmartGazeboBaseServerROSExtension
+		
+		// initializations of SeRoNetSDKComponentGeneratorExtension
+		
+		// initializations of PlainOpcUaSmartGazeboBaseServerExtension
+		
+		
+		// initialize all registered port-factories
+		for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+		{
+			portFactory->second->initialize(this, argc, argv);
 		}
 		
+		// initialize all registered component-extensions
+		for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+		{
+			extension->second->initialize(this, argc, argv);
+		}
+		
+		SmartGazeboBaseServerPortFactoryInterface *acePortFactory = portFactoryRegistry["ACE_SmartSoft"];
+		if(acePortFactory == 0) {
+			std::cerr << "ERROR: acePortFactory NOT instantiated -> exit(-1)" << std::endl;
+			exit(-1);
+		}
+		
+		// this pointer is used for backwards compatibility (deprecated: should be removed as soon as all patterns, including coordination, are moved to port-factory)
+		SmartACE::SmartComponent *component = dynamic_cast<SmartGazeboBaseServerAcePortFactory*>(acePortFactory)->getComponentImpl();
 		
 		std::cout << "ComponentDefinition SmartGazeboBaseServer is named " << connections.component.name << std::endl;
 		
@@ -195,12 +230,12 @@ void SmartGazeboBaseServer::init(int argc, char *argv[])
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
-		baseSatateQueryAnsw = new SmartACE::QueryServer<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>(component, connections.baseSatateQueryAnsw.serviceName);
+		baseSatateQueryAnsw = portFactoryRegistry[connections.baseSatateQueryAnsw.roboticMiddleware]->createBaseSatateQueryAnsw(connections.baseSatateQueryAnsw.serviceName);
 		baseSatateQueryAnswInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState,SmartACE::QueryId>(baseSatateQueryAnsw);
-		baseStateServiceOut = new SmartACE::PushServer<CommBasicObjects::CommBaseState>(component, connections.baseStateServiceOut.serviceName);
-		laserServiceOut = new SmartACE::PushServer<CommBasicObjects::CommMobileLaserScan>(component, connections.laserServiceOut.serviceName);
-		localizationUpdateServiceIn = new SmartACE::SendServer<CommBasicObjects::CommBasePositionUpdate>(component, connections.localizationUpdateServiceIn.serviceName);
-		navVelServiceIn = new SmartACE::SendServer<CommBasicObjects::CommNavigationVelocity>(component, connections.navVelServiceIn.serviceName);
+		baseStateServiceOut = portFactoryRegistry[connections.baseStateServiceOut.roboticMiddleware]->createBaseStateServiceOut(connections.baseStateServiceOut.serviceName);
+		laserServiceOut = portFactoryRegistry[connections.laserServiceOut.roboticMiddleware]->createLaserServiceOut(connections.laserServiceOut.serviceName);
+		localizationUpdateServiceIn = portFactoryRegistry[connections.localizationUpdateServiceIn.roboticMiddleware]->createLocalizationUpdateServiceIn(connections.localizationUpdateServiceIn.serviceName);
+		navVelServiceIn = portFactoryRegistry[connections.navVelServiceIn.roboticMiddleware]->createNavVelServiceIn(connections.navVelServiceIn.serviceName);
 		
 		// create client ports
 		
@@ -216,7 +251,6 @@ void SmartGazeboBaseServer::init(int argc, char *argv[])
 		
 		// create request-handlers
 		baseStateQueryHandler = new BaseStateQueryHandler(baseSatateQueryAnsw);
-		
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
@@ -291,15 +325,37 @@ void SmartGazeboBaseServer::init(int argc, char *argv[])
 // run the component
 void SmartGazeboBaseServer::run()
 {
+	stateSlave->acquire("init");
+	// startup all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->onStartup();
+	}
+	
+	// startup all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->onStartup();
+	}
+	stateSlave->release("init");
+	
+	// do not call this handler within the init state (see above) as this handler internally calls setStartupFinished() (this should be fixed in future)
 	compHandler.onStartup();
 	
+	// this call blocks until the component is commanded to shutdown
+	stateSlave->acquire("shutdown");
 	
-	// coponent will now start running and will continue (block in the run method) until it is commanded to shutdown (i.e. by a SIGINT signal)
-	component->run();
-	// component was signalled to shutdown
-	// 1) signall all tasks to shutdown as well (and give them 2 seconds time to cooperate)
-	// if time exceeds, component is killed without further clean-up
-	component->closeAllAssociatedTasks(2);
+	// shutdown all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->onShutdown();
+	}
+	
+	// shutdown all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->onShutdown();
+	}
 	
 	if(connections.component.useLogger == true) {
 		//FIXME: use logging
@@ -308,7 +364,12 @@ void SmartGazeboBaseServer::run()
 	
 	compHandler.onShutdown();
 	
-	
+	stateSlave->release("shutdown");
+}
+
+// clean-up component's resources
+void SmartGazeboBaseServer::fini()
+{
 	// unlink all observers
 	baseStateTask->detach_interaction_observer(baseStateQueryHandler);
 	localizationUpdateHandler->detach_interaction_observer(baseStateTask);
@@ -347,7 +408,6 @@ void SmartGazeboBaseServer::run()
 	// destroy request-handlers
 	delete baseStateQueryHandler;
 	
-
 	delete stateSlave;
 	// destroy state-change-handler
 	delete stateChangeHandler;
@@ -357,12 +417,24 @@ void SmartGazeboBaseServer::run()
 	delete param;
 	
 
-	// clean-up component's internally used resources (internally used communication middleware) 
-	component->cleanUpComponentResources();
+	// destroy all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->destroy();
+	}
+
+	// destroy all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->destroy();
+	}
 	
+	// destruction of SmartGazeboBaseServerROSExtension
 	
-	// finally delete the component itself
-	delete component;
+	// destruction of SeRoNetSDKComponentGeneratorExtension
+	
+	// destruction of PlainOpcUaSmartGazeboBaseServerExtension
+	
 }
 
 void SmartGazeboBaseServer::loadParameter(int argc, char *argv[])
@@ -436,17 +508,31 @@ void SmartGazeboBaseServer::loadParameter(int argc, char *argv[])
 		}
 		
 		
-		
 		// load parameters for server BaseSatateQueryAnsw
 		parameter.getString("BaseSatateQueryAnsw", "serviceName", connections.baseSatateQueryAnsw.serviceName);
+		if(parameter.checkIfParameterExists("BaseSatateQueryAnsw", "roboticMiddleware")) {
+			parameter.getString("BaseSatateQueryAnsw", "roboticMiddleware", connections.baseSatateQueryAnsw.roboticMiddleware);
+		}
 		// load parameters for server BaseStateServiceOut
 		parameter.getString("BaseStateServiceOut", "serviceName", connections.baseStateServiceOut.serviceName);
+		if(parameter.checkIfParameterExists("BaseStateServiceOut", "roboticMiddleware")) {
+			parameter.getString("BaseStateServiceOut", "roboticMiddleware", connections.baseStateServiceOut.roboticMiddleware);
+		}
 		// load parameters for server LaserServiceOut
 		parameter.getString("LaserServiceOut", "serviceName", connections.laserServiceOut.serviceName);
+		if(parameter.checkIfParameterExists("LaserServiceOut", "roboticMiddleware")) {
+			parameter.getString("LaserServiceOut", "roboticMiddleware", connections.laserServiceOut.roboticMiddleware);
+		}
 		// load parameters for server LocalizationUpdateServiceIn
 		parameter.getString("LocalizationUpdateServiceIn", "serviceName", connections.localizationUpdateServiceIn.serviceName);
+		if(parameter.checkIfParameterExists("LocalizationUpdateServiceIn", "roboticMiddleware")) {
+			parameter.getString("LocalizationUpdateServiceIn", "roboticMiddleware", connections.localizationUpdateServiceIn.roboticMiddleware);
+		}
 		// load parameters for server NavVelServiceIn
 		parameter.getString("NavVelServiceIn", "serviceName", connections.navVelServiceIn.serviceName);
+		if(parameter.checkIfParameterExists("NavVelServiceIn", "roboticMiddleware")) {
+			parameter.getString("NavVelServiceIn", "roboticMiddleware", connections.navVelServiceIn.roboticMiddleware);
+		}
 		
 		// load parameters for task BaseStateTask
 		parameter.getDouble("BaseStateTask", "minActFreqHz", connections.baseStateTask.minActFreq);
@@ -482,6 +568,19 @@ void SmartGazeboBaseServer::loadParameter(int argc, char *argv[])
 		}
 		if(parameter.checkIfParameterExists("VelocityInpuHandler", "prescale")) {
 			parameter.getInteger("VelocityInpuHandler", "prescale", connections.velocityInpuHandler.prescale);
+		}
+		
+		// load parameters for SmartGazeboBaseServerROSExtension
+		
+		// load parameters for SeRoNetSDKComponentGeneratorExtension
+		
+		// load parameters for PlainOpcUaSmartGazeboBaseServerExtension
+		
+		
+		// load parameters for all registered component-extensions
+		for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+		{
+			extension->second->loadParameters(parameter);
 		}
 		
 		paramHandler.loadParameter(parameter);

@@ -18,14 +18,18 @@
 //FIXME: implement logging
 //#include "smartGlobalLogger.hh"
 
+// the ace port-factory is used as a default port-mapping
+#include "SmartPlannerBreadthFirstSearchAcePortFactory.hh"
+
 #include "PlannerEventServerEventTestHandler.hh"
+
+// initialize static singleton pointer to zero
+SmartPlannerBreadthFirstSearch* SmartPlannerBreadthFirstSearch::_smartPlannerBreadthFirstSearch = 0;
 
 // constructor
 SmartPlannerBreadthFirstSearch::SmartPlannerBreadthFirstSearch()
 {
 	std::cout << "constructor of SmartPlannerBreadthFirstSearch\n";
-	
-	component = NULL;
 	
 	// set all pointer members to NULL
 	baseStateClient = NULL;
@@ -46,7 +50,6 @@ SmartPlannerBreadthFirstSearch::SmartPlannerBreadthFirstSearch()
 	wiringSlave = NULL;
 	param = NULL;
 	
-	
 	// set default ini parameter values
 	connections.component.name = "SmartPlannerBreadthFirstSearch";
 	connections.component.initialComponentMode = "Neutral";
@@ -54,15 +57,19 @@ SmartPlannerBreadthFirstSearch::SmartPlannerBreadthFirstSearch()
 	connections.component.useLogger = false;
 	
 	connections.plannerEventServer.serviceName = "PlannerEventServer";
+	connections.plannerEventServer.roboticMiddleware = "ACE_SmartSoft";
 	connections.plannerGoalServer.serviceName = "PlannerGoalServer";
+	connections.plannerGoalServer.roboticMiddleware = "ACE_SmartSoft";
 	connections.baseStateClient.wiringName = "BaseStateClient";
 	connections.baseStateClient.serverName = "unknown";
 	connections.baseStateClient.serviceName = "unknown";
 	connections.baseStateClient.interval = 1;
+	connections.baseStateClient.roboticMiddleware = "ACE_SmartSoft";
 	connections.curMapClient.wiringName = "CurMapClient";
 	connections.curMapClient.serverName = "unknown";
 	connections.curMapClient.serviceName = "unknown";
 	connections.curMapClient.interval = 1;
+	connections.curMapClient.roboticMiddleware = "ACE_SmartSoft";
 	connections.plannerTask.minActFreq = 2.0;
 	connections.plannerTask.maxActFreq = 10.0;
 	connections.plannerTask.trigger = "PeriodicTimer";
@@ -71,9 +78,24 @@ SmartPlannerBreadthFirstSearch::SmartPlannerBreadthFirstSearch()
 	connections.plannerTask.scheduler = "DEFAULT";
 	connections.plannerTask.priority = -1;
 	connections.plannerTask.cpuAffinity = -1;
+	
+	// initialize members of SmartPlannerBreadthFirstSearchROSExtension
+	
+	// initialize members of SeRoNetSDKComponentGeneratorExtension
+	
+	// initialize members of PlainOpcUaSmartPlannerBreadthFirstSearchExtension
+	
 }
 
+void SmartPlannerBreadthFirstSearch::addPortFactory(const std::string &name, SmartPlannerBreadthFirstSearchPortFactoryInterface *portFactory)
+{
+	portFactoryRegistry[name] = portFactory;
+}
 
+void SmartPlannerBreadthFirstSearch::addExtension(SmartPlannerBreadthFirstSearchExtension *extension)
+{
+	componentExtensionRegistry[extension->getName()] = extension;
+}
 
 /**
  * Notify the component that setup/initialization is finished.
@@ -178,22 +200,34 @@ void SmartPlannerBreadthFirstSearch::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
-		if(connections.component.defaultScheduler != "DEFAULT") {
-			ACE_Sched_Params sched_params(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
-			if(connections.component.defaultScheduler == "FIFO") {
-				sched_params.policy(ACE_SCHED_FIFO);
-				sched_params.priority(ACE_THR_PRI_FIFO_MIN);
-			} else if(connections.component.defaultScheduler == "RR") {
-				sched_params.policy(ACE_SCHED_RR);
-				sched_params.priority(ACE_THR_PRI_RR_MIN);
-			}
-			// create new instance of the SmartSoft component with customized scheuling parameters 
-			component = new SmartPlannerBreadthFirstSearchImpl(connections.component.name, argc, argv, sched_params);
-		} else {
-			// create new instance of the SmartSoft component
-			component = new SmartPlannerBreadthFirstSearchImpl(connections.component.name, argc, argv);
+		
+		// initializations of SmartPlannerBreadthFirstSearchROSExtension
+		
+		// initializations of SeRoNetSDKComponentGeneratorExtension
+		
+		// initializations of PlainOpcUaSmartPlannerBreadthFirstSearchExtension
+		
+		
+		// initialize all registered port-factories
+		for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+		{
+			portFactory->second->initialize(this, argc, argv);
 		}
 		
+		// initialize all registered component-extensions
+		for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+		{
+			extension->second->initialize(this, argc, argv);
+		}
+		
+		SmartPlannerBreadthFirstSearchPortFactoryInterface *acePortFactory = portFactoryRegistry["ACE_SmartSoft"];
+		if(acePortFactory == 0) {
+			std::cerr << "ERROR: acePortFactory NOT instantiated -> exit(-1)" << std::endl;
+			exit(-1);
+		}
+		
+		// this pointer is used for backwards compatibility (deprecated: should be removed as soon as all patterns, including coordination, are moved to port-factory)
+		SmartACE::SmartComponent *component = dynamic_cast<SmartPlannerBreadthFirstSearchAcePortFactory*>(acePortFactory)->getComponentImpl();
 		
 		std::cout << "ComponentDefinition SmartPlannerBreadthFirstSearch is named " << connections.component.name << std::endl;
 		
@@ -208,12 +242,12 @@ void SmartPlannerBreadthFirstSearch::init(int argc, char *argv[])
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
-		plannerEventServer = new SmartACE::EventServer<CommNavigationObjects::CommPlannerEventParameter, CommNavigationObjects::CommPlannerEventResult, CommNavigationObjects::PlannerEventState>(component, connections.plannerEventServer.serviceName, plannerEventServerEventTestHandler);
-		plannerGoalServer = new SmartACE::PushServer<CommNavigationObjects::CommPlannerGoal>(component, connections.plannerGoalServer.serviceName);
+		plannerEventServer = portFactoryRegistry[connections.plannerEventServer.roboticMiddleware]->createPlannerEventServer(connections.plannerEventServer.serviceName, plannerEventServerEventTestHandler);
+		plannerGoalServer = portFactoryRegistry[connections.plannerGoalServer.roboticMiddleware]->createPlannerGoalServer(connections.plannerGoalServer.serviceName);
 		
 		// create client ports
-		baseStateClient = new SmartACE::PushClient<CommBasicObjects::CommBaseState>(component);
-		curMapClient = new SmartACE::PushClient<CommNavigationObjects::CommGridMap>(component);
+		baseStateClient = portFactoryRegistry[connections.baseStateClient.roboticMiddleware]->createBaseStateClient();
+		curMapClient = portFactoryRegistry[connections.curMapClient.roboticMiddleware]->createCurMapClient();
 		
 		// create InputTaskTriggers and UpcallManagers
 		baseStateClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(baseStateClient);
@@ -224,7 +258,6 @@ void SmartPlannerBreadthFirstSearch::init(int argc, char *argv[])
 		// create input-handler
 		
 		// create request-handlers
-		
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
@@ -238,8 +271,14 @@ void SmartPlannerBreadthFirstSearch::init(int argc, char *argv[])
 		
 		wiringSlave = new SmartACE::WiringSlave(component);
 		// add client port to wiring slave
-		dynamic_cast<SmartACE::PushClient<CommBasicObjects::CommBaseState>*>(baseStateClient)->add(wiringSlave, connections.baseStateClient.wiringName);
-		dynamic_cast<SmartACE::PushClient<CommNavigationObjects::CommGridMap>*>(curMapClient)->add(wiringSlave, connections.curMapClient.wiringName);
+		if(connections.baseStateClient.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::PushClient<CommBasicObjects::CommBaseState>*>(baseStateClient)->add(wiringSlave, connections.baseStateClient.wiringName);
+		}
+		if(connections.curMapClient.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::PushClient<CommNavigationObjects::CommGridMap>*>(curMapClient)->add(wiringSlave, connections.curMapClient.wiringName);
+		}
 		
 		// create parameter slave
 		param = new SmartACE::ParameterSlave(component, &paramHandler);
@@ -297,15 +336,37 @@ void SmartPlannerBreadthFirstSearch::init(int argc, char *argv[])
 // run the component
 void SmartPlannerBreadthFirstSearch::run()
 {
+	stateSlave->acquire("init");
+	// startup all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->onStartup();
+	}
+	
+	// startup all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->onStartup();
+	}
+	stateSlave->release("init");
+	
+	// do not call this handler within the init state (see above) as this handler internally calls setStartupFinished() (this should be fixed in future)
 	compHandler.onStartup();
 	
+	// this call blocks until the component is commanded to shutdown
+	stateSlave->acquire("shutdown");
 	
-	// coponent will now start running and will continue (block in the run method) until it is commanded to shutdown (i.e. by a SIGINT signal)
-	component->run();
-	// component was signalled to shutdown
-	// 1) signall all tasks to shutdown as well (and give them 2 seconds time to cooperate)
-	// if time exceeds, component is killed without further clean-up
-	component->closeAllAssociatedTasks(2);
+	// shutdown all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->onShutdown();
+	}
+	
+	// shutdown all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->onShutdown();
+	}
 	
 	if(connections.component.useLogger == true) {
 		//FIXME: use logging
@@ -314,7 +375,12 @@ void SmartPlannerBreadthFirstSearch::run()
 	
 	compHandler.onShutdown();
 	
-	
+	stateSlave->release("shutdown");
+}
+
+// clean-up component's resources
+void SmartPlannerBreadthFirstSearch::fini()
+{
 	// unlink all observers
 	
 	// destroy all task instances
@@ -345,7 +411,6 @@ void SmartPlannerBreadthFirstSearch::run()
 	
 	// destroy request-handlers
 	
-
 	delete stateSlave;
 	// destroy state-change-handler
 	delete stateChangeHandler;
@@ -355,12 +420,24 @@ void SmartPlannerBreadthFirstSearch::run()
 	delete param;
 	
 
-	// clean-up component's internally used resources (internally used communication middleware) 
-	component->cleanUpComponentResources();
+	// destroy all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->destroy();
+	}
+
+	// destroy all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->destroy();
+	}
 	
+	// destruction of SmartPlannerBreadthFirstSearchROSExtension
 	
-	// finally delete the component itself
-	delete component;
+	// destruction of SeRoNetSDKComponentGeneratorExtension
+	
+	// destruction of PlainOpcUaSmartPlannerBreadthFirstSearchExtension
+	
 }
 
 void SmartPlannerBreadthFirstSearch::loadParameter(int argc, char *argv[])
@@ -438,17 +515,28 @@ void SmartPlannerBreadthFirstSearch::loadParameter(int argc, char *argv[])
 		parameter.getString("BaseStateClient", "serverName", connections.baseStateClient.serverName);
 		parameter.getString("BaseStateClient", "wiringName", connections.baseStateClient.wiringName);
 		parameter.getInteger("BaseStateClient", "interval", connections.baseStateClient.interval);
+		if(parameter.checkIfParameterExists("BaseStateClient", "roboticMiddleware")) {
+			parameter.getString("BaseStateClient", "roboticMiddleware", connections.baseStateClient.roboticMiddleware);
+		}
 		// load parameters for client CurMapClient
 		parameter.getString("CurMapClient", "serviceName", connections.curMapClient.serviceName);
 		parameter.getString("CurMapClient", "serverName", connections.curMapClient.serverName);
 		parameter.getString("CurMapClient", "wiringName", connections.curMapClient.wiringName);
 		parameter.getInteger("CurMapClient", "interval", connections.curMapClient.interval);
-		
+		if(parameter.checkIfParameterExists("CurMapClient", "roboticMiddleware")) {
+			parameter.getString("CurMapClient", "roboticMiddleware", connections.curMapClient.roboticMiddleware);
+		}
 		
 		// load parameters for server PlannerEventServer
 		parameter.getString("PlannerEventServer", "serviceName", connections.plannerEventServer.serviceName);
+		if(parameter.checkIfParameterExists("PlannerEventServer", "roboticMiddleware")) {
+			parameter.getString("PlannerEventServer", "roboticMiddleware", connections.plannerEventServer.roboticMiddleware);
+		}
 		// load parameters for server PlannerGoalServer
 		parameter.getString("PlannerGoalServer", "serviceName", connections.plannerGoalServer.serviceName);
+		if(parameter.checkIfParameterExists("PlannerGoalServer", "roboticMiddleware")) {
+			parameter.getString("PlannerGoalServer", "roboticMiddleware", connections.plannerGoalServer.roboticMiddleware);
+		}
 		
 		// load parameters for task PlannerTask
 		parameter.getDouble("PlannerTask", "minActFreqHz", connections.plannerTask.minActFreq);
@@ -468,6 +556,19 @@ void SmartPlannerBreadthFirstSearch::loadParameter(int argc, char *argv[])
 		}
 		if(parameter.checkIfParameterExists("PlannerTask", "cpuAffinity")) {
 			parameter.getInteger("PlannerTask", "cpuAffinity", connections.plannerTask.cpuAffinity);
+		}
+		
+		// load parameters for SmartPlannerBreadthFirstSearchROSExtension
+		
+		// load parameters for SeRoNetSDKComponentGeneratorExtension
+		
+		// load parameters for PlainOpcUaSmartPlannerBreadthFirstSearchExtension
+		
+		
+		// load parameters for all registered component-extensions
+		for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+		{
+			extension->second->loadParameters(parameter);
 		}
 		
 		paramHandler.loadParameter(parameter);

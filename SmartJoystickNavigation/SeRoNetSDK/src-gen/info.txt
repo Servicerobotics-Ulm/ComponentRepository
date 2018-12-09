@@ -14,28 +14,4 @@
 // running the code generator.
 //--------------------------------------------------------------------------
 
-#ifndef OPCUA_COMPONENT_TASK_H_
-#define OPCUA_COMPONENT_TASK_H_
-
-#include "aceSmartSoft.hh"
-
-namespace OpcUa {
-
-class ComponentTask : public SmartACE::Task {
-public:
-	ComponentTask(Smart::IComponent *comp);
-	virtual ~ComponentTask();
-	
-	inline Smart::IComponent* getOpcUaComponent() {
-		return opcUaComponent;
-	}
-
-private:
-	Smart::IComponent *opcUaComponent;
-	
-	virtual int svc (void);
-};
-
-} // end namespace OpcUa
-
-#endif // OPCUA_COMPONENT_TASK_H_
+// Generated with SmartSoft MDSD Toolchain Version 1.0.0.qualifier

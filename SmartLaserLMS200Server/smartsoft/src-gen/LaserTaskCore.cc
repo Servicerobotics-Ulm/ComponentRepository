@@ -22,6 +22,23 @@
 
 // include observers
 
+
+LaserTaskCore::LaserTaskCore(Smart::IComponent *comp, const bool &useDefaultState) 
+:	SmartACE::ManagedTask(comp)
+,	useDefaultState(useDefaultState)
+,	useLogging(false)
+,	taskLoggingId(0)
+,	currentUpdateCount(0)
+,	baseStateInStatus(Smart::SMART_DISCONNECTED)
+,	baseStateInObject()
+{
+}
+
+LaserTaskCore::~LaserTaskCore()
+{
+}
+
+
 void LaserTaskCore::notify_all_interaction_observers() {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
 	// try dynamically down-casting this class to the derived class 
@@ -73,6 +90,7 @@ int LaserTaskCore::execute_protected_region()
 void LaserTaskCore::updateAllCommObjects()
 {
 	baseStateInStatus = COMP->baseStateInInputTaskTrigger->getUpdate(baseStateInObject);
+	
 }
 
 

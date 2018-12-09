@@ -7,13 +7,13 @@ ComponentDocumentation SmartJoystickNavigation{
 	Purpose : "Navigation"
 	
 	
-	ComponentService JoystickServiceIn {
+	ComponentPort JoystickServiceIn {
 		Description : "The component receives joystick input commands via this ports which are translated to navigation commands. This port is connected e.g. to SmartJoystickServer that provides access to joystick hardware."
 	}
-	ComponentService NavVelServiceOut {
+	ComponentPort NavVelServiceOut {
 		Description : "Typically connected to the robot base (e.g. SmartPioneerBaseServer or SmartCdlServer). This port sends navigation commands v, omega which have been translated from joystick commands."
 	}
-	BehaviorSlaveInterface SlavePort {
+	CoordinationSlavePort CoordinationPort {
 		DynamicWiringPort :  "Slave part of wiring pattern. It is responsible for changing the port connections within the component."
 	}
 }

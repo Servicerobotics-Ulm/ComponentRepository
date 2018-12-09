@@ -15,15 +15,18 @@
 //--------------------------------------------------------------------------
 #include <iostream>
 #include "SmartPlannerBreadthFirstSearch.hh"
-	
-	
-SmartPlannerBreadthFirstSearch SmartPlannerBreadthFirstSearch::_smartPlannerBreadthFirstSearch;
-	
+
 int main(int argc, char *argv[])
 {
 	std::cout << "main...\n";
+	// initialize component infrastructure (loading ini-file, creating ports, tasks, etc.)
 	SmartPlannerBreadthFirstSearch::instance()->init(argc, argv);
+	// run component infrastructure until the component is commanded to shutdown
 	SmartPlannerBreadthFirstSearch::instance()->run();
+	// clean-up component's internal resources (deleting ports, tasks, etc.)
+	SmartPlannerBreadthFirstSearch::instance()->fini();
+	// destroy the component's singleton
+	SmartPlannerBreadthFirstSearch::deleteInstance();
 	std::cout << "... main() end. return 0." << std::endl;
 	return 0;
 }

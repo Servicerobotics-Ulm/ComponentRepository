@@ -63,19 +63,34 @@ periodicActFreqHz 10.0
 
 [BasePositionOut]
 serviceName BasePositionOut
+roboticMiddleware ACE_SmartSoft
 
 [BaseStateQueryServer]
 serviceName BaseStateQueryServer
+roboticMiddleware ACE_SmartSoft
 
 [BatteryEventServer]
 serviceName BatteryEventServer
+roboticMiddleware ACE_SmartSoft
 
 [LocalizationUpdate]
 serviceName LocalizationUpdate
+roboticMiddleware ACE_SmartSoft
 
 [NavVelIn]
 serviceName NavVelIn
+roboticMiddleware ACE_SmartSoft
 
 ##########################
 # client port parameter
+
+##########################
+## parameters of SmartPioneerBaseServerROSExtension
+
+##########################
+## parameters of SeRoNetSDKComponentGeneratorExtension
+
+##########################
+## parameters of PlainOpcUaSmartPioneerBaseServerExtension
+
 

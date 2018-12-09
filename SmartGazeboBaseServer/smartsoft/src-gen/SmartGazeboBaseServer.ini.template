@@ -69,21 +69,36 @@ prescale 1
 
 [BaseSatateQueryAnsw]
 serviceName BaseSatateQueryAnsw
+roboticMiddleware ACE_SmartSoft
 
 [BaseStateServiceOut]
 serviceName BaseStateServiceOut
+roboticMiddleware ACE_SmartSoft
 
 [LaserServiceOut]
 serviceName LaserServiceOut
+roboticMiddleware ACE_SmartSoft
 
 [LocalizationUpdateServiceIn]
 serviceName LocalizationUpdateServiceIn
+roboticMiddleware ACE_SmartSoft
 
 [NavVelServiceIn]
 serviceName NavVelServiceIn
+roboticMiddleware ACE_SmartSoft
 
 ##########################
 # client port parameter
+
+##########################
+## parameters of SmartGazeboBaseServerROSExtension
+
+##########################
+## parameters of SeRoNetSDKComponentGeneratorExtension
+
+##########################
+## parameters of PlainOpcUaSmartGazeboBaseServerExtension
+
 
 #####################
 # internal parameters

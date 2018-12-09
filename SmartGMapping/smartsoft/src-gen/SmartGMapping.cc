@@ -18,13 +18,17 @@
 //FIXME: implement logging
 //#include "smartGlobalLogger.hh"
 
+// the ace port-factory is used as a default port-mapping
+#include "SmartGMappingAcePortFactory.hh"
+
+
+// initialize static singleton pointer to zero
+SmartGMapping* SmartGMapping::_smartGMapping = 0;
 
 // constructor
 SmartGMapping::SmartGMapping()
 {
 	std::cout << "constructor of SmartGMapping\n";
-	
-	component = NULL;
 	
 	// set all pointer members to NULL
 	//coordinationPort = NULL;
@@ -41,7 +45,6 @@ SmartGMapping::SmartGMapping()
 	wiringSlave = NULL;
 	param = NULL;
 	
-	
 	// set default ini parameter values
 	connections.component.name = "SmartGMapping";
 	connections.component.initialComponentMode = "Neutral";
@@ -49,15 +52,18 @@ SmartGMapping::SmartGMapping()
 	connections.component.useLogger = false;
 	
 	connections.currGridMapPushServiceOut.serviceName = "CurrGridMapPushServiceOut";
+	connections.currGridMapPushServiceOut.roboticMiddleware = "ACE_SmartSoft";
 	connections.laserServiceIn.wiringName = "LaserServiceIn";
 	connections.laserServiceIn.serverName = "unknown";
 	connections.laserServiceIn.serviceName = "unknown";
 	connections.laserServiceIn.interval = 1;
+	connections.laserServiceIn.roboticMiddleware = "ACE_SmartSoft";
 	connections.localizationUpdateServiceOut.initialConnect = false;
 	connections.localizationUpdateServiceOut.wiringName = "LocalizationUpdateServiceOut";
 	connections.localizationUpdateServiceOut.serverName = "unknown";
 	connections.localizationUpdateServiceOut.serviceName = "unknown";
 	connections.localizationUpdateServiceOut.interval = 1;
+	connections.localizationUpdateServiceOut.roboticMiddleware = "ACE_SmartSoft";
 	connections.gMappingTask.minActFreq = 0.0;
 	connections.gMappingTask.maxActFreq = 0.0;
 	connections.gMappingTask.trigger = "DataTriggered";
@@ -67,9 +73,24 @@ SmartGMapping::SmartGMapping()
 	connections.gMappingTask.scheduler = "DEFAULT";
 	connections.gMappingTask.priority = -1;
 	connections.gMappingTask.cpuAffinity = -1;
+	
+	// initialize members of SmartGMappingROSExtension
+	
+	// initialize members of SeRoNetSDKComponentGeneratorExtension
+	
+	// initialize members of PlainOpcUaSmartGMappingExtension
+	
 }
 
+void SmartGMapping::addPortFactory(const std::string &name, SmartGMappingPortFactoryInterface *portFactory)
+{
+	portFactoryRegistry[name] = portFactory;
+}
 
+void SmartGMapping::addExtension(SmartGMappingExtension *extension)
+{
+	componentExtensionRegistry[extension->getName()] = extension;
+}
 
 /**
  * Notify the component that setup/initialization is finished.
@@ -175,22 +196,34 @@ void SmartGMapping::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
-		if(connections.component.defaultScheduler != "DEFAULT") {
-			ACE_Sched_Params sched_params(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
-			if(connections.component.defaultScheduler == "FIFO") {
-				sched_params.policy(ACE_SCHED_FIFO);
-				sched_params.priority(ACE_THR_PRI_FIFO_MIN);
-			} else if(connections.component.defaultScheduler == "RR") {
-				sched_params.policy(ACE_SCHED_RR);
-				sched_params.priority(ACE_THR_PRI_RR_MIN);
-			}
-			// create new instance of the SmartSoft component with customized scheuling parameters 
-			component = new SmartGMappingImpl(connections.component.name, argc, argv, sched_params);
-		} else {
-			// create new instance of the SmartSoft component
-			component = new SmartGMappingImpl(connections.component.name, argc, argv);
+		
+		// initializations of SmartGMappingROSExtension
+		
+		// initializations of SeRoNetSDKComponentGeneratorExtension
+		
+		// initializations of PlainOpcUaSmartGMappingExtension
+		
+		
+		// initialize all registered port-factories
+		for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+		{
+			portFactory->second->initialize(this, argc, argv);
 		}
 		
+		// initialize all registered component-extensions
+		for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+		{
+			extension->second->initialize(this, argc, argv);
+		}
+		
+		SmartGMappingPortFactoryInterface *acePortFactory = portFactoryRegistry["ACE_SmartSoft"];
+		if(acePortFactory == 0) {
+			std::cerr << "ERROR: acePortFactory NOT instantiated -> exit(-1)" << std::endl;
+			exit(-1);
+		}
+		
+		// this pointer is used for backwards compatibility (deprecated: should be removed as soon as all patterns, including coordination, are moved to port-factory)
+		SmartACE::SmartComponent *component = dynamic_cast<SmartGMappingAcePortFactory*>(acePortFactory)->getComponentImpl();
 		
 		std::cout << "ComponentDefinition SmartGMapping is named " << connections.component.name << std::endl;
 		
@@ -204,11 +237,11 @@ void SmartGMapping::init(int argc, char *argv[])
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
-		currGridMapPushServiceOut = new SmartACE::PushServer<CommNavigationObjects::CommGridMap>(component, connections.currGridMapPushServiceOut.serviceName);
+		currGridMapPushServiceOut = portFactoryRegistry[connections.currGridMapPushServiceOut.roboticMiddleware]->createCurrGridMapPushServiceOut(connections.currGridMapPushServiceOut.serviceName);
 		
 		// create client ports
-		laserServiceIn = new SmartACE::PushClient<CommBasicObjects::CommMobileLaserScan>(component);
-		localizationUpdateServiceOut = new SmartACE::SendClient<CommBasicObjects::CommBasePositionUpdate>(component);
+		laserServiceIn = portFactoryRegistry[connections.laserServiceIn.roboticMiddleware]->createLaserServiceIn();
+		localizationUpdateServiceOut = portFactoryRegistry[connections.localizationUpdateServiceOut.roboticMiddleware]->createLocalizationUpdateServiceOut();
 		
 		// create InputTaskTriggers and UpcallManagers
 		laserServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan>(laserServiceIn);
@@ -217,7 +250,6 @@ void SmartGMapping::init(int argc, char *argv[])
 		// create input-handler
 		
 		// create request-handlers
-		
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
@@ -231,8 +263,14 @@ void SmartGMapping::init(int argc, char *argv[])
 		
 		wiringSlave = new SmartACE::WiringSlave(component);
 		// add client port to wiring slave
-		dynamic_cast<SmartACE::PushClient<CommBasicObjects::CommMobileLaserScan>*>(laserServiceIn)->add(wiringSlave, connections.laserServiceIn.wiringName);
-		dynamic_cast<SmartACE::SendClient<CommBasicObjects::CommBasePositionUpdate>*>(localizationUpdateServiceOut)->add(wiringSlave, connections.localizationUpdateServiceOut.wiringName);
+		if(connections.laserServiceIn.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::PushClient<CommBasicObjects::CommMobileLaserScan>*>(laserServiceIn)->add(wiringSlave, connections.laserServiceIn.wiringName);
+		}
+		if(connections.localizationUpdateServiceOut.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::SendClient<CommBasicObjects::CommBasePositionUpdate>*>(localizationUpdateServiceOut)->add(wiringSlave, connections.localizationUpdateServiceOut.wiringName);
+		}
 		
 		// create parameter slave
 		param = new SmartACE::ParameterSlave(component, &paramHandler);
@@ -285,15 +323,37 @@ void SmartGMapping::init(int argc, char *argv[])
 // run the component
 void SmartGMapping::run()
 {
+	stateSlave->acquire("init");
+	// startup all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->onStartup();
+	}
+	
+	// startup all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->onStartup();
+	}
+	stateSlave->release("init");
+	
+	// do not call this handler within the init state (see above) as this handler internally calls setStartupFinished() (this should be fixed in future)
 	compHandler.onStartup();
 	
+	// this call blocks until the component is commanded to shutdown
+	stateSlave->acquire("shutdown");
 	
-	// coponent will now start running and will continue (block in the run method) until it is commanded to shutdown (i.e. by a SIGINT signal)
-	component->run();
-	// component was signalled to shutdown
-	// 1) signall all tasks to shutdown as well (and give them 2 seconds time to cooperate)
-	// if time exceeds, component is killed without further clean-up
-	component->closeAllAssociatedTasks(2);
+	// shutdown all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->onShutdown();
+	}
+	
+	// shutdown all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->onShutdown();
+	}
 	
 	if(connections.component.useLogger == true) {
 		//FIXME: use logging
@@ -302,7 +362,12 @@ void SmartGMapping::run()
 	
 	compHandler.onShutdown();
 	
-	
+	stateSlave->release("shutdown");
+}
+
+// clean-up component's resources
+void SmartGMapping::fini()
+{
 	// unlink all observers
 	
 	// destroy all task instances
@@ -328,7 +393,6 @@ void SmartGMapping::run()
 	
 	// destroy request-handlers
 	
-
 	delete stateSlave;
 	// destroy state-change-handler
 	delete stateChangeHandler;
@@ -338,12 +402,24 @@ void SmartGMapping::run()
 	delete param;
 	
 
-	// clean-up component's internally used resources (internally used communication middleware) 
-	component->cleanUpComponentResources();
+	// destroy all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->destroy();
+	}
+
+	// destroy all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->destroy();
+	}
 	
+	// destruction of SmartGMappingROSExtension
 	
-	// finally delete the component itself
-	delete component;
+	// destruction of SeRoNetSDKComponentGeneratorExtension
+	
+	// destruction of PlainOpcUaSmartGMappingExtension
+	
 }
 
 void SmartGMapping::loadParameter(int argc, char *argv[])
@@ -421,15 +497,23 @@ void SmartGMapping::loadParameter(int argc, char *argv[])
 		parameter.getString("LaserServiceIn", "serverName", connections.laserServiceIn.serverName);
 		parameter.getString("LaserServiceIn", "wiringName", connections.laserServiceIn.wiringName);
 		parameter.getInteger("LaserServiceIn", "interval", connections.laserServiceIn.interval);
+		if(parameter.checkIfParameterExists("LaserServiceIn", "roboticMiddleware")) {
+			parameter.getString("LaserServiceIn", "roboticMiddleware", connections.laserServiceIn.roboticMiddleware);
+		}
 		// load parameters for client LocalizationUpdateServiceOut
 		parameter.getBoolean("LocalizationUpdateServiceOut", "initialConnect", connections.localizationUpdateServiceOut.initialConnect);
 		parameter.getString("LocalizationUpdateServiceOut", "serviceName", connections.localizationUpdateServiceOut.serviceName);
 		parameter.getString("LocalizationUpdateServiceOut", "serverName", connections.localizationUpdateServiceOut.serverName);
 		parameter.getString("LocalizationUpdateServiceOut", "wiringName", connections.localizationUpdateServiceOut.wiringName);
-		
+		if(parameter.checkIfParameterExists("LocalizationUpdateServiceOut", "roboticMiddleware")) {
+			parameter.getString("LocalizationUpdateServiceOut", "roboticMiddleware", connections.localizationUpdateServiceOut.roboticMiddleware);
+		}
 		
 		// load parameters for server CurrGridMapPushServiceOut
 		parameter.getString("CurrGridMapPushServiceOut", "serviceName", connections.currGridMapPushServiceOut.serviceName);
+		if(parameter.checkIfParameterExists("CurrGridMapPushServiceOut", "roboticMiddleware")) {
+			parameter.getString("CurrGridMapPushServiceOut", "roboticMiddleware", connections.currGridMapPushServiceOut.roboticMiddleware);
+		}
 		
 		// load parameters for task GMappingTask
 		parameter.getDouble("GMappingTask", "minActFreqHz", connections.gMappingTask.minActFreq);
@@ -449,6 +533,19 @@ void SmartGMapping::loadParameter(int argc, char *argv[])
 		}
 		if(parameter.checkIfParameterExists("GMappingTask", "cpuAffinity")) {
 			parameter.getInteger("GMappingTask", "cpuAffinity", connections.gMappingTask.cpuAffinity);
+		}
+		
+		// load parameters for SmartGMappingROSExtension
+		
+		// load parameters for SeRoNetSDKComponentGeneratorExtension
+		
+		// load parameters for PlainOpcUaSmartGMappingExtension
+		
+		
+		// load parameters for all registered component-extensions
+		for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+		{
+			extension->second->loadParameters(parameter);
 		}
 		
 		paramHandler.loadParameter(parameter);
