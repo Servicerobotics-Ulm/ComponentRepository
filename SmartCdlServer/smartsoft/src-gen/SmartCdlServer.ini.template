@@ -149,20 +149,20 @@ roboticMiddleware ACE_SmartSoft
 ##########################
 # InternalParameter Cdl
 [Cdl]
-accel_default_file CDLacc_P3DX.dat
+accel_default_file CDLacc_PMB2.dat
 accel_second_file CDLacc_P3DX.dat
-contour_default_file CDLcontour_P3DX.dat
+contour_default_file CDLcontour_PMB2.dat
 contour_second_file CDLcontour_P3DX.dat
-curvature_default_file CDLindex_P3DX.dat
+curvature_default_file CDLindex_PMB2.dat
 curvature_second_file CDLindex_P3DX.dat
-dataDir data/lookup-files/
+dataDir lookup-files/
 delta_t_calc 0.35
 delta_t_trigger 0.1
 followHysteresis false
 freeBehaviorDist 350.0
 freeBehaviorDist_second 350.0
-lookup_default_file CDLdist_P3DX.dat
-lookup_default_file_compressed false
+lookup_default_file CDLdist_PMB2.dat.compressed
+lookup_default_file_compressed true
 lookup_second_file CDLdist_P3DX.dat
 lookup_second_file_compressed false
 rotation_acc 100.0
