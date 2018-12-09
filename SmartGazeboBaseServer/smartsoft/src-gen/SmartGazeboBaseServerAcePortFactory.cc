@@ -53,21 +53,6 @@ int SmartGazeboBaseServerAcePortFactory::onStartup()
 }
 
 
-Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * SmartGazeboBaseServerAcePortFactory::createLaserServiceOut(const std::string &serviceName)
-{
-	return new SmartACE::PushServer<CommBasicObjects::CommMobileLaserScan>(componentImpl, serviceName);
-}
-
-Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState,SmartACE::QueryId> * SmartGazeboBaseServerAcePortFactory::createBaseSatateQueryAnsw(const std::string &serviceName)
-{
-	return new SmartACE::QueryServer<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>(componentImpl, serviceName);
-}
-
-Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * SmartGazeboBaseServerAcePortFactory::createNavVelServiceIn(const std::string &serviceName)
-{
-	return new SmartACE::SendServer<CommBasicObjects::CommNavigationVelocity>(componentImpl, serviceName);
-}
-
 Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * SmartGazeboBaseServerAcePortFactory::createBaseStateServiceOut(const std::string &serviceName)
 {
 	return new SmartACE::PushServer<CommBasicObjects::CommBaseState>(componentImpl, serviceName);
@@ -76,6 +61,21 @@ Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * SmartGazeboBaseServ
 Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * SmartGazeboBaseServerAcePortFactory::createLocalizationUpdateServiceIn(const std::string &serviceName)
 {
 	return new SmartACE::SendServer<CommBasicObjects::CommBasePositionUpdate>(componentImpl, serviceName);
+}
+
+Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState,SmartACE::QueryId> * SmartGazeboBaseServerAcePortFactory::createBaseSatateQueryAnsw(const std::string &serviceName)
+{
+	return new SmartACE::QueryServer<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>(componentImpl, serviceName);
+}
+
+Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * SmartGazeboBaseServerAcePortFactory::createLaserServiceOut(const std::string &serviceName)
+{
+	return new SmartACE::PushServer<CommBasicObjects::CommMobileLaserScan>(componentImpl, serviceName);
+}
+
+Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * SmartGazeboBaseServerAcePortFactory::createNavVelServiceIn(const std::string &serviceName)
+{
+	return new SmartACE::SendServer<CommBasicObjects::CommNavigationVelocity>(componentImpl, serviceName);
 }
 
 
