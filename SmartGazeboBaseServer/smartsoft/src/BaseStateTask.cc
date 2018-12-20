@@ -42,9 +42,14 @@ int BaseStateTask::on_execute()
 	CommBasicObjects::CommBaseState commCurrentBaseState;
 
 	// get base pose and velocity from gazebo interface
-	commCurrentBaseState.set_base_position(COMP->pose->getBasePose());
-	commCurrentBaseState.set_base_raw_position(COMP->pose->getBasePose());
-	commCurrentBaseState.set_base_velocity(COMP->velocity->getBaseVelocity());
+	if (COMP->pose != NULL && COMP->velocity != NULL) {
+		commCurrentBaseState.set_base_position(COMP->pose->getBasePose());
+		commCurrentBaseState.set_base_raw_position(COMP->pose->getBasePose());
+		commCurrentBaseState.set_base_velocity(COMP->velocity->getBaseVelocity());
+	}
+	else {
+		std::cout << "Gazebo Simulator not yet started !" << std::endl;
+	}
 
 	CommBasicObjects::CommTimeStamp time_stamp;
 	time_stamp.set_now();

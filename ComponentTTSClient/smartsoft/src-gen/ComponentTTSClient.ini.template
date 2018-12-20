@@ -61,6 +61,7 @@ serverName unknown
 serviceName unknown
 wiringName SpeechQueryServiceReq
 interval 1
+roboticMiddleware ACE_SmartSoft
 
 [SpeechSendServiceOut]
 initialConnect false
@@ -68,6 +69,11 @@ serverName unknown
 serviceName unknown
 wiringName SpeechSendServiceOut
 interval 1
+roboticMiddleware ACE_SmartSoft
+
+##########################
+## parameters of PlainOpcUaComponentTTSClientExtension
+
 
 #####################
 # internal parameters

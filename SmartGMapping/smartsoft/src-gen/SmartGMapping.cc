@@ -74,10 +74,6 @@ SmartGMapping::SmartGMapping()
 	connections.gMappingTask.priority = -1;
 	connections.gMappingTask.cpuAffinity = -1;
 	
-	// initialize members of SmartGMappingROSExtension
-	
-	// initialize members of SeRoNetSDKComponentGeneratorExtension
-	
 	// initialize members of PlainOpcUaSmartGMappingExtension
 	
 }
@@ -196,10 +192,6 @@ void SmartGMapping::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
-		
-		// initializations of SmartGMappingROSExtension
-		
-		// initializations of SeRoNetSDKComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaSmartGMappingExtension
 		
@@ -414,10 +406,6 @@ void SmartGMapping::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of SmartGMappingROSExtension
-	
-	// destruction of SeRoNetSDKComponentGeneratorExtension
-	
 	// destruction of PlainOpcUaSmartGMappingExtension
 	
 }
@@ -534,10 +522,6 @@ void SmartGMapping::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("GMappingTask", "cpuAffinity")) {
 			parameter.getInteger("GMappingTask", "cpuAffinity", connections.gMappingTask.cpuAffinity);
 		}
-		
-		// load parameters for SmartGMappingROSExtension
-		
-		// load parameters for SeRoNetSDKComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaSmartGMappingExtension
 		

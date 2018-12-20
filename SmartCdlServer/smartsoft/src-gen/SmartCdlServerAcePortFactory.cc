@@ -57,14 +57,14 @@ Smart::IPushClientPattern<CommTrackingObjects::CommTrackingGoal> * SmartCdlServe
 	return new SmartACE::PushClient<CommTrackingObjects::CommTrackingGoal>(componentImpl);
 }
 
-Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * SmartCdlServerAcePortFactory::createLaserClient()
-{
-	return new SmartACE::PushClient<CommBasicObjects::CommMobileLaserScan>(componentImpl);
-}
-
 Smart::IPushClientPattern<CommRobotinoObjects::CommPathNavigationGoal> * SmartCdlServerAcePortFactory::createPathNavigationGoalClient()
 {
 	return new SmartACE::PushClient<CommRobotinoObjects::CommPathNavigationGoal>(componentImpl);
+}
+
+Smart::IPushClientPattern<CommBasicObjects::CommMobileIRScan> * SmartCdlServerAcePortFactory::createIRClient()
+{
+	return new SmartACE::PushClient<CommBasicObjects::CommMobileIRScan>(componentImpl);
 }
 
 Smart::IPushClientPattern<CommNavigationObjects::CommPlannerGoal> * SmartCdlServerAcePortFactory::createPlannerClient()
@@ -82,9 +82,9 @@ Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> * SmartCdlSe
 	return new SmartACE::SendClient<CommBasicObjects::CommNavigationVelocity>(componentImpl);
 }
 
-Smart::IPushClientPattern<CommBasicObjects::CommMobileIRScan> * SmartCdlServerAcePortFactory::createIRClient()
+Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * SmartCdlServerAcePortFactory::createLaserClient()
 {
-	return new SmartACE::PushClient<CommBasicObjects::CommMobileIRScan>(componentImpl);
+	return new SmartACE::PushClient<CommBasicObjects::CommMobileLaserScan>(componentImpl);
 }
 
 Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * SmartCdlServerAcePortFactory::createLaserClient2()
@@ -93,14 +93,14 @@ Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * SmartCdlServe
 }
 
 
-Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * SmartCdlServerAcePortFactory::createNavVelSendServer(const std::string &serviceName)
-{
-	return new SmartACE::SendServer<CommBasicObjects::CommNavigationVelocity>(componentImpl, serviceName);
-}
-
 Smart::IEventServerPattern<CommNavigationObjects::CommCdlRobotBlockedEventParameter, CommNavigationObjects::CommCdlRobotBlockedEventResult, CommNavigationObjects::CommCdlRobotBlockedState,SmartACE::EventId> * SmartCdlServerAcePortFactory::createRobotBlockedEventServer(const std::string &serviceName, Smart::IEventTestHandler<CommNavigationObjects::CommCdlRobotBlockedEventParameter, CommNavigationObjects::CommCdlRobotBlockedEventResult, CommNavigationObjects::CommCdlRobotBlockedState> *robotBlockedEventServerEventTestHandler)
 {
 	return new SmartACE::EventServer<CommNavigationObjects::CommCdlRobotBlockedEventParameter, CommNavigationObjects::CommCdlRobotBlockedEventResult, CommNavigationObjects::CommCdlRobotBlockedState>(componentImpl, serviceName, robotBlockedEventServerEventTestHandler);
+}
+
+Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * SmartCdlServerAcePortFactory::createNavVelSendServer(const std::string &serviceName)
+{
+	return new SmartACE::SendServer<CommBasicObjects::CommNavigationVelocity>(componentImpl, serviceName);
 }
 
 Smart::IEventServerPattern<CommNavigationObjects::CommCdlGoalEventParameter, CommNavigationObjects::CommCdlGoalEventResult, CommNavigationObjects::CdlGoalEventState,SmartACE::EventId> * SmartCdlServerAcePortFactory::createGoalEventServer(const std::string &serviceName, Smart::IEventTestHandler<CommNavigationObjects::CommCdlGoalEventParameter, CommNavigationObjects::CommCdlGoalEventResult, CommNavigationObjects::CdlGoalEventState> *goalEventServerEventTestHandler)

@@ -139,10 +139,6 @@ SmartCdlServer::SmartCdlServer()
 	connections.cdlTask.priority = -1;
 	connections.cdlTask.cpuAffinity = -1;
 	
-	// initialize members of SmartCdlServerROSExtension
-	
-	// initialize members of SeRoNetSDKComponentGeneratorExtension
-	
 	// initialize members of PlainOpcUaSmartCdlServerExtension
 	
 }
@@ -382,10 +378,6 @@ void SmartCdlServer::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
-		
-		// initializations of SmartCdlServerROSExtension
-		
-		// initializations of SeRoNetSDKComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaSmartCdlServerExtension
 		
@@ -690,10 +682,6 @@ void SmartCdlServer::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of SmartCdlServerROSExtension
-	
-	// destruction of SeRoNetSDKComponentGeneratorExtension
-	
 	// destruction of PlainOpcUaSmartCdlServerExtension
 	
 }
@@ -874,10 +862,6 @@ void SmartCdlServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("CdlTask", "cpuAffinity")) {
 			parameter.getInteger("CdlTask", "cpuAffinity", connections.cdlTask.cpuAffinity);
 		}
-		
-		// load parameters for SmartCdlServerROSExtension
-		
-		// load parameters for SeRoNetSDKComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaSmartCdlServerExtension
 		

@@ -18,13 +18,17 @@
 //FIXME: implement logging
 //#include "smartGlobalLogger.hh"
 
+// the ace port-factory is used as a default port-mapping
+#include "ComponentSymbolicPlannerAcePortFactory.hh"
+
+
+// initialize static singleton pointer to zero
+ComponentSymbolicPlanner* ComponentSymbolicPlanner::_componentSymbolicPlanner = 0;
 
 // constructor
 ComponentSymbolicPlanner::ComponentSymbolicPlanner()
 {
 	std::cout << "constructor of ComponentSymbolicPlanner\n";
-	
-	component = NULL;
 	
 	// set all pointer members to NULL
 	//coordinationPort = NULL;
@@ -35,7 +39,6 @@ ComponentSymbolicPlanner::ComponentSymbolicPlanner()
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	
-	
 	// set default ini parameter values
 	connections.component.name = "ComponentSymbolicPlanner";
 	connections.component.initialComponentMode = "Neutral";
@@ -43,9 +46,21 @@ ComponentSymbolicPlanner::ComponentSymbolicPlanner()
 	connections.component.useLogger = false;
 	
 	connections.symbolicPlannerQueryServer.serviceName = "SymbolicPlannerQueryServer";
+	connections.symbolicPlannerQueryServer.roboticMiddleware = "ACE_SmartSoft";
+	
+	// initialize members of PlainOpcUaComponentSymbolicPlannerExtension
+	
 }
 
+void ComponentSymbolicPlanner::addPortFactory(const std::string &name, ComponentSymbolicPlannerPortFactoryInterface *portFactory)
+{
+	portFactoryRegistry[name] = portFactory;
+}
 
+void ComponentSymbolicPlanner::addExtension(ComponentSymbolicPlannerExtension *extension)
+{
+	componentExtensionRegistry[extension->getName()] = extension;
+}
 
 /**
  * Notify the component that setup/initialization is finished.
@@ -100,22 +115,30 @@ void ComponentSymbolicPlanner::init(int argc, char *argv[])
 		// load initial parameters from ini-file (if found)
 		loadParameter(argc, argv);
 		
-		if(connections.component.defaultScheduler != "DEFAULT") {
-			ACE_Sched_Params sched_params(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
-			if(connections.component.defaultScheduler == "FIFO") {
-				sched_params.policy(ACE_SCHED_FIFO);
-				sched_params.priority(ACE_THR_PRI_FIFO_MIN);
-			} else if(connections.component.defaultScheduler == "RR") {
-				sched_params.policy(ACE_SCHED_RR);
-				sched_params.priority(ACE_THR_PRI_RR_MIN);
-			}
-			// create new instance of the SmartSoft component with customized scheuling parameters 
-			component = new ComponentSymbolicPlannerImpl(connections.component.name, argc, argv, sched_params);
-		} else {
-			// create new instance of the SmartSoft component
-			component = new ComponentSymbolicPlannerImpl(connections.component.name, argc, argv);
+		
+		// initializations of PlainOpcUaComponentSymbolicPlannerExtension
+		
+		
+		// initialize all registered port-factories
+		for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+		{
+			portFactory->second->initialize(this, argc, argv);
 		}
 		
+		// initialize all registered component-extensions
+		for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+		{
+			extension->second->initialize(this, argc, argv);
+		}
+		
+		ComponentSymbolicPlannerPortFactoryInterface *acePortFactory = portFactoryRegistry["ACE_SmartSoft"];
+		if(acePortFactory == 0) {
+			std::cerr << "ERROR: acePortFactory NOT instantiated -> exit(-1)" << std::endl;
+			exit(-1);
+		}
+		
+		// this pointer is used for backwards compatibility (deprecated: should be removed as soon as all patterns, including coordination, are moved to port-factory)
+		SmartACE::SmartComponent *component = dynamic_cast<ComponentSymbolicPlannerAcePortFactory*>(acePortFactory)->getComponentImpl();
 		
 		std::cout << "ComponentDefinition ComponentSymbolicPlanner is named " << connections.component.name << std::endl;
 		
@@ -129,7 +152,7 @@ void ComponentSymbolicPlanner::init(int argc, char *argv[])
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
-		symbolicPlannerQueryServer = new SmartACE::QueryServer<DomainSymbolicPlanner::CommSymbolicPlannerRequest, DomainSymbolicPlanner::CommSymbolicPlannerPlan>(component, connections.symbolicPlannerQueryServer.serviceName);
+		symbolicPlannerQueryServer = portFactoryRegistry[connections.symbolicPlannerQueryServer.roboticMiddleware]->createSymbolicPlannerQueryServer(connections.symbolicPlannerQueryServer.serviceName);
 		symbolicPlannerQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<DomainSymbolicPlanner::CommSymbolicPlannerRequest, DomainSymbolicPlanner::CommSymbolicPlannerPlan,SmartACE::QueryId>(symbolicPlannerQueryServer);
 		
 		// create client ports
@@ -140,7 +163,6 @@ void ComponentSymbolicPlanner::init(int argc, char *argv[])
 		
 		// create request-handlers
 		symbolicPannerQueryHandler = new SymbolicPannerQueryHandler(symbolicPlannerQueryServer);
-		
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
@@ -168,15 +190,37 @@ void ComponentSymbolicPlanner::init(int argc, char *argv[])
 // run the component
 void ComponentSymbolicPlanner::run()
 {
+	stateSlave->acquire("init");
+	// startup all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->onStartup();
+	}
+	
+	// startup all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->onStartup();
+	}
+	stateSlave->release("init");
+	
+	// do not call this handler within the init state (see above) as this handler internally calls setStartupFinished() (this should be fixed in future)
 	compHandler.onStartup();
 	
+	// this call blocks until the component is commanded to shutdown
+	stateSlave->acquire("shutdown");
 	
-	// coponent will now start running and will continue (block in the run method) until it is commanded to shutdown (i.e. by a SIGINT signal)
-	component->run();
-	// component was signalled to shutdown
-	// 1) signall all tasks to shutdown as well (and give them 2 seconds time to cooperate)
-	// if time exceeds, component is killed without further clean-up
-	component->closeAllAssociatedTasks(2);
+	// shutdown all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->onShutdown();
+	}
+	
+	// shutdown all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->onShutdown();
+	}
 	
 	if(connections.component.useLogger == true) {
 		//FIXME: use logging
@@ -185,7 +229,12 @@ void ComponentSymbolicPlanner::run()
 	
 	compHandler.onShutdown();
 	
-	
+	stateSlave->release("shutdown");
+}
+
+// clean-up component's resources
+void ComponentSymbolicPlanner::fini()
+{
 	// unlink all observers
 	
 	// destroy all task instances
@@ -204,7 +253,6 @@ void ComponentSymbolicPlanner::run()
 	// destroy request-handlers
 	delete symbolicPannerQueryHandler;
 	
-
 	delete stateSlave;
 	// destroy state-change-handler
 	delete stateChangeHandler;
@@ -213,12 +261,20 @@ void ComponentSymbolicPlanner::run()
 	delete wiringSlave;
 	
 
-	// clean-up component's internally used resources (internally used communication middleware) 
-	component->cleanUpComponentResources();
+	// destroy all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->destroy();
+	}
+
+	// destroy all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->destroy();
+	}
 	
+	// destruction of PlainOpcUaComponentSymbolicPlannerExtension
 	
-	// finally delete the component itself
-	delete component;
 }
 
 void ComponentSymbolicPlanner::loadParameter(int argc, char *argv[])
@@ -292,10 +348,21 @@ void ComponentSymbolicPlanner::loadParameter(int argc, char *argv[])
 		}
 		
 		
-		
 		// load parameters for server SymbolicPlannerQueryServer
 		parameter.getString("SymbolicPlannerQueryServer", "serviceName", connections.symbolicPlannerQueryServer.serviceName);
+		if(parameter.checkIfParameterExists("SymbolicPlannerQueryServer", "roboticMiddleware")) {
+			parameter.getString("SymbolicPlannerQueryServer", "roboticMiddleware", connections.symbolicPlannerQueryServer.roboticMiddleware);
+		}
 		
+		
+		// load parameters for PlainOpcUaComponentSymbolicPlannerExtension
+		
+		
+		// load parameters for all registered component-extensions
+		for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+		{
+			extension->second->loadParameters(parameter);
+		}
 		
 	
 	} catch (const SmartACE::IniParameterError & e) {

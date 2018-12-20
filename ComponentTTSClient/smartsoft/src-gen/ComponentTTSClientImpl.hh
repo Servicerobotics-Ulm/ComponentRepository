@@ -16,6 +16,7 @@
 #ifndef _COMPONENTTTSCLIENTIMPL_HH
 #define _COMPONENTTTSCLIENTIMPL_HH
 
+#include <chrono>
 #include "aceSmartSoft.hh"
 
 class ComponentTTSClientImpl : public SmartACE::SmartComponent {
@@ -24,8 +25,8 @@ public:
 	ComponentTTSClientImpl(const std::string &componentName, int & argc, char ** argv, const ACE_Sched_Params &sched_params);
 	virtual ~ComponentTTSClientImpl();
 
-	Smart::StatusCode run(void);
-	void closeAllAssociatedTasks(const int &taskShutdownTimeLimit);
+	int startComponentInfrastructure();
+	void stopComponentInfrastructure(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2));
 	void cleanUpComponentResources();
 };
 

@@ -54,10 +54,6 @@ SmartRobotConsole::SmartRobotConsole()
 	connections.consoleTask.priority = -1;
 	connections.consoleTask.cpuAffinity = -1;
 	
-	// initialize members of SmartRobotConsoleROSExtension
-	
-	// initialize members of SeRoNetSDKComponentGeneratorExtension
-	
 	// initialize members of PlainOpcUaSmartRobotConsoleExtension
 	
 }
@@ -139,10 +135,6 @@ void SmartRobotConsole::init(int argc, char *argv[])
 		// load initial parameters from ini-file (if found)
 		loadParameter(argc, argv);
 		
-		
-		// initializations of SmartRobotConsoleROSExtension
-		
-		// initializations of SeRoNetSDKComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaSmartRobotConsoleExtension
 		
@@ -332,10 +324,6 @@ void SmartRobotConsole::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of SmartRobotConsoleROSExtension
-	
-	// destruction of SeRoNetSDKComponentGeneratorExtension
-	
 	// destruction of PlainOpcUaSmartRobotConsoleExtension
 	
 }
@@ -431,10 +419,6 @@ void SmartRobotConsole::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("ConsoleTask", "cpuAffinity")) {
 			parameter.getInteger("ConsoleTask", "cpuAffinity", connections.consoleTask.cpuAffinity);
 		}
-		
-		// load parameters for SmartRobotConsoleROSExtension
-		
-		// load parameters for SeRoNetSDKComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaSmartRobotConsoleExtension
 		

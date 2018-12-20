@@ -53,16 +53,6 @@ int SmartPioneerBaseServerAcePortFactory::onStartup()
 }
 
 
-Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * SmartPioneerBaseServerAcePortFactory::createLocalizationUpdate(const std::string &serviceName)
-{
-	return new SmartACE::SendServer<CommBasicObjects::CommBasePositionUpdate>(componentImpl, serviceName);
-}
-
-Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * SmartPioneerBaseServerAcePortFactory::createNavVelIn(const std::string &serviceName)
-{
-	return new SmartACE::SendServer<CommBasicObjects::CommNavigationVelocity>(componentImpl, serviceName);
-}
-
 Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState,SmartACE::EventId> * SmartPioneerBaseServerAcePortFactory::createBatteryEventServer(const std::string &serviceName, Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> *batteryEventServerEventTestHandler)
 {
 	return new SmartACE::EventServer<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>(componentImpl, serviceName, batteryEventServerEventTestHandler);
@@ -76,6 +66,16 @@ Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBas
 Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * SmartPioneerBaseServerAcePortFactory::createBasePositionOut(const std::string &serviceName)
 {
 	return new SmartACE::PushServer<CommBasicObjects::CommBaseState>(componentImpl, serviceName);
+}
+
+Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * SmartPioneerBaseServerAcePortFactory::createNavVelIn(const std::string &serviceName)
+{
+	return new SmartACE::SendServer<CommBasicObjects::CommNavigationVelocity>(componentImpl, serviceName);
+}
+
+Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * SmartPioneerBaseServerAcePortFactory::createLocalizationUpdate(const std::string &serviceName)
+{
+	return new SmartACE::SendServer<CommBasicObjects::CommBasePositionUpdate>(componentImpl, serviceName);
 }
 
 

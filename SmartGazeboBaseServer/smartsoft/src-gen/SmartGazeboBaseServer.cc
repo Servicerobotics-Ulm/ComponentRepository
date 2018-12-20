@@ -48,6 +48,8 @@ SmartGazeboBaseServer::SmartGazeboBaseServer()
 	navVelServiceIn = NULL;
 	navVelServiceInInputTaskTrigger = NULL;
 	navVelServiceInUpcallManager = NULL;
+	pollForGazeboConnection = NULL;
+	pollForGazeboConnectionTrigger = NULL;
 	//smartGazeboBaseServerParams = NULL;
 	velocityInpuHandler = NULL;
 	stateChangeHandler = NULL;
@@ -83,12 +85,14 @@ SmartGazeboBaseServer::SmartGazeboBaseServer()
 	connections.laserTask.scheduler = "DEFAULT";
 	connections.laserTask.priority = -1;
 	connections.laserTask.cpuAffinity = -1;
+	connections.pollForGazeboConnection.minActFreq = 0.0;
+	connections.pollForGazeboConnection.maxActFreq = 0.0;
+	// scheduling default parameters
+	connections.pollForGazeboConnection.scheduler = "DEFAULT";
+	connections.pollForGazeboConnection.priority = -1;
+	connections.pollForGazeboConnection.cpuAffinity = -1;
 	connections.localizationUpdateHandler.prescale = 1;
 	connections.velocityInpuHandler.prescale = 1;
-	
-	// initialize members of SmartGazeboBaseServerROSExtension
-	
-	// initialize members of SeRoNetSDKComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaSmartGazeboBaseServerExtension
 	
@@ -161,6 +165,20 @@ void SmartGazeboBaseServer::startAllTasks() {
 	} else {
 		laserTask->start();
 	}
+	// start task PollForGazeboConnection
+	if(connections.pollForGazeboConnection.scheduler != "DEFAULT") {
+		ACE_Sched_Params pollForGazeboConnection_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
+		if(connections.pollForGazeboConnection.scheduler == "FIFO") {
+			pollForGazeboConnection_SchedParams.policy(ACE_SCHED_FIFO);
+			pollForGazeboConnection_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+		} else if(connections.pollForGazeboConnection.scheduler == "RR") {
+			pollForGazeboConnection_SchedParams.policy(ACE_SCHED_RR);
+			pollForGazeboConnection_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+		}
+		pollForGazeboConnection->start(pollForGazeboConnection_SchedParams, connections.pollForGazeboConnection.cpuAffinity);
+	} else {
+		pollForGazeboConnection->start();
+	}
 }
 
 /**
@@ -189,10 +207,6 @@ void SmartGazeboBaseServer::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
-		
-		// initializations of SmartGazeboBaseServerROSExtension
-		
-		// initializations of SeRoNetSDKComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaSmartGazeboBaseServerExtension
 		
@@ -311,6 +325,31 @@ void SmartGazeboBaseServer::init(int argc, char *argv[])
 		// configure input-links
 		// configure task-trigger (if task is configurable)
 		
+		// create Task PollForGazeboConnection
+		pollForGazeboConnection = new PollForGazeboConnection(component);
+		// configure input-links
+		// configure task-trigger (if task is configurable)
+		if(connections.pollForGazeboConnection.trigger == "PeriodicTimer") {
+			// create PeriodicTimerTrigger
+			int microseconds = 1000*1000 / connections.pollForGazeboConnection.periodicActFreq;
+			if(microseconds > 0) {
+				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
+				triggerPtr->attach(pollForGazeboConnection);
+				component->getTimerManager()->scheduleTimer(triggerPtr, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				// store trigger in class member
+				pollForGazeboConnectionTrigger = triggerPtr;
+			} else {
+				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task PollForGazeboConnection" << std::endl;
+			}
+		} else if(connections.pollForGazeboConnection.trigger == "DataTriggered") {
+			pollForGazeboConnectionTrigger = getInputTaskTriggerFromString(connections.pollForGazeboConnection.inPortRef);
+			if(pollForGazeboConnectionTrigger != NULL) {
+				pollForGazeboConnectionTrigger->attach(pollForGazeboConnection, connections.pollForGazeboConnection.prescale);
+			} else {
+				std::cerr << "ERROR: could not set-up InPort " << connections.pollForGazeboConnection.inPortRef << " as activation source for Task PollForGazeboConnection" << std::endl;
+			}
+		} 
+		
 		
 		// link observers with subjects
 		baseStateTask->attach_interaction_observer(baseStateQueryHandler);
@@ -383,6 +422,10 @@ void SmartGazeboBaseServer::fini()
 	// unlink the TaskTrigger
 	laserTaskTrigger->detach(laserTask);
 	delete laserTask;
+	// unlink all UpcallManagers
+	// unlink the TaskTrigger
+	pollForGazeboConnectionTrigger->detach(pollForGazeboConnection);
+	delete pollForGazeboConnection;
 
 	// destroy all input-handler
 	delete localizationUpdateHandler;
@@ -428,10 +471,6 @@ void SmartGazeboBaseServer::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of SmartGazeboBaseServerROSExtension
-	
-	// destruction of SeRoNetSDKComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaSmartGazeboBaseServerExtension
 	
@@ -563,16 +602,31 @@ void SmartGazeboBaseServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("LaserTask", "cpuAffinity")) {
 			parameter.getInteger("LaserTask", "cpuAffinity", connections.laserTask.cpuAffinity);
 		}
+		// load parameters for task PollForGazeboConnection
+		parameter.getDouble("PollForGazeboConnection", "minActFreqHz", connections.pollForGazeboConnection.minActFreq);
+		parameter.getDouble("PollForGazeboConnection", "maxActFreqHz", connections.pollForGazeboConnection.maxActFreq);
+		parameter.getString("PollForGazeboConnection", "triggerType", connections.pollForGazeboConnection.trigger);
+		if(connections.pollForGazeboConnection.trigger == "PeriodicTimer") {
+			parameter.getDouble("PollForGazeboConnection", "periodicActFreqHz", connections.pollForGazeboConnection.periodicActFreq);
+		} else if(connections.pollForGazeboConnection.trigger == "DataTriggered") {
+			parameter.getString("PollForGazeboConnection", "inPortRef", connections.pollForGazeboConnection.inPortRef);
+			parameter.getInteger("PollForGazeboConnection", "prescale", connections.pollForGazeboConnection.prescale);
+		}
+		if(parameter.checkIfParameterExists("PollForGazeboConnection", "scheduler")) {
+			parameter.getString("PollForGazeboConnection", "scheduler", connections.pollForGazeboConnection.scheduler);
+		}
+		if(parameter.checkIfParameterExists("PollForGazeboConnection", "priority")) {
+			parameter.getInteger("PollForGazeboConnection", "priority", connections.pollForGazeboConnection.priority);
+		}
+		if(parameter.checkIfParameterExists("PollForGazeboConnection", "cpuAffinity")) {
+			parameter.getInteger("PollForGazeboConnection", "cpuAffinity", connections.pollForGazeboConnection.cpuAffinity);
+		}
 		if(parameter.checkIfParameterExists("LocalizationUpdateHandler", "prescale")) {
 			parameter.getInteger("LocalizationUpdateHandler", "prescale", connections.localizationUpdateHandler.prescale);
 		}
 		if(parameter.checkIfParameterExists("VelocityInpuHandler", "prescale")) {
 			parameter.getInteger("VelocityInpuHandler", "prescale", connections.velocityInpuHandler.prescale);
 		}
-		
-		// load parameters for SmartGazeboBaseServerROSExtension
-		
-		// load parameters for SeRoNetSDKComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaSmartGazeboBaseServerExtension
 		

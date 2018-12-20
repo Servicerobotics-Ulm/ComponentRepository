@@ -29,10 +29,6 @@
 class SmartRobotConsolePortFactoryInterface;
 class SmartRobotConsoleExtension;
 
-// includes for SmartRobotConsoleROSExtension
-
-// includes for SeRoNetSDKComponentGeneratorExtension
-
 // includes for PlainOpcUaSmartRobotConsoleExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -100,10 +96,6 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
-	
-	// definitions of SmartRobotConsoleROSExtension
-	
-	// definitions of SeRoNetSDKComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaSmartRobotConsoleExtension
 	
@@ -207,10 +199,6 @@ public:
 		//--- server port parameter ---
 	
 		//--- client port parameter ---
-		
-		// -- parameters for SmartRobotConsoleROSExtension
-		
-		// -- parameters for SeRoNetSDKComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaSmartRobotConsoleExtension
 		

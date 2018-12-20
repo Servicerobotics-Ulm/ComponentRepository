@@ -3,6 +3,7 @@
 # imports: http://seronet-projekt.de/models/t2#Navigation
 # imports: http://spdx.org/licenses/LGPL-2.0-or-later
 
+
 #######################################
 # Technical Data Sheet
 # for a SeRoNet Software Component as 
@@ -28,253 +29,7 @@
 @prefix robmosys: <http://robmosys.eu/rdf/composition-structures#> .
 
 # these namespaces can be different in generated files
-@prefix t2: <http://seronet-projekt.de/models/t2#> .
-#@prefix t2: <http://servicerobotik-ulm.de/DomainModels#> .
 @prefix t3: <http://servicerobotik-ulm.de/ComponentsAndSystems#> .
-
-##### Domain Model Repository
-# ... they resemble eclipse projects in the tooling
-# Note: this will later not be provided by the software component
-t2:CommBasicObjects a robmosys:DomainModelRepository;
-.
-
-t2:CommNavigationObjects a robmosys:DomainModelRepository;
-.
-
-t2:CommRobotinoObjects a robmosys:DomainModelRepository;
-.
-
-t2:CommTrackingObjects a robmosys:DomainModelRepository;
-.
-
-
-##### Communication Objects
-# see https://robmosys.eu/wiki/modeling:metamodels:commobject 
-# Note: this will later not be provided by the software component
-t2:CdlGoalEventState a robmosys:CommunicationObject;
-	rdfs:label "CdlGoalEventState";
-	t1:shortDescription "CommunicationObject CdlGoalEventState";
-	t1:memberOfRepository t2:CommNavigationObjects;
-.
-
-t2:CommBaseState a robmosys:CommunicationObject;
-	rdfs:label "CommBaseState";
-	t1:shortDescription "CommunicationObject CommBaseState";
-	t1:memberOfRepository t2:CommBasicObjects;
-.
-
-t2:CommCdlGoalEventParameter a robmosys:CommunicationObject;
-	rdfs:label "CommCdlGoalEventParameter";
-	t1:shortDescription "CommunicationObject CommCdlGoalEventParameter";
-	t1:memberOfRepository t2:CommNavigationObjects;
-.
-
-t2:CommCdlGoalEventResult a robmosys:CommunicationObject;
-	rdfs:label "CommCdlGoalEventResult";
-	t1:shortDescription "CommunicationObject CommCdlGoalEventResult";
-	t1:memberOfRepository t2:CommNavigationObjects;
-.
-
-t2:CommCdlRobotBlockedEventParameter a robmosys:CommunicationObject;
-	rdfs:label "CommCdlRobotBlockedEventParameter";
-	t1:shortDescription "CommunicationObject CommCdlRobotBlockedEventParameter";
-	t1:memberOfRepository t2:CommNavigationObjects;
-.
-
-t2:CommCdlRobotBlockedEventResult a robmosys:CommunicationObject;
-	rdfs:label "CommCdlRobotBlockedEventResult";
-	t1:shortDescription "CommunicationObject CommCdlRobotBlockedEventResult";
-	t1:memberOfRepository t2:CommNavigationObjects;
-.
-
-t2:CommCdlRobotBlockedState a robmosys:CommunicationObject;
-	rdfs:label "CommCdlRobotBlockedState";
-	t1:shortDescription "CommunicationObject CommCdlRobotBlockedState";
-	t1:memberOfRepository t2:CommNavigationObjects;
-.
-
-t2:CommMobileIRScan a robmosys:CommunicationObject;
-	rdfs:label "CommMobileIRScan";
-	t1:shortDescription "CommunicationObject CommMobileIRScan";
-	t1:memberOfRepository t2:CommBasicObjects;
-.
-
-t2:CommMobileLaserScan a robmosys:CommunicationObject;
-	rdfs:label "CommMobileLaserScan";
-	t1:shortDescription "CommunicationObject CommMobileLaserScan";
-	t1:memberOfRepository t2:CommBasicObjects;
-.
-
-t2:CommNavigationVelocity a robmosys:CommunicationObject;
-	rdfs:label "CommNavigationVelocity";
-	t1:shortDescription "CommunicationObject CommNavigationVelocity";
-	t1:memberOfRepository t2:CommBasicObjects;
-.
-
-t2:CommPathNavigationGoal a robmosys:CommunicationObject;
-	rdfs:label "CommPathNavigationGoal";
-	t1:shortDescription "CommunicationObject CommPathNavigationGoal";
-	t1:memberOfRepository t2:CommRobotinoObjects;
-.
-
-t2:CommPlannerGoal a robmosys:CommunicationObject;
-	rdfs:label "CommPlannerGoal";
-	t1:shortDescription "CommunicationObject CommPlannerGoal";
-	t1:memberOfRepository t2:CommNavigationObjects;
-.
-
-t2:CommTrackingGoal a robmosys:CommunicationObject;
-	rdfs:label "CommTrackingGoal";
-	t1:shortDescription "CommunicationObject CommTrackingGoal";
-	t1:memberOfRepository t2:CommTrackingObjects;
-.
-
-
-##### Service Definitions
-# see https://robmosys.eu/wiki/modeling:metamodels:service 
-# see https://robmosys.eu/wiki/modeling:metamodels:commpattern 
-# Note: this will later not be provided by the software component
-t2:LaserService a robmosys:ServiceDefinition;
-	rdf:type rdfs:Class;
-	rdfs:subClassOf robmosys:AbstractService;
-	rdfs:label "LaserService";
-	t1:shortDescription "ServiceDefinition LaserService";
-	t1:memberOfRepository t2:CommBasicObjects;
-	t1:commPatternUsage [
-		a robmosys:PushPattern;
-		t1:dataType t2:CommMobileLaserScan;
-	];
-.
-
-t2:LaserService a robmosys:ServiceDefinition;
-	rdf:type rdfs:Class;
-	rdfs:subClassOf robmosys:AbstractService;
-	rdfs:label "LaserService";
-	t1:shortDescription "ServiceDefinition LaserService";
-	t1:memberOfRepository t2:CommBasicObjects;
-	t1:commPatternUsage [
-		a robmosys:PushPattern;
-		t1:dataType t2:CommMobileLaserScan;
-	];
-.
-
-t2:PlannerGoalService a robmosys:ServiceDefinition;
-	rdf:type rdfs:Class;
-	rdfs:subClassOf robmosys:AbstractService;
-	rdfs:label "PlannerGoalService";
-	t1:shortDescription "ServiceDefinition PlannerGoalService";
-	t1:description """Planner service definitions""";
-	t1:memberOfRepository t2:CommNavigationObjects;
-	t1:commPatternUsage [
-		a robmosys:PushPattern;
-		t1:dataType t2:CommPlannerGoal;
-	];
-.
-
-t2:NavigationVelocityService a robmosys:ServiceDefinition;
-	rdf:type rdfs:Class;
-	rdfs:subClassOf robmosys:AbstractService;
-	rdfs:label "NavigationVelocityService";
-	t1:shortDescription "ServiceDefinition NavigationVelocityService";
-	t1:description """Base-related service-definitions""";
-	t1:memberOfRepository t2:CommNavigationObjects;
-	t1:commPatternUsage [
-		a robmosys:SendPattern;
-		t1:dataType t2:CommNavigationVelocity;
-	];
-.
-
-t2:TrackingService a robmosys:ServiceDefinition;
-	rdf:type rdfs:Class;
-	rdfs:subClassOf robmosys:AbstractService;
-	rdfs:label "TrackingService";
-	t1:shortDescription "ServiceDefinition TrackingService";
-	t1:memberOfRepository t2:CommTrackingObjects;
-	t1:commPatternUsage [
-		a robmosys:PushPattern;
-		t1:dataType t2:CommTrackingGoal;
-	];
-.
-
-t2:IRService a robmosys:ServiceDefinition;
-	rdf:type rdfs:Class;
-	rdfs:subClassOf robmosys:AbstractService;
-	rdfs:label "IRService";
-	t1:shortDescription "ServiceDefinition IRService";
-	t1:memberOfRepository t2:CommNavigationObjects;
-	t1:commPatternUsage [
-		a robmosys:PushPattern;
-		t1:dataType t2:CommMobileIRScan;
-	];
-.
-
-t2:PathNavigationGoalService a robmosys:ServiceDefinition;
-	rdf:type rdfs:Class;
-	rdfs:subClassOf robmosys:AbstractService;
-	rdfs:label "PathNavigationGoalService";
-	t1:shortDescription "ServiceDefinition PathNavigationGoalService";
-	t1:description """Service for path-based navigation.
-	A path is a virtual corridor a robot is allowed to navigate within.""";
-	t1:memberOfRepository t2:CommRobotinoObjects;
-	t1:commPatternUsage [
-		a robmosys:PushPattern;
-		t1:dataType t2:CommPathNavigationGoal;
-	];
-.
-
-t2:BaseStateService a robmosys:ServiceDefinition;
-	rdf:type rdfs:Class;
-	rdfs:subClassOf robmosys:AbstractService;
-	rdfs:label "BaseStateService";
-	t1:shortDescription "ServiceDefinition BaseStateService";
-	t1:memberOfRepository t2:CommBasicObjects;
-	t1:commPatternUsage [
-		a robmosys:PushPattern;
-		t1:dataType t2:CommBaseState;
-	];
-.
-
-t2:NavigationVelocityService a robmosys:ServiceDefinition;
-	rdf:type rdfs:Class;
-	rdfs:subClassOf robmosys:AbstractService;
-	rdfs:label "NavigationVelocityService";
-	t1:shortDescription "ServiceDefinition NavigationVelocityService";
-	t1:description """Base-related service-definitions""";
-	t1:memberOfRepository t2:CommNavigationObjects;
-	t1:commPatternUsage [
-		a robmosys:SendPattern;
-		t1:dataType t2:CommNavigationVelocity;
-	];
-.
-
-t2:GoalEventService a robmosys:ServiceDefinition;
-	rdf:type rdfs:Class;
-	rdfs:subClassOf robmosys:AbstractService;
-	rdfs:label "GoalEventService";
-	t1:shortDescription "ServiceDefinition GoalEventService";
-	t1:description """CDL-related service-definitions""";
-	t1:memberOfRepository t2:CommNavigationObjects;
-	t1:commPatternUsage [
-		a robmosys:EventPattern;
-		t1:eventType t2:CommCdlGoalEventResult;
-		t1:activationType t2:CommCdlGoalEventParameter;
-		t1:eventStateType t2:CdlGoalEventState;
-	];
-.
-
-t2:RobotBlockedEventService a robmosys:ServiceDefinition;
-	rdf:type rdfs:Class;
-	rdfs:subClassOf robmosys:AbstractService;
-	rdfs:label "RobotBlockedEventService";
-	t1:shortDescription "ServiceDefinition RobotBlockedEventService";
-	t1:memberOfRepository t2:CommNavigationObjects;
-	t1:commPatternUsage [
-		a robmosys:EventPattern;
-		t1:eventType t2:CommCdlRobotBlockedEventResult;
-		t1:activationType t2:CommCdlRobotBlockedEventParameter;
-		t1:eventStateType t2:CommCdlRobotBlockedState;
-	];
-.
 
 
 ##### Software Component SmartCdlServer
@@ -368,89 +123,111 @@ t3:SmartCdlServer a robmosys:ComponentDefinition;
 
 # a service definition usage. Here: provided service
 # see https://robmosys.eu/wiki/modeling:metamodels:component
-t3:SmartCdlServer_LaserClient a t2:LaserService;
+t3:SmartCdlServer_LaserClient 
+	rdf:type CommBasicObjects:LaserService ;
 	# name of this service definition as from the model
 	rdfs:label "LaserClient";
 
+
 .
 
 # a service definition usage. Here: provided service
 # see https://robmosys.eu/wiki/modeling:metamodels:component
-t3:SmartCdlServer_LaserClient2 a t2:LaserService;
+t3:SmartCdlServer_LaserClient2 
+	rdf:type CommBasicObjects:LaserService ;
 	# name of this service definition as from the model
 	rdfs:label "LaserClient2";
 
+
 .
 
 # a service definition usage. Here: provided service
 # see https://robmosys.eu/wiki/modeling:metamodels:component
-t3:SmartCdlServer_PlannerClient a t2:PlannerGoalService;
+t3:SmartCdlServer_PlannerClient 
+	rdf:type CommNavigationObjects:PlannerGoalService ;
 	# name of this service definition as from the model
 	rdfs:label "PlannerClient";
 
+
 .
 
 # a service definition usage. Here: provided service
 # see https://robmosys.eu/wiki/modeling:metamodels:component
-t3:SmartCdlServer_NavVelSendServer a t2:NavigationVelocityService;
+t3:SmartCdlServer_NavVelSendServer 
+	rdf:type CommNavigationObjects:NavigationVelocityService ;
 	# name of this service definition as from the model
 	rdfs:label "NavVelSendServer";
 
+
 .
 
 # a service definition usage. Here: provided service
 # see https://robmosys.eu/wiki/modeling:metamodels:component
-t3:SmartCdlServer_TrackingClient a t2:TrackingService;
+t3:SmartCdlServer_TrackingClient 
+	rdf:type CommTrackingObjects:TrackingService ;
 	# name of this service definition as from the model
 	rdfs:label "TrackingClient";
 
+
 .
 
 # a service definition usage. Here: provided service
 # see https://robmosys.eu/wiki/modeling:metamodels:component
-t3:SmartCdlServer_IRClient a t2:IRService;
+t3:SmartCdlServer_IRClient 
+	rdf:type CommNavigationObjects:IRService ;
 	# name of this service definition as from the model
 	rdfs:label "IRClient";
 
+
 .
 
 # a service definition usage. Here: provided service
 # see https://robmosys.eu/wiki/modeling:metamodels:component
-t3:SmartCdlServer_PathNavigationGoalClient a t2:PathNavigationGoalService;
+t3:SmartCdlServer_PathNavigationGoalClient 
+	rdf:type CommRobotinoObjects:PathNavigationGoalService ;
 	# name of this service definition as from the model
 	rdfs:label "PathNavigationGoalClient";
 
+
 .
 
 # a service definition usage. Here: provided service
 # see https://robmosys.eu/wiki/modeling:metamodels:component
-t3:SmartCdlServer_BaseStateClient a t2:BaseStateService;
+t3:SmartCdlServer_BaseStateClient 
+	rdf:type CommBasicObjects:BaseStateService ;
 	# name of this service definition as from the model
 	rdfs:label "BaseStateClient";
 
+
 .
 
 # a service definition usage. Here: provided service
 # see https://robmosys.eu/wiki/modeling:metamodels:component
-t3:SmartCdlServer_NavVelSendClient a t2:NavigationVelocityService;
+t3:SmartCdlServer_NavVelSendClient 
+	rdf:type CommNavigationObjects:NavigationVelocityService ;
 	# name of this service definition as from the model
 	rdfs:label "NavVelSendClient";
 
+
 .
 
 # a service definition usage. Here: provided service
 # see https://robmosys.eu/wiki/modeling:metamodels:component
-t3:SmartCdlServer_GoalEventServer a t2:GoalEventService;
+t3:SmartCdlServer_GoalEventServer 
+	rdf:type CommNavigationObjects:GoalEventService ;
 	# name of this service definition as from the model
 	rdfs:label "GoalEventServer";
 
+
 .
 
 # a service definition usage. Here: provided service
 # see https://robmosys.eu/wiki/modeling:metamodels:component
-t3:SmartCdlServer_RobotBlockedEventServer a t2:RobotBlockedEventService;
+t3:SmartCdlServer_RobotBlockedEventServer 
+	rdf:type CommNavigationObjects:RobotBlockedEventService ;
 	# name of this service definition as from the model
 	rdfs:label "RobotBlockedEventServer";
+
 
 .
 

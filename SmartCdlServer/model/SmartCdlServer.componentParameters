@@ -16,17 +16,17 @@ ComponentParameter SmartCdlServerParams component SmartCdlServer {
 	}
 	
  	InternalParameter Cdl {
- 		dataDir: String= "lookup-files/"
+ 		dataDir: String= "data/lookup-files/"
  		
  		/** File with the curvature indices as produced by cdlCalculate. Relative to current dir or absolute. See also parameter LOOKUPTABLE().*/
- 		curvature_default_file: String= "CDLindex_PMB2.dat"
+ 		curvature_default_file: String= "CDLindex_P3DX.dat"
  		
  		/** File with the distance values as produced by cdlCalculate. Relative to current dir or absolute. See also parameter LOOKUPTABLE().*/
- 		lookup_default_file: String= "CDLdist_PMB2.dat.compressed"
- 		lookup_default_file_compressed :Boolean = true
+ 		lookup_default_file: String= "CDLdist_P3DX.dat"
+ 		lookup_default_file_compressed :Boolean = false
  		
  		/** File with the allowed accelerations as produced by cdlCalculate. Relative to current dir or absolute. See also parameter LOOKUPTABLE().*/
- 		accel_default_file: String= "CDLacc_PMB2.dat"
+ 		accel_default_file: String= "CDLacc_P3DX.dat"
  		
  		/** File with the curvature indices as produced by cdlCalculate. Relative to current dir or absolute. See also parameter LOOKUPTABLE().*/
  		curvature_second_file: String= "CDLindex_P3DX.dat"
@@ -61,7 +61,7 @@ ComponentParameter SmartCdlServerParams component SmartCdlServer {
 
 		/** In following mode: if true, the robot will only follow the person if the person moved a considerably distance. */
  		followHysteresis: Boolean= false
- 		contour_default_file: String= "CDLcontour_PMB2.dat"
+ 		contour_default_file: String= "CDLcontour_P3DX.dat"
  		contour_second_file: String= "CDLcontour_P3DX.dat"
  		use_obstacle_history: Boolean= false
 	 	freeBehaviorDist:Double = 350.0
@@ -154,4 +154,3 @@ ComponentParameter SmartCdlServerParams component SmartCdlServer {
 		
  	}
 }
-

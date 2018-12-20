@@ -16,6 +16,7 @@
 #ifndef _COMPONENTPLAYERSTAGESIMULATORIMPL_HH
 #define _COMPONENTPLAYERSTAGESIMULATORIMPL_HH
 
+#include <chrono>
 #include "aceSmartSoft.hh"
 
 class ComponentPlayerStageSimulatorImpl : public SmartACE::SmartComponent {
@@ -24,8 +25,8 @@ public:
 	ComponentPlayerStageSimulatorImpl(const std::string &componentName, int & argc, char ** argv, const ACE_Sched_Params &sched_params);
 	virtual ~ComponentPlayerStageSimulatorImpl();
 
-	Smart::StatusCode run(void);
-	void closeAllAssociatedTasks(const int &taskShutdownTimeLimit);
+	int startComponentInfrastructure();
+	void stopComponentInfrastructure(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2));
 	void cleanUpComponentResources();
 };
 

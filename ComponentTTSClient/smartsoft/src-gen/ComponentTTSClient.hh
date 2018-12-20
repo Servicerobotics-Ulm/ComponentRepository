@@ -15,12 +15,24 @@
 //--------------------------------------------------------------------------
 #ifndef _COMPONENTTTSCLIENT_HH
 #define _COMPONENTTTSCLIENT_HH
-	
+
+#include <map>
 #include <iostream>
 #include "aceSmartSoft.hh"
 #include "smartQueryServerTaskTrigger_T.h"
 #include "ComponentTTSClientCore.hh"
-#include "ComponentTTSClientImpl.hh"
+
+#include "ComponentTTSClientPortFactoryInterface.hh"
+#include "ComponentTTSClientExtension.hh"
+
+// forward declarations
+class ComponentTTSClientPortFactoryInterface;
+class ComponentTTSClientExtension;
+
+// includes for PlainOpcUaComponentTTSClientExtension
+// include plain OPC UA device clients
+// include plain OPC UA status servers
+
 
 // include communication objects
 #include <CommBasicObjects/CommPropertySet.hh>
@@ -35,7 +47,6 @@
 // include input-handler
 // include input-handler
 
-
 // include handler
 #include "CompHandler.hh"
 
@@ -48,7 +59,7 @@
 
 class ComponentTTSClient : public ComponentTTSClientCore {
 private:
-	static ComponentTTSClient _componentTTSClient;
+	static ComponentTTSClient *_componentTTSClient;
 	
 	// constructor
 	ComponentTTSClient();
@@ -65,12 +76,16 @@ private:
 	// instantiate comp-handler
 	CompHandler compHandler;
 	
+	// helper method that maps a string-name to an according TaskTriggerSubject
 	Smart::TaskTriggerSubject* getInputTaskTriggerFromString(const std::string &client);
 	
-public:
-	// component
-	ComponentTTSClientImpl *component;
+	// internal map storing the different port-creation factories (that internally map to specific middleware implementations)
+	std::map<std::string, ComponentTTSClientPortFactoryInterface*> portFactoryRegistry;
 	
+	// internal map storing various extensions of this component class
+	std::map<std::string, ComponentTTSClientExtension*> componentExtensionRegistry;
+	
+public:
 	ParameterStateStruct getGlobalState() const
 	{
 		return paramHandler.getGlobalState();
@@ -94,6 +109,8 @@ public:
 	
 	// define request-handlers
 	
+	// definitions of PlainOpcUaComponentTTSClientExtension
+	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
@@ -103,12 +120,41 @@ public:
 	SmartACE::ParameterSlave *param;
 	
 	
+	/// this method is used to register different PortFactory classes (one for each supported middleware framework)
+	void addPortFactory(const std::string &name, ComponentTTSClientPortFactoryInterface *portFactory);
+	
+	/// this method is used to register different component-extension classes
+	void addExtension(ComponentTTSClientExtension *extension);
+	
+	/// this method allows to access the registered component-extensions (automatically converting to the actuall implementation type)
+	template <typename T>
+	T* getExtension(const std::string &name) {
+		auto it = componentExtensionRegistry.find(name);
+		if(it != componentExtensionRegistry.end()) {
+			return dynamic_cast<T*>(it->second);
+		}
+		return 0;
+	}
+	
+	/// initialize component's internal members
 	void init(int argc, char *argv[]);
+	
+	/// execute the component's infrastructure
 	void run();
 	
+	/// clean-up component's resources
+	void fini();
+	
+	/// call this method to set the overall component into the Alive state (i.e. component is then ready to operate)
 	void setStartupFinished();
+	
+	/// connect all component's client ports
 	Smart::StatusCode connectAndStartAllServices();
+	
+	/// start all assocuated Activities
 	void startAllTasks();
+	
+	/// start all associated timers
 	void startAllTimers();
 	
 	Smart::StatusCode connectSpeechQueryServiceReq(const std::string &serverName, const std::string &serviceName);
@@ -117,7 +163,16 @@ public:
 	// return singleton instance
 	static ComponentTTSClient* instance()
 	{
-		return (ComponentTTSClient*)&_componentTTSClient;
+		if(_componentTTSClient == 0) {
+			_componentTTSClient = new ComponentTTSClient();
+		}
+		return _componentTTSClient;
+	}
+	
+	static void deleteInstance() {
+		if(_componentTTSClient != 0) {
+			delete _componentTTSClient;
+		}
 	}
 	
 	// connections parameter
@@ -162,6 +217,7 @@ public:
 			std::string serviceName;
 			std::string wiringName;
 			long interval;
+			std::string roboticMiddleware;
 		} speechQueryServiceReq;
 		struct SpeechSendServiceOut_struct {
 			bool initialConnect;
@@ -169,7 +225,10 @@ public:
 			std::string serviceName;
 			std::string wiringName;
 			long interval;
+			std::string roboticMiddleware;
 		} speechSendServiceOut;
+		
+		// -- parameters for PlainOpcUaComponentTTSClientExtension
 		
 	} connections;
 };

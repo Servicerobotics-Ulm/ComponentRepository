@@ -34,6 +34,9 @@ initialComponentMode Neutral
 [RobotTask]
 minActFreqHz 0.0
 maxActFreqHz 0.0
+# setup default trigger as PeriodicTimer
+triggerType PeriodicTimer
+periodicActFreqHz 1.0
 # other trigger-types are:
 #triggerType PeriodicTimer
 #periodicActFreqHz 0.0
@@ -60,6 +63,7 @@ serverName unknown
 serviceName unknown
 wiringName LaserServiceIn
 interval 1
+roboticMiddleware ACE_SmartSoft
 
 [NavigationVelocityServiceOut]
 initialConnect false
@@ -67,4 +71,9 @@ serverName unknown
 serviceName unknown
 wiringName NavigationVelocityServiceOut
 interval 1
+roboticMiddleware ACE_SmartSoft
+
+##########################
+## parameters of PlainOpcUaComponentLaserObstacleAvoidExtension
+
 

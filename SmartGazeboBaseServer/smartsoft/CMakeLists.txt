@@ -63,7 +63,7 @@ FILE(GLOB_RECURSE SRC_GEN_PARAMS ${CMAKE_CURRENT_LIST_DIR}/src-gen/params/*.cc)
 ADD_EXECUTABLE(${PROJECT_NAME} ${SRC} ${SRC_GEN} ${SRC_GEN_PARAMS}) # add ${USER_SRC} (if needed)
 
 # link your external libraries here (if there are any)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${GAZEBO_LIBRARIES} NewDiffDrivePlugin PubBasePosePlugin)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${GAZEBO_LIBRARIES} NewDiffDrivePlugin NewOmniDrivePlugin PubBasePosePlugin)
 
 #INSTALL(FILES ${PROJECT_SOURCE_DIR}/src-gen/${PROJECT_NAME}.ini.template DESTINATION etc)
 

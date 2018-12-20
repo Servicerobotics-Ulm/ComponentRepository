@@ -84,10 +84,6 @@ SmartMapperGridMap::SmartMapperGridMap()
 	connections.ltmMapTask.priority = -1;
 	connections.ltmMapTask.cpuAffinity = -1;
 	
-	// initialize members of SmartMapperGridMapROSExtension
-	
-	// initialize members of SeRoNetSDKComponentGeneratorExtension
-	
 	// initialize members of PlainOpcUaSmartMapperGridMapExtension
 	
 }
@@ -202,10 +198,6 @@ void SmartMapperGridMap::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
-		
-		// initializations of SmartMapperGridMapROSExtension
-		
-		// initializations of SeRoNetSDKComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaSmartMapperGridMapExtension
 		
@@ -468,10 +460,6 @@ void SmartMapperGridMap::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of SmartMapperGridMapROSExtension
-	
-	// destruction of SeRoNetSDKComponentGeneratorExtension
-	
 	// destruction of PlainOpcUaSmartMapperGridMapExtension
 	
 }
@@ -609,10 +597,6 @@ void SmartMapperGridMap::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("LtmMapTask", "cpuAffinity")) {
 			parameter.getInteger("LtmMapTask", "cpuAffinity", connections.ltmMapTask.cpuAffinity);
 		}
-		
-		// load parameters for SmartMapperGridMapROSExtension
-		
-		// load parameters for SeRoNetSDKComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaSmartMapperGridMapExtension
 		

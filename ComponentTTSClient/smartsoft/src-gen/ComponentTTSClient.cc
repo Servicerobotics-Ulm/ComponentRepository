@@ -18,13 +18,17 @@
 //FIXME: implement logging
 //#include "smartGlobalLogger.hh"
 
+// the ace port-factory is used as a default port-mapping
+#include "ComponentTTSClientAcePortFactory.hh"
+
+
+// initialize static singleton pointer to zero
+ComponentTTSClient* ComponentTTSClient::_componentTTSClient = 0;
 
 // constructor
 ComponentTTSClient::ComponentTTSClient()
 {
 	std::cout << "constructor of ComponentTTSClient\n";
-	
-	component = NULL;
 	
 	// set all pointer members to NULL
 	//componentTTSClientParams = NULL;
@@ -38,7 +42,6 @@ ComponentTTSClient::ComponentTTSClient()
 	wiringSlave = NULL;
 	param = NULL;
 	
-	
 	// set default ini parameter values
 	connections.component.name = "ComponentTTSClient";
 	connections.component.initialComponentMode = "Neutral";
@@ -50,20 +53,33 @@ ComponentTTSClient::ComponentTTSClient()
 	connections.speechQueryServiceReq.serverName = "unknown";
 	connections.speechQueryServiceReq.serviceName = "unknown";
 	connections.speechQueryServiceReq.interval = 1;
+	connections.speechQueryServiceReq.roboticMiddleware = "ACE_SmartSoft";
 	connections.speechSendServiceOut.initialConnect = false;
 	connections.speechSendServiceOut.wiringName = "SpeechSendServiceOut";
 	connections.speechSendServiceOut.serverName = "unknown";
 	connections.speechSendServiceOut.serviceName = "unknown";
 	connections.speechSendServiceOut.interval = 1;
+	connections.speechSendServiceOut.roboticMiddleware = "ACE_SmartSoft";
 	connections.consoleTask.minActFreq = 0.0;
 	connections.consoleTask.maxActFreq = 0.0;
 	// scheduling default parameters
 	connections.consoleTask.scheduler = "DEFAULT";
 	connections.consoleTask.priority = -1;
 	connections.consoleTask.cpuAffinity = -1;
+	
+	// initialize members of PlainOpcUaComponentTTSClientExtension
+	
 }
 
+void ComponentTTSClient::addPortFactory(const std::string &name, ComponentTTSClientPortFactoryInterface *portFactory)
+{
+	portFactoryRegistry[name] = portFactory;
+}
 
+void ComponentTTSClient::addExtension(ComponentTTSClientExtension *extension)
+{
+	componentExtensionRegistry[extension->getName()] = extension;
+}
 
 /**
  * Notify the component that setup/initialization is finished.
@@ -170,22 +186,30 @@ void ComponentTTSClient::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
-		if(connections.component.defaultScheduler != "DEFAULT") {
-			ACE_Sched_Params sched_params(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
-			if(connections.component.defaultScheduler == "FIFO") {
-				sched_params.policy(ACE_SCHED_FIFO);
-				sched_params.priority(ACE_THR_PRI_FIFO_MIN);
-			} else if(connections.component.defaultScheduler == "RR") {
-				sched_params.policy(ACE_SCHED_RR);
-				sched_params.priority(ACE_THR_PRI_RR_MIN);
-			}
-			// create new instance of the SmartSoft component with customized scheuling parameters 
-			component = new ComponentTTSClientImpl(connections.component.name, argc, argv, sched_params);
-		} else {
-			// create new instance of the SmartSoft component
-			component = new ComponentTTSClientImpl(connections.component.name, argc, argv);
+		
+		// initializations of PlainOpcUaComponentTTSClientExtension
+		
+		
+		// initialize all registered port-factories
+		for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+		{
+			portFactory->second->initialize(this, argc, argv);
 		}
 		
+		// initialize all registered component-extensions
+		for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+		{
+			extension->second->initialize(this, argc, argv);
+		}
+		
+		ComponentTTSClientPortFactoryInterface *acePortFactory = portFactoryRegistry["ACE_SmartSoft"];
+		if(acePortFactory == 0) {
+			std::cerr << "ERROR: acePortFactory NOT instantiated -> exit(-1)" << std::endl;
+			exit(-1);
+		}
+		
+		// this pointer is used for backwards compatibility (deprecated: should be removed as soon as all patterns, including coordination, are moved to port-factory)
+		SmartACE::SmartComponent *component = dynamic_cast<ComponentTTSClientAcePortFactory*>(acePortFactory)->getComponentImpl();
 		
 		std::cout << "ComponentDefinition ComponentTTSClient is named " << connections.component.name << std::endl;
 		
@@ -201,15 +225,14 @@ void ComponentTTSClient::init(int argc, char *argv[])
 		// TODO: set minCycleTime from Ini-file
 		
 		// create client ports
-		speechQueryServiceReq = new SmartACE::QueryClient<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet>(component);
-		speechSendServiceOut = new SmartACE::SendClient<DomainSpeech::CommSpeechOutputMessage>(component);
+		speechQueryServiceReq = portFactoryRegistry[connections.speechQueryServiceReq.roboticMiddleware]->createSpeechQueryServiceReq();
+		speechSendServiceOut = portFactoryRegistry[connections.speechSendServiceOut.roboticMiddleware]->createSpeechSendServiceOut();
 		
 		// create InputTaskTriggers and UpcallManagers
 		
 		// create input-handler
 		
 		// create request-handlers
-		
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
@@ -222,8 +245,14 @@ void ComponentTTSClient::init(int argc, char *argv[])
 		
 		wiringSlave = new SmartACE::WiringSlave(component);
 		// add client port to wiring slave
-		dynamic_cast<SmartACE::QueryClient<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet>*>(speechQueryServiceReq)->add(wiringSlave, connections.speechQueryServiceReq.wiringName);
-		dynamic_cast<SmartACE::SendClient<DomainSpeech::CommSpeechOutputMessage>*>(speechSendServiceOut)->add(wiringSlave, connections.speechSendServiceOut.wiringName);
+		if(connections.speechQueryServiceReq.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::QueryClient<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet>*>(speechQueryServiceReq)->add(wiringSlave, connections.speechQueryServiceReq.wiringName);
+		}
+		if(connections.speechSendServiceOut.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::SendClient<DomainSpeech::CommSpeechOutputMessage>*>(speechSendServiceOut)->add(wiringSlave, connections.speechSendServiceOut.wiringName);
+		}
 		
 		// create parameter slave
 		param = new SmartACE::ParameterSlave(component, &paramHandler);
@@ -266,15 +295,37 @@ void ComponentTTSClient::init(int argc, char *argv[])
 // run the component
 void ComponentTTSClient::run()
 {
+	stateSlave->acquire("init");
+	// startup all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->onStartup();
+	}
+	
+	// startup all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->onStartup();
+	}
+	stateSlave->release("init");
+	
+	// do not call this handler within the init state (see above) as this handler internally calls setStartupFinished() (this should be fixed in future)
 	compHandler.onStartup();
 	
+	// this call blocks until the component is commanded to shutdown
+	stateSlave->acquire("shutdown");
 	
-	// coponent will now start running and will continue (block in the run method) until it is commanded to shutdown (i.e. by a SIGINT signal)
-	component->run();
-	// component was signalled to shutdown
-	// 1) signall all tasks to shutdown as well (and give them 2 seconds time to cooperate)
-	// if time exceeds, component is killed without further clean-up
-	component->closeAllAssociatedTasks(2);
+	// shutdown all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->onShutdown();
+	}
+	
+	// shutdown all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->onShutdown();
+	}
 	
 	if(connections.component.useLogger == true) {
 		//FIXME: use logging
@@ -283,7 +334,12 @@ void ComponentTTSClient::run()
 	
 	compHandler.onShutdown();
 	
-	
+	stateSlave->release("shutdown");
+}
+
+// clean-up component's resources
+void ComponentTTSClient::fini()
+{
 	// unlink all observers
 	
 	// destroy all task instances
@@ -305,7 +361,6 @@ void ComponentTTSClient::run()
 	
 	// destroy request-handlers
 	
-
 	delete stateSlave;
 	// destroy state-change-handler
 	delete stateChangeHandler;
@@ -315,12 +370,20 @@ void ComponentTTSClient::run()
 	delete param;
 	
 
-	// clean-up component's internally used resources (internally used communication middleware) 
-	component->cleanUpComponentResources();
+	// destroy all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->destroy();
+	}
+
+	// destroy all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->destroy();
+	}
 	
+	// destruction of PlainOpcUaComponentTTSClientExtension
 	
-	// finally delete the component itself
-	delete component;
 }
 
 void ComponentTTSClient::loadParameter(int argc, char *argv[])
@@ -398,12 +461,17 @@ void ComponentTTSClient::loadParameter(int argc, char *argv[])
 		parameter.getString("SpeechQueryServiceReq", "serviceName", connections.speechQueryServiceReq.serviceName);
 		parameter.getString("SpeechQueryServiceReq", "serverName", connections.speechQueryServiceReq.serverName);
 		parameter.getString("SpeechQueryServiceReq", "wiringName", connections.speechQueryServiceReq.wiringName);
+		if(parameter.checkIfParameterExists("SpeechQueryServiceReq", "roboticMiddleware")) {
+			parameter.getString("SpeechQueryServiceReq", "roboticMiddleware", connections.speechQueryServiceReq.roboticMiddleware);
+		}
 		// load parameters for client SpeechSendServiceOut
 		parameter.getBoolean("SpeechSendServiceOut", "initialConnect", connections.speechSendServiceOut.initialConnect);
 		parameter.getString("SpeechSendServiceOut", "serviceName", connections.speechSendServiceOut.serviceName);
 		parameter.getString("SpeechSendServiceOut", "serverName", connections.speechSendServiceOut.serverName);
 		parameter.getString("SpeechSendServiceOut", "wiringName", connections.speechSendServiceOut.wiringName);
-		
+		if(parameter.checkIfParameterExists("SpeechSendServiceOut", "roboticMiddleware")) {
+			parameter.getString("SpeechSendServiceOut", "roboticMiddleware", connections.speechSendServiceOut.roboticMiddleware);
+		}
 		
 		
 		// load parameters for task ConsoleTask
@@ -424,6 +492,15 @@ void ComponentTTSClient::loadParameter(int argc, char *argv[])
 		}
 		if(parameter.checkIfParameterExists("ConsoleTask", "cpuAffinity")) {
 			parameter.getInteger("ConsoleTask", "cpuAffinity", connections.consoleTask.cpuAffinity);
+		}
+		
+		// load parameters for PlainOpcUaComponentTTSClientExtension
+		
+		
+		// load parameters for all registered component-extensions
+		for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+		{
+			extension->second->loadParameters(parameter);
 		}
 		
 		paramHandler.loadParameter(parameter);

@@ -29,10 +29,6 @@
 class SmartMapperGridMapPortFactoryInterface;
 class SmartMapperGridMapExtension;
 
-// includes for SmartMapperGridMapROSExtension
-
-// includes for SeRoNetSDKComponentGeneratorExtension
-
 // includes for PlainOpcUaSmartMapperGridMapExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -129,10 +125,6 @@ public:
 	// define request-handlers
 	CurrQueryServerHandler *currQueryServerHandler;
 	LtmQueryServerHandler *ltmQueryServerHandler;
-	
-	// definitions of SmartMapperGridMapROSExtension
-	
-	// definitions of SeRoNetSDKComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaSmartMapperGridMapExtension
 	
@@ -270,10 +262,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} laserServiceIn;
-		
-		// -- parameters for SmartMapperGridMapROSExtension
-		
-		// -- parameters for SeRoNetSDKComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaSmartMapperGridMapExtension
 		

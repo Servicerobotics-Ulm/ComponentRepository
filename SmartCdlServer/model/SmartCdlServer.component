@@ -1,12 +1,17 @@
 ComponentDefinition SmartCdlServer 
 {
+	
 	CoordinationSlavePort CoordinationPort implements CommNavigationObjects.CdlCoordinationService {
+
 		PrivateOperationMode moveRobot;
 		
 		PublicOperationMode CommNavigationObjects.CdlStates.MoveRobot {
 			activates ( moveRobot )
 		}
-	//	with CurrGridMapQueryService mapped-to NavVelSendServer
+		
+		with blockedEvent realizedBy RobotBlockedEventServer
+		with goalEvent realizedBy GoalEventServer
+		//SkillRealizationsRef cdlSkills;
 	}
 	
 	InputPort LaserClient implements CommBasicObjects.LaserService { }

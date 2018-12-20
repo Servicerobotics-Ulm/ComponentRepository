@@ -29,10 +29,6 @@
 class SmartPlannerBreadthFirstSearchPortFactoryInterface;
 class SmartPlannerBreadthFirstSearchExtension;
 
-// includes for SmartPlannerBreadthFirstSearchROSExtension
-
-// includes for SeRoNetSDKComponentGeneratorExtension
-
 // includes for PlainOpcUaSmartPlannerBreadthFirstSearchExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -131,10 +127,6 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
-	
-	// definitions of SmartPlannerBreadthFirstSearchROSExtension
-	
-	// definitions of SeRoNetSDKComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaSmartPlannerBreadthFirstSearchExtension
 	
@@ -260,10 +252,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} curMapClient;
-		
-		// -- parameters for SmartPlannerBreadthFirstSearchROSExtension
-		
-		// -- parameters for SeRoNetSDKComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaSmartPlannerBreadthFirstSearchExtension
 		

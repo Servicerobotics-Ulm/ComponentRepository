@@ -18,13 +18,17 @@
 //FIXME: implement logging
 //#include "smartGlobalLogger.hh"
 
+// the ace port-factory is used as a default port-mapping
+#include "ComponentLaserObstacleAvoidAcePortFactory.hh"
+
+
+// initialize static singleton pointer to zero
+ComponentLaserObstacleAvoid* ComponentLaserObstacleAvoid::_componentLaserObstacleAvoid = 0;
 
 // constructor
 ComponentLaserObstacleAvoid::ComponentLaserObstacleAvoid()
 {
 	std::cout << "constructor of ComponentLaserObstacleAvoid\n";
-	
-	component = NULL;
 	
 	// set all pointer members to NULL
 	laserServiceIn = NULL;
@@ -37,7 +41,6 @@ ComponentLaserObstacleAvoid::ComponentLaserObstacleAvoid()
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	
-	
 	// set default ini parameter values
 	connections.component.name = "ComponentLaserObstacleAvoid";
 	connections.component.initialComponentMode = "Neutral";
@@ -48,20 +51,35 @@ ComponentLaserObstacleAvoid::ComponentLaserObstacleAvoid()
 	connections.laserServiceIn.serverName = "unknown";
 	connections.laserServiceIn.serviceName = "unknown";
 	connections.laserServiceIn.interval = 1;
+	connections.laserServiceIn.roboticMiddleware = "ACE_SmartSoft";
 	connections.navigationVelocityServiceOut.initialConnect = false;
 	connections.navigationVelocityServiceOut.wiringName = "NavigationVelocityServiceOut";
 	connections.navigationVelocityServiceOut.serverName = "unknown";
 	connections.navigationVelocityServiceOut.serviceName = "unknown";
 	connections.navigationVelocityServiceOut.interval = 1;
+	connections.navigationVelocityServiceOut.roboticMiddleware = "ACE_SmartSoft";
 	connections.robotTask.minActFreq = 0.0;
 	connections.robotTask.maxActFreq = 0.0;
+	connections.robotTask.trigger = "PeriodicTimer";
+	connections.robotTask.periodicActFreq = 1.0;
 	// scheduling default parameters
 	connections.robotTask.scheduler = "DEFAULT";
 	connections.robotTask.priority = -1;
 	connections.robotTask.cpuAffinity = -1;
+	
+	// initialize members of PlainOpcUaComponentLaserObstacleAvoidExtension
+	
 }
 
+void ComponentLaserObstacleAvoid::addPortFactory(const std::string &name, ComponentLaserObstacleAvoidPortFactoryInterface *portFactory)
+{
+	portFactoryRegistry[name] = portFactory;
+}
 
+void ComponentLaserObstacleAvoid::addExtension(ComponentLaserObstacleAvoidExtension *extension)
+{
+	componentExtensionRegistry[extension->getName()] = extension;
+}
 
 /**
  * Notify the component that setup/initialization is finished.
@@ -165,22 +183,30 @@ void ComponentLaserObstacleAvoid::init(int argc, char *argv[])
 		// load initial parameters from ini-file (if found)
 		loadParameter(argc, argv);
 		
-		if(connections.component.defaultScheduler != "DEFAULT") {
-			ACE_Sched_Params sched_params(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
-			if(connections.component.defaultScheduler == "FIFO") {
-				sched_params.policy(ACE_SCHED_FIFO);
-				sched_params.priority(ACE_THR_PRI_FIFO_MIN);
-			} else if(connections.component.defaultScheduler == "RR") {
-				sched_params.policy(ACE_SCHED_RR);
-				sched_params.priority(ACE_THR_PRI_RR_MIN);
-			}
-			// create new instance of the SmartSoft component with customized scheuling parameters 
-			component = new ComponentLaserObstacleAvoidImpl(connections.component.name, argc, argv, sched_params);
-		} else {
-			// create new instance of the SmartSoft component
-			component = new ComponentLaserObstacleAvoidImpl(connections.component.name, argc, argv);
+		
+		// initializations of PlainOpcUaComponentLaserObstacleAvoidExtension
+		
+		
+		// initialize all registered port-factories
+		for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+		{
+			portFactory->second->initialize(this, argc, argv);
 		}
 		
+		// initialize all registered component-extensions
+		for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+		{
+			extension->second->initialize(this, argc, argv);
+		}
+		
+		ComponentLaserObstacleAvoidPortFactoryInterface *acePortFactory = portFactoryRegistry["ACE_SmartSoft"];
+		if(acePortFactory == 0) {
+			std::cerr << "ERROR: acePortFactory NOT instantiated -> exit(-1)" << std::endl;
+			exit(-1);
+		}
+		
+		// this pointer is used for backwards compatibility (deprecated: should be removed as soon as all patterns, including coordination, are moved to port-factory)
+		SmartACE::SmartComponent *component = dynamic_cast<ComponentLaserObstacleAvoidAcePortFactory*>(acePortFactory)->getComponentImpl();
 		
 		std::cout << "ComponentDefinition ComponentLaserObstacleAvoid is named " << connections.component.name << std::endl;
 		
@@ -196,8 +222,8 @@ void ComponentLaserObstacleAvoid::init(int argc, char *argv[])
 		// TODO: set minCycleTime from Ini-file
 		
 		// create client ports
-		laserServiceIn = new SmartACE::PushClient<CommBasicObjects::CommMobileLaserScan>(component);
-		navigationVelocityServiceOut = new SmartACE::SendClient<CommBasicObjects::CommNavigationVelocity>(component);
+		laserServiceIn = portFactoryRegistry[connections.laserServiceIn.roboticMiddleware]->createLaserServiceIn();
+		navigationVelocityServiceOut = portFactoryRegistry[connections.navigationVelocityServiceOut.roboticMiddleware]->createNavigationVelocityServiceOut();
 		
 		// create InputTaskTriggers and UpcallManagers
 		laserServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan>(laserServiceIn);
@@ -206,7 +232,6 @@ void ComponentLaserObstacleAvoid::init(int argc, char *argv[])
 		// create input-handler
 		
 		// create request-handlers
-		
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
@@ -219,8 +244,14 @@ void ComponentLaserObstacleAvoid::init(int argc, char *argv[])
 		
 		wiringSlave = new SmartACE::WiringSlave(component);
 		// add client port to wiring slave
-		dynamic_cast<SmartACE::PushClient<CommBasicObjects::CommMobileLaserScan>*>(laserServiceIn)->add(wiringSlave, connections.laserServiceIn.wiringName);
-		dynamic_cast<SmartACE::SendClient<CommBasicObjects::CommNavigationVelocity>*>(navigationVelocityServiceOut)->add(wiringSlave, connections.navigationVelocityServiceOut.wiringName);
+		if(connections.laserServiceIn.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::PushClient<CommBasicObjects::CommMobileLaserScan>*>(laserServiceIn)->add(wiringSlave, connections.laserServiceIn.wiringName);
+		}
+		if(connections.navigationVelocityServiceOut.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::SendClient<CommBasicObjects::CommNavigationVelocity>*>(navigationVelocityServiceOut)->add(wiringSlave, connections.navigationVelocityServiceOut.wiringName);
+		}
 		
 		
 		
@@ -248,7 +279,20 @@ void ComponentLaserObstacleAvoid::init(int argc, char *argv[])
 			} else {
 				std::cerr << "ERROR: could not set-up InPort " << connections.robotTask.inPortRef << " as activation source for Task RobotTask" << std::endl;
 			}
-		} 
+		} else
+		{
+			// setup default task-trigger as PeriodicTimer
+			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
+			int microseconds = 1000*1000 / 1.0;
+			if(microseconds > 0) {
+				component->getTimerManager()->scheduleTimer(triggerPtr, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				triggerPtr->attach(robotTask);
+				// store trigger in class member
+				robotTaskTrigger = triggerPtr;
+			} else {
+				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task RobotTask" << std::endl;
+			}
+		}
 		
 		
 		// link observers with subjects
@@ -262,15 +306,37 @@ void ComponentLaserObstacleAvoid::init(int argc, char *argv[])
 // run the component
 void ComponentLaserObstacleAvoid::run()
 {
+	stateSlave->acquire("init");
+	// startup all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->onStartup();
+	}
+	
+	// startup all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->onStartup();
+	}
+	stateSlave->release("init");
+	
+	// do not call this handler within the init state (see above) as this handler internally calls setStartupFinished() (this should be fixed in future)
 	compHandler.onStartup();
 	
+	// this call blocks until the component is commanded to shutdown
+	stateSlave->acquire("shutdown");
 	
-	// coponent will now start running and will continue (block in the run method) until it is commanded to shutdown (i.e. by a SIGINT signal)
-	component->run();
-	// component was signalled to shutdown
-	// 1) signall all tasks to shutdown as well (and give them 2 seconds time to cooperate)
-	// if time exceeds, component is killed without further clean-up
-	component->closeAllAssociatedTasks(2);
+	// shutdown all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->onShutdown();
+	}
+	
+	// shutdown all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->onShutdown();
+	}
 	
 	if(connections.component.useLogger == true) {
 		//FIXME: use logging
@@ -279,7 +345,12 @@ void ComponentLaserObstacleAvoid::run()
 	
 	compHandler.onShutdown();
 	
-	
+	stateSlave->release("shutdown");
+}
+
+// clean-up component's resources
+void ComponentLaserObstacleAvoid::fini()
+{
 	// unlink all observers
 	
 	// destroy all task instances
@@ -304,7 +375,6 @@ void ComponentLaserObstacleAvoid::run()
 	
 	// destroy request-handlers
 	
-
 	delete stateSlave;
 	// destroy state-change-handler
 	delete stateChangeHandler;
@@ -313,12 +383,20 @@ void ComponentLaserObstacleAvoid::run()
 	delete wiringSlave;
 	
 
-	// clean-up component's internally used resources (internally used communication middleware) 
-	component->cleanUpComponentResources();
+	// destroy all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->destroy();
+	}
+
+	// destroy all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->destroy();
+	}
 	
+	// destruction of PlainOpcUaComponentLaserObstacleAvoidExtension
 	
-	// finally delete the component itself
-	delete component;
 }
 
 void ComponentLaserObstacleAvoid::loadParameter(int argc, char *argv[])
@@ -396,12 +474,17 @@ void ComponentLaserObstacleAvoid::loadParameter(int argc, char *argv[])
 		parameter.getString("LaserServiceIn", "serverName", connections.laserServiceIn.serverName);
 		parameter.getString("LaserServiceIn", "wiringName", connections.laserServiceIn.wiringName);
 		parameter.getInteger("LaserServiceIn", "interval", connections.laserServiceIn.interval);
+		if(parameter.checkIfParameterExists("LaserServiceIn", "roboticMiddleware")) {
+			parameter.getString("LaserServiceIn", "roboticMiddleware", connections.laserServiceIn.roboticMiddleware);
+		}
 		// load parameters for client NavigationVelocityServiceOut
 		parameter.getBoolean("NavigationVelocityServiceOut", "initialConnect", connections.navigationVelocityServiceOut.initialConnect);
 		parameter.getString("NavigationVelocityServiceOut", "serviceName", connections.navigationVelocityServiceOut.serviceName);
 		parameter.getString("NavigationVelocityServiceOut", "serverName", connections.navigationVelocityServiceOut.serverName);
 		parameter.getString("NavigationVelocityServiceOut", "wiringName", connections.navigationVelocityServiceOut.wiringName);
-		
+		if(parameter.checkIfParameterExists("NavigationVelocityServiceOut", "roboticMiddleware")) {
+			parameter.getString("NavigationVelocityServiceOut", "roboticMiddleware", connections.navigationVelocityServiceOut.roboticMiddleware);
+		}
 		
 		
 		// load parameters for task RobotTask
@@ -422,6 +505,15 @@ void ComponentLaserObstacleAvoid::loadParameter(int argc, char *argv[])
 		}
 		if(parameter.checkIfParameterExists("RobotTask", "cpuAffinity")) {
 			parameter.getInteger("RobotTask", "cpuAffinity", connections.robotTask.cpuAffinity);
+		}
+		
+		// load parameters for PlainOpcUaComponentLaserObstacleAvoidExtension
+		
+		
+		// load parameters for all registered component-extensions
+		for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+		{
+			extension->second->loadParameters(parameter);
 		}
 		
 	

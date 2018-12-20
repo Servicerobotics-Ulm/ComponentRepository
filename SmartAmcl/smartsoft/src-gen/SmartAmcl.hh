@@ -15,12 +15,24 @@
 //--------------------------------------------------------------------------
 #ifndef _SMARTAMCL_HH
 #define _SMARTAMCL_HH
-	
+
+#include <map>
 #include <iostream>
 #include "aceSmartSoft.hh"
 #include "smartQueryServerTaskTrigger_T.h"
 #include "SmartAmclCore.hh"
-#include "SmartAmclImpl.hh"
+
+#include "SmartAmclPortFactoryInterface.hh"
+#include "SmartAmclExtension.hh"
+
+// forward declarations
+class SmartAmclPortFactoryInterface;
+class SmartAmclExtension;
+
+// includes for PlainOpcUaSmartAmclExtension
+// include plain OPC UA device clients
+// include plain OPC UA status servers
+
 
 // include communication objects
 #include <CommBasicObjects/CommBasePositionUpdate.hh>
@@ -42,7 +54,6 @@
 // include input-handler
 // include input-handler
 
-
 // include handler
 #include "CompHandler.hh"
 
@@ -55,7 +66,7 @@
 
 class SmartAmcl : public SmartAmclCore {
 private:
-	static SmartAmcl _smartAmcl;
+	static SmartAmcl *_smartAmcl;
 	
 	// constructor
 	SmartAmcl();
@@ -72,12 +83,16 @@ private:
 	// instantiate comp-handler
 	CompHandler compHandler;
 	
+	// helper method that maps a string-name to an according TaskTriggerSubject
 	Smart::TaskTriggerSubject* getInputTaskTriggerFromString(const std::string &client);
 	
-public:
-	// component
-	SmartAmclImpl *component;
+	// internal map storing the different port-creation factories (that internally map to specific middleware implementations)
+	std::map<std::string, SmartAmclPortFactoryInterface*> portFactoryRegistry;
 	
+	// internal map storing various extensions of this component class
+	std::map<std::string, SmartAmclExtension*> componentExtensionRegistry;
+	
+public:
 	ParameterStateStruct getGlobalState() const
 	{
 		return paramHandler.getGlobalState();
@@ -106,6 +121,8 @@ public:
 	
 	// define request-handlers
 	
+	// definitions of PlainOpcUaSmartAmclExtension
+	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
@@ -115,12 +132,41 @@ public:
 	SmartACE::ParameterSlave *param;
 	
 	
+	/// this method is used to register different PortFactory classes (one for each supported middleware framework)
+	void addPortFactory(const std::string &name, SmartAmclPortFactoryInterface *portFactory);
+	
+	/// this method is used to register different component-extension classes
+	void addExtension(SmartAmclExtension *extension);
+	
+	/// this method allows to access the registered component-extensions (automatically converting to the actuall implementation type)
+	template <typename T>
+	T* getExtension(const std::string &name) {
+		auto it = componentExtensionRegistry.find(name);
+		if(it != componentExtensionRegistry.end()) {
+			return dynamic_cast<T*>(it->second);
+		}
+		return 0;
+	}
+	
+	/// initialize component's internal members
 	void init(int argc, char *argv[]);
+	
+	/// execute the component's infrastructure
 	void run();
 	
+	/// clean-up component's resources
+	void fini();
+	
+	/// call this method to set the overall component into the Alive state (i.e. component is then ready to operate)
 	void setStartupFinished();
+	
+	/// connect all component's client ports
 	Smart::StatusCode connectAndStartAllServices();
+	
+	/// start all assocuated Activities
 	void startAllTasks();
+	
+	/// start all associated timers
 	void startAllTimers();
 	
 	Smart::StatusCode connectLaserServiceIn(const std::string &serverName, const std::string &serviceName);
@@ -129,7 +175,16 @@ public:
 	// return singleton instance
 	static SmartAmcl* instance()
 	{
-		return (SmartAmcl*)&_smartAmcl;
+		if(_smartAmcl == 0) {
+			_smartAmcl = new SmartAmcl();
+		}
+		return _smartAmcl;
+	}
+	
+	static void deleteInstance() {
+		if(_smartAmcl != 0) {
+			delete _smartAmcl;
+		}
 	}
 	
 	// connections parameter
@@ -168,6 +223,7 @@ public:
 		//--- server port parameter ---
 		struct LocalizationEventServiceOut_struct {
 				std::string serviceName;
+				std::string roboticMiddleware;
 		} localizationEventServiceOut;
 	
 		//--- client port parameter ---
@@ -176,6 +232,7 @@ public:
 			std::string serviceName;
 			std::string wiringName;
 			long interval;
+			std::string roboticMiddleware;
 		} laserServiceIn;
 		struct LocalizationUpdateServiceOut_struct {
 			bool initialConnect;
@@ -183,7 +240,10 @@ public:
 			std::string serviceName;
 			std::string wiringName;
 			long interval;
+			std::string roboticMiddleware;
 		} localizationUpdateServiceOut;
+		
+		// -- parameters for PlainOpcUaSmartAmclExtension
 		
 	} connections;
 };

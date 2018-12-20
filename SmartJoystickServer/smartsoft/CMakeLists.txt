@@ -26,7 +26,6 @@ SMART_COMPONENT_PROJECT()
 
 # find SmartSoft package
 #FIND_SMARTSOFT(3.0)
-#FIXME: generalize this
 FIND_PACKAGE(AceSmartSoft PATHS $ENV{SMART_ROOT_ACE}/build)
 
 # generte doxygen documentation

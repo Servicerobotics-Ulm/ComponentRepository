@@ -75,24 +75,34 @@ prescale 1
 
 [BaseStateAnswerer]
 serviceName BaseStateAnswerer
+roboticMiddleware ACE_SmartSoft
 
 [BaseStateServiceOut]
 serviceName BaseStateServiceOut
+roboticMiddleware ACE_SmartSoft
 
 [BatteryEventServiceOut]
 serviceName BatteryEventServiceOut
+roboticMiddleware ACE_SmartSoft
 
 [LaserServiceOut]
 serviceName LaserServiceOut
+roboticMiddleware ACE_SmartSoft
 
 [LocalizationUpdateServiceIn]
 serviceName LocalizationUpdateServiceIn
+roboticMiddleware ACE_SmartSoft
 
 [NavigationVelocityServiceIn]
 serviceName NavigationVelocityServiceIn
+roboticMiddleware ACE_SmartSoft
 
 ##########################
 # client port parameter
+
+##########################
+## parameters of PlainOpcUaComponentPlayerStageSimulatorExtension
+
 
 #####################
 # internal parameters

@@ -1,13 +1,3 @@
-# target configurations for SmartPioneerBaseServerROSExtension
-IF(EXISTS ${ROS_DIR})
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${ROS_LIBS})
-ENDIF(EXISTS ${ROS_DIR})
-
-# target configurations for SeRoNetSDKComponentGeneratorExtension
-IF(SeRoNetSDK_FOUND)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} SeRoNetSDK::SeRoNetSDK)
-ENDIF(SeRoNetSDK_FOUND)
-
 # target configurations for PlainOpcUaSmartPioneerBaseServerExtension
 IF(open62541_FOUND)
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} open62541)

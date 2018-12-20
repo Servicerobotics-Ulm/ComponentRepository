@@ -58,6 +58,7 @@ prescale 1
 
 [LocalizationEventServiceOut]
 serviceName LocalizationEventServiceOut
+roboticMiddleware ACE_SmartSoft
 
 ##########################
 # client port parameter
@@ -67,6 +68,7 @@ serverName unknown
 serviceName unknown
 wiringName LaserServiceIn
 interval 1
+roboticMiddleware ACE_SmartSoft
 
 [LocalizationUpdateServiceOut]
 initialConnect false
@@ -74,4 +76,9 @@ serverName unknown
 serviceName unknown
 wiringName LocalizationUpdateServiceOut
 interval 1
+roboticMiddleware ACE_SmartSoft
+
+##########################
+## parameters of PlainOpcUaSmartAmclExtension
+
 

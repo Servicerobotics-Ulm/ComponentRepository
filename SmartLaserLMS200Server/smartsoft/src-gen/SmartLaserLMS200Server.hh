@@ -29,10 +29,6 @@
 class SmartLaserLMS200ServerPortFactoryInterface;
 class SmartLaserLMS200ServerExtension;
 
-// includes for SmartLaserLMS200ServerROSExtension
-
-// includes for SeRoNetSDKComponentGeneratorExtension
-
 // includes for PlainOpcUaSmartLaserLMS200ServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -122,10 +118,6 @@ public:
 	
 	// define request-handlers
 	LaserQueryServiceAnswHandler *laserQueryServiceAnswHandler;
-	
-	// definitions of SmartLaserLMS200ServerROSExtension
-	
-	// definitions of SeRoNetSDKComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaSmartLaserLMS200ServerExtension
 	
@@ -234,10 +226,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} baseStateIn;
-		
-		// -- parameters for SmartLaserLMS200ServerROSExtension
-		
-		// -- parameters for SeRoNetSDKComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaSmartLaserLMS200ServerExtension
 		

@@ -15,12 +15,24 @@
 //--------------------------------------------------------------------------
 #ifndef _COMPONENTLASEROBSTACLEAVOID_HH
 #define _COMPONENTLASEROBSTACLEAVOID_HH
-	
+
+#include <map>
 #include <iostream>
 #include "aceSmartSoft.hh"
 #include "smartQueryServerTaskTrigger_T.h"
 #include "ComponentLaserObstacleAvoidCore.hh"
-#include "ComponentLaserObstacleAvoidImpl.hh"
+
+#include "ComponentLaserObstacleAvoidPortFactoryInterface.hh"
+#include "ComponentLaserObstacleAvoidExtension.hh"
+
+// forward declarations
+class ComponentLaserObstacleAvoidPortFactoryInterface;
+class ComponentLaserObstacleAvoidExtension;
+
+// includes for PlainOpcUaComponentLaserObstacleAvoidExtension
+// include plain OPC UA device clients
+// include plain OPC UA status servers
+
 
 // include communication objects
 #include <CommBasicObjects/CommMobileLaserScan.hh>
@@ -36,7 +48,6 @@
 // include input-handler
 // include input-handler
 
-
 // include handler
 #include "CompHandler.hh"
 
@@ -47,7 +58,7 @@
 
 class ComponentLaserObstacleAvoid : public ComponentLaserObstacleAvoidCore {
 private:
-	static ComponentLaserObstacleAvoid _componentLaserObstacleAvoid;
+	static ComponentLaserObstacleAvoid *_componentLaserObstacleAvoid;
 	
 	// constructor
 	ComponentLaserObstacleAvoid();
@@ -64,12 +75,16 @@ private:
 	// instantiate comp-handler
 	CompHandler compHandler;
 	
+	// helper method that maps a string-name to an according TaskTriggerSubject
 	Smart::TaskTriggerSubject* getInputTaskTriggerFromString(const std::string &client);
 	
-public:
-	// component
-	ComponentLaserObstacleAvoidImpl *component;
+	// internal map storing the different port-creation factories (that internally map to specific middleware implementations)
+	std::map<std::string, ComponentLaserObstacleAvoidPortFactoryInterface*> portFactoryRegistry;
 	
+	// internal map storing various extensions of this component class
+	std::map<std::string, ComponentLaserObstacleAvoidExtension*> componentExtensionRegistry;
+	
+public:
 	
 	// define tasks
 	Smart::TaskTriggerSubject* robotTaskTrigger;
@@ -92,6 +107,8 @@ public:
 	
 	// define request-handlers
 	
+	// definitions of PlainOpcUaComponentLaserObstacleAvoidExtension
+	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
@@ -99,12 +116,41 @@ public:
 	SmartACE::WiringSlave *wiringSlave;
 	
 	
+	/// this method is used to register different PortFactory classes (one for each supported middleware framework)
+	void addPortFactory(const std::string &name, ComponentLaserObstacleAvoidPortFactoryInterface *portFactory);
+	
+	/// this method is used to register different component-extension classes
+	void addExtension(ComponentLaserObstacleAvoidExtension *extension);
+	
+	/// this method allows to access the registered component-extensions (automatically converting to the actuall implementation type)
+	template <typename T>
+	T* getExtension(const std::string &name) {
+		auto it = componentExtensionRegistry.find(name);
+		if(it != componentExtensionRegistry.end()) {
+			return dynamic_cast<T*>(it->second);
+		}
+		return 0;
+	}
+	
+	/// initialize component's internal members
 	void init(int argc, char *argv[]);
+	
+	/// execute the component's infrastructure
 	void run();
 	
+	/// clean-up component's resources
+	void fini();
+	
+	/// call this method to set the overall component into the Alive state (i.e. component is then ready to operate)
 	void setStartupFinished();
+	
+	/// connect all component's client ports
 	Smart::StatusCode connectAndStartAllServices();
+	
+	/// start all assocuated Activities
 	void startAllTasks();
+	
+	/// start all associated timers
 	void startAllTimers();
 	
 	Smart::StatusCode connectLaserServiceIn(const std::string &serverName, const std::string &serviceName);
@@ -113,7 +159,16 @@ public:
 	// return singleton instance
 	static ComponentLaserObstacleAvoid* instance()
 	{
-		return (ComponentLaserObstacleAvoid*)&_componentLaserObstacleAvoid;
+		if(_componentLaserObstacleAvoid == 0) {
+			_componentLaserObstacleAvoid = new ComponentLaserObstacleAvoid();
+		}
+		return _componentLaserObstacleAvoid;
+	}
+	
+	static void deleteInstance() {
+		if(_componentLaserObstacleAvoid != 0) {
+			delete _componentLaserObstacleAvoid;
+		}
 	}
 	
 	// connections parameter
@@ -157,6 +212,7 @@ public:
 			std::string serviceName;
 			std::string wiringName;
 			long interval;
+			std::string roboticMiddleware;
 		} laserServiceIn;
 		struct NavigationVelocityServiceOut_struct {
 			bool initialConnect;
@@ -164,7 +220,10 @@ public:
 			std::string serviceName;
 			std::string wiringName;
 			long interval;
+			std::string roboticMiddleware;
 		} navigationVelocityServiceOut;
+		
+		// -- parameters for PlainOpcUaComponentLaserObstacleAvoidExtension
 		
 	} connections;
 };

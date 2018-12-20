@@ -29,10 +29,6 @@
 class SmartGazeboBaseServerPortFactoryInterface;
 class SmartGazeboBaseServerExtension;
 
-// includes for SmartGazeboBaseServerROSExtension
-
-// includes for SeRoNetSDKComponentGeneratorExtension
-
 // includes for PlainOpcUaSmartGazeboBaseServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -53,6 +49,7 @@ class SmartGazeboBaseServerExtension;
 // include tasks
 #include "BaseStateTask.hh"
 #include "LaserTask.hh"
+#include "PollForGazeboConnection.hh"
 // include UpcallManagers
 #include "LocalizationUpdateServiceInUpcallManager.hh"
 #include "NavVelServiceInUpcallManager.hh"
@@ -112,6 +109,8 @@ public:
 	BaseStateTask *baseStateTask;
 	Smart::TaskTriggerSubject* laserTaskTrigger;
 	LaserTask *laserTask;
+	Smart::TaskTriggerSubject* pollForGazeboConnectionTrigger;
+	PollForGazeboConnection *pollForGazeboConnection;
 	
 	// define input-ports
 	// InputPort LocalizationUpdateServiceIn
@@ -139,10 +138,6 @@ public:
 	
 	// define request-handlers
 	BaseStateQueryHandler *baseStateQueryHandler;
-	
-	// definitions of SmartGazeboBaseServerROSExtension
-	
-	// definitions of SeRoNetSDKComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaSmartGazeboBaseServerExtension
 	
@@ -244,6 +239,22 @@ public:
 			int priority;
 			int cpuAffinity;
 		} laserTask;
+		struct PollForGazeboConnection_struct {
+			double minActFreq;
+			double maxActFreq;
+			std::string trigger;
+			// only one of the following two params is 
+			// actually used at run-time according 
+			// to the system config model
+			double periodicActFreq;
+			// or
+			std::string inPortRef;
+			int prescale;
+			// scheduling parameters
+			std::string scheduler;
+			int priority;
+			int cpuAffinity;
+		} pollForGazeboConnection;
 		
 		//--- upcall parameter ---
 		struct LocalizationUpdateHandler_struct {
@@ -276,10 +287,6 @@ public:
 		} navVelServiceIn;
 	
 		//--- client port parameter ---
-		
-		// -- parameters for SmartGazeboBaseServerROSExtension
-		
-		// -- parameters for SeRoNetSDKComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaSmartGazeboBaseServerExtension
 		

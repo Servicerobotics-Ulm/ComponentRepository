@@ -55,6 +55,21 @@ periodicActFreqHz 20.0
 # priority 0
 # cpuAffinity 0
 
+[PollForGazeboConnection]
+minActFreqHz 0.0
+maxActFreqHz 0.0
+# other trigger-types are:
+#triggerType PeriodicTimer
+#periodicActFreqHz 0.0
+# or alternatively:
+#triggerType DataTriggered
+#inPortRef <InPortName>
+#prescale 1
+# optional scheduling parameters
+# scheduler FIFO
+# priority 0
+# cpuAffinity 0
+
 ##########################
 # InputHandler parameters
 
@@ -89,12 +104,6 @@ roboticMiddleware ACE_SmartSoft
 
 ##########################
 # client port parameter
-
-##########################
-## parameters of SmartGazeboBaseServerROSExtension
-
-##########################
-## parameters of SeRoNetSDKComponentGeneratorExtension
 
 ##########################
 ## parameters of PlainOpcUaSmartGazeboBaseServerExtension

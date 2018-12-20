@@ -77,6 +77,8 @@ public:
 	BaseVelocity* velocity;
 
 	Queue* queue;
+
+	SmartACE::SmartSemaphore connectionEstablished;
 };
 	
 #endif
