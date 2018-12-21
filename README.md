@@ -10,6 +10,11 @@ Individual components instantiate and implement modelled service-definitions tha
 
 License: Each component has its individual license depending on the internally used algorithms and libraries.
 
+This repository is maintained by Servicerobotik Ulm. For more information see:
+
+* Big picture: relation of repositories: https://wiki.servicerobotik-ulm.de/download
+* SRRC Technical Wiki on SmartSoft and SmartMDSD Toolchain: https://wiki.servicerobotik-ulm.de
+
 ## Installation and compilation instructions
 
 For compiling and installing the components, please checkout and install the [**ACE/SmartSoft Framework**](https://github.com/Servicerobotics-Ulm/AceSmartSoftFramework) (following [these installation instructions](https://github.com/Servicerobotics-Ulm/AceSmartSoftFramework/blob/master/README.md)) and make sure that the required [**DomainModelsRepositories**](https://github.com/Servicerobotics-Ulm/DomainModelsRepositories) are checked out.
