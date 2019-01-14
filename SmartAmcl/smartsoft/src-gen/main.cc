@@ -15,15 +15,18 @@
 //--------------------------------------------------------------------------
 #include <iostream>
 #include "SmartAmcl.hh"
-	
-	
-SmartAmcl SmartAmcl::_smartAmcl;
-	
+
 int main(int argc, char *argv[])
 {
 	std::cout << "main...\n";
+	// initialize component infrastructure (loading ini-file, creating ports, tasks, etc.)
 	SmartAmcl::instance()->init(argc, argv);
+	// run component infrastructure until the component is commanded to shutdown
 	SmartAmcl::instance()->run();
+	// clean-up component's internal resources (deleting ports, tasks, etc.)
+	SmartAmcl::instance()->fini();
+	// destroy the component's singleton
+	SmartAmcl::deleteInstance();
 	std::cout << "... main() end. return 0." << std::endl;
 	return 0;
 }

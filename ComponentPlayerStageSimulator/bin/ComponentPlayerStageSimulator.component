@@ -1,14 +1,14 @@
-ComponentDefinition ComponentPlayerStageSimulator {
-
-AnswerPort BaseStateAnswerer implements CommBasicObjects.BaseStateQueryService {
+ComponentDefinition ComponentPlayerStageSimulator 
+{
+	AnswerPort BaseStateAnswerer implements CommBasicObjects.BaseStateQueryService {
 	}
 	RequestHandler BaseStateQueryHandler triggeredFrom BaseStateAnswerer {
 	}
-	PreemptiveTask PlayerTask
+	Activity PlayerTask
 	{
 	}
 	
-	PreemptiveTask BatteryEventTask
+	Activity BatteryEventTask
 	{
 	}
 	
@@ -19,11 +19,13 @@ AnswerPort BaseStateAnswerer implements CommBasicObjects.BaseStateQueryService {
 	}
 	InputPort NavigationVelocityServiceIn implements CommNavigationObjects.NavigationVelocityService {
 	}
-	InputHandler NavigationVelocityHandler triggeredFrom NavigationVelocityServiceIn
+	InputHandler NavigationVelocityHandler triggeredFrom NavigationVelocityServiceIn { }
 	InputPort LocalizationUpdateServiceIn implements CommNavigationObjects.LocalizationUpdateService {
 	}
-	InputHandler LocalizationUpdateHandler triggeredFrom LocalizationUpdateServiceIn
+	InputHandler LocalizationUpdateHandler triggeredFrom LocalizationUpdateServiceIn { }
 	OutputPort BaseStateServiceOut implements CommBasicObjects.BaseStateService realizedBy PlayerTask {
 	}
-ComponentParameters ComponentPlayerStageSimulatorParams
+	ComponentParameters ComponentPlayerStageSimulatorParams slave CoordinationPort;
+	
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService { }
 }

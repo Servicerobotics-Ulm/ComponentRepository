@@ -22,6 +22,21 @@
 
 // include observers
 
+
+BatteryEventTaskCore::BatteryEventTaskCore(Smart::IComponent *comp, const bool &useDefaultState) 
+:	SmartACE::ManagedTask(comp)
+,	useDefaultState(useDefaultState)
+,	useLogging(false)
+,	taskLoggingId(0)
+,	currentUpdateCount(0)
+{
+}
+
+BatteryEventTaskCore::~BatteryEventTaskCore()
+{
+}
+
+
 void BatteryEventTaskCore::notify_all_interaction_observers() {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
 	// try dynamically down-casting this class to the derived class 
@@ -72,6 +87,7 @@ int BatteryEventTaskCore::execute_protected_region()
 
 void BatteryEventTaskCore::updateAllCommObjects()
 {
+	
 }
 
 

@@ -15,12 +15,24 @@
 //--------------------------------------------------------------------------
 #ifndef _SMARTGAZEBOBASESERVER_HH
 #define _SMARTGAZEBOBASESERVER_HH
-	
+
+#include <map>
 #include <iostream>
 #include "aceSmartSoft.hh"
 #include "smartQueryServerTaskTrigger_T.h"
 #include "SmartGazeboBaseServerCore.hh"
-#include "SmartGazeboBaseServerImpl.hh"
+
+#include "SmartGazeboBaseServerPortFactoryInterface.hh"
+#include "SmartGazeboBaseServerExtension.hh"
+
+// forward declarations
+class SmartGazeboBaseServerPortFactoryInterface;
+class SmartGazeboBaseServerExtension;
+
+// includes for PlainOpcUaSmartGazeboBaseServerExtension
+// include plain OPC UA device clients
+// include plain OPC UA status servers
+
 
 // include communication objects
 #include <CommBasicObjects/CommBasePositionUpdate.hh>
@@ -37,6 +49,7 @@
 // include tasks
 #include "BaseStateTask.hh"
 #include "LaserTask.hh"
+#include "PollForGazeboConnection.hh"
 // include UpcallManagers
 #include "LocalizationUpdateServiceInUpcallManager.hh"
 #include "NavVelServiceInUpcallManager.hh"
@@ -46,7 +59,6 @@
 #include "VelocityInpuHandler.hh"
 // include input-handler
 #include "BaseStateQueryHandler.hh"
-
 
 // include handler
 #include "CompHandler.hh"
@@ -60,7 +72,7 @@
 
 class SmartGazeboBaseServer : public SmartGazeboBaseServerCore {
 private:
-	static SmartGazeboBaseServer _smartGazeboBaseServer;
+	static SmartGazeboBaseServer *_smartGazeboBaseServer;
 	
 	// constructor
 	SmartGazeboBaseServer();
@@ -77,12 +89,16 @@ private:
 	// instantiate comp-handler
 	CompHandler compHandler;
 	
+	// helper method that maps a string-name to an according TaskTriggerSubject
 	Smart::TaskTriggerSubject* getInputTaskTriggerFromString(const std::string &client);
 	
-public:
-	// component
-	SmartGazeboBaseServerImpl *component;
+	// internal map storing the different port-creation factories (that internally map to specific middleware implementations)
+	std::map<std::string, SmartGazeboBaseServerPortFactoryInterface*> portFactoryRegistry;
 	
+	// internal map storing various extensions of this component class
+	std::map<std::string, SmartGazeboBaseServerExtension*> componentExtensionRegistry;
+	
+public:
 	ParameterStateStruct getGlobalState() const
 	{
 		return paramHandler.getGlobalState();
@@ -93,6 +109,8 @@ public:
 	BaseStateTask *baseStateTask;
 	Smart::TaskTriggerSubject* laserTaskTrigger;
 	LaserTask *laserTask;
+	Smart::TaskTriggerSubject* pollForGazeboConnectionTrigger;
+	PollForGazeboConnection *pollForGazeboConnection;
 	
 	// define input-ports
 	// InputPort LocalizationUpdateServiceIn
@@ -121,6 +139,8 @@ public:
 	// define request-handlers
 	BaseStateQueryHandler *baseStateQueryHandler;
 	
+	// definitions of PlainOpcUaSmartGazeboBaseServerExtension
+	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
@@ -130,19 +150,57 @@ public:
 	SmartACE::ParameterSlave *param;
 	
 	
+	/// this method is used to register different PortFactory classes (one for each supported middleware framework)
+	void addPortFactory(const std::string &name, SmartGazeboBaseServerPortFactoryInterface *portFactory);
+	
+	/// this method is used to register different component-extension classes
+	void addExtension(SmartGazeboBaseServerExtension *extension);
+	
+	/// this method allows to access the registered component-extensions (automatically converting to the actuall implementation type)
+	template <typename T>
+	T* getExtension(const std::string &name) {
+		auto it = componentExtensionRegistry.find(name);
+		if(it != componentExtensionRegistry.end()) {
+			return dynamic_cast<T*>(it->second);
+		}
+		return 0;
+	}
+	
+	/// initialize component's internal members
 	void init(int argc, char *argv[]);
+	
+	/// execute the component's infrastructure
 	void run();
 	
+	/// clean-up component's resources
+	void fini();
+	
+	/// call this method to set the overall component into the Alive state (i.e. component is then ready to operate)
 	void setStartupFinished();
+	
+	/// connect all component's client ports
 	Smart::StatusCode connectAndStartAllServices();
+	
+	/// start all assocuated Activities
 	void startAllTasks();
+	
+	/// start all associated timers
 	void startAllTimers();
 	
 
 	// return singleton instance
 	static SmartGazeboBaseServer* instance()
 	{
-		return (SmartGazeboBaseServer*)&_smartGazeboBaseServer;
+		if(_smartGazeboBaseServer == 0) {
+			_smartGazeboBaseServer = new SmartGazeboBaseServer();
+		}
+		return _smartGazeboBaseServer;
+	}
+	
+	static void deleteInstance() {
+		if(_smartGazeboBaseServer != 0) {
+			delete _smartGazeboBaseServer;
+		}
 	}
 	
 	// connections parameter
@@ -181,6 +239,22 @@ public:
 			int priority;
 			int cpuAffinity;
 		} laserTask;
+		struct PollForGazeboConnection_struct {
+			double minActFreq;
+			double maxActFreq;
+			std::string trigger;
+			// only one of the following two params is 
+			// actually used at run-time according 
+			// to the system config model
+			double periodicActFreq;
+			// or
+			std::string inPortRef;
+			int prescale;
+			// scheduling parameters
+			std::string scheduler;
+			int priority;
+			int cpuAffinity;
+		} pollForGazeboConnection;
 		
 		//--- upcall parameter ---
 		struct LocalizationUpdateHandler_struct {
@@ -193,21 +267,28 @@ public:
 		//--- server port parameter ---
 		struct BaseSatateQueryAnsw_struct {
 				std::string serviceName;
+				std::string roboticMiddleware;
 		} baseSatateQueryAnsw;
 		struct BaseStateServiceOut_struct {
 				std::string serviceName;
+				std::string roboticMiddleware;
 		} baseStateServiceOut;
 		struct LaserServiceOut_struct {
 				std::string serviceName;
+				std::string roboticMiddleware;
 		} laserServiceOut;
 		struct LocalizationUpdateServiceIn_struct {
 				std::string serviceName;
+				std::string roboticMiddleware;
 		} localizationUpdateServiceIn;
 		struct NavVelServiceIn_struct {
 				std::string serviceName;
+				std::string roboticMiddleware;
 		} navVelServiceIn;
 	
 		//--- client port parameter ---
+		
+		// -- parameters for PlainOpcUaSmartGazeboBaseServerExtension
 		
 	} connections;
 };

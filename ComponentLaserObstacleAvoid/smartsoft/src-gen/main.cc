@@ -15,15 +15,18 @@
 //--------------------------------------------------------------------------
 #include <iostream>
 #include "ComponentLaserObstacleAvoid.hh"
-	
-	
-ComponentLaserObstacleAvoid ComponentLaserObstacleAvoid::_componentLaserObstacleAvoid;
-	
+
 int main(int argc, char *argv[])
 {
 	std::cout << "main...\n";
+	// initialize component infrastructure (loading ini-file, creating ports, tasks, etc.)
 	ComponentLaserObstacleAvoid::instance()->init(argc, argv);
+	// run component infrastructure until the component is commanded to shutdown
 	ComponentLaserObstacleAvoid::instance()->run();
+	// clean-up component's internal resources (deleting ports, tasks, etc.)
+	ComponentLaserObstacleAvoid::instance()->fini();
+	// destroy the component's singleton
+	ComponentLaserObstacleAvoid::deleteInstance();
 	std::cout << "... main() end. return 0." << std::endl;
 	return 0;
 }

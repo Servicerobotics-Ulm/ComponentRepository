@@ -37,4 +37,7 @@ ComponentDefinition SmartGazeboBaseServer {
 	OutputPort BaseStateServiceOut implements CommBasicObjects.BaseStateService realizedBy BaseStateTask { } 
 	
 	ComponentParameters SmartGazeboBaseServerParams slave CoordinationPort;
+Activity PollForGazeboConnection
+	{
+	}
 }

@@ -18,13 +18,17 @@
 //FIXME: implement logging
 //#include "smartGlobalLogger.hh"
 
+// the ace port-factory is used as a default port-mapping
+#include "SmartMapperGridMapAcePortFactory.hh"
+
+
+// initialize static singleton pointer to zero
+SmartMapperGridMap* SmartMapperGridMap::_smartMapperGridMap = 0;
 
 // constructor
 SmartMapperGridMap::SmartMapperGridMap()
 {
 	std::cout << "constructor of SmartMapperGridMap\n";
-	
-	component = NULL;
 	
 	// set all pointer members to NULL
 	//coordinationPort = NULL;
@@ -48,7 +52,6 @@ SmartMapperGridMap::SmartMapperGridMap()
 	wiringSlave = NULL;
 	param = NULL;
 	
-	
 	// set default ini parameter values
 	connections.component.name = "SmartMapperGridMap";
 	connections.component.initialComponentMode = "BuildCurrMap";
@@ -56,12 +59,16 @@ SmartMapperGridMap::SmartMapperGridMap()
 	connections.component.useLogger = false;
 	
 	connections.currMapOut.serviceName = "CurrMapOut";
+	connections.currMapOut.roboticMiddleware = "ACE_SmartSoft";
 	connections.currQueryServer.serviceName = "CurrQueryServer";
+	connections.currQueryServer.roboticMiddleware = "ACE_SmartSoft";
 	connections.ltmQueryServer.serviceName = "LtmQueryServer";
+	connections.ltmQueryServer.roboticMiddleware = "ACE_SmartSoft";
 	connections.laserServiceIn.wiringName = "LaserServiceIn";
 	connections.laserServiceIn.serverName = "unknown";
 	connections.laserServiceIn.serviceName = "unknown";
 	connections.laserServiceIn.interval = 1;
+	connections.laserServiceIn.roboticMiddleware = "ACE_SmartSoft";
 	connections.curMapTask.minActFreq = 10.0;
 	connections.curMapTask.maxActFreq = 20.0;
 	// scheduling default parameters
@@ -76,9 +83,20 @@ SmartMapperGridMap::SmartMapperGridMap()
 	connections.ltmMapTask.scheduler = "DEFAULT";
 	connections.ltmMapTask.priority = -1;
 	connections.ltmMapTask.cpuAffinity = -1;
+	
+	// initialize members of PlainOpcUaSmartMapperGridMapExtension
+	
 }
 
+void SmartMapperGridMap::addPortFactory(const std::string &name, SmartMapperGridMapPortFactoryInterface *portFactory)
+{
+	portFactoryRegistry[name] = portFactory;
+}
 
+void SmartMapperGridMap::addExtension(SmartMapperGridMapExtension *extension)
+{
+	componentExtensionRegistry[extension->getName()] = extension;
+}
 
 /**
  * Notify the component that setup/initialization is finished.
@@ -180,22 +198,30 @@ void SmartMapperGridMap::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
-		if(connections.component.defaultScheduler != "DEFAULT") {
-			ACE_Sched_Params sched_params(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
-			if(connections.component.defaultScheduler == "FIFO") {
-				sched_params.policy(ACE_SCHED_FIFO);
-				sched_params.priority(ACE_THR_PRI_FIFO_MIN);
-			} else if(connections.component.defaultScheduler == "RR") {
-				sched_params.policy(ACE_SCHED_RR);
-				sched_params.priority(ACE_THR_PRI_RR_MIN);
-			}
-			// create new instance of the SmartSoft component with customized scheuling parameters 
-			component = new SmartMapperGridMapImpl(connections.component.name, argc, argv, sched_params);
-		} else {
-			// create new instance of the SmartSoft component
-			component = new SmartMapperGridMapImpl(connections.component.name, argc, argv);
+		
+		// initializations of PlainOpcUaSmartMapperGridMapExtension
+		
+		
+		// initialize all registered port-factories
+		for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+		{
+			portFactory->second->initialize(this, argc, argv);
 		}
 		
+		// initialize all registered component-extensions
+		for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+		{
+			extension->second->initialize(this, argc, argv);
+		}
+		
+		SmartMapperGridMapPortFactoryInterface *acePortFactory = portFactoryRegistry["ACE_SmartSoft"];
+		if(acePortFactory == 0) {
+			std::cerr << "ERROR: acePortFactory NOT instantiated -> exit(-1)" << std::endl;
+			exit(-1);
+		}
+		
+		// this pointer is used for backwards compatibility (deprecated: should be removed as soon as all patterns, including coordination, are moved to port-factory)
+		SmartACE::SmartComponent *component = dynamic_cast<SmartMapperGridMapAcePortFactory*>(acePortFactory)->getComponentImpl();
 		
 		std::cout << "ComponentDefinition SmartMapperGridMap is named " << connections.component.name << std::endl;
 		
@@ -209,14 +235,14 @@ void SmartMapperGridMap::init(int argc, char *argv[])
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
-		currMapOut = new SmartACE::PushServer<CommNavigationObjects::CommGridMap>(component, connections.currMapOut.serviceName);
-		currQueryServer = new SmartACE::QueryServer<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap>(component, connections.currQueryServer.serviceName);
+		currMapOut = portFactoryRegistry[connections.currMapOut.roboticMiddleware]->createCurrMapOut(connections.currMapOut.serviceName);
+		currQueryServer = portFactoryRegistry[connections.currQueryServer.roboticMiddleware]->createCurrQueryServer(connections.currQueryServer.serviceName);
 		currQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap,SmartACE::QueryId>(currQueryServer);
-		ltmQueryServer = new SmartACE::QueryServer<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap>(component, connections.ltmQueryServer.serviceName);
+		ltmQueryServer = portFactoryRegistry[connections.ltmQueryServer.roboticMiddleware]->createLtmQueryServer(connections.ltmQueryServer.serviceName);
 		ltmQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap,SmartACE::QueryId>(ltmQueryServer);
 		
 		// create client ports
-		laserServiceIn = new SmartACE::PushClient<CommBasicObjects::CommMobileLaserScan>(component);
+		laserServiceIn = portFactoryRegistry[connections.laserServiceIn.roboticMiddleware]->createLaserServiceIn();
 		
 		// create InputTaskTriggers and UpcallManagers
 		laserServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan>(laserServiceIn);
@@ -227,7 +253,6 @@ void SmartMapperGridMap::init(int argc, char *argv[])
 		// create request-handlers
 		currQueryServerHandler = new CurrQueryServerHandler(currQueryServer);
 		ltmQueryServerHandler = new LtmQueryServerHandler(ltmQueryServer);
-		
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
@@ -244,7 +269,10 @@ void SmartMapperGridMap::init(int argc, char *argv[])
 		
 		wiringSlave = new SmartACE::WiringSlave(component);
 		// add client port to wiring slave
-		dynamic_cast<SmartACE::PushClient<CommBasicObjects::CommMobileLaserScan>*>(laserServiceIn)->add(wiringSlave, connections.laserServiceIn.wiringName);
+		if(connections.laserServiceIn.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::PushClient<CommBasicObjects::CommMobileLaserScan>*>(laserServiceIn)->add(wiringSlave, connections.laserServiceIn.wiringName);
+		}
 		
 		// create parameter slave
 		param = new SmartACE::ParameterSlave(component, &paramHandler);
@@ -329,15 +357,37 @@ void SmartMapperGridMap::init(int argc, char *argv[])
 // run the component
 void SmartMapperGridMap::run()
 {
+	stateSlave->acquire("init");
+	// startup all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->onStartup();
+	}
+	
+	// startup all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->onStartup();
+	}
+	stateSlave->release("init");
+	
+	// do not call this handler within the init state (see above) as this handler internally calls setStartupFinished() (this should be fixed in future)
 	compHandler.onStartup();
 	
+	// this call blocks until the component is commanded to shutdown
+	stateSlave->acquire("shutdown");
 	
-	// coponent will now start running and will continue (block in the run method) until it is commanded to shutdown (i.e. by a SIGINT signal)
-	component->run();
-	// component was signalled to shutdown
-	// 1) signall all tasks to shutdown as well (and give them 2 seconds time to cooperate)
-	// if time exceeds, component is killed without further clean-up
-	component->closeAllAssociatedTasks(2);
+	// shutdown all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->onShutdown();
+	}
+	
+	// shutdown all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->onShutdown();
+	}
 	
 	if(connections.component.useLogger == true) {
 		//FIXME: use logging
@@ -346,7 +396,12 @@ void SmartMapperGridMap::run()
 	
 	compHandler.onShutdown();
 	
-	
+	stateSlave->release("shutdown");
+}
+
+// clean-up component's resources
+void SmartMapperGridMap::fini()
+{
 	// unlink all observers
 	curMapTask->detach_interaction_observer(currQueryServerHandler);
 	ltmMapTask->detach_interaction_observer(ltmQueryServerHandler);
@@ -384,7 +439,6 @@ void SmartMapperGridMap::run()
 	delete currQueryServerHandler;
 	delete ltmQueryServerHandler;
 	
-
 	delete stateSlave;
 	// destroy state-change-handler
 	delete stateChangeHandler;
@@ -394,12 +448,20 @@ void SmartMapperGridMap::run()
 	delete param;
 	
 
-	// clean-up component's internally used resources (internally used communication middleware) 
-	component->cleanUpComponentResources();
+	// destroy all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->destroy();
+	}
+
+	// destroy all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->destroy();
+	}
 	
+	// destruction of PlainOpcUaSmartMapperGridMapExtension
 	
-	// finally delete the component itself
-	delete component;
 }
 
 void SmartMapperGridMap::loadParameter(int argc, char *argv[])
@@ -477,14 +539,25 @@ void SmartMapperGridMap::loadParameter(int argc, char *argv[])
 		parameter.getString("LaserServiceIn", "serverName", connections.laserServiceIn.serverName);
 		parameter.getString("LaserServiceIn", "wiringName", connections.laserServiceIn.wiringName);
 		parameter.getInteger("LaserServiceIn", "interval", connections.laserServiceIn.interval);
-		
+		if(parameter.checkIfParameterExists("LaserServiceIn", "roboticMiddleware")) {
+			parameter.getString("LaserServiceIn", "roboticMiddleware", connections.laserServiceIn.roboticMiddleware);
+		}
 		
 		// load parameters for server CurrMapOut
 		parameter.getString("CurrMapOut", "serviceName", connections.currMapOut.serviceName);
+		if(parameter.checkIfParameterExists("CurrMapOut", "roboticMiddleware")) {
+			parameter.getString("CurrMapOut", "roboticMiddleware", connections.currMapOut.roboticMiddleware);
+		}
 		// load parameters for server CurrQueryServer
 		parameter.getString("CurrQueryServer", "serviceName", connections.currQueryServer.serviceName);
+		if(parameter.checkIfParameterExists("CurrQueryServer", "roboticMiddleware")) {
+			parameter.getString("CurrQueryServer", "roboticMiddleware", connections.currQueryServer.roboticMiddleware);
+		}
 		// load parameters for server LtmQueryServer
 		parameter.getString("LtmQueryServer", "serviceName", connections.ltmQueryServer.serviceName);
+		if(parameter.checkIfParameterExists("LtmQueryServer", "roboticMiddleware")) {
+			parameter.getString("LtmQueryServer", "roboticMiddleware", connections.ltmQueryServer.roboticMiddleware);
+		}
 		
 		// load parameters for task CurMapTask
 		parameter.getDouble("CurMapTask", "minActFreqHz", connections.curMapTask.minActFreq);
@@ -523,6 +596,15 @@ void SmartMapperGridMap::loadParameter(int argc, char *argv[])
 		}
 		if(parameter.checkIfParameterExists("LtmMapTask", "cpuAffinity")) {
 			parameter.getInteger("LtmMapTask", "cpuAffinity", connections.ltmMapTask.cpuAffinity);
+		}
+		
+		// load parameters for PlainOpcUaSmartMapperGridMapExtension
+		
+		
+		// load parameters for all registered component-extensions
+		for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+		{
+			extension->second->loadParameters(parameter);
 		}
 		
 		paramHandler.loadParameter(parameter);

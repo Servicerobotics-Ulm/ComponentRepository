@@ -15,15 +15,18 @@
 //--------------------------------------------------------------------------
 #include <iostream>
 #include "ComponentPlayerStageSimulator.hh"
-	
-	
-ComponentPlayerStageSimulator ComponentPlayerStageSimulator::_componentPlayerStageSimulator;
-	
+
 int main(int argc, char *argv[])
 {
 	std::cout << "main...\n";
+	// initialize component infrastructure (loading ini-file, creating ports, tasks, etc.)
 	ComponentPlayerStageSimulator::instance()->init(argc, argv);
+	// run component infrastructure until the component is commanded to shutdown
 	ComponentPlayerStageSimulator::instance()->run();
+	// clean-up component's internal resources (deleting ports, tasks, etc.)
+	ComponentPlayerStageSimulator::instance()->fini();
+	// destroy the component's singleton
+	ComponentPlayerStageSimulator::deleteInstance();
 	std::cout << "... main() end. return 0." << std::endl;
 	return 0;
 }

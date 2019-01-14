@@ -64,6 +64,7 @@ serverName unknown
 serviceName unknown
 wiringName JoystickServiceIn
 interval 1
+roboticMiddleware ACE_SmartSoft
 
 [NavVelServiceOut]
 initialConnect false
@@ -71,6 +72,11 @@ serverName unknown
 serviceName unknown
 wiringName NavVelServiceOut
 interval 1
+roboticMiddleware ACE_SmartSoft
+
+##########################
+## parameters of PlainOpcUaSmartJoystickNavigationExtension
+
 
 #####################
 # internal parameters

@@ -26,7 +26,8 @@
 
 // include all interaction-observer interfaces
 #include <RobotTaskObserverInterface.hh>
-	
+
+
 class RobotTaskCore
 :	public SmartACE::ManagedTask
 ,	public Smart::TaskTriggerSubject
@@ -43,6 +44,7 @@ private:
 	CommBasicObjects::CommBasePositionUpdate localizationUpdateObject;
 	Smart::StatusCode navVelInStatus;
 	CommBasicObjects::CommNavigationVelocity navVelInObject;
+	
 	
 protected:
 	virtual int execute_protected_region();
@@ -80,6 +82,7 @@ protected:
 	}
 	
 	
+	
 /**
  * Implementation of the Subject part of an InteractionObserver
  */
@@ -93,19 +96,8 @@ public:
 	void detach_interaction_observer(RobotTaskObserverInterface *observer);
 
 public:
-	RobotTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true)
-	:	SmartACE::ManagedTask(comp)
-	,	useDefaultState(useDefaultState)
-	,	useLogging(false)
-	,	taskLoggingId(0)
-	,	currentUpdateCount(0)
-	,	localizationUpdateStatus(Smart::SMART_DISCONNECTED)
-	,	localizationUpdateObject()
-	,	navVelInStatus(Smart::SMART_DISCONNECTED)
-	,	navVelInObject()
-	{  }
-	virtual ~RobotTaskCore()
-	{  }
+	RobotTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true);
+	virtual ~RobotTaskCore();
 	
 	inline void setUpLogging(const int &taskNbr, const bool &useLogging=true) {
 		this->taskLoggingId = taskNbr;
@@ -123,5 +115,6 @@ public:
 	inline int getCurrentUpdateCount() const {
 		return currentUpdateCount;
 	}
+	
 };
 #endif

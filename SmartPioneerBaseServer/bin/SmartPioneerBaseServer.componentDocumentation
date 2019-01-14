@@ -9,21 +9,21 @@ ComponentDocumentation SmartPioneerBaseServer{
 	Purpose : "Hardware-Driver"
 	
 	
-	ComponentService LocalizationUpdate {
+	ComponentPort LocalizationUpdate {
 		Description : "Port to send corrections of base pose to overcome the odometry failure. Accepts a pair of an old uncorrected pose and a new corrected pose. The deviation between these two poses is applied to correct the current pose of the robot."
 	}
-	ComponentService NavVelIn {
+	ComponentPort NavVelIn {
 		Description : "Send new navigation velocity commands v and omega to hardware base. The values are thresholded by the min and max values specified in the ini file before being sent.
 						Note that the base will perform an emergency stop if no new velocity command was sent within the timeout specified in firmware."
 	}
-	ComponentService BasePositionOut {
+	ComponentPort BasePositionOut {
 		Description : "Push the base state containing current information about the robot's velocity, pose, raw pose. Should be used when a continuous base pose is required. For example, the SmartLaserLMS200Server uses the latest base pose (received continuously) to stamp the laser scan with the robot's pose at the time the scan was recorded."
 	}
-	ComponentService BaseStateQueryServer {
+	ComponentPort BaseStateQueryServer {
 		Description : "Query port to request the base state. Analogous to basePositionPushTimedServer, but a query service. Should be used when the base pose is needed sporadically, for example by a behavior component which explicitly needs to query the base pose from time to time."
 	}
 	
-	BehaviorSlaveInterface SlavePort {
+	CoordinationSlavePort CoordinationPort {
 		ParameterPort : "Accept parameters at runtime. See section Parameters."
 	}
 }

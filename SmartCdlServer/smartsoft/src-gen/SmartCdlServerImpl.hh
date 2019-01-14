@@ -16,6 +16,7 @@
 #ifndef _SMARTCDLSERVERIMPL_HH
 #define _SMARTCDLSERVERIMPL_HH
 
+#include <chrono>
 #include "aceSmartSoft.hh"
 
 class SmartCdlServerImpl : public SmartACE::SmartComponent {
@@ -24,8 +25,8 @@ public:
 	SmartCdlServerImpl(const std::string &componentName, int & argc, char ** argv, const ACE_Sched_Params &sched_params);
 	virtual ~SmartCdlServerImpl();
 
-	Smart::StatusCode run(void);
-	void closeAllAssociatedTasks(const int &taskShutdownTimeLimit);
+	int startComponentInfrastructure();
+	void stopComponentInfrastructure(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2));
 	void cleanUpComponentResources();
 };
 

@@ -15,15 +15,18 @@
 //--------------------------------------------------------------------------
 #include <iostream>
 #include "SmartLaserLMS200Server.hh"
-	
-	
-SmartLaserLMS200Server SmartLaserLMS200Server::_smartLaserLMS200Server;
-	
+
 int main(int argc, char *argv[])
 {
 	std::cout << "main...\n";
+	// initialize component infrastructure (loading ini-file, creating ports, tasks, etc.)
 	SmartLaserLMS200Server::instance()->init(argc, argv);
+	// run component infrastructure until the component is commanded to shutdown
 	SmartLaserLMS200Server::instance()->run();
+	// clean-up component's internal resources (deleting ports, tasks, etc.)
+	SmartLaserLMS200Server::instance()->fini();
+	// destroy the component's singleton
+	SmartLaserLMS200Server::deleteInstance();
 	std::cout << "... main() end. return 0." << std::endl;
 	return 0;
 }

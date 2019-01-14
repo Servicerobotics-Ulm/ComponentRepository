@@ -33,7 +33,12 @@ VelocityInpuHandler::~VelocityInpuHandler()
 void VelocityInpuHandler::on_NavVelServiceIn(const CommBasicObjects::CommNavigationVelocity& input)
 {
 	gazebo::msgs::Vector3d msg;
-	gazebo::msgs::Set(&msg, ignition::math::Vector3d(input.get_vX(), input.get_vY(), input.get_omega()));
+	gazebo::msgs::Set(&msg, ignition::math::Vector3d(input.get_vX()/1000.0, input.get_vY()/1000.0, input.get_omega()));
 	// send command to gazebo topic
-	COMP->sendVelTopic->Publish(msg);
+	if (COMP->sendVelTopic != NULL) {
+		COMP->sendVelTopic->Publish(msg);
+	}
+	else {
+		std::cout << "Gazebo Simulator not yet started !" << std::endl;
+	}
 }

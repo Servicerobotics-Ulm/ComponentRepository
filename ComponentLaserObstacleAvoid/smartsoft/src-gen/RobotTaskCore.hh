@@ -26,7 +26,8 @@
 
 // include all interaction-observer interfaces
 #include <RobotTaskObserverInterface.hh>
-	
+
+
 class RobotTaskCore
 :	public SmartACE::ManagedTask
 ,	public Smart::TaskTriggerSubject
@@ -40,6 +41,7 @@ private:
 	
 	Smart::StatusCode laserServiceInStatus;
 	CommBasicObjects::CommMobileLaserScan laserServiceInObject;
+	
 	
 protected:
 	virtual int execute_protected_region();
@@ -67,6 +69,7 @@ protected:
 	// this method is meant to be used in derived classes
 	Smart::StatusCode navigationVelocityServiceOutPut(CommBasicObjects::CommNavigationVelocity &navigationVelocityServiceOutDataObject);
 	
+	
 /**
  * Implementation of the Subject part of an InteractionObserver
  */
@@ -80,17 +83,8 @@ public:
 	void detach_interaction_observer(RobotTaskObserverInterface *observer);
 
 public:
-	RobotTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true)
-	:	SmartACE::ManagedTask(comp)
-	,	useDefaultState(useDefaultState)
-	,	useLogging(false)
-	,	taskLoggingId(0)
-	,	currentUpdateCount(0)
-	,	laserServiceInStatus(Smart::SMART_DISCONNECTED)
-	,	laserServiceInObject()
-	{  }
-	virtual ~RobotTaskCore()
-	{  }
+	RobotTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true);
+	virtual ~RobotTaskCore();
 	
 	inline void setUpLogging(const int &taskNbr, const bool &useLogging=true) {
 		this->taskLoggingId = taskNbr;
@@ -108,5 +102,6 @@ public:
 	inline int getCurrentUpdateCount() const {
 		return currentUpdateCount;
 	}
+	
 };
 #endif

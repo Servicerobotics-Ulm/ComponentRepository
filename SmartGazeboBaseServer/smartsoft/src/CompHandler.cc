@@ -61,19 +61,23 @@ void CompHandler::onStartup()
 
 	Smart::StatusCode status;
 
-	COMP->queue = new Queue();
-	// Component will crash if the next line is executed while the simulator is not yet running
-	// TODO: Make more robust
-	gazebo::client::setup();
+	COMP->pollForGazeboConnection->start();
+
+	COMP->connectionEstablished.acquire();
+
+	COMP->pollForGazeboConnection->stop();
+
+	// Connect to topics
 
 	gazebo::transport::NodePtr sendVelNode(new gazebo::transport::Node());
 	sendVelNode->Init();
-	
+
 	COMP->sendVelTopic = sendVelNode->Advertise<gazebo::msgs::Vector3d>(COMP->getGlobalState().getSettings().getSendVelTopic());
-	std::cout << "wait for connection" << std::endl;
+	std::cout << "Wait for topic connection ..." << std::endl;
 	COMP->sendVelTopic->WaitForConnection();
 	std::cout << "connected" << std::endl;
 
+	COMP->queue = new Queue();
 	COMP->laser = new LaserScan(COMP->queue);
 	COMP->laser->init();
 	COMP->pose = new BasePose();
@@ -88,7 +92,36 @@ void CompHandler::onStartup()
 	
 	// Start all tasks. If you need manual control, use the content of this function to
 	// start each task individually.
-	COMP->startAllTasks();
+	//COMP->startAllTasks();
+
+	// start task BaseStateTask
+	if(COMP->connections.baseStateTask.scheduler != "DEFAULT") {
+		ACE_Sched_Params baseStateTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
+		if(COMP->connections.baseStateTask.scheduler == "FIFO") {
+			baseStateTask_SchedParams.policy(ACE_SCHED_FIFO);
+			baseStateTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+		} else if(COMP->connections.baseStateTask.scheduler == "RR") {
+			baseStateTask_SchedParams.policy(ACE_SCHED_RR);
+			baseStateTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+		}
+		COMP->baseStateTask->start(baseStateTask_SchedParams, COMP->connections.baseStateTask.cpuAffinity);
+	} else {
+		COMP->baseStateTask->start();
+	}
+	// start task LaserTask
+	if(COMP->connections.laserTask.scheduler != "DEFAULT") {
+		ACE_Sched_Params laserTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
+		if(COMP->connections.laserTask.scheduler == "FIFO") {
+			laserTask_SchedParams.policy(ACE_SCHED_FIFO);
+			laserTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+		} else if(COMP->connections.laserTask.scheduler == "RR") {
+			laserTask_SchedParams.policy(ACE_SCHED_RR);
+			laserTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+		}
+		COMP->laserTask->start(laserTask_SchedParams, COMP->connections.laserTask.cpuAffinity);
+	} else {
+		COMP->laserTask->start();
+	}
 	
 	// Start all timers. If you need manual control, use the content of this function to
 	// start each timer individually.

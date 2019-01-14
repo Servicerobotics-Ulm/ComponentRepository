@@ -22,6 +22,23 @@
 
 // include observers
 
+
+JoystickNavTaskCore::JoystickNavTaskCore(Smart::IComponent *comp, const bool &useDefaultState) 
+:	SmartACE::ManagedTask(comp)
+,	useDefaultState(useDefaultState)
+,	useLogging(false)
+,	taskLoggingId(0)
+,	currentUpdateCount(0)
+,	joystickServiceInStatus(Smart::SMART_DISCONNECTED)
+,	joystickServiceInObject()
+{
+}
+
+JoystickNavTaskCore::~JoystickNavTaskCore()
+{
+}
+
+
 void JoystickNavTaskCore::notify_all_interaction_observers() {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
 	// try dynamically down-casting this class to the derived class 
@@ -73,6 +90,7 @@ int JoystickNavTaskCore::execute_protected_region()
 void JoystickNavTaskCore::updateAllCommObjects()
 {
 	joystickServiceInStatus = COMP->joystickServiceInInputTaskTrigger->getUpdate(joystickServiceInObject);
+	
 }
 
 

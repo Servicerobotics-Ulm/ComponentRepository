@@ -13,20 +13,20 @@ ComponentDocumentation SmartMapperGridMap{
 	Purpose : "Navigation"
 	
 	
-	NeutralMainState : "No maps are being built."
-	ComponentMainState BuildBothMaps : "Both the current and the longterm maps are being built."
-	ComponentMainState BuildCurrMap : "The current map is being built."
-	ComponentMainState BuildLtmMap : "The longterm map is being built."
+	NeutralMode : "No maps are being built."
+	ComponentMode BuildBothMaps : "Both the current and the longterm maps are being built."
+	ComponentMode BuildCurrMap : "The current map is being built."
+	ComponentMode BuildLtmMap : "The longterm map is being built."
 	
-	ComponentService LaserServiceIn {
+	ComponentPort LaserServiceIn {
 		Description : "Port has to be connected to the laser component (e.g. SmartLaserLMS200Server). The received laser scan is used for building the maps."
-		NeutralMainState : "Port is neutral, does not consume new input while in this state."
-		ComponentMainState BuildBothMaps : "Uses laser scans to build longterm and current map."
-		ComponentMainState BuildCurrMap : "Uses laser scans to build current map."
-		ComponentMainState BuildLtmMap : "Uses laser scans to build longterm map."
+		NeutralMode : "Port is neutral, does not consume new input while in this state."
+		ComponentMode BuildBothMaps : "Uses laser scans to build longterm and current map."
+		ComponentMode BuildCurrMap : "Uses laser scans to build current map."
+		ComponentMode BuildLtmMap : "Uses laser scans to build longterm map."
 	}
 	
-	BehaviorSlaveInterface SlavePort {
+	CoordinationSlavePort CoordinationPort {
 		DynamicWiringPort : "Slave part of wiring pattern. It is responsible for changing the port connections within the component."
 		ParameterPort : " Accepts parameters to handle the current and longterm map. See Parameters.
 
@@ -42,27 +42,27 @@ ComponentDocumentation SmartMapperGridMap{
 		StatePort : "See States for descriptions of possible states and their meaning."
 	}
 
-	ComponentService CurrMapOut {
+	ComponentPort CurrMapOut {
 		Description : 	"Pushes the current map to subscribers (e.g. SmartPlannerBreadthFirstSearch) if the current map is being built (component is in state buildbothmaps or buildcurrentmap).
 						This port should be used if a map is required continuously. For example, the SmartPlannerBreadthFirstSearch always requires an up-to-date-map for proper path planning. Other components may require the map only occasionally and shall use the query port: curGridMapQueryServer."
-		NeutralMainState : "Port is neutral, no current maps are pushed to subscribers."
-		ComponentMainState BuildBothMaps : "Pushes the current map to subscribers."
-		ComponentMainState BuildCurrMap : "Pushes the current map to subscribers."
-		ComponentMainState BuildLtmMap : "Port is neutral, no current maps are pushed to subscribers."
+		NeutralMode : "Port is neutral, no current maps are pushed to subscribers."
+		ComponentMode BuildBothMaps : "Pushes the current map to subscribers."
+		ComponentMode BuildCurrMap : "Pushes the current map to subscribers."
+		ComponentMode BuildLtmMap : "Port is neutral, no current maps are pushed to subscribers."
 	}
-	ComponentService CurrQueryServer {
+	ComponentPort CurrQueryServer {
 		Description : "Port to query the current map. If the current map is not being built (component in state neutral or buildcurrentmap), the answer is stamped invalid. It will be stamped valid if the current map is being built (component in state buildbothmaps or buildcurrentmap).
 						The query port should be used if a map is required only occasionally. The port currentGridMapServer (a SmartPushNewestServer) should be used in components where it is necessary to continuously receive the latest map."
-		NeutralMainState : "Requests are answered but the map is stamped invalid since no currentmap is built."
-		ComponentMainState BuildBothMaps : "Replies to queries with the current map."
-		ComponentMainState BuildCurrMap : "Replies to queries with the current map."
-		ComponentMainState BuildLtmMap : "Requests are answered but the map is stamped invalid since no current map is built."
+		NeutralMode : "Requests are answered but the map is stamped invalid since no currentmap is built."
+		ComponentMode BuildBothMaps : "Replies to queries with the current map."
+		ComponentMode BuildCurrMap : "Replies to queries with the current map."
+		ComponentMode BuildLtmMap : "Requests are answered but the map is stamped invalid since no current map is built."
 	}
-	ComponentService LtmQueryServer {
+	ComponentPort LtmQueryServer {
 		Description : "Port to query the longterm map. Queries will be replied to in every state."
-		NeutralMainState : "Replies to queries with the long term map."
-		ComponentMainState BuildBothMaps : "Replies to queries with the long term map."
-		ComponentMainState BuildCurrMap : "	Replies to queries with the long term map."
-		ComponentMainState BuildLtmMap : "Replies to queries with the long term map."
+		NeutralMode : "Replies to queries with the long term map."
+		ComponentMode BuildBothMaps : "Replies to queries with the long term map."
+		ComponentMode BuildCurrMap : "	Replies to queries with the long term map."
+		ComponentMode BuildLtmMap : "Replies to queries with the long term map."
 	}
 }

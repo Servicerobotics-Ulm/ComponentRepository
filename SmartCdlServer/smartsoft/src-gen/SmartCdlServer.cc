@@ -18,15 +18,19 @@
 //FIXME: implement logging
 //#include "smartGlobalLogger.hh"
 
+// the ace port-factory is used as a default port-mapping
+#include "SmartCdlServerAcePortFactory.hh"
+
 #include "GoalEventServerEventTestHandler.hh"
 #include "RobotBlockedEventServerEventTestHandler.hh"
+
+// initialize static singleton pointer to zero
+SmartCdlServer* SmartCdlServer::_smartCdlServer = 0;
 
 // constructor
 SmartCdlServer::SmartCdlServer()
 {
 	std::cout << "constructor of SmartCdlServer\n";
-	
-	component = NULL;
 	
 	// set all pointer members to NULL
 	baseStateClient = NULL;
@@ -67,7 +71,6 @@ SmartCdlServer::SmartCdlServer()
 	wiringSlave = NULL;
 	param = NULL;
 	
-	
 	// set default ini parameter values
 	connections.component.name = "SmartCdlServer";
 	connections.component.initialComponentMode = "Neutral";
@@ -75,47 +78,58 @@ SmartCdlServer::SmartCdlServer()
 	connections.component.useLogger = false;
 	
 	connections.goalEventServer.serviceName = "GoalEventServer";
+	connections.goalEventServer.roboticMiddleware = "ACE_SmartSoft";
 	connections.navVelSendServer.serviceName = "NavVelSendServer";
+	connections.navVelSendServer.roboticMiddleware = "ACE_SmartSoft";
 	connections.robotBlockedEventServer.serviceName = "RobotBlockedEventServer";
+	connections.robotBlockedEventServer.roboticMiddleware = "ACE_SmartSoft";
 	connections.baseStateClient.initialConnect = false;
 	connections.baseStateClient.wiringName = "BaseStateClient";
 	connections.baseStateClient.serverName = "unknown";
 	connections.baseStateClient.serviceName = "unknown";
 	connections.baseStateClient.interval = 1;
+	connections.baseStateClient.roboticMiddleware = "ACE_SmartSoft";
 	connections.iRClient.initialConnect = false;
 	connections.iRClient.wiringName = "IRClient";
 	connections.iRClient.serverName = "unknown";
 	connections.iRClient.serviceName = "unknown";
 	connections.iRClient.interval = 1;
+	connections.iRClient.roboticMiddleware = "ACE_SmartSoft";
 	connections.laserClient.wiringName = "LaserClient";
 	connections.laserClient.serverName = "unknown";
 	connections.laserClient.serviceName = "unknown";
 	connections.laserClient.interval = 1;
+	connections.laserClient.roboticMiddleware = "ACE_SmartSoft";
 	connections.laserClient2.initialConnect = false;
 	connections.laserClient2.wiringName = "LaserClient2";
 	connections.laserClient2.serverName = "unknown";
 	connections.laserClient2.serviceName = "unknown";
 	connections.laserClient2.interval = 1;
+	connections.laserClient2.roboticMiddleware = "ACE_SmartSoft";
 	connections.navVelSendClient.initialConnect = false;
 	connections.navVelSendClient.wiringName = "NavVelSendClient";
 	connections.navVelSendClient.serverName = "unknown";
 	connections.navVelSendClient.serviceName = "unknown";
 	connections.navVelSendClient.interval = 1;
+	connections.navVelSendClient.roboticMiddleware = "ACE_SmartSoft";
 	connections.pathNavigationGoalClient.initialConnect = false;
 	connections.pathNavigationGoalClient.wiringName = "PathNavigationGoalClient";
 	connections.pathNavigationGoalClient.serverName = "unknown";
 	connections.pathNavigationGoalClient.serviceName = "unknown";
 	connections.pathNavigationGoalClient.interval = 1;
+	connections.pathNavigationGoalClient.roboticMiddleware = "ACE_SmartSoft";
 	connections.plannerClient.initialConnect = false;
 	connections.plannerClient.wiringName = "PlannerClient";
 	connections.plannerClient.serverName = "unknown";
 	connections.plannerClient.serviceName = "unknown";
 	connections.plannerClient.interval = 1;
+	connections.plannerClient.roboticMiddleware = "ACE_SmartSoft";
 	connections.trackingClient.initialConnect = false;
 	connections.trackingClient.wiringName = "TrackingClient";
 	connections.trackingClient.serverName = "unknown";
 	connections.trackingClient.serviceName = "unknown";
 	connections.trackingClient.interval = 1;
+	connections.trackingClient.roboticMiddleware = "ACE_SmartSoft";
 	connections.cdlTask.minActFreq = 5.0;
 	connections.cdlTask.maxActFreq = 40.0;
 	connections.cdlTask.trigger = "PeriodicTimer";
@@ -124,9 +138,20 @@ SmartCdlServer::SmartCdlServer()
 	connections.cdlTask.scheduler = "DEFAULT";
 	connections.cdlTask.priority = -1;
 	connections.cdlTask.cpuAffinity = -1;
+	
+	// initialize members of PlainOpcUaSmartCdlServerExtension
+	
 }
 
+void SmartCdlServer::addPortFactory(const std::string &name, SmartCdlServerPortFactoryInterface *portFactory)
+{
+	portFactoryRegistry[name] = portFactory;
+}
 
+void SmartCdlServer::addExtension(SmartCdlServerExtension *extension)
+{
+	componentExtensionRegistry[extension->getName()] = extension;
+}
 
 /**
  * Notify the component that setup/initialization is finished.
@@ -353,22 +378,30 @@ void SmartCdlServer::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
-		if(connections.component.defaultScheduler != "DEFAULT") {
-			ACE_Sched_Params sched_params(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
-			if(connections.component.defaultScheduler == "FIFO") {
-				sched_params.policy(ACE_SCHED_FIFO);
-				sched_params.priority(ACE_THR_PRI_FIFO_MIN);
-			} else if(connections.component.defaultScheduler == "RR") {
-				sched_params.policy(ACE_SCHED_RR);
-				sched_params.priority(ACE_THR_PRI_RR_MIN);
-			}
-			// create new instance of the SmartSoft component with customized scheuling parameters 
-			component = new SmartCdlServerImpl(connections.component.name, argc, argv, sched_params);
-		} else {
-			// create new instance of the SmartSoft component
-			component = new SmartCdlServerImpl(connections.component.name, argc, argv);
+		
+		// initializations of PlainOpcUaSmartCdlServerExtension
+		
+		
+		// initialize all registered port-factories
+		for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+		{
+			portFactory->second->initialize(this, argc, argv);
 		}
 		
+		// initialize all registered component-extensions
+		for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+		{
+			extension->second->initialize(this, argc, argv);
+		}
+		
+		SmartCdlServerPortFactoryInterface *acePortFactory = portFactoryRegistry["ACE_SmartSoft"];
+		if(acePortFactory == 0) {
+			std::cerr << "ERROR: acePortFactory NOT instantiated -> exit(-1)" << std::endl;
+			exit(-1);
+		}
+		
+		// this pointer is used for backwards compatibility (deprecated: should be removed as soon as all patterns, including coordination, are moved to port-factory)
+		SmartACE::SmartComponent *component = dynamic_cast<SmartCdlServerAcePortFactory*>(acePortFactory)->getComponentImpl();
 		
 		std::cout << "ComponentDefinition SmartCdlServer is named " << connections.component.name << std::endl;
 		
@@ -384,19 +417,19 @@ void SmartCdlServer::init(int argc, char *argv[])
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
-		goalEventServer = new SmartACE::EventServer<CommNavigationObjects::CommCdlGoalEventParameter, CommNavigationObjects::CommCdlGoalEventResult, CommNavigationObjects::CdlGoalEventState>(component, connections.goalEventServer.serviceName, goalEventServerEventTestHandler);
-		navVelSendServer = new SmartACE::SendServer<CommBasicObjects::CommNavigationVelocity>(component, connections.navVelSendServer.serviceName);
-		robotBlockedEventServer = new SmartACE::EventServer<CommNavigationObjects::CommCdlRobotBlockedEventParameter, CommNavigationObjects::CommCdlRobotBlockedEventResult, CommNavigationObjects::CommCdlRobotBlockedState>(component, connections.robotBlockedEventServer.serviceName, robotBlockedEventServerEventTestHandler);
+		goalEventServer = portFactoryRegistry[connections.goalEventServer.roboticMiddleware]->createGoalEventServer(connections.goalEventServer.serviceName, goalEventServerEventTestHandler);
+		navVelSendServer = portFactoryRegistry[connections.navVelSendServer.roboticMiddleware]->createNavVelSendServer(connections.navVelSendServer.serviceName);
+		robotBlockedEventServer = portFactoryRegistry[connections.robotBlockedEventServer.roboticMiddleware]->createRobotBlockedEventServer(connections.robotBlockedEventServer.serviceName, robotBlockedEventServerEventTestHandler);
 		
 		// create client ports
-		baseStateClient = new SmartACE::PushClient<CommBasicObjects::CommBaseState>(component);
-		iRClient = new SmartACE::PushClient<CommBasicObjects::CommMobileIRScan>(component);
-		laserClient = new SmartACE::PushClient<CommBasicObjects::CommMobileLaserScan>(component);
-		laserClient2 = new SmartACE::PushClient<CommBasicObjects::CommMobileLaserScan>(component);
-		navVelSendClient = new SmartACE::SendClient<CommBasicObjects::CommNavigationVelocity>(component);
-		pathNavigationGoalClient = new SmartACE::PushClient<CommRobotinoObjects::CommPathNavigationGoal>(component);
-		plannerClient = new SmartACE::PushClient<CommNavigationObjects::CommPlannerGoal>(component);
-		trackingClient = new SmartACE::PushClient<CommTrackingObjects::CommTrackingGoal>(component);
+		baseStateClient = portFactoryRegistry[connections.baseStateClient.roboticMiddleware]->createBaseStateClient();
+		iRClient = portFactoryRegistry[connections.iRClient.roboticMiddleware]->createIRClient();
+		laserClient = portFactoryRegistry[connections.laserClient.roboticMiddleware]->createLaserClient();
+		laserClient2 = portFactoryRegistry[connections.laserClient2.roboticMiddleware]->createLaserClient2();
+		navVelSendClient = portFactoryRegistry[connections.navVelSendClient.roboticMiddleware]->createNavVelSendClient();
+		pathNavigationGoalClient = portFactoryRegistry[connections.pathNavigationGoalClient.roboticMiddleware]->createPathNavigationGoalClient();
+		plannerClient = portFactoryRegistry[connections.plannerClient.roboticMiddleware]->createPlannerClient();
+		trackingClient = portFactoryRegistry[connections.trackingClient.roboticMiddleware]->createTrackingClient();
 		
 		// create InputTaskTriggers and UpcallManagers
 		baseStateClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(baseStateClient);
@@ -420,7 +453,6 @@ void SmartCdlServer::init(int argc, char *argv[])
 		
 		// create request-handlers
 		
-		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
 		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
@@ -433,14 +465,38 @@ void SmartCdlServer::init(int argc, char *argv[])
 		
 		wiringSlave = new SmartACE::WiringSlave(component);
 		// add client port to wiring slave
-		dynamic_cast<SmartACE::PushClient<CommBasicObjects::CommBaseState>*>(baseStateClient)->add(wiringSlave, connections.baseStateClient.wiringName);
-		dynamic_cast<SmartACE::PushClient<CommBasicObjects::CommMobileIRScan>*>(iRClient)->add(wiringSlave, connections.iRClient.wiringName);
-		dynamic_cast<SmartACE::PushClient<CommBasicObjects::CommMobileLaserScan>*>(laserClient)->add(wiringSlave, connections.laserClient.wiringName);
-		dynamic_cast<SmartACE::PushClient<CommBasicObjects::CommMobileLaserScan>*>(laserClient2)->add(wiringSlave, connections.laserClient2.wiringName);
-		dynamic_cast<SmartACE::SendClient<CommBasicObjects::CommNavigationVelocity>*>(navVelSendClient)->add(wiringSlave, connections.navVelSendClient.wiringName);
-		dynamic_cast<SmartACE::PushClient<CommRobotinoObjects::CommPathNavigationGoal>*>(pathNavigationGoalClient)->add(wiringSlave, connections.pathNavigationGoalClient.wiringName);
-		dynamic_cast<SmartACE::PushClient<CommNavigationObjects::CommPlannerGoal>*>(plannerClient)->add(wiringSlave, connections.plannerClient.wiringName);
-		dynamic_cast<SmartACE::PushClient<CommTrackingObjects::CommTrackingGoal>*>(trackingClient)->add(wiringSlave, connections.trackingClient.wiringName);
+		if(connections.baseStateClient.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::PushClient<CommBasicObjects::CommBaseState>*>(baseStateClient)->add(wiringSlave, connections.baseStateClient.wiringName);
+		}
+		if(connections.iRClient.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::PushClient<CommBasicObjects::CommMobileIRScan>*>(iRClient)->add(wiringSlave, connections.iRClient.wiringName);
+		}
+		if(connections.laserClient.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::PushClient<CommBasicObjects::CommMobileLaserScan>*>(laserClient)->add(wiringSlave, connections.laserClient.wiringName);
+		}
+		if(connections.laserClient2.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::PushClient<CommBasicObjects::CommMobileLaserScan>*>(laserClient2)->add(wiringSlave, connections.laserClient2.wiringName);
+		}
+		if(connections.navVelSendClient.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::SendClient<CommBasicObjects::CommNavigationVelocity>*>(navVelSendClient)->add(wiringSlave, connections.navVelSendClient.wiringName);
+		}
+		if(connections.pathNavigationGoalClient.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::PushClient<CommRobotinoObjects::CommPathNavigationGoal>*>(pathNavigationGoalClient)->add(wiringSlave, connections.pathNavigationGoalClient.wiringName);
+		}
+		if(connections.plannerClient.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::PushClient<CommNavigationObjects::CommPlannerGoal>*>(plannerClient)->add(wiringSlave, connections.plannerClient.wiringName);
+		}
+		if(connections.trackingClient.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::PushClient<CommTrackingObjects::CommTrackingGoal>*>(trackingClient)->add(wiringSlave, connections.trackingClient.wiringName);
+		}
 		
 		// create parameter slave
 		param = new SmartACE::ParameterSlave(component, &paramHandler);
@@ -504,15 +560,37 @@ void SmartCdlServer::init(int argc, char *argv[])
 // run the component
 void SmartCdlServer::run()
 {
+	stateSlave->acquire("init");
+	// startup all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->onStartup();
+	}
+	
+	// startup all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->onStartup();
+	}
+	stateSlave->release("init");
+	
+	// do not call this handler within the init state (see above) as this handler internally calls setStartupFinished() (this should be fixed in future)
 	compHandler.onStartup();
 	
+	// this call blocks until the component is commanded to shutdown
+	stateSlave->acquire("shutdown");
 	
-	// coponent will now start running and will continue (block in the run method) until it is commanded to shutdown (i.e. by a SIGINT signal)
-	component->run();
-	// component was signalled to shutdown
-	// 1) signall all tasks to shutdown as well (and give them 2 seconds time to cooperate)
-	// if time exceeds, component is killed without further clean-up
-	component->closeAllAssociatedTasks(2);
+	// shutdown all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->onShutdown();
+	}
+	
+	// shutdown all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->onShutdown();
+	}
 	
 	if(connections.component.useLogger == true) {
 		//FIXME: use logging
@@ -521,7 +599,12 @@ void SmartCdlServer::run()
 	
 	compHandler.onShutdown();
 	
-	
+	stateSlave->release("shutdown");
+}
+
+// clean-up component's resources
+void SmartCdlServer::fini()
+{
 	// unlink all observers
 	
 	// destroy all task instances
@@ -578,7 +661,6 @@ void SmartCdlServer::run()
 	
 	// destroy request-handlers
 	
-
 	delete stateSlave;
 	// destroy state-change-handler
 	delete stateChangeHandler;
@@ -588,12 +670,20 @@ void SmartCdlServer::run()
 	delete param;
 	
 
-	// clean-up component's internally used resources (internally used communication middleware) 
-	component->cleanUpComponentResources();
+	// destroy all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->destroy();
+	}
+
+	// destroy all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->destroy();
+	}
 	
+	// destruction of PlainOpcUaSmartCdlServerExtension
 	
-	// finally delete the component itself
-	delete component;
 }
 
 void SmartCdlServer::loadParameter(int argc, char *argv[])
@@ -672,54 +762,86 @@ void SmartCdlServer::loadParameter(int argc, char *argv[])
 		parameter.getString("BaseStateClient", "serverName", connections.baseStateClient.serverName);
 		parameter.getString("BaseStateClient", "wiringName", connections.baseStateClient.wiringName);
 		parameter.getInteger("BaseStateClient", "interval", connections.baseStateClient.interval);
+		if(parameter.checkIfParameterExists("BaseStateClient", "roboticMiddleware")) {
+			parameter.getString("BaseStateClient", "roboticMiddleware", connections.baseStateClient.roboticMiddleware);
+		}
 		// load parameters for client IRClient
 		parameter.getBoolean("IRClient", "initialConnect", connections.iRClient.initialConnect);
 		parameter.getString("IRClient", "serviceName", connections.iRClient.serviceName);
 		parameter.getString("IRClient", "serverName", connections.iRClient.serverName);
 		parameter.getString("IRClient", "wiringName", connections.iRClient.wiringName);
 		parameter.getInteger("IRClient", "interval", connections.iRClient.interval);
+		if(parameter.checkIfParameterExists("IRClient", "roboticMiddleware")) {
+			parameter.getString("IRClient", "roboticMiddleware", connections.iRClient.roboticMiddleware);
+		}
 		// load parameters for client LaserClient
 		parameter.getString("LaserClient", "serviceName", connections.laserClient.serviceName);
 		parameter.getString("LaserClient", "serverName", connections.laserClient.serverName);
 		parameter.getString("LaserClient", "wiringName", connections.laserClient.wiringName);
 		parameter.getInteger("LaserClient", "interval", connections.laserClient.interval);
+		if(parameter.checkIfParameterExists("LaserClient", "roboticMiddleware")) {
+			parameter.getString("LaserClient", "roboticMiddleware", connections.laserClient.roboticMiddleware);
+		}
 		// load parameters for client LaserClient2
 		parameter.getBoolean("LaserClient2", "initialConnect", connections.laserClient2.initialConnect);
 		parameter.getString("LaserClient2", "serviceName", connections.laserClient2.serviceName);
 		parameter.getString("LaserClient2", "serverName", connections.laserClient2.serverName);
 		parameter.getString("LaserClient2", "wiringName", connections.laserClient2.wiringName);
 		parameter.getInteger("LaserClient2", "interval", connections.laserClient2.interval);
+		if(parameter.checkIfParameterExists("LaserClient2", "roboticMiddleware")) {
+			parameter.getString("LaserClient2", "roboticMiddleware", connections.laserClient2.roboticMiddleware);
+		}
 		// load parameters for client NavVelSendClient
 		parameter.getBoolean("NavVelSendClient", "initialConnect", connections.navVelSendClient.initialConnect);
 		parameter.getString("NavVelSendClient", "serviceName", connections.navVelSendClient.serviceName);
 		parameter.getString("NavVelSendClient", "serverName", connections.navVelSendClient.serverName);
 		parameter.getString("NavVelSendClient", "wiringName", connections.navVelSendClient.wiringName);
+		if(parameter.checkIfParameterExists("NavVelSendClient", "roboticMiddleware")) {
+			parameter.getString("NavVelSendClient", "roboticMiddleware", connections.navVelSendClient.roboticMiddleware);
+		}
 		// load parameters for client PathNavigationGoalClient
 		parameter.getBoolean("PathNavigationGoalClient", "initialConnect", connections.pathNavigationGoalClient.initialConnect);
 		parameter.getString("PathNavigationGoalClient", "serviceName", connections.pathNavigationGoalClient.serviceName);
 		parameter.getString("PathNavigationGoalClient", "serverName", connections.pathNavigationGoalClient.serverName);
 		parameter.getString("PathNavigationGoalClient", "wiringName", connections.pathNavigationGoalClient.wiringName);
 		parameter.getInteger("PathNavigationGoalClient", "interval", connections.pathNavigationGoalClient.interval);
+		if(parameter.checkIfParameterExists("PathNavigationGoalClient", "roboticMiddleware")) {
+			parameter.getString("PathNavigationGoalClient", "roboticMiddleware", connections.pathNavigationGoalClient.roboticMiddleware);
+		}
 		// load parameters for client PlannerClient
 		parameter.getBoolean("PlannerClient", "initialConnect", connections.plannerClient.initialConnect);
 		parameter.getString("PlannerClient", "serviceName", connections.plannerClient.serviceName);
 		parameter.getString("PlannerClient", "serverName", connections.plannerClient.serverName);
 		parameter.getString("PlannerClient", "wiringName", connections.plannerClient.wiringName);
 		parameter.getInteger("PlannerClient", "interval", connections.plannerClient.interval);
+		if(parameter.checkIfParameterExists("PlannerClient", "roboticMiddleware")) {
+			parameter.getString("PlannerClient", "roboticMiddleware", connections.plannerClient.roboticMiddleware);
+		}
 		// load parameters for client TrackingClient
 		parameter.getBoolean("TrackingClient", "initialConnect", connections.trackingClient.initialConnect);
 		parameter.getString("TrackingClient", "serviceName", connections.trackingClient.serviceName);
 		parameter.getString("TrackingClient", "serverName", connections.trackingClient.serverName);
 		parameter.getString("TrackingClient", "wiringName", connections.trackingClient.wiringName);
 		parameter.getInteger("TrackingClient", "interval", connections.trackingClient.interval);
-		
+		if(parameter.checkIfParameterExists("TrackingClient", "roboticMiddleware")) {
+			parameter.getString("TrackingClient", "roboticMiddleware", connections.trackingClient.roboticMiddleware);
+		}
 		
 		// load parameters for server GoalEventServer
 		parameter.getString("GoalEventServer", "serviceName", connections.goalEventServer.serviceName);
+		if(parameter.checkIfParameterExists("GoalEventServer", "roboticMiddleware")) {
+			parameter.getString("GoalEventServer", "roboticMiddleware", connections.goalEventServer.roboticMiddleware);
+		}
 		// load parameters for server NavVelSendServer
 		parameter.getString("NavVelSendServer", "serviceName", connections.navVelSendServer.serviceName);
+		if(parameter.checkIfParameterExists("NavVelSendServer", "roboticMiddleware")) {
+			parameter.getString("NavVelSendServer", "roboticMiddleware", connections.navVelSendServer.roboticMiddleware);
+		}
 		// load parameters for server RobotBlockedEventServer
 		parameter.getString("RobotBlockedEventServer", "serviceName", connections.robotBlockedEventServer.serviceName);
+		if(parameter.checkIfParameterExists("RobotBlockedEventServer", "roboticMiddleware")) {
+			parameter.getString("RobotBlockedEventServer", "roboticMiddleware", connections.robotBlockedEventServer.roboticMiddleware);
+		}
 		
 		// load parameters for task CdlTask
 		parameter.getDouble("CdlTask", "minActFreqHz", connections.cdlTask.minActFreq);
@@ -739,6 +861,15 @@ void SmartCdlServer::loadParameter(int argc, char *argv[])
 		}
 		if(parameter.checkIfParameterExists("CdlTask", "cpuAffinity")) {
 			parameter.getInteger("CdlTask", "cpuAffinity", connections.cdlTask.cpuAffinity);
+		}
+		
+		// load parameters for PlainOpcUaSmartCdlServerExtension
+		
+		
+		// load parameters for all registered component-extensions
+		for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+		{
+			extension->second->loadParameters(parameter);
 		}
 		
 		paramHandler.loadParameter(parameter);

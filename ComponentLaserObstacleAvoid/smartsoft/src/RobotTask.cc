@@ -106,7 +106,7 @@ int RobotTask::on_execute()
 		std::cout << "Sent navigation velocity " << navigationVelocity << std::endl;
 	}
 
-	sleep(1);
+
 	return 0;
 }
 

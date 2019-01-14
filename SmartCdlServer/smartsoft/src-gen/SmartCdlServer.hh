@@ -15,12 +15,24 @@
 //--------------------------------------------------------------------------
 #ifndef _SMARTCDLSERVER_HH
 #define _SMARTCDLSERVER_HH
-	
+
+#include <map>
 #include <iostream>
 #include "aceSmartSoft.hh"
 #include "smartQueryServerTaskTrigger_T.h"
 #include "SmartCdlServerCore.hh"
-#include "SmartCdlServerImpl.hh"
+
+#include "SmartCdlServerPortFactoryInterface.hh"
+#include "SmartCdlServerExtension.hh"
+
+// forward declarations
+class SmartCdlServerPortFactoryInterface;
+class SmartCdlServerExtension;
+
+// includes for PlainOpcUaSmartCdlServerExtension
+// include plain OPC UA device clients
+// include plain OPC UA status servers
+
 
 // include communication objects
 #include <CommNavigationObjects/CdlGoalEventState.hh>
@@ -65,7 +77,6 @@
 // include input-handler
 // include input-handler
 
-
 // include handler
 #include "CompHandler.hh"
 
@@ -78,7 +89,7 @@
 
 class SmartCdlServer : public SmartCdlServerCore {
 private:
-	static SmartCdlServer _smartCdlServer;
+	static SmartCdlServer *_smartCdlServer;
 	
 	// constructor
 	SmartCdlServer();
@@ -95,12 +106,16 @@ private:
 	// instantiate comp-handler
 	CompHandler compHandler;
 	
+	// helper method that maps a string-name to an according TaskTriggerSubject
 	Smart::TaskTriggerSubject* getInputTaskTriggerFromString(const std::string &client);
 	
-public:
-	// component
-	SmartCdlServerImpl *component;
+	// internal map storing the different port-creation factories (that internally map to specific middleware implementations)
+	std::map<std::string, SmartCdlServerPortFactoryInterface*> portFactoryRegistry;
 	
+	// internal map storing various extensions of this component class
+	std::map<std::string, SmartCdlServerExtension*> componentExtensionRegistry;
+	
+public:
 	ParameterStateStruct getGlobalState() const
 	{
 		return paramHandler.getGlobalState();
@@ -159,6 +174,8 @@ public:
 	
 	// define request-handlers
 	
+	// definitions of PlainOpcUaSmartCdlServerExtension
+	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
@@ -168,12 +185,41 @@ public:
 	SmartACE::ParameterSlave *param;
 	
 	
+	/// this method is used to register different PortFactory classes (one for each supported middleware framework)
+	void addPortFactory(const std::string &name, SmartCdlServerPortFactoryInterface *portFactory);
+	
+	/// this method is used to register different component-extension classes
+	void addExtension(SmartCdlServerExtension *extension);
+	
+	/// this method allows to access the registered component-extensions (automatically converting to the actuall implementation type)
+	template <typename T>
+	T* getExtension(const std::string &name) {
+		auto it = componentExtensionRegistry.find(name);
+		if(it != componentExtensionRegistry.end()) {
+			return dynamic_cast<T*>(it->second);
+		}
+		return 0;
+	}
+	
+	/// initialize component's internal members
 	void init(int argc, char *argv[]);
+	
+	/// execute the component's infrastructure
 	void run();
 	
+	/// clean-up component's resources
+	void fini();
+	
+	/// call this method to set the overall component into the Alive state (i.e. component is then ready to operate)
 	void setStartupFinished();
+	
+	/// connect all component's client ports
 	Smart::StatusCode connectAndStartAllServices();
+	
+	/// start all assocuated Activities
 	void startAllTasks();
+	
+	/// start all associated timers
 	void startAllTimers();
 	
 	Smart::StatusCode connectBaseStateClient(const std::string &serverName, const std::string &serviceName);
@@ -188,7 +234,16 @@ public:
 	// return singleton instance
 	static SmartCdlServer* instance()
 	{
-		return (SmartCdlServer*)&_smartCdlServer;
+		if(_smartCdlServer == 0) {
+			_smartCdlServer = new SmartCdlServer();
+		}
+		return _smartCdlServer;
+	}
+	
+	static void deleteInstance() {
+		if(_smartCdlServer != 0) {
+			delete _smartCdlServer;
+		}
 	}
 	
 	// connections parameter
@@ -227,12 +282,15 @@ public:
 		//--- server port parameter ---
 		struct GoalEventServer_struct {
 				std::string serviceName;
+				std::string roboticMiddleware;
 		} goalEventServer;
 		struct NavVelSendServer_struct {
 				std::string serviceName;
+				std::string roboticMiddleware;
 		} navVelSendServer;
 		struct RobotBlockedEventServer_struct {
 				std::string serviceName;
+				std::string roboticMiddleware;
 		} robotBlockedEventServer;
 	
 		//--- client port parameter ---
@@ -242,6 +300,7 @@ public:
 			std::string serviceName;
 			std::string wiringName;
 			long interval;
+			std::string roboticMiddleware;
 		} baseStateClient;
 		struct IRClient_struct {
 			bool initialConnect;
@@ -249,12 +308,14 @@ public:
 			std::string serviceName;
 			std::string wiringName;
 			long interval;
+			std::string roboticMiddleware;
 		} iRClient;
 		struct LaserClient_struct {
 			std::string serverName;
 			std::string serviceName;
 			std::string wiringName;
 			long interval;
+			std::string roboticMiddleware;
 		} laserClient;
 		struct LaserClient2_struct {
 			bool initialConnect;
@@ -262,6 +323,7 @@ public:
 			std::string serviceName;
 			std::string wiringName;
 			long interval;
+			std::string roboticMiddleware;
 		} laserClient2;
 		struct NavVelSendClient_struct {
 			bool initialConnect;
@@ -269,6 +331,7 @@ public:
 			std::string serviceName;
 			std::string wiringName;
 			long interval;
+			std::string roboticMiddleware;
 		} navVelSendClient;
 		struct PathNavigationGoalClient_struct {
 			bool initialConnect;
@@ -276,6 +339,7 @@ public:
 			std::string serviceName;
 			std::string wiringName;
 			long interval;
+			std::string roboticMiddleware;
 		} pathNavigationGoalClient;
 		struct PlannerClient_struct {
 			bool initialConnect;
@@ -283,6 +347,7 @@ public:
 			std::string serviceName;
 			std::string wiringName;
 			long interval;
+			std::string roboticMiddleware;
 		} plannerClient;
 		struct TrackingClient_struct {
 			bool initialConnect;
@@ -290,7 +355,10 @@ public:
 			std::string serviceName;
 			std::string wiringName;
 			long interval;
+			std::string roboticMiddleware;
 		} trackingClient;
+		
+		// -- parameters for PlainOpcUaSmartCdlServerExtension
 		
 	} connections;
 };

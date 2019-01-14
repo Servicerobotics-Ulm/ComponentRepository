@@ -69,9 +69,6 @@ namespace gazebo
       	this->sub = this->node->Subscribe(topicName, &NewDiffDrivePlugin::OnMsg, this);
 
 		this->updateConnection = event::Events::ConnectWorldUpdateBegin(std::bind(&NewDiffDrivePlugin::OnUpdate, this));
-
-		this->leftWheelSpeed = 0;
-		this->rightWheelSpeed = 0;
     }
 
     public: void setVelocity(const double &_velLeft, const double &_velRight)
@@ -84,7 +81,7 @@ namespace gazebo
     private: void OnMsg(ConstVector3dPtr &_msg)
     {
 		// _msg->x() is mm/s
-		double v = _msg->x()/1000.0;
+		double v = _msg->x();
 		// _msg->z() is rad/s
 		double w = _msg->z()*-1;
 		double velLeft = (v+w*this->wheelSeparation/2.0)/this->wheelRadius;

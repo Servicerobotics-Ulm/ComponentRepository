@@ -15,15 +15,18 @@
 //--------------------------------------------------------------------------
 #include <iostream>
 #include "SmartGMapping.hh"
-	
-	
-SmartGMapping SmartGMapping::_smartGMapping;
-	
+
 int main(int argc, char *argv[])
 {
 	std::cout << "main...\n";
+	// initialize component infrastructure (loading ini-file, creating ports, tasks, etc.)
 	SmartGMapping::instance()->init(argc, argv);
+	// run component infrastructure until the component is commanded to shutdown
 	SmartGMapping::instance()->run();
+	// clean-up component's internal resources (deleting ports, tasks, etc.)
+	SmartGMapping::instance()->fini();
+	// destroy the component's singleton
+	SmartGMapping::deleteInstance();
 	std::cout << "... main() end. return 0." << std::endl;
 	return 0;
 }

@@ -18,14 +18,18 @@
 //FIXME: implement logging
 //#include "smartGlobalLogger.hh"
 
+// the ace port-factory is used as a default port-mapping
+#include "SmartPioneerBaseServerAcePortFactory.hh"
+
 #include "BatteryEventServerEventTestHandler.hh"
+
+// initialize static singleton pointer to zero
+SmartPioneerBaseServer* SmartPioneerBaseServer::_smartPioneerBaseServer = 0;
 
 // constructor
 SmartPioneerBaseServer::SmartPioneerBaseServer()
 {
 	std::cout << "constructor of SmartPioneerBaseServer\n";
-	
-	component = NULL;
 	
 	// set all pointer members to NULL
 	basePositionOut = NULL;
@@ -51,7 +55,6 @@ SmartPioneerBaseServer::SmartPioneerBaseServer()
 	wiringSlave = NULL;
 	param = NULL;
 	
-	
 	// set default ini parameter values
 	connections.component.name = "SmartPioneerBaseServer";
 	connections.component.initialComponentMode = "Neutral";
@@ -59,10 +62,15 @@ SmartPioneerBaseServer::SmartPioneerBaseServer()
 	connections.component.useLogger = false;
 	
 	connections.basePositionOut.serviceName = "BasePositionOut";
+	connections.basePositionOut.roboticMiddleware = "ACE_SmartSoft";
 	connections.baseStateQueryServer.serviceName = "BaseStateQueryServer";
+	connections.baseStateQueryServer.roboticMiddleware = "ACE_SmartSoft";
 	connections.batteryEventServer.serviceName = "BatteryEventServer";
+	connections.batteryEventServer.roboticMiddleware = "ACE_SmartSoft";
 	connections.localizationUpdate.serviceName = "LocalizationUpdate";
+	connections.localizationUpdate.roboticMiddleware = "ACE_SmartSoft";
 	connections.navVelIn.serviceName = "NavVelIn";
+	connections.navVelIn.roboticMiddleware = "ACE_SmartSoft";
 	connections.poseUpdateTask.minActFreq = 10.0;
 	connections.poseUpdateTask.maxActFreq = 40.0;
 	connections.poseUpdateTask.trigger = "PeriodicTimer";
@@ -75,9 +83,20 @@ SmartPioneerBaseServer::SmartPioneerBaseServer()
 	connections.robotTask.scheduler = "DEFAULT";
 	connections.robotTask.priority = -1;
 	connections.robotTask.cpuAffinity = -1;
+	
+	// initialize members of PlainOpcUaSmartPioneerBaseServerExtension
+	
 }
 
+void SmartPioneerBaseServer::addPortFactory(const std::string &name, SmartPioneerBaseServerPortFactoryInterface *portFactory)
+{
+	portFactoryRegistry[name] = portFactory;
+}
 
+void SmartPioneerBaseServer::addExtension(SmartPioneerBaseServerExtension *extension)
+{
+	componentExtensionRegistry[extension->getName()] = extension;
+}
 
 /**
  * Notify the component that setup/initialization is finished.
@@ -164,22 +183,30 @@ void SmartPioneerBaseServer::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
-		if(connections.component.defaultScheduler != "DEFAULT") {
-			ACE_Sched_Params sched_params(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
-			if(connections.component.defaultScheduler == "FIFO") {
-				sched_params.policy(ACE_SCHED_FIFO);
-				sched_params.priority(ACE_THR_PRI_FIFO_MIN);
-			} else if(connections.component.defaultScheduler == "RR") {
-				sched_params.policy(ACE_SCHED_RR);
-				sched_params.priority(ACE_THR_PRI_RR_MIN);
-			}
-			// create new instance of the SmartSoft component with customized scheuling parameters 
-			component = new SmartPioneerBaseServerImpl(connections.component.name, argc, argv, sched_params);
-		} else {
-			// create new instance of the SmartSoft component
-			component = new SmartPioneerBaseServerImpl(connections.component.name, argc, argv);
+		
+		// initializations of PlainOpcUaSmartPioneerBaseServerExtension
+		
+		
+		// initialize all registered port-factories
+		for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+		{
+			portFactory->second->initialize(this, argc, argv);
 		}
 		
+		// initialize all registered component-extensions
+		for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+		{
+			extension->second->initialize(this, argc, argv);
+		}
+		
+		SmartPioneerBaseServerPortFactoryInterface *acePortFactory = portFactoryRegistry["ACE_SmartSoft"];
+		if(acePortFactory == 0) {
+			std::cerr << "ERROR: acePortFactory NOT instantiated -> exit(-1)" << std::endl;
+			exit(-1);
+		}
+		
+		// this pointer is used for backwards compatibility (deprecated: should be removed as soon as all patterns, including coordination, are moved to port-factory)
+		SmartACE::SmartComponent *component = dynamic_cast<SmartPioneerBaseServerAcePortFactory*>(acePortFactory)->getComponentImpl();
 		
 		std::cout << "ComponentDefinition SmartPioneerBaseServer is named " << connections.component.name << std::endl;
 		
@@ -194,12 +221,12 @@ void SmartPioneerBaseServer::init(int argc, char *argv[])
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
-		basePositionOut = new SmartACE::PushServer<CommBasicObjects::CommBaseState>(component, connections.basePositionOut.serviceName);
-		baseStateQueryServer = new SmartACE::QueryServer<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>(component, connections.baseStateQueryServer.serviceName);
+		basePositionOut = portFactoryRegistry[connections.basePositionOut.roboticMiddleware]->createBasePositionOut(connections.basePositionOut.serviceName);
+		baseStateQueryServer = portFactoryRegistry[connections.baseStateQueryServer.roboticMiddleware]->createBaseStateQueryServer(connections.baseStateQueryServer.serviceName);
 		baseStateQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState,SmartACE::QueryId>(baseStateQueryServer);
-		batteryEventServer = new SmartACE::EventServer<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>(component, connections.batteryEventServer.serviceName, batteryEventServerEventTestHandler);
-		localizationUpdate = new SmartACE::SendServer<CommBasicObjects::CommBasePositionUpdate>(component, connections.localizationUpdate.serviceName);
-		navVelIn = new SmartACE::SendServer<CommBasicObjects::CommNavigationVelocity>(component, connections.navVelIn.serviceName);
+		batteryEventServer = portFactoryRegistry[connections.batteryEventServer.roboticMiddleware]->createBatteryEventServer(connections.batteryEventServer.serviceName, batteryEventServerEventTestHandler);
+		localizationUpdate = portFactoryRegistry[connections.localizationUpdate.roboticMiddleware]->createLocalizationUpdate(connections.localizationUpdate.serviceName);
+		navVelIn = portFactoryRegistry[connections.navVelIn.roboticMiddleware]->createNavVelIn(connections.navVelIn.serviceName);
 		
 		// create client ports
 		
@@ -213,7 +240,6 @@ void SmartPioneerBaseServer::init(int argc, char *argv[])
 		
 		// create request-handlers
 		baseStateQueryHandler = new BaseStateQueryHandler(baseStateQueryServer);
-		
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
@@ -290,15 +316,37 @@ void SmartPioneerBaseServer::init(int argc, char *argv[])
 // run the component
 void SmartPioneerBaseServer::run()
 {
+	stateSlave->acquire("init");
+	// startup all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->onStartup();
+	}
+	
+	// startup all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->onStartup();
+	}
+	stateSlave->release("init");
+	
+	// do not call this handler within the init state (see above) as this handler internally calls setStartupFinished() (this should be fixed in future)
 	compHandler.onStartup();
 	
+	// this call blocks until the component is commanded to shutdown
+	stateSlave->acquire("shutdown");
 	
-	// coponent will now start running and will continue (block in the run method) until it is commanded to shutdown (i.e. by a SIGINT signal)
-	component->run();
-	// component was signalled to shutdown
-	// 1) signall all tasks to shutdown as well (and give them 2 seconds time to cooperate)
-	// if time exceeds, component is killed without further clean-up
-	component->closeAllAssociatedTasks(2);
+	// shutdown all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->onShutdown();
+	}
+	
+	// shutdown all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->onShutdown();
+	}
 	
 	if(connections.component.useLogger == true) {
 		//FIXME: use logging
@@ -307,7 +355,12 @@ void SmartPioneerBaseServer::run()
 	
 	compHandler.onShutdown();
 	
-	
+	stateSlave->release("shutdown");
+}
+
+// clean-up component's resources
+void SmartPioneerBaseServer::fini()
+{
 	// unlink all observers
 	robotTask->detach_interaction_observer(baseStateQueryHandler);
 	robotTask->detach_interaction_observer(poseUpdateTask);
@@ -347,7 +400,6 @@ void SmartPioneerBaseServer::run()
 	// destroy request-handlers
 	delete baseStateQueryHandler;
 	
-
 	delete stateSlave;
 	// destroy state-change-handler
 	delete stateChangeHandler;
@@ -357,12 +409,20 @@ void SmartPioneerBaseServer::run()
 	delete param;
 	
 
-	// clean-up component's internally used resources (internally used communication middleware) 
-	component->cleanUpComponentResources();
+	// destroy all registered component-extensions
+	for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+	{
+		extension->second->destroy();
+	}
+
+	// destroy all registered port-factories
+	for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
+	{
+		portFactory->second->destroy();
+	}
 	
+	// destruction of PlainOpcUaSmartPioneerBaseServerExtension
 	
-	// finally delete the component itself
-	delete component;
 }
 
 void SmartPioneerBaseServer::loadParameter(int argc, char *argv[])
@@ -436,17 +496,31 @@ void SmartPioneerBaseServer::loadParameter(int argc, char *argv[])
 		}
 		
 		
-		
 		// load parameters for server BasePositionOut
 		parameter.getString("BasePositionOut", "serviceName", connections.basePositionOut.serviceName);
+		if(parameter.checkIfParameterExists("BasePositionOut", "roboticMiddleware")) {
+			parameter.getString("BasePositionOut", "roboticMiddleware", connections.basePositionOut.roboticMiddleware);
+		}
 		// load parameters for server BaseStateQueryServer
 		parameter.getString("BaseStateQueryServer", "serviceName", connections.baseStateQueryServer.serviceName);
+		if(parameter.checkIfParameterExists("BaseStateQueryServer", "roboticMiddleware")) {
+			parameter.getString("BaseStateQueryServer", "roboticMiddleware", connections.baseStateQueryServer.roboticMiddleware);
+		}
 		// load parameters for server BatteryEventServer
 		parameter.getString("BatteryEventServer", "serviceName", connections.batteryEventServer.serviceName);
+		if(parameter.checkIfParameterExists("BatteryEventServer", "roboticMiddleware")) {
+			parameter.getString("BatteryEventServer", "roboticMiddleware", connections.batteryEventServer.roboticMiddleware);
+		}
 		// load parameters for server LocalizationUpdate
 		parameter.getString("LocalizationUpdate", "serviceName", connections.localizationUpdate.serviceName);
+		if(parameter.checkIfParameterExists("LocalizationUpdate", "roboticMiddleware")) {
+			parameter.getString("LocalizationUpdate", "roboticMiddleware", connections.localizationUpdate.roboticMiddleware);
+		}
 		// load parameters for server NavVelIn
 		parameter.getString("NavVelIn", "serviceName", connections.navVelIn.serviceName);
+		if(parameter.checkIfParameterExists("NavVelIn", "roboticMiddleware")) {
+			parameter.getString("NavVelIn", "roboticMiddleware", connections.navVelIn.roboticMiddleware);
+		}
 		
 		// load parameters for task PoseUpdateTask
 		parameter.getDouble("PoseUpdateTask", "minActFreqHz", connections.poseUpdateTask.minActFreq);
@@ -476,6 +550,15 @@ void SmartPioneerBaseServer::loadParameter(int argc, char *argv[])
 		}
 		if(parameter.checkIfParameterExists("RobotTask", "cpuAffinity")) {
 			parameter.getInteger("RobotTask", "cpuAffinity", connections.robotTask.cpuAffinity);
+		}
+		
+		// load parameters for PlainOpcUaSmartPioneerBaseServerExtension
+		
+		
+		// load parameters for all registered component-extensions
+		for(auto extension = componentExtensionRegistry.begin(); extension != componentExtensionRegistry.end(); extension++) 
+		{
+			extension->second->loadParameters(parameter);
 		}
 		
 		paramHandler.loadParameter(parameter);

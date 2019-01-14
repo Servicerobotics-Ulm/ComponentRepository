@@ -26,7 +26,8 @@
 
 // include all interaction-observer interfaces
 #include <JoystickNavTaskObserverInterface.hh>
-	
+
+
 class JoystickNavTaskCore
 :	public SmartACE::ManagedTask
 ,	public Smart::TaskTriggerSubject
@@ -40,6 +41,7 @@ private:
 	
 	Smart::StatusCode joystickServiceInStatus;
 	CommBasicObjects::CommJoystick joystickServiceInObject;
+	
 	
 protected:
 	virtual int execute_protected_region();
@@ -67,6 +69,7 @@ protected:
 	// this method is meant to be used in derived classes
 	Smart::StatusCode navVelServiceOutPut(CommBasicObjects::CommNavigationVelocity &navVelServiceOutDataObject);
 	
+	
 /**
  * Implementation of the Subject part of an InteractionObserver
  */
@@ -80,17 +83,8 @@ public:
 	void detach_interaction_observer(JoystickNavTaskObserverInterface *observer);
 
 public:
-	JoystickNavTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true)
-	:	SmartACE::ManagedTask(comp)
-	,	useDefaultState(useDefaultState)
-	,	useLogging(false)
-	,	taskLoggingId(0)
-	,	currentUpdateCount(0)
-	,	joystickServiceInStatus(Smart::SMART_DISCONNECTED)
-	,	joystickServiceInObject()
-	{  }
-	virtual ~JoystickNavTaskCore()
-	{  }
+	JoystickNavTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true);
+	virtual ~JoystickNavTaskCore();
 	
 	inline void setUpLogging(const int &taskNbr, const bool &useLogging=true) {
 		this->taskLoggingId = taskNbr;
@@ -108,5 +102,6 @@ public:
 	inline int getCurrentUpdateCount() const {
 		return currentUpdateCount;
 	}
+	
 };
 #endif

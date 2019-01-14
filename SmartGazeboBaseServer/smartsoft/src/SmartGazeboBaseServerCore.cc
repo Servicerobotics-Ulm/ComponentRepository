@@ -17,7 +17,7 @@
 #include "SmartGazeboBaseServerCore.hh"
 
 // constructor
-SmartGazeboBaseServerCore::SmartGazeboBaseServerCore()
+SmartGazeboBaseServerCore::SmartGazeboBaseServerCore() : connectionEstablished(0)
 {
 	std::cout << "constructor SmartGazeboBaseServerCore\n";
 }

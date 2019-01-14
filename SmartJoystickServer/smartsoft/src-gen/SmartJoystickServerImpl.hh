@@ -16,6 +16,7 @@
 #ifndef _SMARTJOYSTICKSERVERIMPL_HH
 #define _SMARTJOYSTICKSERVERIMPL_HH
 
+#include <chrono>
 #include "aceSmartSoft.hh"
 
 class SmartJoystickServerImpl : public SmartACE::SmartComponent {
@@ -24,8 +25,8 @@ public:
 	SmartJoystickServerImpl(const std::string &componentName, int & argc, char ** argv, const ACE_Sched_Params &sched_params);
 	virtual ~SmartJoystickServerImpl();
 
-	Smart::StatusCode run(void);
-	void closeAllAssociatedTasks(const int &taskShutdownTimeLimit);
+	int startComponentInfrastructure();
+	void stopComponentInfrastructure(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2));
 	void cleanUpComponentResources();
 };
 

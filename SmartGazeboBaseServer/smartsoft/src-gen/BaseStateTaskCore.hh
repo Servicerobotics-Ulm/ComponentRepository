@@ -26,7 +26,8 @@
 // include all interaction-observer interfaces
 #include <BaseStateTaskObserverInterface.hh>
 #include <LocalizationUpdateHandlerObserverInterface.hh>
-	
+
+
 class BaseStateTaskCore
 :	public SmartACE::ManagedTask
 ,	public Smart::TaskTriggerSubject
@@ -37,6 +38,7 @@ private:
 	bool useLogging;
 	int taskLoggingId;
 	unsigned int currentUpdateCount;
+	
 	
 	
 protected:
@@ -57,6 +59,7 @@ protected:
 	// this method is meant to be used in derived classes
 	Smart::StatusCode baseStateServiceOutPut(CommBasicObjects::CommBaseState &baseStateServiceOutDataObject);
 	
+	
 /**
  * Implementation of the Subject part of an InteractionObserver
  */
@@ -70,15 +73,8 @@ public:
 	void detach_interaction_observer(BaseStateTaskObserverInterface *observer);
 
 public:
-	BaseStateTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true)
-	:	SmartACE::ManagedTask(comp)
-	,	useDefaultState(useDefaultState)
-	,	useLogging(false)
-	,	taskLoggingId(0)
-	,	currentUpdateCount(0)
-	{  }
-	virtual ~BaseStateTaskCore()
-	{  }
+	BaseStateTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true);
+	virtual ~BaseStateTaskCore();
 	
 	inline void setUpLogging(const int &taskNbr, const bool &useLogging=true) {
 		this->taskLoggingId = taskNbr;
@@ -96,5 +92,6 @@ public:
 	inline int getCurrentUpdateCount() const {
 		return currentUpdateCount;
 	}
+	
 };
 #endif

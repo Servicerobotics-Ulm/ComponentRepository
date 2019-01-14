@@ -57,12 +57,18 @@ prescale 1
 
 [SpeechQueryServiceAnsw]
 serviceName SpeechQueryServiceAnsw
+roboticMiddleware ACE_SmartSoft
 
 [SpeechSendServiceIn]
 serviceName SpeechSendServiceIn
+roboticMiddleware ACE_SmartSoft
 
 ##########################
 # client port parameter
+
+##########################
+## parameters of PlainOpcUaComponentTTSExtension
+
 
 #####################
 # internal parameters

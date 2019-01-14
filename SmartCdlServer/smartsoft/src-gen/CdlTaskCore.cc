@@ -22,6 +22,37 @@
 
 // include observers
 
+
+CdlTaskCore::CdlTaskCore(Smart::IComponent *comp, const bool &useDefaultState) 
+:	SmartACE::ManagedTask(comp)
+,	useDefaultState(useDefaultState)
+,	useLogging(false)
+,	taskLoggingId(0)
+,	currentUpdateCount(0)
+,	baseStateClientStatus(Smart::SMART_DISCONNECTED)
+,	baseStateClientObject()
+,	iRClientStatus(Smart::SMART_DISCONNECTED)
+,	iRClientObject()
+,	laserClientStatus(Smart::SMART_DISCONNECTED)
+,	laserClientObject()
+,	laserClient2Status(Smart::SMART_DISCONNECTED)
+,	laserClient2Object()
+,	navVelSendServerStatus(Smart::SMART_DISCONNECTED)
+,	navVelSendServerObject()
+,	pathNavigationGoalClientStatus(Smart::SMART_DISCONNECTED)
+,	pathNavigationGoalClientObject()
+,	plannerClientStatus(Smart::SMART_DISCONNECTED)
+,	plannerClientObject()
+,	trackingClientStatus(Smart::SMART_DISCONNECTED)
+,	trackingClientObject()
+{
+}
+
+CdlTaskCore::~CdlTaskCore()
+{
+}
+
+
 void CdlTaskCore::notify_all_interaction_observers() {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
 	// try dynamically down-casting this class to the derived class 
@@ -90,6 +121,7 @@ void CdlTaskCore::updateAllCommObjects()
 	pathNavigationGoalClientStatus = COMP->pathNavigationGoalClientInputTaskTrigger->getUpdate(pathNavigationGoalClientObject);
 	plannerClientStatus = COMP->plannerClientInputTaskTrigger->getUpdate(plannerClientObject);
 	trackingClientStatus = COMP->trackingClientInputTaskTrigger->getUpdate(trackingClientObject);
+	
 }
 
 

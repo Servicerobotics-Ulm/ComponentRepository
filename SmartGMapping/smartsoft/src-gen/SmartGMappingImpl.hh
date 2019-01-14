@@ -16,6 +16,7 @@
 #ifndef _SMARTGMAPPINGIMPL_HH
 #define _SMARTGMAPPINGIMPL_HH
 
+#include <chrono>
 #include "aceSmartSoft.hh"
 
 class SmartGMappingImpl : public SmartACE::SmartComponent {
@@ -24,8 +25,8 @@ public:
 	SmartGMappingImpl(const std::string &componentName, int & argc, char ** argv, const ACE_Sched_Params &sched_params);
 	virtual ~SmartGMappingImpl();
 
-	Smart::StatusCode run(void);
-	void closeAllAssociatedTasks(const int &taskShutdownTimeLimit);
+	int startComponentInfrastructure();
+	void stopComponentInfrastructure(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2));
 	void cleanUpComponentResources();
 };
 

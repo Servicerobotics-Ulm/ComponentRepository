@@ -16,6 +16,7 @@
 #ifndef _SMARTLASERLMS200SERVERIMPL_HH
 #define _SMARTLASERLMS200SERVERIMPL_HH
 
+#include <chrono>
 #include "aceSmartSoft.hh"
 
 class SmartLaserLMS200ServerImpl : public SmartACE::SmartComponent {
@@ -24,8 +25,8 @@ public:
 	SmartLaserLMS200ServerImpl(const std::string &componentName, int & argc, char ** argv, const ACE_Sched_Params &sched_params);
 	virtual ~SmartLaserLMS200ServerImpl();
 
-	Smart::StatusCode run(void);
-	void closeAllAssociatedTasks(const int &taskShutdownTimeLimit);
+	int startComponentInfrastructure();
+	void stopComponentInfrastructure(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2));
 	void cleanUpComponentResources();
 };
 

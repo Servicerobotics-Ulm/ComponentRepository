@@ -27,7 +27,8 @@
 
 // include all interaction-observer interfaces
 #include <GMappingTaskObserverInterface.hh>
-	
+
+
 class GMappingTaskCore
 :	public SmartACE::ManagedTask
 ,	public Smart::TaskTriggerSubject
@@ -41,6 +42,7 @@ private:
 	
 	Smart::StatusCode laserServiceInStatus;
 	CommBasicObjects::CommMobileLaserScan laserServiceInObject;
+	
 	
 protected:
 	virtual int execute_protected_region();
@@ -70,6 +72,7 @@ protected:
 	// this method is meant to be used in derived classes
 	Smart::StatusCode localizationUpdateServiceOutPut(CommBasicObjects::CommBasePositionUpdate &localizationUpdateServiceOutDataObject);
 	
+	
 /**
  * Implementation of the Subject part of an InteractionObserver
  */
@@ -83,17 +86,8 @@ public:
 	void detach_interaction_observer(GMappingTaskObserverInterface *observer);
 
 public:
-	GMappingTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true)
-	:	SmartACE::ManagedTask(comp)
-	,	useDefaultState(useDefaultState)
-	,	useLogging(false)
-	,	taskLoggingId(0)
-	,	currentUpdateCount(0)
-	,	laserServiceInStatus(Smart::SMART_DISCONNECTED)
-	,	laserServiceInObject()
-	{  }
-	virtual ~GMappingTaskCore()
-	{  }
+	GMappingTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true);
+	virtual ~GMappingTaskCore();
 	
 	inline void setUpLogging(const int &taskNbr, const bool &useLogging=true) {
 		this->taskLoggingId = taskNbr;
@@ -111,5 +105,6 @@ public:
 	inline int getCurrentUpdateCount() const {
 		return currentUpdateCount;
 	}
+	
 };
 #endif

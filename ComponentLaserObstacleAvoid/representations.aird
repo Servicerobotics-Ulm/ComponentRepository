@@ -10,6 +10,8 @@
     <semanticResources>platform:/resource/CommNavigationObjects/model/CommNavigationObjects.modes</semanticResources>
     <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.services</semanticResources>
     <semanticResources>platform:/resource/CommNavigationObjects/model/CommNavigationObjects.services</semanticResources>
+    <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.types</semanticResources>
+    <semanticResources>platform:/resource/CommNavigationObjects/model/CommNavigationObjects.types</semanticResources>
     <ownedViews xmi:type="viewpoint:DView" xmi:id="_MaFzAID0EeidOcsAG3AY1g">
       <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']"/>
       <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" xmi:id="_MeqJ8ID0EeidOcsAG3AY1g" name="ComponentLaserObstacleAvoid" repPath="#_McC60ID0EeidOcsAG3AY1g">
@@ -30,6 +32,15 @@
             <children xmi:type="notation:Node" xmi:id="_4X9IoIvvEeiHCpyMIP6W2g" type="3008" element="_4S5pgIvvEeiHCpyMIP6W2g">
               <children xmi:type="notation:Node" xmi:id="_4YCoMIvvEeiHCpyMIP6W2g" type="5005"/>
               <children xmi:type="notation:Node" xmi:id="_4YDPQIvvEeiHCpyMIP6W2g" type="7002">
+                <children xmi:type="notation:Node" xmi:id="_U9VwgKHwEeiV5pHKD1YJkA" type="3008" element="_U8usgKHwEeiV5pHKD1YJkA">
+                  <children xmi:type="notation:Node" xmi:id="_U9apAKHwEeiV5pHKD1YJkA" type="5005"/>
+                  <children xmi:type="notation:Node" xmi:id="_U9bQEKHwEeiV5pHKD1YJkA" type="7002">
+                    <styles xmi:type="notation:SortingStyle" xmi:id="_U9bQEaHwEeiV5pHKD1YJkA"/>
+                    <styles xmi:type="notation:FilteringStyle" xmi:id="_U9bQEqHwEeiV5pHKD1YJkA"/>
+                  </children>
+                  <styles xmi:type="notation:ShapeStyle" xmi:id="_U9VwgaHwEeiV5pHKD1YJkA" fontName="Ubuntu" fontHeight="8"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_U9VwgqHwEeiV5pHKD1YJkA" x="127" y="42" width="66" height="34"/>
+                </children>
                 <styles xmi:type="notation:SortingStyle" xmi:id="_4YDPQYvvEeiHCpyMIP6W2g"/>
                 <styles xmi:type="notation:FilteringStyle" xmi:id="_4YDPQovvEeiHCpyMIP6W2g"/>
               </children>
@@ -134,6 +145,17 @@
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']"/>
+        <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_U8usgKHwEeiV5pHKD1YJkA" name="PeriodicTimer" tooltipText="DefaultTrigger">
+          <target xmi:type="PerformanceExtension:DefaultPeriodicTimer" href="model/ComponentLaserObstacleAvoid.component#//@component/@elements.0/@extensions.0"/>
+          <semanticElements xmi:type="PerformanceExtension:DefaultPeriodicTimer" href="model/ComponentLaserObstacleAvoid.component#//@component/@elements.0/@extensions.0"/>
+          <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+          <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+          <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
+          <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_U80zIKHwEeiV5pHKD1YJkA" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
+            <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@subContainerMappings[name='DefaultPeriodicTimerContainer']/@style"/>
+          </ownedStyle>
+          <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@subContainerMappings[name='DefaultPeriodicTimerContainer']"/>
+        </ownedDiagramElements>
       </ownedDiagramElements>
     </ownedDiagramElements>
     <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_4Xa9IIvvEeiHCpyMIP6W2g" sourceNode="_Z2qs4ID0EeidOcsAG3AY1g" targetNode="_4S5pgIvvEeiHCpyMIP6W2g">

@@ -27,7 +27,8 @@
 
 // include all interaction-observer interfaces
 #include <BatteryEventTaskObserverInterface.hh>
-	
+
+
 class BatteryEventTaskCore
 :	public SmartACE::ManagedTask
 ,	public Smart::TaskTriggerSubject
@@ -37,6 +38,7 @@ private:
 	bool useLogging;
 	int taskLoggingId;
 	unsigned int currentUpdateCount;
+	
 	
 	
 protected:
@@ -53,6 +55,7 @@ protected:
 	// this method is meant to be used in derived classes
 	Smart::StatusCode batteryEventServiceOutPut(CommBasicObjects::CommBatteryState &eventState);
 	
+	
 /**
  * Implementation of the Subject part of an InteractionObserver
  */
@@ -66,15 +69,8 @@ public:
 	void detach_interaction_observer(BatteryEventTaskObserverInterface *observer);
 
 public:
-	BatteryEventTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true)
-	:	SmartACE::ManagedTask(comp)
-	,	useDefaultState(useDefaultState)
-	,	useLogging(false)
-	,	taskLoggingId(0)
-	,	currentUpdateCount(0)
-	{  }
-	virtual ~BatteryEventTaskCore()
-	{  }
+	BatteryEventTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true);
+	virtual ~BatteryEventTaskCore();
 	
 	inline void setUpLogging(const int &taskNbr, const bool &useLogging=true) {
 		this->taskLoggingId = taskNbr;
@@ -92,5 +88,6 @@ public:
 	inline int getCurrentUpdateCount() const {
 		return currentUpdateCount;
 	}
+	
 };
 #endif

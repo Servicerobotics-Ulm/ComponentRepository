@@ -15,12 +15,24 @@
 //--------------------------------------------------------------------------
 #ifndef _SMARTJOYSTICKNAVIGATION_HH
 #define _SMARTJOYSTICKNAVIGATION_HH
-	
+
+#include <map>
 #include <iostream>
 #include "aceSmartSoft.hh"
 #include "smartQueryServerTaskTrigger_T.h"
 #include "SmartJoystickNavigationCore.hh"
-#include "SmartJoystickNavigationImpl.hh"
+
+#include "SmartJoystickNavigationPortFactoryInterface.hh"
+#include "SmartJoystickNavigationExtension.hh"
+
+// forward declarations
+class SmartJoystickNavigationPortFactoryInterface;
+class SmartJoystickNavigationExtension;
+
+// includes for PlainOpcUaSmartJoystickNavigationExtension
+// include plain OPC UA device clients
+// include plain OPC UA status servers
+
 
 // include communication objects
 #include <CommBasicObjects/CommJoystick.hh>
@@ -36,7 +48,6 @@
 // include input-handler
 // include input-handler
 
-
 // include handler
 #include "CompHandler.hh"
 
@@ -49,7 +60,7 @@
 
 class SmartJoystickNavigation : public SmartJoystickNavigationCore {
 private:
-	static SmartJoystickNavigation _smartJoystickNavigation;
+	static SmartJoystickNavigation *_smartJoystickNavigation;
 	
 	// constructor
 	SmartJoystickNavigation();
@@ -66,13 +77,16 @@ private:
 	// instantiate comp-handler
 	CompHandler compHandler;
 	
+	// helper method that maps a string-name to an according TaskTriggerSubject
 	Smart::TaskTriggerSubject* getInputTaskTriggerFromString(const std::string &client);
 	
-public:
-	// component
-	SmartJoystickNavigationImpl *component;
-	Smart::ITask *opcUaComponentTask;
+	// internal map storing the different port-creation factories (that internally map to specific middleware implementations)
+	std::map<std::string, SmartJoystickNavigationPortFactoryInterface*> portFactoryRegistry;
 	
+	// internal map storing various extensions of this component class
+	std::map<std::string, SmartJoystickNavigationExtension*> componentExtensionRegistry;
+	
+public:
 	ParameterStateStruct getGlobalState() const
 	{
 		return paramHandler.getGlobalState();
@@ -99,6 +113,8 @@ public:
 	
 	// define request-handlers
 	
+	// definitions of PlainOpcUaSmartJoystickNavigationExtension
+	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
@@ -108,12 +124,41 @@ public:
 	SmartACE::ParameterSlave *param;
 	
 	
+	/// this method is used to register different PortFactory classes (one for each supported middleware framework)
+	void addPortFactory(const std::string &name, SmartJoystickNavigationPortFactoryInterface *portFactory);
+	
+	/// this method is used to register different component-extension classes
+	void addExtension(SmartJoystickNavigationExtension *extension);
+	
+	/// this method allows to access the registered component-extensions (automatically converting to the actuall implementation type)
+	template <typename T>
+	T* getExtension(const std::string &name) {
+		auto it = componentExtensionRegistry.find(name);
+		if(it != componentExtensionRegistry.end()) {
+			return dynamic_cast<T*>(it->second);
+		}
+		return 0;
+	}
+	
+	/// initialize component's internal members
 	void init(int argc, char *argv[]);
+	
+	/// execute the component's infrastructure
 	void run();
 	
+	/// clean-up component's resources
+	void fini();
+	
+	/// call this method to set the overall component into the Alive state (i.e. component is then ready to operate)
 	void setStartupFinished();
+	
+	/// connect all component's client ports
 	Smart::StatusCode connectAndStartAllServices();
+	
+	/// start all assocuated Activities
 	void startAllTasks();
+	
+	/// start all associated timers
 	void startAllTimers();
 	
 	Smart::StatusCode connectJoystickServiceIn(const std::string &serverName, const std::string &serviceName);
@@ -122,7 +167,16 @@ public:
 	// return singleton instance
 	static SmartJoystickNavigation* instance()
 	{
-		return (SmartJoystickNavigation*)&_smartJoystickNavigation;
+		if(_smartJoystickNavigation == 0) {
+			_smartJoystickNavigation = new SmartJoystickNavigation();
+		}
+		return _smartJoystickNavigation;
+	}
+	
+	static void deleteInstance() {
+		if(_smartJoystickNavigation != 0) {
+			delete _smartJoystickNavigation;
+		}
 	}
 	
 	// connections parameter
@@ -166,6 +220,7 @@ public:
 			std::string serviceName;
 			std::string wiringName;
 			long interval;
+			std::string roboticMiddleware;
 		} joystickServiceIn;
 		struct NavVelServiceOut_struct {
 			bool initialConnect;
@@ -173,7 +228,10 @@ public:
 			std::string serviceName;
 			std::string wiringName;
 			long interval;
+			std::string roboticMiddleware;
 		} navVelServiceOut;
+		
+		// -- parameters for PlainOpcUaSmartJoystickNavigationExtension
 		
 	} connections;
 };

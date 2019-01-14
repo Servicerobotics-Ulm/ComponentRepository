@@ -1,34 +1,32 @@
 ComponentDefinition SmartPlannerBreadthFirstSearch {
-	BehaviorSlaveInterface SlavePort implements CommNavigationObjects.PlannerCoordinationService
+	CoordinationSlavePort CoordinationPort implements CommNavigationObjects.PlannerCoordinationService {
+		PrivateOperationMode pathplanning;
+		PublicOperationMode CommNavigationObjects.PathPlannerStates.PathPlanning {
+			activates ( pathplanning )
+		}
+	}
 	
 	InputPort CurMapClient implements CommNavigationObjects.CurrGridMapPushService { }
 	InputPort BaseStateClient implements CommBasicObjects.BaseStateService { }
 	
-	PreemptiveTask PlannerTask {
-		InputLinkExtension CurMapClient {
+	Activity PlannerTask {
+		InputPortLink CurMapClient {
 			oversamplingOk undersamplingOk
 		}
-		InputLinkExtension BaseStateClient {
+		InputPortLink BaseStateClient {
 			oversamplingOk undersamplingOk
 		}
 		ActivationConstraints {
-			configurable=true minActFreq = 4.0 Hz maxActFreq = 10.0 Hz
+			configurable=true minActFreq = 2.0 Hz maxActFreq = 10.0 Hz
 		}
 		
-		DefaultTaskTrigger PeriodicTimer 4.0 Hz;
+		DefaultTrigger PeriodicTimer 4.0 Hz;
 		
-		SubStateBinding pathlanning;
+		OperationModeBinding CoordinationPort.pathplanning;
 	}
 	
 	OutputPort PlannerGoalServer implements CommNavigationObjects.PlannerGoalService realizedBy PlannerTask { }
 	OutputPort PlannerEventServer implements CommNavigationObjects.PlannerEventService realizedBy PlannerTask { }
 	
-	ComponentParameters SmartPlannerParams;
-	
-	StateAutomaton SmartPlannerStates implementsExtendedMSC CommNavigationObjects.PathPlannerStates {
-		SubState pathlanning;
-		MainStateInstance PathPlanning {
-			subStates pathlanning
-		}
-	}
+	ComponentParameters SmartPlannerParams slave CoordinationPort;
 }

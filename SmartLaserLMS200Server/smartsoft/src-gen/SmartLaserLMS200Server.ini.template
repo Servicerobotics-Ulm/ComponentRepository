@@ -45,9 +45,11 @@ initialComponentMode Neutral
 
 [LaserQueryServiceAnsw]
 serviceName LaserQueryServiceAnsw
+roboticMiddleware ACE_SmartSoft
 
 [LaserScanOut]
 serviceName LaserScanOut
+roboticMiddleware ACE_SmartSoft
 
 ##########################
 # client port parameter
@@ -58,6 +60,11 @@ serverName unknown
 serviceName unknown
 wiringName BaseStateIn
 interval 1
+roboticMiddleware ACE_SmartSoft
+
+##########################
+## parameters of PlainOpcUaSmartLaserLMS200ServerExtension
+
 
 #####################
 # internal parameters

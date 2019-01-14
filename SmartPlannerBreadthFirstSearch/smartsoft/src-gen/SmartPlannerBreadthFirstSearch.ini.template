@@ -57,9 +57,11 @@ periodicActFreqHz 4.0
 
 [PlannerEventServer]
 serviceName PlannerEventServer
+roboticMiddleware ACE_SmartSoft
 
 [PlannerGoalServer]
 serviceName PlannerGoalServer
+roboticMiddleware ACE_SmartSoft
 
 ##########################
 # client port parameter
@@ -69,12 +71,18 @@ serverName unknown
 serviceName unknown
 wiringName BaseStateClient
 interval 1
+roboticMiddleware ACE_SmartSoft
 
 [CurMapClient]
 serverName unknown
 serviceName unknown
 wiringName CurMapClient
 interval 1
+roboticMiddleware ACE_SmartSoft
+
+##########################
+## parameters of PlainOpcUaSmartPlannerBreadthFirstSearchExtension
+
 
 #####################
 # internal parameters

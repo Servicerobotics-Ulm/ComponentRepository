@@ -30,7 +30,8 @@
 
 // include all interaction-observer interfaces
 #include <PlannerTaskObserverInterface.hh>
-	
+
+
 class PlannerTaskCore
 :	public SmartACE::ManagedTask
 ,	public Smart::TaskTriggerSubject
@@ -47,6 +48,7 @@ private:
 	CommBasicObjects::CommBaseState baseStateClientObject;
 	Smart::StatusCode curMapClientStatus;
 	CommNavigationObjects::CommGridMap curMapClientObject;
+	
 	
 protected:
 	virtual int execute_protected_region();
@@ -88,6 +90,7 @@ protected:
 	// this method is meant to be used in derived classes
 	Smart::StatusCode plannerGoalServerPut(CommNavigationObjects::CommPlannerGoal &plannerGoalServerDataObject);
 	
+	
 /**
  * Implementation of the Subject part of an InteractionObserver
  */
@@ -101,19 +104,8 @@ public:
 	void detach_interaction_observer(PlannerTaskObserverInterface *observer);
 
 public:
-	PlannerTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true)
-	:	SmartACE::ManagedTask(comp)
-	,	useDefaultState(useDefaultState)
-	,	useLogging(false)
-	,	taskLoggingId(0)
-	,	currentUpdateCount(0)
-	,	baseStateClientStatus(Smart::SMART_DISCONNECTED)
-	,	baseStateClientObject()
-	,	curMapClientStatus(Smart::SMART_DISCONNECTED)
-	,	curMapClientObject()
-	{  }
-	virtual ~PlannerTaskCore()
-	{  }
+	PlannerTaskCore(Smart::IComponent *comp, const bool &useDefaultState=true);
+	virtual ~PlannerTaskCore();
 	
 	inline void setUpLogging(const int &taskNbr, const bool &useLogging=true) {
 		this->taskLoggingId = taskNbr;
@@ -131,5 +123,6 @@ public:
 	inline int getCurrentUpdateCount() const {
 		return currentUpdateCount;
 	}
+	
 };
 #endif
