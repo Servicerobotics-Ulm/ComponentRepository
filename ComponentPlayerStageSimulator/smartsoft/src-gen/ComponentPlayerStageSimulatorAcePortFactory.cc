@@ -53,24 +53,9 @@ int ComponentPlayerStageSimulatorAcePortFactory::onStartup()
 }
 
 
-Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * ComponentPlayerStageSimulatorAcePortFactory::createNavigationVelocityServiceIn(const std::string &serviceName)
-{
-	return new SmartACE::SendServer<CommBasicObjects::CommNavigationVelocity>(componentImpl, serviceName);
-}
-
-Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState,SmartACE::EventId> * ComponentPlayerStageSimulatorAcePortFactory::createBatteryEventServiceOut(const std::string &serviceName, Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> *batteryEventServiceOutEventTestHandler)
-{
-	return new SmartACE::EventServer<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>(componentImpl, serviceName, batteryEventServiceOutEventTestHandler);
-}
-
 Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * ComponentPlayerStageSimulatorAcePortFactory::createLocalizationUpdateServiceIn(const std::string &serviceName)
 {
 	return new SmartACE::SendServer<CommBasicObjects::CommBasePositionUpdate>(componentImpl, serviceName);
-}
-
-Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * ComponentPlayerStageSimulatorAcePortFactory::createLaserServiceOut(const std::string &serviceName)
-{
-	return new SmartACE::PushServer<CommBasicObjects::CommMobileLaserScan>(componentImpl, serviceName);
 }
 
 Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * ComponentPlayerStageSimulatorAcePortFactory::createBaseStateServiceOut(const std::string &serviceName)
@@ -78,9 +63,24 @@ Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * ComponentPlayerStag
 	return new SmartACE::PushServer<CommBasicObjects::CommBaseState>(componentImpl, serviceName);
 }
 
+Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState,SmartACE::EventId> * ComponentPlayerStageSimulatorAcePortFactory::createBatteryEventServiceOut(const std::string &serviceName, Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> *batteryEventServiceOutEventTestHandler)
+{
+	return new SmartACE::EventServer<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>(componentImpl, serviceName, batteryEventServiceOutEventTestHandler);
+}
+
 Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState,SmartACE::QueryId> * ComponentPlayerStageSimulatorAcePortFactory::createBaseStateAnswerer(const std::string &serviceName)
 {
 	return new SmartACE::QueryServer<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>(componentImpl, serviceName);
+}
+
+Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * ComponentPlayerStageSimulatorAcePortFactory::createLaserServiceOut(const std::string &serviceName)
+{
+	return new SmartACE::PushServer<CommBasicObjects::CommMobileLaserScan>(componentImpl, serviceName);
+}
+
+Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * ComponentPlayerStageSimulatorAcePortFactory::createNavigationVelocityServiceIn(const std::string &serviceName)
+{
+	return new SmartACE::SendServer<CommBasicObjects::CommNavigationVelocity>(componentImpl, serviceName);
 }
 
 

@@ -58,7 +58,7 @@ Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * SmartMapperGr
 }
 
 
-Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap,SmartACE::QueryId> * SmartMapperGridMapAcePortFactory::createCurrQueryServer(const std::string &serviceName)
+Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap,SmartACE::QueryId> * SmartMapperGridMapAcePortFactory::createLtmQueryServer(const std::string &serviceName)
 {
 	return new SmartACE::QueryServer<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap>(componentImpl, serviceName);
 }
@@ -68,7 +68,7 @@ Smart::IPushServerPattern<CommNavigationObjects::CommGridMap> * SmartMapperGridM
 	return new SmartACE::PushServer<CommNavigationObjects::CommGridMap>(componentImpl, serviceName);
 }
 
-Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap,SmartACE::QueryId> * SmartMapperGridMapAcePortFactory::createLtmQueryServer(const std::string &serviceName)
+Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap,SmartACE::QueryId> * SmartMapperGridMapAcePortFactory::createCurrQueryServer(const std::string &serviceName)
 {
 	return new SmartACE::QueryServer<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap>(componentImpl, serviceName);
 }
