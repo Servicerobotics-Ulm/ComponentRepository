@@ -3,7 +3,7 @@
 
 # SmartGMapping Component
 
-![SmartGMapping-ComponentImage](https://github.com/Servicerobotics-Ulm/ComponentRepository/blob/master/SmartGMapping/model/SmartGMappingComponentDefinition.jpg)
+![SmartGMapping-ComponentImage](model/SmartGMappingComponentDefinition.jpg)
 
 SmartGMapping implements GMapping for simultaneous localization and mapping (SLAM). GMapping uses the Rao-Blackwellized particle filer for learning grid maps. It adaptively reduces the number of particles which each carries an individual map of the environment. The robot's pose is estimated by taking the robot's movement and the most recent observation into account.
 

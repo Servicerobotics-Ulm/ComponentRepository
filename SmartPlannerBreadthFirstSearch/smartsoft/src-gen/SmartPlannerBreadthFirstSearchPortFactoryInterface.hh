@@ -47,8 +47,8 @@ public:
 	virtual void initialize(SmartPlannerBreadthFirstSearch *component, int argc, char* argv[]) = 0;
 	virtual int onStartup() = 0;
 
-	virtual Smart::IPushClientPattern<CommNavigationObjects::CommGridMap> * createCurMapClient() = 0;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * createBaseStateClient() = 0;
+	virtual Smart::IPushClientPattern<CommNavigationObjects::CommGridMap> * createCurMapClient() = 0;
 	
 	virtual Smart::IEventServerPattern<CommNavigationObjects::CommPlannerEventParameter, CommNavigationObjects::CommPlannerEventResult, CommNavigationObjects::PlannerEventState,SmartACE::EventId> * createPlannerEventServer(const std::string &serviceName, Smart::IEventTestHandler<CommNavigationObjects::CommPlannerEventParameter, CommNavigationObjects::CommPlannerEventResult, CommNavigationObjects::PlannerEventState> *plannerEventServerEventTestHandler) = 0;
 	virtual Smart::IPushServerPattern<CommNavigationObjects::CommPlannerGoal> * createPlannerGoalServer(const std::string &serviceName) = 0;

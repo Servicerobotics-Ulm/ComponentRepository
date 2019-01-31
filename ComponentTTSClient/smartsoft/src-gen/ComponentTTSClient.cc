@@ -67,6 +67,8 @@ ComponentTTSClient::ComponentTTSClient()
 	connections.consoleTask.priority = -1;
 	connections.consoleTask.cpuAffinity = -1;
 	
+	// initialize members of ComponentTTSClientROSExtension
+	
 	// initialize members of PlainOpcUaComponentTTSClientExtension
 	
 }
@@ -186,6 +188,8 @@ void ComponentTTSClient::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
+		
+		// initializations of ComponentTTSClientROSExtension
 		
 		// initializations of PlainOpcUaComponentTTSClientExtension
 		
@@ -382,6 +386,8 @@ void ComponentTTSClient::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of ComponentTTSClientROSExtension
+	
 	// destruction of PlainOpcUaComponentTTSClientExtension
 	
 }
@@ -493,6 +499,8 @@ void ComponentTTSClient::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("ConsoleTask", "cpuAffinity")) {
 			parameter.getInteger("ConsoleTask", "cpuAffinity", connections.consoleTask.cpuAffinity);
 		}
+		
+		// load parameters for ComponentTTSClientROSExtension
 		
 		// load parameters for PlainOpcUaComponentTTSClientExtension
 		

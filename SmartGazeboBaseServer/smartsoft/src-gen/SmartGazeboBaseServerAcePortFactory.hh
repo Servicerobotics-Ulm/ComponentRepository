@@ -36,10 +36,10 @@ public:
 
 	
 	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState,SmartACE::QueryId> * createBaseSatateQueryAnsw(const std::string &serviceName) override;
-	virtual Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * createNavVelServiceIn(const std::string &serviceName) override;
-	virtual Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * createLocalizationUpdateServiceIn(const std::string &serviceName) override;
-	virtual Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * createLaserServiceOut(const std::string &serviceName) override;
 	virtual Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * createBaseStateServiceOut(const std::string &serviceName) override;
+	virtual Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * createLaserServiceOut(const std::string &serviceName) override;
+	virtual Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * createLocalizationUpdateServiceIn(const std::string &serviceName) override;
+	virtual Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * createNavVelServiceIn(const std::string &serviceName) override;
 	
 	// get a pointer to the internal component implementation
 	SmartACE::SmartComponent* getComponentImpl();

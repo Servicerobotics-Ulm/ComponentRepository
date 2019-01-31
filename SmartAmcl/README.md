@@ -3,7 +3,7 @@
 
 # SmartAmcl Component
 
-![SmartAmcl-ComponentImage](https://github.com/Servicerobotics-Ulm/ComponentRepository/blob/master/SmartAmcl/model/SmartAmclComponentDefinition.jpg)
+![SmartAmcl-ComponentImage](model/SmartAmclComponentDefinition.jpg)
 
 SmartAmcl implements the Adaptive Monte-Carlo Localization (Amcl) algorithm.
 Localization is based on a particle filter and a pre-captured grid map of the environment. Amcl maintains a set of possible robot poses and updates this distribution by comparing laser scans against the pre-captured map. Amcl is adaptive because the amount of particles depends on the pose certainty: large number of particles if uncertainty increases and vice versa.

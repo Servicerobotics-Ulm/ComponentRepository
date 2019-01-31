@@ -43,9 +43,9 @@ public:
 
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * createLaserServiceIn() = 0;
 	
-	virtual Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap,SmartACE::QueryId> * createLtmQueryServer(const std::string &serviceName) = 0;
 	virtual Smart::IPushServerPattern<CommNavigationObjects::CommGridMap> * createCurrMapOut(const std::string &serviceName) = 0;
 	virtual Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap,SmartACE::QueryId> * createCurrQueryServer(const std::string &serviceName) = 0;
+	virtual Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap,SmartACE::QueryId> * createLtmQueryServer(const std::string &serviceName) = 0;
 
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) = 0;
 	virtual void destroy() = 0;

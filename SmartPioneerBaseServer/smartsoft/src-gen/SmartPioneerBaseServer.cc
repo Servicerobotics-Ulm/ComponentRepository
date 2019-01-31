@@ -84,6 +84,8 @@ SmartPioneerBaseServer::SmartPioneerBaseServer()
 	connections.robotTask.priority = -1;
 	connections.robotTask.cpuAffinity = -1;
 	
+	// initialize members of SmartPioneerBaseServerROSExtension
+	
 	// initialize members of PlainOpcUaSmartPioneerBaseServerExtension
 	
 }
@@ -183,6 +185,8 @@ void SmartPioneerBaseServer::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
+		
+		// initializations of SmartPioneerBaseServerROSExtension
 		
 		// initializations of PlainOpcUaSmartPioneerBaseServerExtension
 		
@@ -421,6 +425,8 @@ void SmartPioneerBaseServer::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of SmartPioneerBaseServerROSExtension
+	
 	// destruction of PlainOpcUaSmartPioneerBaseServerExtension
 	
 }
@@ -551,6 +557,8 @@ void SmartPioneerBaseServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("RobotTask", "cpuAffinity")) {
 			parameter.getInteger("RobotTask", "cpuAffinity", connections.robotTask.cpuAffinity);
 		}
+		
+		// load parameters for SmartPioneerBaseServerROSExtension
 		
 		// load parameters for PlainOpcUaSmartPioneerBaseServerExtension
 		

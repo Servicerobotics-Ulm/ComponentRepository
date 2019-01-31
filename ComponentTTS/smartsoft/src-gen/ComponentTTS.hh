@@ -29,6 +29,8 @@
 class ComponentTTSPortFactoryInterface;
 class ComponentTTSExtension;
 
+// includes for ComponentTTSROSExtension
+
 // includes for PlainOpcUaComponentTTSExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -117,6 +119,8 @@ public:
 	
 	// define request-handlers
 	SpeechQueryHandler *speechQueryHandler;
+	
+	// definitions of ComponentTTSROSExtension
 	
 	// definitions of PlainOpcUaComponentTTSExtension
 	
@@ -229,6 +233,8 @@ public:
 		} speechSendServiceIn;
 	
 		//--- client port parameter ---
+		
+		// -- parameters for ComponentTTSROSExtension
 		
 		// -- parameters for PlainOpcUaComponentTTSExtension
 		

@@ -3,7 +3,7 @@
 
 # ComponentTTS Component
 
-![ComponentTTS-ComponentImage](https://github.com/Servicerobotics-Ulm/ComponentRepository/blob/master/ComponentTTS/model/ComponentTTSComponentDefinition.jpg)
+![ComponentTTS-ComponentImage](model/ComponentTTSComponentDefinition.jpg)
 
 SmartTTS is a component for text to speech (tts) synthesis. SmartTTS pipes speech output messages to stdin of an arbitrary executable. 
 It is thus a simple wrapper for all tts applications that accept text via stdin, e.g. mbrola, festival or /bin/cat for debugging. 

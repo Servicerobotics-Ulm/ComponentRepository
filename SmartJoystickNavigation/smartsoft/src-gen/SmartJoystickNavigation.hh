@@ -29,6 +29,8 @@
 class SmartJoystickNavigationPortFactoryInterface;
 class SmartJoystickNavigationExtension;
 
+// includes for SmartJoystickNavigationROSExtension
+
 // includes for PlainOpcUaSmartJoystickNavigationExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -112,6 +114,8 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
+	
+	// definitions of SmartJoystickNavigationROSExtension
 	
 	// definitions of PlainOpcUaSmartJoystickNavigationExtension
 	
@@ -230,6 +234,8 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} navVelServiceOut;
+		
+		// -- parameters for SmartJoystickNavigationROSExtension
 		
 		// -- parameters for PlainOpcUaSmartJoystickNavigationExtension
 		

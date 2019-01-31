@@ -94,6 +94,8 @@ SmartGazeboBaseServer::SmartGazeboBaseServer()
 	connections.localizationUpdateHandler.prescale = 1;
 	connections.velocityInpuHandler.prescale = 1;
 	
+	// initialize members of SmartGazeboBaseServerROSExtension
+	
 	// initialize members of PlainOpcUaSmartGazeboBaseServerExtension
 	
 }
@@ -207,6 +209,8 @@ void SmartGazeboBaseServer::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
+		
+		// initializations of SmartGazeboBaseServerROSExtension
 		
 		// initializations of PlainOpcUaSmartGazeboBaseServerExtension
 		
@@ -472,6 +476,8 @@ void SmartGazeboBaseServer::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of SmartGazeboBaseServerROSExtension
+	
 	// destruction of PlainOpcUaSmartGazeboBaseServerExtension
 	
 }
@@ -627,6 +633,8 @@ void SmartGazeboBaseServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("VelocityInpuHandler", "prescale")) {
 			parameter.getInteger("VelocityInpuHandler", "prescale", connections.velocityInpuHandler.prescale);
 		}
+		
+		// load parameters for SmartGazeboBaseServerROSExtension
 		
 		// load parameters for PlainOpcUaSmartGazeboBaseServerExtension
 		

@@ -3,7 +3,7 @@
 
 # ComponentTTSClient Component
 
-![ComponentTTSClient-ComponentImage](https://github.com/Servicerobotics-Ulm/ComponentRepository/blob/master/ComponentTTSClient/model/ComponentTTSClientComponentDefinition.jpg)
+![ComponentTTSClient-ComponentImage](model/ComponentTTSClientComponentDefinition.jpg)
 
 
 | Metaelement | Documentation |

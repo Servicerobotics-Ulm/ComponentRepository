@@ -67,6 +67,8 @@ ComponentLaserObstacleAvoid::ComponentLaserObstacleAvoid()
 	connections.robotTask.priority = -1;
 	connections.robotTask.cpuAffinity = -1;
 	
+	// initialize members of ComponentLaserObstacleAvoidROSExtension
+	
 	// initialize members of PlainOpcUaComponentLaserObstacleAvoidExtension
 	
 }
@@ -183,6 +185,8 @@ void ComponentLaserObstacleAvoid::init(int argc, char *argv[])
 		// load initial parameters from ini-file (if found)
 		loadParameter(argc, argv);
 		
+		
+		// initializations of ComponentLaserObstacleAvoidROSExtension
 		
 		// initializations of PlainOpcUaComponentLaserObstacleAvoidExtension
 		
@@ -395,6 +399,8 @@ void ComponentLaserObstacleAvoid::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of ComponentLaserObstacleAvoidROSExtension
+	
 	// destruction of PlainOpcUaComponentLaserObstacleAvoidExtension
 	
 }
@@ -506,6 +512,8 @@ void ComponentLaserObstacleAvoid::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("RobotTask", "cpuAffinity")) {
 			parameter.getInteger("RobotTask", "cpuAffinity", connections.robotTask.cpuAffinity);
 		}
+		
+		// load parameters for ComponentLaserObstacleAvoidROSExtension
 		
 		// load parameters for PlainOpcUaComponentLaserObstacleAvoidExtension
 		

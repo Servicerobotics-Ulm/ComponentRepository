@@ -3,7 +3,7 @@
 
 # SmartGazeboBaseServer Component
 
-![SmartGazeboBaseServer-ComponentImage](https://github.com/Servicerobotics-Ulm/ComponentRepository/blob/master/SmartGazeboBaseServer/model/SmartGazeboBaseServerComponentDefinition.jpg)
+![SmartGazeboBaseServer-ComponentImage](model/SmartGazeboBaseServerComponentDefinition.jpg)
 
 The SmartGazeboBaseServer can be used to command a robot in a 3D environment using the Gazebo simulator. It offers services for controlling the robot via SmartCDL or SmartJoystickNavigation by receiving v and omega values from SmartCDL or SmartJoystickNavigation. Those values are directly handed over to the Gazebo simulator in case of a differential drive. The communication between the SmartGazeboBaseServer and Gazebo is based on the communication lib of gazebo.
 

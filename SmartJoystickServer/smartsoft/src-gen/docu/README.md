@@ -3,7 +3,7 @@
 
 # SmartJoystickServer Component
 
-![SmartJoystickServer-ComponentImage](https://github.com/Servicerobotics-Ulm/ComponentRepository/blob/master/SmartJoystickServer/model/SmartJoystickServerComponentDefinition.jpg)
+![SmartJoystickServer-ComponentImage](model/SmartJoystickServerComponentDefinition.jpg)
 
 The SmartJoystickServer provides access to input commands from a joystick via PushNewest communication pattern. The input commands are represented by x/y-value (as available) and an identifier for the button pressed.
 

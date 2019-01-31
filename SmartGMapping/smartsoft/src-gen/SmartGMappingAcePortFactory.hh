@@ -34,8 +34,8 @@ public:
 	virtual void initialize(SmartGMapping *component, int argc, char* argv[]) override;
 	virtual int onStartup() override;
 
-	virtual Smart::ISendClientPattern<CommBasicObjects::CommBasePositionUpdate> * createLocalizationUpdateServiceOut() override;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * createLaserServiceIn() override;
+	virtual Smart::ISendClientPattern<CommBasicObjects::CommBasePositionUpdate> * createLocalizationUpdateServiceOut() override;
 	
 	virtual Smart::IPushServerPattern<CommNavigationObjects::CommGridMap> * createCurrGridMapPushServiceOut(const std::string &serviceName) override;
 	

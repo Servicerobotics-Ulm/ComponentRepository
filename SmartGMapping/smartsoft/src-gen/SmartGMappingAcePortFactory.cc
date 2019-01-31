@@ -52,14 +52,14 @@ int SmartGMappingAcePortFactory::onStartup()
 	return componentImpl->startComponentInfrastructure();
 }
 
-Smart::ISendClientPattern<CommBasicObjects::CommBasePositionUpdate> * SmartGMappingAcePortFactory::createLocalizationUpdateServiceOut()
-{
-	return new SmartACE::SendClient<CommBasicObjects::CommBasePositionUpdate>(componentImpl);
-}
-
 Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * SmartGMappingAcePortFactory::createLaserServiceIn()
 {
 	return new SmartACE::PushClient<CommBasicObjects::CommMobileLaserScan>(componentImpl);
+}
+
+Smart::ISendClientPattern<CommBasicObjects::CommBasePositionUpdate> * SmartGMappingAcePortFactory::createLocalizationUpdateServiceOut()
+{
+	return new SmartACE::SendClient<CommBasicObjects::CommBasePositionUpdate>(componentImpl);
 }
 
 

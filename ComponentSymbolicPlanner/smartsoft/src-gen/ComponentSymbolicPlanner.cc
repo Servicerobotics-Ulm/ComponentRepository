@@ -48,6 +48,8 @@ ComponentSymbolicPlanner::ComponentSymbolicPlanner()
 	connections.symbolicPlannerQueryServer.serviceName = "SymbolicPlannerQueryServer";
 	connections.symbolicPlannerQueryServer.roboticMiddleware = "ACE_SmartSoft";
 	
+	// initialize members of ComponentSymbolicPlannerROSExtension
+	
 	// initialize members of PlainOpcUaComponentSymbolicPlannerExtension
 	
 }
@@ -115,6 +117,8 @@ void ComponentSymbolicPlanner::init(int argc, char *argv[])
 		// load initial parameters from ini-file (if found)
 		loadParameter(argc, argv);
 		
+		
+		// initializations of ComponentSymbolicPlannerROSExtension
 		
 		// initializations of PlainOpcUaComponentSymbolicPlannerExtension
 		
@@ -273,6 +277,8 @@ void ComponentSymbolicPlanner::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of ComponentSymbolicPlannerROSExtension
+	
 	// destruction of PlainOpcUaComponentSymbolicPlannerExtension
 	
 }
@@ -354,6 +360,8 @@ void ComponentSymbolicPlanner::loadParameter(int argc, char *argv[])
 			parameter.getString("SymbolicPlannerQueryServer", "roboticMiddleware", connections.symbolicPlannerQueryServer.roboticMiddleware);
 		}
 		
+		
+		// load parameters for ComponentSymbolicPlannerROSExtension
 		
 		// load parameters for PlainOpcUaComponentSymbolicPlannerExtension
 		

@@ -3,7 +3,7 @@
 
 # SmartMapperGridMap Component
 
-![SmartMapperGridMap-ComponentImage](https://github.com/Servicerobotics-Ulm/ComponentRepository/blob/master/SmartMapperGridMap/model/SmartMapperGridMapComponentDefinition.jpg)
+![SmartMapperGridMap-ComponentImage](model/SmartMapperGridMapComponentDefinition.jpg)
 
 The SmartMapperGridMap provides mapping services based on occupancy grid maps. Laser scans are taken for building a current and a longterm map.
 

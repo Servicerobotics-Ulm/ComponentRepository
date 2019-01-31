@@ -29,6 +29,8 @@
 class SmartGazeboBaseServerPortFactoryInterface;
 class SmartGazeboBaseServerExtension;
 
+// includes for SmartGazeboBaseServerROSExtension
+
 // includes for PlainOpcUaSmartGazeboBaseServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -138,6 +140,8 @@ public:
 	
 	// define request-handlers
 	BaseStateQueryHandler *baseStateQueryHandler;
+	
+	// definitions of SmartGazeboBaseServerROSExtension
 	
 	// definitions of PlainOpcUaSmartGazeboBaseServerExtension
 	
@@ -287,6 +291,8 @@ public:
 		} navVelServiceIn;
 	
 		//--- client port parameter ---
+		
+		// -- parameters for SmartGazeboBaseServerROSExtension
 		
 		// -- parameters for PlainOpcUaSmartGazeboBaseServerExtension
 		

@@ -58,14 +58,9 @@ Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBas
 	return new SmartACE::QueryServer<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>(componentImpl, serviceName);
 }
 
-Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * SmartGazeboBaseServerAcePortFactory::createNavVelServiceIn(const std::string &serviceName)
+Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * SmartGazeboBaseServerAcePortFactory::createBaseStateServiceOut(const std::string &serviceName)
 {
-	return new SmartACE::SendServer<CommBasicObjects::CommNavigationVelocity>(componentImpl, serviceName);
-}
-
-Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * SmartGazeboBaseServerAcePortFactory::createLocalizationUpdateServiceIn(const std::string &serviceName)
-{
-	return new SmartACE::SendServer<CommBasicObjects::CommBasePositionUpdate>(componentImpl, serviceName);
+	return new SmartACE::PushServer<CommBasicObjects::CommBaseState>(componentImpl, serviceName);
 }
 
 Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * SmartGazeboBaseServerAcePortFactory::createLaserServiceOut(const std::string &serviceName)
@@ -73,9 +68,14 @@ Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * SmartGazeboBa
 	return new SmartACE::PushServer<CommBasicObjects::CommMobileLaserScan>(componentImpl, serviceName);
 }
 
-Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * SmartGazeboBaseServerAcePortFactory::createBaseStateServiceOut(const std::string &serviceName)
+Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * SmartGazeboBaseServerAcePortFactory::createLocalizationUpdateServiceIn(const std::string &serviceName)
 {
-	return new SmartACE::PushServer<CommBasicObjects::CommBaseState>(componentImpl, serviceName);
+	return new SmartACE::SendServer<CommBasicObjects::CommBasePositionUpdate>(componentImpl, serviceName);
+}
+
+Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * SmartGazeboBaseServerAcePortFactory::createNavVelServiceIn(const std::string &serviceName)
+{
+	return new SmartACE::SendServer<CommBasicObjects::CommNavigationVelocity>(componentImpl, serviceName);
 }
 
 

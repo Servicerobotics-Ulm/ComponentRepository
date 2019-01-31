@@ -54,6 +54,8 @@ SmartJoystickServer::SmartJoystickServer()
 	connections.joystickTask.priority = -1;
 	connections.joystickTask.cpuAffinity = -1;
 	
+	// initialize members of SmartJoystickServerROSExtension
+	
 	// initialize members of PlainOpcUaSmartJoystickServerExtension
 	
 }
@@ -137,6 +139,8 @@ void SmartJoystickServer::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
+		
+		// initializations of SmartJoystickServerROSExtension
 		
 		// initializations of PlainOpcUaSmartJoystickServerExtension
 		
@@ -303,6 +307,8 @@ void SmartJoystickServer::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of SmartJoystickServerROSExtension
+	
 	// destruction of PlainOpcUaSmartJoystickServerExtension
 	
 }
@@ -394,6 +400,8 @@ void SmartJoystickServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("JoystickTask", "cpuAffinity")) {
 			parameter.getInteger("JoystickTask", "cpuAffinity", connections.joystickTask.cpuAffinity);
 		}
+		
+		// load parameters for SmartJoystickServerROSExtension
 		
 		// load parameters for PlainOpcUaSmartJoystickServerExtension
 		

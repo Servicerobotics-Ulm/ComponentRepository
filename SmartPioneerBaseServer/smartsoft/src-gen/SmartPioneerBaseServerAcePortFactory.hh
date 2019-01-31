@@ -35,11 +35,11 @@ public:
 	virtual int onStartup() override;
 
 	
-	virtual Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * createNavVelIn(const std::string &serviceName) override;
-	virtual Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * createLocalizationUpdate(const std::string &serviceName) override;
-	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState,SmartACE::QueryId> * createBaseStateQueryServer(const std::string &serviceName) override;
 	virtual Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * createBasePositionOut(const std::string &serviceName) override;
+	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState,SmartACE::QueryId> * createBaseStateQueryServer(const std::string &serviceName) override;
 	virtual Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState,SmartACE::EventId> * createBatteryEventServer(const std::string &serviceName, Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> *batteryEventServerEventTestHandler) override;
+	virtual Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * createLocalizationUpdate(const std::string &serviceName) override;
+	virtual Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * createNavVelIn(const std::string &serviceName) override;
 	
 	// get a pointer to the internal component implementation
 	SmartACE::SmartComponent* getComponentImpl();

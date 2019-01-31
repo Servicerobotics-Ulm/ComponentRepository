@@ -29,6 +29,8 @@
 class SmartAmclPortFactoryInterface;
 class SmartAmclExtension;
 
+// includes for SmartAmclROSExtension
+
 // includes for PlainOpcUaSmartAmclExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -120,6 +122,8 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
+	
+	// definitions of SmartAmclROSExtension
 	
 	// definitions of PlainOpcUaSmartAmclExtension
 	
@@ -242,6 +246,8 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} localizationUpdateServiceOut;
+		
+		// -- parameters for SmartAmclROSExtension
 		
 		// -- parameters for PlainOpcUaSmartAmclExtension
 		

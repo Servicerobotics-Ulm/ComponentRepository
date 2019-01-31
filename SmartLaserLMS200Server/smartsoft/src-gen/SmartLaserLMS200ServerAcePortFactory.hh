@@ -36,8 +36,8 @@ public:
 
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * createBaseStateIn() override;
 	
-	virtual Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * createLaserScanOut(const std::string &serviceName) override;
 	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan,SmartACE::QueryId> * createLaserQueryServiceAnsw(const std::string &serviceName) override;
+	virtual Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * createLaserScanOut(const std::string &serviceName) override;
 	
 	// get a pointer to the internal component implementation
 	SmartACE::SmartComponent* getComponentImpl();

@@ -50,11 +50,11 @@ public:
 	virtual int onStartup() = 0;
 
 	
-	virtual Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * createNavVelIn(const std::string &serviceName) = 0;
-	virtual Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * createLocalizationUpdate(const std::string &serviceName) = 0;
-	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState,SmartACE::QueryId> * createBaseStateQueryServer(const std::string &serviceName) = 0;
 	virtual Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * createBasePositionOut(const std::string &serviceName) = 0;
+	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState,SmartACE::QueryId> * createBaseStateQueryServer(const std::string &serviceName) = 0;
 	virtual Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState,SmartACE::EventId> * createBatteryEventServer(const std::string &serviceName, Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> *batteryEventServerEventTestHandler) = 0;
+	virtual Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * createLocalizationUpdate(const std::string &serviceName) = 0;
+	virtual Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * createNavVelIn(const std::string &serviceName) = 0;
 
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) = 0;
 	virtual void destroy() = 0;

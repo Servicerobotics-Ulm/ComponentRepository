@@ -3,7 +3,7 @@
 
 # ComponentPlayerStageSimulator Component
 
-![ComponentPlayerStageSimulator-ComponentImage](https://github.com/Servicerobotics-Ulm/ComponentRepository/blob/master/ComponentPlayerStageSimulator/model/ComponentPlayerStageSimulatorComponentDefinition.jpg)
+![ComponentPlayerStageSimulator-ComponentImage](model/ComponentPlayerStageSimulatorComponentDefinition.jpg)
 
 The SmartPlayerStageSimulator simulates a robot in a 2D bitmapped environment using Player/Stage. 
 It offers several services for controlling the robot, such as sending navigation commands, providing access to the robot's odometry and laser scans. 

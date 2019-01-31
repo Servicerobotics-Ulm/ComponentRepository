@@ -29,6 +29,8 @@
 class ComponentPlayerStageSimulatorPortFactoryInterface;
 class ComponentPlayerStageSimulatorExtension;
 
+// includes for ComponentPlayerStageSimulatorROSExtension
+
 // includes for PlainOpcUaComponentPlayerStageSimulatorExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -143,6 +145,8 @@ public:
 	
 	// define request-handlers
 	BaseStateQueryHandler *baseStateQueryHandler;
+	
+	// definitions of ComponentPlayerStageSimulatorROSExtension
 	
 	// definitions of PlainOpcUaComponentPlayerStageSimulatorExtension
 	
@@ -290,6 +294,8 @@ public:
 		} navigationVelocityServiceIn;
 	
 		//--- client port parameter ---
+		
+		// -- parameters for ComponentPlayerStageSimulatorROSExtension
 		
 		// -- parameters for PlainOpcUaComponentPlayerStageSimulatorExtension
 		

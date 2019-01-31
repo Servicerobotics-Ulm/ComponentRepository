@@ -52,14 +52,14 @@ int SmartPlannerBreadthFirstSearchAcePortFactory::onStartup()
 	return componentImpl->startComponentInfrastructure();
 }
 
-Smart::IPushClientPattern<CommNavigationObjects::CommGridMap> * SmartPlannerBreadthFirstSearchAcePortFactory::createCurMapClient()
-{
-	return new SmartACE::PushClient<CommNavigationObjects::CommGridMap>(componentImpl);
-}
-
 Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * SmartPlannerBreadthFirstSearchAcePortFactory::createBaseStateClient()
 {
 	return new SmartACE::PushClient<CommBasicObjects::CommBaseState>(componentImpl);
+}
+
+Smart::IPushClientPattern<CommNavigationObjects::CommGridMap> * SmartPlannerBreadthFirstSearchAcePortFactory::createCurMapClient()
+{
+	return new SmartACE::PushClient<CommNavigationObjects::CommGridMap>(componentImpl);
 }
 
 

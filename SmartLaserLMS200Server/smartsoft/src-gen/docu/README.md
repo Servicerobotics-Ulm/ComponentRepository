@@ -3,7 +3,7 @@
 
 # SmartLaserLMS200Server Component
 
-![SmartLaserLMS200Server-ComponentImage](https://github.com/Servicerobotics-Ulm/ComponentRepository/blob/master/SmartLaserLMS200Server/model/SmartLaserLMS200ServerComponentDefinition.jpg)
+![SmartLaserLMS200Server-ComponentImage](model/SmartLaserLMS200ServerComponentDefinition.jpg)
 
 The SmartLaserLMS200Server makes laser scans from SICK LMS 200 and PLS langer rangers available. Scans can be requested by push newest or query communication.
 

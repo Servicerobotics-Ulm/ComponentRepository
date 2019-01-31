@@ -52,14 +52,14 @@ int SmartJoystickNavigationAcePortFactory::onStartup()
 	return componentImpl->startComponentInfrastructure();
 }
 
-Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> * SmartJoystickNavigationAcePortFactory::createNavVelServiceOut()
-{
-	return new SmartACE::SendClient<CommBasicObjects::CommNavigationVelocity>(componentImpl);
-}
-
 Smart::IPushClientPattern<CommBasicObjects::CommJoystick> * SmartJoystickNavigationAcePortFactory::createJoystickServiceIn()
 {
 	return new SmartACE::PushClient<CommBasicObjects::CommJoystick>(componentImpl);
+}
+
+Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> * SmartJoystickNavigationAcePortFactory::createNavVelServiceOut()
+{
+	return new SmartACE::SendClient<CommBasicObjects::CommNavigationVelocity>(componentImpl);
 }
 
 

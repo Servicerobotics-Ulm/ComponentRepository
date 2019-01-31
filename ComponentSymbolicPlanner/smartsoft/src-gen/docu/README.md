@@ -3,7 +3,7 @@
 
 # ComponentSymbolicPlanner Component
 
-![ComponentSymbolicPlanner-ComponentImage](https://github.com/Servicerobotics-Ulm/ComponentRepository/blob/master/ComponentSymbolicPlanner/model/ComponentSymbolicPlannerComponentDefinition.jpg)
+![ComponentSymbolicPlanner-ComponentImage](model/ComponentSymbolicPlannerComponentDefinition.jpg)
 
 
 | Metaelement | Documentation |

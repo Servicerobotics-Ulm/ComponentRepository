@@ -39,8 +39,8 @@ public:
 	virtual void initialize(SmartJoystickNavigation *component, int argc, char* argv[]) = 0;
 	virtual int onStartup() = 0;
 
-	virtual Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> * createNavVelServiceOut() = 0;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommJoystick> * createJoystickServiceIn() = 0;
+	virtual Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> * createNavVelServiceOut() = 0;
 	
 
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) = 0;

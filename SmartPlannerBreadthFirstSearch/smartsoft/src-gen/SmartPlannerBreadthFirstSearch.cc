@@ -79,6 +79,8 @@ SmartPlannerBreadthFirstSearch::SmartPlannerBreadthFirstSearch()
 	connections.plannerTask.priority = -1;
 	connections.plannerTask.cpuAffinity = -1;
 	
+	// initialize members of SmartPlannerBreadthFirstSearchROSExtension
+	
 	// initialize members of PlainOpcUaSmartPlannerBreadthFirstSearchExtension
 	
 }
@@ -196,6 +198,8 @@ void SmartPlannerBreadthFirstSearch::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
+		
+		// initializations of SmartPlannerBreadthFirstSearchROSExtension
 		
 		// initializations of PlainOpcUaSmartPlannerBreadthFirstSearchExtension
 		
@@ -424,6 +428,8 @@ void SmartPlannerBreadthFirstSearch::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of SmartPlannerBreadthFirstSearchROSExtension
+	
 	// destruction of PlainOpcUaSmartPlannerBreadthFirstSearchExtension
 	
 }
@@ -545,6 +551,8 @@ void SmartPlannerBreadthFirstSearch::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("PlannerTask", "cpuAffinity")) {
 			parameter.getInteger("PlannerTask", "cpuAffinity", connections.plannerTask.cpuAffinity);
 		}
+		
+		// load parameters for SmartPlannerBreadthFirstSearchROSExtension
 		
 		// load parameters for PlainOpcUaSmartPlannerBreadthFirstSearchExtension
 		

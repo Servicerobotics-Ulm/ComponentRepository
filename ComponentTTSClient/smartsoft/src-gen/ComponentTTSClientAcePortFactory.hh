@@ -34,8 +34,8 @@ public:
 	virtual void initialize(ComponentTTSClient *component, int argc, char* argv[]) override;
 	virtual int onStartup() override;
 
-	virtual Smart::ISendClientPattern<DomainSpeech::CommSpeechOutputMessage> * createSpeechSendServiceOut() override;
 	virtual Smart::IQueryClientPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet,SmartACE::QueryId> * createSpeechQueryServiceReq() override;
+	virtual Smart::ISendClientPattern<DomainSpeech::CommSpeechOutputMessage> * createSpeechSendServiceOut() override;
 	
 	
 	// get a pointer to the internal component implementation

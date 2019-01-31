@@ -3,7 +3,7 @@
 
 # SmartPlannerBreadthFirstSearch Component
 
-![SmartPlannerBreadthFirstSearch-ComponentImage](https://github.com/Servicerobotics-Ulm/ComponentRepository/blob/master/SmartPlannerBreadthFirstSearch/model/SmartPlannerBreadthFirstSearchComponentDefinition.jpg)
+![SmartPlannerBreadthFirstSearch-ComponentImage](model/SmartPlannerBreadthFirstSearchComponentDefinition.jpg)
 
 The SmartPlannerBreadthFirstSearch provides path planning services based on grid maps. It uses a grid map from a map building component (e.g. SmartMapperGridMap) and sends an intermediate waypoint as well as the goalpoint to the motion execution (e.g. SmartCdlServer).
 

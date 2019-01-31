@@ -43,8 +43,8 @@ public:
 
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * createBaseStateIn() = 0;
 	
-	virtual Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * createLaserScanOut(const std::string &serviceName) = 0;
 	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan,SmartACE::QueryId> * createLaserQueryServiceAnsw(const std::string &serviceName) = 0;
+	virtual Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * createLaserScanOut(const std::string &serviceName) = 0;
 
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) = 0;
 	virtual void destroy() = 0;

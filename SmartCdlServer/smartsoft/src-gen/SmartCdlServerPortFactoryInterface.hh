@@ -61,18 +61,18 @@ public:
 	virtual void initialize(SmartCdlServer *component, int argc, char* argv[]) = 0;
 	virtual int onStartup() = 0;
 
-	virtual Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> * createNavVelSendClient() = 0;
-	virtual Smart::IPushClientPattern<CommTrackingObjects::CommTrackingGoal> * createTrackingClient() = 0;
-	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * createLaserClient2() = 0;
-	virtual Smart::IPushClientPattern<CommNavigationObjects::CommPlannerGoal> * createPlannerClient() = 0;
+	virtual Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * createBaseStateClient() = 0;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileIRScan> * createIRClient() = 0;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * createLaserClient() = 0;
-	virtual Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * createBaseStateClient() = 0;
+	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * createLaserClient2() = 0;
+	virtual Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> * createNavVelSendClient() = 0;
 	virtual Smart::IPushClientPattern<CommRobotinoObjects::CommPathNavigationGoal> * createPathNavigationGoalClient() = 0;
+	virtual Smart::IPushClientPattern<CommNavigationObjects::CommPlannerGoal> * createPlannerClient() = 0;
+	virtual Smart::IPushClientPattern<CommTrackingObjects::CommTrackingGoal> * createTrackingClient() = 0;
 	
 	virtual Smart::IEventServerPattern<CommNavigationObjects::CommCdlGoalEventParameter, CommNavigationObjects::CommCdlGoalEventResult, CommNavigationObjects::CdlGoalEventState,SmartACE::EventId> * createGoalEventServer(const std::string &serviceName, Smart::IEventTestHandler<CommNavigationObjects::CommCdlGoalEventParameter, CommNavigationObjects::CommCdlGoalEventResult, CommNavigationObjects::CdlGoalEventState> *goalEventServerEventTestHandler) = 0;
-	virtual Smart::IEventServerPattern<CommNavigationObjects::CommCdlRobotBlockedEventParameter, CommNavigationObjects::CommCdlRobotBlockedEventResult, CommNavigationObjects::CommCdlRobotBlockedState,SmartACE::EventId> * createRobotBlockedEventServer(const std::string &serviceName, Smart::IEventTestHandler<CommNavigationObjects::CommCdlRobotBlockedEventParameter, CommNavigationObjects::CommCdlRobotBlockedEventResult, CommNavigationObjects::CommCdlRobotBlockedState> *robotBlockedEventServerEventTestHandler) = 0;
 	virtual Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * createNavVelSendServer(const std::string &serviceName) = 0;
+	virtual Smart::IEventServerPattern<CommNavigationObjects::CommCdlRobotBlockedEventParameter, CommNavigationObjects::CommCdlRobotBlockedEventResult, CommNavigationObjects::CommCdlRobotBlockedState,SmartACE::EventId> * createRobotBlockedEventServer(const std::string &serviceName, Smart::IEventTestHandler<CommNavigationObjects::CommCdlRobotBlockedEventParameter, CommNavigationObjects::CommCdlRobotBlockedEventResult, CommNavigationObjects::CommCdlRobotBlockedState> *robotBlockedEventServerEventTestHandler) = 0;
 
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) = 0;
 	virtual void destroy() = 0;

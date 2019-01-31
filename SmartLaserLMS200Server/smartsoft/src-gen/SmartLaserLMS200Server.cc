@@ -68,6 +68,8 @@ SmartLaserLMS200Server::SmartLaserLMS200Server()
 	connections.laserTask.priority = -1;
 	connections.laserTask.cpuAffinity = -1;
 	
+	// initialize members of SmartLaserLMS200ServerROSExtension
+	
 	// initialize members of PlainOpcUaSmartLaserLMS200ServerExtension
 	
 }
@@ -171,6 +173,8 @@ void SmartLaserLMS200Server::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
+		
+		// initializations of SmartLaserLMS200ServerROSExtension
 		
 		// initializations of PlainOpcUaSmartLaserLMS200ServerExtension
 		
@@ -357,6 +361,8 @@ void SmartLaserLMS200Server::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of SmartLaserLMS200ServerROSExtension
+	
 	// destruction of PlainOpcUaSmartLaserLMS200ServerExtension
 	
 }
@@ -462,6 +468,8 @@ void SmartLaserLMS200Server::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("LaserTask", "cpuAffinity")) {
 			parameter.getInteger("LaserTask", "cpuAffinity", connections.laserTask.cpuAffinity);
 		}
+		
+		// load parameters for SmartLaserLMS200ServerROSExtension
 		
 		// load parameters for PlainOpcUaSmartLaserLMS200ServerExtension
 		

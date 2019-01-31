@@ -3,7 +3,7 @@
 
 # SmartJoystickNavigation Component
 
-![SmartJoystickNavigation-ComponentImage](https://github.com/Servicerobotics-Ulm/ComponentRepository/blob/master/SmartJoystickNavigation/model/SmartJoystickNavigationComponentDefinition.jpg)
+![SmartJoystickNavigation-ComponentImage](model/SmartJoystickNavigationComponentDefinition.jpg)
 
 The SmartJoystickNavigation component takes joystick input commands (CommJoystick) and translates them to v/omega navigation commands (CommNavigationVelocity). This component can be used in combination with SmartJoystickServer to receive input commands and send them to motion execution, e.g. SmartCdlServer, for collision free steering using a joystick.
 

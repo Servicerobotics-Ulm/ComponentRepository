@@ -36,9 +36,9 @@ public:
 
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * createLaserServiceIn() override;
 	
-	virtual Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap,SmartACE::QueryId> * createLtmQueryServer(const std::string &serviceName) override;
 	virtual Smart::IPushServerPattern<CommNavigationObjects::CommGridMap> * createCurrMapOut(const std::string &serviceName) override;
 	virtual Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap,SmartACE::QueryId> * createCurrQueryServer(const std::string &serviceName) override;
+	virtual Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap,SmartACE::QueryId> * createLtmQueryServer(const std::string &serviceName) override;
 	
 	// get a pointer to the internal component implementation
 	SmartACE::SmartComponent* getComponentImpl();

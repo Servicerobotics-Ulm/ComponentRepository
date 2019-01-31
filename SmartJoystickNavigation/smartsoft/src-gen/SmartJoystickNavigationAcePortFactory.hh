@@ -34,8 +34,8 @@ public:
 	virtual void initialize(SmartJoystickNavigation *component, int argc, char* argv[]) override;
 	virtual int onStartup() override;
 
-	virtual Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> * createNavVelServiceOut() override;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommJoystick> * createJoystickServiceIn() override;
+	virtual Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> * createNavVelServiceOut() override;
 	
 	
 	// get a pointer to the internal component implementation

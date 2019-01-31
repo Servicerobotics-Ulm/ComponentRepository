@@ -3,7 +3,7 @@
 
 # SmartCdlServer Component
 
-![SmartCdlServer-ComponentImage](https://github.com/Servicerobotics-Ulm/ComponentRepository/blob/master/SmartCdlServer/model/SmartCdlServerComponentDefinition.jpg)
+![SmartCdlServer-ComponentImage](model/SmartCdlServerComponentDefinition.jpg)
 
 The SmartCdlServer is based on the Curvature Distance Lookup (CDL) algorithm for fast local obstacle avoidance.
 

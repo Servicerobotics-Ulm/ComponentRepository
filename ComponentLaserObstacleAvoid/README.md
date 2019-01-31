@@ -3,7 +3,7 @@
 
 # ComponentLaserObstacleAvoid Component
 
-![ComponentLaserObstacleAvoid-ComponentImage](https://github.com/Servicerobotics-Ulm/ComponentRepository/blob/master/ComponentLaserObstacleAvoid/model/ComponentLaserObstacleAvoidComponentDefinition.jpg)
+![ComponentLaserObstacleAvoid-ComponentImage](model/ComponentLaserObstacleAvoidComponentDefinition.jpg)
 
 The SmartLaserObstacleAvoid component implements a simple reactive obstacle avoidance. 
 It periodically receives laser range scans, calculates steering commands and forwards these to the robot 
