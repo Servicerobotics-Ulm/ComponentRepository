@@ -1,0 +1,23 @@
+ComponentDefinition ComponentLaserLMS1xx {
+
+Activity LaserTask
+	{
+		InputPortLink BaseStateServiceIn { optional oversamplingOk undersamplingOk }
+		ActivationConstraints {
+			configurable = true
+			minActFreq = 33.0 Hz
+			maxActFreq = 40.0 Hz
+		}
+	}
+	InputPort BaseStateServiceIn implements CommBasicObjects.BaseStateService {
+	}
+	OutputPort LaserServiceOut implements CommBasicObjects.LaserService realizedBy LaserTask {
+	}
+	AnswerPort LaserQueryServiceAnsw implements CommBasicObjects.LaserQueryService {
+	}
+	RequestHandler LaserQueryServiceAnswHandler triggeredFrom LaserQueryServiceAnsw {
+		Observe LaserTask
+	}
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService { }
+	ComponentParameters ComponentLaserLMS1xxParams slave CoordinationPort
+}

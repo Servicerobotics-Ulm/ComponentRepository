@@ -1,0 +1,19 @@
+ComponentDefinition SmartObjectRecognition {
+
+	AnswerPort ObjectQueryServiceAnsw implements CommObjectRecognitionObjects.ObjectQueryService {}
+	RequestHandler ObjectQueryServiceAnswHandler triggeredFrom ObjectQueryServiceAnsw {}
+	AnswerPort EnvironmentQueryServiceAnsw implements CommObjectRecognitionObjects.EnvironmentQueryService {}
+	RequestHandler EnvironmentQueryServiceAnswHandler triggeredFrom EnvironmentQueryServiceAnsw {}
+	
+	OutputPort ObjectEventServiceOut implements CommObjectRecognitionObjects.ObjectEventService realizedBy RecognitionTask {}
+	
+	RequestPort RGBDImageQueryServiceReq implements CommVisionObjects.RGBDImageQueryService {}
+	RequestPort RGBImageQueryServiceReq implements CommVisionObjects.RGBImageQueryService {}
+	RequestPort PointCloudQueryServiceReq implements CommVisionObjects.PointCloudQueryService {}
+	
+	Activity RecognitionTask{}
+	Activity CaptureTask{}
+	
+	CoordinationSlavePort CoordinationPort implements CommObjectRecognitionObjects.ObjectRecognitionCoordinationService { }
+	ComponentParameters  SmartObjectRecognitionParams slave CoordinationPort
+}

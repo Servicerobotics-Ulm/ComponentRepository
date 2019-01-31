@@ -1,0 +1,43 @@
+ComponentParameter SmartObjectRecognitionParams component SmartObjectRecognition {
+	ParameterSetInstance CommObjectRecognitionObjects.ObjectRecognitionParameter {
+		ParameterInstance BELIEF_THRESHOLD {
+			threshold = 0.0
+		}
+		ParameterInstance CLOUD {
+			id = 0
+		}
+		ParameterInstance CLUSTERING {
+			doClustering = true
+		}
+		ParameterInstance ESTIMATEFILLING {
+			estimateObjectProperties = false
+		}
+		ParameterInstance SETOBJECTID {
+			id = 0
+		}
+		TriggerInstance ADDALGORITHM passive
+		TriggerInstance DELALGORITHMS passive
+		TriggerInstance ADDOBJECT passive
+		TriggerInstance DELOBJECTS passive
+		TriggerInstance ADDSENSOR passive
+		TriggerInstance DELSENSORS passive
+		TriggerInstance BEHAVIOR passive
+		TriggerInstance CAPTURE passive
+		TriggerInstance RECOGNIZE passive
+	}
+	InternalParameter Data {
+		object_db_path: String = "data/ObjectRecognition/xsdDb.xml"
+		moped_model_path: String = "data/ObjectRecognition/MopedModels"
+	}
+	InternalParameter General {
+		verbose: Boolean = true
+		use_kinect: Boolean = true
+		use_image: Boolean = false
+		use_manipulator: Boolean = false
+		table_thickness: Double = 75
+		workspace_max_xy: Double = 700
+		workspace_min_z: Double = 200
+		workspace_max_z: Double = 1300
+	}
+}
+

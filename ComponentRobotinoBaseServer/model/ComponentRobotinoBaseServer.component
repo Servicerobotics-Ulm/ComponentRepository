@@ -1,0 +1,52 @@
+ComponentDefinition ComponentRobotinoBaseServer {
+	InputPort NavigationVelocityServiceIn implements CommNavigationObjects.NavigationVelocityService {
+	}
+	InputPort LocalizationEventServiceIn implements CommLocalizationObjects.LocalizationEventService {
+	}
+
+	InputHandler NavigationVelocityServiceInHandler triggeredFrom NavigationVelocityServiceIn { }
+	InputHandler LocalizationEventServiceInHandler triggeredFrom LocalizationEventServiceIn { }
+	Activity OdomTask
+	{
+		DefaultTrigger PeriodicTimer 50.0 Hz
+	ActivationConstraints {
+			configurable = true
+			minActFreq = 20.0 Hz
+			maxActFreq = 1.0 Hz
+		}
+	}
+	Activity SignalStateTask
+	{
+	}
+
+	OutputPort BatteryEventServiceOut implements CommNavigationObjects.BatteryEventService realizedBy OdomTask {
+	}
+	AnswerPort BaseStateQueryServiceAnsw implements CommBasicObjects.BaseStateQueryService {
+	}
+	RequestHandler BaseStateQueryServiceAnswHandler triggeredFrom BaseStateQueryServiceAnsw {
+	}
+	AnswerPort CommRobotinoIOValuesQueryServiceAnsw implements CommRobotinoObjects.CommRobotinoIOValuesQueryService {
+	}
+	RequestHandler CommRobotinoIOValuesQueryServiceAnswHandler triggeredFrom CommRobotinoIOValuesQueryServiceAnsw {
+	}
+
+	OutputPort BumperEventServiceOut implements CommBasicObjects.BumperEventService realizedBy OdomTask {
+	}
+	OutputPort CommRobotinoDigitalEventOut implements CommRobotinoObjects.CommRobotinoDigitalEvent realizedBy SignalStateTask {
+	}
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.BaseCoordinationService {
+		PrivateOperationMode eStop 
+		PublicOperationMode CommBasicObjects.RobotBaseModes.emergencyStop {
+			activates (eStop)} }
+			
+	ComponentParameters ComponentRobotinoBaseServerParams slave CoordinationPort 
+OutputPort BaseStateServiceOut implements CommBasicObjects.BaseStateService realizedBy OdomTask {
+	}
+	
+InputPort LocalizationUpdateServiceIn implements CommNavigationObjects.LocalizationUpdateService {
+	}
+	InputHandler LocalizationUpdateServiceInHandler triggeredFrom LocalizationUpdateServiceIn { }
+Activity robotinoAPITask
+	{
+	}
+}

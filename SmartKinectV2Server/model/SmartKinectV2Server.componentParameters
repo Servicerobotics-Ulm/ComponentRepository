@@ -1,0 +1,46 @@
+ComponentParameter SmartKinectV2ServerParams component SmartKinectV2Server {
+	InternalParameter settings{
+		debug_info: Boolean = true
+		valid_image_time: Double = 1.0
+		high_resolution: Boolean = true
+		undistort_image: Boolean = true
+	}
+	InternalParameter sensor_pose{
+		x: Double = 21
+		y: Double = -7
+		z: Double = 85
+		azimuth: Double = -1.5707963
+		elevation: Double = 0
+		roll: Double = -1.5707963
+	}
+	InternalParameter base{
+		/// Subscribe to ptu server for pose updates (true)?
+		on_ptu: Boolean = true
+		
+		/// Subscribe to base server for pose updates (true)? 
+		on_base: Boolean = true
+		
+		/// Use fixed values x, y, z [mm] for pose of the camera if not subscribed to base server. See server ports.
+		x: Int32 = 0
+		
+		/// Use fixed values x, y, z [mm] for pose of the camera if not subscribed to base server. See server ports.
+		y: Int32 = 0
+		
+		/// Use fixed values x, y, z [mm] for pose of the camera if not subscribed to base server. See server ports.
+		z: Int32 = 0
+		
+		/// Use fixed value base_a [rad] for pose of the camera if not subscribed to base server. See server ports.
+		base_a: Double = 0
+		
+		/// Use fixed value for steer_a [rad] for pose of the camera if not subscribed to base server. See server ports.
+		steer_a: Double = 0
+	}
+	InternalParameter hardware_properties{
+		/// Defines the min distance of the measurements in the depth image[mm]. Values with distances less than this value will be discarded.
+		min_distance: Double = 500
+		
+		/// Defines the max distance of the measurements in the depth image[mm]. Values with distances greater than this value will be discarded.
+		max_distance: Double = 4500
+		
+	}
+}

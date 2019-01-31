@@ -1,0 +1,52 @@
+ComponentParameter ComponentRobotinoBaseServerParams component ComponentRobotinoBaseServer 
+{
+	InternalParameter Robot {
+		//@doc"Set maximum translation velocity of robotino's omnidrive in x direction [mm/s]."
+		maxVelX :  Double = 1.0
+		
+		//@doc"Not yet implemented. (Set maximum translation velocity of robotino's omnidrive in y direction [mm/s]."
+		maxVelY : Double = 1.0
+		
+		//@doc"Set maximum rotation velocity of robot [rad/s]."
+		maxRotVel : Double = 4.0
+		
+		//@doc"IP-adress of the robotino daemon. Depends on where the component is executed. Execution on robotino requires the host name IP."
+		daemonIP: String = "192.168.0.1"
+		
+		//@doc"Type of robotino platform. Currently supported: robotinoXT,robotinoSIM,robotino3"
+		robotType: String = "robotino3"
+	}
+	
+	InternalParameter General {
+		verbose: Boolean = false
+		hasSignalState : Boolean = true
+		useLocalizationEvent : Boolean = true
+		
+		poseFileName : String = "/tmp/lastRobotPose.txt"
+		writePoseFile:Boolean = false
+	}
+	
+	
+	ParameterSetInstance  CommBasicObjects.BaseParams   {
+		//@doc"Reset the connection to the base at runtime. The TCP connection is closed and reopened. All estimated positions are set to zero."
+		TriggerInstance BASE_RESET passive
+		TriggerInstance BASE_SONAR passive
+		TriggerInstance SIGNAL_STATE_BUSY passive
+		TriggerInstance SIGNAL_STATE_ERROR passive
+		TriggerInstance SIGNAL_STATE_IDLE passive
+		TriggerInstance SIGNAL_STATE_LOCALIZATION_ERROR passive
+		TriggerInstance SIGNAL_STATE_SAFETY_FIELD passive
+	}
+	
+	ExtendedTrigger SET_RELAY passive {
+		number  :  UInt32
+		value : Boolean 
+	}
+
+}
+
+
+
+
+
+

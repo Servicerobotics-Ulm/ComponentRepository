@@ -1,0 +1,23 @@
+ComponentParameter ComponentSkillInterfaceParams component ComponentSkillInterface {
+	InternalParameter Settings {
+		communicationType : InlineEnumeration {
+			socket
+			ZeroMQ
+		} = ZeroMQ
+		
+		ip:String = "0.0.0.0"
+		port: UInt32 = 5557
+
+		use_socket_timeout :Boolean = false
+		/*
+		 *  timeout in sec, do not use small values (<2 sec), risk of loosing data, due to client side closed connection!
+		 */
+		socket_timeout_s :UInt32 = 5
+
+		verbose:Boolean = false
+		
+	}
+		
+		
+
+}

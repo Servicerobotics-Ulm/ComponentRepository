@@ -1,0 +1,35 @@
+ComponentParameter SmartURServerParams component SmartURServer {
+	InternalParameter laser{
+		laser_is_mounted: Boolean = false
+		x: Int32 = 0
+		y: Int32 = 0
+		z: Int32 = 0
+		azimuth: Double = 0
+		elevation: Double = 0
+		roll: Double = 0
+	}
+	InternalParameter base{
+		on_base: Boolean = true
+		x: Int32 = 0
+		y: Int32 = 0
+		z: Int32 = 0
+		base_a: Double = 0
+		steer_a: Double = 0
+		turret_a: Double = 0
+	}
+	InternalParameter manipulator{
+		verbose: Boolean = false
+		goal_angle_approach: Double = 0.1
+		goal_position_approach: Double = 3
+		x: Int32 = 0
+		y: Int32 = 0
+		z: Int32 = 0
+		azimuth: Double = 0
+		elevation: Double = 0
+		roll: Double = 0
+		debugSendProgrammDirect: Boolean = false
+	}
+	InternalParameter network{
+		ip_adress: String = "192.168.0.1"
+	}
+}

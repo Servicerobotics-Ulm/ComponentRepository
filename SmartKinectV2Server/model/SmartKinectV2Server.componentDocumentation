@@ -1,0 +1,51 @@
+ComponentDocumentation SmartKinectV2Server{
+	Description : 	"NOTE: THIS COMPONENT PROJECT ONLY CONTAINS A COMPONENT HULL. IMPLEMENTATION OF THIS COMPONENT IS WORK IN PROGRESS. YOU CAN USE THIS COMPONENT HULL TO FILL IN YOUR OWN IMPLEMENTATION.
+
+					The SmartKinectV2Server captures RGB, depth and range images from the Microsoft Kinect. Undistorted images can be requested by push or query communication.
+
+					GPL-License: includes code from The Mobile Robot Programming Toolkit (MRPT). "
+	License : "GPL"
+	HardwareRequirements : "Microsoft Kinect"
+	Purpose : "Hardware-Driver"
+	
+	
+	NeutralMode : " 	In this state the Kinect camera is disabled. The component will not deliver any valid image. When changed to neutral, the component stops the push service and returns invalid stamped images if queried."
+	ComponentMode QueryImage: "Kinect camera is enabled, an image is captured any time a query is received. The push services are stopped in this state."
+	ComponentMode PushImage : "Kinect camera is enabled, images are captured continuously. The push services are active in this state. Image queries will be answered with the most recent captured image."
+	
+	ComponentPort BaseStateServiceIn {
+		Description : "Typically connected to the robot base (e.g. SmartPioneerBaseServer) to receive the base state which is included in the image. Whether this port is connected or not can be configured via the ini file. Used to stamp every image with the base state where the image was recorded, if camera is mounted on a mobile platform. If this port is not connected, the pose where recorded will contain the values configured in the ini file."
+		NeutralMode : "	Port is neutral, does not consume new input while in this state."
+		ComponentMode QueryImage: "	Base pose is used to stamp the image with a pose."
+		ComponentMode PushImage : "Base pose is used to stamp the image with a pose."
+	}
+	 ComponentPort PtuPoseClient {
+		Description : "Typically connected to the pan-tilt-unit (e.g. SmartPTUServer) to receive the ptu state which is included in the image. Whether this port is connected or not can be configured via the ini file. Used to stamp every image with the ptu state where the image was recorded, if camera is mounted on a ptu. If this port is not connected, the pose where recorded will contain the values configured in the ini file. "
+		NeutralMode : "Port is neutral, does not consume new input while in this state."
+		ComponentMode QueryImage : "PTU pose is used to stamp the image with a pose."
+		ComponentMode PushImage : "PTU pose is used to stamp the image with a pose."
+	}
+	CoordinationSlavePort CoordinationPort {
+		DynamicWiringPort : "Slave part of wiring pattern. It is responsible for changing the port connections within the component."
+		SlavePortDescription : "See States for descriptions of possible states and their meaning."
+	}
+	ComponentPort RGBDImageQueryV2Server {
+		Description : "Query to request the kinect image. Image will be stamped invalid if it was not possible to get the base state or the ptu state but the baseClient or the ptuClient port are connected."
+		NeutralMode : "Port is neutral, image queries are answered but marked invalid."
+		ComponentMode QueryImage : "Port is active, image queries will be answered with an newly captured image any time a query is received."
+		ComponentMode PushImage : "Port is active, image queries will be answered with the most recent captured image."
+	}
+	ComponentPort ColorImagePushServiceOut {
+		Description : "Push latest kinect image. The rate with which the server pushes depends on the parameterization of the kinect camera, especially the resolution. Image will be stamped invalid if it was not possible to get the base state or the ptu state but the baseClient or the ptuClient port are connected."
+		NeutralMode : "Port is neutral, push service is stopped."
+		ComponentMode QueryImage : "Port is neutral, push service is stopped."
+		ComponentMode PushImage : "Port is active, newest image is pushed."
+	}
+	ComponentPort ColorImageQueryServer{
+		Description : "Query to request the color image from the kinect camera only. Image will be stamped invalid if it was not possible to get the base state or the ptu state but the baseClient or the ptuClient port are connected."
+		NeutralMode : "Port is neutral, image queries are answered but marked invalid."
+		ComponentMode QueryImage : "Port is active, image queries will be answered with an newly captured image any time a query is received."
+		ComponentMode PushImage : "Port is active, image queries will be answered with the most recent captured image."
+	}
+
+}

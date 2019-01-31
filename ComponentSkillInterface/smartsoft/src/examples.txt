@@ -1,0 +1,15 @@
+
+PUSH:
+{ "msg-type" : "push-skill" , "id" : 1, "skill" : { "name" : "moverobot", "skillDefinitionFQN" : "CommNavigationObjects.CdlSkills.moverobot", "in-attribute" : { "location" : 1 }, "out-attribute" : { }}}
+RES:
+{"id":1,"msg-type":"skill-result","result":{"result":"SUCCESS","result-value":"OK"}}
+
+PUSH:
+{ "msg-type" : "abort-current-running-skill" }
+RES:
+{ "msg-type" : "abort-current-running-skill-result", "result" : "SUCCESS"}
+
+PUSH:
+{ "msg-type" : "abort-skill" , "id" : 2 }
+RES:
+{ "msg-type" : "abort-skill-result", "id" : 2, "result" : "SUCCESS"}

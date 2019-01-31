@@ -1,0 +1,59 @@
+ComponentDefinition SmartURServer logo "/SmartURServer/model/logo.png"
+{
+	InputPort trajectorySendServer implements CommManipulatorObjects.SendTrajectoryService {
+	}
+	Activity PoseUpdateActivity
+	{
+		InputPortLink baseStateServiceIn { oversamplingOk undersamplingOk }
+		RequestPortLink laserQueryServiceReq
+		DefaultTrigger PeriodicTimer 10.0 Hz
+	}
+	OutputPort posePushServer implements CommManipulatorObjects.MobileManipulatorStateService realizedBy PoseUpdateActivity {
+	}
+	AnswerPort poseQueryServer implements CommManipulatorObjects.MobileManipulatorStateQueryService {
+	}
+	RequestHandler PoseQueryServerHandler triggeredFrom poseQueryServer {
+	}
+	OutputPort manipulatorEventServiceOut implements CommManipulatorObjects.ManipulatorEventService realizedBy PoseUpdateActivity {
+	}
+
+	InputPort requestScan3dSendServer implements CommManipulatorObjects.SendManipulatorRequestScan3dService {
+	}
+	Activity Scan3dActivity
+	{
+		InputPortLink requestScan3dSendServer { oversamplingOk undersamplingOk }
+	DefaultTrigger InputPortTrigger requestScan3dSendServer
+	}
+	OutputPort scan3dEventServer implements CommManipulatorObjects.Scan3dEventService realizedBy Scan3dActivity {
+	}
+	InputHandler TrajectorySendServerHandler triggeredFrom trajectorySendServer { }
+	AnswerPort scan3dQueryServer implements CommVisionObjects.PointCloudQueryService {
+	}
+	RequestHandler Scan3dQueryServerHandler triggeredFrom scan3dQueryServer {
+	}
+	InputPort baseStateServiceIn implements CommBasicObjects.BaseStateService {
+	}
+	RequestPort laserQueryServiceReq implements CommBasicObjects.LaserQueryService {
+	}
+	AnswerPort ioQueryServer implements CommRobotinoObjects.CommRobotinoIOValuesQueryService {
+	}
+	RequestHandler IoQueryServerHandler triggeredFrom ioQueryServer {
+	}
+	OutputPort digitalInputEventServer implements CommRobotinoObjects.CommRobotinoDigitalEvent realizedBy PoseUpdateActivity {
+	}
+	CoordinationSlavePort CoordinationPort implements CommManipulatorObjects.ManipulatorCoordinationService {
+		PrivateOperationMode demonstration;
+		PrivateOperationMode trajectory;
+		PrivateOperationMode scan;
+		PublicOperationMode CommManipulatorObjects.ManipulatorStates.Demonstration {
+			activates ( demonstration )
+		}
+		PublicOperationMode CommManipulatorObjects.ManipulatorStates.Trajectory {
+			activates ( trajectory )
+		}
+		PublicOperationMode CommManipulatorObjects.ManipulatorStates.Scan {
+			activates ( scan )
+		}
+	}
+	ComponentParameters SmartURServerParams slave CoordinationPort
+}

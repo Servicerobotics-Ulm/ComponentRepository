@@ -1,0 +1,36 @@
+ComponentDefinition ComponentOpenRave logo "/ComponentOpenRave/model/logo.png"
+{
+
+	OutputPort SendTrajectoryOut implements CommManipulatorObjects.SendTrajectoryService realizedBy TrajectorySampling {}
+	OutputPort PlanningEventServiceOut implements CommManipulationPlannerObjects.ManipulationPlannerEventService realizedBy EventActivity {}
+	
+	
+	InputPort ManipulatorEventServiceIn implements CommManipulatorObjects.ManipulatorEventService {}
+	InputPort MobileManipulatorStateServiceIn implements CommManipulatorObjects.MobileManipulatorStateService {}
+	RequestPort MobileManipulatorStateQueryServiceReq implements CommManipulatorObjects.MobileManipulatorStateQueryService {}
+	
+	RequestPort EnvironmentQueryServiceReq implements CommObjectRecognitionObjects.EnvironmentQueryService {}
+	RequestPort ObjectQueryServiceReq implements CommObjectRecognitionObjects.ObjectQueryService {}
+	
+	RequestPort GripperStateQueryServiceReq implements CommManipulatorObjects.GripperStateQueryService {}
+	InputPort GripperStateServiceIn implements CommManipulatorObjects.GripperStateService {}
+	InputPort GripperEventServiceIn implements CommManipulatorObjects.GripperEventService {}
+	
+	AnswerPort ObjectQueryServiceAnsw implements CommObjectRecognitionObjects.ObjectQueryService {}
+	
+	Activity TrajectorySampling {}
+	Activity EventActivity {}
+	
+	Activity DemonstrationTask
+	{
+		InputPortLink MobileManipulatorStateServiceIn { oversamplingOk undersamplingOk }
+		InputPortLink GripperStateServiceIn { oversamplingOk undersamplingOk }
+	}
+	
+	InputHandler ManipulatorEventServiceInHandler triggeredFrom ManipulatorEventServiceIn {}
+	RequestHandler ObjectQueryServiceAnswHandler triggeredFrom ObjectQueryServiceAnsw {}
+	
+	CoordinationSlavePort CoordinationPort implements CommManipulationPlannerObjects.OpenRaveCoordinationService { PrivateOperationMode trajectory PublicOperationMode CommManipulationPlannerObjects.OpenRaveStates.Trajectory { activates ( trajectory ) } PrivateOperationMode demonstration PublicOperationMode CommManipulationPlannerObjects.OpenRaveStates.Demonstration { activates ( demonstration ) } PrivateOperationMode simulation PublicOperationMode CommManipulationPlannerObjects.OpenRaveStates.Simulation { activates ( simulation ) } }
+	ComponentParameters ComponentOpenRaveParams slave CoordinationPort
+InputHandler GripperEventServiceInHandler triggeredFrom GripperEventServiceIn { }
+}
