@@ -28,10 +28,9 @@ ComponentParameter ComponentOpenRaveParams component ComponentOpenRave {
 	
 	ParameterSetInstance CommManipulationPlannerObjects.ManipulationPlannerParameter {
 		
-		///TODO change those to active dependent on the realization
-		TriggerInstance PLAN_PATH_TARGET_TCP_POSE passive
-		TriggerInstance PLAN_PATH_TARGET_JOINT_ANGLES passive
-		TriggerInstance PLAN_FURNITURE_MANIPUATION_TASK passive
+		TriggerInstance PLAN_PATH_TARGET_TCP_POSE active
+		TriggerInstance PLAN_PATH_TARGET_JOINT_ANGLES active
+		TriggerInstance PLAN_FURNITURE_MANIPUATION_TASK active
 		
 		TriggerInstance CONSTRAINED_PATH passive
 		TriggerInstance ENV_CLEAR passive

@@ -4,9 +4,9 @@
 # imports: http://spdx.org/licenses/LGPL-2.0-or-later
 
 # imports: http://www.servicerobotik-ulm.de/DomainModels/CommNavigationObjects
-# imports: http://www.servicerobotik-ulm.de/DomainModels/CommBasicObjects
-# imports: http://www.servicerobotik-ulm.de/DomainModels/CommTrackingObjects
 # imports: http://www.servicerobotik-ulm.de/DomainModels/CommRobotinoObjects
+# imports: http://www.servicerobotik-ulm.de/DomainModels/CommTrackingObjects
+# imports: http://www.servicerobotik-ulm.de/DomainModels/CommBasicObjects
 
 #######################################
 # Technical Data Sheet
@@ -35,10 +35,10 @@
 # these namespaces can be different in generated files
 @prefix t3: <http://servicerobotik-ulm.de/ComponentsAndSystems#> .
 
-@prefix CommTrackingObjects: <http://www.servicerobotik-ulm.de/DomainModels/CommTrackingObjects#> .
 @prefix CommRobotinoObjects: <http://www.servicerobotik-ulm.de/DomainModels/CommRobotinoObjects#> .
 @prefix CommBasicObjects: <http://www.servicerobotik-ulm.de/DomainModels/CommBasicObjects#> .
 @prefix CommNavigationObjects: <http://www.servicerobotik-ulm.de/DomainModels/CommNavigationObjects#> .
+@prefix CommTrackingObjects: <http://www.servicerobotik-ulm.de/DomainModels/CommTrackingObjects#> .
 
 ##### Software Component SmartCdlServer
 # see https://robmosys.eu/wiki/modeling:metamodels:component
@@ -46,10 +46,10 @@ t3:SmartCdlServer a robmosys:ComponentDefinition;
 	a owl:Ontology ;
 	owl:imports <http://robmosys.eu/rdf/composition-structures> ;
 	owl:imports <http://spdx.org/licenses/LGPL-2.0-or-later>;
-	owl:imports <http://www.servicerobotik-ulm.de/DomainModels/CommTrackingObjects> ;
 	owl:imports <http://www.servicerobotik-ulm.de/DomainModels/CommBasicObjects> ;
-	owl:imports <http://www.servicerobotik-ulm.de/DomainModels/CommRobotinoObjects> ;
 	owl:imports <http://www.servicerobotik-ulm.de/DomainModels/CommNavigationObjects> ;
+	owl:imports <http://www.servicerobotik-ulm.de/DomainModels/CommRobotinoObjects> ;
+	owl:imports <http://www.servicerobotik-ulm.de/DomainModels/CommTrackingObjects> ;
 	
 	# Human readable name of this component
 	# Equals with the project name
