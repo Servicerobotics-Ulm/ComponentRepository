@@ -45,7 +45,11 @@ namespace gazebo
 
 	  this->node = transport::NodePtr(new transport::Node());
 	  node->Init();
-	  this->pub = node->Advertise<gazebo::msgs::Pose>("~/robot/basePose");
+	  std::string topicPath = "~/";
+	  std::string topicName = "/basePose";
+	  topicPath = topicPath + _model->GetName();
+	  topicPath = topicPath + topicName;
+	  this->pub = node->Advertise<gazebo::msgs::Pose>(topicPath);
 
       update_connection_ = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&PubBasePosePlugin::Update, this));
     }
