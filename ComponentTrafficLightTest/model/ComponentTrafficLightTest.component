@@ -1,0 +1,9 @@
+ComponentDefinition ComponentTrafficLightTest {
+
+Activity GenerateOut
+	{
+		DefaultTrigger PeriodicTimer 1.0 Hz
+	}
+	OutputPort TrafficLightServiceOut implements DomainHMI.TrafficLightService realizedBy GenerateOut {
+	}
+}
