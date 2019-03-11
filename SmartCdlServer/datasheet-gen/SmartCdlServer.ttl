@@ -4,9 +4,9 @@
 # imports: http://spdx.org/licenses/LGPL-2.0-or-later
 
 # imports: http://www.servicerobotik-ulm.de/DomainModels/CommNavigationObjects
-# imports: http://www.servicerobotik-ulm.de/DomainModels/CommRobotinoObjects
-# imports: http://www.servicerobotik-ulm.de/DomainModels/CommTrackingObjects
 # imports: http://www.servicerobotik-ulm.de/DomainModels/CommBasicObjects
+# imports: http://www.servicerobotik-ulm.de/DomainModels/CommTrackingObjects
+# imports: http://www.servicerobotik-ulm.de/DomainModels/CommRobotinoObjects
 
 #######################################
 # Technical Data Sheet
@@ -36,8 +36,8 @@
 @prefix t3: <http://servicerobotik-ulm.de/ComponentsAndSystems#> .
 
 @prefix CommRobotinoObjects: <http://www.servicerobotik-ulm.de/DomainModels/CommRobotinoObjects#> .
-@prefix CommBasicObjects: <http://www.servicerobotik-ulm.de/DomainModels/CommBasicObjects#> .
 @prefix CommNavigationObjects: <http://www.servicerobotik-ulm.de/DomainModels/CommNavigationObjects#> .
+@prefix CommBasicObjects: <http://www.servicerobotik-ulm.de/DomainModels/CommBasicObjects#> .
 @prefix CommTrackingObjects: <http://www.servicerobotik-ulm.de/DomainModels/CommTrackingObjects#> .
 
 ##### Software Component SmartCdlServer
@@ -95,7 +95,7 @@ t3:SmartCdlServer a robmosys:ComponentDefinition;
 	# http://www.innovationseeds.eu/Virtual_Library/Knowledge/TLR_Scale.kl
 	# Level 1 to level 9.
 	# plus trl:undefined for undefined TRL
-	t1:trl t1:TRL_Level1;
+	t1:trl t1:TRL_Level5;
 	
 	# The webpage with additional information about this component
 	t1:homepage "http://servicerobotik-ulm.de/components"^^xsd:anyURI;

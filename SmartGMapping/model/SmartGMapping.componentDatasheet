@@ -1,0 +1,18 @@
+ComponentDatasheet SmartGMapping {
+	baseURI : "http://servicerobotik-ulm.de"
+	shortDescrition : "The SmartGMapping implements GMapping for simultaneous localization and mapping (SLAM)."
+	longDescription : $%SmartGMapping implements GMapping for simultaneous localization and mapping (SLAM). 
+	GMapping uses the Rao-Blackwellized particle filer for learning grid maps. 
+	It adaptively reduces the number of particles which each carries an individual map of the environment. 
+	The robot's pose is estimated by taking the robot's movement and the most recent observation into account.
+
+	Triggered by a parameter communication object, the grid map can be saved to file. 
+	Based on its localization, SmartGMapping sends position updates to the base server (e.g. SmartPioneerBaseServer).
+
+	See also: http://openslam.org/gmapping.html%$
+	license : spdx("LGPL-2.0-or-later")
+	trl : Level5
+	homepage : "http://servicerobotik-ulm.de/components"
+	supplierDescription : "Servicerobotics Ulm"
+	purposeDescription : "Mapping"
+}

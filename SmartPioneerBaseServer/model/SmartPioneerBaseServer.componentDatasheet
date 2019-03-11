@@ -1,0 +1,16 @@
+ComponentDatasheet SmartPioneerBaseServer {
+	baseURI : "http://servicerobotik-ulm.de"
+	shortDescrition : "The SmartPioneerBaseServer makes P2OS-based robot platforms available."
+	longDescription : $%The SmartPioneerBaseServer makes P2OS-based robot platforms available. 
+	It handles all the communication with the hardware. 
+	It offers several services for controlling the robot, 
+	such as sending navigation commands to the base and providing access to the robot's odometry. 
+	Position updates can be sent to the component to overcome odometry failures.
+
+	GPL-License: includes Code from the Player Project.%$
+	license : spdx("LGPL-2.0-or-later")
+	trl : Level5
+	homepage : "http://servicerobotik-ulm.de/components"
+	supplierDescription : "Servicerobotics Ulm"
+	purposeDescription : "Mobile-Base"
+}

@@ -5,15 +5,21 @@
 
 ![ComponentSymbolicPlanner-ComponentImage](model/ComponentSymbolicPlannerComponentDefinition.jpg)
 
+Provides a symbolic planner service. Works with ff, metric-ff (suggested) and lama.
 
 | Metaelement | Documentation |
 |-------------|---------------|
-| License |  |
-| Hardware Requirements |  |
-| Purpose |  |
+| License | LGPL |
+| Hardware Requirements | none |
+| Purpose | Planning |
 
 
 
 ## Service Ports
+
+### SymbolicPlannerQueryServer
+
+Accepts a planning request, hands it over to symbolic planer and returns the result. 
+		Takes a domain and problem descriptions (pddl, see metric-ff sources for examples) as input and returns the solution by the symbolic planner.
 
 

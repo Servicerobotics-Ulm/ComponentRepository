@@ -1,3 +1,13 @@
-ComponentDocumentation ComponentSymbolicPlanner {
-
+ComponentDocumentation ComponentSymbolicPlanner 
+{
+	Description : "Provides a symbolic planner service. Works with ff, metric-ff (suggested) and lama."
+	HardwareRequirements : "none"
+	License : "LGPL"
+	Purpose : "Planning"
+	
+	ComponentPort SymbolicPlannerQueryServer 
+	{
+		Description : "Accepts a planning request, hands it over to symbolic planer and returns the result. 
+		Takes a domain and problem descriptions (pddl, see metric-ff sources for examples) as input and returns the solution by the symbolic planner."
+	}
 }
