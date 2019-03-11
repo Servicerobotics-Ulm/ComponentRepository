@@ -1,0 +1,6 @@
+ComponentDefinition ComponentTrafficLight {
+
+InputPort TrafficLightServiceIn implements DomainHMI.TrafficLightService {
+	}
+	InputHandler TrafficLightServiceInHandler triggeredFrom TrafficLightServiceIn { }
+}
