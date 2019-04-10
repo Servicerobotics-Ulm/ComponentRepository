@@ -1,0 +1,10 @@
+ComponentDefinition ComponentTCLSequencer logo "/ComponentTCLSequencer/model/logo.png"
+{
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService {
+		
+	}
+	ComponentParameters ComponentTCLSequencerParams slave CoordinationPort
+	
+	CoordinationMasterPort CoordinationMaster implements CommBasicObjects.DefaultCoordinationService;
+	
+}

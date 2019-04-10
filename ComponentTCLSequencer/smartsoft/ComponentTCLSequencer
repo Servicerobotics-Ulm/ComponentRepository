@@ -1,0 +1,29 @@
+#!/bin/bash
+
+TCL_PATH=""
+LISPINTERFACE_PATH=""
+
+if [ ! "$SMART_ROOT_DEPLOYMENT" = "" ]; then
+	echo "Using SMART DEPLOYMENT ENV..."
+	echo "SMART_ROOT_DEPLOYMENT: $SMART_ROOT_DEPLOYMENT"
+	echo "Copy libComponentTCLSequencer.so .."
+	cp $SMART_ROOT_DEPLOYMENT/libComponentTCLSequencer.so .
+	TCL_PATH="./"
+	LISPINTERFACE_PATH="./lispInterface/"
+	MODULE_PATH="$SMART_ROOT_DEPLOYMENT/behaviorFiles"
+	INIFILE="$(echo $1 | sed 's/-filename=//')"
+	echo "INI FileFile: $INIFILE"
+	if [ -f "$INIFILE" ]; then
+		echo "USING command line ini file"
+	else
+		echo "No ini file given --> EXIT"
+		exit -1
+	fi
+	sbcl --userinit $TCL_PATH/load-smartTCL-scenarios.lisp "--filename=$INIFILE" "--tcl-prefix" $TCL_PATH "--lispinterface-prefix" $LISPINTERFACE_PATH "--module-path" $MODULE_PATH
+else
+	echo "Using System SMART_ROOT files.."
+	TCL_PATH="$SMART_ROOT_ACE/repos/ComponentRepository/ComponentTCLSequencer/"
+	MODULE_PATH="$SMART_ROOT_ACE/lib"
+	sbcl --userinit $TCL_PATH/load-smartTCL-scenarios.lisp "--tcl-prefix" $TCL_PATH "--module-path" $MODULE_PATH
+fi
+

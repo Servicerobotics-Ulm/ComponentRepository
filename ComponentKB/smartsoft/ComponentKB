@@ -1,0 +1,29 @@
+#!/bin/bash
+
+INIFILE="$(echo $1 | sed 's/-filename=//')"
+LISPFILES_PATH=""
+
+echo "File: $INIFILE"
+if [ -f "$INIFILE" ]; then
+ echo "USING command line ini file"
+else
+  echo "No ini file given using default"
+  INIFILE="etc/ComponentKB.ini"
+fi
+
+
+
+if [ ! "$SMART_ROOT_DEPLOYMENT" = "" ]; then
+	echo "Using SMART DEPLOYMENT ENV..."
+	LISPFILES_PATH="."
+else
+	echo "Using System SMART_ROOT files.."
+	LISPFILES_PATH="$SMART_ROOT_ACE/repos/ComponentRepository/ComponentKB"
+fi
+
+if [ -f "$INIFILE" ]; then
+	sbcl --userinit $LISPFILES_PATH/start-simpleKB.lisp "--filename=$INIFILE" "--prefix" $LISPFILES_PATH
+else 
+	echo "INIFILE not found! --> EXIT"
+fi
+

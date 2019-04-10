@@ -1,0 +1,26 @@
+ComponentDefinition ComponentKB logo "/ComponentKB/model/logo.png"
+{
+ CoordinationSlavePort CoordinationSlave implements CommBasicObjects.KBCoordinationService {
+ 	
+ 	with kbQuery realizedBy kbQuery
+ 	with kbEvent realizedBy kbEventServer
+ 	SkillRealizationsRef kbModule
+ 	
+ }	
+ 
+ AnswerPort kbQuery implements CommBasicObjects.CommKBQuery {}
+ 
+ //TODO remove dummy thread, this is not needed!
+ Activity dummy {}
+ //TODO the realizedBy relation should be optional
+ OutputPort kbEventServer implements CommBasicObjects.CommKBEvent realizedBy dummy {}
+   
+ InputPort kbChainedEntriesEventClient implements CommBasicObjects.CommKBEvent {}
+   
+ ComponentParameters ComponentKBParams slave CoordinationSlave 
+RequestHandler kbQueryHandler triggeredFrom kbQuery activeQueue {
+	}
+	InputHandler kbChainedEntriesEventClientHandler triggeredFrom kbChainedEntriesEventClient { }
+	
+
+}
