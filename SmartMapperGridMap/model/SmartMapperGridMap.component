@@ -2,7 +2,7 @@ ComponentDefinition SmartMapperGridMap {
 	CoordinationSlavePort CoordinationPort implements CommNavigationObjects.MapperCoordinationService {
 		PrivateOperationMode currMap;
 		PrivateOperationMode ltmMap; 
-		default PublicOperationMode CommNavigationObjects.MapperStates.BuildCurrMap {
+		PublicOperationMode CommNavigationObjects.MapperStates.BuildCurrMap {
 			activates (currMap)
 		}
 		PublicOperationMode CommNavigationObjects.MapperStates.BuildLtmMap {

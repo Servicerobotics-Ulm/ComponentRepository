@@ -34,21 +34,21 @@ public:
 	// trigger user methods
 	
 		
-		virtual void handleCommNavigationObjects_AmclParameter_GLOBALLOCALIZATION() = 0;
+		virtual void handleCommLocalizationObjects_LocalizationParameter_GLOBALLOCALIZATION() = 0;
 	
 		
-		virtual void handleCommNavigationObjects_AmclParameter_INITIALPOSE(const int &x, const int &y, const double &a) = 0;
+		virtual void handleCommLocalizationObjects_LocalizationParameter_INITIALPOSE(const int &x, const int &y, const double &a) = 0;
 	
 		
-		virtual void handleCommNavigationObjects_AmclParameter_LOADMAP(const std::string &filename) = 0;
+		virtual void handleCommLocalizationObjects_LocalizationParameter_LOADMAP(const std::string &filename) = 0;
 	
 	// extended trigger user methods
 	
 private:
 	// trigger internal methods
-	void handleCommNavigationObjects_AmclParameter_GLOBALLOCALIZATIONCore();
-	void handleCommNavigationObjects_AmclParameter_INITIALPOSECore(const int &x, const int &y, const double &a);
-	void handleCommNavigationObjects_AmclParameter_LOADMAPCore(const std::string &filename);
+	void handleCommLocalizationObjects_LocalizationParameter_GLOBALLOCALIZATIONCore();
+	void handleCommLocalizationObjects_LocalizationParameter_INITIALPOSECore(const int &x, const int &y, const double &a);
+	void handleCommLocalizationObjects_LocalizationParameter_LOADMAPCore(const std::string &filename);
 	
 	// extended trigger internal methods 
 };

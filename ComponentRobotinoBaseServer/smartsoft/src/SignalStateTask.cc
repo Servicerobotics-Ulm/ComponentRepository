@@ -68,10 +68,8 @@ SignalStateTask::SignalStateTask(SmartACE::SmartComponent *comp)
 }
 SignalStateTask::~SignalStateTask() 
 {
-	std::cout << "destructor SignalStateTast\n";
+	std::cout << "destructor SignalStateTask\n";
 }
-
-
 
 int SignalStateTask::on_entry()
 {
@@ -104,18 +102,14 @@ int SignalStateTask::on_entry()
 	}
 
 	return 0;
-	//return 0;
 }
+
 int SignalStateTask::on_execute()
 {
 	// this method is called from an outside loop,
 	// hence, NEVER use an infinite loop (like "while(1)") here inside!!!
 	// also do not use blocking calls which do not result from smartsoft kernel
-	
-	// to get the incoming data, use this methods:
 	Smart::StatusCode status;
-
-	std::cout << "Hello from SignalStateTast " << std::endl;
 	if(COMP->getGlobalState().getGeneral().getVerbose() == true)
 		{
 			std::cout<<"State is: "<<newSignalState<<" loc: "<<localizationState<<std::endl;

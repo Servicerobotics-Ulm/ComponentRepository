@@ -48,7 +48,7 @@ bool Communication::initConnection(const std::string& ip, const unsigned int& po
 	this->port = port;
 
 	 // set this class as default handler for SIGPIPE signal
-	COMP->component->getReactorTask()->getImpl()->register_handler(SIGPIPE, this);
+	COMP->getComponentImpl()->getReactorTask()->getImpl()->register_handler(SIGPIPE, this);
 
 	int ret;
 	do{

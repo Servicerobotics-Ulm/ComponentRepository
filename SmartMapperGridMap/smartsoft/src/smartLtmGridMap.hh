@@ -131,6 +131,8 @@ private:
   // The string mapFileName contains the file name of the corresponding map file.
   void write_yaml(std::ostream &os_yaml, std::string mapFileName);
 
+  void write_ascii(std::string filename);
+
 }; // class SmartLtmGridMap
 
 } // namespace Smart

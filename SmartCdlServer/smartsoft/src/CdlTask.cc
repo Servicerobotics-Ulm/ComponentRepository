@@ -184,12 +184,17 @@ int CdlTask::on_entry()
 	covForwardFlag = true;
 	covTurningFlag = false;
 
-	//<alexej>
-	// initial value for followHysteresis is retrieved from  ini-file parameter
-	this->followHysteresis = COMP->getGlobalState().getCdl().getFollowHysteresis();
 
 	this->previous_strategy = TriggerHandler::SETSTRATEGYType::stratType::REACTIVE;
 	//</alexej>
+
+
+	previous_trackX = 0.0;
+	previous_trackY = 0.0;
+
+	old_counter = 0;
+	firstPass = true;
+
 	return 0;
 }
 
@@ -199,6 +204,61 @@ void transformWorldPointToRobot(double wx, double wy, double wa, double px, doub
 					lx = (px - wx) * cos_a + (py - wy) * sin_a;
 					ly =-(px - wx) * sin_a + (py - wy) * cos_a;
 }
+
+double CdlTask::linearinterpolation(const std::vector<std::pair<double, double> >& vec, const double x )
+{
+	std::vector<std::pair<double, double> >::const_iterator iter, end;
+	iter = vec.begin();
+	end = vec.end();
+
+	double y = 0.0;
+
+	if( iter != end )
+	{
+		if( x < (*iter).first )
+		{
+			y = (*iter).second;
+		}
+		else
+		{
+			while( end != iter )
+			{
+				const std::pair<double, double>& p = (*iter);
+				++iter;
+
+				if( x >= p.first )
+				{
+					if( end != iter )
+					{
+						if( x < (*iter).first )
+						{
+							const std::pair<double, double>& p2 = (*iter);
+							double dx = p2.first - p.first;
+							double dy = p2.second - p.second;
+
+							if( 0.0 == dx )
+							{
+								y = p.second;
+							}
+							else
+							{
+								double a = dy / dx;
+								y = a * ( x - p.first ) + p.second;
+							}
+						}
+					}
+					else
+					{
+						y = p.second;
+					}
+				}
+			}
+		}
+	}
+
+	return y;
+}
+
 
 int CdlTask::on_execute()
 {
@@ -285,7 +345,7 @@ int CdlTask::on_execute()
 	//smartBase.getPos(spos);             ???
 
 	// dont wait for scan (PushNewest)
-	status = this->laserClientGetUpdate( scan );
+	status = COMP->laserClient->getUpdate( scan );
 	if (status != Smart::SMART_OK)
 	{
 		if(status == Smart::SMART_UNSUBSCRIBED)
@@ -300,7 +360,7 @@ int CdlTask::on_execute()
 	{
 		if(COMP->getGlobalState().getServer().getLaserClient2Init())
 		{
-			status = this->laserClient2GetUpdate( scan2 );
+			status = COMP->laserClient2->getUpdate( scan2 );
 			if (status != Smart::SMART_OK)
 			{
 				if(status == Smart::SMART_UNSUBSCRIBED)
@@ -317,7 +377,7 @@ int CdlTask::on_execute()
 
 		if(COMP->getGlobalState().getServer().getIrClientInit())
 		{
-			status = this->iRClientGetUpdate( irScan );
+			status = COMP->iRClient->getUpdate( irScan );
 			if (status != Smart::SMART_OK)
 			{
 				if(status == Smart::SMART_UNSUBSCRIBED)
@@ -354,6 +414,7 @@ int CdlTask::on_execute()
 		// --------------------------------------------------------
 		// cdl-loop
 		// --------------------------------------------------------
+		std::cout<<"[CDL-TASK] strategy: "<<local_strategy.to_string()<<std::endl;
 		switch(local_strategy)
 		{
 
@@ -362,11 +423,9 @@ int CdlTask::on_execute()
 		/////////////////////////////////////////////////////////////////////////////////////////
 		case TriggerHandler::SETSTRATEGYType::stratType::VELCHECK:
 		{
-
-			approachFlag = true;
 			//in case of velcheck and with slow laser scanners use a more recent baseState
 			CommBasicObjects::CommBaseState baseState;
-			status = this->baseStateClientGetUpdate( baseState );
+			status = COMP->baseStateClient->getUpdate( baseState );
 			if (status != Smart::SMART_OK)
 			{
 				if(status == Smart::SMART_UNSUBSCRIBED)
@@ -400,40 +459,44 @@ int CdlTask::on_execute()
 
 			if(desiredV == 0 && desiredW == 0){
 				std::cout<<"Robot stop desired!"<<std::endl;
-				approachFlag = false;
-				vres=0; wres=0;
-			} else {
-
+				COMP->cdlLookup->setDesiredTranslationalSpeed(desiredV);
+				COMP->cdlLookup->setDesiredRotationalSpeed(desiredW);
+				//this is done ONLY for visualization, goal info is not used!
+				COMP->cdlLookup->setGoalPosition(0,0);
+				COMP->cdlLookup->calculateSpeedValues( v, w, x, y, a, local_vmin, local_vmax, local_wmin, local_wmax, CDL_STRATEGY_1,CDL_EVAL_STANDARD,vres, wres, vaccres, waccres);
+				stalledFlag = 0;
+				} else {
 				if(desiredV<=local_vmax && desiredV>=local_vmin &&
-						desiredW<=local_wmax && desiredW>=local_wmin){
+					desiredW<=local_wmax && desiredW>=local_wmin){
 
 					COMP->cdlLookup->setDesiredTranslationalSpeed(desiredV);
 					COMP->cdlLookup->setDesiredRotationalSpeed(desiredW);
+					//this is done ONLY for visualization, goal info is not used!
+					COMP->cdlLookup->setGoalPosition(0,0);
 
 					COMP->cdlLookup->calculateSpeedValues( v, w, x, y, a, local_vmin, local_vmax, local_wmin, local_wmax, CDL_STRATEGY_1,CDL_EVAL_STANDARD,vres, wres, vaccres, waccres);
-
-					if((desiredV != 0 || desiredW != 0 ) && (vres==0 && wres==0)){
-						std::cout<<"[CdlTask] No valid V/W found! --> Stop "<<std::endl;
-					}
-				} else {
-					if(desiredV == 0){
-						std::cout<<"WARNING: vels exceed the maximum configured cdl values, but trans == 0!"<<std::endl;
-						//if the transV == 0 then the rotV can be limited, without changing the curvature (rotation in place)!
-						desiredW = std::min(desiredW,local_wmin);
-						desiredW = std::max(desiredW,local_wmax);
+				if((desiredV != 0 || desiredW != 0 ) && (vres==0 && wres==0)){
+					std::cout<<"[CdlTask] No valid V/W found! --> Stop "<<std::endl;
+				}
+			} else {
+				if(desiredV == 0){
+					std::cout<<"WARNING: vels exceed the maximum configured cdl values, but trans == 0!"<<std::endl;
+					//if the transV == 0 then the rotV can be limited, without changing the curvature (rotation in place)!
+					desiredW = std::min(desiredW,local_wmin);
+					desiredW = std::max(desiredW,local_wmax);
 
 						COMP->cdlLookup->setDesiredTranslationalSpeed(desiredV);
 						COMP->cdlLookup->setDesiredRotationalSpeed(desiredW);
-
-						COMP->cdlLookup->calculateSpeedValues( v, w, x, y, a, local_vmin, local_vmax, local_wmin, local_wmax, CDL_STRATEGY_1,CDL_EVAL_STANDARD,vres, wres, vaccres, waccres);
-
-						if( (desiredV != 0 || desiredW != 0 ) && (vres==0 && wres==0) ){
+							COMP->cdlLookup->calculateSpeedValues( v, w, x, y, a, local_vmin, local_vmax, local_wmin, local_wmax, CDL_STRATEGY_1,CDL_EVAL_STANDARD,vres, wres, vaccres, waccres);
+							if( (desiredV != 0 || desiredW != 0 ) && (vres==0 && wres==0) ){
 							std::cout<<"[CdlTask] No valid V/W found! --> Stop "<<std::endl;
 						}
 					} else {
 						std::cout<<"The desired vels exceed the maximum configured cdl values!--> STOP ROBOT!"<<std::endl;
 						std::cout<<"Limits are: local_vmax: "<<local_vmax<<" local_vmin: "<<local_vmin<<" local_wmax: "<<local_wmax<< " local_wmin: "<<local_wmin<<std::endl;
-						vres=0; wres=0;
+						COMP->cdlLookup->setDesiredTranslationalSpeed(0.0);
+						COMP->cdlLookup->setDesiredRotationalSpeed(0.0);
+						COMP->cdlLookup->calculateSpeedValues( v, w, x, y, a, local_vmin, local_vmax, local_wmin, local_wmax, CDL_STRATEGY_1,CDL_EVAL_STANDARD,vres, wres, vaccres, waccres);
 					}
 				}
 			}
@@ -590,6 +653,7 @@ int CdlTask::on_execute()
 				{
 					std::cout<<"PATH NAV - ROTATE - STATE"<<std::endl;
 
+
 					// second case: heading > (-1 * COMP->localState.rotateError)
 					if ((heading < local_rotateError) && (heading > (-local_rotateError) ))
 					{
@@ -609,6 +673,10 @@ int CdlTask::on_execute()
 							COMP->cdlLookup->setUsePathBorders(true);
 //							}
 					} else {
+						COMP->cdlLookup->setRotDevSpeed(localState.getCdlRotate().getRotDev1(), localState.getCdlRotate().getRotSpeed1(),
+														localState.getCdlRotate().getRotDev2(), localState.getCdlRotate().getRotSpeed2(),
+														localState.getCdlRotate().getRotDev3(), localState.getCdlRotate().getRotSpeed3(),
+														localState.getCdlRotate().getRotDev4(), local_wmax*180/M_PI);
 						// not inside goal region
 						COMP->cdlLookup->setMaxDistance(COMP->cdlLookup->getCDL_MAX_DISTANCE());
 						COMP->cdlLookup->calculateSpeedValues(v,w,x,y,a,0.0,0.0,
@@ -641,7 +709,7 @@ int CdlTask::on_execute()
 						// put event into object
 						// -------------------------------------------
 						cdlGoalEventState.set(CommNavigationObjects::CdlGoalEventType::CDL_GOAL_REACHED);
-						this->goalEventServerPut(cdlGoalEventState);
+						COMP->goalEventServer->put(cdlGoalEventState);
 						std::cout<<"CDL EVENT CDL_GOAL_REACHED FIRED!"<<std::endl;
 
 						std::cout << "GOAL REACHED !!!!!!!! actpos " << x << " " << y << " " << a*180.0/M_PI << "\n";
@@ -797,11 +865,15 @@ int CdlTask::on_execute()
 
 				default:
 				{
+					std::cout<<"[CDL-TASK]: Error wrong goal mode!"<<std::endl;
 					approachFlag=false;
 					break;
 				}
 				}
 			} // if (COMP->localState.goalId == COMP->localState.id)
+			else {
+				std::cout<<"[CDL-TASK]: WARNING invalid goalid!"<<std::endl;
+			}
 
 
 			if (approachFlag==false)
@@ -830,10 +902,14 @@ int CdlTask::on_execute()
 					{
 						//<lutz>
 						cdlGoalEventState.set(CommNavigationObjects::CdlGoalEventType::CDL_GOAL_REACHED);
-						this->goalEventServerPut(cdlGoalEventState);
+						COMP->goalEventServer->put(cdlGoalEventState);
 						std::cout<<"CDL EVENT CDL_GOAL_REACHED FIRED!"<<std::endl;
 					}
 				} else {
+					COMP->cdlLookup->setRotDevSpeed(localState.getCdlRotate().getRotDev1(), localState.getCdlRotate().getRotSpeed1(),
+													localState.getCdlRotate().getRotDev2(), localState.getCdlRotate().getRotSpeed2(),
+													localState.getCdlRotate().getRotDev3(), localState.getCdlRotate().getRotSpeed3(),
+													localState.getCdlRotate().getRotDev4(), local_wmax*180/M_PI);
 					// not inside goal region
 					COMP->cdlLookup->setMaxDistance(COMP->cdlLookup->getCDL_MAX_DISTANCE());
 					COMP->cdlLookup->calculateSpeedValues(v,w,x,y,a,0.0,0.0,
@@ -904,6 +980,10 @@ int CdlTask::on_execute()
 		/////////////////////////////////////////////////////////////////////////////////////////
 		case TriggerHandler::SETSTRATEGYType::stratType::TURN:
 		{
+			COMP->cdlLookup->setRotDevSpeed(localState.getCdlRotate().getRotDev1(), localState.getCdlRotate().getRotSpeed1(),
+											localState.getCdlRotate().getRotDev2(), localState.getCdlRotate().getRotSpeed2(),
+											localState.getCdlRotate().getRotDev3(), localState.getCdlRotate().getRotSpeed3(),
+											localState.getCdlRotate().getRotDev4(), local_wmax*180/M_PI);
 			// ----------------------------------------------------
 
 			COMP->cdlLookup->setLaserscan(scan);
@@ -973,7 +1053,7 @@ int CdlTask::on_execute()
 				{
 					// currently no valid goal available
 					approachFlag=false;
-                                                std::cout<<"NO VALID GOAL SET"<<std::endl;
+                                        std::cout<<"NO VALID GOAL SET"<<std::endl;
 				}
 				else
 				{
@@ -1038,6 +1118,7 @@ int CdlTask::on_execute()
 
 			default:
 			{
+				std::cout<<"Error wrong goal mode set!"<<std::endl;
 				approachFlag = false;
 				vmin         = 0.0;
 				vmax         = 0.0;
@@ -1070,7 +1151,7 @@ int CdlTask::on_execute()
 					// put event into object
 					// -------------------------------------------
 					cdlGoalEventState.set(CommNavigationObjects::CdlGoalEventType::CDL_GOAL_REACHED);
-					this->goalEventServerPut(cdlGoalEventState);
+					COMP->goalEventServer->put(cdlGoalEventState);
 					std::cout<<"CDL EVENT CDL_GOAL_REACHED FIRED!"<<std::endl;
 
 					std::cout << "GOAL REACHED !!!!!!!! actpos " << x << " " << y << " " << a*180.0/M_PI << "\n";
@@ -1083,9 +1164,9 @@ int CdlTask::on_execute()
 					//COMP->cdlLookup->calculateSpeedValues(v, w, x, y, a, COMP->localState.vmin, COMP->localState.vmax, COMP->localState.wmin, COMP->localState.wmax, CDL_STRATEGY_6, evalFunction, vres, wres, vaccres, waccres);
 					COMP->cdlLookup->setDesiredTranslationalSpeed(local_vmax);
 //						COMP->cdlLookup->calculateSpeedValues(v, w, x, y, a, local_vmin, local_vmax, local_wmin, local_wmax, CDL_STRATEGY_12, evalFunction, vres, wres, vaccres, waccres);
-					//TODO THIS SHOULD BE SEPARATED USING PARAMETER (INI)
+					//TODO THIS SHOULD BE SEPARATED USING PARAMETER (INI) 
 					//FOR ROBOTINO AND FACTORY 4 SETTING
-                    COMP->cdlLookup->calculateSpeedValues(v, w, x, y, a, local_vmin, local_vmax, local_wmin, local_wmax, CDL_STRATEGY_14, evalFunction, vres, wres, vaccres, waccres);
+                                        COMP->cdlLookup->calculateSpeedValues(v, w, x, y, a, local_vmin, local_vmax, local_wmin, local_wmax, CDL_STRATEGY_14, evalFunction, vres, wres, vaccres, waccres);
 					std::cout << "vres = " << vres << "; wres = " << wres << std::endl;
 					double gainDist = distance / 750.0;
 					if(gainDist>1.0) gainDist=1.0;
@@ -1217,10 +1298,14 @@ int CdlTask::on_execute()
 							{
 
 								cdlGoalEventState.set(CommNavigationObjects::CdlGoalEventType::CDL_GOAL_REACHED);
-								this->goalEventServerPut(cdlGoalEventState);
+								COMP->goalEventServer->put(cdlGoalEventState);
 								std::cout<<"CDL EVENT CDL_GOAL_REACHED FIRED!"<<std::endl;
 							}*/
 						} else {
+							COMP->cdlLookup->setRotDevSpeed(localState.getCdlRotate().getRotDev1(), localState.getCdlRotate().getRotSpeed1(),
+															localState.getCdlRotate().getRotDev2(), localState.getCdlRotate().getRotSpeed2(),
+															localState.getCdlRotate().getRotDev3(), localState.getCdlRotate().getRotSpeed3(),
+															localState.getCdlRotate().getRotDev4(), local_wmax*180/M_PI);
 							// not inside goal region
 							COMP->cdlLookup->setMaxDistance(COMP->cdlLookup->getCDL_MAX_DISTANCE());
 							COMP->cdlLookup->calculateSpeedValues(v,w,x,y,a,0.0,0.0,
@@ -1322,7 +1407,7 @@ int CdlTask::on_execute()
 						// put event into object
 						// -------------------------------------------
 						cdlGoalEventState.set(CommNavigationObjects::CdlGoalEventType::CDL_GOAL_REACHED);
-						this->goalEventServerPut(cdlGoalEventState);
+						COMP->goalEventServer->put(cdlGoalEventState);
 						std::cout<<"CDL EVENT CDL_GOAL_REACHED FIRED!"<<std::endl;
 
 						std::cout << "GOAL REACHED !!!!!!!! actpos " << x << " " << y << " " << a*180.0/M_PI << "\n";
@@ -1475,7 +1560,7 @@ int CdlTask::on_execute()
 					// put event into object
 					// -------------------------------------------
 					cdlGoalEventState.set(CommNavigationObjects::CdlGoalEventType::CDL_GOAL_REACHED);
-					this->goalEventServerPut(cdlGoalEventState);
+					COMP->goalEventServer->put(cdlGoalEventState);
 					std::cout<<"CDL EVENT CDL_GOAL_REACHED FIRED!"<<std::endl;
 
 					std::cout << "GOAL REACHED !!!!!!!! actpos " << x << " " << y << " " << a*180.0/M_PI << "\n";
@@ -1508,92 +1593,198 @@ int CdlTask::on_execute()
 			COMP->cdlLookup->setSecondLaserscan(scan2);
 			COMP->cdlLookup->setIrScan(irScan);
 
-			switch(localState.getCommNavigationObjects().getCdlParameter().getGOALMODE().getGm())
-			{
-			case ParameterStateStruct::CommNavigationObjectsType::CdlParameterType::GOALMODEType::gmType::PERSON:
-			{
-				COMP->trackingClient->getUpdate(trackingGoal);
-				trackingGoal.get( trackAngle, trackDistance, trackX, trackY, trackFlag);
+			double approach_distance = localState.getCommNavigationObjects().getCdlParameter().getAPPROACHDIST().getApproachDistance()/1000;
+			double minimum_rotation_rad = 3.0/180.0*M_PI;
 
-				//std::cout << "Track x: " << trackX << "; y: " << trackY << "; Angle: " << ((trackAngle*180.0)/M_PI) << "; dist: " << trackDistance << "; flag: " << trackFlag << "\n";
+	        _followDistVXControl.clear();
+	        _followDistVXControl.push_back(std::make_pair( 0, 0));
+	        _followDistVXControl.push_back(std::make_pair( approach_distance-0.1, 0));
+	        _followDistVXControl.push_back(std::make_pair( approach_distance*1.5, local_vmax*0.8));
+	        _followDistVXControl.push_back(std::make_pair( approach_distance*2, local_vmax));
 
-				trackAngle = angle00(atan2( trackY - raw_y,  trackX- raw_x) - raw_a);
-				trackDistance = sqrt( (raw_x-trackX)*(raw_x-trackX) + (raw_y-trackY)*(raw_y-trackY) );
+	        _followDistVWControl.clear();
+	        _followDistVWControl.push_back(std::make_pair( 0, 0));
+	        _followDistVWControl.push_back(std::make_pair( minimum_rotation_rad, 0));
+	        _followDistVWControl.push_back(std::make_pair( minimum_rotation_rad*10, local_wmax));
 
-				//std::cout << "Track x: " << trackX << "; y: " << trackY << "; Angle: " << ((trackAngle*180.0)/M_PI) << "; dist: " << trackDistance << "; flag: " << trackFlag << "\n";
-				if (trackFlag == false)
+
+		COMP->trackingClient->getUpdate(trackingGoal);
+			trackingGoal.get( trackAngle, trackDistance, trackX, trackY, trackFlag);
+			unsigned long int currentGoalCounter = trackingGoal.getGoalCount();
+
+			std::cout<<"CurrentGoalCounter: "<<currentGoalCounter<<" old: "<< old_counter<<std::endl;
+
+			// If goal is still the same (because of different cycle rates) or if tracking goal was lost and the previous is used now ...
+			if(firstPass == false){
+
+				if(trackFlag == false)
 				{
-					// no valid goal information from track server
-					std::cout << "no valid goal information\n";
-					vres=0.0;
-					wres=0.0;
-					stalledFlag = 0;
-
+					// Tracking goal lost -> trackX / trackY = 0/0, therefore use previous tracking goal
+					std::cout<<"============== PERSON LOST -> old GOAL!"<<std::endl;
+					trackX = previous_trackX;
+					trackY = previous_trackY;
 				}
-				else
-				{
-					//TODO hytsteresis distance 50 mm and angle with 5 deg --> move to ini
-					if(this->followHysteresis==true && trackDistance < (localState.getCommNavigationObjects().getCdlParameter().getAPPROACHDIST().getApproachDistance() + 50) && fabs(trackAngle-w) < (15.0/180.0*M_PI) ){
-						// goal reached, stop robot
-						vres = 0.0;
-						wres = 0.0;
-						// this stop is intended, since the goal has been reached
-						stalledFlag = 0;
-					}
-					else
-					{
-						//<alexej>
-						// this variable was in local/global state struct before
-						this->followHysteresis = false;
-						//</alexej>
-						COMP->cdlLookup->setParameterRobot(local_tcalc,local_transAcc,local_rotAcc);
-						COMP->cdlLookup->setHeading(trackAngle);
-						COMP->cdlLookup->setMaxDistance(COMP->cdlLookup->getCDL_MAX_DISTANCE());
-						COMP->cdlLookup->setDesiredTranslationalSpeed(local_vmax);
-						COMP->cdlLookup->calculateSpeedValues(v,w,0.0,0.0,0.0,local_vmin,local_vmax,local_wmin,local_wmax,CDL_STRATEGY_7,CDL_EVAL_STANDARD,vres,wres,vaccres,waccres);
 
-						double gainDist = trackDistance / (800.0+localState.getCommNavigationObjects().getCdlParameter().getAPPROACHDIST().getApproachDistance());
-						if(gainDist > 1.0) gainDist=1.0;
-						vres *= gainDist;
-						//if(vres > 20 && vres < 150) vres = 150;
-						if(vres > 30 && vres < 100) vres = 100;
-						//std::cout << "dist to person: " << trackDistance << "  ---   v: " << v << " --- w: "<< w <<std::endl;
+				if (currentGoalCounter == old_counter || trackFlag==false) {
+					// ... Then transform goal point (trackX, trackY) depending on the robot motion since the last cycle
 
-						//if( trackDistance < COMP->localState.approachDistance)
-						if( trackDistance < localState.getCommNavigationObjects().getCdlParameter().getAPPROACHDIST().getApproachDistance() && fabs(trackAngle-w) < (10.0/180.0*M_PI)   )
-						{
-							//<alexej>
-							// this variable was in local/global state struct before
-							this->followHysteresis = false;
-							//</alexej>
+					CommBasicObjects::CommBasePose basePosition = scan.get_base_state().get_base_raw_position();
 
-							// goal reached, stop robot
-							vres = 0.0;
-							wres = 0.0;
+					arma::mat res_t(3,1);
+					arma::mat res_r(3,3);
 
-							// this stop is intended, since the goal has been reached
-							stalledFlag = 0;
-						}
+					arma::mat a_t(3,1);
+					a_t(0,0) = basePosition.get_x(1);
+					a_t(1,0) = basePosition.get_y(1);
+					a_t(2,0) = 0;
+					arma::mat a_r(3,3);
+					EulerTransformationMatrices::create_zyx_matrix(basePosition.getPose3D().get_orientation().getAzimuth(),0,0,a_r);
 
-					}
+					arma::mat b_t(3,1);
+					b_t(0,0) = basePosePrevious.get_x(1);
+					b_t(1,0) = basePosePrevious.get_y(1);
+					b_t(2,0) = 0;
+					arma::mat b_r(3,3);
+					EulerTransformationMatrices::create_zyx_matrix(basePosePrevious.getPose3D().get_orientation().getAzimuth(),0,0,b_r);
 
+					inverseComposeFrom(b_t,b_r, a_t, a_r, res_t,res_r);
+
+
+					double yaw, pitch, roll;
+					EulerTransformationMatrices::zyx_from_matrix(res_r, yaw, pitch, roll);
+					double t_alpha = yaw;
+
+					double t_x = res_t(0,0);
+					double t_y = res_t(1,0);
+
+//						std::cout<<"Pose Diff - x:"<<t_x<<" y:"<<t_y<<" t_alpha:"<<t_alpha<<std::endl;
+
+
+					arma::mat trans(3,3);
+					trans(0,0) = cos(t_alpha);
+					trans(0,1) = -sin(t_alpha);
+					trans(0,2) = t_x;
+
+					trans(1,0) = sin(t_alpha);
+					trans(1,1) = cos(t_alpha);
+					trans(1,2) = t_y;
+
+					trans(2,0) = 0;
+					trans(2,1) = 0;
+					trans(2,2) = 1;
+
+					arma::mat trans_i(3,3);
+					trans_i = inv(trans);
+
+					arma::mat point(1,3);
+					point(0,0) = trackX;
+					point(0,1) = trackY;
+					point(0,2) = 1;
+
+					point = arma::trans(trans_i * (arma::trans(point)));
+
+					trackX = point(0,0);
+					trackY = point(0,1);
+
+//						std::cout<<"Track: X:"<<trackX<<" Y:"<<trackY<<std::endl;
+
+					//show_px_color(trackX, trackY, CV_RGB(0, 0, 255)); // gerasterte alte untransformiert
+					//show_px_color(point(0,0), point(0,1), CV_RGB(255, 0, 255)); // alte transformiert = ungerastert/kontinuierliche werte
+					trackFlag = true;
+				} else {
+//						std::cout<<"New Goal!"<<std::endl;
+//						std::cout<<"NG: ("<<trackX<<"|"<<trackY<<")"<<std::endl;
 				}
-				break;
+			} else {
+				std::cout<<"CDLTask - FOLLOW - First run!"<<std::endl;
 			}
 
-			default:
+
+			old_counter = trackingGoal.getGoalCount();
+			basePosePrevious = scan.get_base_state().get_base_raw_position();
+			previous_trackX = trackX;
+			previous_trackY = trackY;
+
+			CommTrackingObjects::TrackingGoalType tackingGoalType = trackingGoal.getTrackingType();
+
+
+			if(tackingGoalType == CommTrackingObjects::TrackingGoalType::XY_MAP_RAW){
+				trackAngle = angle00(atan2( trackY - raw_y,  trackX- raw_x) - raw_a);
+				trackDistance = sqrt( (raw_x-trackX)*(raw_x-trackX) + (raw_y-trackY)*(raw_y-trackY) );
+			}else if(tackingGoalType == CommTrackingObjects::TrackingGoalType::XY_MAP){
+				trackAngle = angle00(atan2( trackY - y,  trackX- x) - a);
+				trackDistance = sqrt( (x-trackX)*(x-trackX) + (y-trackY)*(y-trackY) );
+			} else if(tackingGoalType == CommTrackingObjects::TrackingGoalType::XY_ROBOT){
+				trackAngle = angle00(atan2( trackY,  trackX));
+				trackDistance = sqrt( (trackX)*(trackX) + (trackY)*(trackY) );
+			} else if(tackingGoalType == CommTrackingObjects::TrackingGoalType::ANGLE_DIST){
+				//trackAngle = trackAngle;
+				//trackDistance = trackDistance;
+			} else {
+				std::cout<<"ERROR invalid tracking goal type set: "<<tackingGoalType<<std::endl;
+				trackFlag = false;
+			}
+
+
+			if (trackFlag == false || trackDistance >5.0 )
 			{
-				// set everything to harmless values
+				// no valid goal information from track server
+				std::cout << "no valid goal information; trackDistance: "<<trackDistance<<std::endl;
 				COMP->cdlLookup->setHeading(0.0);
 				COMP->cdlLookup->setMaxDistance(0.0);
 				COMP->cdlLookup->setDesiredTranslationalSpeed(0.0);
 				COMP->cdlLookup->calculateSpeedValues(v,w,0.0,0.0,0.0,local_vmin,local_vmax,local_wmin,local_wmax,CDL_STRATEGY_1,CDL_EVAL_STANDARD,vres,wres,vaccres,waccres);
-				break;
+				stalledFlag = 0;
+
 			}
+			else
+			{
+
+				if( trackDistance < approach_distance && fabs(trackAngle-w) < (minimum_rotation_rad)   )
+				{
+
+					std::cout<<"Goal Reached! --> STOP!"<<std::endl;
+					COMP->cdlLookup->setHeading(0.0);
+					COMP->cdlLookup->setMaxDistance(0.0);
+					COMP->cdlLookup->setDesiredTranslationalSpeed(0.0);
+					COMP->cdlLookup->calculateSpeedValues(v,w,0.0,0.0,0.0,local_vmin,local_vmax,local_wmin,local_wmax,CDL_STRATEGY_1,CDL_EVAL_STANDARD,vres,wres,vaccres,waccres);
+
+					// this stop is intended, since the goal has been reached
+					stalledFlag = 0;
+				}
+				else
+				{
+
+					//this is used to draw the goal into the vis ONLY since CDL_STRATEGY_7 is used!!
+					COMP->cdlLookup->setGoalPosition(trackX*1000,trackY*1000);
+
+					COMP->cdlLookup->setParameterRobot(local_tcalc,local_transAcc,local_rotAcc);
+					double desWTrans = linearinterpolation(_followDistVWControl, fabs(trackAngle));
+					if(trackAngle<0){
+						desWTrans = desWTrans*-1.0;
+					}
+					COMP->cdlLookup->setDesiredRotationalSpeed(desWTrans);
+					COMP->cdlLookup->setHeading(desWTrans);
+					COMP->cdlLookup->setMaxDistance(COMP->cdlLookup->getCDL_MAX_DISTANCE());
+					double desTrans = linearinterpolation(_followDistVXControl, trackDistance);
+					COMP->cdlLookup->setDesiredTranslationalSpeed(desTrans);
+					std::cout << "Track x: " << trackX << "; y: " << trackY << "; Angle: " << ((trackAngle*180.0)/M_PI) <<"; desWTrans: "<<desWTrans<< "; dist: " << trackDistance << "  desTrans: "<<desTrans << "; flag: " << trackFlag << "\n";
+
+					if(trackDistance > 2.4){
+						COMP->cdlLookup->calculateSpeedValues(v,w,0.0,0.0,0.0,local_vmin,local_vmax,local_wmin,local_wmax,CDL_STRATEGY_1,CDL_EVAL_STANDARD,vres,wres,vaccres,waccres);
+					} else {
+						COMP->cdlLookup->calculateSpeedValues(v,w,0.0,0.0,0.0,local_vmin,local_vmax,local_wmin,local_wmax,CDL_STRATEGY_7,CDL_EVAL_STANDARD,vres,wres,vaccres,waccres);
+					}
+//						std::cout << "Res Speed: ("<<vres<<"|"<<wres<<")"<<std::endl;
+
+				}
+
 			}
-			//smartBase.setAccelerations(COMP->localState.rotAcc,COMP->localState.transAcc);
+
+			firstPass = false;
 
 			break; //case follow
+			}
 
 
 			/////////////////////////////////////////////////////////////////////////////////////////
@@ -1629,7 +1820,7 @@ int CdlTask::on_execute()
 					// put event into object
 					// -------------------------------------------
 					cdlGoalEventState.set(CommNavigationObjects::CdlGoalEventType::CDL_GOAL_REACHED);
-					this->goalEventServerPut(cdlGoalEventState);
+					COMP->goalEventServer->put(cdlGoalEventState);
 					std::cout<<"CDL EVENT CDL_GOAL_REACHED FIRED!"<<std::endl;
 				}
 				else
@@ -1660,6 +1851,7 @@ int CdlTask::on_execute()
 			/////////////////////////////////////////////////////////////////////////////////////////
 
 			case TriggerHandler::SETSTRATEGYType::stratType::BACKWARD:
+			{
 				// ----------------------------------------------------
 				// move straight back until distance to goal point is
 				// big enough
@@ -1696,7 +1888,7 @@ int CdlTask::on_execute()
 							// put event into object
 							// -------------------------------------------
 							cdlGoalEventState.set(CommNavigationObjects::CdlGoalEventType::CDL_GOAL_REACHED);
-							this->goalEventServerPut(cdlGoalEventState);
+							COMP->goalEventServer->put(cdlGoalEventState);
 							std::cout<<"CDL EVENT CDL_GOAL_REACHED FIRED!"<<std::endl;
 
 							std::cout << "GOAL REACHED !!!!!!!! actpos " << x << " " << y << " " << a*180.0/M_PI << "\n";
@@ -1776,7 +1968,7 @@ int CdlTask::on_execute()
 			}
 		} else
 		{
-			// normal cdl case (no spped in y direction)
+			// normal cdl case (no speed in y direction)
 			vel.set_vY(0,0);
 			//
 			vel.set_vX(vres, 0.001);
@@ -1788,8 +1980,9 @@ int CdlTask::on_execute()
 //			vel.setVY(0);
 //			vel.set_omega(0);
 //			//END
-		this->navVelSendClientPut(vel);
-		std::cout << "send " << vel << std::endl;
+
+		COMP->navVelSendClient->send(vel);
+		std::cout << "send " << vel << " status: "<< status<<std::endl;
 
 
 		// -----------------------------------------------------------
@@ -1823,7 +2016,7 @@ int CdlTask::on_execute()
 					} else {
 						robotBlockedState.setNewState(CommNavigationObjects::CdlRobotBlockEventType::CDL_ROBOT_BLOCKED);
 					}
-					this->robotBlockedEventServerPut(robotBlockedState);
+					COMP->robotBlockedEventServer->put(robotBlockedState);
 				}
 
 				if (localState.getCommNavigationObjects().getCdlParameter().getFREEBEHAVIOR().getFree() == ParameterStateStruct::CommNavigationObjectsType::CdlParameterType::FREEBEHAVIORType::freeType::ACTIVATE)
@@ -1942,7 +2135,7 @@ int CdlTask::on_execute()
 
 				CommNavigationObjects::CommCdlRobotBlockedState robotBlockedState;
 				robotBlockedState.setNewState(CommNavigationObjects::CdlRobotBlockEventType::CDL_ROBOT_NOT_BLOCKED);
-				this->robotBlockedEventServerPut(robotBlockedState);
+				COMP->robotBlockedEventServer->put(robotBlockedState);
 			}
 		}
 	} // if (status != Smart::SMART_OK) <<<---- status = laserClient->getUpdate( scan );
@@ -1962,4 +2155,36 @@ void CdlTask::initPathNav(){
 
 void CdlTask::resetRobotStalledFlag(){
 	stalledFlag = 0;
+}
+
+// does semantically the same as MRPT's inverseComposeFrom().
+void CdlTask::inverseComposeFrom(arma::mat b_t, arma::mat b_r, arma::mat a_t, arma::mat a_r, arma::mat& out_t, arma::mat& out_r)
+{
+
+  out_r.fill(0);
+  out_t.fill(0);
+
+  arma::mat R_b_inv(3,3);
+  arma::mat t_b_inv(3,1);
+
+  const double tx = -b_t(0,0);
+  const double ty = -b_t(1,0);
+  const double tz = -b_t(2,0);
+
+  t_b_inv(0,0) = tx*b_r(0,0)+ty*b_r(1,0)+tz*b_r(2,0);
+  t_b_inv(1,0) = tx*b_r(0,1)+ty*b_r(1,1)+tz*b_r(2,1);
+  t_b_inv(2,0) = tx*b_r(0,2)+ty*b_r(1,2)+tz*b_r(2,2);
+
+  // 3x3 rotation part: transpose
+  //out_R = b_r.adjoint();
+  R_b_inv = arma::trans(b_r);
+
+  arma::mat m_coords(3,1);
+  arma::mat m_ROT(3,3);
+
+  for (int i=0;i<3;i++)
+    out_t(i,0) = t_b_inv(i,0) + R_b_inv(i,0)*a_t(0,0)+ R_b_inv(i,1)*a_t(1,0)+ R_b_inv(i,2)*a_t(2,0);
+
+  // Rot part:
+  out_r = R_b_inv * a_r;
 }

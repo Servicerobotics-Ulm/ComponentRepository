@@ -84,6 +84,11 @@ void SmartLaserLMS200Server::addExtension(SmartLaserLMS200ServerExtension *exten
 	componentExtensionRegistry[extension->getName()] = extension;
 }
 
+SmartACE::SmartComponent* SmartLaserLMS200Server::getComponentImpl()
+{
+	return dynamic_cast<SmartLaserLMS200ServerAcePortFactory*>(portFactoryRegistry["ACE_SmartSoft"])->getComponentImpl();
+}
+
 /**
  * Notify the component that setup/initialization is finished.
  * You may call this function from anywhere in the component.
@@ -172,7 +177,7 @@ void SmartLaserLMS200Server::init(int argc, char *argv[])
 		loadParameter(argc, argv);
 		
 		// print out the actual parameters which are used to initialize the component
-		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
+		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
 		// initializations of SmartLaserLMS200ServerROSExtension
 		
@@ -319,8 +324,10 @@ void SmartLaserLMS200Server::fini()
 	// unlink all UpcallManagers
 	baseStateInUpcallManager->detach(laserTask);
 	// unlink the TaskTrigger
-	laserTaskTrigger->detach(laserTask);
-	delete laserTask;
+	if(laserTaskTrigger != NULL){
+		laserTaskTrigger->detach(laserTask);
+		delete laserTask;
+	}
 
 	// destroy all input-handler
 

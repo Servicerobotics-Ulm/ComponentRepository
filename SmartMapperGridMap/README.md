@@ -190,6 +190,16 @@ active = false
 active = false
 
 
+#### TriggerInstance LTMSAVEIEEESTD
+
+active = false
+
+
+#### TriggerInstance LTMLOADIEEESTD
+
+active = false
+
+
 #### ParameterInstance CURLTM
 
 Configures whether the current map is preoccupied from the longterm map. Possible values for ?preoccupy: ENABLE will cause the component to load values from the longterm map in each cycle to the current map by applying the threshold ?thresh to decide on the occupancy of the cell. If DISABLE, the current map is not preoccupied.

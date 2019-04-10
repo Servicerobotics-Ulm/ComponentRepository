@@ -83,6 +83,11 @@ void ComponentTTSClient::addExtension(ComponentTTSClientExtension *extension)
 	componentExtensionRegistry[extension->getName()] = extension;
 }
 
+SmartACE::SmartComponent* ComponentTTSClient::getComponentImpl()
+{
+	return dynamic_cast<ComponentTTSClientAcePortFactory*>(portFactoryRegistry["ACE_SmartSoft"])->getComponentImpl();
+}
+
 /**
  * Notify the component that setup/initialization is finished.
  * You may call this function from anywhere in the component.
@@ -187,7 +192,7 @@ void ComponentTTSClient::init(int argc, char *argv[])
 		loadParameter(argc, argv);
 		
 		// print out the actual parameters which are used to initialize the component
-		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
+		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
 		// initializations of ComponentTTSClientROSExtension
 		
@@ -272,7 +277,7 @@ void ComponentTTSClient::init(int argc, char *argv[])
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(consoleTask);
-				component->getTimerManager()->scheduleTimer(triggerPtr, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				// store trigger in class member
 				consoleTaskTrigger = triggerPtr;
 			} else {
@@ -349,8 +354,10 @@ void ComponentTTSClient::fini()
 	// destroy all task instances
 	// unlink all UpcallManagers
 	// unlink the TaskTrigger
-	consoleTaskTrigger->detach(consoleTask);
-	delete consoleTask;
+	if(consoleTaskTrigger != NULL){
+		consoleTaskTrigger->detach(consoleTask);
+		delete consoleTask;
+	}
 
 	// destroy all input-handler
 

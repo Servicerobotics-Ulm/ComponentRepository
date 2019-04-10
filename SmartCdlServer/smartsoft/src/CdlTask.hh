@@ -46,17 +46,21 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
+
 // --------------------------------------------------------------------------
+//TODO cdt plugin bug (needs include before include guards)
+#include <vector>
 
 #ifndef _CDLTASK_HH
 #define _CDLTASK_HH
 
 #include "CdlTaskCore.hh"
-
 #include "smartCdlDefine.h"
+
 
 #include "ParameterStateStruct.hh"
 #include "TriggerHandler.hh"
+
 	
 class CdlTask  : public CdlTaskCore
 {
@@ -103,8 +107,6 @@ private:
 	bool covForwardFlag;
 	bool covTurningFlag;
 
-	//<alexej>
-	bool followHysteresis;
 
 	double savedPosX;                // position from which backward manoeuver starts
 	double savedPosY;
@@ -121,6 +123,17 @@ private:
 
 	 template<class T>
 		  inline T square(const T x)    { return x*x; }
+
+	double previous_trackX, previous_trackY;
+
+	uint64_t old_counter;
+	CommBasicObjects::CommBasePose basePosePrevious;
+	bool firstPass;
+
+	std::vector<std::pair<double, double> > _followDistVXControl;
+	std::vector<std::pair<double, double> > _followDistVWControl;
+
+	void inverseComposeFrom(arma::mat b_t, arma::mat b_r, arma::mat a_t, arma::mat a_r, arma::mat& out_t, arma::mat& out_r);
 
 
 	virtual void on_LaserClient(const CommBasicObjects::CommMobileLaserScan &input);
@@ -143,6 +156,7 @@ public:
 	void initPathNav();
 
 	void resetRobotStalledFlag();
+	double linearinterpolation(const std::vector<std::pair<double, double> >& vec, const double x );
 };
 
 #endif

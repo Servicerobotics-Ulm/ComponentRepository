@@ -44,15 +44,6 @@
 #include <iostream>
 #include <sys/time.h>
 #include <vector>
-/* obsolete?
- #include <termios.h>
- #include <unistd.h>
- #include <sys/types.h>
- #include <sys/stat.h>
- #include <sys/ioctl.h>
- #include <fcntl.h>
- #include <errno.h>
- */
 
 // boost-Library for Matrix
 #include <boost/numeric/ublas/matrix.hpp>
@@ -72,16 +63,11 @@
 #include "rec/robotino/api2/OmniDriveModel.h"
 
 
-// different robotino robot types
-#define  ROBOT_ROBOTINO_XT 0
-#define  ROBOT_ROBOTINO_SIM 1
-#define  ROBOT_ROBOTINO_3 2
-
 /**
  * \class Robot
  * Encapsulates the Robot
  */
-class Robot
+class Robot: public Smart::ITimerHandler
 {
 public:
 
@@ -89,7 +75,7 @@ public:
 	 * @brief Default constructor
 	 *
 	 */
-	Robot( int robotType );
+	Robot();
 
 	/**
 	 * @brief Default destructor
@@ -221,7 +207,7 @@ public:
 	double getTotalRotationRight();
 
 	void setParameters( double maxVelX, double maxVelY, double maxRotVel );
-	void update(double newxpos, double newypos, double newalpha,double vx, double vy, double omega,  double sequence);
+	void update(double newxpos, double newypos, double newalpha,double vx, double vy, double omega,  unsigned int sequence);
 
 	void processEvents();
 
@@ -233,8 +219,19 @@ public:
 
 	void setRelay(unsigned int relayNumber, bool state);
 
+	bool getBumperState();
+
+	void setPowerOutput(float value);
+
 	/////////////////////////////// private
 private:
+	void timerExpired(const std::chrono::system_clock::time_point &abs_time, const void * arg);
+//	void timerExpired(const ACE_Time_Value & absolute_time,const void * arg);
+	void timerCancelled();
+	void timerDeleted(const void * arg);
+
+	void initVariables();
+	
 	// thread
 	int svc( void );
 
@@ -289,21 +286,20 @@ private:
 
 	rec::robotino::api2::DigitalOutput digitalOutput;
 	//rec::robotino::api2::AnalogOutput analogOutputy;
+	rec::robotino::api2::PowerOutput powerOutput;
 
 	rec::robotino::api2::Relay relay;
 	mutable SmartACE::SmartMutex lockRelay;
 
 
 	RobotinoOdom robotinoOdom;
+	bool _ignoreOdometryEvent;
+	
 	RobotinoBumper robotinoBumper;
 
 
 	// control Robotino's movement
 	rec::robotino::api2::OmniDrive robotinoDrive;
-
-	//rec::robotino::api2::Odometry robotinoOdometry;
-	// Sequence nr's to check new readings of the odometry
-	unsigned int sequenceNew, sequenceOld;
 
 	// Model of Robotinos drive system (wheel diameter, gear, ...)
 	rec::robotino::api2::OmniDriveModel robotinoDriveModel;
@@ -313,6 +309,13 @@ private:
 	rec::robotino::api2::Motor robotinoM1, robotinoM2, robotinoM3;
 
 	rec::robotino::api2::PowerManagement power;
+
+
+	bool generateLaserSafetyFieldEvents;
+	int laserSafetyFieldIOBit;
+    	int laserSafetyFieldTimerId;
+	int laserSafetyFieldTimeoutSec, laserSafetyFieldTimeoutMsec;
+	int laserSafetyFieldLastState;
 
 };
 

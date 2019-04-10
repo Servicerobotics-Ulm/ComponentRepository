@@ -11,10 +11,19 @@ ComponentParameter ComponentRobotinoBaseServerParams component ComponentRobotino
 		maxRotVel : Double = 4.0
 		
 		//@doc"IP-adress of the robotino daemon. Depends on where the component is executed. Execution on robotino requires the host name IP."
-		daemonIP: String = "192.168.0.1"
+		daemonIP: String = "127.0.0.1"
 		
-		//@doc"Type of robotino platform. Currently supported: robotinoXT,robotinoSIM,robotino3"
-		robotType: String = "robotino3"
+	}
+	
+	InternalParameter Bumper{
+		bumperTimeOutSec : Int32 = 10
+		bumperTimeOutMSec : Int32 = 0		
+	}
+	
+	InternalParameter LaserSafetyField{
+		generateLaserSafetyFieldEvents : Boolean = false
+		laserSafetyfFieldTimeOutSec : Int32 = 10
+		laserSafetyfFieldTimeOutMSec : Int32 = 0		
 	}
 	
 	InternalParameter General {

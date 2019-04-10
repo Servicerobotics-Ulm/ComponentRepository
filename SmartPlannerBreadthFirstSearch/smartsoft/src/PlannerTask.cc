@@ -14,6 +14,39 @@
 // If you want the toolchain to re-generate this file, please 
 // delete it before running the code generator.
 //--------------------------------------------------------------------------
+
+// --------------------------------------------------------------------------
+//
+//  Copyright (C) 2009 Christian Schlegel, Andreas Steck, Matthias Lutz
+//
+//        schlegel@hs-ulm.de
+//        steck@hs-ulm.de
+//
+//        ZAFH Servicerobotik Ulm
+//        University of Applied Sciences
+//        Prittwitzstr. 10
+//        D-89075 Ulm
+//        Germany
+//
+//  This file is part of the "SmartSoft smartPlannerBreadthFirstSearch component".
+//  It provides planning services based on grid maps.
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License, or (at your option) any later version.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+//
+// --------------------------------------------------------------------------
+
 #include "PlannerTask.hh"
 #include "SmartPlannerBreadthFirstSearch.hh"
 
@@ -108,7 +141,7 @@ int PlannerTask::on_execute()
 	// ------------------------------------------------------------------
 	//std::cout << "before acquiring curMapClient - line " << __LINE__ << std::endl;
 	//do {
-	   status = this->curMapClientGetUpdate(currentGridMap);
+	   status = COMP->curMapClient->getUpdate(currentGridMap);
 	  if(status != Smart::SMART_OK) {
 		 std::cout << "no map received with getUpdate(currentGridMap); return code: " << status << std::endl;
 		 usleep(50000);
@@ -268,7 +301,7 @@ int PlannerTask::on_execute()
 						std::cout << "PLANNER: fatal error, no path found since no valid goal point" << std::endl;
 
 						plannerGoal.set_goal(0.0,0.0,0.0,0.0,0.0,0.0,localState.getCommNavigationObjects().getPlannerParams().getID().getId(),1);
-						this->plannerGoalServerPut(plannerGoal);
+						COMP->plannerGoalServer->put(plannerGoal);
 					}
 					else
 					{
@@ -282,7 +315,7 @@ int PlannerTask::on_execute()
 						std::cout << "PLANNER  next goal (" << xNextGoal << "," << yNextGoal << ") goal (" << xGoal << "," << yGoal << ")" << std::endl;
 
 						plannerGoal.set_goal(xNextGoal,yNextGoal,0.0,xGoal,yGoal,0.0,localState.getCommNavigationObjects().getPlannerParams().getID().getId(),0);
-						this->plannerGoalServerPut(plannerGoal);
+						COMP->plannerGoalServer->put(plannerGoal);
 
 						generalstatus = CommNavigationObjects::PlannerEventType::PLANNER_NO_ERROR;
 					}
@@ -394,7 +427,7 @@ int PlannerTask::on_execute()
 			   // ---------------------------------------------------
 			   CommNavigationObjects::PlannerEventState plannerEventState;
 			   plannerEventState.set(CommNavigationObjects::PlannerEventType::PLANNER_NO_PATH);
-			   this->plannerEventServerPut(plannerEventState);
+			   COMP->plannerEventServer->put(plannerEventState);
 		   }
 	   }
    }
@@ -402,7 +435,7 @@ int PlannerTask::on_execute()
    {
 	   CommNavigationObjects::PlannerEventState plannerEventState;
 	   plannerEventState.set(generalstatus);
-	   this->plannerEventServerPut(plannerEventState);
+	   COMP->plannerEventServer->put(plannerEventState);
    }
 
 

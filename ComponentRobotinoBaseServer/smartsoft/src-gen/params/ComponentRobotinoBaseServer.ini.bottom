@@ -1,0 +1,43 @@
+#####################
+# internal parameters
+#####################
+##########################
+# InternalParameter Bumper
+[Bumper]
+bumperTimeOutMSec 0
+bumperTimeOutSec 10
+
+##########################
+# InternalParameter General
+[General]
+hasSignalState true
+poseFileName /tmp/lastRobotPose.txt
+useLocalizationEvent true
+verbose false
+writePoseFile false
+
+##########################
+# InternalParameter LaserSafetyField
+[LaserSafetyField]
+generateLaserSafetyFieldEvents false
+laserSafetyfFieldTimeOutMSec 0
+laserSafetyfFieldTimeOutSec 10
+
+##########################
+# InternalParameter Robot
+[Robot]
+daemonIP 127.0.0.1
+maxRotVel 4.0
+maxVelX 1.0
+maxVelY 1.0
+
+
+#####################
+# extended parameters
+#####################
+
+#####################
+# instance parameters
+#####################
+##########################
+# ParameterSet BaseParams

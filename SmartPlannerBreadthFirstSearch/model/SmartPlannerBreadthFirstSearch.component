@@ -4,6 +4,7 @@ ComponentDefinition SmartPlannerBreadthFirstSearch {
 		PublicOperationMode CommNavigationObjects.PathPlannerStates.PathPlanning {
 			activates ( pathplanning )
 		}
+		with plannerEvent realizedBy PlannerEventServer
 	}
 	
 	InputPort CurMapClient implements CommNavigationObjects.CurrGridMapPushService { }

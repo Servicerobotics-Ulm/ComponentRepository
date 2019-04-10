@@ -37,16 +37,25 @@
 
 #include "Robot.hh"
 #include "aceSmartSoft.hh"
+#include <chrono>
+#include <ctime>
+#include <ratio>
+
+#include "CommBasicObjects/CommLaserSafetyEventState.hh"
 
 #include "ComponentRobotinoBaseServer.hh"
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-Robot::Robot( int robotType )
+Robot::Robot( )
+: _ignoreOdometryEvent(false)
 {
 
 	digitalInputArray.setComId(robotinoCom.id());
 	analogInputArray.setComId(robotinoCom.id());
 	digitalOutput.setComId(robotinoCom.id());
 	relay.setComId(robotinoCom.id());
+
+	powerOutput.setComId(robotinoCom.id());
+
 	robotinoOdom.setComId(robotinoCom.id());
 	robotinoBumper.setComId(robotinoCom.id());
 	robotinoDrive.setComId(robotinoCom.id());
@@ -58,68 +67,29 @@ Robot::Robot( int robotType )
 	power.setComId(robotinoCom.id());
 
 	// reset position
-	resetPosition();
+	initVariables();
 
-	// select the parameters according to the specified robotino robot type
-	switch(robotType)
-	{
-		// Robotino
-		case ROBOT_ROBOTINO_XT:
-		{
-			// for possible other robotino models
-			robotinoM1.setMotorNumber(0);
-			robotinoM2.setMotorNumber(1);
-			robotinoM3.setMotorNumber(2);
 
-			this->sequenceNew = 1;
-			this->sequenceOld = 0;
+	// for possible other robotino models
+	robotinoM1.setMotorNumber(0);
+	robotinoM2.setMotorNumber(1);
+	robotinoM3.setMotorNumber(2);
 
-			//TODO
-			// uncertainity of robot
-			lamdaSigmaD = 50*50/1000.0;
-			lamdaSigmaDeltaAlpha = (5*5/360.0) /180.0 * M_PI;
-			lamdaSigmaDeltaBeta = (2*2/1000.0) /180.0 * M_PI;
+	// uncertainity of robot
+	lamdaSigmaD = 50*50/1000.0;
+	lamdaSigmaDeltaAlpha = (5*5/360.0) /180.0 * M_PI;
+	lamdaSigmaDeltaBeta = (2*2/1000.0) /180.0 * M_PI;
 
-			break;
-		}
-		case ROBOT_ROBOTINO_SIM:
-		{
-			// for possible other robotino models
-			robotinoM1.setMotorNumber(0);
-			robotinoM2.setMotorNumber(1);
-			robotinoM3.setMotorNumber(2);
+	this->robotinoBumper.setTimoutConfiguration(COMP->getGlobalState().getBumper().getBumperTimeOutSec(),COMP->getGlobalState().getBumper().getBumperTimeOutMSec());
 
-			this->sequenceNew = 1;
-			this->sequenceOld = 0;
 
-			//TODO
-			// uncertainity of robot
-			lamdaSigmaD = 50*50/1000.0;
-			lamdaSigmaDeltaAlpha = (5*5/360.0) /180.0 * M_PI;
-			lamdaSigmaDeltaBeta = (2*2/1000.0) /180.0 * M_PI;
 
-			break;
-		}
-		case ROBOT_ROBOTINO_3:
-		{
-			// for possible other robotino models
-			robotinoM1.setMotorNumber(0);
-			robotinoM2.setMotorNumber(1);
-			robotinoM3.setMotorNumber(2);
-
-			this->sequenceNew = 1;
-			this->sequenceOld = 0;
-
-			//TODO
-			// uncertainity of robot
-			lamdaSigmaD = 50*50/1000.0;
-			lamdaSigmaDeltaAlpha = (5*5/360.0) /180.0 * M_PI;
-			lamdaSigmaDeltaBeta = (2*2/1000.0) /180.0 * M_PI;
-
-			break;
-		}
-
-	}
+	generateLaserSafetyFieldEvents = COMP->getGlobalState().getLaserSafetyField().getGenerateLaserSafetyFieldEvents();
+	laserSafetyFieldIOBit = 0;
+	laserSafetyFieldTimerId = -1;
+	laserSafetyFieldTimeoutSec = COMP->getGlobalState().getLaserSafetyField().getLaserSafetyfFieldTimeOutSec();
+	laserSafetyFieldTimeoutMsec = COMP->getGlobalState().getLaserSafetyField().getLaserSafetyfFieldTimeOutMSec();
+	laserSafetyFieldLastState = 1;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -155,7 +125,7 @@ int Robot::openSerial( std::string daemonIp )
 	{
 		std::cout << "Robotino daemon connection successful." << std::endl;
 		// set odometry and wait till it's ready. otherwise the first readings contain a false sequence nr
-		while( !robotinoOdom.set(0.0, 0.0, 0.0, false) )
+		while( false == robotinoOdom.set(0.0, 0.0, 0.0, 100) )
 		{
 			std::cout << "Setting the Odometry timed out!!! --> Retry..." << std::endl;
 		}
@@ -177,9 +147,12 @@ inline unsigned arraysize(const T (&v)[S]) { return S; }
 
 void Robot::processEvents()
 {
-	CommRobotinoObjects::CommDigitalInputEventState state;
-	//std::cout << "ProcessEvents ..." << std::endl;
+
+	//call into the robotino api to provide resources for the callbacks of the api using classes
 	robotinoCom.processEvents();
+
+	//fetch state of digital and analog inputs
+	CommRobotinoObjects::CommDigitalInputEventState state;
 	SmartACE::SmartGuard posGuard(lockIO);
 	{
 	digitalInputArray.values(digitalInputs);
@@ -193,103 +166,144 @@ void Robot::processEvents()
 
 	}
 
-	//COMP->digitalInputEventServer->put(state);
 
-	COMP->commRobotinoDigitalEventOut->put(state);
+
+	////////////////////////////////////////////////////////////////
+	//robotino laser safety field state evalution
+	//this should be realized within a laser server component
+	//due to firmware issues with the sick s300 laser sever the evaluation of the lasersafety fields
+	//is done using the digital io of the robotino base
+	//This will only work if the laser is configured to switch the io and connected to the digital ios of the robotino base!
+	if(generateLaserSafetyFieldEvents == true){
+
+		int laserSafetyFieldCurrentState = digitalInputs[0];
+
+		if(laserSafetyFieldCurrentState != laserSafetyFieldLastState){
+
+			if(laserSafetyFieldCurrentState == 0){
+				//we need some timeout here. If station is invisible for more than x seconds, we abort this task
+				//COMP->ini.laser.noStationVisibleTimeout
+				if(laserSafetyFieldTimerId == -1){
+					std::cout << "[Robot::processEvents()] laserSafety Event scheduleTimer relative time: " << laserSafetyFieldTimeoutSec << " : " << laserSafetyFieldTimeoutMsec << std::endl;
+
+					std::chrono::seconds sec(laserSafetyFieldTimeoutSec);
+					std::chrono::milliseconds msec(laserSafetyFieldTimeoutMsec);
+					laserSafetyFieldTimerId = COMP->getComponentImpl()->getTimerManager()->scheduleTimer(this,NULL,sec+msec);
+				} else {
+					std::cout<<__FUNCTION__<<":"<<__LINE__<<"ERROR: this should never had happened!"<<std::endl;
+				}
+
+			} else {
+				//abort timer
+				if(laserSafetyFieldTimerId != -1)
+				{
+					std::cout << "[Robot::processEvents()] laserSafety Event cancelTimer!"<< std::endl;
+					COMP->getComponentImpl()->getTimerManager()->cancelTimer(laserSafetyFieldTimerId);
+					laserSafetyFieldTimerId = -1;
+				} else {
+					std::cout<<__FUNCTION__<<":"<<__LINE__<<" ERROR: this should never had happened!"<<std::endl;
+				}
+
+				//send free state immediately
+				CommBasicObjects::CommLaserSafetyEventState state;
+				state.setProtectiveState(CommBasicObjects::SafetyFieldState::FREE);
+				COMP->laserSafetyEventServiceOut->put(state);
+			}
+
+			laserSafetyFieldLastState = laserSafetyFieldCurrentState;
+		} else {
+			//state not changed this is only used for output!
+			if (laserSafetyFieldCurrentState == 0){
+				if(COMP->getGlobalState().getGeneral().getVerbose()){
+					std::cout << "LaserSafety blocked!" << std::endl;
+				}
+				if(laserSafetyFieldTimerId == -1){
+					std::cout << "[Robot::processEvents()] laserSafety Event scheduleTimer relative time: " << laserSafetyFieldTimeoutSec << " : " << laserSafetyFieldTimeoutMsec << std::endl;
+					std::chrono::seconds sec(laserSafetyFieldTimeoutSec);
+					std::chrono::milliseconds msec(laserSafetyFieldTimeoutMsec);
+					laserSafetyFieldTimerId = COMP->getComponentImpl()->getTimerManager()->scheduleTimer(this,NULL, sec+msec);
+				}
+			}
+		}
+	}
+	////////////////////////////////////////////////////////////////
+
+	COMP->digitalInputEventOut->put(state);
 
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void Robot::update(double newxpos, double newypos, double newalpha, double vx, double vy, double omega, double sequence)
+void Robot::update(double newxpos, double newypos, double newalpha, double vx, double vy, double omega, unsigned int sequence)
 {
-	double deltaX;
-	double deltaY;
-	double deltaA;
-
-	double deltaDistance;
-
-	this->sequenceNew = sequence;
-
-//	std::cout << "readings x: " << newxpos << "\ty: " << newypos << "\tomega: " << newalpha << std::endl;
-//	std::cout << "sequence new: " << this->sequenceNew << " sequence old: " << this->sequenceOld << std::endl;
+	//std::cout << "Robot::update -- readings x: " << newxpos << "\ty: " << newypos << "\tomega: " << newalpha << std::endl;
+	//std::cout << "sequence new: " << this->sequenceNew << " sequence old: " << this->sequenceOld << std::endl;
 
 
 	// update pos with new readings
-	if ( this->sequenceOld < this->sequenceNew || strcmp("robotinoSIM", COMP->getGlobalState().getRobot().getRobotType().c_str() ) == 0 )
+	SmartACE::SmartGuard posGuard(mutexRobotPos);
+	
+	if(false == this->_ignoreOdometryEvent)
 	{
-
-		SmartACE::SmartGuard posGuard(mutexRobotPos);
-		{
-
-			robotVel.set_vX(vx,1);
-			robotVel.set_vY(vy,1);
-			robotVel.set_WZ_base(omega);
+		robotVel.set_vX(vx,1);
+		robotVel.set_vY(vy,1);
+		robotVel.set_WZ_base(omega);
 
 
-			double deltaX = newxpos - this->rawPos.get_x(1);
-			double deltaY = newypos - this->rawPos.get_y(1);
-			double deltaA = piToPiRad(newalpha - this->rawPos.get_base_azimuth());
+		double deltaX = newxpos - this->rawPos.get_x(1);
+		double deltaY = newypos - this->rawPos.get_y(1);
+		double deltaA = piToPiRad(newalpha - this->rawPos.get_base_azimuth());
 
 
-			//////////////////////////////////////////////////////////////////
-			// calculation of new robotPos
+		//////////////////////////////////////////////////////////////////
+		// calculation of new robotPos
 
-			double dAlpha = piToPiRad(this->robotPos.get_base_azimuth() - rawPos.get_base_azimuth());
-			double a1 = cos(dAlpha);
-			double a2 = (-1.0) * sin(dAlpha);
-			double a3 = 0;
+		double dAlpha = piToPiRad(this->robotPos.get_base_azimuth() - rawPos.get_base_azimuth());
+		double a1 = cos(dAlpha);
+		double a2 = (-1.0) * sin(dAlpha);
+		double a3 = 0;
 
-			double a4 = sin(dAlpha);
-			double a5 = cos(dAlpha);
-			double a6 = 0;
+		double a4 = sin(dAlpha);
+		double a5 = cos(dAlpha);
+		double a6 = 0;
 
-			double a7 = 0;
-			double a8 = 0;
-			double a9 = 1;
+		double a7 = 0;
+		double a8 = 0;
+		double a9 = 1;
 
-			CommBasicObjects::CommTimeStamp time_stamp;
-		    time_stamp.set_now(); // Set the timestamp to the current time
+		CommBasicObjects::CommTimeStamp time_stamp;
+		time_stamp.set_now(); // Set the timestamp to the current time
 
-			this->robotPos.set_x(this->robotPos.get_x(1) + (a1 * deltaX + a2 * deltaY + a3 * deltaA), 1);
-			this->robotPos.set_y(this->robotPos.get_y(1) + (a4 * deltaX + a5 * deltaY + a6 * deltaA), 1);
-			this->robotPos.set_base_azimuth(piToPiRad(this->robotPos.get_base_azimuth() + (a7 * deltaX + a8 * deltaY + a9 * deltaA)));
-			this->robotPos.setTimeStamp(time_stamp);
+		this->robotPos.set_x(this->robotPos.get_x(1) + (a1 * deltaX + a2 * deltaY + a3 * deltaA), 1);
+		this->robotPos.set_y(this->robotPos.get_y(1) + (a4 * deltaX + a5 * deltaY + a6 * deltaA), 1);
+		this->robotPos.set_base_azimuth(piToPiRad(this->robotPos.get_base_azimuth() + (a7 * deltaX + a8 * deltaY + a9 * deltaA)));
+		this->robotPos.setTimeStamp(time_stamp);
+		
 
-			//////////////////////////////////////////////////////////////////
-			// calculation of new rawPos
+	//	std::cout << "robotPos " << this->robotPos.get_x() << " " << this->robotPos.get_y() << " " << this->robotPos.get_base_azimuth() << std::endl;
 
-			this->rawPos.set_x(newxpos, 1);
-			this->rawPos.set_y(newypos, 1);
-			this->rawPos.set_base_azimuth(piToPiRad(newalpha));
-		    this->rawPos.setTimeStamp(time_stamp);
+		//////////////////////////////////////////////////////////////////
+		// calculation of new rawPos
 
-			//////////////////////////////////////////////////////////////////
-			// update CovMatrix
+		this->rawPos.set_x(newxpos, 1);
+		this->rawPos.set_y(newypos, 1);
+		this->rawPos.set_base_azimuth(piToPiRad(newalpha));
+		this->rawPos.setTimeStamp(time_stamp);
 
-			updateCovMatrix(this->oldPos, this->robotPos);
-			this->oldPos = this->robotPos;
-			this->sequenceOld = this->sequenceNew;
+		//////////////////////////////////////////////////////////////////
+		// update CovMatrix
 
-			deltaDistance = sqrt((deltaX * deltaX) + (deltaY * deltaY));
-			totalDistance += deltaDistance;
+		updateCovMatrix(this->oldPos, this->robotPos);
+		this->oldPos = this->robotPos;
 
-
-
-			//sollte die sequenznr an max stoßen -> reset odometry (nicht zu 0,0,0 aber die sequenznr)
-			if ( this->sequenceNew == UINT_MAX )
-			{
-				robotinoOdom.set(newxpos, newypos, newalpha, true);
-				this->sequenceNew = 1;
-				this->sequenceOld = 0;
-			}
-
-		}
-		posGuard.release();
+		double deltaDistance = sqrt((deltaX * deltaX) + (deltaY * deltaY));
+		totalDistance += deltaDistance;	
 	}
+	
+	posGuard.release();
 }
 
-//TODO übernommen von SmartPioneerBase. Robotino braucht möglicherweise Anpassungen
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // this function just calculates the covMatric for pos1
 bool Robot::updateCovMatrix( CommBasicObjects::CommBasePose pos0,
@@ -450,7 +464,7 @@ bool Robot::updateCovMatrix( CommBasicObjects::CommBasePose pos0,
 	}
 }
 
-//TODO übernommen von SmartPioneerBase. Robotino braucht möglicherweise Anpassungen
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int Robot::updatePosition( CommBasicObjects::CommBasePositionUpdate update )
 {
@@ -533,61 +547,68 @@ int Robot::updatePosition( CommBasicObjects::CommBasePositionUpdate update )
 	return 0;
 }
 
+void Robot::initVariables()
+{
+	this->robotVel.setVX(0);
+	this->robotVel.setVY(0);
+	this->robotVel.set_WZ_base(0);
+
+	this->robotPos.set_x(0.0);
+	this->robotPos.set_y(0.0);
+	this->robotPos.set_base_azimuth(0.0);
+
+	this->rawPos.set_x(0.0);
+	this->rawPos.set_y(0.0);
+	this->rawPos.set_base_azimuth(0.0);
+
+
+	this->oldPos.set_x(0.0);
+	this->oldPos.set_y(0.0);
+	this->oldPos.set_base_azimuth(0.0);
+
+	oldalpha = 0;
+	oldxpos = 0;
+	oldypos = 0;
+	totalDistance = 0;
+	totalRotationLeft = 0;
+	totalRotationRight = 0;
+	
+	// initialize covariance matrix
+	this->oldPos.set_cov(0, 0, 50* 50 );
+	this->oldPos.set_cov(1,1, 50*50);
+	this->oldPos.set_cov(2,2, 5*5/180.0*M_PI);
+	this->robotPos.set_cov(0,0, oldPos.get_cov(0,0) );
+	this->robotPos.set_cov(1,1, oldPos.get_cov(1,1) );
+	this->robotPos.set_cov(2,2, oldPos.get_cov(2,2) );
+}
+
 int Robot::resetPosition()
 {
 	//std::cout << "Reset Base Position!" << std::endl;
 
 	// reset of the robot Position
-	SmartACE::SmartGuard posGuard(mutexRobotPos);
 	{
-		//this->closeSerial();
+		SmartACE::SmartGuard posGuard(mutexRobotPos);
+			
+		this->initVariables();
+		this->_ignoreOdometryEvent = true;
 
-		this->robotVel.setVX(0);
-		this->robotVel.setVY(0);
-		this->robotVel.set_WZ_base(0);
-
-		this->sequenceNew = 1;
-		this->sequenceOld = 0;
-
-		this->robotPos.set_x(0.0);
-		this->robotPos.set_y(0.0);
-		this->robotPos.set_base_azimuth(0.0);
-
-		this->rawPos.set_x(0.0);
-		this->rawPos.set_y(0.0);
-		this->rawPos.set_base_azimuth(0.0);
-
-
-		this->oldPos.set_x(0.0);
-		this->oldPos.set_y(0.0);
-		this->oldPos.set_base_azimuth(0.0);
-
-		oldalpha = 0;
-		oldxpos = 0;
-		oldypos = 0;
-		totalDistance = 0;
-		totalRotationLeft = 0;
-		totalRotationRight = 0;
-
-		//TODO add LOCK
-		if(!robotinoOdom.set(0.0, 0.0, 0.0, true)){
-			std::cout<<" Robot::resetPosition: Timeout resetting odom!"<<std::endl;
-		}
-
-		// initialize covariance matrix
-		this->oldPos.set_cov(0, 0, 50* 50 );
-		this->oldPos.set_cov(1,1, 50*50);
-		this->oldPos.set_cov(2,2, 5*5/180.0*M_PI);
-		this->robotPos.set_cov(0,0, oldPos.get_cov(0,0) );
-		this->robotPos.set_cov(1,1, oldPos.get_cov(1,1) );
-		this->robotPos.set_cov(2,2, oldPos.get_cov(2,2) );
-
-
-
-		//this->openSerial( this->hostIP );
+		posGuard.release();		
 	}
-	posGuard.release();
+	
+	while( false == robotinoOdom.set(0.0, 0.0, 0.0, 100) )
+	{
+		std::cout << "Setting the Odometry timed out!!! --> Retry..." << std::endl;
+	}
+	std::cout << "Odometry set." << std::endl;
+	
+	{
+		SmartACE::SmartGuard posGuard(mutexRobotPos);
+		
+		this->_ignoreOdometryEvent = false;
 
+		posGuard.release();
+	}
 
 	return 0;
 }
@@ -662,7 +683,7 @@ bool Robot::getExternalPower()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Robot::setVxVyOmega( double vX, double vY, double omega )
 {
-	if(robotinoBumper.bumped == false){
+	if(robotinoBumper.getState() == false){
 
 	if ( vX > this->maxVelX )
 		vX = this->maxVelX;
@@ -681,7 +702,6 @@ void Robot::setVxVyOmega( double vX, double vY, double omega )
 		omega = -this->maxRotVel;
 	newOmega = omega;
 
-	//TODO add lock
 	robotinoDrive.setVelocity(newVx, newVy, newOmega);
 	} else {
 		robotinoDrive.setVelocity(0, 0, 0);
@@ -708,21 +728,18 @@ void Robot::setVxVyOmega( double vX, double vY, double omega )
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 double Robot::getDistance()
 {
-	//TODO Check output value
 	return totalDistance;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 double Robot::getTotalRotationLeft()
 {
-	//TODO Check output value
 	return totalRotationLeft;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 double Robot::getTotalRotationRight()
 {
-	//TODO Check output value
 	return totalRotationRight;
 }
 
@@ -736,47 +753,6 @@ void Robot::setParameters( double maxVelX, double maxVelY, double maxRotVel )
 
 	//printf("set parameters: maxVelX %f, maxVelY %f, maxRotVel %f \n", maxVelX, maxVelY, maxRotVel);
 }
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//int Robot::svc()
-//{
-//	std::cout << "RobotinoBaseServer thread running...\n";
-//
-//	if ( false == robotinoCom.isConnected() )
-//	{
-//		std::cout << std::endl << "Connection error..." << std::endl;
-//		return 1;
-//	}
-//
-//	//double newxpos, newypos, newalpha = 0.0;
-//	//robotinoOdometry.readings(&newxpos, &newypos, &newalpha, &(this->sequenceNew));
-//	/*std::cout << "readings x: " << newxpos
-//	 << "\ty: " << newypos
-//	 << "\tomega: " << newalpha << std::endl;*/
-//
-//	while ( robotinoCom.isConnected() )
-//	{
-//		parse();
-//
-//		if ( updateVOmega )
-//		{
-//			robotinoDrive.setVelocity(newVx, 0.0, newOmega);
-//			//printf("o: %f, v: %f\n", newOmega, newVx);
-//			updateVOmega = false;
-//		}
-//
-//		//std::cout << "Battery: " << getBatteryVoltage() << std::endl;
-//		//std::cout << "Vx: " << getVx() << " m/s\tVOmegaRad: " << getOmegaRad() << " rad/s" << std::endl;
-//		//std::cout << "rawx: " << getBaseRawPosition().get_x() << "\trawy: "	<< getBaseRawPosition().get_y() << std::endl;
-//		//std::cout << "x: " << getBasePosition().get_x() << "\ty: " << getBasePosition().get_y() << std::endl;
-//
-//		usleep( 1000 );
-//		robotinoCom.processEvents();
-//
-//	} // while
-//	return 0;
-//}
-
 
 std::vector<bool> Robot::getDigitalInputArray( ) const{
 	SmartACE::SmartGuard posGuard(lockIO);
@@ -802,6 +778,10 @@ void Robot::setDigitalOutput(unsigned int outputNumber, bool outputValue){
 
 }
 
+void Robot::setPowerOutput(float value){
+	powerOutput.setValue(value);
+}
+
 void Robot::setRelay(unsigned int relayNumber, bool state){
 	SmartACE::SmartGuard relayGuard(lockRelay);
 	std::cout<<"Robot::setRelay: "<<relayNumber<<" state : "<<state<<std::endl;
@@ -813,9 +793,31 @@ void Robot::setRelay(unsigned int relayNumber, bool state){
 		std::cerr<<"Error setting relay: "<<e.what()<<std::endl;
 	}
 
-
 }
 
 void Robot::setAnalogOutput(unsigned int outputNumber, double outputValue){
 	std::cout<<"WARNING: Analog Output is not supported!"<<std::endl;
 }
+
+bool Robot::getBumperState(){
+	return robotinoBumper.getState();
+}
+
+
+
+
+//void Robot::timerExpired(const ACE_Time_Value & absolute_time,const void * arg){
+void Robot::timerExpired(const std::chrono::system_clock::time_point &abs_time, const void * arg){
+
+	std::cout<<"[Robot:laserSafetyFieldTimerExpired] LaserSafetyField blocked timeout!"<<std::endl;
+
+	COMP->getComponentImpl()->getTimerManager()->cancelTimer(laserSafetyFieldTimerId);
+	laserSafetyFieldTimerId = -1;
+	CommBasicObjects::CommLaserSafetyEventState state;
+	state.setProtectiveState(CommBasicObjects::SafetyFieldState::BLOCKED);
+	COMP->laserSafetyEventServiceOut->put(state);
+
+}
+
+void Robot::timerCancelled(){};
+void Robot::timerDeleted(const void * arg){};

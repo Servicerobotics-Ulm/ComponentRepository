@@ -70,6 +70,11 @@ void SmartJoystickServer::addExtension(SmartJoystickServerExtension *extension)
 	componentExtensionRegistry[extension->getName()] = extension;
 }
 
+SmartACE::SmartComponent* SmartJoystickServer::getComponentImpl()
+{
+	return dynamic_cast<SmartJoystickServerAcePortFactory*>(portFactoryRegistry["ACE_SmartSoft"])->getComponentImpl();
+}
+
 /**
  * Notify the component that setup/initialization is finished.
  * You may call this function from anywhere in the component.
@@ -138,7 +143,7 @@ void SmartJoystickServer::init(int argc, char *argv[])
 		loadParameter(argc, argv);
 		
 		// print out the actual parameters which are used to initialize the component
-		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
+		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
 		// initializations of SmartJoystickServerROSExtension
 		
@@ -271,8 +276,10 @@ void SmartJoystickServer::fini()
 	// destroy all task instances
 	// unlink all UpcallManagers
 	// unlink the TaskTrigger
-	joystickTaskTrigger->detach(joystickTask);
-	delete joystickTask;
+	if(joystickTaskTrigger != NULL){
+		joystickTaskTrigger->detach(joystickTask);
+		delete joystickTask;
+	}
 
 	// destroy all input-handler
 

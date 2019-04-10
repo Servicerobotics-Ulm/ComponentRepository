@@ -14,6 +14,36 @@
 // If you want the toolchain to re-generate this file, please 
 // delete it before running the code generator.
 //--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+//
+//  Copyright (C) 2010 Manuel Wopfner, Matthias Lutz
+//
+//        schlegel@hs-ulm.de
+//        lutz@hs-ulm.de
+//
+//        ZAFH Servicerobotic Ulm
+//        University of Applied Sciences
+//        Prittwitzstr. 10
+//        89075 Ulm
+//        Germany
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU General Public License
+//  as published by the Free Software Foundation; either version 2.1
+//  of the License, or (at your option) any later version.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License along
+//  with this library; if not, write to the Free Software Foundation, Inc.,
+//  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
+//  This work is based on previous work by the folks from PlayerStage.
+//
+//--------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 //
@@ -28,6 +58,7 @@
 //    Brian Gerkey, Kasper Stoy, Richard Vaughan, & Andrew Howard
 //
 //----------------------------------------------------------------------------
+
 
 #include "AmclTask.hh"
 #include "SmartAmcl.hh"
@@ -44,8 +75,8 @@ AmclTask::AmclTask(SmartACE::SmartComponent *comp)
 :	AmclTaskCore(comp)
 {
 	std::cout << "constructor AmclTask\n";
-	std::cout << "constructor AmclTask\n";
 	COMP->pf_init_ = false;
+
 }
 AmclTask::~AmclTask() 
 {
@@ -56,14 +87,14 @@ AmclTask::~AmclTask()
 
 	delete COMP->laser_;
 	delete COMP->odom_;
+
 }
-
-
 
 int AmclTask::on_entry()
 {
 	// do initialization procedures here, which are called once, each time the task is started
 	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
+
 
 	if(0!=init(COMP->getGlobalState().getGeneral().getYaml_file())){
 		std::cout<<"ERROR opening default map!"<<std::endl;
@@ -77,6 +108,7 @@ int AmclTask::on_entry()
 		COMP->h.initObjects();
 	}
 
+
 	return 0;
 }
 int AmclTask::on_execute()
@@ -84,7 +116,7 @@ int AmclTask::on_execute()
 	// this method is called from an outside loop,
 	// hence, NEVER use an infinite loop (like "while(1)") here inside!!!
 	// also do not use blocking calls which do not result from smartsoft kernel
-	
+
 	if(COMP->amcl_init == false){
 		std::cout<<"[AmclTask] filter not initialized --> skip execution sleep(1)"<<std::endl;
 		ACE_OS::sleep(ACE_Time_Value(1,0));
@@ -93,7 +125,7 @@ int AmclTask::on_execute()
 
 	// get new laser scan
 	CommBasicObjects::CommMobileLaserScan scan;
-	Smart::StatusCode status = this->laserServiceInGetUpdate(scan);
+	Smart::StatusCode status = COMP->laserServiceIn->getUpdateWait(scan);
 	if (status != Smart::SMART_OK) {
 		std::cerr << "[AMCL] laser client " << status << "\n";
 		ACE_OS::sleep(ACE_Time_Value(0,250000));
@@ -395,7 +427,7 @@ int AmclTask::on_execute()
 					{
 						std::cout<<"LOCALIZATION LOST!"<<std::endl;
 						state.set(CommLocalizationObjects::LocalizationEventType::LOCALIZATION_LOST);
-						this->localizationEventServiceOutPut(state);
+						COMP->localizationEventServiceOut->put(state);
 
 
 
@@ -404,7 +436,7 @@ int AmclTask::on_execute()
 					{
 						std::cout<<"LOCALIZATION OK!"<<std::endl;
 						state.set(CommLocalizationObjects::LocalizationEventType::LOCALIZATION_OK);
-						this->localizationEventServiceOutPut(state);
+						COMP->localizationEventServiceOut->put(state);
 					}
 
 
@@ -436,7 +468,7 @@ int AmclTask::on_execute()
 
 					// send the position update
 					positionUpdate.set_corrected_position(correctedPos);
-					this->localizationUpdateServiceOutPut(positionUpdate);
+					COMP->localizationUpdateServiceOut->send(positionUpdate);
 				} else {
 					std::cerr << "No pose!\n";
 				}
@@ -456,6 +488,7 @@ int AmclTask::on_exit()
 	// use this method to clean-up resources which are initialized in on_entry() and needs to be freed before the on_execute() can be called again
 	return 0;
 }
+
 
 /////////////////////////////////////////////
 //
@@ -765,3 +798,5 @@ map_t* AmclTask::loadMapFromFile(const std::string& fname, double res, bool nega
 
 	return map;
 }
+
+

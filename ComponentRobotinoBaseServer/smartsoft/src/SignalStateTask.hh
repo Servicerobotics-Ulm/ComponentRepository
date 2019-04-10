@@ -67,7 +67,7 @@ public:
 
 	bool blink;
 	bool blinkLoc;
-	mutable SmartACE::SmartMutex lockSignalState; // why ? Gautam
+	mutable SmartACE::SmartMutex lockSignalState;
 
 
 	void setSignalState(CommBasicObjects::BaseTagType state);
@@ -75,10 +75,6 @@ public:
 
 	void setLocalizationState(bool state);
 	bool getLocalizationState()const;
-
-	//virtual int on_entry();
-	//virtual int on_execute();
-	//virtual int on_exit();
 };
 
 #endif

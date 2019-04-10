@@ -64,6 +64,11 @@ void ComponentSymbolicPlanner::addExtension(ComponentSymbolicPlannerExtension *e
 	componentExtensionRegistry[extension->getName()] = extension;
 }
 
+SmartACE::SmartComponent* ComponentSymbolicPlanner::getComponentImpl()
+{
+	return dynamic_cast<ComponentSymbolicPlannerAcePortFactory*>(portFactoryRegistry["ACE_SmartSoft"])->getComponentImpl();
+}
+
 /**
  * Notify the component that setup/initialization is finished.
  * You may call this function from anywhere in the component.

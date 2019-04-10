@@ -211,22 +211,54 @@ public:
 			 * here are the member definitions
 			 */
 			double error;
+			double rotDev1;
+			double rotDev2;
+			double rotDev3;
+			double rotDev4;
+			double rotSpeed1;
+			double rotSpeed2;
+			double rotSpeed3;
+			double rotSpeed4;
 		
 		public:
 			// default constructor
 			CdlRotateType() {
 				error = 5.0;
+				rotDev1 = 1.0;
+				rotDev2 = 1.0;
+				rotDev3 = 15.0;
+				rotDev4 = 45.0;
+				rotSpeed1 = 0.0;
+				rotSpeed2 = 2.0;
+				rotSpeed3 = 10.0;
+				rotSpeed4 = 70.0;
 			}
 		
 			/**
 			 * here are the public getters
 			 */
 			inline double getError() const { return error; }
+			inline double getRotDev1() const { return rotDev1; }
+			inline double getRotDev2() const { return rotDev2; }
+			inline double getRotDev3() const { return rotDev3; }
+			inline double getRotDev4() const { return rotDev4; }
+			inline double getRotSpeed1() const { return rotSpeed1; }
+			inline double getRotSpeed2() const { return rotSpeed2; }
+			inline double getRotSpeed3() const { return rotSpeed3; }
+			inline double getRotSpeed4() const { return rotSpeed4; }
 			
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "CdlRotate(";
 				os << "error = " << error << ", ";
+				os << "rotDev1 = " << rotDev1 << ", ";
+				os << "rotDev2 = " << rotDev2 << ", ";
+				os << "rotDev3 = " << rotDev3 << ", ";
+				os << "rotDev4 = " << rotDev4 << ", ";
+				os << "rotSpeed1 = " << rotSpeed1 << ", ";
+				os << "rotSpeed2 = " << rotSpeed2 << ", ";
+				os << "rotSpeed3 = " << rotSpeed3 << ", ";
+				os << "rotSpeed4 = " << rotSpeed4 << ", ";
 				os << ")\n";
 			}
 			

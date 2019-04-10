@@ -155,6 +155,11 @@ void SmartCdlServer::addExtension(SmartCdlServerExtension *extension)
 	componentExtensionRegistry[extension->getName()] = extension;
 }
 
+SmartACE::SmartComponent* SmartCdlServer::getComponentImpl()
+{
+	return dynamic_cast<SmartCdlServerAcePortFactory*>(portFactoryRegistry["ACE_SmartSoft"])->getComponentImpl();
+}
+
 /**
  * Notify the component that setup/initialization is finished.
  * You may call this function from anywhere in the component.
@@ -379,7 +384,7 @@ void SmartCdlServer::init(int argc, char *argv[])
 		loadParameter(argc, argv);
 		
 		// print out the actual parameters which are used to initialize the component
-		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
+		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
 		// initializations of SmartCdlServerROSExtension
 		
@@ -524,7 +529,7 @@ void SmartCdlServer::init(int argc, char *argv[])
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(cdlTask);
-				component->getTimerManager()->scheduleTimer(triggerPtr, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				// store trigger in class member
 				cdlTaskTrigger = triggerPtr;
 			} else {
@@ -543,7 +548,7 @@ void SmartCdlServer::init(int argc, char *argv[])
 			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 			int microseconds = 1000*1000 / 20.0;
 			if(microseconds > 0) {
-				component->getTimerManager()->scheduleTimer(triggerPtr, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				triggerPtr->attach(cdlTask);
 				// store trigger in class member
 				cdlTaskTrigger = triggerPtr;
@@ -622,8 +627,10 @@ void SmartCdlServer::fini()
 	plannerClientUpcallManager->detach(cdlTask);
 	trackingClientUpcallManager->detach(cdlTask);
 	// unlink the TaskTrigger
-	cdlTaskTrigger->detach(cdlTask);
-	delete cdlTask;
+	if(cdlTaskTrigger != NULL){
+		cdlTaskTrigger->detach(cdlTask);
+		delete cdlTask;
+	}
 
 	// destroy all input-handler
 

@@ -63,6 +63,12 @@
 		this->handleCommNavigationObjects_MapperParams_LTMLOAD(filename);
 	}
 
+	// handle LTMLOADIEEESTD
+	void TriggerHandlerCore::handleCommNavigationObjects_MapperParams_LTMLOADIEEESTDCore(const std::string &filename)
+	{
+		this->handleCommNavigationObjects_MapperParams_LTMLOADIEEESTD(filename);
+	}
+
 	// handle LTMLOADYAML
 	void TriggerHandlerCore::handleCommNavigationObjects_MapperParams_LTMLOADYAMLCore(const std::string &filename)
 	{
@@ -79,6 +85,12 @@
 	void TriggerHandlerCore::handleCommNavigationObjects_MapperParams_LTMSAVECore(const std::string &filename)
 	{
 		this->handleCommNavigationObjects_MapperParams_LTMSAVE(filename);
+	}
+
+	// handle LTMSAVEIEEESTD
+	void TriggerHandlerCore::handleCommNavigationObjects_MapperParams_LTMSAVEIEEESTDCore(const std::string &filename)
+	{
+		this->handleCommNavigationObjects_MapperParams_LTMSAVEIEEESTD(filename);
 	}
 
 	// handle LTMSAVEXPM

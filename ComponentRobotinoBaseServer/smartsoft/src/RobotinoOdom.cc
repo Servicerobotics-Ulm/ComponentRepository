@@ -32,7 +32,7 @@
 #include "aceSmartSoft.hh"
 #include "ComponentRobotinoBaseServer.hh"
 
-/**
+	/**
 	* Called when new odomtery data is available.
 	* @param x Global x position of Robotino in m.
 	* @param y Global y position of Robotino in m.
@@ -47,9 +47,8 @@
 	*/
 void RobotinoOdom::readingsEvent( double x, double y, double phi, float vx, float vy, float omega, unsigned int sequence ){
 
-//	std::cout<<"New Odom Reading: x: "<<x<<"y: "<<y<<" phi: "<<phi<<" vx: "<<vx<<" vy: "<<vy<<" omega: "<<omega<< "seg: "<<sequence<<std::endl;
-
-//	std::cout<<"New vx: "<<vx<<" vy: "<<vy<<" omega: "<<omega<<std::endl;
+	//std::cout<<"New Odom Reading: x: "<< x <<"y: "<<y<<" phi: "<<phi<<" vx: "<<vx<<" vy: "<<vy<<" omega: "<<omega<< "seg: "<<sequence<<std::endl;
+	//std::cout<<"New vx: "<<vx<<" vy: "<<vy<<" omega: "<<omega<<std::endl;
 
 	SmartACE::SmartGuard guard(COMP->CurrentOdomLock); //TODO
 		COMP->robot->update(x,y,phi,vx,vy,omega,sequence);

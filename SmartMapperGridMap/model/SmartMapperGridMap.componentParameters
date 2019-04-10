@@ -95,6 +95,10 @@ ComponentParameter SmartMapperGridMapParams component SmartMapperGridMap {
 	
 		TriggerInstance LTMLOADYAML passive
 		
+		TriggerInstance LTMSAVEIEEESTD passive
+		
+		TriggerInstance LTMLOADIEEESTD passive
+		
 		/** Configures whether the current map is preoccupied from the longterm map. Possible values for ?preoccupy: ENABLE will cause the component to load values from the longterm map in each cycle to the current map by applying the threshold ?thresh to decide on the occupancy of the cell. If DISABLE, the current map is not preoccupied.
 					A threshold is applied to preoccupy the binary current map: The cells of the new current map will be marked free if the value from the long term map is smaller than the threshold ?thresh. The cells will be marked as occupied if the long term map value is above the threshold. */
 		ParameterInstance CURLTM {

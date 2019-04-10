@@ -4,8 +4,8 @@
 # imports: http://spdx.org/licenses/LGPL-2.0-or-later
 
 # imports: http://www.servicerobotik-ulm.de/DomainModels/CommBasicObjects
-# imports: http://www.servicerobotik-ulm.de/DomainModels/CommNavigationObjects
 # imports: http://www.servicerobotik-ulm.de/DomainModels/CommLocalizationObjects
+# imports: http://www.servicerobotik-ulm.de/DomainModels/CommNavigationObjects
 
 #######################################
 # Technical Data Sheet
@@ -34,8 +34,8 @@
 # these namespaces can be different in generated files
 @prefix t3: <http://servicerobotik-ulm.de/ComponentsAndSystems#> .
 
-@prefix CommLocalizationObjects: <http://www.servicerobotik-ulm.de/DomainModels/CommLocalizationObjects#> .
 @prefix CommBasicObjects: <http://www.servicerobotik-ulm.de/DomainModels/CommBasicObjects#> .
+@prefix CommLocalizationObjects: <http://www.servicerobotik-ulm.de/DomainModels/CommLocalizationObjects#> .
 @prefix CommNavigationObjects: <http://www.servicerobotik-ulm.de/DomainModels/CommNavigationObjects#> .
 
 ##### Software Component SmartAmcl
@@ -44,8 +44,8 @@ t3:SmartAmcl a robmosys:ComponentDefinition;
 	a owl:Ontology ;
 	owl:imports <http://robmosys.eu/rdf/composition-structures> ;
 	owl:imports <http://spdx.org/licenses/LGPL-2.0-or-later>;
-	owl:imports <http://www.servicerobotik-ulm.de/DomainModels/CommLocalizationObjects> ;
 	owl:imports <http://www.servicerobotik-ulm.de/DomainModels/CommBasicObjects> ;
+	owl:imports <http://www.servicerobotik-ulm.de/DomainModels/CommLocalizationObjects> ;
 	owl:imports <http://www.servicerobotik-ulm.de/DomainModels/CommNavigationObjects> ;
 	
 	# Human readable name of this component

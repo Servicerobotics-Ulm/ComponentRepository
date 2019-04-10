@@ -91,6 +91,11 @@ public:
 		return paramHandler.getGlobalState();
 	}
 	
+	ParameterStateStruct getParameters() const
+	{
+		return paramHandler.getGlobalState();
+	}
+	
 	// define tasks
 	Smart::TaskTriggerSubject* joystickTaskTrigger;
 	JoystickTask *joystickTask;
@@ -123,6 +128,8 @@ public:
 	
 	/// this method is used to register different PortFactory classes (one for each supported middleware framework)
 	void addPortFactory(const std::string &name, SmartJoystickServerPortFactoryInterface *portFactory);
+	
+	SmartACE::SmartComponent* getComponentImpl();
 	
 	/// this method is used to register different component-extension classes
 	void addExtension(SmartJoystickServerExtension *extension);

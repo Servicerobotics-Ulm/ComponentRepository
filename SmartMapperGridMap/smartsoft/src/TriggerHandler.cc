@@ -51,7 +51,7 @@
 // --------------------------------------------------------------------------
 
 #include "TriggerHandler.hh"
-
+#include "IEEEMDR.hh"
 #include "SmartMapperGridMap.hh"
 
 // trigger user methods
@@ -251,4 +251,29 @@ void TriggerHandler::handleCommNavigationObjects_MapperParams_LTMLOADYAML(const 
 		std::cout << "MAPPER_LTM_LOAD_YAML: loaded - " << file << "\n";
 	}
 	COMP->LtmLock.release();
+}
+
+
+void TriggerHandler::handleCommNavigationObjects_MapperParams_LTMLOADIEEESTD(const std::string &filename)
+{
+	std::string file = filename;
+	IEEEMDR imdr;
+	COMP->LtmLock.acquire();
+	imdr.ieeemdr_to_ltm_gridmap(file, *COMP->ltmGridMap);
+	COMP->LtmLock.release();
+	std::cout << "MAPPER_LTM_LOAD_IEEE_STD: saved -  " << file << "\n";
+
+}
+
+void TriggerHandler::handleCommNavigationObjects_MapperParams_LTMSAVEIEEESTD(const std::string &filename)
+{
+	std::string file = filename;
+	file.append(".xml");
+	file.insert(0,COMP->getGlobalState().getGeneral().getMapDataDir());
+	IEEEMDR imdr;
+	COMP->LtmLock.acquire();
+	imdr.ltm_gridmap_to_ieeemdr(*COMP->ltmGridMap, file);
+	COMP->LtmLock.release();
+	std::cout << "MAPPER_LTM_SAVE_IEEESTD: saved -  " << file << "\n";
+
 }

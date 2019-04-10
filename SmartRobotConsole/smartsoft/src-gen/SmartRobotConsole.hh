@@ -117,6 +117,8 @@ public:
 	/// this method is used to register different PortFactory classes (one for each supported middleware framework)
 	void addPortFactory(const std::string &name, SmartRobotConsolePortFactoryInterface *portFactory);
 	
+	SmartACE::SmartComponent* getComponentImpl();
+	
 	/// this method is used to register different component-extension classes
 	void addExtension(SmartRobotConsoleExtension *extension);
 	

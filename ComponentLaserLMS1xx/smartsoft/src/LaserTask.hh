@@ -52,9 +52,9 @@
 #include "LMS1xx.hh"
 #include <armadillo.hh>
 
-
 class LaserTask  : public LaserTaskCore
 {
+
 private:
 	LMS1xx laser;
 	ulong scan_id;
@@ -80,9 +80,6 @@ private:
 	CommBasicObjects::CommBaseState base_state;
 
 	CommBasicObjects::CommBaseVelocity zero_velocity;
-
-
-
 
 public:
 	LaserTask(SmartACE::SmartComponent *comp);

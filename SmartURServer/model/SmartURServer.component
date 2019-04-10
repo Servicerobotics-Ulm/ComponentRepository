@@ -27,7 +27,7 @@ ComponentDefinition SmartURServer logo "/SmartURServer/model/logo.png"
 	OutputPort scan3dEventServer implements CommManipulatorObjects.Scan3dEventService realizedBy Scan3dActivity {
 	}
 	InputHandler TrajectorySendServerHandler triggeredFrom trajectorySendServer { }
-	AnswerPort scan3dQueryServer implements CommVisionObjects.PointCloudQueryService {
+	AnswerPort scan3dQueryServer implements DomainVision.PointCloudQueryService {
 	}
 	RequestHandler Scan3dQueryServerHandler triggeredFrom scan3dQueryServer {
 	}
@@ -39,7 +39,7 @@ ComponentDefinition SmartURServer logo "/SmartURServer/model/logo.png"
 	}
 	RequestHandler IoQueryServerHandler triggeredFrom ioQueryServer {
 	}
-	OutputPort digitalInputEventServer implements CommRobotinoObjects.CommRobotinoDigitalEvent realizedBy PoseUpdateActivity {
+	OutputPort digitalInputEventServer implements CommRobotinoObjects.CommRobotinoDigitalInputEvent realizedBy PoseUpdateActivity {
 	}
 	CoordinationSlavePort CoordinationPort implements CommManipulatorObjects.ManipulatorCoordinationService {
 		PrivateOperationMode demonstration;

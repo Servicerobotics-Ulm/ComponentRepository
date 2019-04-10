@@ -38,17 +38,17 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 			// the commit state is rejected and is not copied into the global state
 		}
 	}
-	else if (tag == "COMMNAVIGATIONOBJECTS.AMCLPARAMETER.GLOBALLOCALIZATION")
+	else if (tag == "COMMLOCALIZATIONOBJECTS.LOCALIZATIONPARAMETER.GLOBALLOCALIZATION")
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK);
 		
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
-			triggerHandler.handleCommNavigationObjects_AmclParameter_GLOBALLOCALIZATIONCore(
+			triggerHandler.handleCommLocalizationObjects_LocalizationParameter_GLOBALLOCALIZATIONCore(
 			);
 		}
 	}
-	else if (tag == "COMMNAVIGATIONOBJECTS.AMCLPARAMETER.INITIALPOSE")
+	else if (tag == "COMMLOCALIZATIONOBJECTS.LOCALIZATIONPARAMETER.INITIALPOSE")
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK);
 		
@@ -66,14 +66,14 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		}
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
-			triggerHandler.handleCommNavigationObjects_AmclParameter_INITIALPOSECore(
+			triggerHandler.handleCommLocalizationObjects_LocalizationParameter_INITIALPOSECore(
 			temp_x, 
 			temp_y, 
 			temp_a
 			);
 		}
 	}
-	else if (tag == "COMMNAVIGATIONOBJECTS.AMCLPARAMETER.LOADMAP")
+	else if (tag == "COMMLOCALIZATIONOBJECTS.LOCALIZATIONPARAMETER.LOADMAP")
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK);
 		
@@ -83,7 +83,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		}
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
-			triggerHandler.handleCommNavigationObjects_AmclParameter_LOADMAPCore(
+			triggerHandler.handleCommLocalizationObjects_LocalizationParameter_LOADMAPCore(
 			temp_filename
 			);
 		}

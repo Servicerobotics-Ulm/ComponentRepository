@@ -40,7 +40,7 @@ SMART_COMPONENT_AUTOBUILD_DEPENDENCIES()
 ## using regular CMake commands (like FIND_PACKAGE, INCLUDE_DIRECTORIES, etc.) ##
 
 # you can add additional external libraries using regular CMake commands, e.g.:
-FIND_PACKAGE(OpenCV 2.3.1 REQUIRED)
+FIND_PACKAGE(OpenCV REQUIRED)
 
 FIND_PACKAGE( MRPT REQUIRED gui base maps)
 GET_PROPERTY(MRPT_INCLUDE_DIRS DIRECTORY PROPERTY INCLUDE_DIRECTORIES)

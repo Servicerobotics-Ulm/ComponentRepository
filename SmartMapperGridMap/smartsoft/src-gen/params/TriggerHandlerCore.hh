@@ -55,6 +55,9 @@ public:
 		virtual void handleCommNavigationObjects_MapperParams_LTMLOAD(const std::string &filename) = 0;
 	
 		
+		virtual void handleCommNavigationObjects_MapperParams_LTMLOADIEEESTD(const std::string &filename) = 0;
+	
+		
 		virtual void handleCommNavigationObjects_MapperParams_LTMLOADYAML(const std::string &filename) = 0;
 	
 		
@@ -62,6 +65,9 @@ public:
 	
 		
 		virtual void handleCommNavigationObjects_MapperParams_LTMSAVE(const std::string &filename) = 0;
+	
+		
+		virtual void handleCommNavigationObjects_MapperParams_LTMSAVEIEEESTD(const std::string &filename) = 0;
 	
 		
 		virtual void handleCommNavigationObjects_MapperParams_LTMSAVEXPM(const std::string &filename) = 0;
@@ -83,9 +89,11 @@ private:
 	void handleCommNavigationObjects_MapperParams_CURSAVEXPMCore(const std::string &filename);
 	void handleCommNavigationObjects_MapperParams_LTMINITIALIZECore(const int &value);
 	void handleCommNavigationObjects_MapperParams_LTMLOADCore(const std::string &filename);
+	void handleCommNavigationObjects_MapperParams_LTMLOADIEEESTDCore(const std::string &filename);
 	void handleCommNavigationObjects_MapperParams_LTMLOADYAMLCore(const std::string &filename);
 	void handleCommNavigationObjects_MapperParams_LTMPARAMETERCore(const int &xsize, const int &ysize, const int &xpos, const int &ypos, const int &id);
 	void handleCommNavigationObjects_MapperParams_LTMSAVECore(const std::string &filename);
+	void handleCommNavigationObjects_MapperParams_LTMSAVEIEEESTDCore(const std::string &filename);
 	void handleCommNavigationObjects_MapperParams_LTMSAVEXPMCore(const std::string &filename);
 	void handleCommNavigationObjects_MapperParams_LTMSAVEYAMLPGMCore(const std::string &filename);
 	void handleCommNavigationObjects_MapperParams_LTMSAVEYAMLPPMCore(const std::string &filename);

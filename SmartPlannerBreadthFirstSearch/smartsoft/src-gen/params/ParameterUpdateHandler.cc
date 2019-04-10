@@ -60,6 +60,18 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		}
 		
 	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.PLANNERPARAMS.PLANNERMODE")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK); // TODO: this should be decided according to validation checks defined in the model (not yet implemented)
+		
+		std::string temp_mode = "";
+		if(request.getString("1", temp_mode) == 0) {
+			commitState.CommNavigationObjects.PlannerParams.PLANNERMODE.mode = temp_mode;
+		} else {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+		}
+		
+	}
 	else if (tag == "COMMNAVIGATIONOBJECTS.PLANNERPARAMS.SETDESTINATIONCIRCLE")
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK);
@@ -178,6 +190,13 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		if(parameter.getInteger("CommNavigationObjects.PlannerParams.ID", "id", commitState.CommNavigationObjects.PlannerParams.ID.id))
 		{
 			globalState.CommNavigationObjects.PlannerParams.ID.id = commitState.CommNavigationObjects.PlannerParams.ID.id;
+		}
+		// parameter CommNavigationObjects.PlannerParams.PLANNERMODE
+		std::string temp_CommNavigationObjects_PlannerParams_PLANNERMODE_mode = "";
+		if(parameter.getString("CommNavigationObjects.PlannerParams.PLANNERMODE", "mode", temp_CommNavigationObjects_PlannerParams_PLANNERMODE_mode))
+		{
+			commitState.CommNavigationObjects.PlannerParams.PLANNERMODE.mode = temp_CommNavigationObjects_PlannerParams_PLANNERMODE_mode;
+			globalState.CommNavigationObjects.PlannerParams.PLANNERMODE.mode = commitState.CommNavigationObjects.PlannerParams.PLANNERMODE.mode;
 		}
 
 	} catch (const SmartACE::IniParameterError & e)

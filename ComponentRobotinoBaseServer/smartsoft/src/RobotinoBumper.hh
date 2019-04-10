@@ -30,19 +30,35 @@
 #define ROBOTINOBUMPER_HH
 
 #include "rec/robotino/api2/all.h"
+#include "aceSmartSoft.hh"
 
 
-class RobotinoBumper : public  rec::robotino::api2::Bumper
+class RobotinoBumper : public  rec::robotino::api2::Bumper , public Smart::ITimerHandler
 {
 public:
 		RobotinoBumper()
-                : bumped( false )
+                : lastState( false ),bumperTimerId(-1),timeoutSec(10),timeoutMsec(0)
         {
         }
 
         void bumperEvent( bool hasContact );
+    	void timerExpired(const std::chrono::system_clock::time_point &abs_time, const void * arg);
+    //	void timerExpired(const ACE_Time_Value & absolute_time,const void * arg);
+    	void timerCancelled();
+    	void timerDeleted(const void * arg);
 
-        bool bumped;
+
+
+        void setTimoutConfiguration(int sec, int msec);
+        bool getState();
+
+private:
+        SmartACE::SmartMutex lock;
+        //last state
+        bool lastState;
+
+        int bumperTimerId;
+        int timeoutSec, timeoutMsec;
 };
 
 

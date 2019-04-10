@@ -118,22 +118,146 @@ public:
 					
 				}; // end of parameter class IDType
 				
+				/**
+				 * Definition of Parameter PLANNERMODE
+				 */
+				class PLANNERMODEType {
+					friend class ParamUpdateHandler;
+					public:
+					/**
+					 * Wrapper class for Enum mode
+					 */
+					class modeType {
+					public:
+						enum ENUM_mode {
+							ENUM_VALUE_UNDEFINED = 0,
+							FREE = 1,
+							PATHNAV = 2,
+							AREANAV = 3
+						};
+						
+						// default constructor
+						modeType() { 
+							value = ENUM_VALUE_UNDEFINED;
+						}
+						
+						// copy constructor for enum type
+						modeType(ENUM_mode e) {
+							value = e;
+						}
+						
+						// copy constructor for String type
+						modeType(const std::string &literal) {
+							from_string(literal);
+						}
+						
+						// from_string assignment operator
+						modeType& operator = (const std::string &literal) {
+							from_string(literal);
+							return *this;
+						}
+						
+						// ENUM operator
+						operator ENUM_mode() const {
+							return value;
+						}
+						
+						// String operator
+						operator std::string() const {
+							return to_string();
+						}
+						
+						// compare operator
+						bool operator == (const ENUM_mode t) const {
+							return this->value == t;
+						}
+						
+						std::string to_string() const {
+							std::string result = "";
+							switch (value) {
+								case AREANAV:
+									result = "AREANAV";
+									break;
+								case FREE:
+									result = "FREE";
+									break;
+								case PATHNAV:
+									result = "PATHNAV";
+									break;
+								default:
+									result = "ENUM_VALUE_UNDEFINED";
+									break;
+							};
+							return result;
+						}
+						
+						void from_string(const std::string &literal) {
+							if(literal == "FREE") {
+								value = FREE;
+							} else if(literal == "PATHNAV") {
+								value = PATHNAV;
+							} else if(literal == "AREANAV") {
+								value = AREANAV;
+							} else {
+								value = ENUM_VALUE_UNDEFINED;
+							}
+						}
+						
+						// helper method to easily implement output stream
+						void to_ostream(std::ostream &os = std::cout) const {
+							os << to_string();
+						}
+					private:
+						ENUM_mode value;
+					};
+					
+					
+				
+				protected:
+					/**
+					 * here are the member definitions
+					 */
+					PLANNERMODEType::modeType mode;
+					
+				public:
+					// default constructor
+					PLANNERMODEType() {
+						mode = "";
+					}
+					
+					/**
+					 * here are the getter methods
+					 */
+					inline PLANNERMODEType::modeType getMode() const { return mode; }
+					
+					void to_ostream(std::ostream &os = std::cout) const
+					{
+						os << "\tPLANNERMODE(";
+						os << "mode = " << mode << ", ";
+						os << ")\n";
+					}
+					
+				}; // end of parameter class PLANNERMODEType
+				
 				protected:
 					/**
 					 * internal members
 					 */
 					IDType ID;
+					PLANNERMODEType PLANNERMODE;
 					
 				public:
 					/**
 					 * public getter methods
 					 */
 					inline IDType getID() const { return ID; }
+					inline PLANNERMODEType getPLANNERMODE() const { return PLANNERMODE; }
 					
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "PlannerParams(\n";
 						ID.to_ostream(os);
+						PLANNERMODE.to_ostream(os);
 						os << ")";
 					}
 			}; // end of parameter-set class PlannerParamsType

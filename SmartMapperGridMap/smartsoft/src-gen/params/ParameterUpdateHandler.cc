@@ -188,6 +188,21 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 			);
 		}
 	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.MAPPERPARAMS.LTMLOADIEEESTD")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		std::string temp_filename = "";
+		if(request.getString("1", temp_filename) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommNavigationObjects_MapperParams_LTMLOADIEEESTDCore(
+			temp_filename
+			);
+		}
+	}
 	else if (tag == "COMMNAVIGATIONOBJECTS.MAPPERPARAMS.LTMLOADYAML")
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK);
@@ -249,6 +264,21 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
 			triggerHandler.handleCommNavigationObjects_MapperParams_LTMSAVECore(
+			temp_filename
+			);
+		}
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.MAPPERPARAMS.LTMSAVEIEEESTD")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		std::string temp_filename = "";
+		if(request.getString("1", temp_filename) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommNavigationObjects_MapperParams_LTMSAVEIEEESTDCore(
 			temp_filename
 			);
 		}

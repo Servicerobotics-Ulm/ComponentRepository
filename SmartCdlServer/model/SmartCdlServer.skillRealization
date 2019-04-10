@@ -1,0 +1,52 @@
+SkillRealizationModel {
+	CoordinationModuleRealization MovementMod2 coordModuleDef CommNavigationObjects.NavigationModule
+	uses {
+		CommNavigationObjects.CdlCoordinationService intsName cdl
+		CommNavigationObjects.MapperCoordinationService intsName mapper
+		CommNavigationObjects.PlannerCoordinationService intsName planner 
+	}
+	{
+
+		//dummy realization (see *.smartTCL files)
+		SkillRealization approachLocation{
+			//Skill realization example:
+			action ( 
+				     tcl-param 
+				     	:server cdl 
+				     	:param APPROACHDIST 
+				     	:paramvalue "100"
+				     
+				     tcl-state 
+				     	:server cdl
+				     	:state MoveRobot
+				     	
+				     tcl-param
+				     	:server mapper
+				     	:param CURLOAD
+				     
+				     tcl-param 
+				     	:server planner
+				     	:param SETDESTINATIONCIRCLE
+				     )
+				     
+				     
+			//....			
+		}
+		
+		SkillRealization moveRoboterPosition { action ()}
+		SkillRealization moveRoboterBackwardsLocation { action ()}
+		SkillRealization moveRoboterBackwardsRelative { action ()}
+		SkillRealization moveRoboterOrientateRobotAbs { action ()}
+		SkillRealization moveRoboterOrientateRobotRel { action ()}
+		SkillRealization startJoystickNavigation { action ()}
+		SkillRealization stopJoystickNavigation { action ()}
+		SkillRealization startReactiveNavigation { action ()}
+		SkillRealization stopReactiveNavigation { action ()}
+		SkillRealization approachWall { action ()}
+		
+		SkillRealization loadNavigationMap { action ()}
+		
+		SkillRealization initNavigation { action ()}
+
+	}
+}

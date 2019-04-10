@@ -231,6 +231,8 @@ protected:
   double safetyClearance;
   // Parameter: the global safety clearance
 
+  std::vector<std::pair<double, double> > rotwCVector;
+
 #ifdef WITH_OPENCV_CDL_LOOKUP_DEBUG
   double cdl_to_pixel_scale;
   int dotsize;
@@ -348,6 +350,9 @@ public:
 
   void setPathNavPathList(std::vector< std::pair<double, double> > pathList, std::vector< double > pathWidth);
   // set the complete path to goal
+
+  int setRotDevSpeed(double rotDev1, double rotSpeed1, double rotDev2, double rotSpeed2,
+		  	  	  	 double rotDev3, double rotSpeed3, double rotDev4, double rotSpeed4);
 
   template<class T>
   inline T square(const T x)    { return x*x; }

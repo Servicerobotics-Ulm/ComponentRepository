@@ -63,30 +63,28 @@ void NavigationVelocityServiceInHandler::on_NavigationVelocityServiceIn(const Co
 	// implement business logic here
 	// (do not use blocking calls here, otherwise this might block the InputPort NavigationVelocityServiceIn)
 	double vX = r.get_vX(1); // meters
-		double vY = r.get_vY(1); // meters
-	    double omega = r.get_omega(); //rad
+	double vY = r.get_vY(1); // meters
+	double omega = r.get_omega(); //rad
 
-	    // set the robot's velocity
-	//    std::cout << "SetSpeed(" << vX<<","<<vY << ", " << omega << " )" << std::endl;
+	// set the robot's velocity
+	//std::cout << "SetSpeed(" << vX<<","<<vY << ", " << omega << " )" << std::endl;
 
 
-		Smart::StatusCode status = COMP->stateSlave->acquire("eStop");
-	    //SmartACE::StatusCode status = COMP->smartStateSlave->tryAcquire("eStop");
-	    if(status == Smart::SMART_OK)
-	    {
-	    	std::cout<<__FUNCTION__<<": Robot in eStop, not sending vel command!"<<std::endl;
-	    	COMP ->stateSlave->release("eStop");
-	    	//COMP->smartStateSlave->release("eStop");
-	    }
-	    else
-	    {
-			if(COMP->robot!=NULL)
-			{
-				COMP->robot->setVxVyOmega(vX,vY,omega);
-			}
-			else
-			{
-				std::cout<<"Robot is not inizialized!"<<std::endl;
-			}
-	    }
+	Smart::StatusCode status = COMP->stateSlave->tryAcquire("eStop");
+	if(status == Smart::SMART_OK)
+	{
+		std::cout<<__FUNCTION__<<": Robot in eStop, not sending vel command!"<<std::endl;
+		COMP ->stateSlave->release("eStop");
+	}
+	else
+	{
+		if(COMP->robot!=NULL)
+		{
+			COMP->robot->setVxVyOmega(vX,vY,omega);
+		}
+		else
+		{
+			std::cout<<"Robot is not inizialized!"<<std::endl;
+		}
+	}
 }

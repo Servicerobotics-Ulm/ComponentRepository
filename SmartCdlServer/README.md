@@ -27,51 +27,8 @@ Christian Schlegel. Fast local obstacle avoidance under kinematic and dynamic co
 | Purpose | Navigation |
 
 
-## Coordination Port CoordinationPort
-
-
-### States
-
-See States for descriptions of possible states and their meaning.
-
-| MainState Name | MainState Description |
-|----------------|-----------------------|
-| Neutral | The robot will not move in state neutral. No navigation velocities will be commanded by the component. When changed to neutral, the CDL will stop the base to avoid an emergency stop. This is necessary since some mobile platforms perform an emergency stop if no new velocity command was sent within a timeout specified in firmware (e.g. Pioneer P3DX). |
-| MoveRobot | The robot will only move when in state moverobot. |
-
-### DynamicWiring
-
-Slave part of wiring pattern. It is responsible for changing the port connections within the component.
-
-### Parameter
-
 
 ## Service Ports
-
-### NavVelSendServer
-
-Typically connected to the robot base (e.g. SmartPioneerBaseServer). This port sends navigation commands v, w.
-
-### LaserClient
-
-The laser scans that the CDL algorithm uses for obstacle avoidance, e.g. from SmartLaserLMS200Server.
-
-### LaserClient2
-
-Goals from planner (e.g. smartPlannerBreathFirstSearch) can be sent to this port.
-
-### TrackingClient
-
-Goals from tracking can be sent to this port. (e.g. smartLaserPersonTracker)
-
-### NavVelSendClient
-
-Navigation commands v and w sent via this port will be considered when chosing a trajectory. Can be used to send navigation commands from a joystick (e.g. SmartExampleJoystickNavigationClient) while the CDL ensures a collision free navigation. Accepts input if strategy JOYSTICK is set, ignores otherwise. See strategy JOYSTICK.
-
-### GoalEventServer
-
- Register with event state CDL_GOAL_NOT_REACHED to be notified when the stateful event switches to event state CDL_GOAL_REACHED. The CDL_GOAL_REACHED will be sent only once per activation.
-						CDL_GOAL_REACHED: Is sent when a goal was reached (the robot is within goal distance or angle error). - Depending on the strategy.
 
 
 ## Component Parameters SmartCdlServerParams
@@ -119,6 +76,14 @@ Navigation commands v and w sent via this port will be considered when chosing a
 | Attribute Name | Attribute Type | Description |
 |----------------|----------------|-------------|
 | error | Double | Define allowed error for in place rotation [deg]. Similar to goalregion for rotation. |
+| rotDev1 | Double |  |
+| rotDev2 | Double |  |
+| rotDev3 | Double |  |
+| rotDev4 | Double |  |
+| rotSpeed1 | Double |  |
+| rotSpeed2 | Double |  |
+| rotSpeed3 | Double |  |
+| rotSpeed4 | Double |  |
 
 ### InternalParameter Server
 

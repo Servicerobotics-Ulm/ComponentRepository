@@ -82,7 +82,7 @@ int LtmMapTask::on_execute()
 	Smart::StatusCode statusCode;
 
 	// wait for scan (PushNewest)
-	status = this->laserServiceInGetUpdate(laserscan);
+	status = COMP->laserServiceIn->getUpdateWait(laserscan);
 	if (status == Smart::SMART_OK)
 	{
 		COMP->LtmLock.acquire();

@@ -21,12 +21,12 @@
 // Called when a substate is entered
 void SmartStateChangeHandler::handleEnterState(const std::string & substate) throw()
 {
-	// change this code to your needs !!!
 	if(substate == "eStop")
 	{
 		std::cout<<__FUNCTION__<<" :  enter eStop - send 0.0 vel command!"<<std::endl;
 		COMP->robot->setVxVyOmega(0,0,0);
 	}
+
 }
 
 // Called when a substate is left

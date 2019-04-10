@@ -44,26 +44,38 @@ SMART_COMPONENT_AUTOBUILD_DEPENDENCIES()
 
 SMART_ADD_UTILITY(YAML_CPP)
 
+IF(WIN32)
+        SET(OpenCV_DIR "C:/optc/opencv_3.1.0/build")
+ENDIF()
+
+add_definitions("-DWITH_OPENCV_YAML")
+find_package( OpenCV REQUIRED )
+INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
+
+
 # these are the regular includes (add your own includes, if needed)
 INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_LIST_DIR}/src
   ${CMAKE_CURRENT_LIST_DIR}/src-gen
   ${CMAKE_CURRENT_LIST_DIR}/src-gen/params
+  ${CMAKE_CURRENT_LIST_DIR}/src/pugixml1.9
 )
+
 
 # collect the toolchain-generated source-files
 FILE(GLOB_RECURSE SRC ${CMAKE_CURRENT_LIST_DIR}/src/*.cc)
 FILE(GLOB_RECURSE SRC_GEN ${CMAKE_CURRENT_LIST_DIR}/src-gen/*.cc)
 FILE(GLOB_RECURSE SRC_GEN_PARAMS ${CMAKE_CURRENT_LIST_DIR}/src-gen/params/*.cc)
+FILE(GLOB FURTHER_SRCS src/pugixml1.9/*.cc)
 
 # collect your own (local) source-files here (if needed)
 #FILE(GLOB_RECURSE USER_SRC ${CMAKE_CURRENT_LIST_DIR}/src/<your-sources>)
 
 # create the executable using collected source-files
-ADD_EXECUTABLE(${PROJECT_NAME} ${SRC} ${SRC_GEN} ${SRC_GEN_PARAMS}) # add ${USER_SRC} (if needed)
+ADD_EXECUTABLE(${PROJECT_NAME} ${SRC} ${SRC_GEN} ${SRC_GEN_PARAMS} ${FURTHER_SRCS}) # add ${USER_SRC} (if needed)
 
 # link your external libraries here (if there are any)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} YAML_CPP)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} YAML_CPP ${OpenCV_LIBS})
 
 #INSTALL(FILES ${PROJECT_SOURCE_DIR}/src-gen/${PROJECT_NAME}.ini.template DESTINATION etc)
 

@@ -7,9 +7,9 @@ ComponentDefinition SmartObjectRecognition {
 	
 	OutputPort ObjectEventServiceOut implements CommObjectRecognitionObjects.ObjectEventService realizedBy RecognitionTask {}
 	
-	RequestPort RGBDImageQueryServiceReq implements CommVisionObjects.RGBDImageQueryService {}
-	RequestPort RGBImageQueryServiceReq implements CommVisionObjects.RGBImageQueryService {}
-	RequestPort PointCloudQueryServiceReq implements CommVisionObjects.PointCloudQueryService {}
+	RequestPort RGBDImageQueryServiceReq implements DomainVision.RGBDImageQueryService {}
+	RequestPort RGBImageQueryServiceReq implements DomainVision.RGBImageQueryService {}
+	RequestPort PointCloudQueryServiceReq implements DomainVision.PointCloudQueryService {}
 	
 	Activity RecognitionTask{}
 	Activity CaptureTask{}

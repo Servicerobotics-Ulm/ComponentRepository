@@ -112,7 +112,7 @@ The laser scans that the Amcl algorithm uses for localization, e.g. from SmartLa
 | lostEventMaxHypothese | UInt32 |  |
 | lostEventMaxEigValueSum | Double |  |
 
-### ParameterSetInstance AmclParameter
+### ParameterSetInstance LocalizationParameter
 
 #### TriggerInstance INITIALPOSE
 

@@ -85,7 +85,7 @@ int CurMapTask::on_execute()
 	  local_ltm_state = COMP->ltm_state;
 
 	  // wait for scan (PushNewest)
-	  statusCode = this->laserServiceInGetUpdate(laserscan);
+	  statusCode = COMP->laserServiceIn->getUpdateWait(laserscan);
 	  if (statusCode == Smart::SMART_OK)
 	  {
 		  // laserscan received
@@ -153,7 +153,7 @@ int CurMapTask::on_execute()
 			  // send it via autoupdate to subscribed clients
 			  CommNavigationObjects::CommGridMap gm;
 			  gm = (CommNavigationObjects::CommGridMap)(*(COMP->currentGridMap));
-			  this->currMapOutPut( gm );
+			  COMP->currMapOut->put( gm );
 			  COMP->CurLock.release();
 
 			  if(localState.getGeneral().getVerbose() == true)

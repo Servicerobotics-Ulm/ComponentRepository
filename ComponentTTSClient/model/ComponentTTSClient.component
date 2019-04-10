@@ -10,5 +10,5 @@ ComponentDefinition ComponentTTSClient {
 	}
 	ComponentParameters ComponentTTSClientParams
 slave CoordinationPort
-	CoordinationSlavePort CoordinationPort implements CommBasicObjects.BaseCoordinationService { }
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService { }
 }

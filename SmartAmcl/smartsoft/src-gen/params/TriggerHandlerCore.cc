@@ -22,21 +22,21 @@
 //
 
 	// handle GLOBALLOCALIZATION
-	void TriggerHandlerCore::handleCommNavigationObjects_AmclParameter_GLOBALLOCALIZATIONCore()
+	void TriggerHandlerCore::handleCommLocalizationObjects_LocalizationParameter_GLOBALLOCALIZATIONCore()
 	{
-		this->handleCommNavigationObjects_AmclParameter_GLOBALLOCALIZATION();
+		this->handleCommLocalizationObjects_LocalizationParameter_GLOBALLOCALIZATION();
 	}
 
 	// handle INITIALPOSE
-	void TriggerHandlerCore::handleCommNavigationObjects_AmclParameter_INITIALPOSECore(const int &x, const int &y, const double &a)
+	void TriggerHandlerCore::handleCommLocalizationObjects_LocalizationParameter_INITIALPOSECore(const int &x, const int &y, const double &a)
 	{
-		this->handleCommNavigationObjects_AmclParameter_INITIALPOSE(x, y, a);
+		this->handleCommLocalizationObjects_LocalizationParameter_INITIALPOSE(x, y, a);
 	}
 
 	// handle LOADMAP
-	void TriggerHandlerCore::handleCommNavigationObjects_AmclParameter_LOADMAPCore(const std::string &filename)
+	void TriggerHandlerCore::handleCommLocalizationObjects_LocalizationParameter_LOADMAPCore(const std::string &filename)
 	{
-		this->handleCommNavigationObjects_AmclParameter_LOADMAP(filename);
+		this->handleCommLocalizationObjects_LocalizationParameter_LOADMAP(filename);
 	}
 
 //

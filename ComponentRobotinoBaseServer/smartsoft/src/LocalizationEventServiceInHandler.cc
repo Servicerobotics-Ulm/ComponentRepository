@@ -14,6 +14,7 @@
 // If you want the toolchain to re-generate this file, please 
 // delete it before running the code generator.
 //--------------------------------------------------------------------------
+
 // --------------------------------------------------------------------------
 //
 //  Copyright (C) 2014 Matthias Lutz
@@ -63,9 +64,6 @@ LocalizationEventServiceInHandler::~LocalizationEventServiceInHandler()
 
 void LocalizationEventServiceInHandler::on_LocalizationEventServiceIn(const Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult,SmartACE::EventId> &input)
 {
-	// implement business logic here
-	// (do not use blocking calls here, otherwise this might block the InputPort LocalizationEventServiceIn)
-
 	std::cout << "LocalizationEventHandler event handler: "<<input.event <<" event received.";
 
 		CommLocalizationObjects::LocalizationEventType value;
@@ -82,6 +80,4 @@ void LocalizationEventServiceInHandler::on_LocalizationEventServiceIn(const Smar
 		{
 			COMP->signalStateTask->setLocalizationState(true);
 		}
-
-
 }

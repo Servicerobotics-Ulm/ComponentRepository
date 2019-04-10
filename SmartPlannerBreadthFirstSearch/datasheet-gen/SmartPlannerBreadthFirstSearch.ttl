@@ -3,8 +3,8 @@
 # imports: http://seronet-projekt.de/models/t2#Navigation
 # imports: http://spdx.org/licenses/LGPL-2.0-or-later
 
-# imports: http://www.servicerobotik-ulm.de/DomainModels/CommNavigationObjects
 # imports: http://www.servicerobotik-ulm.de/DomainModels/CommBasicObjects
+# imports: http://www.servicerobotik-ulm.de/DomainModels/CommNavigationObjects
 
 #######################################
 # Technical Data Sheet
@@ -33,8 +33,8 @@
 # these namespaces can be different in generated files
 @prefix t3: <http://servicerobotik-ulm.de/ComponentsAndSystems#> .
 
-@prefix CommNavigationObjects: <http://www.servicerobotik-ulm.de/DomainModels/CommNavigationObjects#> .
 @prefix CommBasicObjects: <http://www.servicerobotik-ulm.de/DomainModels/CommBasicObjects#> .
+@prefix CommNavigationObjects: <http://www.servicerobotik-ulm.de/DomainModels/CommNavigationObjects#> .
 
 ##### Software Component SmartPlannerBreadthFirstSearch
 # see https://robmosys.eu/wiki/modeling:metamodels:component
@@ -42,8 +42,8 @@ t3:SmartPlannerBreadthFirstSearch a robmosys:ComponentDefinition;
 	a owl:Ontology ;
 	owl:imports <http://robmosys.eu/rdf/composition-structures> ;
 	owl:imports <http://spdx.org/licenses/LGPL-2.0-or-later>;
-	owl:imports <http://www.servicerobotik-ulm.de/DomainModels/CommNavigationObjects> ;
 	owl:imports <http://www.servicerobotik-ulm.de/DomainModels/CommBasicObjects> ;
+	owl:imports <http://www.servicerobotik-ulm.de/DomainModels/CommNavigationObjects> ;
 	
 	# Human readable name of this component
 	# Equals with the project name

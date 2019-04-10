@@ -1,0 +1,843 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; NAVIGATION
+
+
+(realize-tcb  (tcb-load-navigation-map ?map)
+  (module "NavigationModule")
+  (action (
+            (format t "=========================>>> tcb-load-navigation-map ~s ~%" '?map)
+            (let* ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot))))
+                   (robot-current-room-name (get-value (tcl-kb-query :key '(is-a)  :value '((is-a robot))) 'current-room))
+                   (robot-room (tcl-kb-query :key '(is-a name) :value `((is-a room)(name ,robot-current-room-name)))))
+
+            (tcl-state :server 'mapper  :state "Neutral")
+            (tcl-param :server 'mapper :slot 'CommNavigationObjects.MapperParams.LTMPARAMETER :value (append (get-value robot-room 'size)
+                                            (get-value robot-room 'offset)
+                                            (list 0)))
+
+            (tcl-param :server 'mapper :slot 'CommNavigationObjects.MapperParams.LTMLOADYAML :value ?map)
+            (tcl-param :server 'mapper :slot 'COMMIT)
+  
+            (tcl-state :server 'mapper :state "BuildCurrMap")
+            '(SUCCESS ())))))
+
+
+
+(realize-tcb  (tcb-init-navigation)
+  (module "NavigationModule")
+  (action (
+            (format t "=========================>>> tcb-init-navigation ~%")
+            (let* ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot))))
+                   (robot-current-room-name (get-value (tcl-kb-query :key '(is-a)  :value '((is-a robot))) 'current-room))
+                   (robot-room (tcl-kb-query :key '(is-a name) :value `((is-a room)(name ,robot-current-room-name)))))
+
+            (tcl-state :server 'mapper  :state "Neutral")
+            (tcl-param :server 'mapper :slot 'CommNavigationObjects.MapperParams.LTMPARAMETER :value (append (get-value robot-room 'size)
+                                            (get-value robot-room 'offset)
+                                            (list 0)))
+
+            (tcl-param :server 'mapper :slot 'CommNavigationObjects.MapperParams.LTMLOADYAML :value (get-value robot 'default-nav-map))
+            (tcl-param :server 'mapper :slot 'CommNavigationObjects.MapperParams.CURLTM      :value '(DISABLE 30))
+            (tcl-param :server 'mapper :slot 'CommNavigationObjects.MapperParams.CUREMPTY    :value 'ACCUMULATE)
+            (tcl-param :server 'mapper :slot 'COMMIT)
+
+            (tcl-state :server 'cdl :state "Neutral")
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.FREEBEHAVIOR :value 'ACTIVATE)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.LOOKUPTABLE  :value 'DEFAULT)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.APPROACHDIST :value 100)
+            (tcl-param :server 'cdl :slot 'COMMIT)
+            '(SUCCESS ())))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; approach-location
+
+(define-tcb (tcb-approach-location ?location)
+  (module "NavigationModule")
+  (rules (rule-unknown-location rule-location-success rule-robot-blocked rule-abort-job-error-ack))
+  (precondition  (equal '(region) (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a location) (name ?location))) 'approach-type)))
+  (priority 99)
+  (abort-action (
+                  (tcl-state :server 'cdl :state "Neutral")
+                  (tcl-state :server 'mapper :state "Neutral")
+                  (tcl-state :server 'planner :state "Neutral")))
+  (plan (
+          (tcb-move-robot 'approach-region ?location)
+          (tcb-move-robot 'orientate-region ?location))))
+
+
+(define-tcb (tcb-approach-location ?location)
+  (module "NavigationModule")
+  (rules (rule-unknown-location rule-location-success rule-robot-blocked))
+  (precondition  (equal '(exact) (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a location) (name ?location))) 'approach-type)))
+  (priority 99)
+  (abort-action (
+                  (tcl-state :server 'cdl :state "Neutral")
+                  (tcl-state :server 'mapper :state "Neutral")
+                  (tcl-state :server 'planner :state "Neutral")))
+  (plan (
+          (tcb-move-robot 'approach-region ?location)
+          (tcb-move-robot 'orientate-region ?location)
+          (tcb-move-robot 'approach-exact ?location)
+          (tcb-move-robot 'orientate-exact ?location))))
+
+;;TODO TEST
+;;detector wall
+(define-tcb (tcb-approach-location ?location)
+  (module "NavigationModule")
+  (rules (rule-unknown-location rule-location-success rule-robot-blocked rule-abort-job-error-ack))
+  (precondition  (equal '(detector wall) (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a location) (name ?location))) 'approach-type)))
+  (priority 99)
+  (abort-action (
+                  (tcl-state :server 'cdl :state "Neutral")))
+  (plan (
+          (tcb-move-robot 'approach-region ?location)
+          (tcb-move-robot 'orientate-region ?location)
+          (tcb-move-robot 'approach-exact ?location)
+          (tcb-move-robot 'orientate-exact ?location)
+          (tcb-approach-wall))))
+
+
+(define-tcb (tcb-approach-location ?location)
+;; this is the default block in case no approach-type precondition matches!
+  (module "NavigationModule")
+  (rules (rule-unknown-location rule-location-success))
+  (priority 2)
+  (action (
+            (format t "=========================>>> tcb-approach-location DEFAULT approach-type choosen !!! --> exact~%")))
+  (abort-action (
+                  (tcl-state :server 'cdl :state "Neutral")
+                  (tcl-state :server 'mapper :state "Neutral")
+                  (tcl-state :server 'planner :state "Neutral")))
+  (plan (
+          (tcb-move-robot 'approach-region ?location)
+          (tcb-move-robot 'orientate-region ?location)
+          (tcb-move-robot 'approach-exact ?location)
+          (tcb-move-robot 'orientate-exact ?location))))
+
+
+(define-tcb (tcb-approach-location ?location)
+  (module "NavigationModule")
+  (priority 1)
+  (action (
+            (format t "=========================>>> tcb-approach-location ~a DEFAULT ~%" '?location)
+            (tcl-send :server 'tts :service 'say-wait :param (format nil "I do not know this location."))
+            '(ERROR (UNKNOWN LOCATION)))))
+
+;; approach-location
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; tcb-move-robot
+
+(realize-tcb  (tcb-move-robot 'approach-region ?location)
+  (module "NavigationModule")
+  (action (
+            (format t "=========================>>> tcb-move-robot 'approach-region ~s ~%" '?location)
+            (let* ((pose (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a location) (name ?location))) 'approach-region-pose))
+                   (dist (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a location) (name ?location))) 'approach-region-dist))
+                   (robot-current-room-name (get-value (tcl-kb-query :key '(is-a)  :value '((is-a robot))) 'current-room))
+                   (robot-room (tcl-kb-query :key '(is-a name) :value `((is-a room)(name ,robot-current-room-name))))
+                   (velocity-travelling (get-value (tcl-kb-query :key '(is-a)  :value '((is-a robot))) 'velocity-travelling))
+                   (goalid nil))
+              (cond
+                ;; location unknown
+                ((null pose)
+                  (format t "ERROR UNKNOWN LOCATION~%")
+                  '(ERROR (UNKNOWN LOCATION)))
+                ;; location known
+
+
+                (T
+                  (tcl-activate-event :name 'evt-cdlgoal 
+                                      :handler 'handler-cdl 
+                                      :server 'cdl 
+                                      :service 'goalEvent
+                                      :mode 'continuous)
+
+                  (tcl-activate-event :name 'evt-cdlblocked
+                                      :handler 'handler-cdl-blocked
+                                      :server 'cdl
+                                      :service 'blockedEvent
+                                      :mode 'continuous)
+
+                  (tcl-kb-update :key '(is-a name) :value '((is-a counter)(name no-path-counter)(count 0)))
+
+                  (tcl-activate-event :name 'evt-planner 
+                                      :handler 'handler-planner-approach-halt 
+                                      :server 'planner 
+                                      :service 'plannerEvent
+                                      :mode 'continuous)
+                  ;; read - increment - store goalid
+                  (setf goalid (get-value (tcl-kb-query :key '(is-a) :value '((is-a robot))) 'goalid))
+                  (setf goalid (+ goalid 1))
+                  (format t "GoalID: ~s~%" goalid)
+                  (tcl-kb-update :key '(is-a) :value `((is-a robot)(goalid ,goalid)))
+
+                  (tcl-state :server 'planner :state "Neutral")
+                  (tcl-state :server 'mapper  :state "Neutral")
+                  ;; cdl
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ID :value goalid)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.LOOKUPTABLE  :value 'DEFAULT)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SAFETYCL :value 200)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.TRANSVEL :value (first velocity-travelling))
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ROTVEL :value (second velocity-travelling))
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.APPROACHDIST :value dist)
+                  (tcl-param :server 'cdl :slot 'COMMIT)
+
+                  ;; mapper
+                  (tcl-param :server 'mapper :slot 'CommNavigationObjects.MapperParams.CURPARAMETER 
+                             :value (append (get-value robot-room 'size) 
+                                            (get-value robot-room 'offset)
+                                            (list goalid)))
+                  (tcl-param :server 'mapper :slot 'CommNavigationObjects.MapperParams.CURLOADLTM)
+                  (tcl-param :server 'mapper :slot 'COMMIT)
+                  ;; planner
+                  (tcl-param :server 'planner :slot 'CommNavigationObjects.PlannerParams.ID :value goalid)
+                  (tcl-param :server 'planner :slot 'CommNavigationObjects.PlannerParams.DELETEGOAL)
+                  (tcl-param :server 'planner :slot 'CommNavigationObjects.PlannerParams.SETDESTINATIONCIRCLE :value `(,(first pose) ,(second pose) ,dist))
+                  (tcl-param :server 'planner :slot 'COMMIT)
+              
+                  (tcl-state :server 'planner :state "PathPlanning")
+                  ;;(tcl-state :server 'mapper :state "BuildBothMaps")
+                  (tcl-state :server 'mapper :state "BuildCurrMap")
+;;TODO
+                 ; (update-robot-state :sub-state "FREE-NAV")
+                  '(SUCCESS ())))))))
+
+
+(define-tcb (tcb-move-robot 'approach-exact ?location)
+  (module "NavigationModule")
+  (action (
+            (format t "=========================>>> tcb-move-robot 'approach-exact ~s ~%" '?location)
+            (let* ((pose (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a location) (name ?location))) 'approach-exact-pose))
+                   (dist (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a location) (name ?location))) 'approach-exact-dist))
+                   (safetycl (get-value (tcl-kb-query :key '(is-a name)  :value '( (is-a location) (name ?location))) 'approach-exact-safetycl))
+                   (velocity-travelling (get-value (tcl-kb-query :key '(is-a)  :value '((is-a robot))) 'velocity-travelling))
+                   (goalid nil))
+              (cond
+                ;; location unknown
+                ((null pose)
+                  (format t "=========================>>> tcb-move-robot 'approach-exact: position is not specified ~%")
+                  '(SUCCESS (POSITION NOT SPECIFIED)))
+                ;; location known
+                (T
+                  (tcl-activate-event :name 'evt-cdlgoal 
+                                      :handler 'handler-cdl 
+                                      :server 'cdl 
+                                      :service 'goalevent 
+                                      :mode 'continuous)
+                  (tcl-activate-event :name 'evt-cdlblocked
+                                      :handler 'handler-cdl-blocked
+                                      :server 'cdl
+                                      :service 'blockedevent
+                                      :mode 'continuous)
+                  ;; read - increment - store goalid
+                  (setf goalid (get-value (tcl-kb-query :key '(is-a) :value '((is-a robot))) 'goalid))
+                  (setf goalid (+ goalid 1))
+                  (tcl-kb-update :key '(is-a) :value `((is-a robot)(goalid ,goalid)))
+                  ;; cdl
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ID :value goalid)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.LOOKUPTABLE  :value 'DEFAULT)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SAFETYCL :value safetycl)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETSTRATEGY :value 'APPROACH_HALT)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALMODE :value 'ABSOLUTE)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.TRANSVEL :value (first velocity-travelling))
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ROTVEL :value (second velocity-travelling))
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.APPROACHDIST :value dist)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALREGION :value `(,(first pose) ,(second pose) 0 ,dist))
+                  (tcl-param :server 'cdl :slot 'COMMIT)
+                  ;;(tcl-param :server 'cdl :slot 'SETGOALREGION :value dist) ;;no GOAL ID needed for direct movement with CDL (without planner)
+
+                  (tcl-state :server 'cdl :state "MoveRobot")
+;;TODO                  (update-robot-state :sub-state "FREE-NAV")
+                  '(SUCCESS ())))))))
+
+
+(define-tcb (tcb-move-robot 'orientate-region ?location)
+  (module "NavigationModule")
+  (action (
+            (format t "=========================>>> tcb-move-robot 'orientate-region ~s ~%" '?location)
+            (let* ((orientation (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a location) (name ?location))) 'orientation-region))
+                   (goalid nil))
+              (cond
+                ;; location unknown
+                ((null orientation)
+                  '(ERROR (UNKNOWN LOCATION)))
+                ;; location known
+                (T
+                  (tcl-activate-event :name 'evt-cdlgoal 
+                                      :handler 'handler-cdl 
+                                      :server 'cdl 
+                                      :service 'goalevent 
+                                      :mode 'continuous)
+                  ;; read - increment - store goalid
+                  (setf goalid (get-value (tcl-kb-query :key '(is-a) :value '((is-a robot))) 'goalid))
+                  (setf goalid (+ goalid 1))
+                  (tcl-kb-update :key '(is-a) :value `((is-a robot)(goalid ,goalid)))
+
+                  ;; cdl
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ID :value goalid)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.LOOKUPTABLE  :value 'SECOND)
+                  ;;(tcl-param :server 'cdl :slot 'LOOKUPTABLE  :value 'DEFAULT)
+
+                  (cond
+                    ;; position absolute
+                    ((equal (first orientation) 'position)
+                      (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETSTRATEGY :value 'ROTATE)
+                      (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALMODE :value 'ABSOLUTE)
+                      (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ROTVEL :value '((-20)(20)))
+                      (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALREGION :value (append (rest orientation) (list 0 goalid)))
+                      (tcl-param :server 'cdl :slot 'COMMIT)
+                      (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETGOALREGION :value goalid))
+                    ;; angle-absolute
+                    ((equal (first orientation) 'angle-absolute)
+                      (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETSTRATEGY :value 'ROTATE)
+                      (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALMODE :value 'ANGLE_ABSOLUTE)
+                      (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ROTVEL :value '((-60)(60)))
+                      (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALREGION :value (list 0 0 (second orientation) goalid ))
+                      (tcl-param :server 'cdl :slot 'COMMIT)
+                      (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETGOALREGION :value goalid)))
+                  (tcl-state :server 'cdl :state "MoveRobot")
+                  '(SUCCESS ())))))))
+
+
+(define-tcb (tcb-move-robot 'orientate-exact ?location)
+  (module "NavigationModule")
+  (action (
+            (format t "=========================>>> tcb-move-robot 'orientate-exact ~s ~%" '?location)
+            (let* ((orientation (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a location) (name ?location))) 'orientation-exact))
+                   (goalid nil))
+              (cond
+                ;; location unknown
+                ((null orientation)
+                  '(ERROR (UNKNOWN LOCATION)))
+                ;; location known
+                (T
+                  (tcl-activate-event :name 'evt-cdlgoal 
+                                      :handler 'handler-cdl 
+                                      :server 'cdl 
+                                      :service 'goalevent 
+                                      :mode 'continuous)
+                  ;; read - increment - store goalid
+                  (setf goalid (get-value (tcl-kb-query :key '(is-a) :value '((is-a robot))) 'goalid))
+                  (setf goalid (+ goalid 1))
+                  (tcl-kb-update :key '(is-a) :value `((is-a robot)(goalid ,goalid)))
+
+                  ;; cdl
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ID :value goalid)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.LOOKUPTABLE  :value 'DEFAULT)
+
+                  (cond
+                    ;; position absolute
+                    ((equal (first orientation) 'position)
+                      (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETSTRATEGY :value 'ROTATE)
+                      (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALMODE :value 'ABSOLUTE)
+                      (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ROTVEL :value '((-20)(20)))
+                      (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALREGION :value (append (rest orientation) (list 0)))
+                      (tcl-param :server 'cdl :slot 'COMMIT)
+                      (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETGOALREGION :value goalid))
+
+                    ;; angle-absolute
+                    ((equal (first orientation) 'angle-absolute)
+                      (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETSTRATEGY :value 'ROTATE)
+                      (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALMODE :value 'ANGLE_ABSOLUTE)
+                      (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ROTVEL :value '((-20)(20)))
+                      (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALREGION :value (list 0 0 (second orientation)))
+                      (tcl-param :server 'cdl :slot 'COMMIT)
+                      (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETGOALREGION :value goalid)))
+                  (tcl-state :server 'cdl :state "MoveRobot")
+                  '(SUCCESS ())))))))
+
+
+(define-tcb (tcb-move-robot 'orientate-angle-absolute ?angle-deg)
+  (module "NavigationModule")
+  (action (
+            (format t "=========================>>> tcb-move-robot 'orientate-angle-absolute ~s ~%" '?angle-deg)
+            (tcl-activate-event :name 'evt-cdlgoal 
+                                :handler 'handler-cdl 
+                                :server 'cdl 
+                                :service 'goalevent 
+                                :mode 'continuous)
+            ;; read - increment - store goalid
+            (setf goalid (get-value (tcl-kb-query :key '(is-a) :value '((is-a robot))) 'goalid))
+            (setf goalid (+ goalid 1))
+            (tcl-kb-update :key '(is-a) :value `((is-a robot)(goalid ,goalid)))
+
+            ;; cdl
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ID :value goalid)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.LOOKUPTABLE  :value 'DEFAULT)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETSTRATEGY :value 'ROTATE)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALMODE :value 'ANGLE_ABSOLUTE)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ROTVEL :value '((-20)(20)))
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALREGION :value (list 0 0 '?angle-deg))
+            (tcl-param :server 'cdl :slot 'COMMIT)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETGOALREGION :value goalid) ;;this is a trigger
+
+            (tcl-state :server 'cdl :state "MoveRobot")
+            '(SUCCESS ()))))
+
+(define-tcb (tcb-move-robot 'orientate-angle-relative ?angle-deg)
+  (module "NavigationModule")
+  (action (
+            (format t "=========================>>> tcb-move-robot 'orientate-angle-relative ~s ~%" '?angle-deg)
+            (tcl-activate-event :name 'evt-cdlgoal
+                                :handler 'handler-cdl
+                                :server 'cdl
+                                :service 'goalevent
+                                :mode 'continuous)
+            ;; read - increment - store goalid
+            (setf goalid (get-value (tcl-kb-query :key '(is-a) :value '((is-a robot))) 'goalid))
+            (setf goalid (+ goalid 1))
+            (tcl-kb-update :key '(is-a) :value `((is-a robot)(goalid ,goalid)))
+
+            ;; cdl
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ID :value goalid)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.LOOKUPTABLE  :value 'DEFAULT)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETSTRATEGY :value 'ROTATE)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALMODE :value 'ANGLE_RELATIVE)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ROTVEL :value '((-20)(20)))
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SAVECURPOS :value goalid)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALREGION :value (list 0 0 '?angle-deg))
+            (tcl-param :server 'cdl :slot 'COMMIT)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETGOALREGION :value goalid) ;;this is a trigger
+
+            (tcl-state :server 'cdl :state "MoveRobot")
+            '(SUCCESS ()))))
+
+
+(define-tcb (tcb-move-robot 'orientate-angle-relative 180)
+  ;;this block will allways rotate counterclockwise 180 deg
+  (module "NavigationModule")
+  (action (
+            (format t "=========================>>> tcb-move-robot 'orientate-angle-relative 180 ~%")
+            (tcl-activate-event :name 'evt-cdlgoal
+                                :handler 'handler-cdl
+                                :server 'cdl
+                                :service 'goalevent
+                                :mode 'continuous)
+            ;; read - increment - store goalid
+            (setf goalid (get-value (tcl-kb-query :key '(is-a) :value '((is-a robot))) 'goalid))
+            (setf goalid (+ goalid 1))
+            (tcl-kb-update :key '(is-a) :value `((is-a robot)(goalid ,goalid)))
+
+            ;; cdl
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ID :value goalid)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.LOOKUPTABLE  :value 'DEFAULT)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETSTRATEGY :value 'ROTATE)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALMODE :value 'ANGLE_RELATIVE)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ROTVEL :value '((0)(20)))
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SAVECURPOS :value goalid)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALREGION :value (list 0 0 180))
+            (tcl-param :server 'cdl :slot 'COMMIT)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETGOALREGION :value goalid) ;;this is a trigger
+
+            (tcl-state :server 'cdl :state "MoveRobot")
+            '(SUCCESS ()))))
+
+
+(define-tcb (tcb-move-robot 'backward ?location)
+  (module "NavigationModule")
+  (action (
+            (format t "=========================>>> tcb-move-robot 'backward ~s ~%" '?location)
+            (let* ((dist (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a location) (name ?location))) 'backward-dist))
+                   (goalid nil))
+              (cond
+                ;; location unknown
+                ((null dist)
+                  '(SUCCESS (POSITION NOT SPECIFIED)))
+                ;; location known
+                (T
+                  (tcl-activate-event :name 'evt-cdlgoal 
+                                      :handler 'handler-cdl 
+                                      :server 'cdl 
+                                      :service 'goalevent 
+                                      :mode 'continuous)
+                  ;; read - increment - store goalid
+                  (setf goalid (get-value (tcl-kb-query :key '(is-a) :value '((is-a robot))) 'goalid))
+                  (setf goalid (+ goalid 1))
+                  (tcl-kb-update :key '(is-a) :value `((is-a robot)(goalid ,goalid)))
+
+                  ;; cdl
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ID :value goalid)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.LOOKUPTABLE  :value 'DEFAULT)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETSTRATEGY :value 'BACKWARD)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SAFETYCL :value 200)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALMODE :value 'SAVED)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SAVECURPOS :value goalid)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.APPROACHDIST :value dist)
+                  (tcl-param :server 'cdl :slot 'COMMIT)
+
+                  (tcl-state :server 'cdl :state "MoveRobot")
+                  '(SUCCESS ())))))))
+
+
+(define-tcb (tcb-move-robot 'backward-abs ?dist)
+  (module "NavigationModule")
+  (action (
+            (format t "=========================>>> tcb-move-robot 'backward-abs ~s ~%" '?dist)
+            (let* ( 
+                   (goalid nil))
+              (cond
+                ;; location unknown
+                ((null ?dist)
+                  '(SUCCESS (DIST NOT SPECIFIED)))
+                ;; location known
+                (T
+                  (tcl-activate-event :name 'evt-cdlgoal 
+                                      :handler 'handler-cdl 
+                                      :server 'cdl 
+                                      :service 'goalevent 
+                                      :mode 'continuous)
+                  ;; read - increment - store goalid
+                  (setf goalid (get-value (tcl-kb-query :key '(is-a) :value '((is-a robot))) 'goalid))
+                  (setf goalid (+ goalid 1))
+                  (tcl-kb-update :key '(is-a) :value `((is-a robot)(goalid ,goalid)))
+
+                  ;; cdl
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ID :value goalid)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.LOOKUPTABLE  :value 'DEFAULT)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETSTRATEGY :value 'BACKWARD)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SAFETYCL :value 200)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALMODE :value 'SAVED)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SAVECURPOS :value goalid)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.APPROACHDIST :value ?dist)
+                  (tcl-param :server 'cdl :slot 'COMMIT)
+
+                  (tcl-state :server 'cdl :state "MoveRobot")
+                  '(SUCCESS ())))))))
+
+
+(define-tcb (tcb-move-robot 'plain ?x ?y ?radius)
+  (module "NavigationModule")
+ (action (
+            (format t "=========================>>> tcb-move-robot 'plain x: ~s Y: ~s radius: ~s ~%" '?x '?x '?radius)
+            (let* ((pose '(?x ?y))
+                   (dist ?radius)
+                   (robot-current-room-name (get-value (tcl-kb-query :key '(is-a)  :value '((is-a robot))) 'current-room))
+                   (robot-room (tcl-kb-query :key '(is-a name) :value `((is-a room)(name ,robot-current-room-name))))
+                   (velocity-travelling (get-value (tcl-kb-query :key '(is-a)  :value '((is-a robot))) 'velocity-travelling))
+                   (goalid nil))
+
+                  (tcl-bind-var :name '?location :value 'NONE)
+
+                  (tcl-activate-event :name 'evt-cdlgoal 
+                                      :handler 'handler-cdl 
+                                      :server 'cdl 
+                                      :service 'goalevent 
+                                      :mode 'continuous)
+
+                  (tcl-activate-event :name 'evt-cdlblocked
+                                      :handler 'handler-cdl-blocked
+                                      :server 'cdl
+                                      :service 'blockedevent
+                                      :mode 'continuous)
+
+                  (tcl-kb-update :key '(is-a name) :value '((is-a counter)(name no-path-counter)(count 0)))
+
+                  (tcl-activate-event :name 'evt-planner 
+                                      :handler 'handler-planner-approach-halt 
+                                      :server 'planner 
+                                      :service 'plannerevent 
+                                      :mode 'continuous)
+                  ;; read - increment - store goalid
+                  (setf goalid (get-value (tcl-kb-query :key '(is-a) :value '((is-a robot))) 'goalid))
+                  (setf goalid (+ goalid 1))
+                  (format t "GoalID: ~s~%" goalid)
+                  (tcl-kb-update :key '(is-a) :value `((is-a robot)(goalid ,goalid)))
+
+                  (tcl-state :server 'planner :state "Neutral")
+                  (tcl-state :server 'mapper  :state "Neutral")
+                  ;; cdl
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ID :value goalid)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.LOOKUPTABLE  :value 'DEFAULT)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SAFETYCL :value 200)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.TRANSVEL :value (first velocity-travelling))
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ROTVEL :value (second velocity-travelling))
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.APPROACHDIST :value dist)
+                  (tcl-param :server 'cdl :slot 'COMMIT)
+
+                  ;; mapper
+                  (tcl-param :server 'mapper :slot 'CommNavigationObjects.MapperParams.CURPARAMETER 
+                             :value (append (get-value robot-room 'size) 
+                                            (get-value robot-room 'offset)
+                                            (list goalid)))	   
+                  (tcl-param :server 'mapper :slot 'CommNavigationObjects.MapperParams.CURLOADLTM)
+                  (tcl-param :server 'mapper :slot 'COMMIT)
+                  ;; planner
+                  (tcl-param :server 'planner :slot 'CommNavigationObjects.PlannerParams.ID :value goalid)
+                  (tcl-param :server 'planner :slot 'CommNavigationObjects.PlannerParams.DELETEGOAL)
+                  (tcl-param :server 'planner :slot 'CommNavigationObjects.PlannerParams.SETDESTINATIONCIRCLE :value `(,(first pose) ,(second pose) ,dist))
+                  (tcl-param :server 'planner :slot 'COMMIT)
+              
+                  (tcl-state :server 'planner :state "PathPlanning")
+                  ;;(tcl-state :server 'mapper :state "BuildBothMaps")
+                  (tcl-state :server 'mapper :state "BuildCurrMap")
+;;TODO
+                  ;(update-robot-state :sub-state "FREE-NAV")
+                  '(SUCCESS ())))))
+
+
+
+
+
+;; handler-goal-reached
+(define-event-handler (handler-cdl)
+  (action (
+            (format t "=========================>>> GOAL REACHED HANDLER location ~s ~%~%" '?location)
+            (cond 
+              ((equal (tcl-event-message) "(reached)")
+                (format t "=========================>>> GOAL REACHED !!! ~%")
+                (tcl-state :server 'cdl :state "Neutral")
+                (tcl-state :server 'mapper :state "Neutral")
+                (tcl-state :server 'planner :state "Neutral")
+                (tcl-kb-update 
+                  :key '(is-a) 
+                  :value '(
+                           (is-a robot)
+                           (current-symbolic-position ?location)))
+;;TODO
+                ;;(check-robot-parked-state)
+                (tcl-abort)
+                '(SUCCESS ()))))))
+
+
+;; handler-planner
+(define-event-handler (handler-planner-approach-halt)
+  (action (
+            (format t "=========================>>> PLANNER HANDLER location ~s ~%~%" '?location)
+            (cond 
+              
+              ((equal (tcl-event-message) "(start occupied by goal)")
+                (format t "=========================>>> start occupied by goal !!! ~%")
+                (tcl-state :server 'mapper :state "Neutral")
+                (tcl-state :server 'planner :state "Neutral")
+                (tcl-kb-update 
+                  :key '(is-a) 
+                  :value '(
+                           (is-a robot)
+                           (current-symbolic-position ?location)))
+;;TODO
+                ;;(check-robot-parked-state)
+                (tcl-abort)
+                '(SUCCESS ()))
+              
+              ((equal (tcl-event-message) "(start occupied by obstacle)")
+                (format t "=========================>>> start occupied by obstacle !!! ~%")
+                (tcl-param :server 'mapper :slot 'CommNavigationObjects.MapperParams.CURLOADLTM))
+              
+              ((equal (tcl-event-message) "(wrong map id)")
+                (format t "=========================>>> wrong map id !!! ~%"))
+
+              ((equal (tcl-event-message) "(no path)")
+                (let* ((counter-class (tcl-kb-query :key '(is-a name) :value '((is-a counter)(name no-path-counter))))
+                       (counter (get-value counter-class 'count)))
+                (setf counter  (+ counter 1))
+                (format t "=========================>>> no path !!! count: ~a ~%" counter)
+                (tcl-kb-update :key '(is-a name) :value `((is-a counter) (name no-path-counter) (count ,counter)))
+
+                (cond
+                  ((< counter 3)
+                    (tcl-param :server 'mapper :slot 'CommNavigationObjects.MapperParams.CURLOADLTM))
+
+                  (T
+                    (let ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot)))))
+                      ;(tcl-state :server 'pathnavigation :state "Neutral")
+;;TODO
+;;                      (update-robot-state :state 'ERROR)
+                      (update-running-job-state 'ERROR "GotoPosition PATH_BLOCKED")
+                      (tcl-state :server 'cdl :state "Neutral")
+                      (tcl-state :server 'purepursuit :state "Neutral")
+                      (tcl-state :server 'mapper :state "Neutral")
+                      (tcl-state :server 'planner :state "Deactivated")
+                      (tcl-state :server 'planner :state "Neutral")
+                      (tcl-abort)
+                      '(ERROR (ROBOT BLOCKED)))))))
+
+              
+              ((equal (tcl-event-message) "(ok)")
+                (format t "=========================>>> ok !!! ~%")
+                (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALMODE     :value 'PLANNER)
+                (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.LOOKUPTABLE  :value 'DEFAULT)
+                (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETSTRATEGY     :value 'APPROACH_HALT)
+                (tcl-param :server 'cdl :slot 'COMMIT)
+                (tcl-state :server 'cdl :state "MoveRobot"))
+                    
+              (T
+                (format t "=========================>>> unsupported event ~s !!! ~%" *MSG* ))))))
+
+(define-event-handler (handler-cdl-blocked)
+  (action (
+            (format t "=========================>>> CDL BLOCKED HANDLER location ~s ~s~%~%" '?location (tcl-event-message))
+            (cond
+              ((equal (tcl-event-message) "(blocked)")
+                (format t "=========================>>> ROBOT BLOCKED !!!~%")
+
+                (let ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot)))))
+                ;(cond 
+                 ; ((equal (not (get-value robot 'performs-task)) nil)
+                    ;(tcl-state :server 'pathnavigation :state "Neutral")
+;;TODO
+;;                    (update-robot-state :state 'ERROR)
+                    (update-running-job-state 'ERROR "GotoPosition PATH_BLOCKED")
+                    (tcl-state :server 'cdl :state "Neutral")
+                    (tcl-state :server 'mapper :state "Neutral")
+                    (tcl-state :server 'planner :state "Neutral")
+                    (tcl-abort)
+                    '(ERROR (ROBOT BLOCKED))))
+                  ;(T
+                   ;(format t "The robot is not performing any job --> ignore blocked robot~%")))))
+              ((equal (tcl-event-message) "(notblocked)")
+                (format t "=========================>>> ROBOT NOT BLOCKED !!! ~%")
+                )))))
+
+
+(define-rule (rule-robot-blocked)
+  (tcb (tcb-move-robot ?approach ?location))
+  (return-value (ERROR (ROBOT BLOCKED)))
+  (action (
+            (format t "RULE: robot-blocked (ERROR (ROBOT BLOCKED)) ~%")
+            (format t "=>>> Called from TCB:  ~a ~a~%" (tcb-name *RULE-CHILD-TCB*) (tcb-in-vars *RULE-CHILD-TCB*)) 
+            (tcl-push-plan :plan `( (tcb-wait-for-error-ack 'SW-ACK)
+                                    ,(append (list (tcb-name *RULE-CHILD-TCB*)) (tcb-in-vars *RULE-CHILD-TCB*))))
+            '(SUCCESS ()))))
+
+
+(define-rule (rule-unknown-location)
+  (tcb (tcb-move-robot ?approach ?location))
+  (return-value (ERROR (UNKNOWN LOCATION)))
+  (action (
+            (format t "RULE: (ERROR (UNKNOWN LOCATION)) ~%")
+            '(ERROR (UNKNOWN LOCATION)))))
+
+(define-rule (rule-location-success)
+  (tcb (tcb-move-robot ?approach ?location))
+  (return-value (SUCCESS ()))
+  (action (
+            (format t "RULE: (SUCCESS ()) ~%")
+            '(SUCCESS ()))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; tcb-approach-wall
+;;TODO TEST
+(define-tcb (tcb-approach-wall)
+  (module "NavigationModule")
+  (action (
+            (format t "=========================>>> tcb-approach-wall~%")
+            (tcl-activate-event :name 'evt-cdlgoal 
+                                :handler 'approach-wall-handler-cdl 
+                                :server 'cdl 
+                                :service 'goalevent 
+                                :mode 'continuous)
+            ;; cdl
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SAFETYCL :value 0)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.LOOKUPTABLE  :value 'DEFAULT)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETSTRATEGY :value 'APPROACH_FLAT_SURF)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.TRANSVEL :value '(0 60))
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ROTVEL :value '(-20 20))
+            (tcl-param :server 'cdl :slot 'COMMIT)
+
+            (tcl-state :server 'cdl :state "MoveRobot")
+            '(SUCCESS ()))))
+
+
+
+;; approach-wall-handler-cdl
+(define-event-handler (approach-wall-handler-cdl)
+  (action (
+            (format t "=========================>>> GOAL REACHED HANDLER~%~%")
+            (cond 
+              ((equal (tcl-event-message) '(reached))
+                (format t "=========================>>> GOAL REACHED !!! ~%")
+                (tcl-state :server 'cdl :state "Neutral")
+                (tcl-abort))))))
+
+
+;; tcb-approach-wall
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; tcb-joystick-navigation
+
+
+(define-tcb (tcb-joystick-navigation)
+  (module "NavigationModule")
+   (abort-action (
+                   (tcl-state :server 'cdl :state "Neutral")
+                   (tcl-state :server 'mapper :state "Neutral")))
+  (action (
+            (let* ((velocity-travelling (get-value (tcl-kb-query :key '(is-a)  :value '((is-a robot))) 'velocity-travelling)))
+            (format t "=========================>>> tcb-joystick-navigation~%")
+            ;; cdl
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETSTRATEGY :value 'JOYSTICK)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.LOOKUPTABLE  :value 'DEFAULT)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.FREEBEHAVIOR :value 'DEACTIVATE)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.TRANSVEL :value (first velocity-travelling))
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ROTVEL :value (second velocity-travelling))
+            (tcl-param :server 'cdl :slot 'COMMIT)
+
+            (tcl-state :server 'mapper :state "BuildCurrMap")
+            (tcl-state :server 'cdl :state "MoveRobot")
+            '(SUCCESS ())))))
+
+(define-tcb (tcb-stop-joystick-navigation)
+  (module "NavigationModule")
+  (action (
+            (format t "=========================>>> tcb-stop-joystick-navigation~%")
+            (tcl-state :server 'cdl :state "Neutral")
+            (tcl-state :server 'mapper :state "Neutral"))
+            '(SUCCESS ())))
+
+;; tcb-joystick-navigation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; tcb-reactive-navigation
+
+(define-tcb (tcb-reactive-navigation)
+  (module "NavigationModule")
+   (abort-action (
+                   (tcl-state :server 'cdl :state "Neutral")
+                   (tcl-state :server 'mapper :state "Neutral")))
+   (action (
+            (let* ((velocity-travelling (get-value (tcl-kb-query :key '(is-a)  :value '((is-a robot))) 'velocity-travelling)))
+            (format t "=========================>>> tcb-reactive-navigation~%")
+            ;; cdl
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETSTRATEGY :value 'REACTIVE)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.LOOKUPTABLE  :value 'DEFAULT)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.FREEBEHAVIOR :value 'ACTIVATE)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.TRANSVEL :value (first velocity-travelling))
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ROTVEL :value (second velocity-travelling))
+            (tcl-param :server 'cdl :slot 'COMMIT)
+
+            (tcl-state :server 'mapper :state "BuildCurrMap")
+            (tcl-state :server 'cdl :state "MoveRobot")
+            '(SUCCESS ())))))
+
+
+(define-tcb (tcb-stop-reactive-navigation)
+  (module "NavigationModule")
+  (action (
+            (format t "=========================>>> tcb-stop-reactive-navigation~%")
+            (tcl-state :server 'cdl :state "Neutral")
+            (tcl-state :server 'mapper :state "Neutral"))
+            '(SUCCESS ())))
+
+;; tcb-reactive-navigation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;; NAVIGATION
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

@@ -1,7 +1,11 @@
 ComponentDefinition SmartPioneerBaseServer {
-	CoordinationSlavePort CoordinationPort implements CommBasicObjects.BaseCoordinationService {
-		
+
+	CoordinationSlavePort CoordinationPort implements CommNavigationObjects.BaseCoordinationService {
+		with baseState realizedBy BaseStateQueryServer 
+		with batteryEvent realizedBy BatteryEventServer
+//		with bumperEvent realizedBy 
 	}
+
 	
 	// InputPorts
 	InputPort NavVelIn implements CommNavigationObjects.NavigationVelocityService { }

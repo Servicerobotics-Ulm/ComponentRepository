@@ -74,21 +74,7 @@ void CompHandler::onStartup()
 
 	Smart::StatusCode status;
 
-
-	int robotType = -1;
-    if( strcmp("robotinoXT", COMP->getGlobalState().getRobot().getRobotType().c_str() ) == 0 )
-    {
-      robotType = ROBOT_ROBOTINO_XT;
-    }
-    else if( strcmp("robotinoSIM", COMP->getGlobalState().getRobot().getRobotType().c_str() ) == 0 )
-    {
-      robotType = ROBOT_ROBOTINO_SIM;
-    } else if ( strcmp("robotino3", COMP->getGlobalState().getRobot().getRobotType().c_str() ) == 0 )
-    {
-      robotType = ROBOT_ROBOTINO_3;
-    }
-
-    COMP->robot = new Robot(robotType);
+    	COMP->robot = new Robot();
 
 
 	while(COMP->robot->openSerial( COMP->getGlobalState().getRobot().getDaemonIP() )!=0)
@@ -138,6 +124,7 @@ void CompHandler::onStartup()
 
 	// start all tasks
 	COMP->odomTask->start();
+	COMP->robotinoAPITask->start();
 
 	if(COMP->getGlobalState().getGeneral().getHasSignalState()){
 		COMP->signalStateTask->start();

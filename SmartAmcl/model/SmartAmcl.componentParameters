@@ -105,7 +105,7 @@ ComponentParameter SmartAmclParams component SmartAmcl
 		lostEventMaxEigValueSum : Double = 0.2
 	}
 	
-	ParameterSetInstance CommNavigationObjects.AmclParameter {
+	ParameterSetInstance CommLocalizationObjects.LocalizationParameter {
 		/** Set the initial pose in normal distribution. ?x = x coordinate [m], ?y = y coordinate [m], ?a = rotation in [rad].*/
 		TriggerInstance INITIALPOSE passive
 		

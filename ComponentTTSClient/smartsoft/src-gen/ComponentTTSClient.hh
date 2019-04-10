@@ -93,6 +93,11 @@ public:
 		return paramHandler.getGlobalState();
 	}
 	
+	ParameterStateStruct getParameters() const
+	{
+		return paramHandler.getGlobalState();
+	}
+	
 	// define tasks
 	Smart::TaskTriggerSubject* consoleTaskTrigger;
 	ConsoleTask *consoleTask;
@@ -126,6 +131,8 @@ public:
 	
 	/// this method is used to register different PortFactory classes (one for each supported middleware framework)
 	void addPortFactory(const std::string &name, ComponentTTSClientPortFactoryInterface *portFactory);
+	
+	SmartACE::SmartComponent* getComponentImpl();
 	
 	/// this method is used to register different component-extension classes
 	void addExtension(ComponentTTSClientExtension *extension);

@@ -7,7 +7,7 @@ pre-start)
 	# Insert commands you want to call prior to starting the components
 	
 	echo -e "\n\n\n"
-	bash $SMART_ROOT_ACE/repos/DataRepository/gazebo/startGazebo.sh worlds/tiagoOffice.world
+	bash $SMART_ROOT_ACE/repos/DataRepository/gazebo/startGazebo.sh worlds/tiagoOffice_nav.world
 	#bash $SMART_ROOT_ACE/repos/DataRepository/gazebo/startGazebo.sh
 
 	echo "Wait for Simulator to start..."

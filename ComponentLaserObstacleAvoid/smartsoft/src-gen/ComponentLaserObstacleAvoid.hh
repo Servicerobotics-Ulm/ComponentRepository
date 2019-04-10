@@ -123,6 +123,8 @@ public:
 	/// this method is used to register different PortFactory classes (one for each supported middleware framework)
 	void addPortFactory(const std::string &name, ComponentLaserObstacleAvoidPortFactoryInterface *portFactory);
 	
+	SmartACE::SmartComponent* getComponentImpl();
+	
 	/// this method is used to register different component-extension classes
 	void addExtension(ComponentLaserObstacleAvoidExtension *extension);
 	

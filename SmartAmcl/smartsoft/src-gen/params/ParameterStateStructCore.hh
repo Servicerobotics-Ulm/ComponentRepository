@@ -395,15 +395,15 @@ public:
 		///////////////////////////////////////////
 		
 		/**
-		 * Definition of instantiated ParameterRepository CommNavigationObjects
+		 * Definition of instantiated ParameterRepository CommLocalizationObjects
 		 */
-		class CommNavigationObjectsType {
+		class CommLocalizationObjectsType {
 			friend class ParamUpdateHandler;
 			public:
 			/**
-			 * Definition of instantiated ParameterSet AmclParameter
+			 * Definition of instantiated ParameterSet LocalizationParameter
 			 */
-			class AmclParameterType {
+			class LocalizationParameterType {
 				friend class ParamUpdateHandler;
 				public:
 				protected:
@@ -418,30 +418,30 @@ public:
 					
 					void to_ostream(std::ostream &os = std::cout) const
 					{
-						os << "AmclParameter(\n";
+						os << "LocalizationParameter(\n";
 						os << ")";
 					}
-			}; // end of parameter-set class AmclParameterType
+			}; // end of parameter-set class LocalizationParameterType
 			
 			protected:
 				/**
 				 * internal members
 				 */
-				AmclParameterType AmclParameter;
+				LocalizationParameterType LocalizationParameter;
 			
 			public:
 				/**
 				 * public getter methods
 				 */
-				inline AmclParameterType getAmclParameter() const { return AmclParameter; }
+				inline LocalizationParameterType getLocalizationParameter() const { return LocalizationParameter; }
 				
 				void to_ostream(std::ostream &os = std::cout) const
 				{
-					os << "CommNavigationObjects(\n";
-					AmclParameter.to_ostream(os);
+					os << "CommLocalizationObjects(\n";
+					LocalizationParameter.to_ostream(os);
 					os << ")";
 				}
-		}; // end of parameter-repository wrapper class CommNavigationObjectsType
+		}; // end of parameter-repository wrapper class CommLocalizationObjectsType
 	
 protected:
 
@@ -454,13 +454,13 @@ protected:
 	// External params
 	
 	// Instance params (encapsulated in a wrapper class for each instantiated parameter repository)
-	CommNavigationObjectsType CommNavigationObjects;
+	CommLocalizationObjectsType CommLocalizationObjects;
 	
 
 	void setContent(const ParameterStateStructCore &commit) {
 		// External params
 	
-		this->CommNavigationObjects = commit.getCommNavigationObjects();
+		this->CommLocalizationObjects = commit.getCommLocalizationObjects();
 	}
 
 	// special trigger method (user upcall) called before updating parameter global state
@@ -486,8 +486,8 @@ public:
 	// external param getters
 	
 	// repo wrapper class getter(s)
-	CommNavigationObjectsType getCommNavigationObjects() const {
-		return CommNavigationObjects;
+	CommLocalizationObjectsType getCommLocalizationObjects() const {
+		return CommLocalizationObjects;
 	}
 	
 	// helper method to easily implement output stream in derived classes
@@ -502,7 +502,7 @@ public:
 		// External params
 		
 		// Instance params (encapsulated in a wrapper class for each instantiated parameter repository)
-		CommNavigationObjects.to_ostream(os);
+		CommLocalizationObjects.to_ostream(os);
 	}
 };
 

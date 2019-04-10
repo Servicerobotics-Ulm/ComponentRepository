@@ -123,6 +123,11 @@ public:
 		return paramHandler.getGlobalState();
 	}
 	
+	ParameterStateStruct getParameters() const
+	{
+		return paramHandler.getGlobalState();
+	}
+	
 	// define tasks
 	Smart::TaskTriggerSubject* cdlTaskTrigger;
 	CdlTask *cdlTask;
@@ -191,6 +196,8 @@ public:
 	
 	/// this method is used to register different PortFactory classes (one for each supported middleware framework)
 	void addPortFactory(const std::string &name, SmartCdlServerPortFactoryInterface *portFactory);
+	
+	SmartACE::SmartComponent* getComponentImpl();
 	
 	/// this method is used to register different component-extension classes
 	void addExtension(SmartCdlServerExtension *extension);

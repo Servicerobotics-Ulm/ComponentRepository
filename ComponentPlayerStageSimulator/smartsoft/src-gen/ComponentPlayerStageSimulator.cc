@@ -107,6 +107,11 @@ void ComponentPlayerStageSimulator::addExtension(ComponentPlayerStageSimulatorEx
 	componentExtensionRegistry[extension->getName()] = extension;
 }
 
+SmartACE::SmartComponent* ComponentPlayerStageSimulator::getComponentImpl()
+{
+	return dynamic_cast<ComponentPlayerStageSimulatorAcePortFactory*>(portFactoryRegistry["ACE_SmartSoft"])->getComponentImpl();
+}
+
 /**
  * Notify the component that setup/initialization is finished.
  * You may call this function from anywhere in the component.
@@ -191,7 +196,7 @@ void ComponentPlayerStageSimulator::init(int argc, char *argv[])
 		loadParameter(argc, argv);
 		
 		// print out the actual parameters which are used to initialize the component
-		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
+		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
 		// initializations of ComponentPlayerStageSimulatorROSExtension
 		
@@ -281,7 +286,7 @@ void ComponentPlayerStageSimulator::init(int argc, char *argv[])
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(batteryEventTask);
-				component->getTimerManager()->scheduleTimer(triggerPtr, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				// store trigger in class member
 				batteryEventTaskTrigger = triggerPtr;
 			} else {
@@ -306,7 +311,7 @@ void ComponentPlayerStageSimulator::init(int argc, char *argv[])
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(playerTask);
-				component->getTimerManager()->scheduleTimer(triggerPtr, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				// store trigger in class member
 				playerTaskTrigger = triggerPtr;
 			} else {
@@ -383,12 +388,16 @@ void ComponentPlayerStageSimulator::fini()
 	// destroy all task instances
 	// unlink all UpcallManagers
 	// unlink the TaskTrigger
-	batteryEventTaskTrigger->detach(batteryEventTask);
-	delete batteryEventTask;
+	if(batteryEventTaskTrigger != NULL){
+		batteryEventTaskTrigger->detach(batteryEventTask);
+		delete batteryEventTask;
+	}
 	// unlink all UpcallManagers
 	// unlink the TaskTrigger
-	playerTaskTrigger->detach(playerTask);
-	delete playerTask;
+	if(playerTaskTrigger != NULL){
+		playerTaskTrigger->detach(playerTask);
+		delete playerTask;
+	}
 
 	// destroy all input-handler
 	delete localizationUpdateHandler;

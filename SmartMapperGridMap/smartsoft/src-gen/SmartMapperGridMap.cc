@@ -54,7 +54,7 @@ SmartMapperGridMap::SmartMapperGridMap()
 	
 	// set default ini parameter values
 	connections.component.name = "SmartMapperGridMap";
-	connections.component.initialComponentMode = "BuildCurrMap";
+	connections.component.initialComponentMode = "Neutral";
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
@@ -98,6 +98,11 @@ void SmartMapperGridMap::addPortFactory(const std::string &name, SmartMapperGrid
 void SmartMapperGridMap::addExtension(SmartMapperGridMapExtension *extension)
 {
 	componentExtensionRegistry[extension->getName()] = extension;
+}
+
+SmartACE::SmartComponent* SmartMapperGridMap::getComponentImpl()
+{
+	return dynamic_cast<SmartMapperGridMapAcePortFactory*>(portFactoryRegistry["ACE_SmartSoft"])->getComponentImpl();
 }
 
 /**
@@ -199,7 +204,7 @@ void SmartMapperGridMap::init(int argc, char *argv[])
 		loadParameter(argc, argv);
 		
 		// print out the actual parameters which are used to initialize the component
-		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
+		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
 		// initializations of SmartMapperGridMapROSExtension
 		
@@ -293,7 +298,7 @@ void SmartMapperGridMap::init(int argc, char *argv[])
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(curMapTask);
-				component->getTimerManager()->scheduleTimer(triggerPtr, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				// store trigger in class member
 				curMapTaskTrigger = triggerPtr;
 			} else {
@@ -319,7 +324,7 @@ void SmartMapperGridMap::init(int argc, char *argv[])
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(ltmMapTask);
-				component->getTimerManager()->scheduleTimer(triggerPtr, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				// store trigger in class member
 				ltmMapTaskTrigger = triggerPtr;
 			} else {
@@ -338,7 +343,7 @@ void SmartMapperGridMap::init(int argc, char *argv[])
 			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 			int microseconds = 1000*1000 / 2.0;
 			if(microseconds > 0) {
-				component->getTimerManager()->scheduleTimer(triggerPtr, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				triggerPtr->attach(ltmMapTask);
 				// store trigger in class member
 				ltmMapTaskTrigger = triggerPtr;
@@ -414,13 +419,17 @@ void SmartMapperGridMap::fini()
 	// unlink all UpcallManagers
 	laserServiceInUpcallManager->detach(curMapTask);
 	// unlink the TaskTrigger
-	curMapTaskTrigger->detach(curMapTask);
-	delete curMapTask;
+	if(curMapTaskTrigger != NULL){
+		curMapTaskTrigger->detach(curMapTask);
+		delete curMapTask;
+	}
 	// unlink all UpcallManagers
 	laserServiceInUpcallManager->detach(ltmMapTask);
 	// unlink the TaskTrigger
-	ltmMapTaskTrigger->detach(ltmMapTask);
-	delete ltmMapTask;
+	if(ltmMapTaskTrigger != NULL){
+		ltmMapTaskTrigger->detach(ltmMapTask);
+		delete ltmMapTask;
+	}
 
 	// destroy all input-handler
 

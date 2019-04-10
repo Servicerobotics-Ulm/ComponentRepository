@@ -100,6 +100,11 @@ void SmartPioneerBaseServer::addExtension(SmartPioneerBaseServerExtension *exten
 	componentExtensionRegistry[extension->getName()] = extension;
 }
 
+SmartACE::SmartComponent* SmartPioneerBaseServer::getComponentImpl()
+{
+	return dynamic_cast<SmartPioneerBaseServerAcePortFactory*>(portFactoryRegistry["ACE_SmartSoft"])->getComponentImpl();
+}
+
 /**
  * Notify the component that setup/initialization is finished.
  * You may call this function from anywhere in the component.
@@ -184,7 +189,7 @@ void SmartPioneerBaseServer::init(int argc, char *argv[])
 		loadParameter(argc, argv);
 		
 		// print out the actual parameters which are used to initialize the component
-		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
+		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
 		// initializations of SmartPioneerBaseServerROSExtension
 		
@@ -271,7 +276,7 @@ void SmartPioneerBaseServer::init(int argc, char *argv[])
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(poseUpdateTask);
-				component->getTimerManager()->scheduleTimer(triggerPtr, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				// store trigger in class member
 				poseUpdateTaskTrigger = triggerPtr;
 			} else {
@@ -290,7 +295,7 @@ void SmartPioneerBaseServer::init(int argc, char *argv[])
 			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 			int microseconds = 1000*1000 / 10.0;
 			if(microseconds > 0) {
-				component->getTimerManager()->scheduleTimer(triggerPtr, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				triggerPtr->attach(poseUpdateTask);
 				// store trigger in class member
 				poseUpdateTaskTrigger = triggerPtr;
@@ -372,14 +377,18 @@ void SmartPioneerBaseServer::fini()
 	// destroy all task instances
 	// unlink all UpcallManagers
 	// unlink the TaskTrigger
-	poseUpdateTaskTrigger->detach(poseUpdateTask);
-	delete poseUpdateTask;
+	if(poseUpdateTaskTrigger != NULL){
+		poseUpdateTaskTrigger->detach(poseUpdateTask);
+		delete poseUpdateTask;
+	}
 	// unlink all UpcallManagers
 	localizationUpdateUpcallManager->detach(robotTask);
 	navVelInUpcallManager->detach(robotTask);
 	// unlink the TaskTrigger
-	robotTaskTrigger->detach(robotTask);
-	delete robotTask;
+	if(robotTaskTrigger != NULL){
+		robotTaskTrigger->detach(robotTask);
+		delete robotTask;
+	}
 
 	// destroy all input-handler
 

@@ -63,7 +63,6 @@ void BaseStateQueryServiceAnswHandler::handleQuery(const SmartACE::QueryId &id, 
 {
 	CommBasicObjects::CommBaseState answer;
 	
-	// implement your query handling logic here and fill in the answer object
 	std::cout << "Query for basestate \n";
 
 	time_stamp.set_now();  // Set the timestamp to the current time
@@ -89,8 +88,6 @@ void BaseStateQueryServiceAnswHandler::handleQuery(const SmartACE::QueryId &id, 
 	batteryLevel.setExternalPower(COMP->robot->getExternalPower());
 
 	base_state.set_battery_state(batteryLevel);
-
-	//server.answer(id, base_state);
 	
 	this->server->answer(id, base_state);
 }

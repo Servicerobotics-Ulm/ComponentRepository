@@ -98,12 +98,12 @@ int OdomTask::on_execute()
 
 	if(COMP->getGlobalState().getGeneral().getVerbose() == true)
 	{
-		std::cout<<"Base Pose: "<<base_state.getBasePose()<<std::endl;
-		std::cout<<"RobotinoExternerPower: "<<COMP->robot->getExternalPower()<<std::endl;
+		std::cout<<"Base Pose: "<<base_state.getBasePose().get_base_pose3d().get_position()<<std::endl;
+		std::cout<<"RobotinoExternaPower: "<<COMP->robot->getExternalPower()<<std::endl;
 	}
 
 	// send the CommBaseState object to the client
-	const Smart::StatusCode status = this->baseStateServiceOutPut(base_state);
+	const Smart::StatusCode status = COMP->baseStateServiceOut->put(base_state);
 	if ( status != Smart::SMART_OK )
 	{
 		std::cerr << "ERROR: failed to push base state ("

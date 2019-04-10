@@ -39,6 +39,8 @@ public:
 	virtual void handleCommNavigationObjects_MapperParams_LTMSAVEYAMLPGM(const std::string &filename);
 	virtual void handleCommNavigationObjects_MapperParams_LTMSAVEYAMLPPM(const std::string &filename);
 	virtual void handleCommNavigationObjects_MapperParams_LTMLOADYAML(const std::string &filename);
+	virtual void handleCommNavigationObjects_MapperParams_LTMSAVEIEEESTD(const std::string &filename);
+	virtual void handleCommNavigationObjects_MapperParams_LTMLOADIEEESTD(const std::string &filename);
 };
 
 #endif // _TRIGGERHANDLER_HH

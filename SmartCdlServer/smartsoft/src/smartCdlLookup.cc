@@ -2112,6 +2112,54 @@ ss << std::setw(3) << std::setfill('0') << "cdl-out-" << imgCntTMP++ << ".jpg";
 	  indexWantedVWCheck[i] = 0;
 	}
 
+// for person following
+  if(strategy == CDL_STRATEGY_7){
+	  double x, y;
+	  x = goalX;
+	  y = goalY;
+	  int ix,iy;
+	  int px = 0;
+	  int py = 0;
+
+	  int vi,wi,ci,li;
+
+	  if (x < 0.0)
+	  {
+		  ix = (int)(ceil((x-cdl_c_x_min)/cdl_c_res));
+		  px = (ix * cdl_c_res) + cdl_c_x_min	- cdl_c_res/2.0;
+	  }
+	  else
+	  {
+		  ix = (int)(floor((x-cdl_c_x_min)/cdl_c_res));
+		  px = (ix * cdl_c_res) + cdl_c_x_min	+ cdl_c_res/2.0;
+	  }
+	  if (y < 0.0)
+	  {
+		  iy = (int)(ceil((y-cdl_c_y_min)/cdl_c_res));
+		  py = (iy * cdl_c_res) + cdl_c_y_min - cdl_c_res/2.0;
+	  }
+	  else
+	  {
+		  iy = (int)(floor((y-cdl_c_y_min)/cdl_c_res));
+		  py = (iy * cdl_c_res) + cdl_c_y_min + cdl_c_res/2.0;
+	  }
+
+	  if ((ix>=0) && (ix<cdl_c_x_cells) && (iy>=0) && (iy<cdl_c_y_cells))
+	  {
+		  for (li=0;li<indexCurvature;li++)
+		  {
+			  ci=indexList[li];
+			  int dist = distLookup[ix][iy][ci];
+			  if(dist<cdl_max_distance && dist>0){
+				  indexWantedVWCheck[ci] = 1;
+
+				  //std::cout<<"Wanted CI: "<<ci<<" dist: "<<dist<<std::endl;
+			  }
+
+		  }
+	  }
+  }
+
 
   if(strategy == CDL_STRATEGY_1){
 	  //check if the desired speed vels are within the bounds of the lookup tables!
@@ -2193,9 +2241,6 @@ ss << std::setw(3) << std::setfill('0') << "cdl-out-" << imgCntTMP++ << ".jpg";
 	  if(distlook < pathNavPredictedGoalPose_minDist){
 		  distlook = pathNavPredictedGoalPose_minDist;
 	  }
-	  std::cout<<"MATTHIAS speed: "<<abs00(v)<<" distlook: "<<distlook<<std::endl;
-
-
 
 
 #ifdef WITH_OPENCV_CDL_LOOKUP_DEBUG
@@ -2377,7 +2422,9 @@ ss << std::setw(3) << std::setfill('0') << "cdl-out-" << imgCntTMP++ << ".jpg";
 
           } else {
         	  if(indexWantedVWCheck[ci]==1){
+#ifdef WITH_OPENCV_CDL_LOOKUP_DEBUG
         		  std::cout<<"vw: ("<< vtrans <<"|"<< vrot <<") is not allowed - distO|dist: ("<<dist_lookup<<"|"<<dist<<") angleO|angle: ("<<angle_lookup<<"|"<<angle<<") vTransAllowed: "<<vTransAllowed<<" vRotAllowed: "<<vRotAllowed<<std::endl;
+#endif
         	  }
 
           }
@@ -2415,7 +2462,9 @@ ss << std::setw(3) << std::setfill('0') << "cdl-out-" << imgCntTMP++ << ".jpg";
 					  alpha2 = 1;
 					  alpha3 = 1;
 					  costValue = alpha1*costSpeed + alpha3*costHeading;
+#ifdef WITH_OPENCV_CDL_LOOKUP_DEBUG
 					  std::cout<<ci<<" - v|desv: "<<vtrans<<"|"<<desiredTranslationalSpeed<<" w|desw: "<<vrot<<"|"<<desiredRotationalSpeed<<" cost: "<<costValue<<"              v:"<<v<<" w:"<<w<<std::endl;
+#endif
 				  } else {
 //					  std::cout<<ci<<" not wanted - v|desv: "<<vtrans<<"|"<<desiredTranslationalSpeed<<" w|desw: "<<vrot<<"|"<<desiredRotationalSpeed<<std::endl;
 					  costValue = 0;
@@ -3370,14 +3419,8 @@ ss << std::setw(3) << std::setfill('0') << "cdl-out-" << imgCntTMP++ << ".jpg";
 
                   desiredHeading = angle00(atan2(goalY-posY,goalX-posX));
 
-                  std::vector<std::pair<double, double> > wCVector;
-                  wCVector.push_back( std::make_pair(1,0)); //1deg
-                  wCVector.push_back( std::make_pair(1 , 2 ) ); //1deg
-                  wCVector.push_back( std::make_pair(15 , 10 ) ); //1deg
-                  wCVector.push_back( std::make_pair(45 , wmaxIni*180/M_PI) ); //20deg
-
                   double angleDelta = angle00(desiredHeading-posA);
-                  double vInter = linearinterpolation(wCVector,abs00(angleDelta*180/M_PI));
+                  double vInter = linearinterpolation(rotwCVector,abs00(angleDelta*180/M_PI));
 		  vInter = vInter/180*M_PI;
                   if(angleDelta < 0 )
                   {
@@ -4133,25 +4176,62 @@ ss << std::setw(3) << std::setfill('0') << "cdl-out-" << imgCntTMP++ << ".jpg";
                   // ------------------------------------------------------------------------
                   // follow
                   // ------------------------------------------------------------------------
-                  double free   = 1000.0;
-                  double angle  = (60.0*M_PI/180.0);
 
-                  if (goalHeadingRelative < -angle) goalHeadingRelative=-angle;
-                  if (goalHeadingRelative >  angle) goalHeadingRelative= angle;
 
-                  costHeading = 1.0 - abs00( angle00(goalHeadingRelative-vrot)) / (2*angle);
-                  costSpeed   = 1.0 - abs00( desiredTranslationalSpeed-vtrans) / vmaxIni;
 
-                  costDist    = 1; //dist/maxDistance;
+                	if(indexWantedVWCheck[ci]==1){
+                		costHeading=1.0-abs00(angle00(desiredRotationalSpeed-vrot))/wmaxIni;
+                		costSpeed=1.0-abs00(desiredTranslationalSpeed-vtrans)/vmaxIni;
+                		alpha1 = 1;
+                		alpha2 = 1;
+                		alpha3 = 1;
+                		costValue = alpha1*costSpeed + alpha3*costHeading;
+//                		std::cout<<ci<<" - v|desv: "<<vtrans<<"|"<<desiredTranslationalSpeed<<" w|desw: "<<vrot<<"|"<<desiredRotationalSpeed<<" cost: "<<costValue<<"              v:"<<v<<" w:"<<w<<std::endl;
+                	} else {
+                		//					  std::cout<<ci<<" not wanted - v|desv: "<<vtrans<<"|"<<desiredTranslationalSpeed<<" w|desw: "<<vrot<<"|"<<desiredRotationalSpeed<<std::endl;
+                		costValue = 0;
+                	}
 
-                  alpha1 = 1.0;
-                  alpha2 = 2.0;
-                  alpha3 = 8.0;
+                	break;
 
-                  //costValue =  alpha1*costSpeed + alpha3*costHeading;
-                  costValue = alpha1*costSpeed + alpha3*costHeading;
 
-                  break;
+
+// ALT 22.02.2018
+//                  double free   = 1000.0;
+//                  double angle  = (60.0*M_PI/180.0);
+//
+//                  if (goalHeadingRelative < -angle) goalHeadingRelative=-angle;
+//                  if (goalHeadingRelative >  angle) goalHeadingRelative= angle;
+//
+//                  //gain function for goalheadingrelative
+//                  // f(x) = 5+ 0.06* x^2
+//                  double deg_goalHeadingRelative = goalHeadingRelative * (180.0/M_PI);
+//                  double heading_gain_rad = 0.0;
+//
+//                  if(goalHeadingRelative >0.0)
+//                  {
+//                  double heading_gain_deg = 5 + (0.06 * deg_goalHeadingRelative * deg_goalHeadingRelative);
+//                  heading_gain_rad = heading_gain_deg * M_PI/180.0;
+//                  }else
+//                  {
+//                   double heading_gain_deg = -1.0 *(5 + (0.06 * deg_goalHeadingRelative * deg_goalHeadingRelative));
+//                   heading_gain_rad = heading_gain_deg * M_PI/180.0;
+//                  }
+//
+//                  heading_gain_rad = 0;
+//
+//                  costHeading = 1.0 - abs00( angle00(goalHeadingRelative + heading_gain_rad - vrot)) / (2*angle);
+//                  costSpeed   = 1.0 - abs00( desiredTranslationalSpeed - vtrans) / vmaxIni;
+//                  costDist    = dist/maxDistance;
+//
+//                  alpha1 = 1.0;
+//                  alpha2 = 2.0;
+//                  alpha3 = 8.0;
+//
+//
+//                  costValue = alpha1*costSpeed + alpha2*costDist + alpha3*costHeading;
+
+//                  break;
                 } // CDL_STRATEGY_7
 
 
@@ -4348,6 +4428,14 @@ if( strategy  == CDL_STRATEGY_1){
 }
 
 
+//for person following
+if( strategy  == CDL_STRATEGY_7){
+
+	  show_px_color(goalX, goalY, CV_RGB(255, 0, 255)); // alte transformiert = ungerastert/kontinuierliche werte
+
+}
+
+
   if(wResult !=0){
 	  double r = (vResult/1000.0) / wResult;
 			  r = r*1000.0;
@@ -4394,6 +4482,66 @@ if( strategy  == CDL_STRATEGY_1){
 	s = vResult * deltat;
 	show_px_color(s, 0, CV_RGB(128, 128, 128));
   }
+
+  // FOR Debuging only Plot current speed!
+  if(fabs(w) > 0.01){
+	  std::cout << "v/w: " << v << "/" << w << std::endl;
+	  double r = (v/1000.0) / w;
+			  r = r*1000.0;
+	  double icc_x = 0;
+	  double icc_y = r;
+
+	if(icc_y<0){
+	  r = abs00(r);
+	  cvEllipse(img, cvPoint((-cdl_c_y_min + -icc_y) * cdl_to_pixel_scale, (cdl_c_x_max + -icc_x) * cdl_to_pixel_scale), cvSize(r * cdl_to_pixel_scale,r * cdl_to_pixel_scale), 0,  180,  270, CV_RGB(0, 0, 255), 1);
+
+	} else {
+	  cvEllipse(img, cvPoint((-cdl_c_y_min + -icc_y) * cdl_to_pixel_scale, (cdl_c_x_max + -icc_x) * cdl_to_pixel_scale), cvSize(r * cdl_to_pixel_scale,r * cdl_to_pixel_scale), 0,  270, 360 , CV_RGB(0, 0, 255), 1);
+	}
+
+
+	//calculate point on line
+	double s, alpha, h,ys, r_m;
+	r_m = r/1000.0;
+	s = v * deltat;
+	alpha = s/r;
+	h = sin(alpha) * r_m;
+	ys = cos(alpha) * r_m;
+
+
+	double res_x,res_y;
+	res_x = h*1000;
+	if(icc_y<0){
+		res_y = icc_y + (ys*1000.0);
+	} else {
+		res_y = icc_y - (ys*1000.0);
+	}
+
+
+	show_px_color(res_x, res_y, CV_RGB(0, 0, 255));
+
+  } else {
+
+	cvLine(img,
+		cvPoint((-cdl_c_y_min + -0) * cdl_to_pixel_scale, (cdl_c_x_max + -0) * cdl_to_pixel_scale),
+		cvPoint((-cdl_c_y_min + -0) * cdl_to_pixel_scale, (cdl_c_x_max + -1000) * cdl_to_pixel_scale),
+		CV_RGB(0, 0, 255),
+		1);
+	double s;
+	s = v * deltat;
+	show_px_color(s, 0, CV_RGB(0, 0, 255));
+  }
+
+ 
+	   char buffer[255];
+	      
+	      sprintf(buffer, "V: %f W: %f A: %f:", v, w, posA*180.0/M_PI);
+	      
+	      CvFont font;
+	      cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 1, 1);
+	      cvPutText(img, buffer, cvPoint(-cdl_c_y_min * cdl_to_pixel_scale,
+	    			(cdl_c_x_max + 200) * cdl_to_pixel_scale), &font, CV_RGB(0, 0, 255));
+  
 #endif
 
 
@@ -4576,6 +4724,20 @@ int CdlLookupClass::setGoalPosition(double x,double y)
 
   return 0;
 };
+
+int CdlLookupClass::setRotDevSpeed(double rotDev1, double rotSpeed1, double rotDev2, double rotSpeed2,
+		                           double rotDev3, double rotSpeed3, double rotDev4, double rotSpeed4) {
+
+
+	rotwCVector.clear();
+
+	rotwCVector.push_back( std::make_pair(rotDev1,rotSpeed1));
+	rotwCVector.push_back( std::make_pair(rotDev2,rotSpeed2));
+	rotwCVector.push_back( std::make_pair(rotDev3,rotSpeed3));
+	rotwCVector.push_back( std::make_pair(rotDev4,rotSpeed4));
+
+	return 0;
+}
 
 int CdlLookupClass::loadCurvatureIndexAscii(char *filename)
 {

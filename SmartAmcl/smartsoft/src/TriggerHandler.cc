@@ -14,13 +14,57 @@
 // If you want the toolchain to re-generate this file, please 
 // delete it before running the code generator.
 //--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+//
+//  Copyright (C) 2010 Manuel Wopfner, Matthias Lutz
+//
+//        schlegel@hs-ulm.de
+//        lutz@hs-ulm.de
+//
+//        ZAFH Servicerobotic Ulm
+//        University of Applied Sciences
+//        Prittwitzstr. 10
+//        89075 Ulm
+//        Germany
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU General Public License
+//  as published by the Free Software Foundation; either version 2.1
+//  of the License, or (at your option) any later version.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License along
+//  with this library; if not, write to the Free Software Foundation, Inc.,
+//  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
+//  This work is based on previous work by the folks from PlayerStage.
+//
+//--------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------
+//
+// CREDITS:
+//
+// The code for the amcl algorithm was taken from the
+// Playerstage Project, which is distributed under GPL, and you can find at
+// http://playerstage.sourceforge.net/
+//
+// Player - One Hell of a Robot Server
+// Copyright (C) 2000
+//    Brian Gerkey, Kasper Stoy, Richard Vaughan, & Andrew Howard
+//
+//----------------------------------------------------------------------------
 
 #include "TriggerHandler.hh"
 
 #include "SmartAmcl.hh"
 
 // trigger user methods
-void TriggerHandler::handleCommNavigationObjects_AmclParameter_INITIALPOSE(const int &x, const int &y, const double &a)
+void TriggerHandler::handleCommLocalizationObjects_LocalizationParameter_INITIALPOSE(const int &x, const int &y, const double &a)
 {
 	// implement the trigger behavior here. Be aware, if you must use blocking calls here, please set this
 	// trigger as active in the model. For an active trigger an active queue will be generated internally 
@@ -52,7 +96,7 @@ void TriggerHandler::handleCommNavigationObjects_AmclParameter_INITIALPOSE(const
 	}
 	pfGuard.release();
 }
-void TriggerHandler::handleCommNavigationObjects_AmclParameter_GLOBALLOCALIZATION()
+void TriggerHandler::handleCommLocalizationObjects_LocalizationParameter_GLOBALLOCALIZATION()
 {
 	// implement the trigger behavior here. Be aware, if you must use blocking calls here, please set this
 	// trigger as active in the model. For an active trigger an active queue will be generated internally 
@@ -69,11 +113,8 @@ void TriggerHandler::handleCommNavigationObjects_AmclParameter_GLOBALLOCALIZATIO
 	}
 	pfGuard.release();
 }
-void TriggerHandler::handleCommNavigationObjects_AmclParameter_LOADMAP(const std::string &filename)
+void TriggerHandler::handleCommLocalizationObjects_LocalizationParameter_LOADMAP(const std::string &filename)
 {
-	// implement the trigger behavior here. Be aware, if you must use blocking calls here, please set this
-	// trigger as active in the model. For an active trigger an active queue will be generated internally 
-	// (transparent for the usage here). Thus an active trigger will be called within a separate task scope.
 	std::cout <<"[TriggerHandler]LOADMAP: file:"<<filename<<std::endl;
 	Smart::StatusCode status;
 	status = COMP->stateSlave->tryAcquire("nonneutral");

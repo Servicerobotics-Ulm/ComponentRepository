@@ -49,7 +49,7 @@ int RobotinoAPITask::on_execute()
 	Smart::StatusCode status;
 
 	COMP->robot->processEvents();
-	rec::robotino::api2::msleep( 20 ); //50Herz // ? msleep ?   Gautam
+	rec::robotino::api2::msleep( 20 ); //50Herz
 
 	// it is possible to return != 0 (e.g. when the task detects errors), then the outer loop breaks and the task stops
 	return 0;

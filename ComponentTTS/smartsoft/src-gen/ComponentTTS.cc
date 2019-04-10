@@ -81,6 +81,11 @@ void ComponentTTS::addExtension(ComponentTTSExtension *extension)
 	componentExtensionRegistry[extension->getName()] = extension;
 }
 
+SmartACE::SmartComponent* ComponentTTS::getComponentImpl()
+{
+	return dynamic_cast<ComponentTTSAcePortFactory*>(portFactoryRegistry["ACE_SmartSoft"])->getComponentImpl();
+}
+
 /**
  * Notify the component that setup/initialization is finished.
  * You may call this function from anywhere in the component.
@@ -150,7 +155,7 @@ void ComponentTTS::init(int argc, char *argv[])
 		loadParameter(argc, argv);
 		
 		// print out the actual parameters which are used to initialize the component
-		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
+		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
 		// initializations of ComponentTTSROSExtension
 		
@@ -232,7 +237,7 @@ void ComponentTTS::init(int argc, char *argv[])
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(speechTask);
-				component->getTimerManager()->scheduleTimer(triggerPtr, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				// store trigger in class member
 				speechTaskTrigger = triggerPtr;
 			} else {
@@ -309,8 +314,10 @@ void ComponentTTS::fini()
 	// destroy all task instances
 	// unlink all UpcallManagers
 	// unlink the TaskTrigger
-	speechTaskTrigger->detach(speechTask);
-	delete speechTask;
+	if(speechTaskTrigger != NULL){
+		speechTaskTrigger->detach(speechTask);
+		delete speechTask;
+	}
 
 	// destroy all input-handler
 	delete speechSendHandler;

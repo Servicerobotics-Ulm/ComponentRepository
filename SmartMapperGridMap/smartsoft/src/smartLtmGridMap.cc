@@ -269,6 +269,7 @@ int SmartLtmGridMap::getPartialMap( int partXoffset,int partYoffset,
       sourceValue = (int)idl_CommGridMap.cell[sourceIndex];
       destValue   = (int)destCell[destIndex];
 
+
       if (destValue == MAPPER_GROWING)
       {
         // destination cell will not be overwritten !
@@ -294,7 +295,10 @@ int SmartLtmGridMap::getPartialMap( int partXoffset,int partYoffset,
           destCell[destIndex] = MAPPER_OBSTACLE;
         }
       }
+
     }
+
+
   }
 
   return 0;
@@ -653,18 +657,24 @@ int SmartLtmGridMap::load_yaml( std::string fname)
 				p = pixels + j * rowstride + i * n_channels;
 				color_sum = *p;
 
-				// If negate is true, we consider blacker pixels free, and whiter
-				// pixels free.  Otherwise, it's vice versa.
-				// smartLtmGridMap use only cell values from 0 to 127 therefore we have
-				// to downscale by factor 2.
-				if (negate)
-				{
-					cellValue = floor(color_sum / 2);
+				if(color_sum == MAPPER_UNKNOWN){
+					cellValue = MAPPER_UNKNOWN;
+				} else {
+
+					// If negate is true, we consider blacker pixels free, and whiter
+					// pixels free.  Otherwise, it's vice versa.
+					// smartLtmGridMap use only cell values from 0 to 127 therefore we have
+					// to downscale by factor 2.
+					if (negate)
+					{
+						cellValue = floor(color_sum / 2);
+					}
+					else
+					{
+						cellValue = floor((255 - color_sum) / 2);
+					}
 				}
-				else
-				{
-					cellValue = floor((255 - color_sum) / 2);
-				}
+
 
 				// store the cell value in the map. The y-axis point in image coordinates into the opposite direction.
 				// Therfore we have to count j down from img->height-1 to 0.
@@ -685,6 +695,35 @@ int SmartLtmGridMap::load_yaml( std::string fname)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //PRIVATE MEMBERS
+
+
+void SmartLtmGridMap::write_ascii(std::string filename){
+
+	  ofstream mapfile;
+	  mapfile.open (filename.c_str());
+
+
+	unsigned int x,y;
+
+	for (x=0; x < idl_CommGridMap.xSizeCells; x++)
+	{
+		for (y=0; y < idl_CommGridMap.ySizeCells; y++)
+		{
+
+			int value = (int)idl_CommGridMap.cell[x+y * idl_CommGridMap.xSizeCells];
+			mapfile << " "<< value;
+			if(value == MAPPER_UNKNOWN){
+				mapfile << "u";
+			}
+
+		}
+		mapfile <<"\n";
+	}
+
+	mapfile.close();
+
+}
+
 
 int SmartLtmGridMap::drawBorder(void)
 {

@@ -83,6 +83,11 @@ void ComponentLaserObstacleAvoid::addExtension(ComponentLaserObstacleAvoidExtens
 	componentExtensionRegistry[extension->getName()] = extension;
 }
 
+SmartACE::SmartComponent* ComponentLaserObstacleAvoid::getComponentImpl()
+{
+	return dynamic_cast<ComponentLaserObstacleAvoidAcePortFactory*>(portFactoryRegistry["ACE_SmartSoft"])->getComponentImpl();
+}
+
 /**
  * Notify the component that setup/initialization is finished.
  * You may call this function from anywhere in the component.
@@ -270,7 +275,7 @@ void ComponentLaserObstacleAvoid::init(int argc, char *argv[])
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(robotTask);
-				component->getTimerManager()->scheduleTimer(triggerPtr, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				// store trigger in class member
 				robotTaskTrigger = triggerPtr;
 			} else {
@@ -289,7 +294,7 @@ void ComponentLaserObstacleAvoid::init(int argc, char *argv[])
 			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 			int microseconds = 1000*1000 / 1.0;
 			if(microseconds > 0) {
-				component->getTimerManager()->scheduleTimer(triggerPtr, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				triggerPtr->attach(robotTask);
 				// store trigger in class member
 				robotTaskTrigger = triggerPtr;
@@ -361,8 +366,10 @@ void ComponentLaserObstacleAvoid::fini()
 	// unlink all UpcallManagers
 	laserServiceInUpcallManager->detach(robotTask);
 	// unlink the TaskTrigger
-	robotTaskTrigger->detach(robotTask);
-	delete robotTask;
+	if(robotTaskTrigger != NULL){
+		robotTaskTrigger->detach(robotTask);
+		delete robotTask;
+	}
 
 	// destroy all input-handler
 

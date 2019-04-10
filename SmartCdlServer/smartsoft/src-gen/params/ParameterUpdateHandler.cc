@@ -355,6 +355,38 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.CdlRotate.error = commitState.CdlRotate.error;
 		}
+		if(parameter.getDouble("CdlRotate", "rotDev1", commitState.CdlRotate.rotDev1))
+		{
+			globalState.CdlRotate.rotDev1 = commitState.CdlRotate.rotDev1;
+		}
+		if(parameter.getDouble("CdlRotate", "rotDev2", commitState.CdlRotate.rotDev2))
+		{
+			globalState.CdlRotate.rotDev2 = commitState.CdlRotate.rotDev2;
+		}
+		if(parameter.getDouble("CdlRotate", "rotDev3", commitState.CdlRotate.rotDev3))
+		{
+			globalState.CdlRotate.rotDev3 = commitState.CdlRotate.rotDev3;
+		}
+		if(parameter.getDouble("CdlRotate", "rotDev4", commitState.CdlRotate.rotDev4))
+		{
+			globalState.CdlRotate.rotDev4 = commitState.CdlRotate.rotDev4;
+		}
+		if(parameter.getDouble("CdlRotate", "rotSpeed1", commitState.CdlRotate.rotSpeed1))
+		{
+			globalState.CdlRotate.rotSpeed1 = commitState.CdlRotate.rotSpeed1;
+		}
+		if(parameter.getDouble("CdlRotate", "rotSpeed2", commitState.CdlRotate.rotSpeed2))
+		{
+			globalState.CdlRotate.rotSpeed2 = commitState.CdlRotate.rotSpeed2;
+		}
+		if(parameter.getDouble("CdlRotate", "rotSpeed3", commitState.CdlRotate.rotSpeed3))
+		{
+			globalState.CdlRotate.rotSpeed3 = commitState.CdlRotate.rotSpeed3;
+		}
+		if(parameter.getDouble("CdlRotate", "rotSpeed4", commitState.CdlRotate.rotSpeed4))
+		{
+			globalState.CdlRotate.rotSpeed4 = commitState.CdlRotate.rotSpeed4;
+		}
 		// parameter PathNav
 		if(parameter.getDouble("PathNav", "pathNavPredictedGoalPose_controll1_dist", commitState.PathNav.pathNavPredictedGoalPose_controll1_dist))
 		{

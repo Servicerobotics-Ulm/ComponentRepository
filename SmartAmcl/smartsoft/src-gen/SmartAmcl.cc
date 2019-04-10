@@ -92,6 +92,11 @@ void SmartAmcl::addExtension(SmartAmclExtension *extension)
 	componentExtensionRegistry[extension->getName()] = extension;
 }
 
+SmartACE::SmartComponent* SmartAmcl::getComponentImpl()
+{
+	return dynamic_cast<SmartAmclAcePortFactory*>(portFactoryRegistry["ACE_SmartSoft"])->getComponentImpl();
+}
+
 /**
  * Notify the component that setup/initialization is finished.
  * You may call this function from anywhere in the component.
@@ -195,7 +200,7 @@ void SmartAmcl::init(int argc, char *argv[])
 		loadParameter(argc, argv);
 		
 		// print out the actual parameters which are used to initialize the component
-		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getGlobalState() << std::endl;
+		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
 		// initializations of SmartAmclROSExtension
 		
@@ -286,7 +291,7 @@ void SmartAmcl::init(int argc, char *argv[])
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(amclTask);
-				component->getTimerManager()->scheduleTimer(triggerPtr, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				// store trigger in class member
 				amclTaskTrigger = triggerPtr;
 			} else {
@@ -373,8 +378,10 @@ void SmartAmcl::fini()
 	// unlink all UpcallManagers
 	laserServiceInUpcallManager->detach(amclTask);
 	// unlink the TaskTrigger
-	amclTaskTrigger->detach(amclTask);
-	delete amclTask;
+	if(amclTaskTrigger != NULL){
+		amclTaskTrigger->detach(amclTask);
+		delete amclTask;
+	}
 
 	// destroy all input-handler
 

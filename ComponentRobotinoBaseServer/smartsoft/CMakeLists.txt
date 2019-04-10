@@ -38,14 +38,10 @@ SMART_COMPONENT_AUTOBUILD_DEPENDENCIES()
 #################################################################################
 ## here you can put all your project-specific compiler configurations          ##
 ## using regular CMake commands (like FIND_PACKAGE, INCLUDE_DIRECTORIES, etc.) ##
-LIST(APPEND CMAKE_MODULE_PATH /usr/local/robotino/api2/cmake)
-# you can add additional external libraries using regular CMake commands, e.g.:
+
+
+LIST(APPEND CMAKE_MODULE_PATH /opt/robotino/cmake)
 FIND_PACKAGE(RobotinoAPI2)
-#SMART_ADD_UTILITY(RobotinoAPI2)
-message( robotino_include ${ROBOTINO_INCLUDE_DIR})
-message( robotino_userlibs ${REC_ROBOTINO_API2_LIBRARY})
-
-
 
 # these are the regular includes (add your own includes, if needed)
 INCLUDE_DIRECTORIES(

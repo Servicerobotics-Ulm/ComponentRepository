@@ -9,7 +9,7 @@ ComponentDefinition ComponentRobotinoBaseServer {
 	Activity OdomTask
 	{
 		DefaultTrigger PeriodicTimer 50.0 Hz
-	ActivationConstraints {
+		ActivationConstraints {
 			configurable = true
 			minActFreq = 20.0 Hz
 			maxActFreq = 1.0 Hz
@@ -25,28 +25,38 @@ ComponentDefinition ComponentRobotinoBaseServer {
 	}
 	RequestHandler BaseStateQueryServiceAnswHandler triggeredFrom BaseStateQueryServiceAnsw {
 	}
-	AnswerPort CommRobotinoIOValuesQueryServiceAnsw implements CommRobotinoObjects.CommRobotinoIOValuesQueryService {
+	AnswerPort RobotinoIOValuesQueryServiceAnsw implements CommRobotinoObjects.CommRobotinoIOValuesQueryService {
 	}
-	RequestHandler CommRobotinoIOValuesQueryServiceAnswHandler triggeredFrom CommRobotinoIOValuesQueryServiceAnsw {
+	RequestHandler RobotinoIOValuesQueryServiceAnswHandler triggeredFrom RobotinoIOValuesQueryServiceAnsw {
 	}
 
 	OutputPort BumperEventServiceOut implements CommBasicObjects.BumperEventService realizedBy OdomTask {
 	}
-	OutputPort CommRobotinoDigitalEventOut implements CommRobotinoObjects.CommRobotinoDigitalEvent realizedBy SignalStateTask {
+	OutputPort DigitalInputEventOut implements CommRobotinoObjects.CommRobotinoDigitalInputEvent realizedBy robotinoAPITask {
 	}
-	CoordinationSlavePort CoordinationPort implements CommBasicObjects.BaseCoordinationService {
+	CoordinationSlavePort CoordinationPort implements CommNavigationObjects.BaseCoordinationService {
+		with baseState realizedBy BaseStateQueryServiceAnsw
+		with bumperEvent realizedBy BumperEventServiceOut
+		with batteryEvent realizedBy BatteryEventServiceOut
 		PrivateOperationMode eStop 
 		PublicOperationMode CommBasicObjects.RobotBaseModes.emergencyStop {
-			activates (eStop)} }
-			
+			activates (eStop)} 
+		SkillRealizationsRef baseInst
+	}
+
 	ComponentParameters ComponentRobotinoBaseServerParams slave CoordinationPort 
-OutputPort BaseStateServiceOut implements CommBasicObjects.BaseStateService realizedBy OdomTask {
+	OutputPort BaseStateServiceOut implements CommBasicObjects.BaseStateService realizedBy OdomTask {
 	}
 	
-InputPort LocalizationUpdateServiceIn implements CommNavigationObjects.LocalizationUpdateService {
+	InputPort LocalizationUpdateServiceIn implements CommNavigationObjects.LocalizationUpdateService {
 	}
 	InputHandler LocalizationUpdateServiceInHandler triggeredFrom LocalizationUpdateServiceIn { }
-Activity robotinoAPITask
+	Activity robotinoAPITask
 	{
 	}
+	OutputPort LaserSafetyEventServiceOut implements CommBasicObjects.LaserSafetyEventService realizedBy robotinoAPITask {
+	}
+	InputPort PowerOutputSendIn implements CommRobotinoObjects.CommPowerOutputSend {
+	}
+	InputHandler PowerOutputSendInHandler triggeredFrom PowerOutputSendIn { }
 }

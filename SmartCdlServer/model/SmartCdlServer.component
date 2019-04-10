@@ -11,7 +11,7 @@ ComponentDefinition SmartCdlServer
 		
 		with blockedEvent realizedBy RobotBlockedEventServer
 		with goalEvent realizedBy GoalEventServer
-		//SkillRealizationsRef cdlSkills;
+		SkillRealizationsRef MovementMod2
 	}
 	
 	InputPort LaserClient implements CommBasicObjects.LaserService { }

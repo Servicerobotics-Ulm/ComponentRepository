@@ -228,8 +228,6 @@ int LaserTask::on_entry()
 
 	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
 	return 0;
-
-	return 0;
 }
 int LaserTask::on_execute()
 {
@@ -239,8 +237,6 @@ int LaserTask::on_execute()
 	
 	// to get the incoming data, use this methods:
 	Smart::StatusCode status;
-
-	std::cout << "Hello from LaserTask " << std::endl;
 
 	// this method is called from an outside loop,
 	// hence, NEVER use an infinite loop (like "while(1)") here inside!!!
@@ -257,8 +253,7 @@ int LaserTask::on_execute()
 
 				// read base state from base server
 				if (COMP->getGlobalState().getBase_manipulator().getOn_base()) {
-					//Smart::StatusCode status = COMP->baseStateServiceIn->getUpdate(base_state);
-					Smart::StatusCode status = this->baseStateServiceInGetUpdate(base_state);
+					Smart::StatusCode status = COMP->baseStateServiceIn->getUpdate(base_state);
 					if (status == Smart::SMART_OK) {
 						scan_is_valid = true;
 
@@ -358,19 +353,13 @@ int LaserTask::on_execute()
 
 	// it is possible to return != 0 (e.g. when the task detects errors), then the outer loop breaks and the task stops
 	return 0;
-
-	// it is possible to return != 0 (e.g. when the task detects errors), then the outer loop breaks and the task stops
-	return 0;
 }
 int LaserTask::on_exit()
 {
-	// use this method to clean-up resources which are initialized in on_entry() and needs to be freed before the on_execute() can be called again
 	laser.stopMeas();
 
 	std::cout << "[LaserTask] Disconnect from laser" << std::endl;
 	laser.disconnect();
 	// use this method to clean-up resources which are initialized in on_entry() and needs to be freed before the on_execute() can be called again
-	return 0;
-
 	return 0;
 }

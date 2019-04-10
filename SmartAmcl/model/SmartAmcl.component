@@ -1,19 +1,23 @@
 ComponentDefinition SmartAmcl 
 {
-	CoordinationSlavePort CoordinationPort implements CommNavigationObjects.AmclCoordinationService {
+	CoordinationSlavePort CoordinationPort implements CommLocalizationObjects.LocalizationCoordinationService {
 		PrivateOperationMode active;
-		PublicOperationMode CommBasicObjects.BasicModes.Active {
+		PublicOperationMode CommLocalizationObjects.localizationMode.Active {
 			activates ( active )
 		}
+		with localizationEvent realizedBy LocalizationEventServiceOut
+		SkillRealizationsRef locModRealization
 	}
 	
 	InputPort LaserServiceIn implements CommBasicObjects.LaserService { }
+	
 	Activity AmclTask
 	{
 		InputPortLink LaserServiceIn { oversamplingOk undersamplingOk }
 		OperationModeBinding CoordinationPort.active;
 		DefaultTrigger InputPortTrigger LaserServiceIn;
 	}
+	
 	OutputPort LocalizationUpdateServiceOut implements CommNavigationObjects.LocalizationUpdateService realizedBy AmclTask { }
 	OutputPort LocalizationEventServiceOut implements CommLocalizationObjects.LocalizationEventService realizedBy AmclTask { }
 	

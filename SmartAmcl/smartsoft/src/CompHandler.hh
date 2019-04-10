@@ -14,6 +14,51 @@
 // If you want the toolchain to re-generate this file, please 
 // delete it before running the code generator.
 //--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+//
+//  Copyright (C) 2010 Manuel Wopfner, Matthias Lutz
+//
+//        schlegel@hs-ulm.de
+//        lutz@hs-ulm.de
+//
+//        ZAFH Servicerobotic Ulm
+//        University of Applied Sciences
+//        Prittwitzstr. 10
+//        89075 Ulm
+//        Germany
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU General Public License
+//  as published by the Free Software Foundation; either version 2.1
+//  of the License, or (at your option) any later version.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License along
+//  with this library; if not, write to the Free Software Foundation, Inc.,
+//  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
+//  This work is based on previous work by the folks from PlayerStage.
+//
+//--------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------
+//
+// CREDITS:
+//
+// The code for the amcl algorithm was taken from the
+// Playerstage Project, which is distributed under GPL, and you can find at
+// http://playerstage.sourceforge.net/
+//
+// Player - One Hell of a Robot Server
+// Copyright (C) 2000
+//    Brian Gerkey, Kasper Stoy, Richard Vaughan, & Andrew Howard
+//
+//----------------------------------------------------------------------------
+
 #ifndef _COMPHANDLER_HH
 #define _COMPHANDLER_HH
 	

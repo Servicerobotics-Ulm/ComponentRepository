@@ -26,9 +26,9 @@ public:
 	virtual ~TriggerHandler() {  }
 	
 	// trigger user methods
-	virtual void handleCommNavigationObjects_AmclParameter_INITIALPOSE(const int &x, const int &y, const double &a);
-	virtual void handleCommNavigationObjects_AmclParameter_GLOBALLOCALIZATION();
-	virtual void handleCommNavigationObjects_AmclParameter_LOADMAP(const std::string &filename);
+	virtual void handleCommLocalizationObjects_LocalizationParameter_INITIALPOSE(const int &x, const int &y, const double &a);
+	virtual void handleCommLocalizationObjects_LocalizationParameter_GLOBALLOCALIZATION();
+	virtual void handleCommLocalizationObjects_LocalizationParameter_LOADMAP(const std::string &filename);
 };
 
 #endif // _TRIGGERHANDLER_HH
