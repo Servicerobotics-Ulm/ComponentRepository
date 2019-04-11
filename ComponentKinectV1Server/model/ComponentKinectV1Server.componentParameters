@@ -1,0 +1,53 @@
+ComponentParameter ComponentKinectV1ServerParams component ComponentKinectV1Server {
+		InternalParameter settings{
+		debug_info: Boolean = true
+		valid_image_time: Double = 1.0
+		high_resolution: Boolean = false
+		undistort_image: Boolean = true
+		//@doc "0-Low resolution(QVGA - 320x240), 1- Medium resolution(VGA  - 640x480), 2- high resolution(SXGA - 1280x1024)"
+       rgb_mode: UInt8 = 1
+       depth_mode:UInt8 = 1 
+       pushnewest_rgbd_image:Boolean = true
+		pushnewest_color_image:Boolean = false
+		pushnewest_depth_image:Boolean = false    
+	}
+	InternalParameter sensor_pose{
+		x: Double = 21
+		y: Double = 0
+		z: Double = 80
+		azimuth: Double =   -1.57079632
+		elevation: Double = 0.174532925
+		roll: Double =-1.57079632
+	}
+	InternalParameter base{
+		//@doc"Subscribe to ptu server for pose updates (true)?"
+		on_ptu: Boolean = false
+		
+		//@doc"Subscribe to base server for pose updates (true)? "
+		on_base: Boolean = false
+		
+		//@doc"Use fixed values x, y, z [mm] for pose of the camera if not subscribed to base server. See server ports."
+		x: Int32 = 0
+		
+		//@doc"Use fixed values x, y, z [mm] for pose of the camera if not subscribed to base server. See server ports."
+		y: Int32 = 0
+		
+		//@doc"Use fixed values x, y, z [mm] for pose of the camera if not subscribed to base server. See server ports."
+		z: Int32 = 0
+		
+		//@doc"Use fixed value base_a [rad] for pose of the camera if not subscribed to base server. See server ports."
+		base_a: Double = 0
+		
+		//@doc"Use fixed value for steer_a [rad] for pose of the camera if not subscribed to base server. See server ports."
+		steer_a: Double = 0
+	}
+	InternalParameter hardware_properties{
+		//@doc"Defines the min distance of the measurements in the depth image[mm]. Values with distances less than this value will be discarded."
+		min_distance: Double = 320
+		
+		//@doc"Defines the max distance of the measurements in the depth image[mm]. Values with distances greater than this value will be discarded."
+		max_distance: Double = 8000		
+		
+	}
+
+}

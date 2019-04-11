@@ -1,0 +1,38 @@
+ComponentParameter ComponentLaserS300ServerParams component ComponentLaserS300Server {
+		InternalParameter scanner {
+		verbose : Boolean = false
+		on_turret : Boolean = false
+		x : Int32 = 0
+		y : Int32 = 0
+		z : Int32 = 0
+		azimuth : Double = 0.0
+		elevation : Double = 0.0
+		roll : Double = 0.0
+		device : String = "/dev/ttyS5"
+		baudrate : UInt32 = 500000
+		min_range : UInt32 = 0
+		max_range : UInt32 = 20000
+		opening_angle : UInt32 = 270
+		resolution : Double = 0.5
+		length_unit : UInt32 = 1
+		frequency : UInt32 = 50
+		telgrm_v103 : Boolean = true
+	}
+	
+	InternalParameter base_manipulator { 
+		on_base : Boolean = true
+		x : Int32 = 0
+		y : Int32 = 0
+		z : Int32 = 0
+		base_a : Double = 0.0
+		steer_a : Double = 0.0
+		turret_a : Double = 0.0
+	}
+	
+	InternalParameter services {
+		activate_push_newest : Boolean = true
+		activate_push_timed : Boolean = true
+		activate_safetyEventServer : Boolean = true
+	}
+
+}

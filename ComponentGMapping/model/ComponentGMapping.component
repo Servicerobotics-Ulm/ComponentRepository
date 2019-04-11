@@ -1,0 +1,15 @@
+ComponentDefinition ComponentGMapping logo "/ComponentGMapping/model/logo.png"
+{
+
+InputPort laserClient implements CommBasicObjects.LaserService {
+	}
+	Activity GMappingTask
+	{
+	}
+	OutputPort basePositionUpdateClient implements CommNavigationObjects.LocalizationUpdateService realizedBy GMappingTask {
+	}
+	OutputPort newestMapPushServer implements CommNavigationObjects.CurrGridMapPushService realizedBy GMappingTask {
+	}
+//	CoordinationSlavePort CoordinationPort implements CommNavigationObjects.MappingCoordinationService { PublicOperationMode CommNavigationObjects.MappingStates.active { activates ( active ) } PrivateOperationMode active }
+//	ComponentParameters ComponentGMappingParams slave CoordinationPort
+}

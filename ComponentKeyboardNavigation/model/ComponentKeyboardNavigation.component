@@ -1,0 +1,12 @@
+ComponentDefinition ComponentKeyboardNavigation logo "/ComponentKeyboardNavigation/model/logo.png"
+{
+
+Activity KeyboardInputTask
+	{
+		DefaultTrigger PeriodicTimer 2.0 Hz
+	}
+	OutputPort navVelSendClient implements CommNavigationObjects.NavigationVelocityService realizedBy KeyboardInputTask {
+	}
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService { }
+	ComponentParameters ComponentKeyboardNavigationParams slave CoordinationPort
+}

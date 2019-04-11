@@ -1,0 +1,20 @@
+ComponentDefinition ComponentUnicapImageServer logo "/ComponentUnicapImageServer/model/logo.png"
+{
+
+Activity ImageTask
+	{
+		OperationModeBinding CoordinationPort.PushImage
+	}
+	AnswerPort imageQueryServer implements DomainVision.RGBImageQueryService {
+	}
+	RequestHandler ImageQueryHandler triggeredFrom imageQueryServer {
+	}
+	OutputPort imagePushNewestServer implements DomainVision.RGBImagePushService realizedBy ImageTask {
+	}
+	InputPort ptuPushTimedClient implements CommBasicObjects.DevicePoseUpdateService {
+	}
+	CoordinationSlavePort CoordinationPort implements DomainVision.ImageProvisionCoordinationService { PublicOperationMode DomainVision.ImageProvisionModes.PushImage { activates ( PushImage ) } PublicOperationMode DomainVision.ImageProvisionModes.QueryImage { activates ( QueryImage ) } PrivateOperationMode PushImage PrivateOperationMode QueryImage }
+	ComponentParameters ComponentUnicapImageServerParams slave CoordinationPort
+	InputPort basePushTimedClient implements CommBasicObjects.BaseStateService {
+	}
+}

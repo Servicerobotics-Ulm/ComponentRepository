@@ -1,0 +1,143 @@
+ComponentParameter ComponentUnicapImageServerParams component ComponentUnicapImageServer {
+	
+	InternalParameter settings{
+		//@doc"Activate or deactivate debug output of image acquisition. "
+		debug_info:Boolean = false
+	}
+	
+	InternalParameter hardware{
+		//@doc"Device to use by unicap."
+		device:String = "/dev/video0"
+		
+		//@doc"Activate or deactivate debug output of hardware access."
+		debug_info:Boolean = false
+		
+		//@doc"String identifier that unicap uses to identify the camera."
+		identifier:String = "UVC Camera (046d:0809) (/dev/video0)"
+		
+		//@doc"Protocol to use. USB|FireWire"
+		camera_type:String = "USB"
+	}
+	
+	InternalParameter hardware_properties{
+		//@doc"Internal Unicap parameter. Values: 0-127. "
+		brightness : Double = 16.0
+		
+		//@doc"Internal Unicap parameter. Values: 90-115. "
+		auto_exposure: Double = 100.0
+		
+		//@doc"Internal Unicap parameter. Values: 0-7."
+		sharpness: Double = 3.0
+		
+		//@doc"Internal Unicap parameter. Values: 0-7. "
+		white_balance_mode: Double = 3.0
+		
+		//@doc"Internal Unicap parameter. Values: 1792-2304."
+		white_balance_u: Double =2000.0
+		
+		//@doc"Internal Unicap parameter. Values: 1792-2304."
+		white_balance_v: Double=2000.0
+		
+		//@doc"Internal Unicap parameter. Values: 83-173."
+		hue: Double = 128
+		
+		//@doc"Internal Unicap parameter. Values: 0-511."
+		saturation: Double = 128
+		
+		//@doc"Internal Unicap parameter. Values: 128-130."
+		gamma: Double = 128
+		
+		//@doc"Internal Unicap parameter. Values: 0.000010 - 17.500000."
+		shutter: Double = 0.014300
+		
+		//@doc"Internal Unicap parameter. Values: 70 - 551."
+		gain: Double = 100
+		
+		//@doc"Internal Unicap parameter. Values: 0=free running, 1=mode 0, 2=mode 1."
+		trigger_mode: UInt32 = 0
+		
+		//@doc"Internal Unicap parameter. Values: 0=falling edge, 1=rising edge."
+		trigger_polarity:UInt32 = 0
+		
+		//@doc"Internal Unicap parameter. Values: 1.875 | 3.750 | 7.500 | 15.000."
+		framerate: Double = 15
+		
+		//@doc"Internal Unicap parameter."
+		autoflag_white_balance_mode: Boolean = true
+		
+		//@doc"Internal Unicap parameter."
+		autoflag_shutter: Boolean = false
+		
+		//@doc"Internal Unicap parameter. e.g. 'Y(Mono)' or 'YUV 4:2:2 (YUYV) ( YUYV )'"
+		format: String ="YUV 4:2:2 (YUYV) ( YUYV )"
+		
+		//@doc"Image width."
+		width: UInt32 = 800
+		
+		//@doc"Image height."
+		height:UInt32 = 600
+	}
+	
+	InternalParameter push_newest {
+		//@doc"Activate debug output of push newest service."
+		debug_info: Boolean = false
+	}
+	
+	InternalParameter push_timed {
+		//@doc"Activate debug output of push timed service."
+		debug_info: Boolean = false
+	}
+	
+	InternalParameter sensor_pose {
+		//@doc"The x position [mm] of the camera on the robot/ptu."
+		x: Int32 = 0
+		
+		//@doc"The y position [mm] of the camera on the robot/ptu."
+		y: Int32 = 0
+		
+		//@doc"The z position [mm] of the camera on the robot/ptu."
+		z: Int32 = 0
+		
+		//@doc"The azimuth orientation [rad] of the camera on the robot/ptu. "
+		azimuth: Double = 0
+		
+		//@doc"The elevation orientation [rad] of the camera on the robot/ptu. "
+		elevation: Double = 0
+		
+		//@doc"The roll orientation [rad] of the camera on the robot/ptu. "
+		roll: Double = 0
+	}
+	
+		InternalParameter base {
+			//@doc"Flag which indicates if the camera is on a robot."
+			on_base: Boolean = false
+			
+			//@doc"Flag which indicates if the camera is on an actuator/ptu."
+			on_ptu:Boolean = false
+			
+			//@doc"If on_base = false this represents the x position [mm] of the robot."
+			x: Int32 = 0
+			
+			//@doc"If on_base = false this represents the  y position [mm] of the robot."
+			y: Int32 = 0
+			
+			//@doc"If on_base = false this represents the z position [mm] of the robot."
+			z: Int32 = 0
+		
+			azimuth: Double = 0
+			elevation: Double = 0
+			roll: Double = 0
+	}
+	
+	InternalParameter Image {
+		//@doc"Activate debug output of image acquisition. "
+		debug_info:Boolean = false
+		
+		//@doc"Type of image format. Values: GREY, RGB24, RGB32, RGB555, RGB565, UYVY, YUV411P, YUV420P, YUV422, YUV422P, YUYV."
+		smart_format: String = "yuv422"
+		
+		//@doc"Unused."
+		valid_time_in_sec: Float = 1.0
+	}	
+
+}

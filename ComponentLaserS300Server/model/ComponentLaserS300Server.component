@@ -1,0 +1,19 @@
+ComponentDefinition ComponentLaserS300Server logo "/ComponentLaserS300Server/model/logo.png"
+{
+
+AnswerPort laserQueryServer implements CommBasicObjects.LaserQueryService {
+	}
+	RequestHandler LaserQueryServiceAnswHandler triggeredFrom laserQueryServer {
+	}
+	Activity LaserTask
+	{
+	}
+	OutputPort laserPushNewestServer implements CommBasicObjects.LaserService realizedBy LaserTask {
+	}
+	InputPort baseTimedClient implements CommBasicObjects.BaseStateService {
+	}
+	OutputPort safetyfieldEventServer implements CommBasicObjects.LaserSafetyEventService realizedBy LaserTask {
+	}
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService { }
+	ComponentParameters ComponentLaserS300ServerParams slave CoordinationPort
+}

@@ -1,0 +1,45 @@
+
+Component for using Microsoft Kinect One (Version 2). 
+Communication object contains RGB image and depth image in same size (1920x1080).
+
+
+Dependencies
+============
++ libfreenect2
+	- API documentation: https://openkinect.github.io/libfreenect2/ 
++ OpenCV 2.4
+
+
+Instructions for Ubuntu 16.04 (xenial)
+======================================
+instructions for other operating systems: 
+https://github.com/OpenKinect/libfreenect2/blob/master/README.md#installation 
+
+1. Install build tools
+	sudo apt-get install build-essential cmake pkg-config
+
+2. Install libusb
+	sudo apt-get install libusb-1.0-0-dev
+	
+3. Install TurboJPEG
+	sudo apt-get install libturbojpeg libjpeg-turbo8-dev
+
+4. Install OpenGL
+	sudo apt-get install libglfw3-dev
+
+5. Download libfreenect2 source
+	git clone https://github.com/OpenKinect/libfreenect2.git
+    
+6. Build
+	cd libfreenect2
+    mkdir build
+    cd build
+    cmake ..
+    sudo make
+    sudo make install
+   --> Files are installed to /usr/local/include/libfreenect2
+
+7. Set up udev rules (for device access) 
+	sudo cp ../platform/linux/udev/90-kinect2.rules /etc/udev/rules.d/
+
+8. Replug Kinect

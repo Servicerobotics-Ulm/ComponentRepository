@@ -1,0 +1,25 @@
+ComponentDefinition ComponentKinectV2Server logo "/ComponentKinectV2Server/model/logo.png"
+{
+
+Activity ImageTask
+	{
+	}
+	InputPort basePushTimedClient implements CommBasicObjects.BaseStateService {
+	}
+	InputPort ptuPosePushNewestClient implements CommBasicObjects.DevicePoseUpdateService {
+	}
+	OutputPort imagePushNewestServer implements DomainVision.RGBDImagePushService realizedBy ImageTask {
+	}
+	AnswerPort imageQueryV2Server implements DomainVision.RGBDImageQueryService {
+	}
+	RequestHandler ImageQueryHandler triggeredFrom imageQueryV2Server {
+	}
+	OutputPort colorImagePushNewestServer implements DomainVision.RGBImagePushService realizedBy ImageTask {
+	}
+	AnswerPort colorImageQueryServer implements DomainVision.RGBImageQueryService {
+	}
+	RequestHandler ColorImageQueryHandler triggeredFrom colorImageQueryServer {
+	}
+	CoordinationSlavePort CoordinationPort implements DomainVision.ImageProvisionCoordinationService { PublicOperationMode DomainVision.ImageProvisionModes.PushImage { activates ( PushImage ) } PublicOperationMode DomainVision.ImageProvisionModes.QueryImage { activates ( QueryImage ) } PrivateOperationMode PushImage PrivateOperationMode QueryImage }
+	ComponentParameters ComponentKinectV2ServerParams slave CoordinationPort
+}

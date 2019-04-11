@@ -1,0 +1,50 @@
+#####################
+# internal parameters
+#####################
+##########################
+# InternalParameter base_manipulator
+[base_manipulator]
+base_a 0.0
+on_base true
+steer_a 0.0
+turret_a 0.0
+x 0
+y 0
+z 0
+
+##########################
+# InternalParameter scanner
+[scanner]
+azimuth 0.0
+baudrate 500000
+device /dev/ttyS5
+elevation 0.0
+frequency 50
+length_unit 1
+max_range 20000
+min_range 0
+on_turret false
+opening_angle 270
+resolution 0.5
+roll 0.0
+telgrm_v103 true
+verbose false
+x 0
+y 0
+z 0
+
+##########################
+# InternalParameter services
+[services]
+activate_push_newest true
+activate_push_timed true
+activate_safetyEventServer true
+
+
+#####################
+# extended parameters
+#####################
+
+#####################
+# instance parameters
+#####################

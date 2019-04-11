@@ -1,0 +1,18 @@
+ComponentDefinition ComponentUnicapImageClient logo "/ComponentUnicapImageClient/model/logo.png"
+{
+
+Activity GuiTask
+	{
+		DefaultTrigger PeriodicTimer 30.0 Hz
+	}
+	Activity ImageTask
+	{
+		DefaultTrigger PeriodicTimer 30.0 Hz
+	}
+	RequestPort queryClient implements DomainVision.RGBImageQueryService {
+	}
+	InputPort pushNewestClient implements DomainVision.RGBImagePushService {
+	}
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService { }
+	ComponentParameters ComponentUnicapImageClientParams slave CoordinationPort
+}

@@ -1,0 +1,112 @@
+Index: configure
+===================================================================
+--- configure	(revision 54)
++++ configure	(working copy)
+@@ -69,11 +69,11 @@
+ 	fi ;
+ done ;
+ 
+-if [ ! "$ARIA_INCLUDE" ]; then
+-	echo -e "\n\n*** ARIA not found, please set ARIA_INCLUDE and ARIA_LIB by hand\n\a"
+-else
+-	echo "Ok" ;
+-fi
++#if [ ! "$ARIA_INCLUDE" ]; then
++#	echo -e "\n\n*** ARIA not found, please set ARIA_INCLUDE and ARIA_LIB by hand\n\a"
++#else
++#	echo "Ok" ;
++#fi
+ 
+ #echo -n "Checking for Gsl libs "
+ #if [ "$OSTYPE" = "LINUX" ]; then
+@@ -156,33 +156,33 @@
+ 	echo "Ok."
+ fi
+ 
+-CARMENFLAG=""
+-CARMENSUPPORT="0"
+-CARMEN_LIBS="libnavigator_interface.a libipc.a librobot_interface.a liblaser_interface.a libsimulator_interface.a liblocalize_interface.a libreadlog.a libwritelog.a libglobal.a libipc.a" 
+-if [ ! "$CARMEN_HOME" ]; then
+-	echo -e "Carmen NOT FOUND."
+-	echo -e "If you have a carmen version installed please set the"
+-	echo -e "CARMEN_HOME variable to the carmen path."
+-else
+-	if [ -d $CARMEN_HOME ]; then
+-		echo -e "carmen found in $CARMEN_HOME, enabling support"
+-		CARMENFLAG="-DCARMEN_SUPPORT"
+-		echo -e "generating shared objects"
+-		for CARMEN_OBJECT in $CARMEN_LIBS ; do
+-			if [ -f $CARMEN_HOME/lib/$CARMEN_OBJECT ]; then
+-				cp $CARMEN_HOME/lib/$CARMEN_OBJECT $LIBDIR
+-				./build_tools/generate_shared_object $LIBDIR/$CARMEN_OBJECT
+-				rm $LIBDIR/$CARMEN_OBJECT
+-			else
+-				echo -e "Compile carmen first "$CARMEN_HOME/lib/$CARMEN_OBJECT"  not found"
+-				exit -1
+-			fi
+-		done;
+-		CARMENSUPPORT="1"
+-	else
+-		echo -e "CARMEN_HOME=$CARMEN_HOME does not exist, disabling support\n"
+-	fi
+-fi	
++#CARMENFLAG=""
++#CARMENSUPPORT="0"
++#CARMEN_LIBS="libnavigator_interface.a libipc.a librobot_interface.a liblaser_interface.a libsimulator_interface.a liblocalize_interface.a libreadlog.a libwritelog.a libglobal.a libipc.a" 
++#if [ ! "$CARMEN_HOME" ]; then
++#	echo -e "Carmen NOT FOUND."
++#	echo -e "If you have a carmen version installed please set the"
++#	echo -e "CARMEN_HOME variable to the carmen path."
++#else
++#	if [ -d $CARMEN_HOME ]; then
++#		echo -e "carmen found in $CARMEN_HOME, enabling support"
++#		CARMENFLAG="-DCARMEN_SUPPORT"
++#		echo -e "generating shared objects"
++#		for CARMEN_OBJECT in $CARMEN_LIBS ; do
++#			if [ -f $CARMEN_HOME/lib/$CARMEN_OBJECT ]; then
++#				cp $CARMEN_HOME/lib/$CARMEN_OBJECT $LIBDIR
++#				./build_tools/generate_shared_object $LIBDIR/$CARMEN_OBJECT
++#				rm $LIBDIR/$CARMEN_OBJECT
++#			else
++#				echo -e "Compile carmen first "$CARMEN_HOME/lib/$CARMEN_OBJECT"  not found"
++#				exit -1
++#			fi
++#		done;
++#		CARMENSUPPORT="1"
++#	else
++#		echo -e "CARMEN_HOME=$CARMEN_HOME does not exist, disabling support\n"
++#	fi
++#fi	
+ 
+ CONFIG=global.mk
+ rm -f $CONFIG
+Index: gridfastslam/gfs2rec.cpp
+===================================================================
+--- gridfastslam/gfs2rec.cpp	(revision 54)
++++ gridfastslam/gfs2rec.cpp	(working copy)
+@@ -145,9 +145,9 @@
+ 	virtual void read(istream& is){
+ 		is >> dim;
+ 		for (unsigned int i=0; i< dim; i++){
+-			unsigned int i;
+-			is >> i;
+-			indexes.push_back(i);
++			unsigned int j;
++			is >> j;
++			indexes.push_back(j);
+ 		}
+ 	}
+ };
+Index: Makefile
+===================================================================
+--- Makefile	(revision 54)
++++ Makefile	(working copy)
+@@ -6,7 +6,7 @@
+ ifeq ($(MACOSX),1)
+ SUBDIRS=utils sensor log configfile scanmatcher gridfastslam 
+ else
+-SUBDIRS=utils sensor log configfile scanmatcher gridfastslam gui 
++SUBDIRS=utils sensor log configfile scanmatcher gridfastslam 
+ endif
+ endif
+ 

@@ -1,0 +1,9 @@
+ComponentParameter ComponentKeyboardNavigationParams component ComponentKeyboardNavigation {
+	InternalParameter Settings{
+		//@doc"Speed acceleration per keystroke [mm/s]."
+		speedAcceleration : Double = 150.0
+		//@doc"Acceleration of the heading angle per keystroke [rad/s]."
+		angularAcceleration : Double = 0.2
+	}
+
+}

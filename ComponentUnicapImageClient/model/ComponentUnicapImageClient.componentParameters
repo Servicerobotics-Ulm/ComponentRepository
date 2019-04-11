@@ -1,0 +1,10 @@
+ComponentParameter ComponentUnicapImageClientParams component ComponentUnicapImageClient {
+	InternalParameter Settings {
+		useQuery : Boolean = false
+		useNewest : Boolean = true		
+		verbose : Boolean = true		
+		sleepInImageTask: Boolean = false
+		
+		saveImageToTask : Boolean = false	
+	}
+}
