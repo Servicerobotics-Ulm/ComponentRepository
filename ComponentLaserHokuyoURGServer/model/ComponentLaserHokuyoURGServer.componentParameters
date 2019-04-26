@@ -1,0 +1,66 @@
+ComponentParameter ComponentLaserHokuyoURGServer component ComponentLaserHokuyoURGServer
+{
+	InternalParameter Scanner {		
+		//@doc"Device of laser hardware."
+		device: String = "/dev/ttyACM0"
+				
+		//@doc"The min distance [mm] of allowed measurements."
+		min_range : UInt32 = 20
+		
+		//@doc"The max distance [mm] of allowed measurements."
+		max_range : UInt32 = 5600
+		
+		//@doc"The opening angle [deg] which should be used. It is possible to give a smaller value than the laser ranger has."
+		opening_angle: UInt32 = 240
+		
+		//@doc"Print debug messages."
+		verbose: Boolean = false
+		
+		//@doc"The position of the scanner on the base/manipulator [mm]."
+		x: Int32= 0
+		
+		//@doc"The position of the scanner on the base/manipulator [mm]."
+		y: Int32= 0
+		
+		//@doc"The position of the scanner on the base/manipulator [mm]."
+		z: Int32= 0
+		
+		//@doc"Orientation of the laser ranger on the base/manipulator. Relative to the perspective mounting point (turrent or base) on the robot [rad]."
+		azimuth: Double = 0.0
+		
+		//@doc"Orientation of the laser ranger on the base/manipulator. Relative to the perspective mounting point (turrent or base) on the robot [rad]."
+		elevation: Double = 0.0
+		
+		//@doc"Orientation of the laser ranger on the base/manipulator. Relative to the perspective mounting point (turrent or base) on the robot [rad]."
+		roll: Double = 0.0
+		}
+		
+		InternalParameter Base_manipulator {
+			//@doc"Defines wether the laser ranger is mounted on a base platform. Subscribe to base server for position updates (true)."
+			on_base : Boolean = true
+			
+			//@doc"Defines whether laser ranger is on a manipulator. If true, on_base must be set to false."
+			on_manipulator : Boolean = false
+			
+			//@doc"The default base x position [mm] if on_base = false."
+			x: Int32= 0
+			
+			//@doc"The default base y position [mm] if on_base = false."
+			y: Int32= 0
+			
+			//@doc"The default base z position [mm] if on_base = false."
+			z: Int32= 0
+			
+			base_azimuth: Double = 0.0
+			base_elevation: Double = 0.0
+			base_roll: Double = 0.0
+		}
+		
+		InternalParameter Services {
+			//@doc"If true, the push newest service is activated."
+			activate_push_newest : Boolean = true
+			
+			//@doc"If true, the push timed service is activated."
+			activate_push_timed: Boolean = true
+		}
+}

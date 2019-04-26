@@ -1,0 +1,24 @@
+ComponentParameter ComponentRobotinoLaserServer component ComponentRobotinoLaserServer
+{
+	InternalParameter RobotinoLaser_ini {
+		//@doc"The min distance [mm] of allowed measurements."
+		min_range : UInt32 = 20
+		
+		//@doc"The max distance [mm] of allowed measurements."
+		max_range : UInt32 = 5600
+		
+		robotinoAddress : String = "192.168.178.40"
+		laserPosX : Double = 170.0
+		laserPosY : Double = 0.0
+		laserPosZ : Double = 150.0
+		yaw : Double = 0.0
+		pitch : Double = 0.0
+		roll : Double = 0.0
+		activatePushNewest : Boolean = true
+		activate_safetyEventServer : Boolean = true
+		laserSafetyDist: Double = 0.3
+		laserWarningSafetyDist: Double = 0.30
+		opening_angle : UInt32 = 240
+		verbose : Boolean = false
+	}
+}

@@ -1,0 +1,22 @@
+ComponentDefinition ComponentLaserHokuyoURGServer logo "/ComponentLaserHokuyoURGServer/model/logo.png"
+{
+AnswerPort laserQueryServer implements CommBasicObjects.LaserQueryService {
+	}
+	RequestHandler laserQueryServerHandler triggeredFrom laserQueryServer {
+	}
+	Activity LaserTask
+	{
+	}
+	Activity WatchDogTask
+	{
+	DefaultTrigger PeriodicTimer 1.0 Hz
+	}
+	OutputPort laserPushNewestServer implements CommBasicObjects.LaserService realizedBy LaserTask {
+	}
+	InputPort manipulatorTimedClient implements CommManipulatorObjects.MobileManipulatorStateService {
+	}
+	InputPort baseTimedClient implements CommBasicObjects.BaseStateService {
+	}
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService { }
+	ComponentParameters ComponentLaserHokuyoURGServer slave CoordinationPort
+}

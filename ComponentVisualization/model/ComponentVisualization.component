@@ -1,0 +1,73 @@
+ComponentDefinition ComponentVisualization logo "/ComponentVisualization/model/logo.png"
+{
+
+InputPort rgbdPushNewestClient implements DomainVision.RGBDImagePushService {
+	}
+	RequestPort RGBDImageQueryServiceReq implements DomainVision.RGBDImageQueryService {
+	}
+	InputPort rgbdQueryClient implements DomainVision.DepthImagePushService {
+	}
+	InputPort baseClient implements CommBasicObjects.BaseStateService {
+	}
+	InputPort laserClient1 implements CommBasicObjects.LaserService {
+	}
+	InputPort laserClient2 implements CommBasicObjects.LaserService {
+	}
+	InputPort laserClient3 implements CommBasicObjects.LaserService {
+	}
+	InputPort irPushNewestClient implements CommBasicObjects.CommMobIR {
+	}
+	InputPort imagePushNewestClient implements DomainVision.RGBImagePushService {
+	}
+	Activity Laser1Task 
+	{
+	}
+	Activity Laser2Task
+	{
+	}
+	Activity Laser3Task
+	{
+	}
+	Activity RGBDTask
+	{
+	}
+	Activity BaseTask
+	{
+	}
+	Activity CurMapTask
+	{
+	}
+	Activity IRTask
+	{
+	}
+	Activity ManagementTask
+	{
+	}
+	Activity ImageTask
+	{
+	}
+	Activity DepthTask
+	{
+	}
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService { }
+	ComponentParameters ComponentVisualizationParams slave CoordinationPort
+	RequestPort ltmQueryClient implements CommNavigationObjects.LongTermGridMapQueryService {
+	}
+	InputPort curPushClient implements CommNavigationObjects.CurrGridMapPushService {
+	}	
+
+	InputPort depthPushNewestClient implements DomainVision.DepthImagePushService {
+	}
+Activity USArTask
+	{
+	}
+	InputPort ultrasonicPushNewestClient implements CommBasicObjects.UltrasonicService {
+	}
+	Activity PersonDetectionTask
+	{
+	}
+RequestPort personDetectionQueryClient implements CommTrackingObjects.PersonDetectionQueryService {
+	}
+	InputPort personDetectionEventClient implements CommTrackingObjects.PersonDetectionEventService {
+	}
+}

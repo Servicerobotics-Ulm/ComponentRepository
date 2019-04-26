@@ -1,0 +1,66 @@
+ComponentParameter ComponentRealSenseV2ServerParams component ComponentRealSenseV2Server {
+	InternalParameter settings{
+		debug_info: Boolean = true
+		valid_image_time: Double = 1.0
+		undistort_image: Boolean = true
+		pushnewest_rgbd_image:Boolean = true
+		pushnewest_color_image:Boolean = true
+		pushnewest_depth_image:Boolean = false
+		post_processing:Boolean = true
+		device_serial_number: String = "733512070584"
+	}
+	//" baseline distance in mm, obtained from runtime and hardcoded here"
+	InternalParameter stereo{		
+		baseline:Float = 49.7852		
+	}
+	InternalParameter sensor_pose{
+		x: Double = 90
+		y: Double = 0
+		z: Double = 350
+		azimuth: Double = 1.5707963
+		elevation: Double = 3.14159265
+		roll: Double = 1.32
+	}
+	// "possible rgb streams [1920	x 1080	at  30Hz], [640 x 480  at  15Hz,30Hz,60Hz], [320 x 240  at  30Hz,60Hz]"
+	InternalParameter RGB_config{
+		width: Int32 = 640
+		height: Int32 = 480
+		framerate: Int32 = 30
+	}
+		//doc "possible depth streams [628	x 468	at  30Hz, 60Hz], [480	x 360	at  30Hz, 60Hz], [320	x 240	at  30Hz, 60Hz]"
+		InternalParameter Depth_config{
+		width: Int32 = 640
+		height: Int32 = 480
+		framerate: Int32 = 30
+	}
+
+	
+	InternalParameter base{
+		//"Subscribe to UR server for pose updates (true)? "
+		on_manipulator: Boolean = false
+		
+		//"Subscribe to ptu server for pose updates (true)?"
+		on_ptu: Boolean = false
+		
+		//"Subscribe to base server for pose updates (true)? "
+		on_base: Boolean = false
+		
+		on_ur:Boolean = false
+		
+		//"Use fixed values x, y, z [mm] for pose of the camera if not subscribed to base server. See server ports."
+		x: Int32 = 0
+		
+		//"Use fixed values x, y, z [mm] for pose of the camera if not subscribed to base server. See server ports."
+		y: Int32 = 0
+		
+		//"Use fixed values x, y, z [mm] for pose of the camera if not subscribed to base server. See server ports."
+		z: Int32 = 0
+		
+		//"Use fixed value base_a [rad] for pose of the camera if not subscribed to base server. See server ports."
+		base_a: Double = 0
+		
+		//"Use fixed value for steer_a [rad] for pose of the camera if not subscribed to base server. See server ports."
+		steer_a: Double = 0
+	}
+
+}

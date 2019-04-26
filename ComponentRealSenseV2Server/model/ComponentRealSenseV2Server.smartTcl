@@ -1,0 +1,27 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; VISION
+
+(realize-tcb  (activateCameraPush)
+  (module "CameraModule")
+  (action (
+            (format t "=========================>>> activateCameraPush ~%")
+            (tcl-state :server 'realsense :state "PushImage")
+            '(SUCCESS ()))))
+
+(realize-tcb  (activateCameraRequestResponse)
+  (module "CameraModule")
+  (action (
+            (format t "=========================>>> activateCameraRequestResponse ~%")
+            (tcl-state :server 'realsense :state "QueryImage")
+            '(SUCCESS ()))))
+
+
+(realize-tcb  (deactivateCamera)
+  (module "CameraModule")
+  (action (
+            (format t "=========================>>> deactivateCamera ~%")
+            (tcl-state :server 'realsense :state "Neutral")
+            '(SUCCESS ()))))
+;; VISION
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

@@ -1,0 +1,37 @@
+ComponentParameter ComponentLaserFromRGBDServerParams component ComponentLaserFromRGBDServer {
+	InternalParameter scanner{
+	verbose: Boolean = true
+	on_turret: Boolean = false
+	x: Int32 = 0
+	y: Int32 = 0
+	z: Int32 = 0
+	azimuth: Double = 0
+	elevation: Double = 0
+	roll: Double = 0
+}
+InternalParameter laser_generator
+{
+	// "in mm"
+	min_range: UInt32 = 280 // for 1280x720
+	max_range: UInt32 = 10000
+	// "vertical view to consider in degrees, 0 means consider full vertical fov"
+	vertical_fov: Double = 0.0	
+	// "soure of rgbd, 0- RealSense, 1- Kinect V2"
+	rgbd_source: UInt8 =0
+	// "angle resolution in degrees, this param determines the numbe of rays in a scan"
+	angle_resolution:Double = 0.5
+}
+InternalParameter base_manipulator{
+	on_base: Boolean = true
+	x: Int32 = 0
+	y: Int32 = 0
+	z: Int32 = 0
+	base_a: Double = 0
+	steer_a: Double = 0
+	turret_a: Double = 0
+}
+InternalParameter services{
+	activate_push_newest: Boolean = true
+	active_push_timed: Boolean = false
+}
+}

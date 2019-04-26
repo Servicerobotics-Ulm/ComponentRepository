@@ -1,0 +1,50 @@
+ComponentDefinition ComponentRealSenseV2Server logo "/ComponentRealSenseV2Server/model/logo.png"
+{
+
+	InputPort basePushTimedClient implements CommBasicObjects.BaseStateService {
+	}
+	InputPort ptuPosePushNewestClient implements CommBasicObjects.DevicePoseUpdateService {
+	}
+Activity ImageTask
+	{
+		InputPortLink basePushTimedClient { oversamplingOk undersamplingOk }
+		InputPortLink ptuPosePushNewestClient { oversamplingOk undersamplingOk }
+		InputPortLink UrPosePushTimedClient { oversamplingOk undersamplingOk }
+		DefaultTrigger PeriodicTimer 30.0 Hz
+	}
+	RequestPort UrPoseQueryClient implements CommManipulatorObjects.MobileManipulatorStateQueryService {
+	}
+	InputPort UrPosePushTimedClient implements CommManipulatorObjects.MobileManipulatorStateService {
+	}
+	OutputPort depthPushNewestServer implements DomainVision.DepthImagePushService realizedBy ImageTask {
+	}
+	AnswerPort imageQueryServer implements DomainVision.RGBDImageQueryService {
+	}
+	RequestHandler ImageQueryHandler triggeredFrom imageQueryServer {
+	}
+	OutputPort imagePushNewestServer implements DomainVision.RGBDImagePushService realizedBy ImageTask {
+	}
+	OutputPort colorImagePushNewestServer implements DomainVision.RGBImagePushService realizedBy ImageTask {
+	}
+	AnswerPort colorImageQueryServer implements DomainVision.RGBImageQueryService {
+	}
+	RequestHandler ColorImageQueryHandler triggeredFrom colorImageQueryServer {
+	}
+	
+	CoordinationSlavePort CoordinationPort implements DomainVision.ImageProvisionCoordinationService 
+	{ 
+		PublicOperationMode DomainVision.ImageProvisionModes.PushImage 
+		{ 
+			activates ( pushimage )
+		} 
+		PublicOperationMode DomainVision.ImageProvisionModes.QueryImage 
+		{ 	activates ( queryonly ) 
+			
+		} 
+		PrivateOperationMode pushimage 
+		PrivateOperationMode queryonly
+		SkillRealizationsRef RealsenseCameraModule
+	}
+	
+	ComponentParameters ComponentRealSenseV2ServerParams slave CoordinationPort
+}

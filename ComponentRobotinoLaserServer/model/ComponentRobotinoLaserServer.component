@@ -1,0 +1,18 @@
+ComponentDefinition ComponentRobotinoLaserServer logo "/ComponentRobotinoLaserServer/model/logo.png"
+{
+Activity ReadLaserTask
+	{
+	}
+	OutputPort pushNewestServer implements CommBasicObjects.LaserService realizedBy ReadLaserTask {
+	}
+	AnswerPort queryServer implements CommBasicObjects.LaserQueryService {
+	}
+	RequestHandler QueryHandler triggeredFrom queryServer {
+	}
+	OutputPort safetyfieldEventServer implements CommBasicObjects.LaserSafetyEventService realizedBy ReadLaserTask {
+	}
+	InputPort baseTimedClient implements CommBasicObjects.BaseStateService {
+	}
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService { }
+	ComponentParameters ComponentRobotinoLaserServer slave CoordinationPort
+}

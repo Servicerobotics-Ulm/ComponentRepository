@@ -1,0 +1,9 @@
+SkillRealizationModel {
+	CoordinationModuleRealization LaserFromRGBDModule coordModuleDef CommBasicObjects.LaserGenarationModule uses{
+	CommBasicObjects.LaserFromRGBDCoordinationService intsName laserfromrgbd	
+	}
+	{
+		SkillRealization activateLaserGenaration {action(tcl-state:serverlaserfromrgbd:stateGenerateLaser)}	
+		SkillRealization dectivateLaserGenaration{action()}
+	}	
+}

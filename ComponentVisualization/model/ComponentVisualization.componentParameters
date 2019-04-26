@@ -1,0 +1,21 @@
+ComponentParameter ComponentVisualizationParams component ComponentVisualization {
+	InternalParameter Services {
+		show_base: Boolean= true
+		show_laser_1: Boolean= true
+		show_laser_2: Boolean= true
+		show_laser_3: Boolean= true
+		show_tof_image: Boolean= false
+		show_ltm: Boolean= true
+		show_cur_map: Boolean= true
+		show_kinect_image: Boolean= false
+		show_person_detection: Boolean= false
+		show_ultrasonic_point_cloud:Boolean= false
+		show_ir:Boolean= false
+		simple_laser_visualization: Boolean= true
+		
+	}
+	InternalParameter Settings {
+		verbose : Boolean = true
+	}
+
+}

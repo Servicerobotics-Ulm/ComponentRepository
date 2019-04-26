@@ -1,0 +1,22 @@
+ComponentDefinition ComponentLaserFromRGBDServer logo "/ComponentLaserFromRGBDServer/model/logo.png"
+{
+
+Activity LaserTask
+	{
+		OperationModeBinding CoordinationPort.GenerateLaser
+	}
+	InputPort rgbdClient implements DomainVision.RGBDImagePushService {
+	}
+	AnswerPort laserQueryServer implements CommBasicObjects.LaserQueryService {
+	}
+	RequestHandler LaserQueryHandler triggeredFrom laserQueryServer {
+	}
+	OutputPort laserPushNewestServer implements CommBasicObjects.LaserService realizedBy LaserTask {
+	}
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.LaserFromRGBDCoordinationService { 
+		PublicOperationMode CommBasicObjects.LaserGenModes.GenerateLaser { activates ( GenerateLaser ) } 
+		PrivateOperationMode GenerateLaser
+		SkillRealizationsRef LaserFromRGBDModule
+	}
+	ComponentParameters ComponentLaserFromRGBDServerParams slave CoordinationPort
+}

@@ -1,0 +1,9 @@
+If the Laser device is not opened
+------------------------------------------
+Check the permissions using 
+
+ls -l /dev/ttyACM0
+
+If read, write permissions are not available for all, change the permissions using
+
+sudo chmod a+rw /dev/ttyACM0
