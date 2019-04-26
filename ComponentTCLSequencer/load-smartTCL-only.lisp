@@ -62,8 +62,8 @@
   (format t " load-smartTCL-only finished ~%")
   (format t " --------------------------- ~%~%")
 
-  (read-coordination-module-system-file (format nil "~a/CoordinationModuleConnections.json" module-path))
-  (instanciate-all-modules-and-cis module-path)
+  ;(read-coordination-module-system-file (format nil "~a/CoordinationModuleConnections.json" module-path))
+  ;(instanciate-all-modules-and-cis module-path)
 
   ;(load-coordination-interface "KBCoordinationService" module-path)
 

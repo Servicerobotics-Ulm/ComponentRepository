@@ -122,7 +122,11 @@ processorLock.acquire();
 	CommBasicObjects::CommPose3d laserPoseRobot = laserscan.get_sensor_pose();
 
 	std::cout<<"Laser Mounting POSE: "<<laserPoseRobot.get_x(1.0)<<" "<<laserPoseRobot.get_y(1) <<" "<<laserPoseRobot.get_azimuth()<<std::endl;
-	m_frontLaser=new GMapping::RangeSensor(sensorName, laserscan.get_max_scan_size() , laserscan.get_scan_resolution(), GMapping::OrientedPoint(laserPoseRobot.get_x(1.0),laserPoseRobot.get_y(1.0),laserPoseRobot.get_azimuth()), 0, maximum_range);
+	m_frontLaser=new GMapping::RangeSensor(sensorName,
+			                               laserscan.get_max_scan_size(),
+										   laserscan.get_scan_resolution(),
+										   GMapping::OrientedPoint(laserPoseRobot.get_x(1.0), laserPoseRobot.get_y(1.0), laserPoseRobot.get_azimuth()),
+										   0, maximum_range);
 
         ///////////////////////////////////////////
         // check if the sensor plane is parallel to the x-y plane of the base
@@ -152,12 +156,21 @@ processorLock.acquire();
 	if(COMP->getGlobalState().getGfs().numScanBeams == 361)
 	{
 	//TODO change Robot offset
-	  m_frontLaser=new GMapping::RangeSensor(sensorName, COMP->getGlobalState().getGfs().numScanBeams , laserscan.get_scan_resolution(), GMapping::OrientedPoint(laserscan.get_scanner_x(1),laserscan.get_scanner_y(1),laserscan.get_scanner_azimuth()), 0, maximum_range);
+	  m_frontLaser=new GMapping::RangeSensor(sensorName,
+	                                         COMP->getGlobalState().getGfs().numScanBeams ,
+	                                         laserscan.get_scan_resolution(),
+	                                         GMapping::OrientedPoint(laserscan.get_scanner_x(1),
+	                                                                 laserscan.get_scanner_y(1),
+	                                                                 laserscan.get_scanner_azimuth()), 0, maximum_range);
 	}
 	else if(COMP->getGlobalState().getGfs().numScanBeams == 181)
 	{
 	  //0.017453 is the intended scan resolution (1 degree in rad)
-	  m_frontLaser=new GMapping::RangeSensor(sensorName, COMP->getGlobalState().getGfs().numScanBeams ,0.017453 , GMapping::OrientedPoint(laserscan.get_scanner_x(1),laserscan.get_scanner_y(1),laserscan.get_scanner_azimuth()), 0, maximum_range);
+	  m_frontLaser=new GMapping::RangeSensor(sensorName,
+	                                         COMP->getGlobalState().getGfs().numScanBeams ,0.017453,
+	                                         GMapping::OrientedPoint(laserscan.get_scanner_x(1),
+	                                                                 laserscan.get_scanner_y(1),
+	                                                                 laserscan.get_scanner_azimuth()), 0, maximum_range);
 	}
 	else
 	{
@@ -171,16 +184,39 @@ processorLock.acquire();
 	processor->setSensorMap(sensorMap);
 	/////////////////////////////////////////////////////////////////////////////////////////
 
-	processor->setMatchingParameters(COMP->getGlobalState().getGfs().getMaxUrange(), COMP->getGlobalState().getGfs().getMaxrange(), COMP->getGlobalState().getGfs().getSigma(), COMP->getGlobalState().getGfs().getKernelSize(), COMP->getGlobalState().getGfs().getLstep(), COMP->getGlobalState().getGfs().getAstep(), COMP->getGlobalState().getGfs().getIterations(), COMP->getGlobalState().getGfs().getLsigma(), COMP->getGlobalState().getGfs().getOgain(), COMP->getGlobalState().getGfs().getLskip());
-	processor->setMotionModelParameters(COMP->getGlobalState().getGfs().getSrr(), COMP->getGlobalState().getGfs().getSrt(), COMP->getGlobalState().getGfs().getStr(), COMP->getGlobalState().getGfs().getStt());
-	processor->setUpdateDistances(COMP->getGlobalState().getGfs().getLinearUpdate(), COMP->getGlobalState().getGfs().getAngularUpdate(), COMP->getGlobalState().getGfs().getResampleThreshold());
+	processor->setMatchingParameters(COMP->getGlobalState().getGfs().getMaxUrange(),
+			                         COMP->getGlobalState().getGfs().getMaxrange(),
+									 COMP->getGlobalState().getGfs().getSigma(),
+									 COMP->getGlobalState().getGfs().getKernelSize(),
+									 COMP->getGlobalState().getGfs().getLstep(),
+									 COMP->getGlobalState().getGfs().getAstep(),
+									 COMP->getGlobalState().getGfs().getIterations(),
+									 COMP->getGlobalState().getGfs().getLsigma(),
+									 COMP->getGlobalState().getGfs().getOgain(),
+									 COMP->getGlobalState().getGfs().getLskip());
+
+	processor->setMotionModelParameters(COMP->getGlobalState().getGfs().getSrr(),
+			                            COMP->getGlobalState().getGfs().getSrt(),
+										COMP->getGlobalState().getGfs().getStr(),
+										COMP->getGlobalState().getGfs().getStt());
+
+	processor->setUpdateDistances(COMP->getGlobalState().getGfs().getLinearUpdate(),
+			                      COMP->getGlobalState().getGfs().getAngularUpdate(),
+								  COMP->getGlobalState().getGfs().getResampleThreshold());
+
 	processor->setgenerateMap(COMP->getGlobalState().getGfs().getGenerateMap());
 	//OrientedPoint initialPose(xmin+xmax/2, ymin+ymax/2, 0);
 
 	GMapping::OrientedPoint initialPose(x,y,phi);
 
 	//INITIALIZATION
-	processor->init(COMP->getGlobalState().getGfs().getParticles(), COMP->getGlobalState().getGfs().getXmin(), COMP->getGlobalState().getGfs().getYmin(), COMP->getGlobalState().getGfs().getXmax(), COMP->getGlobalState().getGfs().getYmax(), COMP->getGlobalState().getGfs().getDelta(), initialPose);
+	processor->init(COMP->getGlobalState().getGfs().getParticles(),
+			        COMP->getGlobalState().getGfs().getXmin(),
+					COMP->getGlobalState().getGfs().getYmin(),
+					COMP->getGlobalState().getGfs().getXmax(),
+					COMP->getGlobalState().getGfs().getYmax(),
+					COMP->getGlobalState().getGfs().getDelta(),
+					initialPose);
 
 processorLock.release();
 }
@@ -213,7 +249,9 @@ void GMappingTask::helperDeleteProcessor(){
 
 int GMappingTask::on_entry()
 {
-	initGMappingProcessor(COMP->getGlobalState().getSettings().getInitial_pose_x(), COMP->getGlobalState().getSettings().getInitial_pose_y(), COMP->getGlobalState().getSettings().getInitial_pose_azimuth());
+	initGMappingProcessor(COMP->getGlobalState().getSettings().getInitial_pose_x(),
+			              COMP->getGlobalState().getSettings().getInitial_pose_y(),
+						  COMP->getGlobalState().getSettings().getInitial_pose_azimuth());
 	return 0;
 }
 int GMappingTask::on_execute()
@@ -250,7 +288,9 @@ int GMappingTask::on_execute()
 				{
 					double angle=COMP->pi_to_pi((double)laserscan.get_scan_angle(i))*factor;
 					double index = -1.0*((COMP->pi_to_pi(laserscan.get_scan_start_angle())-angle)/laserscan.get_scan_resolution());
-			//			std::cout<<"Start angle: "<<COMP->pi_to_pi(laserscan.get_scan_start_angle())<<"INDEX: "<<index<< "angle: "<<angle<<"res: "<<laserscan.get_scan_resolution()<<std::endl;
+			/*		std::cout<<"Start angle: "<<COMP->pi_to_pi(laserscan.get_scan_start_angle())
+			                 <<"INDEX: "<<index<< "angle: "<<angle<<"res: "<<laserscan.get_scan_resolution()<<std::endl;
+			*/
 					assert((int)index<reading.size());
 					assert((int)index>=0);
 					reading[(int)index]=(double)laserscan.get_scan_distance(i,1);
@@ -271,9 +311,9 @@ int GMappingTask::on_execute()
 
 					if(COMP->getGlobalState().getSettings().getVerbose()){
 
-						std::cout<<"SLAM odom pose: "<<laserscan.get_base_state().get_base_raw_position().get_x(1)<<" "<<
-	                                                                       laserscan.get_base_state().get_base_raw_position().get_y(1)<<" "<<
-	                                                                       COMP->pi_to_pi(laserscan.get_base_state().get_base_raw_position().get_base_azimuth())<<std::endl;
+						std::cout<<"SLAM odom pose: "<<laserscan.get_base_state().get_base_raw_position().get_x(1)<<" "
+								                     <<laserscan.get_base_state().get_base_raw_position().get_y(1)<<" "
+													 <<COMP->pi_to_pi(laserscan.get_base_state().get_base_raw_position().get_base_azimuth())<<std::endl;
 					}
 
 					std::cout<< "[GMappingTask::on_execute] SCAN PROCESSED" << std::endl;

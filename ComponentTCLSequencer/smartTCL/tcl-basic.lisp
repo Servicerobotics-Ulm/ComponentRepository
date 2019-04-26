@@ -155,8 +155,10 @@ if there were an empty string between them."
     (let* ((split-res (split-namespace (string (first index))))
            (tcb-name (second split-res))
            (namespace-name (first split-res)))
-      (setf (car index) tcb-name)
-      (let ((goal-name (car index)))
+      ;;FALSE DO NOT TOUCH THE VALUE OF INDEX!
+      ;;;(setf (car index) tcb-name)
+      ;;
+      (let ((goal-name tcb-name))
     (do ((vars-left (cdr index) (cdr vars-left))
           (in-vars '()) )
       ((null vars-left) (values goal-name namespace-name (nreverse in-vars) '()))

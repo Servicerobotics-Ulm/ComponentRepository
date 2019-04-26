@@ -31,6 +31,8 @@ ComponentGMapping::ComponentGMapping()
 	std::cout << "constructor of ComponentGMapping\n";
 	
 	// set all pointer members to NULL
+	//componentGMappingParams = NULL;
+	//coordinationPort = NULL;
 	gMappingTask = NULL;
 	gMappingTaskTrigger = NULL;
 	basePositionUpdateClient = NULL;
@@ -41,6 +43,7 @@ ComponentGMapping::ComponentGMapping()
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
+	param = NULL;
 	
 	// set default ini parameter values
 	connections.component.name = "ComponentGMapping";
@@ -195,6 +198,8 @@ void ComponentGMapping::init(int argc, char *argv[])
 		// load initial parameters from ini-file (if found)
 		loadParameter(argc, argv);
 		
+		// print out the actual parameters which are used to initialize the component
+		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
 		// initializations of ComponentGMappingROSExtension
 		
@@ -251,6 +256,7 @@ void ComponentGMapping::init(int argc, char *argv[])
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
 		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		if (stateSlave->defineStates("Active" ,"active") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion Active.active" << std::endl;
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -268,6 +274,8 @@ void ComponentGMapping::init(int argc, char *argv[])
 			dynamic_cast<SmartACE::PushClient<CommBasicObjects::CommMobileLaserScan>*>(laserClient)->add(wiringSlave, connections.laserClient.wiringName);
 		}
 		
+		// create parameter slave
+		param = new SmartACE::ParameterSlave(component, &paramHandler);
 		
 		
 		// create Task GMappingTask
@@ -384,6 +392,7 @@ void ComponentGMapping::fini()
 	
 	// destroy all master/slave ports
 	delete wiringSlave;
+	delete param;
 	
 
 	// destroy all registered component-extensions
@@ -529,6 +538,7 @@ void ComponentGMapping::loadParameter(int argc, char *argv[])
 			extension->second->loadParameters(parameter);
 		}
 		
+		paramHandler.loadParameter(parameter);
 	
 	} catch (const SmartACE::IniParameterError & e) {
 		std::cerr << e.what() << std::endl;

@@ -55,6 +55,8 @@ class ComponentGMappingExtension;
 // include handler
 #include "CompHandler.hh"
 
+#include "ParameterStateStruct.hh"
+#include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
 
@@ -89,6 +91,15 @@ private:
 	std::map<std::string, ComponentGMappingExtension*> componentExtensionRegistry;
 	
 public:
+	ParameterStateStruct getGlobalState() const
+	{
+		return paramHandler.getGlobalState();
+	}
+	
+	ParameterStateStruct getParameters() const
+	{
+		return paramHandler.getGlobalState();
+	}
 	
 	// define tasks
 	Smart::TaskTriggerSubject* gMappingTaskTrigger;
@@ -121,6 +132,8 @@ public:
 	SmartACE::StateSlave *stateSlave;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
+	ParamUpdateHandler paramHandler;
+	SmartACE::ParameterSlave *param;
 	
 	
 	/// this method is used to register different PortFactory classes (one for each supported middleware framework)

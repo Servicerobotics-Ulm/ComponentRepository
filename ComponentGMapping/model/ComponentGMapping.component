@@ -5,11 +5,13 @@ InputPort laserClient implements CommBasicObjects.LaserService {
 	}
 	Activity GMappingTask
 	{
+	OperationModeBinding CoordinationPort.active
 	}
 	OutputPort basePositionUpdateClient implements CommNavigationObjects.LocalizationUpdateService realizedBy GMappingTask {
 	}
 	OutputPort newestMapPushServer implements CommNavigationObjects.CurrGridMapPushService realizedBy GMappingTask {
 	}
-//	CoordinationSlavePort CoordinationPort implements CommNavigationObjects.MappingCoordinationService { PublicOperationMode CommNavigationObjects.MappingStates.active { activates ( active ) } PrivateOperationMode active }
-//	ComponentParameters ComponentGMappingParams slave CoordinationPort
+
+CoordinationSlavePort CoordinationPort implements CommLocalizationObjects.SLAMCoordinationService { PublicOperationMode CommLocalizationObjects.localizationMode.Active { activates ( active ) } PrivateOperationMode active }
+	ComponentParameters ComponentGMappingParams slave CoordinationPort
 }
