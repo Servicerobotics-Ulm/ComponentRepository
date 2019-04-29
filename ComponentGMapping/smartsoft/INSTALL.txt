@@ -3,20 +3,27 @@ Installation of GMapping:
 This SmartSoft component uses GMapping from OpenSlam (revision 52).
 =======================================================================
 
-Get GMapping from OpenSlam.org:
-   svn -r 52 export https://svn.openslam.org/data/svn/gmapping/trunk $SMART_ROOT_ACE/src/utilities/gmapping
+0) Install the deb package from the robotino debian repo
 
-Apply patch to work with Ubuntu 16.04:
-    cd $SMART_ROOT_ACE/src/utilities/gmapping
-    patch -p0 < $SMART_ROOT_ACE/src/components/SmartGMapping/gmapping-ubuntu-16-04.patch
+=======================================================================
+1) Installing gmapping in /opt
+
+    mkdir gmapping
+    cd gmapping
+    git clone https://github.com/OpenSLAM-org/openslam_gmapping.git
+
+    Apply patch to work with Ubuntu 16.04:
+
+    cd openslam_gmapping/
+    patch -p0 < $SMART_ROOT_ACE/repos/ComponentRepository/ComponentGMapping/smartsoft/gmapping-ubuntu-16-04.patch
 
 Configure GMapping:
    ./configure
-Warnings concerning ARIA and CARMEN directories can be ignored since we do not use neither of them!
+
+    Warnings concerning ARIA and CARMEN directories can be ignored since we do not use neither of them!
 
 Build GMapping:
-   make
-
+    make
 
 
 ========================================================================

@@ -45,7 +45,7 @@
 #include "ComponentGMappingCore.hh"
 
 // constructor
-ComponentGMappingCore::ComponentGMappingCore()
+ComponentGMappingCore::ComponentGMappingCore() : mymap(NULL)
 {
 	std::cout << "constructor ComponentGMappingCore\n";
 }
