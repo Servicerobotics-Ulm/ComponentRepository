@@ -54,7 +54,7 @@ endif()
 
 # you can add additional external libraries using regular CMake commands, e.g.:
 SMART_ADD_UTILITY(OpenCVHelpers 1.0.0)
-find_package( OpenCV 3.1.0 EXACT)
+find_package( OpenCV )
 FIND_PACKAGE( MRPT REQUIRED gui base maps)
 GET_PROPERTY(MRPT_INCLUDE_DIRS DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
 
