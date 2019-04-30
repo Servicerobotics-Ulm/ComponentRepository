@@ -42,12 +42,12 @@
 
 | Attribute Name | Attribute Type | Description |
 |----------------|----------------|-------------|
-| x | Double |  |
-| y | Double |  |
-| z | Double |  |
-| azimuth | Double |  |
-| elevation | Double |  |
-| roll | Double |  |
+| x | Double | ( in mm ) |
+| y | Double | ( in mm ) |
+| z | Double | ( in mm ) |
+| azimuth | Double | ( in radians ) |
+| elevation | Double | ( in radians ) |
+| roll | Double | ( in radians ) |
 
 ### InternalParameter RGB_config
 
@@ -69,13 +69,13 @@
 
 | Attribute Name | Attribute Type | Description |
 |----------------|----------------|-------------|
-| on_manipulator | Boolean |  |
-| on_ptu | Boolean |  |
-| on_base | Boolean |  |
+| on_manipulator | Boolean | Subscribe to UR server for pose updates (true)?. |
+| on_ptu | Boolean | Subscribe to ptu server for pose updates (true)?. |
+| on_base | Boolean | Subscribe to base server for pose updates (true)?. |
 | on_ur | Boolean |  |
-| x | Int32 |  |
-| y | Int32 |  |
-| z | Int32 |  |
-| base_a | Double |  |
-| steer_a | Double |  |
+| x | Int32 | Use fixed values x, y, z [mm] for pose of the camera if not subscribed to base server. See server ports. |
+| y | Int32 | Use fixed values x, y, z [mm] for pose of the camera if not subscribed to base server. See server ports. |
+| z | Int32 | Use fixed values x, y, z [mm] for pose of the camera if not subscribed to base server. See server ports. |
+| base_a | Double | Use fixed value base_a [rad] for pose of the camera if not subscribed to base server. See server ports. |
+| steer_a | Double | Use fixed value for steer_a [rad] for pose of the camera if not subscribed to base server. See server ports. |
 

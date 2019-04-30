@@ -83,7 +83,9 @@ int PersonDetectionTask::on_execute()
 	CommTrackingObjects::CommPersonId queryRequest;
 	CommTrackingObjects::CommDetectedPerson queryResult;
 
+	if(COMP->getGlobalState().getSettings().getVerbose() == true){
 	std::cout << "[PersonDetection] env_id: " << eventResult.getEnvironment_id() << "\n";
+	}
 
 	for (size_t i =0; i < eventResult.getPerson_idSize(); ++i){
 		//queryRequest.setId(eventResult.getPerson_idCopy(i));

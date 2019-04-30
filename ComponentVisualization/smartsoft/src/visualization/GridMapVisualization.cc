@@ -97,7 +97,8 @@ void GridMapVisualization::displayGridMap(const CommNavigationObjects::CommGridM
 	utils::CImage imgColor(xSizeCells, ySizeCells, 3);
 	utils::CImage imgTrans(xSizeCells, ySizeCells, 1);
 
-	std::cout<<"displayGridMap: xSizeCells: "<<xSizeCells<<" ySizeCells: "<<ySizeCells <<std::endl;
+	//std::cout<<"displayGridMap: xSizeCells: "<<xSizeCells<<" ySizeCells: "<<ySizeCells <<std::endl;
+
 	for (uint32_t j = 0; j < ySizeCells; j++) {
 		for (uint32_t i = 0; i < xSizeCells; i++) {
 
@@ -150,23 +151,15 @@ void GridMapVisualization::displayGridMap(const CommNavigationObjects::CommGridM
 }
 
 void GridMapVisualization::clear() {
-	std::cout<<__FUNCTION__<<" : "<<__LINE__<<std::endl;
 	opengl::COpenGLScenePtr &ptrScene = window3D.get3DSceneAndLock();
 	{
-		std::cout<<__FUNCTION__<<" : "<<__LINE__<<std::endl;
 		opengl::CTexturedPlanePtr ptrPlane = (opengl::CTexturedPlanePtr) ptrScene->getByName(identifier + "_ltm");
-		std::cout<<__FUNCTION__<<" : "<<__LINE__<<std::endl;
 		if(ptrPlane.null() == false){
-			std::cout<<__FUNCTION__<<" : "<<__LINE__<<std::endl;
 			ptrPlane->setPlaneCorners(0, 0, 0, 0);
 		} else {
-			std::cout<<__FUNCTION__<<" : "<<__LINE__<<std::endl;
-			std::cout<<__FUNCTION__<<" clear on NULL empty!"<<std::endl;
+			//std::cout<<" clear on NULL empty!"<<std::endl;
 		}
 	}
-	std::cout<<__FUNCTION__<<" : "<<__LINE__<<std::endl;
 	window3D.unlockAccess3DScene();
-	std::cout<<__FUNCTION__<<" : "<<__LINE__<<std::endl;
 	window3D.forceRepaint();
-	std::cout<<__FUNCTION__<<" : "<<__LINE__<<std::endl;
 }

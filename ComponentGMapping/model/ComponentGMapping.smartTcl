@@ -1,0 +1,47 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; NAVIGATION
+
+
+(realize-tcb  (tcb-start-mapping ?x ?y ?a)
+  (module "SlamModule")
+  (action (
+            (format t "=========================>>> tcb-start-mapping ~a ~a ~a ~%" '?x '?y '?a)
+            (tcl-state :server 'gmapping :state "Neutral")
+            (tcl-param :server 'gmapping   :slot 'CommLocalizationObjects.SlamParameter.INITNEWMAP :value '((?x)(?y)(?a)))
+            (tcl-state :server 'gmapping :state "Active")
+            '(SUCCESS (OK)))))
+
+
+(realize-tcb  (tcb-stop-mapping ?mapName ?mapDirName)
+  (module "SlamModule")
+  (action (
+            (format t "=========================>>> tcb-stop-mapping ~a ~a ~%" '?mapName '?mapDirName)
+            (format t "StopMapping -- dirname ~s ~%" ?mapDirName)
+            (ensure-directories-exist ?mapDirName)
+            (tcl-state :server 'gmapping :state "Neutral")
+            (format t "MAP NAME: ~s" '(?mapDirName ?mapName ))
+            (tcl-param :server 'gmapping :slot 'CommLocalizationObjects.SlamParameter.SAVEMAP :value '(?mapDirName ?mapName))
+            '(SUCCESS (OK)))))
+
+(realize-tcb  (tcb-save-current-map ?mapName ?mapDirName)
+  (module "SlamModule")
+  (action (
+            (format t "=========================>>> tcb-save-current-map ~a ~a ~%" '?mapName '?mapDirName)
+            (ensure-directories-exist ?mapDirName)
+            (tcl-state :server 'gmapping :state "Neutral")
+            (format t "MAP NAME: ~s" '(?mapDirName ?mapName ))
+            (tcl-param :server 'gmapping :slot 'CommLocalizationObjects.SlamParameter.SAVEMAP :value '(?mapDirName ?mapName))
+            (tcl-state :server 'gmapping :state "Active")
+            '(SUCCESS (OK)))))
+
+
+(realize-tcb  (tcb-abort-mapping)
+  (module "SlamModule")
+  (action (
+            (format t "=========================>>> tcb-abort-mapping ~%")
+            (tcl-state :server 'gmapping :state "Neutral")
+            '(SUCCESS (OK)))))
+
+;; NAVIGATION
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

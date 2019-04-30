@@ -1,81 +1,82 @@
 ComponentParameter ComponentGMappingParams component ComponentGMapping {
 	InternalParameter gfs {
-		//@doc " Number of particles to use."
+		
+		/** Number of particles to use.*/
 		particles : Int32 = 50
 				
-		//@doc "Used for measurement integration."
+		/** Used for measurement integration.*/
 		angularUpdate : Double = 0.5
 		
-		//@doc "Used for measurement integration."
+		/**  Used for measurement integration.*/
 		linearUpdate : Double = 1.0
 		
-		//@doc "Map resolution [m]."
+		/** Map resolution [m].*/
 		delta : Double = 0.05
 		
-		//@doc "Maximum valid range [m] of laser scanner, e.g. 81m for SICK LMS, 50m for SICK PLS. "
+		/** Maximum valid range [m] of laser scanner, e.g. 81m for SICK LMS, 50m for SICK PLS. */
 		maxrange : Double = 81.0
 		
-		//@doc " Closeup range of scanner [m]. "
+		/**  Closeup range of scanner [m]. */
 		maxUrange : Double = 80.0
 		
-		//@doc"Scan matcher cell sigma [m], used for the greedy search."
+		/** Scan matcher cell sigma [m], used for the greedy search.*/
 		sigma : Double = 0.05
 		
-		//@doc"Minimum score for regsistering a scan. "
+		/**  Minimum score for regsistering a scan. */
 		regscore : Double = 0.0004
 		
-		//@doc"Number of iterations of scanmatcher. "
+		/** Number of iterations of scanmatcher. */
 		iterations : Int32 = 5
 		
-		//@doc"Internal parameter."
+		/** Internal parameter.*/
 		critscore : Double = 0.0
 		
-		//@doc "Maximum move among two scans. This detects some corrupted logs."
+		/**  Maximum move among two scans. This detects some corrupted logs.*/
 		maxMove : Double = 1.0
 		
-		//@doc"Optimization step for translation."
+		/**  Optimization step for translation.*/
 		lstep : Double = 0.05
 		
-		//@doc"Optimization step for rotation. "
+		/** Optimization step for rotation. */
 		astep : Double = 0.05
 		
-		//@doc "Sigma likelihood of one beam."
+		/**  "Sigma likelihood of one beam.*/
 		lsigma : Double = 0.05
 		
-		//@doc "Number of beams to skip in the likelihood computation."
+		/**  Number of beams to skip in the likelihood computation.*/
 		lskip : Int32 = 0
 		
-		//@doc "Size of kernel. The higher the value, the slower the filter, the better it can deal with noise, but the less precise and slower. "
+		/**  Size of kernel. The higher the value, the slower the filter, the better it can deal with noise, but the less precise and slower. */
 		kernelSize : Int32 = 1
 		
-		//@doc "Gain for smoothing the likelihood. "
+		/**  Gain for smoothing the likelihood. */
 		ogain : Int32 = 3
 		
-		//@doc "Neff based threshold for resampling."
+		/**  Neff based threshold for resampling.*/
 		resampleThreshold : Double = 0.5
 		
-		//@doc "Motion model parameter: error in translation as a function of translation. "
+		/**  Motion model parameter: error in translation as a function of translation. */
 		srr : Double = 0.1
 		
-		//@doc "Motion model parameter: error in translation as a function of rotation."
+		/**  Motion model parameter: error in translation as a function of rotation.*/
 		srt : Double = 0.1
 		
-		//@doc "Motion model parameter: error in rotation as a function of translation. "
+		/**  Motion model parameter: error in rotation as a function of translation. */
 		str : Double = 0.1
 		
-		//@doc "Motion model parameter: error in rotation as a function of rotation. "
+		/**  Motion model parameter: error in rotation as a function of rotation. */
 		stt: Double = 0.1
 		
-		//@doc "Initial map parameter."
+		/**  Initial map parameter.*/
 		xmin : Double = -20.0
 		
-		//@doc "Initial map parameter."
+		/**  Initial map parameter.*/
 		ymin : Double = -20.0
 		
-		//@doc "Initial map parameter. "
+		/** Initial map parameter. */
 		xmax: Double = 20.0
 		
-		//@doc "Initial map parameter."
+		/** Initial map parameter.*/
 		ymax: Double = 20.0
 		
 		generateMap : Boolean = true		
@@ -91,7 +92,7 @@ ComponentParameter ComponentGMappingParams component ComponentGMapping {
 	ParameterSetInstance CommLocalizationObjects.SlamParameter {
 		TriggerInstance INITNEWMAP passive
 		
-		//@doc"Stores the current grid map to <?dirname>/<?mapname>.pgm and meta information to data/<?mapname>.yaml."
+		/** Stores the current grid map to <?dirname>/<?mapname>.pgm and meta information to data/<?mapname>.yaml.*/
 		TriggerInstance SAVEMAP passive
 	}
 }

@@ -123,7 +123,7 @@ public:
 		public:
 			// default constructor
 			SettingsType() {
-				verbose = true;
+				verbose = false;
 			}
 		
 			/**

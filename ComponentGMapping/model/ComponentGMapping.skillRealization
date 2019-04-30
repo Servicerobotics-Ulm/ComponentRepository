@@ -1,0 +1,12 @@
+SkillRealizationModel {
+	CoordinationModuleRealization slamModule coordModuleDef CommLocalizationObjects.SlamModule uses {
+		CommLocalizationObjects.SLAMCoordinationService intsName gmapping
+	}
+	{
+		//dummy realization (see *.smartTCL files)
+		SkillRealization startMapping { action () }
+		SkillRealization stopMapping { action () }
+		SkillRealization abortMapping { action () }
+		SkillRealization saveCurrentMap { action () }
+	}
+}

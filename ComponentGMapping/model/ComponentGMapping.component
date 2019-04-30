@@ -12,6 +12,10 @@ InputPort laserClient implements CommBasicObjects.LaserService {
 	OutputPort newestMapPushServer implements CommNavigationObjects.CurrGridMapPushService realizedBy GMappingTask {
 	}
 
-CoordinationSlavePort CoordinationPort implements CommLocalizationObjects.SLAMCoordinationService { PublicOperationMode CommLocalizationObjects.localizationMode.Active { activates ( active ) } PrivateOperationMode active }
+	CoordinationSlavePort CoordinationPort implements CommLocalizationObjects.SLAMCoordinationService { 
+		PublicOperationMode CommLocalizationObjects.localizationMode.Active { activates ( active ) } 
+		PrivateOperationMode active
+		SkillRealizationsRef slamModule
+	}
 	ComponentParameters ComponentGMappingParams slave CoordinationPort
 }

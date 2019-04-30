@@ -93,11 +93,15 @@ int IRTask::on_execute()
 	Smart::StatusCode status = COMP->irPushNewestClient->getUpdateWait(scan);
 	if (status == Smart::SMART_OK)
 	{
+		if(COMP->getGlobalState().getSettings().getVerbose() == true){
 		std::cout << "[IRTask] got new ir scan\n";
+		}
 		ir->displayScan(scan);
 	} else
 	{
+		if(COMP->getGlobalState().getSettings().getVerbose() == true){
 		std::cout << "[IRTask] error while getting new scan: " << Smart::StatusCodeConversion(status) << "\n";
+		}
 	}
 
 	// it is possible to return != 0 (e.g. when the task detects errors), then the outer loop breaks and the task stops

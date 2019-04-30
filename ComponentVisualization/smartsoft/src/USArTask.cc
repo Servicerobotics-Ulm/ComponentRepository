@@ -90,11 +90,15 @@ int USArTask::on_execute()
 	Smart::StatusCode status = COMP->ultrasonicPushNewestClient->getUpdateWait(scan);
 	if (status == Smart::SMART_OK)
 	{
+		if(COMP->getGlobalState().getSettings().getVerbose() == true){
 		std::cout << "[USArTask] got new usar scan\n";
+		}
 		usar->displayScan(scan);
 	} else
 	{
+		if(COMP->getGlobalState().getSettings().getVerbose() == true){
 		std::cout << "[USArTask] error while getting new scan: " << Smart::StatusCodeConversion(status) << "\n";
+		}
 	}
 
 	// it is possible to return != 0 (e.g. when the task detects errors), then the outer loop breaks and the task stops

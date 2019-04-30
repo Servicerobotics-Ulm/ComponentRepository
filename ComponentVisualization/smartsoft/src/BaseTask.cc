@@ -90,7 +90,9 @@ int BaseTask::on_execute()
 	if (status == Smart::SMART_OK) {
 		base->displayBase(baseState);
 	} else {
+		if(COMP->getGlobalState().getSettings().getVerbose() == true){
 		std::cout<<"Error getting base state: "<<Smart::StatusCodeConversion(status)<<std::endl;
+		}
 		base->clear();
 	}
 	
