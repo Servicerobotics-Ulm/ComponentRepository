@@ -62,7 +62,18 @@ GMappingTask::GMappingTask(SmartACE::SmartComponent *comp)
 }
 GMappingTask::~GMappingTask() 
 {
-	std::cout << "destructor GMappingTask\n";
+	//this should be working, however this will result in a double free
+	//since this is only used in case the component is shutdown,
+	//the cleanup of the processor and the map is not that important,
+	//as the task will ony be destroyed when the components stops
+//	if(processor!=NULL)
+//	{
+//		delete processor;
+//	}
+//	if(COMP->mymap!=NULL)
+//	{
+//		delete COMP->mymap;
+//	}
 }
 void GMappingTask::initGMappingProcessor(double x, double y, double phi)
 {
