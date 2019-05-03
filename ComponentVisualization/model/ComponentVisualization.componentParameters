@@ -17,5 +17,36 @@ ComponentParameter ComponentVisualizationParams component ComponentVisualization
 	InternalParameter Settings {
 		verbose : Boolean = false
 	}
+	
+	ParameterSetInstance CommBasicObjects.VisualizationParams {
+		
+		TriggerInstance SHOW_BASE1 passive
+		TriggerInstance STOP_BASE1 passive
+		
+		TriggerInstance SHOW_LASER1 passive
+		TriggerInstance STOP_LASER1 passive
+		
+		TriggerInstance SHOW_LASER2 passive
+		TriggerInstance STOP_LASER2 passive
+		
+		TriggerInstance SHOW_LASER3 passive
+		TriggerInstance STOP_LASER3 passive
+		
+		TriggerInstance SHOW_IR1 passive
+		TriggerInstance STOP_IR1 passive
+		
+		TriggerInstance SHOW_MAP1 passive
+		TriggerInstance STOP_MAP1 passive
+		
+		TriggerInstance SHOW_RGB1 passive
+		TriggerInstance STOP_RGB1 passive
+		
+		TriggerInstance SHOW_RGBD1 passive
+		TriggerInstance STOP_RGBD1 passive
+		
+		TriggerInstance SHOW_DEPTHIMAGE1 passive
+		TriggerInstance STOP_DEPTHIMAGE1 passive
+		
+	}
 
 }

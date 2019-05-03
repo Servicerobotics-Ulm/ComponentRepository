@@ -60,13 +60,7 @@ BaseTask::~BaseTask()
 }
 
 
-
-int BaseTask::on_entry()
-{
-	// do initialization procedures here, which are called once, each time the task is started
-	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
-    base = new BaseVisualization(COMP->getWindow3d(), "Base");
-
+int BaseTask::connectServices(){
 	std::cout << "connecting to: " << COMP->connections.baseClient.serverName << "; " << COMP->connections.baseClient.serviceName << std::endl;
 	Smart::StatusCode status = COMP->baseClient->connect(COMP->connections.baseClient.serverName, COMP->connections.baseClient.serviceName);
 	while (status != Smart::SMART_OK) {
@@ -74,8 +68,21 @@ int BaseTask::on_entry()
 		status = COMP->baseClient->connect(COMP->connections.baseClient.serverName, COMP->connections.baseClient.serviceName);
 	}
 	std::cout << COMP->connections.baseClient.serverName << "; " << COMP->connections.baseClient.serviceName << " connected.\n";
-	COMP->baseClient->subscribe(COMP->connections.baseClient.interval);
+	return 0;
+}
 
+int BaseTask::disconnectServices(){
+	COMP->baseClient->disconnect();
+	return 0;
+}
+
+
+int BaseTask::on_entry()
+{
+	// do initialization procedures here, which are called once, each time the task is started
+	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
+    base = new BaseVisualization(COMP->getWindow3d(), "Base");
+	COMP->baseClient->subscribe(COMP->connections.baseClient.interval);
 
 	return (base !=0)? 0 : 1;
 }
@@ -95,7 +102,6 @@ int BaseTask::on_execute()
 		}
 		base->clear();
 	}
-	
 
 	// it is possible to return != 0 (e.g. when the task detects errors), then the outer loop breaks and the task stops
 	return 0;
@@ -106,6 +112,5 @@ int BaseTask::on_exit()
 
 	delete base;
 	COMP->baseClient->unsubscribe();
-	COMP->baseClient->disconnect();
 	return 0;
 }

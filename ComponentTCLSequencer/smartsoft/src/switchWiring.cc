@@ -37,8 +37,10 @@ std::string switchWiring(const std::string& moduleInst, const std::string& compn
 {
 	std::ostringstream outString;
 
+	std::cout<<"switchWiring- moduleInst "<<moduleInst<<" compnameTypename: "<<compnameTypename<<" compname: "<<compname<<" service: "<<service<<" inString: "<<inString<<std::endl;
+
 	// wiring connect
-	if(service == "connect")
+	if(service == "CONNECT")
 	{
 		Smart::StatusCode status;
 		char *input  = (char *)NULL;
@@ -109,7 +111,7 @@ std::string switchWiring(const std::string& moduleInst, const std::string& compn
 		}
 	}
 	// wiring disconnect
-	else if(service == "disconnect")
+	else if(service == "DISCONNECT")
 	{
 		Smart::StatusCode status;
 		char *input  = (char *)NULL;

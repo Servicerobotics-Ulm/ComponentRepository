@@ -436,6 +436,50 @@ ZAFH Servicerobotik Ulm, Germany
                            (format t "~% communication interface: unknown error: ~s~%" activity)
                            NIL)))
 
+
+             ;; special - WIRING!
+             ( (and (equal mod 'special)
+                    (equal mod-inst *WIRING-MODULE-NAME*))
+               (let* ((wiring-module (query-kb *MEMORY* '(is-a type) `((is-a coordination-module) (type ,*WIRING-MODULE-NAME*))))
+                      (wiring-module-inst (get-value wiring-module 'inst-name))
+                      (comp-interfaces (get-value wiring-module 'comp-interfaces))
+                      ;;take the first ci in the KB mode
+                      (wiring-ci-inst (cdr (assoc 'INST-NAME (first comp-interfaces))))
+
+                      (wiring-client-module (query-kb *MEMORY* '(is-a type inst-name) `((is-a coordination-module) (type ,(first comp)) (inst-name ,(second comp)))))
+                      (wiring-client-ci-inst nil)
+                      (wiring-client-ci-comp-inst nil))
+
+                      (show-modules);;DEBUG
+                      
+                      ;;find the client componet in case of wiring
+                      (setf wiring-client-ci-inst (find (first prm) (get-value wiring-client-module 'comp-interfaces) :test #'matching-ci-inst))
+
+                      (cond
+                        ((null wiring-client-ci-inst)
+                          (format t "ERROR - No matching ci-inst found!~%")
+                          "(error no ci-inst)")
+                        (T
+                          (setf wiring-client-ci-comp-inst (cdr (assoc 'component-inst wiring-client-ci-inst)))
+                          (format t "wiring-client-inst-name : ~a ~%" wiring-client-ci-comp-inst)
+
+                          ;;replace the abstract comp-inst with the real component instance name
+                          (setf (nth 0 prm) wiring-client-ci-comp-inst)
+ 
+                          (setq result (interface *WIRING-MODULE-NAME* wiring-module-inst wiring-ci-inst svc mth prm)))
+                          ;; result ok
+                          (cond ( (equal (first result) 'ok)
+                                    (setf (smartsoft-result instance) (second result))
+                                  T)
+                                ( (equal (first result) 'error)
+                                    (setf (smartsoft-result instance) (second result))
+                                    (format t "~% communication interface: an error occured: ~s -- result: ~s ~%" activity result)
+                                  NIL)
+                                ( T 
+                                  (setf (smartsoft-result instance) (second result))
+                                  (format t "~% communication interface: unknown error: ~s~%" activity)
+                                  NIL)))))
+
              ;; T
              ( T 
                  ;; interface
@@ -649,6 +693,7 @@ and adds the configuration to the kb"
        (push (cdr (assoc 'type ci)) ci-list)))
    (setq ci-list (remove-duplicates ci-list))
    (setq ci-list (remove (intern (string-upcase *FETCHEVENT-MODULE-NAME*)) ci-list))
+   (setq ci-list (remove (intern (string-upcase *WIRING-MODULE-NAME*)) ci-list))
 
    ;; load all cis
    (format t "ci-list: ~a~%" ci-list)
@@ -661,6 +706,9 @@ and adds the configuration to the kb"
        ((equal-symbol-string (get-value module 'type) *FETCHEVENT-MODULE-NAME*)
          ;;skip
          (format t "Skip fetch event~%"))
+       ((equal-symbol-string (get-value module 'type) *WIRING-MODULE-NAME*)
+         ;;skip
+         (format t "Skip wiring~%"))
        (T
          (format t "Inst Module: ~a - ~a~%" (get-value module 'type) (get-value module 'inst-name))
          (instantiate-coordination-module (get-value module 'type) (get-value module 'inst-name))))))
@@ -728,6 +776,15 @@ and adds the configuration to the kb"
 ;  (type ,*KB-MODULE-NAME*) 
 ;  (inst-name KB) 
 ;  (comp-interfaces (((TYPE . ,*KB-MODULE-NAME*) (INST-NAME . ,*KB-MODULE-NAME*))))))
+
+
+
+(defvar *WIRING-MODULE-NAME* "WIRING")
+(update-kb *MEMORY* '(is-a type inst-name) `( 
+  (is-a coordination-module) 
+  (type ,*WIRING-MODULE-NAME*) 
+  (inst-name ,(intern (string-upcase *WIRING-MODULE-NAME*)))
+  (comp-interfaces (((TYPE .  ,(intern (string-upcase *WIRING-MODULE-NAME*))) (INST-NAME . ,*WIRING-MODULE-NAME*))))))
 
 ;(defvar wiring-map-l '( (wiring   ( (connect "connect")
 ;                                    (disconnect "disconnect")))))

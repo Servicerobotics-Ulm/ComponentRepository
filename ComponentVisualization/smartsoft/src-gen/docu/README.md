@@ -42,3 +42,95 @@
 |----------------|----------------|-------------|
 | verbose | Boolean |  |
 
+### ParameterSetInstance VisualizationParams
+
+#### TriggerInstance SHOW_BASE1
+
+active = false
+
+
+#### TriggerInstance STOP_BASE1
+
+active = false
+
+
+#### TriggerInstance SHOW_LASER1
+
+active = false
+
+
+#### TriggerInstance STOP_LASER1
+
+active = false
+
+
+#### TriggerInstance SHOW_LASER2
+
+active = false
+
+
+#### TriggerInstance STOP_LASER2
+
+active = false
+
+
+#### TriggerInstance SHOW_LASER3
+
+active = false
+
+
+#### TriggerInstance STOP_LASER3
+
+active = false
+
+
+#### TriggerInstance SHOW_IR1
+
+active = false
+
+
+#### TriggerInstance STOP_IR1
+
+active = false
+
+
+#### TriggerInstance SHOW_MAP1
+
+active = false
+
+
+#### TriggerInstance STOP_MAP1
+
+active = false
+
+
+#### TriggerInstance SHOW_RGB1
+
+active = false
+
+
+#### TriggerInstance STOP_RGB1
+
+active = false
+
+
+#### TriggerInstance SHOW_RGBD1
+
+active = false
+
+
+#### TriggerInstance STOP_RGBD1
+
+active = false
+
+
+#### TriggerInstance SHOW_DEPTHIMAGE1
+
+active = false
+
+
+#### TriggerInstance STOP_DEPTHIMAGE1
+
+active = false
+
+

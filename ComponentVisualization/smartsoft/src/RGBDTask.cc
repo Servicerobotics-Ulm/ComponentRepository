@@ -29,15 +29,7 @@ RGBDTask::~RGBDTask()
 	std::cout << "destructor RGBDTask\n";
 }
 
-
-
-int RGBDTask::on_entry()
-{
-	// do initialization procedures here, which are called once, each time the task is started
-	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
-
-	rgbd_viz = new RGBDVisualization(COMP->getWindow3d(), "realsense");
-
+int RGBDTask::connectServices(){
 	std::cout << "connecting to: " << COMP->connections.rgbdPushNewestClient.serverName<< "; " << COMP->connections.rgbdPushNewestClient.serviceName
 			<< std::endl;
 	Smart::StatusCode status = COMP->rgbdPushNewestClient->connect(COMP->connections.rgbdPushNewestClient.serverName,
@@ -50,6 +42,22 @@ int RGBDTask::on_entry()
 	}
 	std::cout << "connected.\n";
 	std::cout << COMP->connections.rgbdPushNewestClient.serverName << "; " << COMP->connections.rgbdPushNewestClient.serviceName << " connected.\n";
+	return 0;
+}
+int RGBDTask::disconnectServices(){
+	COMP->rgbdPushNewestClient->disconnect();
+	return 0;
+}
+
+
+int RGBDTask::on_entry()
+{
+	// do initialization procedures here, which are called once, each time the task is started
+	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
+
+	rgbd_viz = new RGBDVisualization(COMP->getWindow3d(), "realsense");
+
+
 	COMP->rgbdPushNewestClient->subscribe();
 
 	return (rgbd_viz !=0)?0:1;
@@ -82,6 +90,5 @@ int RGBDTask::on_exit()
 	// use this method to clean-up resources which are initialized in on_entry() and needs to be freed before the on_execute() can be called again
 	delete rgbd_viz;
 	COMP->rgbdPushNewestClient->unsubscribe();
-	COMP->rgbdPushNewestClient->disconnect();
 	return 0;
 }

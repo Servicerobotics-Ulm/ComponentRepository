@@ -150,6 +150,54 @@ public:
 		// Instance params
 		///////////////////////////////////////////
 		
+		/**
+		 * Definition of instantiated ParameterRepository CommBasicObjects
+		 */
+		class CommBasicObjectsType {
+			friend class ParamUpdateHandler;
+			public:
+			/**
+			 * Definition of instantiated ParameterSet VisualizationParams
+			 */
+			class VisualizationParamsType {
+				friend class ParamUpdateHandler;
+				public:
+				protected:
+					/**
+					 * internal members
+					 */
+					
+				public:
+					/**
+					 * public getter methods
+					 */
+					
+					void to_ostream(std::ostream &os = std::cout) const
+					{
+						os << "VisualizationParams(\n";
+						os << ")";
+					}
+			}; // end of parameter-set class VisualizationParamsType
+			
+			protected:
+				/**
+				 * internal members
+				 */
+				VisualizationParamsType VisualizationParams;
+			
+			public:
+				/**
+				 * public getter methods
+				 */
+				inline VisualizationParamsType getVisualizationParams() const { return VisualizationParams; }
+				
+				void to_ostream(std::ostream &os = std::cout) const
+				{
+					os << "CommBasicObjects(\n";
+					VisualizationParams.to_ostream(os);
+					os << ")";
+				}
+		}; // end of parameter-repository wrapper class CommBasicObjectsType
 	
 protected:
 
@@ -160,11 +208,13 @@ protected:
 	// External params
 	
 	// Instance params (encapsulated in a wrapper class for each instantiated parameter repository)
+	CommBasicObjectsType CommBasicObjects;
 	
 
 	void setContent(const ParameterStateStructCore &commit) {
 		// External params
 	
+		this->CommBasicObjects = commit.getCommBasicObjects();
 	}
 
 	// special trigger method (user upcall) called before updating parameter global state
@@ -184,6 +234,9 @@ public:
 	// external param getters
 	
 	// repo wrapper class getter(s)
+	CommBasicObjectsType getCommBasicObjects() const {
+		return CommBasicObjects;
+	}
 	
 	// helper method to easily implement output stream in derived classes
 	void to_ostream(std::ostream &os = std::cout) const
@@ -195,6 +248,7 @@ public:
 		// External params
 		
 		// Instance params (encapsulated in a wrapper class for each instantiated parameter repository)
+		CommBasicObjects.to_ostream(os);
 	}
 };
 

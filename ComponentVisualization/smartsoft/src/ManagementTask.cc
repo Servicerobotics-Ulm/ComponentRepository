@@ -108,6 +108,7 @@ int ManagementTask::on_execute()
 		switch(port){
 			case port_base_push_timed:
 				if(disconnect && connected[port_base_push_timed]){
+					COMP->baseTask->disconnectServices();
 					COMP->baseTask->stop();
 					connected[port_base_push_timed] = 0;
 					std::cout << "baseClient disconnected." << std::endl;
@@ -118,6 +119,7 @@ int ManagementTask::on_execute()
 				break;
 			case port_grid_push_newest:
 				if(disconnect && connected[port_grid_push_newest]){
+					COMP->curMapTask->disconnectServices();
 					COMP->curMapTask->stop();
 					connected[port_grid_push_newest] = 0;
 					std::cout << "curPushClient disconnected." << std::endl;
@@ -128,6 +130,7 @@ int ManagementTask::on_execute()
 				break;
 			case port_laser1_push_newest:
 				if(disconnect && connected[port_laser1_push_newest]){
+					COMP->laser1Task->disconnectServices();
 					COMP->laser1Task->stop();
 					connected[port_laser1_push_newest] = 0;
 					std::cout << "laserClient1 disconnected." << std::endl;
@@ -140,6 +143,7 @@ int ManagementTask::on_execute()
 				break;
 			case port_laser2_push_newest:
 				if(disconnect && connected[port_laser2_push_newest]){
+					COMP->laser2Task->disconnectServices();
 					COMP->laser2Task->stop();
 					connected[port_laser2_push_newest] = 0;
 					std::cout << "laserClient2 disconnected." << std::endl;
@@ -150,6 +154,7 @@ int ManagementTask::on_execute()
 				break;
 			case port_laser3_push_newest:
 				if(disconnect && connected[port_laser3_push_newest]){
+					COMP->laser3Task->disconnectServices();
 					COMP->laser3Task->stop();
 					connected[port_laser3_push_newest] = 0;
 					std::cout << "laserClient3 disconnected." << std::endl;
@@ -181,6 +186,7 @@ int ManagementTask::on_execute()
 //				break;
 			case port_iRTask_push_newest:
 				if(disconnect && connected[port_iRTask_push_newest]){
+					COMP->iRTask->disconnectServices();
 					COMP->iRTask->stop();
 					connected[port_iRTask_push_newest] = 0;
 					std::cout << "irPushNewestClient disconnected." << std::endl;
@@ -203,6 +209,7 @@ int ManagementTask::on_execute()
 //				break;
 			case port_video_image_push_newest:
 				if(disconnect && connected[port_video_image_push_newest]){
+					COMP->imageTask->disconnectServices();
 					COMP->imageTask->stop();
 					connected[port_video_image_push_newest] = 0;
 					std::cout << "imagePushNewestClient disconnected." << std::endl;
@@ -212,17 +219,19 @@ int ManagementTask::on_execute()
 				commObject1 = "DomainVision::CommVideoImage";
 				break;
 			case port_rgbd_image_push_newest:
-						if(disconnect && connected[port_rgbd_image_push_newest]){
-							COMP->rGBDTask->stop();
-							connected[port_rgbd_image_push_newest] = 0;
-							std::cout << "imagePushNewestClient disconnected." << std::endl;
-							return 0;
-						}
-						portType = "Push";
-						commObject1 = "DomainVision::CommRGBDImage";
-						break;
+				if(disconnect && connected[port_rgbd_image_push_newest]){
+					COMP->rGBDTask->disconnectServices();
+					COMP->rGBDTask->stop();
+					connected[port_rgbd_image_push_newest] = 0;
+					std::cout << "imagePushNewestClient disconnected." << std::endl;
+					return 0;
+				}
+				portType = "Push";
+				commObject1 = "DomainVision::CommRGBDImage";
+				break;
 			case port_depth_image_client:
 				if(disconnect && connected[port_depth_image_client]){
+					COMP->depthTask->disconnectServices();
 					COMP->depthTask->stop();
 					connected[port_depth_image_client] = 0;
 					std::cout << "depthPushNewestClient disconnected." << std::endl;
@@ -303,6 +312,7 @@ int ManagementTask::on_execute()
 					COMP->connections.baseClient.serverName = con[toCon].first;
 					COMP->connections.baseClient.serviceName = con[toCon].second;
 					std::cout << "starting baseTask" << std::endl;
+					COMP->baseTask->connectServices();
 					COMP->baseTask->start();
 					connected[port_base_push_timed] = 1;
 					break;
@@ -310,6 +320,7 @@ int ManagementTask::on_execute()
 					COMP->connections.curPushClient.serverName = con[toCon].first;
 					COMP->connections.curPushClient.serviceName = con[toCon].second;
 					std::cout << "starting curMapTask" << std::endl;
+					COMP->curMapTask->connectServices();
 					COMP->curMapTask->start();
 					connected[port_grid_push_newest] = 1;
 					break;
@@ -317,6 +328,7 @@ int ManagementTask::on_execute()
 					COMP->connections.laserClient1.serverName = con[toCon].first;
 					COMP->connections.laserClient1.serviceName = con[toCon].second;
 					std::cout << "starting laser1Task" << std::endl;
+					COMP->laser1Task->connectServices();
 					COMP->laser1Task->start();
 					connected[port_laser1_push_newest] = 1;
 					break;
@@ -324,6 +336,7 @@ int ManagementTask::on_execute()
 					COMP->connections.laserClient2.serverName = con[toCon].first;
 					COMP->connections.laserClient2.serviceName = con[toCon].second;
 					std::cout << "starting laser2Task" << std::endl;
+					COMP->laser2Task->connectServices();
 					COMP->laser2Task->start();
 					connected[port_laser2_push_newest] = 1;
 					break;
@@ -331,6 +344,7 @@ int ManagementTask::on_execute()
 					COMP->connections.laserClient3.serverName = con[toCon].first;
 					COMP->connections.laserClient3.serviceName = con[toCon].second;
 					std::cout << "starting laser3Task" << std::endl;
+					COMP->laser3Task->connectServices();
 					COMP->laser3Task->start();
 					connected[port_laser3_push_newest] = 1;
 					break;
@@ -391,6 +405,7 @@ int ManagementTask::on_execute()
 					COMP->connections.irPushNewestClient.serverName = con[toCon].first;
 					COMP->connections.irPushNewestClient.serviceName = con[toCon].second;
 					std::cout << "starting irTask" << std::endl;
+					COMP->iRTask->connectServices();
 					COMP->iRTask->start();
 					connected[port_iRTask_push_newest] = 1;
 					break;
@@ -406,6 +421,7 @@ int ManagementTask::on_execute()
 					COMP->connections.imagePushNewestClient.serverName = con[toCon].first;
 					COMP->connections.imagePushNewestClient.serviceName = con[toCon].second;
 					std::cout << "starting imageTask" << std::endl;
+					COMP->imageTask->connectServices();
 					COMP->imageTask->start();
 					connected[port_video_image_push_newest] = 1;
 					break;
@@ -413,6 +429,7 @@ int ManagementTask::on_execute()
 					COMP->connections.rgbdPushNewestClient.serverName = con[toCon].first;
 					COMP->connections.rgbdPushNewestClient.serviceName = con[toCon].second;
 					std::cout << "starting RGBDTask" << std::endl;
+					COMP->rGBDTask->connectServices();
 					COMP->rGBDTask->start();
 					connected[port_rgbd_image_push_newest] = 1;
 					break;
@@ -420,6 +437,7 @@ int ManagementTask::on_execute()
 					COMP->connections.depthPushNewestClient.serverName = con[toCon].first;
 					COMP->connections.depthPushNewestClient.serviceName = con[toCon].second;
 					std::cout << "starting depthTask" << std::endl;
+					COMP->depthTask->connectServices();
 					COMP->depthTask->start();
 					connected[port_depth_image_client] = 1;
 			}

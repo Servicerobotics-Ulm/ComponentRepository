@@ -56,15 +56,7 @@ USArTask::~USArTask()
 	std::cout << "destructor USArTask\n";
 }
 
-
-
-int USArTask::on_entry()
-{
-	// do initialization procedures here, which are called once, each time the task is started
-	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
-
-	usar = new UltrasonicScanVisualization(COMP->getWindow3d(), "USAr");
-
+int USArTask::connectServices(){
 	std::cout << "connecting to: " << COMP->connections.ultrasonicPushNewestClient.serverName<< "; " << COMP->connections.ultrasonicPushNewestClient.serviceName
 			<< std::endl;
 	Smart::StatusCode status = COMP->ultrasonicPushNewestClient->connect(COMP->connections.ultrasonicPushNewestClient.serverName,
@@ -77,6 +69,20 @@ int USArTask::on_entry()
 	}
 	std::cout << "connected.\n";
 	std::cout << COMP->connections.ultrasonicPushNewestClient.serverName << "; " << COMP->connections.ultrasonicPushNewestClient.serviceName << " connected.\n";
+	return 0;
+}
+int USArTask::disconnectServices(){
+	COMP->ultrasonicPushNewestClient->disconnect();
+	return 0;
+}
+
+
+int USArTask::on_entry()
+{
+	// do initialization procedures here, which are called once, each time the task is started
+	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
+
+	usar = new UltrasonicScanVisualization(COMP->getWindow3d(), "USAr");
 	COMP->ultrasonicPushNewestClient->subscribe();
 
 	return (usar !=0)?0:1;
@@ -109,6 +115,5 @@ int USArTask::on_exit()
 	// use this method to clean-up resources which are initialized in on_entry() and needs to be freed before the on_execute() can be called again
 	delete usar;
 	COMP->ultrasonicPushNewestClient->unsubscribe();
-	COMP->ultrasonicPushNewestClient->disconnect();
 	return 0;
 }

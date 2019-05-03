@@ -60,12 +60,7 @@ Laser2Task::~Laser2Task()
 }
 
 
-
-int Laser2Task::on_entry()
-{
-	// do initialization procedures here, which are called once, each time the task is started
-	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
-	laser = new LaserVisualization(COMP->getWindow3d(), "Laser2");
+int Laser2Task::connectServices(){
 	std::cout << "connecting to: " << COMP->connections.laserClient2.serverName << "; " << COMP->connections.laserClient2.serviceName << std::endl;
 	Smart::StatusCode status = COMP->laserClient2->connect(COMP->connections.laserClient2.serverName, COMP->connections.laserClient2.serviceName);
 	while (status != Smart::SMART_OK) {
@@ -73,6 +68,18 @@ int Laser2Task::on_entry()
 		status = COMP->laserClient2->connect(COMP->connections.laserClient2.serverName, COMP->connections.laserClient2.serviceName);
 	}
 	std::cout << COMP->connections.laserClient2.serverName << "; " << COMP->connections.laserClient2.serviceName << " connected.\n";
+	return 0;
+}
+int Laser2Task::disconnectServices(){
+	COMP->laserClient2->disconnect();
+	return 0;
+}
+
+int Laser2Task::on_entry()
+{
+	// do initialization procedures here, which are called once, each time the task is started
+	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
+	laser = new LaserVisualization(COMP->getWindow3d(), "Laser2");
 	COMP->laserClient2->subscribe();
 
 	return (laser !=0)?0:1;
@@ -99,6 +106,5 @@ int Laser2Task::on_exit()
 	// use this method to clean-up resources which are initialized in on_entry() and needs to be freed before the on_execute() can be called again
 	delete laser;
 	COMP->laserClient2->unsubscribe();
-	COMP->laserClient2->disconnect();
 	return 0;
 }

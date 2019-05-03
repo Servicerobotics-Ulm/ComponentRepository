@@ -49,7 +49,6 @@ InputPort rgbdPushNewestClient implements DomainVision.RGBDImagePushService {
 	Activity DepthTask
 	{
 	}
-	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService { }
 	ComponentParameters ComponentVisualizationParams slave CoordinationPort
 	RequestPort ltmQueryClient implements CommNavigationObjects.LongTermGridMapQueryService {
 	}
@@ -69,5 +68,10 @@ Activity USArTask
 RequestPort personDetectionQueryClient implements CommTrackingObjects.PersonDetectionQueryService {
 	}
 	InputPort personDetectionEventClient implements CommTrackingObjects.PersonDetectionEventService {
+	}
+	
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.VisualizationCoordinationService {
+		SkillRealizationsRef visualizationmod
+		
 	}
 }

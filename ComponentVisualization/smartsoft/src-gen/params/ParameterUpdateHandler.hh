@@ -18,6 +18,7 @@
 
 #include "aceSmartSoft.hh"
 #include "ParameterStateStruct.hh"
+#include "TriggerHandler.hh"
 
 class ParamUpdateHandler: public SmartACE::ParameterUpdateHandler {
 public:
@@ -31,6 +32,7 @@ protected:
 	//local globale state stuff
 	ParameterStateStruct globalState,commitState;
 	mutable SmartACE::SmartMutex globalStateLock;
+	TriggerHandler triggerHandler;
 };
 
 #endif

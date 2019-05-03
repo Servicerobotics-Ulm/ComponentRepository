@@ -315,17 +315,21 @@
 
 ;; tcl-wiring-connect
 (defun tcl-wiring-connect (&key clientComp wiringName serverComp serverService)
-  (let ((tmp (apply-substitution (list clientComp wiringName serverComp serverService) (tcb-env-vars *CURRENT-INSTANCE*))))
+  (let ((tmp (apply-substitution (list clientComp wiringName serverComp serverService) (tcb-env-vars *CURRENT-INSTANCE*)))
+        (module (tcb-module *CURRENT-INSTANCE*))
+        (module-inst (tcb-module-inst *CURRENT-INSTANCE*)))
     ;; wiring
-    (communication *SMARTSOFT* (list 'wiring 'wiring 'connect tmp)))
+    (communication *SMARTSOFT* (list 'special *WIRING-MODULE-NAME* (list module module-inst) nil 'connect tmp)))
   '(SUCCESS))
 
 
 ;; tcl-wiring-disconnect
 (defun tcl-wiring-disconnect (&key clientComp wiringName)
-  (let ((tmp (apply-substitution (list clientComp wiringName) (tcb-env-vars *CURRENT-INSTANCE*))))
+  (let ((tmp (apply-substitution (list clientComp wiringName) (tcb-env-vars *CURRENT-INSTANCE*)))
+        (module (tcb-module *CURRENT-INSTANCE*))
+        (module-inst (tcb-module-inst *CURRENT-INSTANCE*)))
     ;; wiring
-    (communication *SMARTSOFT* (list 'wiring 'wiring 'disconnect tmp)))
+    (communication *SMARTSOFT* (list 'special *WIRING-MODULE-NAME* (list module module-inst) nil 'disconnect tmp)))
   '(SUCCESS))
 
 

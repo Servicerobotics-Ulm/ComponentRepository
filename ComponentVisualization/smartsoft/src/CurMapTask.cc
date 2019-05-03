@@ -60,12 +60,7 @@ CurMapTask::~CurMapTask()
 }
 
 
-
-int CurMapTask::on_entry()
-{
-	// do initialization procedures here, which are called once, each time the task is started
-	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
-    	gridMap = new GridMapVisualization(COMP->getWindow3d(), "CurrentMap", false, true);
+int CurMapTask::connectServices(){
 	std::cout << "connecting to: " << COMP->connections.curPushClient.serverName << "; " << COMP->connections.curPushClient.serviceName << std::endl;
 	Smart::StatusCode status = COMP->curPushClient->connect(COMP->connections.curPushClient.serverName, COMP->connections.curPushClient.serviceName);
 	while (status != Smart::SMART_OK) {
@@ -73,7 +68,21 @@ int CurMapTask::on_entry()
 		status = COMP->curPushClient->connect(COMP->connections.curPushClient.serverName, COMP->connections.curPushClient.serviceName);
 	}
 	std::cout << COMP->connections.curPushClient.serverName << "; " << COMP->connections.curPushClient.serviceName << " connected.\n";
+	return 0;
+}
 
+
+int CurMapTask::disconnectServices(){
+	COMP->curPushClient->disconnect();
+	return 0;
+}
+
+
+int CurMapTask::on_entry()
+{
+	// do initialization procedures here, which are called once, each time the task is started
+	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
+	gridMap = new GridMapVisualization(COMP->getWindow3d(), "CurrentMap", false, true);
 	COMP->curPushClient->subscribe();
 
 	return (gridMap !=0)?0:1;
@@ -99,6 +108,5 @@ int CurMapTask::on_exit()
 	// use this method to clean-up resources which are initialized in on_entry() and needs to be freed before the on_execute() can be called again
 	delete gridMap;
 	COMP->curPushClient->unsubscribe();
-	COMP->curPushClient->disconnect();
 	return 0;
 }

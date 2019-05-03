@@ -1,0 +1,119 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; VISUALIZATION
+
+;   (execute '(VISMODULE.startVisualizationOf 'base "ComponentRobotinoBaseServer" "BaseStateServiceOut"))
+;   (execute '(VISMODULE.stopVisualizationOf 'base))
+
+
+
+;;;;;;;;;;
+;; DEFAULT
+
+(realize-tcb  (startVisualizationOf ?type ?server ?service)
+  (module "VisualizationModule")
+  (action (
+            (format t "=========================>>> startVisualizationOf DEFAULT~%")
+            (format t "type: ~a service: ~a service: ~a~%" '?type '?server '?service)
+            '(SUCCESS (OK)))))
+
+(realize-tcb  (stopVisualizationOf ?type)
+  (module "VisualizationModule")
+  (action (
+            (format t "=========================>>> stopVisualizationOf DEFAULT~%")
+            (format t "type: ~a service: ~a service: ~a~%" '?type)
+            '(SUCCESS (OK)))))
+;; DEFAULT
+;;;;;;;;;;
+
+
+
+;;;;;;;;;;
+;; BASE
+(realize-tcb  (startVisualizationOf 'base ?server ?service)
+  (module "VisualizationModule")
+  (action (
+            (format t "=========================>>> startVisualizationOf base ~%")
+            (tcl-wiring-connect :clientComp 'vis :wiringName "baseClient" :serverComp ?server :serverService ?service)
+            (tcl-param :server 'vis :slot 'COMMBASICOBJECTS.VISUALIZATIONPARAMS.SHOW_BASE1)
+            '(SUCCESS (OK)))))
+
+
+(realize-tcb  (stopVisualizationOf 'base)
+  (module "VisualizationModule")
+  (action (
+            (format t "=========================>>> stopVisualizationOf base ~%")
+            (tcl-wiring-disconnect :clientComp 'vis :wiringName "baseClient")
+            (tcl-param :server 'vis :slot 'COMMBASICOBJECTS.VISUALIZATIONPARAMS.STOP_BASE1)
+            '(SUCCESS (OK)))))
+
+;; BASE
+;;;;;;;;;;
+
+;;;;;;;;;;
+;; LASER
+(realize-tcb  (startVisualizationOf 'laser1 ?server ?service)
+  (module "VisualizationModule")
+  (action (
+            (format t "=========================>>> startVisualizationOf laser1 ~%")
+            (tcl-wiring-connect :clientComp 'vis :wiringName "laserClient1" :serverComp ?server :serverService ?service)
+            (tcl-param :server 'vis :slot 'COMMBASICOBJECTS.VISUALIZATIONPARAMS.SHOW_LASER1)
+            '(SUCCESS (OK)))))
+
+
+(realize-tcb  (stopVisualizationOf 'laser1)
+  (module "VisualizationModule")
+  (action (
+            (format t "=========================>>> stopVisualizationOf laser1 ~%")
+            (tcl-wiring-disconnect :clientComp 'vis :wiringName "laserClient1")
+            (tcl-param :server 'vis :slot 'COMMBASICOBJECTS.VISUALIZATIONPARAMS.STOP_LASER1)
+            '(SUCCESS (OK)))))
+
+
+
+(realize-tcb  (startVisualizationOf 'laser2 ?server ?service)
+  (module "VisualizationModule")
+  (action (
+            (format t "=========================>>> startVisualizationOf laser2 ~%")
+            (tcl-wiring-connect :clientComp 'vis :wiringName "laserClient2" :serverComp ?server :serverService ?service)
+            (tcl-param :server 'vis :slot 'COMMBASICOBJECTS.VISUALIZATIONPARAMS.SHOW_LASER2)
+            '(SUCCESS (OK)))))
+
+
+(realize-tcb  (stopVisualizationOf 'laser2)
+  (module "VisualizationModule")
+  (action (
+            (format t "=========================>>> stopVisualizationOf laser2 ~%")
+            (tcl-wiring-disconnect :clientComp 'vis :wiringName "laserClient2")
+            (tcl-param :server 'vis :slot 'COMMBASICOBJECTS.VISUALIZATIONPARAMS.STOP_LASER2)
+            '(SUCCESS (OK)))))
+
+;; LASER
+;;;;;;;;;;
+
+
+;;;;;;;;;;
+;; MAP
+(realize-tcb  (startVisualizationOf 'map1 ?server ?service)
+  (module "VisualizationModule")
+  (action (
+            (format t "=========================>>> startVisualizationOf map1 ~%")
+            (tcl-wiring-connect :clientComp 'vis :wiringName "curPushClient" :serverComp ?server :serverService ?service)
+            (tcl-param :server 'vis :slot 'COMMBASICOBJECTS.VISUALIZATIONPARAMS.SHOW_MAP1)
+            '(SUCCESS (OK)))))
+
+
+(realize-tcb  (stopVisualizationOf 'map1)
+  (module "VisualizationModule")
+  (action (
+            (format t "=========================>>> stopVisualizationOf map1 ~%")
+            (tcl-wiring-disconnect :clientComp 'vis :wiringName "curPushClient")
+            (tcl-param :server 'vis :slot 'COMMBASICOBJECTS.VISUALIZATIONPARAMS.STOP_MAP1)
+            '(SUCCESS (OK)))))
+;; MAP
+;;;;;;;;;;
+
+
+
+;; VISUALIZATION
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

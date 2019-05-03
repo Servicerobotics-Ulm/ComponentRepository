@@ -59,14 +59,7 @@ IRTask::~IRTask()
 	std::cout << "destructor IRTask\n";
 }
 
-
-
-int IRTask::on_entry()
-{
-	// do initialization procedures here, which are called once, each time the task is started
-	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
-	ir = new IRScanVisualization(COMP->getWindow3d(), "IR");
-
+int IRTask::connectServices(){
 	std::cout << "connecting to: " << COMP->connections.irPushNewestClient.serverName<< "; " << COMP->connections.irPushNewestClient.serviceName
 			<< std::endl;
 	Smart::StatusCode status = COMP->irPushNewestClient->connect(COMP->connections.irPushNewestClient.serverName,
@@ -79,6 +72,18 @@ int IRTask::on_entry()
 	}
 	std::cout << "connected.\n";
 	std::cout << COMP->connections.irPushNewestClient.serverName << "; " << COMP->connections.irPushNewestClient.serviceName << " connected.\n";
+	return 0;
+}
+int IRTask::disconnectServices(){
+	COMP->irPushNewestClient->disconnect();
+	return 0;
+}
+
+int IRTask::on_entry()
+{
+	// do initialization procedures here, which are called once, each time the task is started
+	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
+	ir = new IRScanVisualization(COMP->getWindow3d(), "IR");
 	COMP->irPushNewestClient->subscribe();
 
 	return (ir !=0)?0:1;
@@ -112,6 +117,5 @@ int IRTask::on_exit()
 	// use this method to clean-up resources which are initialized in on_entry() and needs to be freed before the on_execute() can be called again
 	delete ir;
 	COMP->irPushNewestClient->unsubscribe();
-	COMP->irPushNewestClient->disconnect();
 	return 0;
 }

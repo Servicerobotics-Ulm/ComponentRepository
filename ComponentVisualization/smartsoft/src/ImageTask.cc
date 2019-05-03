@@ -29,14 +29,7 @@ ImageTask::~ImageTask()
 	std::cout << "destructor ImageTask\n";
 }
 
-
-
-int ImageTask::on_entry()
-{
-	// do initialization procedures here, which are called once, each time the task is started
-	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
-	imageVisualization= new ImageVisualization("Color Image");
-
+int ImageTask::connectServices(){
 	std::cout << "connecting to: " << COMP->connections.imagePushNewestClient.serverName << "; " << COMP->connections.imagePushNewestClient.serviceName << std::endl;
 	Smart::StatusCode status = COMP->imagePushNewestClient->connect(COMP->connections.imagePushNewestClient.serverName, COMP->connections.imagePushNewestClient.serviceName);
 	while (status != Smart::SMART_OK){
@@ -44,6 +37,18 @@ int ImageTask::on_entry()
 		status = COMP->imagePushNewestClient->connect(COMP->connections.imagePushNewestClient.serverName, COMP->connections.imagePushNewestClient.serviceName);
 	}
 	std::cout << COMP->connections.imagePushNewestClient.serverName << "; " << COMP->connections.imagePushNewestClient.serviceName << " connected.\n";
+	return 0;
+}
+int ImageTask::disconnectServices(){
+	COMP->imagePushNewestClient->disconnect();
+	return 0;
+}
+
+int ImageTask::on_entry()
+{
+	// do initialization procedures here, which are called once, each time the task is started
+	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
+	imageVisualization= new ImageVisualization("Color Image");
 	COMP->imagePushNewestClient->subscribe();
 
 	return (imageVisualization !=0)? 0 : 1;
@@ -69,6 +74,5 @@ int ImageTask::on_exit()
 	// use this method to clean-up resources which are initialized in on_entry() and needs to be freed before the on_execute() can be called again
 	delete imageVisualization;
 	COMP->imagePushNewestClient->unsubscribe();
-	COMP->imagePushNewestClient->disconnect();
 	return 0;
 }

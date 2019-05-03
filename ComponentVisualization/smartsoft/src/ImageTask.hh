@@ -33,6 +33,9 @@ public:
 	virtual int on_entry();
 	virtual int on_execute();
 	virtual int on_exit();
+
+	int connectServices();
+	int disconnectServices();
 };
 
 #endif

@@ -30,6 +30,20 @@ DepthTask::~DepthTask()
 }
 
 
+int DepthTask::connectServices(){
+	std::cout << "connecting to: " << COMP->connections.depthPushNewestClient.serverName << "; " << COMP->connections.depthPushNewestClient.serviceName << std::endl;
+	Smart::StatusCode status = COMP->depthPushNewestClient->connect(COMP->connections.depthPushNewestClient.serverName, COMP->connections.depthPushNewestClient.serviceName);
+	while (status != Smart::SMART_OK){
+		usleep(500000);
+		status = COMP->depthPushNewestClient->connect(COMP->connections.depthPushNewestClient.serverName, COMP->connections.depthPushNewestClient.serviceName);
+	}
+	std::cout << COMP->connections.depthPushNewestClient.serverName << "; " << COMP->connections.depthPushNewestClient.serviceName << " connected.\n";
+	return 0;
+}
+int DepthTask::disconnectServices(){
+	COMP->depthPushNewestClient->disconnect();
+	return 0;
+}
 
 int DepthTask::on_entry()
 {
@@ -37,17 +51,9 @@ int DepthTask::on_entry()
 	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
 	imageVisualization= new ImageVisualization("Depth Image");
 
-		std::cout << "connecting to: " << COMP->connections.depthPushNewestClient.serverName << "; " << COMP->connections.depthPushNewestClient.serviceName << std::endl;
-		Smart::StatusCode status = COMP->depthPushNewestClient->connect(COMP->connections.depthPushNewestClient.serverName, COMP->connections.depthPushNewestClient.serviceName);
-		while (status != Smart::SMART_OK){
-			usleep(500000);
-			status = COMP->depthPushNewestClient->connect(COMP->connections.depthPushNewestClient.serverName, COMP->connections.depthPushNewestClient.serviceName);
-		}
-		std::cout << COMP->connections.depthPushNewestClient.serverName << "; " << COMP->connections.depthPushNewestClient.serviceName << " connected.\n";
-		COMP->depthPushNewestClient->subscribe();
+	COMP->depthPushNewestClient->subscribe();
 
-		return (imageVisualization !=0)? 0 : 1;
-	return 0;
+	return (imageVisualization !=0)? 0 : 1;
 }
 int DepthTask::on_execute()
 {
@@ -73,6 +79,5 @@ int DepthTask::on_exit()
 	// use this method to clean-up resources which are initialized in on_entry() and needs to be freed before the on_execute() can be called again
 	delete imageVisualization;
 	COMP->depthPushNewestClient->unsubscribe();
-	COMP->depthPushNewestClient->disconnect();
 	return 0;
 }

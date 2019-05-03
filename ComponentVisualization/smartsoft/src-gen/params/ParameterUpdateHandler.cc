@@ -38,6 +38,186 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 			// the commit state is rejected and is not copied into the global state
 		}
 	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.SHOW_BASE1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_SHOW_BASE1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.SHOW_DEPTHIMAGE1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_SHOW_DEPTHIMAGE1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.SHOW_IR1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_SHOW_IR1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.SHOW_LASER1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_SHOW_LASER1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.SHOW_LASER2")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_SHOW_LASER2Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.SHOW_LASER3")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_SHOW_LASER3Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.SHOW_MAP1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_SHOW_MAP1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.SHOW_RGB1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_SHOW_RGB1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.SHOW_RGBD1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_SHOW_RGBD1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.STOP_BASE1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_STOP_BASE1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.STOP_DEPTHIMAGE1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_STOP_DEPTHIMAGE1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.STOP_IR1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_STOP_IR1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.STOP_LASER1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_STOP_LASER1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.STOP_LASER2")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_STOP_LASER2Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.STOP_LASER3")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_STOP_LASER3Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.STOP_MAP1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_STOP_MAP1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.STOP_RGB1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_STOP_RGB1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.STOP_RGBD1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_STOP_RGBD1Core(
+			);
+		}
+	}
 	else
 	{
 		/////////////////////////////////////////////////////////////////////

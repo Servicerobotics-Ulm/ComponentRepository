@@ -1,0 +1,10 @@
+SkillRealizationModel { 
+	CoordinationModuleRealization visualizationmod coordModuleDef CommBasicObjects.VisualizationModule uses {
+		CommBasicObjects.VisualizationCoordinationService intsName vis
+	}
+	{
+		//todo this is only a dummy realization see tcl file for real model
+		SkillRealization startVisualizationOf { action () }
+		SkillRealization stopVisualizationOf { action () }
+	}
+}
