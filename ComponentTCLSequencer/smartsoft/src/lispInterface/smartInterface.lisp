@@ -466,7 +466,7 @@ ZAFH Servicerobotik Ulm, Germany
                           ;;replace the abstract comp-inst with the real component instance name
                           (setf (nth 0 prm) wiring-client-ci-comp-inst)
  
-                          (setq result (interface *WIRING-MODULE-NAME* wiring-module-inst wiring-ci-inst svc mth prm)))
+                          (setq result (interface *WIRING-MODULE-NAME* wiring-module-inst wiring-ci-inst svc mth prm))
                           ;; result ok
                           (cond ( (equal (first result) 'ok)
                                     (setf (smartsoft-result instance) (second result))
@@ -478,7 +478,7 @@ ZAFH Servicerobotik Ulm, Germany
                                 ( T 
                                   (setf (smartsoft-result instance) (second result))
                                   (format t "~% communication interface: unknown error: ~s~%" activity)
-                                  NIL)))))
+                                  NIL))))))
 
              ;; T
              ( T 
