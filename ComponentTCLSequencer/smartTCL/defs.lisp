@@ -38,6 +38,8 @@
 (defvar *COMPONENT-LIFECYCLE-EVENT-LIST* nil)
 (defvar *RULE-CHILD-TCB* nil)
 
+(defvar *DEDBUG-CI* nil)
+
 ;;(defgeneric show (instance)) ; is already defined in smartSimpleKB
 
 ;; SmartTCL

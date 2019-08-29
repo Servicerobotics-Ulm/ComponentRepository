@@ -259,10 +259,10 @@
          (module (tcb-module *CURRENT-INSTANCE*))
          (module-inst (tcb-module-inst *CURRENT-INSTANCE*))
          (comp (query-kb *MEMORY* '(is-a name) `((is-a component)(name ,server)))))
-    (format t "Slot ~s~%" slot)
-    (format t "Server ~s~%" Server)
-    (format t "Module ~s~%" module)
-    (format t "ModuleInst ~s~%" module-inst)
+    (if *DEDBUG-CI* (format t "Slot ~s~%" slot))
+    (if *DEDBUG-CI* (format t "Server ~s~%" Server))
+    (if *DEDBUG-CI* (format t "Module ~s~%" module))
+    (if *DEDBUG-CI* (format t "ModuleInst ~s~%" module-inst))
     ;; send param
     (communication *SMARTSOFT* (list module module-inst server 'param "param" (list slot tmp)))
     ;; set param in memory

@@ -44,6 +44,8 @@ ZAFH Servicerobotik Ulm, Germany
 
 (defvar *SYNC-VAR-EVENTS* nil)
 
+(defvar *DEBUG-LI* nil)
+
 
 ;; LISP interface
 (defgeneric generate-event (instance parameter))
@@ -72,18 +74,18 @@ ZAFH Servicerobotik Ulm, Germany
 
 
 (defun matching-ci-inst (name element)
-  (format t "name:~s element:~s~%" name element)
+  (if *DEBUG-LI* (format t "name:~s element:~s~%" name element))
   (equal-symbol-string (cdr (assoc 'INST-NAME element)) name))
 
 
 (defun sendCommand (mod-type mod-inst ci-inst-name svc service prm)
-  (format t "~%~%SEND COMMAND START~%")
-  (format t "mod-type: ~s~%" mod-type)
-  (format t "mod-inst: ~s~%" mod-inst)
-  (format t "ci-inst-name: ~s~%" ci-inst-name)
-  (format t "svc: ~s~%" svc)
-  (format t "service: ~s~%" service)
-  (format t "prm: ~s~%" prm)
+  (if *DEBUG-LI* (format t "~%~%SEND COMMAND START~%"))
+  (if *DEBUG-LI* (format t "mod-type: ~s~%" mod-type))
+  (if *DEBUG-LI* (format t "mod-inst: ~s~%" mod-inst))
+  (if *DEBUG-LI* (format t "ci-inst-name: ~s~%" ci-inst-name))
+  (if *DEBUG-LI* (format t "svc: ~s~%" svc))
+  (if *DEBUG-LI* (format t "service: ~s~%" service))
+  (if *DEBUG-LI* (format t "prm: ~s~%" prm))
 
   ;;TODO REMOVE COMP_TYPE
   (let ((comp-type nil)
@@ -93,7 +95,7 @@ ZAFH Servicerobotik Ulm, Germany
         (ci-comp-inst nil)
         (module (query-kb *MEMORY* '(is-a type inst-name) `((is-a coordination-module) (type ,mod-type) (inst-name ,mod-inst)))))
 
-        (format t "comp-interfaces  : ~a ~%" (get-value module 'comp-interfaces))
+        (if *DEBUG-LI* (format t "comp-interfaces  : ~a ~%" (get-value module 'comp-interfaces)))
 
         (setf ci-inst (find ci-inst-name (get-value module 'comp-interfaces) :test #'matching-ci-inst))
 
@@ -106,10 +108,10 @@ ZAFH Servicerobotik Ulm, Germany
             (setf ci-services (cdr (assoc 'services ci-inst)))
             (setf ci-comp-inst (cdr (assoc 'component-inst ci-inst)))
 
-            (format t "type             : ~a ~%" ci-type)
-            (format t "inst-name        : ~a ~%" ci-inst-name)
-            (format t "services         : ~a ~%" ci-services)
-            (format t "cm-inst          : ~a ~%" ci-comp-inst)
+            (if *DEBUG-LI* (format t "type             : ~a ~%" ci-type))
+            (if *DEBUG-LI* (format t "inst-name        : ~a ~%" ci-inst-name))
+            (if *DEBUG-LI* (format t "services         : ~a ~%" ci-services))
+            (if *DEBUG-LI* (format t "cm-inst          : ~a ~%" ci-comp-inst))
 
             (cffi:with-foreign-strings ((ciType_str (format nil "~a" ci-type))
                                         (ciInstance_str (format nil "~a.~a" mod-inst ci-inst-name))
@@ -122,7 +124,7 @@ ZAFH Servicerobotik Ulm, Germany
                     (result nil))
                 (setf result (cffi:foreign-string-to-lisp ptr))
                 (cffi:foreign-free ptr)
-              (format t "raw res:~s~%" result)
+              (if *DEBUG-LI* (format t "raw res:~s~%" result))
               result))))))
 
 
@@ -250,8 +252,8 @@ ZAFH Servicerobotik Ulm, Germany
          (matched-event nil))
 
          (dolist (l (smartsoft-instantiated-events instance))
-           (format t "get-event match  mod-inst: ~s | ~s ~% inst: ~s | ~s ~% serv: ~s | ~s  ~% id: ~s | ~s~%" (event-module-instance l) mod-inst-name (event-ci-inst l) ci-inst-name (event-service l) svc-name (event-id l) eid)
-           (show l)
+           (if *DEBUG-LI* (format t "get-event match  mod-inst: ~s | ~s ~% inst: ~s | ~s ~% serv: ~s | ~s  ~% id: ~s | ~s~%" (event-module-instance l) mod-inst-name (event-ci-inst l) ci-inst-name (event-service l) svc-name (event-id l) eid))
+           (if *DEBUG-LI* (show l))
            (cond 
              ((and (equal-symbol-string mod-inst-name (event-module-instance l))
                    (equal-symbol-string ci-inst-name (event-ci-inst l)) 
@@ -327,14 +329,14 @@ ZAFH Servicerobotik Ulm, Germany
          (mth (fifth  activity))
          (prm (sixth activity)))
 
-  (format t "~%==================================~%")
-  (format t "==================================~%~%")
-  (format t "mod: ~s~%" mod)
-  (format t "mod-inst: ~s~%" mod-inst)
-  (format t "comp-ci-inst: ~s~%" comp)
-  (format t "svc: ~s~%" svc)
-  (format t "mth: ~s~%" mth)
-  (format t "prm: ~s~%" prm)
+       (if *DEBUG-LI* (format t "~%==================================~%"))
+       (if *DEBUG-LI* (format t "==================================~%~%"))
+       (if *DEBUG-LI* (format t "mod: ~s~%" mod))
+       (if *DEBUG-LI* (format t "mod-inst: ~s~%" mod-inst))
+       (if *DEBUG-LI* (format t "comp-ci-inst: ~s~%" comp))
+       (if *DEBUG-LI* (format t "svc: ~s~%" svc))
+       (if *DEBUG-LI* (format t "mth: ~s~%" mth))
+       (if *DEBUG-LI* (format t "prm: ~s~%" prm))
        ;; special - event - generate
        (cond ( (and (equal mod 'special)
                     (equal svc 'event)
@@ -355,8 +357,8 @@ ZAFH Servicerobotik Ulm, Germany
                       (event-prm  (rest  prm)))
                     ;; activate event
                     (setq result (activate event-inst (list (event-mode event-inst) event-prm)))
-                    (format t "Event past activate: ~%")
-                    (show event-inst)
+                    (if *DEBUG-LI* (format t "Event past activate: ~%"))
+                    (if *DEBUG-LI* (show event-inst))
                     ;; result ok
                     (cond ( (equal (first result) 'ok)
                               (setf (smartsoft-result instance) nil)
@@ -420,7 +422,7 @@ ZAFH Servicerobotik Ulm, Germany
                       ;;take the first ci in the KB mode
                       (kb-ci-inst (cdr (assoc 'INST-NAME (first comp-interfaces)))))
 
-                   (show-modules);;DEBUG
+                   (if *DEBUG-LI* (show-modules));;DEBUG
 
                (setq result (interface *KB-MODULE-NAME* kb-module-inst kb-ci-inst svc mth prm)))
                ;; result ok
@@ -450,7 +452,7 @@ ZAFH Servicerobotik Ulm, Germany
                       (wiring-client-ci-inst nil)
                       (wiring-client-ci-comp-inst nil))
 
-                      (show-modules);;DEBUG
+                      (if *DEBUG-LI* (show-modules));;DEBUG
                       
                       ;;find the client componet in case of wiring
                       (setf wiring-client-ci-inst (find (first prm) (get-value wiring-client-module 'comp-interfaces) :test #'matching-ci-inst))

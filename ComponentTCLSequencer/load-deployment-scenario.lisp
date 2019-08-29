@@ -65,15 +65,23 @@
   (read-coordination-module-system-file (format nil "~a/CoordinationModuleConnections.json" module-path))
   (instanciate-all-modules-and-cis module-path)
 
-  (dolist (file (directory (format nil "~a/*.smartTcl" module-path ) ))
+  (dolist (file (remove-if (lambda (it) (search "startUp.smartTcl" (namestring it))) (directory (format nil "~a/*.smartTcl" module-path ) )))
             (format t "Load Behavior Model: ~a ...~%" file)
             (load file))
 
   (format t "~%~%")
   (format t " ---------------------------------- ~%")
   (format t " load-depoyment-scenario finished ~%")
-  (format t " ---------------------------------- ~%~%"))
+  (format t " ---------------------------------- ~%~%")
 
+  (cond
+    ((not (null (probe-file (format nil "~a/startUp.smartTcl" module-path))))
+      (format t " load startup file: ~%")
+      (load (format nil "~a/startUp.smartTcl" module-path)))))
+
+
+  ;;  (load (format nil "./startUp.smartTcl"))
+  ;;(remove-if (lambda (it) (search "startUp.smartTcl" (namestring it))) (directory (format nil "./*.smartTcl")))
 
 ;(defun wait-for-component-shutdown ()
 ; (format t "call wait for componentshutdown~%")

@@ -35,8 +35,8 @@ std::string ComponentTCLSequencerCore::queryParam(SmartACE::ParameterMaster *par
 		SmartACE::CommParameterResponse parameterResponse;
 
 
-		std::cout<<"QueryParam: "<<param<<std::endl;
-		std::cout<<"Server: "<<server<<std::endl;
+//		std::cout<<"QueryParam: "<<param<<std::endl;
+//		std::cout<<"Server: "<<server<<std::endl;
 
 
 //		if (lispParamToParameterRequest(param,parameterRequest) == true)//param.set(input) == 0 )
@@ -62,7 +62,7 @@ std::string ComponentTCLSequencerCore::queryParam(SmartACE::ParameterMaster *par
 							outString << "(ok ())";
 							break;
 						default:
-							std::cout<<"SmartLispServerV2Core.cc::THIS SHOULD NEVEN HAPPEN!"<<std::endl;
+							std::cout<<"ComponentTCLSequencerCore.cc::THIS SHOULD NEVEN HAPPEN!"<<std::endl;
 							break;
 					}
 					break;

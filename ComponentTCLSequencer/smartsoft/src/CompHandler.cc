@@ -28,6 +28,7 @@
 #include "switchComponentLifeCycleEvents.hh"
 #include "switchTimer.hh"
 
+//#define DEBUG_CI
 
 //CompTask can not be a managed task!
 CompTask COMP_TASK;
@@ -77,7 +78,7 @@ extern "C" __declspec(dllexport) char* command(char* ciType, char* ciInstance, c
 	char* rtrn = NULL;
 
 	std::string result;
-
+#ifdef DEBUG_CI
 	std::cout<<"============================"<<std::endl;
 	std::cout<<"CiType: "<<ciType<<std::endl;
 	std::cout<<"CiInstance: "<<ciInstance<<std::endl;
@@ -86,6 +87,7 @@ extern "C" __declspec(dllexport) char* command(char* ciType, char* ciInstance, c
 	std::cout<<"Service: "<<service<<std::endl;
 	std::cout<<"Param: "<<param<<std::endl;
 	std::cout<<"============================"<<std::endl;
+#endif
 
 	std::map<std::string,ComponentTCLSequencerCore::CiFunctions>::const_iterator it = COMP->ciMap.find(ciType);
 	if (it != COMP->ciMap.end())

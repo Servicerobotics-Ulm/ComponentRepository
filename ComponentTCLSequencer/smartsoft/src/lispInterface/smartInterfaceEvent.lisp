@@ -120,7 +120,7 @@
   (cond ((equal (event-state instance) 'new)
           (setf (event-parameter instance) parameter)
           (setf (event-mode instance) (first parameter))
-          (show instance) ;;debug
+          (if *DEBUG-LI* (show instance)) ;;debug
           (let ((tmp (interface (event-module instance) (event-module-instance instance) (event-ci-inst instance) (event-service instance) (format nil "~a-activate" (event-service instance)) parameter)))
                (cond ((equal (first tmp) 'ok)
                        (setf (event-id instance) (first (second tmp)))
@@ -130,7 +130,7 @@
         (T (list 'error '(wrong event state for activation)))))
 
 (defmethod deactivate ((instance event))
-  (show instance) ;;debug
+  (if *DEBUG-LI* (show instance)) ;;debug
   (cond ((equal (event-state instance) 'activated)
           (let ((tmp (interface (event-module instance) (event-module-instance instance) (event-ci-inst instance) (event-service instance) (format nil "~a-deactivate" (event-service instance)) (list (event-id instance)))))
                (cond ((equal (first tmp) 'ok)

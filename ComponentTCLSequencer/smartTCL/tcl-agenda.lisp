@@ -66,7 +66,7 @@
 (defmethod initialize-instance :after ((instance tcb-execution-class) &key signature parent-sync-variables)
   (format t "initialize-instance: ~s ~%" signature)
 
-  (format t "parent-sync-variables: ~s ~%" parent-sync-variables)
+  ;(format t "parent-sync-variables: ~s ~%" parent-sync-variables)
   (setf (slot-value instance 'sync-variables) parent-sync-variables)
 
   (setf *CURRENT-INSTANCE* instance)
@@ -85,7 +85,7 @@
     ;;;;
     (setf (slot-value instance 'name) nil)
     ;; parse signature
-    (format t "TCB sig: ~a~%" signature)
+    (if *DEDBUG-CI* (format t "TCB sig: ~a~%" signature))
     (multiple-value-bind (name module-inst in-vars out-vars ext-run-time-id)
       (parse-tcl-signature signature)
  
@@ -102,7 +102,7 @@
       ;;TODO CHECK THIS!!!
       (setf tcb-module-inst module-inst)
       (setf (slot-value instance 'module-inst) module-inst)
-      (format t "tcb-module-inst: ~a~%" tcb-module-inst)
+      (if *DEDBUG-CI* (format t "tcb-module-inst: ~a~%" tcb-module-inst))
       (setf tcb-name name))
     
     ;; try to match tcb and store them in tcb-match-list     
@@ -628,13 +628,13 @@
 ;;;                  (???)                           pass through of return value of meta operator execute
 (defmethod execute-action ((instance tcb-execution-class) action)
   (let ((result '(ERROR ())))
-    (format t "~%~%##########################################################################~%")
-    (format t "execute-action~%")
-    (format t "instance:     ~a~%" (tcb-name instance))
-    (format t "module:       ~a~%" (tcb-module instance))
-    (format t "module-inst:  ~a~%" (tcb-module-inst instance))
-    (format t "tcb-env-vars: ~a~%" (tcb-env-vars instance))
-    (format t "##########################################################################~%")
+    (if *DEDBUG-CI* (format t "~%~%##########################################################################~%"))
+    (if *DEDBUG-CI* (format t "execute-action~%"))
+    (if *DEDBUG-CI* (format t "instance:     ~a~%" (tcb-name instance)))
+    (if *DEDBUG-CI* (format t "module:       ~a~%" (tcb-module instance)))
+    (if *DEDBUG-CI* (format t "module-inst:  ~a~%" (tcb-module-inst instance)))
+    (if *DEDBUG-CI* (format t "tcb-env-vars: ~a~%" (tcb-env-vars instance)))
+    (if *DEDBUG-CI* (format t "##########################################################################~%"))
     (dolist (step action result)
       (cond
         ((equal (first step) 'tcl-bind-var)
@@ -815,8 +815,8 @@
 	;; EVENT PORT EVENTS
         (cond
           ((not (null (tcb-events instance)))
-            (format t "process event in tcb: ~s ~s ~%" (tcb-name instance) (tcb-in-vars instance))
-            (format t "process event tcb-events : ~s ~%" (tcb-events instance))
+            (if *DEDBUG-CI* (format t "process event in tcb: ~s ~s ~%" (tcb-name instance) (tcb-in-vars instance)))
+            (if *DEDBUG-CI* (format t "process event tcb-events : ~s ~%" (tcb-events instance)))
 
             (setf result '(WAIT-FOR-EVENT ()))
             (dolist (evt (tcb-events instance))
@@ -1105,14 +1105,5 @@
               (setf *PENDING-EVENT-LIST* (check-events *SMARTSOFT* *ACTIVATED-EVENT-LIST*))))
 ;              (format t "MATTHIAS peding-event-list 2 : ~s ~%" *PENDING-EVENT-LIST*)))
           (setf result (execute-one-step tcb-exec)))))))
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
+
+     
