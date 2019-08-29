@@ -301,7 +301,9 @@ int LaserTask::on_exit()
 }
 
 bool LaserTask::accquireNewScan(CommBasicObjects::CommMobileLaserScan& scan, CommBasicObjects::CommLaserSafetyEventState& secEvt) {
-	bool retVal, protectiveField, warningfield = false;
+	bool retVal = false;
+	bool protectiveField = false;
+	bool warningfield = false;
 	std::vector<double> vdDistM, vdAngRAD;
 	std::vector<unsigned int> vdIntensAU;
 	std::vector<bool> vWarning, vProtective;

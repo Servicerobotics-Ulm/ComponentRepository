@@ -245,7 +245,6 @@ void RealSenSeWrapper::startVideo() {
 void RealSenSeWrapper::stopVideo() {
 	try {
 		pipeline.stop();
-		config.disable_all_streams();
 		std::cout << "Realsense device is Closed" <<std::endl;
 	} catch (std::exception &e) {
 		std::cerr << __FILE__<<__LINE__<<"Error while closing RealSense device : "

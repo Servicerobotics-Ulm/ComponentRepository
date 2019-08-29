@@ -1,9 +1,5 @@
 ComponentDefinition SmartGazeboBaseServer {
-	CoordinationSlavePort CoordinationPort implements CommNavigationObjects.BaseCoordinationService {
-		with baseState realizedBy BaseSatateQueryAnsw
-//		with bumperEvent realizedBy 
-//		with batteryEvent realizedBy 
-	}
+
 	
 	// Inputs and Responders
 	InputPort NavVelServiceIn implements CommNavigationObjects.NavigationVelocityService { }
@@ -41,5 +37,12 @@ ComponentDefinition SmartGazeboBaseServer {
 	ComponentParameters SmartGazeboBaseServerParams slave CoordinationPort;
 Activity PollForGazeboConnection
 	{
+	}
+
+		CoordinationSlavePort CoordinationPort implements CommNavigationObjects.BaseCoordinationService {
+		with baseState realizedBy BaseSatateQueryAnsw
+
+		
+		SkillRealizationsRef baseInst 
 	}
 }
