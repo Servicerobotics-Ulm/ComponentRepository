@@ -46,6 +46,24 @@ maxActFreqHz 0.0
 # priority 0
 # cpuAffinity 0
 
+[VisTask]
+minActFreqHz 0.0
+maxActFreqHz 0.0
+# setup default trigger as PeriodicTimer
+triggerType PeriodicTimer
+periodicActFreqHz 10.0
+# other trigger-types are:
+#triggerType PeriodicTimer
+#periodicActFreqHz 0.0
+# or alternatively:
+#triggerType DataTriggered
+#inPortRef <InPortName>
+#prescale 1
+# optional scheduling parameters
+# scheduler FIFO
+# priority 0
+# cpuAffinity 0
+
 ##########################
 # InputHandler parameters
 

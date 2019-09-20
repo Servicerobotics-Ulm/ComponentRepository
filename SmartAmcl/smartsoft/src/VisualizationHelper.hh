@@ -66,7 +66,12 @@
 #include <mrpt/gui.h>
 #include <mrpt/opengl.h>
 #include <mrpt/utils.h>
-#include <mrpt/maps.h>
+#ifdef WITH_OLD_MRPT_VERSION
+	#include <mrpt/maps.h>
+#else
+	#include <mrpt/maps/COccupancyGridMap2D.h>
+#endif
+
 
 using namespace mrpt;
 using namespace mrpt::math;

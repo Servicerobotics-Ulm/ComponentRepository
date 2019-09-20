@@ -36,6 +36,8 @@ ComponentLaserFromRGBDServer::ComponentLaserFromRGBDServer()
 	laserQueryHandler = NULL;
 	laserTask = NULL;
 	laserTaskTrigger = NULL;
+	visTask = NULL;
+	visTaskTrigger = NULL;
 	laserPushNewestServer = NULL;
 	laserQueryServer = NULL;
 	laserQueryServerInputTaskTrigger = NULL;
@@ -69,6 +71,14 @@ ComponentLaserFromRGBDServer::ComponentLaserFromRGBDServer()
 	connections.laserTask.scheduler = "DEFAULT";
 	connections.laserTask.priority = -1;
 	connections.laserTask.cpuAffinity = -1;
+	connections.visTask.minActFreq = 0.0;
+	connections.visTask.maxActFreq = 0.0;
+	connections.visTask.trigger = "PeriodicTimer";
+	connections.visTask.periodicActFreq = 10.0;
+	// scheduling default parameters
+	connections.visTask.scheduler = "DEFAULT";
+	connections.visTask.priority = -1;
+	connections.visTask.cpuAffinity = -1;
 	
 	// initialize members of ComponentLaserFromRGBDServerROSExtension
 	
@@ -152,6 +162,20 @@ void ComponentLaserFromRGBDServer::startAllTasks() {
 		laserTask->start(laserTask_SchedParams, connections.laserTask.cpuAffinity);
 	} else {
 		laserTask->start();
+	}
+	// start task VisTask
+	if(connections.visTask.scheduler != "DEFAULT") {
+		ACE_Sched_Params visTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
+		if(connections.visTask.scheduler == "FIFO") {
+			visTask_SchedParams.policy(ACE_SCHED_FIFO);
+			visTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+		} else if(connections.visTask.scheduler == "RR") {
+			visTask_SchedParams.policy(ACE_SCHED_RR);
+			visTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+		}
+		visTask->start(visTask_SchedParams, connections.visTask.cpuAffinity);
+	} else {
+		visTask->start();
 	}
 }
 
@@ -281,6 +305,44 @@ void ComponentLaserFromRGBDServer::init(int argc, char *argv[])
 			}
 		} 
 		
+		// create Task VisTask
+		visTask = new VisTask(component);
+		// configure input-links
+		// configure task-trigger (if task is configurable)
+		if(connections.visTask.trigger == "PeriodicTimer") {
+			// create PeriodicTimerTrigger
+			int microseconds = 1000*1000 / connections.visTask.periodicActFreq;
+			if(microseconds > 0) {
+				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
+				triggerPtr->attach(visTask);
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				// store trigger in class member
+				visTaskTrigger = triggerPtr;
+			} else {
+				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task VisTask" << std::endl;
+			}
+		} else if(connections.visTask.trigger == "DataTriggered") {
+			visTaskTrigger = getInputTaskTriggerFromString(connections.visTask.inPortRef);
+			if(visTaskTrigger != NULL) {
+				visTaskTrigger->attach(visTask, connections.visTask.prescale);
+			} else {
+				std::cerr << "ERROR: could not set-up InPort " << connections.visTask.inPortRef << " as activation source for Task VisTask" << std::endl;
+			}
+		} else
+		{
+			// setup default task-trigger as PeriodicTimer
+			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
+			int microseconds = 1000*1000 / 10.0;
+			if(microseconds > 0) {
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				triggerPtr->attach(visTask);
+				// store trigger in class member
+				visTaskTrigger = triggerPtr;
+			} else {
+				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task VisTask" << std::endl;
+			}
+		}
+		
 		
 		// link observers with subjects
 	} catch (const std::exception &ex) {
@@ -346,6 +408,12 @@ void ComponentLaserFromRGBDServer::fini()
 	if(laserTaskTrigger != NULL){
 		laserTaskTrigger->detach(laserTask);
 		delete laserTask;
+	}
+	// unlink all UpcallManagers
+	// unlink the TaskTrigger
+	if(visTaskTrigger != NULL){
+		visTaskTrigger->detach(visTask);
+		delete visTask;
 	}
 
 	// destroy all input-handler
@@ -502,6 +570,25 @@ void ComponentLaserFromRGBDServer::loadParameter(int argc, char *argv[])
 		}
 		if(parameter.checkIfParameterExists("LaserTask", "cpuAffinity")) {
 			parameter.getInteger("LaserTask", "cpuAffinity", connections.laserTask.cpuAffinity);
+		}
+		// load parameters for task VisTask
+		parameter.getDouble("VisTask", "minActFreqHz", connections.visTask.minActFreq);
+		parameter.getDouble("VisTask", "maxActFreqHz", connections.visTask.maxActFreq);
+		parameter.getString("VisTask", "triggerType", connections.visTask.trigger);
+		if(connections.visTask.trigger == "PeriodicTimer") {
+			parameter.getDouble("VisTask", "periodicActFreqHz", connections.visTask.periodicActFreq);
+		} else if(connections.visTask.trigger == "DataTriggered") {
+			parameter.getString("VisTask", "inPortRef", connections.visTask.inPortRef);
+			parameter.getInteger("VisTask", "prescale", connections.visTask.prescale);
+		}
+		if(parameter.checkIfParameterExists("VisTask", "scheduler")) {
+			parameter.getString("VisTask", "scheduler", connections.visTask.scheduler);
+		}
+		if(parameter.checkIfParameterExists("VisTask", "priority")) {
+			parameter.getInteger("VisTask", "priority", connections.visTask.priority);
+		}
+		if(parameter.checkIfParameterExists("VisTask", "cpuAffinity")) {
+			parameter.getInteger("VisTask", "cpuAffinity", connections.visTask.cpuAffinity);
 		}
 		
 		// load parameters for ComponentLaserFromRGBDServerROSExtension

@@ -17,9 +17,9 @@
 
 //------------------------------------------------------------------------
 //
-//  Copyright (C) 2018 Nayabrasul Shaik, Matthias Rollenhagen
+//  Copyright (C) 2018 Nayabrasul Shaik, Matthias Lutz, Matthias Rollenhagen
 //
-//        shaik@hs-ulm.de, rollenhagen@hs-ulm.de
+//        shaik@hs-ulm.de, lutz@hs-ulm.de, rollenhagen@hs-ulm.de
 //
 //        Christian Schlegel (schlegel@hs-ulm.de)
 //        University of Applied Sciences
@@ -48,8 +48,6 @@
 
 #include <iostream>
 
-// include communication objects
-
 
 void CompHandler::onStartup() 
 {
@@ -64,7 +62,13 @@ void CompHandler::onStartup()
 	
 	// Start all tasks. If you need manual control, use the content of this function to
 	// start each task individually.
-	COMP->startAllTasks();
+	//COMP->startAllTasks();
+
+	COMP->laserTask->start();
+#ifdef WITH_PCL_VISUALIZATION
+	COMP->visTask->start();
+#endif
+
 	
 	// Start all timers. If you need manual control, use the content of this function to
 	// start each timer individually.

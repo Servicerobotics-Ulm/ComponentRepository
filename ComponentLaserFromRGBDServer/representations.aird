@@ -90,6 +90,15 @@
               <styles xmi:type="notation:ShapeStyle" xmi:id="_SysxgUuwEemLgMd6c42YrA" fontName="Ubuntu" fontHeight="8" bold="true"/>
               <layoutConstraint xmi:type="notation:Bounds" xmi:id="_SysxgkuwEemLgMd6c42YrA" x="187" y="330"/>
             </children>
+            <children xmi:type="notation:Node" xmi:id="_-tJGYNuXEemIyd3a07gWTw" type="3008" element="_-sXqUNuXEemIyd3a07gWTw">
+              <children xmi:type="notation:Node" xmi:id="_-tKUgNuXEemIyd3a07gWTw" type="5005"/>
+              <children xmi:type="notation:Node" xmi:id="_-tK7kNuXEemIyd3a07gWTw" type="7002">
+                <styles xmi:type="notation:SortingStyle" xmi:id="_-tK7kduXEemIyd3a07gWTw"/>
+                <styles xmi:type="notation:FilteringStyle" xmi:id="_-tK7ktuXEemIyd3a07gWTw"/>
+              </children>
+              <styles xmi:type="notation:ShapeStyle" xmi:id="_-tJGYduXEemIyd3a07gWTw" fontName="Sans" fontHeight="8" bold="true"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-tJGYtuXEemIyd3a07gWTw" x="31" y="114"/>
+            </children>
             <styles xmi:type="notation:SortingStyle" xmi:id="_3jH4sUspEemLgMd6c42YrA"/>
             <styles xmi:type="notation:FilteringStyle" xmi:id="_3jH4skspEemLgMd6c42YrA"/>
           </children>
@@ -221,6 +230,22 @@
           <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_SytYlkuwEemLgMd6c42YrA" id="(0.5,0.5)"/>
           <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_SytYl0uwEemLgMd6c42YrA" id="(0.5,0.5)"/>
         </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_-A0L4NuXEemIyd3a07gWTw" type="4001" element="_9_4XwNuXEemIyd3a07gWTw" source="_KEzrMEsqEemLgMd6c42YrA" target="__p0cIEuvEemLgMd6c42YrA">
+          <children xmi:type="notation:Node" xmi:id="_-A8HsNuXEemIyd3a07gWTw" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-A8HsduXEemIyd3a07gWTw" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_-BAZINuXEemIyd3a07gWTw" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-BAZIduXEemIyd3a07gWTw" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_-BBnQNuXEemIyd3a07gWTw" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-BBnQduXEemIyd3a07gWTw" y="10"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_-A0L4duXEemIyd3a07gWTw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_-A0L4tuXEemIyd3a07gWTw" fontName="Sans" fontHeight="8"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_-A0L49uXEemIyd3a07gWTw" points="[1, 3, -37, -141]$[38, 144, 0, 0]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-BRe4NuXEemIyd3a07gWTw" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-BRe4duXEemIyd3a07gWTw" id="(0.5,0.5)"/>
+        </edges>
       </data>
     </ownedAnnotationEntries>
     <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_3itB9EspEemLgMd6c42YrA" name="ComponentLaserFromRGBDServer" tooltipText="ComponentDefinition">
@@ -272,7 +297,7 @@
         <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@style"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']"/>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_KElowEsqEemLgMd6c42YrA" name="LaserTask" tooltipText="Activity" outgoingEdges="_8eOrUEsqEemLgMd6c42YrA">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_KElowEsqEemLgMd6c42YrA" name="LaserTask" tooltipText="Activity" outgoingEdges="_8eOrUEsqEemLgMd6c42YrA _9_4XwNuXEemIyd3a07gWTw">
         <target xmi:type="ComponentDefinition:Activity" href="model/ComponentLaserFromRGBDServer.component#//@component/@elements.0"/>
         <semanticElements xmi:type="ComponentDefinition:Activity" href="model/ComponentLaserFromRGBDServer.component#//@component/@elements.0"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
@@ -318,7 +343,7 @@
           </ownedStyle>
           <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PublicOperationModeContainer']"/>
         </ownedDiagramElements>
-        <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="__pnAwEuvEemLgMd6c42YrA" name="GenerateLaser" tooltipText="PrivateOperationMode" incomingEdges="_G5lOcEuwEemLgMd6c42YrA">
+        <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="__pnAwEuvEemLgMd6c42YrA" name="GenerateLaser" tooltipText="PrivateOperationMode" incomingEdges="_G5lOcEuwEemLgMd6c42YrA _9_4XwNuXEemIyd3a07gWTw">
           <target xmi:type="CoordinationExtension:PrivateOperationMode" href="model/ComponentLaserFromRGBDServer.component#//@component/@elements.5/@elements.1"/>
           <semanticElements xmi:type="CoordinationExtension:PrivateOperationMode" href="model/ComponentLaserFromRGBDServer.component#//@component/@elements.5/@elements.1"/>
           <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
@@ -341,6 +366,18 @@
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentParametersContainer']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentParametersContainer']"/>
+      </ownedDiagramElements>
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_-sXqUNuXEemIyd3a07gWTw" name="VisTask" tooltipText="Activity">
+        <target xmi:type="ComponentDefinition:Activity" href="model/ComponentLaserFromRGBDServer.component#//@component/@elements.7"/>
+        <semanticElements xmi:type="ComponentDefinition:Activity" href="model/ComponentLaserFromRGBDServer.component#//@component/@elements.7"/>
+        <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+        <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+        <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_-sYRYNuXEemIyd3a07gWTw" borderSize="1" borderSizeComputationExpression="1">
+          <labelFormat>bold</labelFormat>
+          <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@style"/>
+        </ownedStyle>
+        <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']"/>
       </ownedDiagramElements>
     </ownedDiagramElements>
     <ownedDiagramElements xmi:type="diagram:DEdge" uid="_rKSeUEsqEemLgMd6c42YrA" sourceNode="_rKGREEsqEemLgMd6c42YrA" targetNode="_rKItUEsqEemLgMd6c42YrA">
@@ -385,6 +422,15 @@
         <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_Syq8UkuwEemLgMd6c42YrA"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ParametersEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_9_4XwNuXEemIyd3a07gWTw" name="uses" sourceNode="_KElowEsqEemLgMd6c42YrA" targetNode="__pnAwEuvEemLgMd6c42YrA">
+      <target xmi:type="CoordinationExtension:OperationModeBinding" href="model/ComponentLaserFromRGBDServer.component#//@component/@elements.0/@extensions.0"/>
+      <semanticElements xmi:type="CoordinationExtension:OperationModeBinding" href="model/ComponentLaserFromRGBDServer.component#//@component/@elements.0/@extensions.0"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_9_4-0NuXEemIyd3a07gWTw" size="2">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='OperationModeBinding']/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_9_4-0duXEemIyd3a07gWTw" showIcon="false"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='OperationModeBinding']"/>
     </ownedDiagramElements>
     <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
     <filterVariableHistory xmi:type="diagram:FilterVariableHistory" uid="_3itB9kspEemLgMd6c42YrA"/>

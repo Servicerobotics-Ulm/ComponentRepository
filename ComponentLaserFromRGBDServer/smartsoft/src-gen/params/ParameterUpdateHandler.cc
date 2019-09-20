@@ -118,6 +118,18 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.laser_generator.angle_resolution = commitState.laser_generator.angle_resolution;
 		}
+		if(parameter.getDouble("laser_generator", "floor_threshold_distance", commitState.laser_generator.floor_threshold_distance))
+		{
+			globalState.laser_generator.floor_threshold_distance = commitState.laser_generator.floor_threshold_distance;
+		}
+		if(parameter.getInteger("laser_generator", "generationPeriodMilliSec", commitState.laser_generator.generationPeriodMilliSec))
+		{
+			globalState.laser_generator.generationPeriodMilliSec = commitState.laser_generator.generationPeriodMilliSec;
+		}
+		if(parameter.getInteger("laser_generator", "generationPeriodSec", commitState.laser_generator.generationPeriodSec))
+		{
+			globalState.laser_generator.generationPeriodSec = commitState.laser_generator.generationPeriodSec;
+		}
 		if(parameter.getInteger("laser_generator", "max_range", commitState.laser_generator.max_range))
 		{
 			globalState.laser_generator.max_range = commitState.laser_generator.max_range;

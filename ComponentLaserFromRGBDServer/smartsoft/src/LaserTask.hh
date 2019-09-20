@@ -17,9 +17,9 @@
 
 //------------------------------------------------------------------------
 //
-//  Copyright (C) 2018 Nayabrasul Shaik, Matthias Rollenhagen
+//  Copyright (C) 2018 Nayabrasul Shaik, Matthias Lutz, Matthias Rollenhagen
 //
-//        shaik@hs-ulm.de, rollenhagen@hs-ulm.de
+//        shaik@hs-ulm.de, lutz@hs-ulm.de, rollenhagen@hs-ulm.de
 //
 //        Christian Schlegel (schlegel@hs-ulm.de)
 //        University of Applied Sciences
@@ -63,26 +63,28 @@
 //  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 //--------------------------------------------------------------------------
-
 #ifndef _LASERTASK_HH
 #define _LASERTASK_HH
 
 #include "LaserTaskCore.hh"
-#include "LaserTaskCore.hh"
-#include "CommBasicObjects/CommBasePose.hh"
+#include "LaserTaskTimerUSER.hh"
+
 #include "CommBasicObjects/CommMobileLaserScan.hh"
 #include "DomainVision/CommRGBDImage.hh"
 
-#include <opencv2/opencv.hpp>
+//include needs to be before the pcl, due to the fact that the mrpt needs to be included before eigen
 #include <mrpt/poses/CPoint.h>
 
-#include <armadillo.hh>
-#include <vector>
+#include <pcl/common/common_headers.h>
+
 #include <deque>
 
 class LaserTask  : public LaserTaskCore
 {
+
 private:
+
+	LaserTaskTimerUser timer;
 
 	CommBasicObjects::CommMobileLaserScan laser_scan;
 	DomainVision::CommRGBDImage rgbd_scan;
@@ -93,7 +95,7 @@ private:
 	bool first_image_flag;  /**use this flag to read intrinsic and extrinsic parameters from the first received RGBD image**/
 
 
-	//these variables are derived from rgbd proterties, calculate only once
+	//these variables are derived from RGBD properties, calculate only once
 	float       hfov_rad;    ///< Horizontal field of View (in radians)
 	float       vfov_rad;    ///< Vertical field of View (in radians)
 	size_t nLaserRays;       ///< number of laser rays in a scan
@@ -101,17 +103,12 @@ private:
 	double angle_resolution; ///< Difference of angles between 2 consecutive rays
 
 
-	float vertical_view;///< vertical field of view angle to be considered (specified from parameters)
+	float vertical_view;///< vertical field of view angle to be considered (currently full view is considered)
 	uint32_t min_dist;  ///< Minimum distance range
 	uint32_t max_dist;  ///< Maximum distance range
 
-	std::vector<float> vert_ang_tan;
-	float tan_min;
-	float tan_max;
-
-	//distance of floor from camera center, we assume robot is on flat floor
-	double camera_height_from_floor; //in meters
-
+	//distance between robot base frame and floor( see the image in doc/readme.md)
+	double robot_base_frame_height_from_floor; //in meters
 
 	// Color and Depth intrinsics
 	struct st_intrinsics{
@@ -127,10 +124,6 @@ private:
 		float translation[3];
 	}depth_to_color_extrinsics;
 
-	//soure of rgbd image
-	u_int8_t rgbd_source;
-	std::vector<bool> floor_mask;
-	//bool floor_mask[MAX_DEPTH_VALUES];
 	std::deque<float> laser_ray_distances;
 public:
 	LaserTask(SmartACE::SmartComponent *comp);
@@ -142,22 +135,24 @@ public:
 	bool realsense_to_laserscan(DomainVision::CommRGBDImage& rgbd_scan, CommBasicObjects::CommMobileLaserScan& laser_scan);
 	static double pi_to_pi(double angle);
 	void display_parameters();
+
+
 private:
+
 	void init_laser_generation();
-	double camera_height_from_floor_meters();
+	void read_intrinsics_extrinsics(const DomainVision::CommRGBDImage& rgbd_image);
+
+	void createPointCloud(DomainVision::CommDepthImage &depth_image, pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_out);
+	void findMinimumDistances(const pcl::PointCloud<pcl::PointXYZ>::Ptr inputCloud, std::deque<float>& laser_ray_distances);
+	void set_laser_ray_distances(CommBasicObjects::CommMobileLaserScan& laser_scan, std::deque<float>& laser_ray_distances);
+
 	void calcPointXYZ (const uint32_t& r, const uint32_t& c, const float &depth_val_meters, float &x, float &y, float &z,
 			const st_intrinsics& intrinsics, const st_extrinsics& extrinsics);
 	void transform (const st_extrinsics& extrinsics, float &x, float &y, float &z);
 	void deproject(const st_intrinsics& intrinsics, const uint32_t& r, const uint32_t& c, const float &depth_val_meters, float &out_x, float &out_y, float &out_z);
 	void project(const st_intrinsics& intrinsics, uint32_t& out_r, uint32_t& out_c, const float &in_x, const float &in_y, const float &in_z);
-	void detect_floor(DomainVision::CommRGBDImage& rgbd_scan, std::vector<bool>& floor_mask);
-	void read_intrinsics_extrinsics(const DomainVision::CommRGBDImage& rgbd_image);
-	void comm_depth_image_to_cv_mat(DomainVision::CommDepthImage& comm_depth_image, cv::Mat& depth_mat);
-	void find_depth_distances(DomainVision::CommDepthImage& comm_depth_image, std::deque<float>& laser_ray_distances);
 	inline float get_depth(DomainVision::CommDepthImage& comm_depth_image, int row, int col);
-	void set_laser_ray_distances(CommBasicObjects::CommMobileLaserScan& laser_scan, std::deque<float>& laser_ray_distances);
-	void find_depth_distances_debug(DomainVision::CommDepthImage& comm_depth_image, std::deque<float>& laser_ray_distances);
-	mrpt::poses::CPoint3D transormPointToRobotCoord(const mrpt::poses::CPoint3D & point, CommBasicObjects::CommPose3d& sensor_pose);
+
 };
 
 #endif

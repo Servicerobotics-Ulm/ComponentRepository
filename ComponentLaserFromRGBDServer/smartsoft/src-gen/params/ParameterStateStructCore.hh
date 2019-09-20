@@ -103,6 +103,9 @@ public:
 			 * here are the member definitions
 			 */
 			double angle_resolution;
+			double floor_threshold_distance;
+			unsigned int generationPeriodMilliSec;
+			unsigned int generationPeriodSec;
 			unsigned int max_range;
 			unsigned int min_range;
 			unsigned char rgbd_source;
@@ -112,6 +115,9 @@ public:
 			// default constructor
 			laser_generatorType() {
 				angle_resolution = 0.5;
+				floor_threshold_distance = 0.05;
+				generationPeriodMilliSec = 200;
+				generationPeriodSec = 0;
 				max_range = 10000;
 				min_range = 280;
 				rgbd_source = 0;
@@ -122,6 +128,9 @@ public:
 			 * here are the public getters
 			 */
 			inline double getAngle_resolution() const { return angle_resolution; }
+			inline double getFloor_threshold_distance() const { return floor_threshold_distance; }
+			inline unsigned int getGenerationPeriodMilliSec() const { return generationPeriodMilliSec; }
+			inline unsigned int getGenerationPeriodSec() const { return generationPeriodSec; }
 			inline unsigned int getMax_range() const { return max_range; }
 			inline unsigned int getMin_range() const { return min_range; }
 			inline unsigned char getRgbd_source() const { return rgbd_source; }
@@ -131,6 +140,9 @@ public:
 			{
 				os << "laser_generator(";
 				os << "angle_resolution = " << angle_resolution << ", ";
+				os << "floor_threshold_distance = " << floor_threshold_distance << ", ";
+				os << "generationPeriodMilliSec = " << generationPeriodMilliSec << ", ";
+				os << "generationPeriodSec = " << generationPeriodSec << ", ";
 				os << "max_range = " << max_range << ", ";
 				os << "min_range = " << min_range << ", ";
 				os << "rgbd_source = " << rgbd_source << ", ";

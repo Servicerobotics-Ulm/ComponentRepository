@@ -1,10 +1,11 @@
 ComponentDefinition ComponentLaserFromRGBDServer logo "/ComponentLaserFromRGBDServer/model/logo.png"
 {
 
-Activity LaserTask
+	Activity LaserTask
 	{
 		OperationModeBinding CoordinationPort.GenerateLaser
 	}
+	
 	InputPort rgbdClient implements DomainVision.RGBDImagePushService {
 	}
 	AnswerPort laserQueryServer implements CommBasicObjects.LaserQueryService {
@@ -19,4 +20,9 @@ Activity LaserTask
 		SkillRealizationsRef LaserFromRGBDModule
 	}
 	ComponentParameters ComponentLaserFromRGBDServerParams slave CoordinationPort
+	
+	Activity VisTask
+	{
+		DefaultTrigger PeriodicTimer 10.0 Hz
+	}
 }

@@ -20,6 +20,14 @@ InternalParameter laser_generator
 	rgbd_source: UInt8 =0
 	// "angle resolution in degrees, this param determines the numbe of rays in a scan"
 	angle_resolution:Double = 0.5
+
+    // "the period of the generation is the addition of sec + msec"
+    generationPeriodSec:UInt32 =  0
+    generationPeriodMilliSec:UInt32 =  200
+
+    //"depth below this values is considered to be part of floor (in meters)"
+    floor_threshold_distance:Double = 0.05
+	
 }
 InternalParameter base_manipulator{
 	on_base: Boolean = true

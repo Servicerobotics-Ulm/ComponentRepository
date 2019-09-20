@@ -35,7 +35,6 @@
 #include "LaserVisualization.hh"
 
 #include <mrpt/opengl/CPlanarLaserScan.h>
-#include <mrpt/opengl/include/mrpt/opengl.h>
 
 #include "../src-gen/ComponentVisualization.hh"
 
@@ -44,16 +43,14 @@ LaserVisualization::LaserVisualization(CDisplayWindow3D& window3D, const std::st
 	AbstractVisualization(window3D, identifier) {
 	opengl::COpenGLScenePtr &ptrScene = window3D.get3DSceneAndLock();
 	{
-		//opengl::CPlanarLaserScanPtr scan = opengl::CPlanarLaserScan::Create();
-		//opengl::CPointCloudPtr scan;
 		if(COMP->getGlobalState().getServices().getSimple_laser_visualization() == true) {
 			opengl::CPointCloudPtr scan = opengl::CPointCloud::Create();
 			scan->setName(identifier);
 			ptrScene->insert(scan);
 		} else {
-			opengl::CPlanarLaserScanPtr scan = opengl::CPlanarLaserScan::Create();
-			scan->setName(identifier);
-			ptrScene->insert(scan);
+			opengl::CPlanarLaserScanPtr scan2 = opengl::CPlanarLaserScan::Create();
+			scan2->setName(identifier);
+			ptrScene->insert(scan2);
 		}
 
 
@@ -90,11 +87,11 @@ void LaserVisualization::displayLaserScan(const CommBasicObjects::CommMobileLase
 		size_t numScans = scan.get_scan_size();
 		double resolution = scan.get_scan_resolution();
 		double startAngle = pi_to_pi(scan.get_scan_start_angle());
-		double endAngle = pi_to_pi(scan.get_scan_angle(numScans - 1));
-		int scanSize = fabs(endAngle - startAngle) / resolution;
+		int max_scan_size = scan.get_max_scan_size();
+		double endAngle = pi_to_pi(startAngle+(max_scan_size*resolution));
 
 		if(COMP->getGlobalState().getSettings().getVerbose() == true){
-			std::cout<<"numScan: "<<numScans<<" res: in deg "<<resolution*180/3.14<<" startAngle: "<<startAngle*180/3.14<<" endAngle: "<<endAngle*180/3.14<<std::endl;
+			std::cout<<"numScan: "<<numScans << " maxScan: "<<max_scan_size<<" res: in deg "<<resolution*180/M_PI<<" startAngle: "<<startAngle*180/M_PI<<" endAngle: "<<endAngle*180/M_PI<<std::endl;
 		}
 
 #ifdef WITH_OLD_MRPT_VERSION
@@ -103,20 +100,7 @@ void LaserVisualization::displayLaserScan(const CommBasicObjects::CommMobileLase
 		obs::CObservation2DRangeScan s;
 #endif
 
-		s.scan.resize(scanSize);
-		s.validRange.resize(scanSize, 0);
-		s.aperture = scanSize * resolution;
-		s.maxRange = scan.get_max_distance(1.0);
-		s.sensorPose = pBase + pSensor;
 
-		for (size_t i = 0; i < numScans; ++i) {
-			int index = fabs(pi_to_pi(scan.get_scan_angle(i)) - startAngle) / resolution;
-
-			if (index < scanSize) {
-				s.scan[index] = scan.get_scan_distance(i, 1);// visualization needs distance in meters
-				s.validRange[index] = 1;
-			}
-		}
 
 		opengl::COpenGLScenePtr &ptrScene = window3D.get3DSceneAndLock();
 		{
@@ -128,15 +112,27 @@ void LaserVisualization::displayLaserScan(const CommBasicObjects::CommMobileLase
 				sPtr->setColorG(1);
 				sPtr->setColorB(0);
 				for (size_t i = 0; i < numScans; ++i) {
-					int index = fabs(pi_to_pi(scan.get_scan_angle(i)) - startAngle) / resolution;
-
 					double x, y, z;
 					scan.get_scan_cartesian_3dpoint_world(i, x, y, z, 1);
-					sPtr->insertPoint(x, -y, 1.5);
+					sPtr->insertPoint(x, y, z);
 				}
 			} else {
-				opengl::CPlanarLaserScanPtr sPtr = (opengl::CPlanarLaserScanPtr) ptrScene->getByName(identifier);
-				sPtr->setScan(s);
+
+				s.scan.resize(max_scan_size);
+				s.validRange.resize(max_scan_size, 0);
+				s.aperture = fabs(endAngle - startAngle);
+				s.maxRange = scan.get_max_distance(1.0);
+				s.sensorPose = pBase + pSensor;
+
+				for (size_t i = 0; i < numScans; ++i) {
+					int index = fabs(pi_to_pi(scan.get_scan_angle(i)) - startAngle) / resolution;
+
+					s.scan[index] = scan.get_scan_distance(i, 1.0);// visualization needs distance in meters
+					s.validRange[index] = 1;
+				}
+
+				opengl::CPlanarLaserScanPtr sPtr2 = (opengl::CPlanarLaserScanPtr) ptrScene->getByName(identifier);
+				sPtr2->setScan(s);
 			}
 
 

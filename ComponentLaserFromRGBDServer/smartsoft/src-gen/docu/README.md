@@ -41,6 +41,9 @@
 | vertical_fov | Double |  |
 | rgbd_source | UInt8 |  |
 | angle_resolution | Double |  |
+| generationPeriodSec | UInt32 |  |
+| generationPeriodMilliSec | UInt32 |  |
+| floor_threshold_distance | Double |  |
 
 ### InternalParameter base_manipulator
 

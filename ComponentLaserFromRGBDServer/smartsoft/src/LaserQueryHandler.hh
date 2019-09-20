@@ -17,9 +17,9 @@
 
 //------------------------------------------------------------------------
 //
-//  Copyright (C) 2018 Nayabrasul Shaik, Matthias Rollenhagen
+//  Copyright (C) 2018 Nayabrasul Shaik, Matthias Lutz, Matthias Rollenhagen
 //
-//        shaik@hs-ulm.de, rollenhagen@hs-ulm.de
+//        shaik@hs-ulm.de, lutz@hs-ulm.de, rollenhagen@hs-ulm.de
 //
 //        Christian Schlegel (schlegel@hs-ulm.de)
 //        University of Applied Sciences

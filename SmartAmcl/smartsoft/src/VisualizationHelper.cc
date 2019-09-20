@@ -64,6 +64,11 @@
 
 #include <sstream>
 
+#ifdef WITH_OLD_MRPT_VERSION
+#else
+	#include <mrpt/opengl/CPlanarLaserScan.h>
+#endif
+
 VisualizationHelper::VisualizationHelper() {
 }
 
@@ -225,22 +230,31 @@ void VisualizationHelper::displayLaserScan(
 	size_t numScans = scan.get_scan_size();
 	double resolution = scan.get_scan_resolution();
 	double startAngle = pi_to_pi(scan.get_scan_start_angle());
-	double endAngle =  pi_to_pi(scan.get_scan_angle(numScans - 1));
-	int scanSize = fabs(endAngle - startAngle) / resolution;
+	int max_scan_size = scan.get_max_scan_size();
+	double endAngle = pi_to_pi(startAngle+(max_scan_size*resolution));
 
-	s.scan.resize(scanSize);
-	s.validRange.resize(scanSize, 0);
-	s.aperture = scanSize * resolution;
+#ifdef WITH_MRPT_1_5_VERSION
+	s.resizeScan(max_scan_size);
+#else
+	s.scan.resize(max_scan_size);
+	s.validRange.resize(max_scan_size, 0);
+#endif
+
+	s.aperture = fabs(endAngle - startAngle);
 	s.maxRange = scan.get_max_distance(1.0);
 	s.sensorPose = pBase + pSensor;
 
 	for (size_t i = 0; i < numScans; ++i) {
 		int index = fabs(pi_to_pi(scan.get_scan_angle(i)) - startAngle) / resolution;
 
-		if (index < scanSize) {
-			s.scan[index] = scan.get_scan_distance(i, 1);
+#ifdef WITH_MRPT_1_5_VERSION
+			s.setScanRange(index, scan.get_scan_distance(i, 1));
+			s.setScanRangeValidity(index, true);
+#else
+			s.scan[index] = scan.get_scan_distance(i, 1.0);
 			s.validRange[index] = 1;
-		}
+#endif
+
 	}
 
 	opengl::COpenGLScenePtr &ptrScene = grid3D->get3DSceneAndLock();

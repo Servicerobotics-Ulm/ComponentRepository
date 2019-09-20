@@ -46,6 +46,7 @@ class ComponentLaserFromRGBDServerExtension;
 
 // include tasks
 #include "LaserTask.hh"
+#include "VisTask.hh"
 // include UpcallManagers
 #include "RgbdClientUpcallManager.hh"
 
@@ -105,6 +106,8 @@ public:
 	// define tasks
 	Smart::TaskTriggerSubject* laserTaskTrigger;
 	LaserTask *laserTask;
+	Smart::TaskTriggerSubject* visTaskTrigger;
+	VisTask *visTask;
 	
 	// define input-ports
 	// InputPort rgbdClient
@@ -225,6 +228,22 @@ public:
 			int priority;
 			int cpuAffinity;
 		} laserTask;
+		struct VisTask_struct {
+			double minActFreq;
+			double maxActFreq;
+			std::string trigger;
+			// only one of the following two params is 
+			// actually used at run-time according 
+			// to the system config model
+			double periodicActFreq;
+			// or
+			std::string inPortRef;
+			int prescale;
+			// scheduling parameters
+			std::string scheduler;
+			int priority;
+			int cpuAffinity;
+		} visTask;
 		
 		//--- upcall parameter ---
 		

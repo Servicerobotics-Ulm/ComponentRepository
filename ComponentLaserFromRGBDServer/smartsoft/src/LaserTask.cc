@@ -17,9 +17,9 @@
 
 //------------------------------------------------------------------------
 //
-//  Copyright (C) 2018 Nayabrasul Shaik, Matthias Rollenhagen
+//  Copyright (C) 2018 Nayabrasul Shaik, Matthias Lutz, Matthias Rollenhagen
 //
-//        shaik@hs-ulm.de, rollenhagen@hs-ulm.de
+//        shaik@hs-ulm.de, lutz@hs-ulm.de, rollenhagen@hs-ulm.de
 //
 //        Christian Schlegel (schlegel@hs-ulm.de)
 //        University of Applied Sciences
@@ -64,43 +64,26 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //--------------------------------------------------------------------------
 
+
 #include "LaserTask.hh"
 #include "ComponentLaserFromRGBDServer.hh"
 
-#include <mrpt/gui/CDisplayWindow3D.h>
-#include <mrpt/system/filesystem.h>
 #include <mrpt/utils/CTicTac.h>
-#include <mrpt/utils/CConfigFile.h>
-#include <mrpt/opengl/CPointCloudColoured.h>
-#include <mrpt/opengl/CPlanarLaserScan.h>
-#include <mrpt/opengl/CFrustum.h>
-#include <mrpt/opengl/CGridPlaneXY.h>
-#include <mrpt/opengl/stock_objects.h>
 #include <EulerTransformationMatrices.hh>
-#include <Eigen/src/Core/Matrix.h>
-#include <Eigen/src/Core/MatrixBase.h>
-#include <mrpt/poses/CPose3D.h>
-#include <mrpt/math.h>
-#include <mrpt/utils.h>
+//#include <Eigen/src/Core/Matrix.h>
+//#include <Eigen/src/Core/MatrixBase.h>
 
-#include <iostream>
-#include <algorithm>
-#include <set>
-#include <cmath>
-#include <vector>
-#include <limits>
-
+#include <pcl/filters/passthrough.h>
+#include <pcl/common/transforms.h>
 
 #define STOP while (std::cin.get() != '\n');
-#define DEGTORAD(x) x*3.141592/180
-#define RADTODEG(x) x*180/3.141592
 
-#include <iostream>
+#define DEGTORAD(x) x*M_PI/180.0f
+#define RADTODEG(x) x*180.0f/M_PI
 
 LaserTask::LaserTask(SmartACE::SmartComponent *comp) 
-:	LaserTaskCore(comp)
+:	LaserTaskCore(comp), timer()
 {
-	std::cout << "constructor LaserTask\n";
 	first_image_flag =true;
 }
 LaserTask::~LaserTask() 
@@ -108,36 +91,36 @@ LaserTask::~LaserTask()
 	std::cout << "destructor LaserTask\n";
 }
 
-
-
 int LaserTask::on_entry()
 {
+
 	ParameterStateStruct global_state = COMP->getGlobalState();
 	min_dist = global_state.getLaser_generator().getMin_range();
     max_dist = global_state.getLaser_generator().getMax_range();
     vertical_view = global_state.getLaser_generator().getVertical_fov(); //  degrees of vertical view
-    rgbd_source = global_state.getLaser_generator().getRgbd_source(); // source of rgbd image
-    angle_resolution = global_state.getLaser_generator().getAngle_resolution(); // angular resolution
-
-    if(angle_resolution<DEGTORAD(0.5))
-    	angle_resolution = DEGTORAD(0.5);
+    angle_resolution = DEGTORAD(global_state.getLaser_generator().getAngle_resolution()); // angular resolution
+    robot_base_frame_height_from_floor = COMP->getGlobalState().getLaser_generator().getFloor_threshold_distance();
 
 	std::cout << "[LaserTask] Initializing ..." << std::endl;
+
+	this->timer.start();
 
 	return 0;
 }
 int LaserTask::on_execute()
 {
 	mrpt::utils::CTicTac stopwatch;
-
 	stopwatch.Tic();
+
+	this->timer.waitTimer();
+
 
 	// this method is called from an outside loop,
 	// hence, NEVER use an infinite loop (like "while(1)") here inside!!!
 	// also do not use blocking calls which do not result from smartsoft kernel
 
 		// wait for scan (PushNewest)
-		status = COMP->rgbdClient->getUpdateWait(rgbd_scan);
+		status = COMP->rgbdClient->getUpdate(rgbd_scan);
 
 		if (status != Smart::SMART_OK) {
 
@@ -172,7 +155,9 @@ int LaserTask::on_execute()
 
 				CommBasicObjects::CommPose3d sensor_pose(rgbd_scan.getSensor_pose());
 				//laser_scan.set_sensor_pose(sensor_pose);
-				laser_scan.set_sensor_pose(CommBasicObjects::CommPose3d(sensor_pose.get_x(),sensor_pose.get_y(),sensor_pose.get_z(),0,0,0));
+				//laser_scan.set_sensor_pose(CommBasicObjects::CommPose3d(sensor_pose.get_x(),sensor_pose.get_y(),sensor_pose.get_z(),0,0,0));
+				//publish the laser in robot base frame
+				laser_scan.set_sensor_pose(CommBasicObjects::CommPose3d(0, 0, 0, 0, 0, 0));
 
 				// set robot scanner position
 				double x = sensor_pose.get_x();
@@ -245,65 +230,222 @@ int LaserTask::on_execute()
 		}
 
 
-	double detection_time = stopwatch.Tac();
-	std::cout << " Current Frequency: " << 1.0f/detection_time << "Hz" << std::endl;
+			double detection_time = stopwatch.Tac();
+			if (COMP->getGlobalState().getScanner().getVerbose()){
+			std::cout << '\r'<< " Current Frequency: " <<std::setw(10) << 1.0f/detection_time << " Hz";
+			}
 
+
+	// it is possible to return != 0 (e.g. when the task detects errors), then the outer loop breaks and the task stops
 	return 0;
-
 }
 int LaserTask::on_exit()
 {
+	//laser.stopMeas();
+
 	std::cout << "[LaserTask] Disconnect from laser" << std::endl;
+
+	this->timer.stop();
+
+	//laser.disconnect();
+	// use this method to clean-up resources which are initialized in on_entry() and needs to be freed before the on_execute() can be called again
 	return 0;
 }
+
+
+void LaserTask::createPointCloud(DomainVision::CommDepthImage &depth_image, pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_out) {
+
+	// get depth data
+	DomainVision::DepthFormatType depth_format = depth_image.getFormat();
+	uint32_t depth_width 							= depth_image.getWidth();
+	uint32_t depth_height 							= depth_image.getHeight();
+
+
+
+	for (uint32_t depth_row = 0; depth_row < depth_height; ++depth_row) { //along y
+		for (uint32_t depth_col = 0; depth_col < depth_width; ++depth_col) { //along x-axis
+
+
+			float depth_meters = get_depth(depth_image, depth_row, depth_col);
+
+			//find x, y, z for given depth pixel in rgb frame
+			float x_in_m, y_in_m, z_in_m;
+			calcPointXYZ (depth_row, depth_col, depth_meters, x_in_m, y_in_m, z_in_m, depth_intrinsics, depth_to_color_extrinsics);
+
+
+			if(std::isinf(x_in_m) || std::isinf(z_in_m) || std::isinf(y_in_m)){
+				continue;
+			}
+
+			if(std::isnan(x_in_m) || std::isnan(z_in_m) || std::isnan(y_in_m)){
+				continue;
+			}
+
+			if(x_in_m != x_in_m || y_in_m != y_in_m || z_in_m != z_in_m){
+				continue;
+			}
+			point_cloud_out->points.push_back(pcl::PointXYZ(x_in_m, y_in_m, z_in_m));
+		}
+	}
+
+}
+
+
+
+void LaserTask::findMinimumDistances(const pcl::PointCloud<pcl::PointXYZ>::Ptr inputCloud, std::deque<float>& laser_ray_distances_out){
+
+	std::map<int, double> angle_distances;
+	std::map<int, pcl::PointXYZ> laser_points_min;
+
+	for(pcl::PointCloud<pcl::PointXYZ>::const_iterator it=inputCloud->begin();it!=inputCloud->end();++it){
+
+		double x = it->x, y = it->y;
+		const double phi_wrt_origin = atan2(y, x);
+
+		int i_range = fabs(pi_to_pi(phi_wrt_origin) - start_angle) / angle_resolution;
+
+		if (i_range < 0 || i_range >= int(nLaserRays)){
+			std::cout<<"[LaserTask] skipp point not within field of view";
+			continue;
+		}
+
+		const double r_wrt_origin = sqrt(x*x + y*y)*1000;
+		if(angle_distances.find(i_range) == angle_distances.end())
+		{
+			angle_distances.insert(std::make_pair(i_range, r_wrt_origin));
+
+		}else if(angle_distances[i_range]>r_wrt_origin)
+		{
+			angle_distances[i_range] = r_wrt_origin;
+			laser_points_min[i_range] = pcl::PointXYZ(x,y,0);
+		}
+	}
+
+#ifdef WITH_PCL_VISUALIZATION
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_laser_min(new pcl::PointCloud<pcl::PointXYZ>);
+
+	for(auto it=laser_points_min.begin();it!=laser_points_min.end();++it){
+		cloud_laser_min->push_back(it->second);
+	}
+
+	COMP->visTask->showPointCloud(cloud_laser_min, "laserPoints", 255,255,0);
+#endif
+
+	laser_ray_distances_out.clear();
+
+	//check if all the indexes are filled, if not fill the ray with value more than max_dist, it will be invalidated in comm object
+	for (size_t i = 0; i < nLaserRays; i++) {
+		if(angle_distances.find(i) != angle_distances.end())
+		{
+			laser_ray_distances_out.push_front(angle_distances[nLaserRays - 1 - i]);
+		}else
+		{
+			laser_ray_distances_out.push_front(max_dist+1000);
+		}
+	}
+}
+
+/* +------------------------------------------------------------------------+
+   |                     Mobile Robot Programming Toolkit (MRPT)            |
+   |                          http://www.mrpt.org/                          |
+   |                                                                        |
+   | Copyright (c) 2005-2018, Individual contributors, see AUTHORS file     |
+   | See: http://www.mrpt.org/Authors - All rights reserved.                |
+   | Released under BSD License. See details in http://www.mrpt.org/License |
+   +------------------------------------------------------------------------+ */
+//	Based on MRPT library function "convertTo2DScan"
+//	https://raw.githubusercontent.com/MRPT/mrpt/master/libs/obs/src/CObservation3DRangeScan.cpp
+//  // Algorithm 2: project to 3D and reproject (for a different sensorPose at the origin)
 
 bool LaserTask::realsense_to_laserscan(DomainVision::CommRGBDImage &rgbd_scan, CommBasicObjects::CommMobileLaserScan& laser_scan)
 {
 
-	//DomainVision::CommVideoImage comm_rgb_image = rgbd_scan.getColor_image();
 	DomainVision::CommDepthImage comm_depth_image = rgbd_scan.getDepth_image();
-	std::fill( floor_mask.begin(), floor_mask.end(), false);
-
 
 	mrpt::utils::CTicTac stopwatch;
 
+	/////////////////////////////
+	// 1. generate pointcloud (camera frame
 	stopwatch.Tic();
-	detect_floor(rgbd_scan, floor_mask); // find the points correspond to floor
+	pcl::PointCloud<pcl::PointXYZ>::Ptr camera_point_cloud (new pcl::PointCloud<pcl::PointXYZ>());
+	createPointCloud(comm_depth_image, camera_point_cloud);
+#ifdef WITH_PCL_VISUALIZATION
+	COMP->visTask->showPointCloud(camera_point_cloud, "cameraFramePointCloud", 0,0,255);
+	double createPointCloud_time = stopwatch.Tac();
+	std::cout << "[set_laser_ray_distances] createPointCloud time: " << createPointCloud_time << "s" << std::endl;
+#endif
 
-	double detection_time = stopwatch.Tac();
-		//std::cout << "[detect_floor] Detection time: " << detection_time << "s" << std::endl;
+
+	/////////////////////////////
+	// 2. transform pointcloud to robot frame
+	stopwatch.Tic();
+	pcl::PointCloud<pcl::PointXYZ>::Ptr robot_point_cloud (new pcl::PointCloud<pcl::PointXYZ>());
+	CommBasicObjects::CommPose3d sensor_pose   = rgbd_scan.getSensor_pose();
+	double sensor_yaw = sensor_pose.get_azimuth(), sensor_pitch = sensor_pose.get_elevation(), sensor_roll = sensor_pose.get_roll();
+	Eigen::Affine3f transform = Eigen::Affine3f::Identity();
+	transform = pcl::getTransformation (sensor_pose.getPosition().get_x(1), sensor_pose.getPosition().get_y(1), sensor_pose.getPosition().get_z(1),
+			sensor_roll, sensor_pitch, sensor_yaw);
+
+	pcl::transformPointCloud(*camera_point_cloud,*robot_point_cloud,transform);
+#ifdef WITH_PCL_VISUALIZATION
+	COMP->visTask->showPointCloud(robot_point_cloud, "robotFramePointCloud", 255,0,0);
+	double transformPointCloud = stopwatch.Tac();
+	std::cout << "[set_laser_ray_distances] transformPointCloud time: " << transformPointCloud << "s" << std::endl;
+#endif
+
+	/////////////////////////////
+	// 3. remove floor
+	stopwatch.Tic();
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered_z(new pcl::PointCloud<pcl::PointXYZ>);
+	pcl::PassThrough<pcl::PointXYZ> pass_z;
+	pass_z.setInputCloud(robot_point_cloud);
+	pass_z.setFilterFieldName("z");
+	pass_z.setFilterLimits(robot_base_frame_height_from_floor+0.02,std::numeric_limits<float>::max());
+	pass_z.filter(*cloud_filtered_z);
+#ifdef WITH_PCL_VISUALIZATION
+	COMP->visTask->showPointCloud(cloud_filtered_z, "robotFramePointCloud_filtered", 0,255,0);
+	double filter = stopwatch.Tac();
+	std::cout << "[set_laser_ray_distances] filter time: " << filter << "s" << std::endl;
+#endif
+
+	/////////////////////////////
+	// 5. find min + downproject (also covert to polar system (dist + angl))
+	stopwatch.Tic();
+	findMinimumDistances(cloud_filtered_z,laser_ray_distances);
+#ifdef WITH_PCL_VISUALIZATION
+	double findMinimumDistances = stopwatch.Tac();
+	std::cout << "[set_laser_ray_distances] filter findMinimumDistances: " << findMinimumDistances << "s" << std::endl;
+#endif
 
 
 
-
-	// Convert to scan:
+	/////////////////////////////
+	// 6. fill the comobject
+	stopwatch.Tic();
 	// set scan header
 	laser_scan.set_scan_time_stamp(CommBasicObjects::CommTimeStamp::now());
 	laser_scan.set_scan_update_count(rgbd_scan.getSeq_count());
 	laser_scan.set_scan_length_unit(1.0);
-	laser_scan.set_scan_double_field_of_view(RADTODEG(start_angle),
-			RADTODEG(angle_resolution)); // smartsoft needs degrees multiplied by 100 i.e 1 deg = 100
+	laser_scan.set_scan_double_field_of_view(RADTODEG(start_angle), RADTODEG(angle_resolution));
 	laser_scan.set_max_distance(max_dist); //in mm
 	laser_scan.set_min_distance(min_dist); //in mm
-
-	laser_scan.set_max_scan_size(nLaserRays);
-	laser_scan.set_scan_size(nLaserRays);
 	laser_scan.set_scan_valid(true);
 
-	laser_ray_distances.clear();
+	set_laser_ray_distances(laser_scan,laser_ray_distances);
 
+#ifdef WITH_PCL_VISUALIZATION
+	pcl::PointCloud<pcl::PointXYZ>::Ptr commlasercloud(new pcl::PointCloud<pcl::PointXYZ>);
+	double set_laser_ray_distances = stopwatch.Tac();
+	std::cout << "[set_laser_ray_distances] filter set_laser_ray_distances: " << set_laser_ray_distances << "s" << std::endl;
 
-	stopwatch.Tic();
-	find_depth_distances(comm_depth_image, laser_ray_distances);
-	double detection_time1 = stopwatch.Tac();
-			//std::cout << "[find_depth_distances] Detection time: " << detection_time1 << "s" << std::endl;
+	for(unsigned int i=0; i<nLaserRays;++i){
+		double x,y,z;
+		laser_scan.get_scan_cartesian_3dpoint_robot(i,x,y,z,1.0);
+		commlasercloud->push_back(pcl::PointXYZ(x,y,z));
+	}
 
-
-
-	stopwatch.Tic();
-	set_laser_ray_distances(laser_scan, laser_ray_distances);
-	double detection_time2 = stopwatch.Tac();
-			//std::cout << "[set_laser_ray_distances] Detection time: " << detection_time2 << "s" << std::endl;
+	COMP->visTask->showPointCloud(commlasercloud, "commlasercloud", 255,0,0);
+#endif
 
 	return true;
 
@@ -312,61 +454,17 @@ bool LaserTask::realsense_to_laserscan(DomainVision::CommRGBDImage &rgbd_scan, C
 void LaserTask::init_laser_generation()
 {
 	// do these calculation only once
-	//These view angles calculations are from Realsense lib
+	//These view angle calculations are from realsense library
 	hfov_rad = std::atan2(depth_intrinsics.cx + 0.5f, depth_intrinsics.fx) + std::atan2(depth_intrinsics.cols - (depth_intrinsics.cx + 0.5f), depth_intrinsics.fx);
 	vfov_rad = std::atan2(depth_intrinsics.cy + 0.5f, depth_intrinsics.fy) + std::atan2(depth_intrinsics.rows - (depth_intrinsics.cy + 0.5f), depth_intrinsics.fy);
 
-
-	//MRPT calculate FOV
-	// (Imagine the camera seen from above to understand this geometry)
-//	const double real_FOV_left = std::atan2(depth_intrinsics.cx, depth_intrinsics.fx);
-//	const double real_FOV_right = std::atan2(depth_intrinsics.cols - 1 - depth_intrinsics.cx, depth_intrinsics.fx);
-//
-//	// FOV of the equivalent "fake" "laser scanner":
-//	hfov_rad = 2. * std::max(real_FOV_left, real_FOV_right);
-
-    //nLaserRays           = static_cast<size_t>(depth_intrinsics.cols * 1.5f); //1.2f is default over sampling ratio
-    //angle_resolution     = (double)hfov_rad/(nLaserRays-1);
-
-	angle_resolution     = DEGTORAD(0.5);
-	nLaserRays           = hfov_rad/angle_resolution;
+	nLaserRays           = ceil(1 + (hfov_rad/angle_resolution));
 	start_angle          = (double)-1.0f*hfov_rad*0.5f;
-
-	vert_ang_tan.resize(depth_intrinsics.rows);
-	for (size_t r = 0; r < depth_intrinsics.rows; r++){
-		vert_ang_tan[r] = static_cast<float>((depth_intrinsics.cy - r) / depth_intrinsics.fy);
-	}
-
-	vertical_view = vfov_rad*2.0f; // consider all the vertical fov
-
-	tan_min = -std::tan(vertical_view*0.5f); // tan needs radians
-	tan_max =  std::tan(vertical_view*0.5f);
-
-
-//	tan_min =  std::tan(-1*std::numeric_limits<double>::infinity());
-//	tan_max =  std::tan(std::numeric_limits<double>::infinity());
-
-
-
-
-	//TODO calculate floor distancen using camera pose
-	camera_height_from_floor = camera_height_from_floor_meters();
-
-	depth_data_type = rgbd_scan.getDepth_image().getFormat();
-
-	floor_mask.resize(depth_intrinsics.rows*depth_intrinsics.cols);
-	std::fill( floor_mask.begin(), floor_mask.end(), false);
+	vertical_view        = vfov_rad*2.0f; // consider all the vertical fov
+	depth_data_type      = rgbd_scan.getDepth_image().getFormat();
+	first_image_flag     = false;
 
 	display_parameters();
-
-	first_image_flag= false;
-
-}
-
-double LaserTask::camera_height_from_floor_meters()
-{
-	return 0.05;
-
 }
 
 double LaserTask::pi_to_pi(double angle) {
@@ -390,10 +488,10 @@ void LaserTask::display_parameters()
 		std::cout <<std::setw(25)<<  "Horizontal Field of View"  <<" = " << RADTODEG(hfov_rad)<< " degrees"<<std::endl;
 		std::cout <<std::setw(25)<<  "Vertical Field of View"  <<" = " << RADTODEG(vfov_rad)<< " degrees"<<std::endl;
 		std::cout <<std::setw(25)<<  "Angle resolution"  <<" = " << RADTODEG(angle_resolution)<< " degrees"<<std::endl;
+		std::cout <<std::setw(25)<<  "Start_angle"       <<" = " << RADTODEG(start_angle) <<std::endl;
 		std::cout <<std::setw(25)<<  "Max distance"      <<" = " << max_dist/1000.0<< " meters"<<std::endl;
 		std::cout <<std::setw(25)<<  "Min distance"      <<" = " << min_dist/1000.0<< " meters"<<std::endl;
-		std::cout <<std::setw(25)<<  "Floor distance"    <<" = " << camera_height_from_floor<< " meters"<<std::endl;
-		std::cout <<std::setw(25)<<  "Start_angle"       <<" = " << RADTODEG(start_angle) <<std::endl;
+		std::cout <<std::setw(25)<<  "Floor distance from Robot base frame"    <<" = " << robot_base_frame_height_from_floor<< " meters"<<std::endl;
 		std::cout <<"-----------------------------------------------------------------"<<std::endl;
 }
 
@@ -478,87 +576,14 @@ void LaserTask::calcPointXYZ (const uint32_t& r, const uint32_t& c, const float 
   }
   else
   {
-	  // find corresponding x,y,z of give depth pixel and depth value
+	  // find the corresponding x,y,z of given depth pixel in depth frame
 	  deproject(intrinsics,r, c, depth_val_meters, x, y, z);
 	  // transform x,y,z into rgb coordinate system using extrinsics
+	  // sensor pose is transform between robot base frame and depth origin, so transform to RGB camera frame is not required
 	  //transform(extrinsics, x, y, z);
   }
 }
 
-void LaserTask::detect_floor (DomainVision::CommRGBDImage& rgbd_scan, std::vector<bool>& floor_mask)
-{
-
-	DomainVision::CommDepthImage comm_depth_image = rgbd_scan.getDepth_image();
-
-	// get depth data
-	DomainVision::DepthFormatType depth_format = comm_depth_image.getFormat();
-	uint32_t depth_width 							= comm_depth_image.getWidth();
-	uint32_t depth_height 							= comm_depth_image.getHeight();
-
-	float x_in_m, y_in_m, z_in_m;
-	mrpt::utils::CTicTac stopwatch;
-	stopwatch.Tic();
-	CommBasicObjects::CommPose3d sensor_pose   = rgbd_scan.getSensor_pose();
-	double sensor_yaw = sensor_pose.get_azimuth(), sensor_pitch = sensor_pose.get_elevation(), sensor_roll = sensor_pose.get_roll();
-    double sensor_x = sensor_pose.getPosition().getX() / 1000, sensor_y = sensor_pose.getPosition().getY() / 1000, sensor_z = sensor_pose.getPosition().getZ() / 1000;
-    mrpt::poses::CPose3D sensorPose_mrpt(sensor_x, sensor_y, sensor_z,sensor_yaw, sensor_pitch, sensor_roll);
-
-    float max_distance_meters = max_dist/1000.0f;
-
-	for (uint32_t depth_row = 0; depth_row < depth_height; ++depth_row) { //along y
-		for (uint32_t depth_col = 0; depth_col < depth_width; ++depth_col) { //along x-axis
-
-
-			float depth_meters = get_depth(comm_depth_image, depth_row, depth_col);
-
-
-			if(depth_col<=25){  // 25 columns in 1280x720 depth image are invalid band
-				floor_mask[depth_row*depth_width+depth_col] = true;
-				continue;
-			}
-
-			if((std::isinf(depth_meters)) || (depth_meters != depth_meters)){
-				floor_mask[depth_row*depth_width+depth_col] = true;
-				continue;
-			}
-
-			if(depth_meters < 0.05 || depth_meters > max_distance_meters) // filter the invalid points
-			{
-				floor_mask[depth_row*depth_width+depth_col] = true;
-				continue;
-			}
-
-            //find x, y, z for given depth pixel in rgb frame
-			calcPointXYZ (depth_row, depth_col, depth_meters, x_in_m, y_in_m, z_in_m, depth_intrinsics, depth_to_color_extrinsics);
-
-
-			if(std::isinf(x_in_m) || std::isinf(z_in_m) || std::isinf(y_in_m)){
-				floor_mask[depth_row*depth_width+depth_col] = true;
-				continue;
-			}
-			if(x_in_m != x_in_m || y_in_m != y_in_m || z_in_m != z_in_m){
-				floor_mask[depth_row*depth_width+depth_col] = true;
-				continue;
-			}
-
-			// convert x, y, z to robot frame
-			mrpt::poses::CPoint3D point_in_realsense_frame(x_in_m, y_in_m, z_in_m);
-
-			//mrpt::poses::CPoint3D point_in_robot_frame =transormPointToRobotCoord(point_in_realsense_frame,sensor_pose);
-			mrpt::poses::CPoint3D point_in_robot_frame =  sensorPose_mrpt + point_in_realsense_frame;
-
-			if(point_in_robot_frame.z() <camera_height_from_floor)// filter points related to floor
-			{
-				floor_mask[depth_row*depth_width+depth_col] = true;
-			}
-
-			}
-	}
-
-	double detection_time3 = stopwatch.Tac();
-	//std::cout << "[loop] Detection time: " << detection_time3 << "s" << std::endl;
-
-}
 void LaserTask::read_intrinsics_extrinsics(const DomainVision::CommRGBDImage& rgbd_image)
 {
 	// get color intrinsics
@@ -631,147 +656,6 @@ void LaserTask::read_intrinsics_extrinsics(const DomainVision::CommRGBDImage& rg
 
 }
 
-void LaserTask::comm_depth_image_to_cv_mat(DomainVision::CommDepthImage& comm_depth_image, cv::Mat& depth_mat)
-{
-	const uint16_t* depth_data_uint16;
-	const float* depth_data_float;
-	DomainVision::DepthFormatType depth_format = comm_depth_image.getFormat();
-	if(depth_format==DomainVision::DepthFormatType::UINT16)
-	{
-		//depth_data_uint16 = comm_depth_image.get_distances_data<const uint16_t*>();
-		depth_data_uint16 = comm_depth_image.get_distances_uint16();
-
-	}else if (depth_format==DomainVision::DepthFormatType::FLOAT)
-	{
-		depth_data_float = comm_depth_image.get_distances_float();
-
-	}
-
-	uint32_t depth_width   =  depth_intrinsics.cols;
-	uint32_t depth_height  =  depth_intrinsics.rows;
-	float pixel_meters;
-
-	for (uint32_t depth_row = 0; depth_row < depth_height ; ++depth_row){//along y
-		for (uint32_t depth_col = 0; depth_col < depth_width;++depth_col){//along x-axis
-
-			pixel_meters = get_depth(comm_depth_image, depth_row, depth_col);
-
-			uint8_t r = pixel_meters / 8* 255 ;
-			uint8_t g = pixel_meters / 8* 255 ;
-			uint8_t b = pixel_meters / 8* 255 ;
-
-			depth_mat.at<cv::Vec3b>(depth_row, depth_col)[0]=g;
-			depth_mat.at<cv::Vec3b>(depth_row, depth_col)[1]=g;
-			depth_mat.at<cv::Vec3b>(depth_row, depth_col)[2]=b;
-
-
-		}
-	}
-
-
-}
-
-void LaserTask::find_depth_distances(DomainVision::CommDepthImage& comm_depth_image, std::deque<float>& laser_ray_distances)
-{
-	double current_angle = start_angle;
-
-	const uint16_t* depth_data_uint16;
-	const float* depth_data_float;
-	if(depth_data_type==DomainVision::DepthFormatType::UINT16)
-	{
-		depth_data_uint16 = comm_depth_image.get_distances_uint16();
-	}else if (depth_data_type==DomainVision::DepthFormatType::FLOAT)
-	{
-		depth_data_float = comm_depth_image.get_distances_float();
-	}
-
-
-	//int over_sampled_rays = nLaserRays*1.5;
-	//double a_angle = hfov_rad/(over_sampled_rays-1);
-
-	for (size_t i = 0; i < nLaserRays; i++, current_angle += angle_resolution) {
-			// Equivalent column in the range image for the "i'th" ray:
-			const double tan_ang = tan(current_angle);
-			// make sure we don't go out of range (just in case):
-			float max_v = std::max(0.0,
-					depth_intrinsics.cx + depth_intrinsics.fx * tan_ang);
-			float xcol = depth_intrinsics.cols - 1;// Column correspond to current angle
-			const size_t c = std::min(max_v, xcol);
-			bool any_valid = false;
-
-			float closest_range_meters = max_dist / 1000.0f; //in meters
-			float min_distance_meters = min_dist / 1000.0f; //in meters
-			std::set<float> row_ordered_set;
-
-			for (int r = 0; r < depth_intrinsics.rows; r++) {
-
-				if (floor_mask[r * depth_intrinsics.cols + c] == true)  // dont process if it is floor or invalid
-					continue;
-
-
-				//float current_distance_meters = get_depth(comm_depth_image, r, c);
-				float current_distance_meters =0.0;
-				if(depth_data_type==DomainVision::DepthFormatType::UINT16)
-				{
-					const uint16_t depth_val_ptr = depth_data_uint16[r*depth_intrinsics.cols+c];
-
-					current_distance_meters = depth_val_ptr/1000.0f;
-				}else if(depth_data_type==DomainVision::DepthFormatType::FLOAT)
-				{
-					const float depth_val_ptr = depth_data_float[r*depth_intrinsics.cols+c];
-
-					current_distance_meters= depth_val_ptr;
-					//std::cout << " depth = " <<depth_meters<<std::endl;
-
-				}else
-				{
-					std::cout << "Unknow Depth Format" <<std::endl;
-					std::abort();
-				}
-
-
-				if (current_distance_meters < min_dist/1000.0 || current_distance_meters > max_dist/1000.0)
-					continue;
-
-
-				// All filters passed:
-				const float this_point_tan = vert_ang_tan[r]* current_distance_meters;
-
-				if (this_point_tan > tan_min && this_point_tan < tan_max)  // we  are considering all the rays
-				{
-					any_valid = true;
-					row_ordered_set.insert(current_distance_meters);
-				}
-			}
-
-			if (any_valid) // got a valid minimum depth from ranges of a row
-			{
-
-
-				for (auto it = row_ordered_set.begin(); it != row_ordered_set.end(); ++it) {
-
-					//if ((*it) > min_dist / 1000) {
-
-						float distance_meters = (*it);
-
-						distance_meters = distance_meters * std::sqrt(1.0 + tan_ang * tan_ang);
-				laser_ray_distances.push_front(distance_meters*1000);
-						break;
-					//}
-				}
-
-
-			}
-			else // keeping default maximum value, very dangerous
-			{
-				laser_ray_distances.push_front(max_dist+ 100); // this will be invalid
-
-			}
-		}
-
-	//std::cout << "size of laser ray distances = " << laser_ray_distances.size() << std::endl;
-}
-
 inline float LaserTask::get_depth(DomainVision::CommDepthImage& comm_depth_image, int row, int col)
 {
 	float current_distance_meters;
@@ -797,17 +681,13 @@ void LaserTask::set_laser_ray_distances(CommBasicObjects::CommMobileLaserScan& l
 
 	const int desiredScans = 1 + hfov_rad / angle_resolution;
 	const int rangerScans = 1 + hfov_rad / angle_resolution;
-    //std::cout << " desiredScans = " << desiredScans
-	//	      << " rangerScans  = " << rangerScans<< std::endl;
 
 	laser_scan.set_max_scan_size(desiredScans);
 
-	//const int firstScanIndex = ((rangerScans - desiredScans) * 0.5)+25;
-	const int firstScanIndex = ((rangerScans - desiredScans) * 0.5);
-	int lastScanIndex = rangerScans - firstScanIndex-2;//-25; // 25 columns correspond to invalid depth band
 
-	//std::cout << " firstScanIndex = " << firstScanIndex
-	//		      << " lastScanIndex  = " << lastScanIndex<< std::endl;
+	const int firstScanIndex = ((rangerScans - desiredScans) * 0.5);
+
+	int lastScanIndex = rangerScans - firstScanIndex;
 
 	uint32_t num_valid_points = 0;
 	for (int i = firstScanIndex; i < lastScanIndex; ++i) {
@@ -823,121 +703,10 @@ void LaserTask::set_laser_ray_distances(CommBasicObjects::CommMobileLaserScan& l
 	for (int i = firstScanIndex; i < lastScanIndex; ++i) {
 		const unsigned int dist = laser_ray_distances.at(i);
 		if (dist >= min_dist && dist <= max_dist) {
-			//this line will cut of the starting beam if the component is configures to provide smaller scans (less opening angle)
 			laser_scan.set_scan_index(valid_point_index, i - firstScanIndex);
 			laser_scan.set_scan_integer_distance(valid_point_index, dist);
-
-			//std::cout << "valid point index, i-firstScanIndex " << valid_point_index << ", " << (i - firstScanIndex) << "  dist =  " << dist <<std::endl;
 			++valid_point_index;
 		}
 	}
-
 	laser_scan.set_scan_valid(true);
-}
-void LaserTask::find_depth_distances_debug(DomainVision::CommDepthImage& comm_depth_image, std::deque<float>& laser_ray_distances)
-{
-	double current_angle = start_angle;
-
-	const uint16_t* depth_data_uint16;
-	const float* depth_data_float;
-	if(depth_data_type==DomainVision::DepthFormatType::UINT16)
-	{
-		depth_data_uint16 = comm_depth_image.get_distances_uint16();
-	}else if (depth_data_type==DomainVision::DepthFormatType::FLOAT)
-	{
-		depth_data_float = comm_depth_image.get_distances_float();
-	}
-
-	for (size_t i = 0; i < nLaserRays; i++, current_angle += angle_resolution) {
-		// Equivalent column in the range image for the "i'th" ray:
-		const double tan_ang = tan(current_angle);
-		// make sure we don't go out of range (just in case):
-		float max_v = std::max(0.0,
-				depth_intrinsics.cx + depth_intrinsics.fx * tan_ang);
-		float xcol = depth_intrinsics.cols - 1;// Column correspond to current angle
-		const size_t c = std::min(max_v, xcol);
-		bool any_valid = false;
-
-		float closest_range_meters = max_dist / 1000.0f; //in meters
-		float min_distance_meters = min_dist / 1000.0f; //in meters
-		std::multimap<float, std::pair<int, int>> row_ordered;
-
-		for (int r = 0; r < depth_intrinsics.rows; r++) {
-
-			float current_distance_meters =0.0;
-			if(depth_data_type==DomainVision::DepthFormatType::UINT16)
-			{
-				const uint16_t depth_val_ptr = depth_data_uint16[r*depth_intrinsics.cols+c];
-
-				current_distance_meters = depth_val_ptr/1000.0f;
-			}else if(depth_data_type==DomainVision::DepthFormatType::FLOAT)
-			{
-				const float depth_val_ptr = depth_data_float[r*depth_intrinsics.cols+c];
-
-				current_distance_meters= depth_val_ptr;
-				//std::cout << " depth = " <<depth_meters<<std::endl;
-
-			}else
-			{
-				std::cout << "Unknow Depth Format" <<std::endl;
-				std::abort();
-			}
-
-
-			if (current_distance_meters < min_dist/1000.0 || current_distance_meters > max_dist/1000.0)
-				continue;
-
-
-			// All filters passed:
-			const float this_point_tan = vert_ang_tan[r]* current_distance_meters;
-
-			//std::cout << "this_point_tan = "<< this_point_tan << "  tan_min = "<< tan_min << "  tan_max = "<< tan_max <<std::endl;
-
-			if (this_point_tan > tan_min && this_point_tan < tan_max)  // we  are considering all the rays
-			{
-				any_valid = true;
-				row_ordered.insert(
-						std::pair<float, std::pair<int, int>>(
-								current_distance_meters, std::make_pair(r, c)));
-			}
-		}
-
-		if (any_valid) // got a valid minimum depth from ranges of a row
-		{
-			//float distance_meters = (closest_range_meters)* std::sqrt(1.0 + tan_ang * tan_ang);
-
-			for (auto it = row_ordered.begin(); it != row_ordered.end(); ++it) {
-
-				if ((*it).first > min_dist / 1000) {
-
-					float distance_meters = (*it).first;
-
-					distance_meters = distance_meters * std::sqrt(1.0 + tan_ang * tan_ang);
-
-					laser_ray_distances.push_front(distance_meters*1000);
-					break;
-				}
-			}
-
-
-		} else // keeping default maximum value, very dangerous
-		{
-			laser_ray_distances.push_front(max_dist); // this will be invalid
-		}
-	}  // end for columns
-}
-
-/**
- * Transforms the inserted point from sensor coordinate system
- * to robot coordinate system.
- */
-mrpt::poses::CPoint3D LaserTask::transormPointToRobotCoord(const mrpt::poses::CPoint3D & point, CommBasicObjects::CommPose3d& sensor_pose) {
-
-	double sensor_yaw = sensor_pose.get_azimuth(), sensor_pitch = sensor_pose.get_elevation(), sensor_roll = sensor_pose.get_roll();
-	double sensor_x = sensor_pose.getPosition().getX() / 1000, sensor_y = sensor_pose.getPosition().getY() / 1000, sensor_z = sensor_pose.getPosition().getZ() / 1000;
-
-	mrpt::poses::CPose3D sensorPose(sensor_x, sensor_y, sensor_z,sensor_yaw, sensor_pitch, sensor_roll);
-	mrpt::poses::CPoint3D result =  sensorPose + point;
-
-	return result;
 }
