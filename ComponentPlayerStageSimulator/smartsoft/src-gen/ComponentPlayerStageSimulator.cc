@@ -37,7 +37,7 @@ ComponentPlayerStageSimulator::ComponentPlayerStageSimulator()
 	baseStateQueryHandler = NULL;
 	baseStateServiceOut = NULL;
 	batteryEventServiceOut = NULL;
-	batteryEventServiceOutEventTestHandler = NULL; 
+	batteryEventServiceOutEventTestHandler = nullptr; 
 	batteryEventTask = NULL;
 	batteryEventTaskTrigger = NULL;
 	//componentPlayerStageSimulatorParams = NULL;
@@ -90,6 +90,8 @@ ComponentPlayerStageSimulator::ComponentPlayerStageSimulator()
 	connections.playerTask.cpuAffinity = -1;
 	connections.localizationUpdateHandler.prescale = 1;
 	connections.navigationVelocityHandler.prescale = 1;
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of ComponentPlayerStageSimulatorROSExtension
 	
@@ -198,6 +200,8 @@ void ComponentPlayerStageSimulator::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		// initializations of ComponentPlayerStageSimulatorROSExtension
 		
 		// initializations of PlainOpcUaComponentPlayerStageSimulatorExtension
@@ -233,13 +237,14 @@ void ComponentPlayerStageSimulator::init(int argc, char *argv[])
 		}
 
 		// create event-test handlers (if needed)
-		batteryEventServiceOutEventTestHandler = new BatteryEventServiceOutEventTestHandler();
+		batteryEventServiceOutEventTestHandler = std::make_shared<BatteryEventServiceOutEventTestHandler>();
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
 		baseStateAnswerer = portFactoryRegistry[connections.baseStateAnswerer.roboticMiddleware]->createBaseStateAnswerer(connections.baseStateAnswerer.serviceName);
-		baseStateAnswererInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState,SmartACE::QueryId>(baseStateAnswerer);
+		baseStateAnswererInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>(baseStateAnswerer);
 		baseStateServiceOut = portFactoryRegistry[connections.baseStateServiceOut.roboticMiddleware]->createBaseStateServiceOut(connections.baseStateServiceOut.serviceName);
+		batteryEventServiceOutEventTestHandler = std::make_shared<BatteryEventServiceOutEventTestHandler>();
 		batteryEventServiceOut = portFactoryRegistry[connections.batteryEventServiceOut.roboticMiddleware]->createBatteryEventServiceOut(connections.batteryEventServiceOut.serviceName, batteryEventServiceOutEventTestHandler);
 		laserServiceOut = portFactoryRegistry[connections.laserServiceOut.roboticMiddleware]->createLaserServiceOut(connections.laserServiceOut.serviceName);
 		localizationUpdateServiceIn = portFactoryRegistry[connections.localizationUpdateServiceIn.roboticMiddleware]->createLocalizationUpdateServiceIn(connections.localizationUpdateServiceIn.serviceName);
@@ -420,7 +425,7 @@ void ComponentPlayerStageSimulator::fini()
 	delete localizationUpdateServiceIn;
 	delete navigationVelocityServiceIn;
 	// destroy event-test handlers (if needed)
-	delete batteryEventServiceOutEventTestHandler;
+	batteryEventServiceOutEventTestHandler;
 	
 	// destroy request-handlers
 	delete baseStateQueryHandler;
@@ -445,6 +450,8 @@ void ComponentPlayerStageSimulator::fini()
 	{
 		portFactory->second->destroy();
 	}
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of ComponentPlayerStageSimulatorROSExtension
 	
@@ -598,6 +605,8 @@ void ComponentPlayerStageSimulator::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("NavigationVelocityHandler", "prescale")) {
 			parameter.getInteger("NavigationVelocityHandler", "prescale", connections.navigationVelocityHandler.prescale);
 		}
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for ComponentPlayerStageSimulatorROSExtension
 		

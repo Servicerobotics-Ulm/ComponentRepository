@@ -58,12 +58,12 @@ Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * SmartPioneerBaseSer
 	return new SmartACE::PushServer<CommBasicObjects::CommBaseState>(componentImpl, serviceName);
 }
 
-Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState,SmartACE::QueryId> * SmartPioneerBaseServerAcePortFactory::createBaseStateQueryServer(const std::string &serviceName)
+Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState> * SmartPioneerBaseServerAcePortFactory::createBaseStateQueryServer(const std::string &serviceName)
 {
 	return new SmartACE::QueryServer<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>(componentImpl, serviceName);
 }
 
-Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState,SmartACE::EventId> * SmartPioneerBaseServerAcePortFactory::createBatteryEventServer(const std::string &serviceName, Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> *batteryEventServerEventTestHandler)
+Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> * SmartPioneerBaseServerAcePortFactory::createBatteryEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>> batteryEventServerEventTestHandler)
 {
 	return new SmartACE::EventServer<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>(componentImpl, serviceName, batteryEventServerEventTestHandler);
 }

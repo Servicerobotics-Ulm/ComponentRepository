@@ -14,6 +14,11 @@ ComponentDefinition SmartObjectRecognition {
 	Activity RecognitionTask{}
 	Activity CaptureTask{}
 	
-	CoordinationSlavePort CoordinationPort implements CommObjectRecognitionObjects.ObjectRecognitionCoordinationService { }
+	CoordinationSlavePort CoordinationPort implements 
+	CommObjectRecognitionObjects.ObjectRecognitionCoordinationService {
+		with objectquery realizedBy ObjectQueryServiceAnsw
+		with objectrecognitionevent realizedBy ObjectEventServiceOut
+		SkillRealizationsRef objectRecognition
+	}
 	ComponentParameters  SmartObjectRecognitionParams slave CoordinationPort
 }

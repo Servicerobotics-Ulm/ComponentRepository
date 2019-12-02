@@ -53,7 +53,7 @@ int ComponentTTSAcePortFactory::onStartup()
 }
 
 
-Smart::IQueryServerPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet,SmartACE::QueryId> * ComponentTTSAcePortFactory::createSpeechQueryServiceAnsw(const std::string &serviceName)
+Smart::IQueryServerPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet> * ComponentTTSAcePortFactory::createSpeechQueryServiceAnsw(const std::string &serviceName)
 {
 	return new SmartACE::QueryServer<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet>(componentImpl, serviceName);
 }

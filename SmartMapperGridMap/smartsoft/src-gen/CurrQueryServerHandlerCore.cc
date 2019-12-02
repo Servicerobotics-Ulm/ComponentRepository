@@ -19,13 +19,9 @@
 // include observers
 #include "CurMapTask.hh"
 
-CurrQueryServerHandlerCore::CurrQueryServerHandlerCore(Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap, SmartACE::QueryId>* server)
-:	Smart::IQueryServerHandler<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap, SmartACE::QueryId>(server)
-{
-	
-}
-
-CurrQueryServerHandlerCore::~CurrQueryServerHandlerCore()
+CurrQueryServerHandlerCore::CurrQueryServerHandlerCore(IQueryServer* server)
+:	Smart::IInputHandler<std::pair<Smart::QueryIdPtr,CommNavigationObjects::CommGridMapRequest>>(server)
+,	server(server)
 {
 	
 }

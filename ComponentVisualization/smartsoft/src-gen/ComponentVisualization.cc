@@ -51,6 +51,11 @@ ComponentVisualization::ComponentVisualization()
 	laser3TaskTrigger = NULL;
 	managementTask = NULL;
 	managementTaskTrigger = NULL;
+	markerListDetectionServiceIn = NULL;
+	markerListDetectionServiceInInputTaskTrigger = NULL;
+	markerListDetectionServiceInUpcallManager = NULL;
+	markerListTask = NULL;
+	markerListTaskTrigger = NULL;
 	personDetectionTask = NULL;
 	personDetectionTaskTrigger = NULL;
 	rGBDImageQueryServiceReq = NULL;
@@ -107,6 +112,12 @@ ComponentVisualization::ComponentVisualization()
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
+	connections.markerListDetectionServiceIn.initialConnect = false;
+	connections.markerListDetectionServiceIn.wiringName = "MarkerListDetectionServiceIn";
+	connections.markerListDetectionServiceIn.serverName = "unknown";
+	connections.markerListDetectionServiceIn.serviceName = "unknown";
+	connections.markerListDetectionServiceIn.interval = 1;
+	connections.markerListDetectionServiceIn.roboticMiddleware = "ACE_SmartSoft";
 	connections.rGBDImageQueryServiceReq.initialConnect = false;
 	connections.rGBDImageQueryServiceReq.wiringName = "RGBDImageQueryServiceReq";
 	connections.rGBDImageQueryServiceReq.serverName = "unknown";
@@ -251,6 +262,12 @@ ComponentVisualization::ComponentVisualization()
 	connections.managementTask.scheduler = "DEFAULT";
 	connections.managementTask.priority = -1;
 	connections.managementTask.cpuAffinity = -1;
+	connections.markerListTask.minActFreq = 0.0;
+	connections.markerListTask.maxActFreq = 0.0;
+	// scheduling default parameters
+	connections.markerListTask.scheduler = "DEFAULT";
+	connections.markerListTask.priority = -1;
+	connections.markerListTask.cpuAffinity = -1;
 	connections.personDetectionTask.minActFreq = 0.0;
 	connections.personDetectionTask.maxActFreq = 0.0;
 	// scheduling default parameters
@@ -269,6 +286,8 @@ ComponentVisualization::ComponentVisualization()
 	connections.uSArTask.scheduler = "DEFAULT";
 	connections.uSArTask.priority = -1;
 	connections.uSArTask.cpuAffinity = -1;
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of ComponentVisualizationROSExtension
 	
@@ -304,6 +323,23 @@ void ComponentVisualization::setStartupFinished() {
 }
 
 
+Smart::StatusCode ComponentVisualization::connectMarkerListDetectionServiceIn(const std::string &serverName, const std::string &serviceName) {
+	Smart::StatusCode status;
+	
+	if(connections.markerListDetectionServiceIn.initialConnect == false) {
+		return Smart::SMART_OK;
+	}
+	std::cout << "connecting to: " << serverName << "; " << serviceName << std::endl;
+	status = markerListDetectionServiceIn->connect(serverName, serviceName);
+	while(status != Smart::SMART_OK)
+	{
+		ACE_OS::sleep(ACE_Time_Value(0,500000));
+		status = COMP->markerListDetectionServiceIn->connect(serverName, serviceName);
+	}
+	std::cout << "connected.\n";
+	markerListDetectionServiceIn->subscribe(connections.markerListDetectionServiceIn.interval);
+	return status;
+}
 Smart::StatusCode ComponentVisualization::connectRGBDImageQueryServiceReq(const std::string &serverName, const std::string &serviceName) {
 	Smart::StatusCode status;
 	
@@ -564,6 +600,8 @@ Smart::StatusCode ComponentVisualization::connectUltrasonicPushNewestClient(cons
 Smart::StatusCode ComponentVisualization::connectAndStartAllServices() {
 	Smart::StatusCode status = Smart::SMART_OK;
 	
+	status = connectMarkerListDetectionServiceIn(connections.markerListDetectionServiceIn.serverName, connections.markerListDetectionServiceIn.serviceName);
+	if(status != Smart::SMART_OK) return status;
 	status = connectRGBDImageQueryServiceReq(connections.rGBDImageQueryServiceReq.serverName, connections.rGBDImageQueryServiceReq.serviceName);
 	if(status != Smart::SMART_OK) return status;
 	status = connectBaseClient(connections.baseClient.serverName, connections.baseClient.serviceName);
@@ -727,6 +765,20 @@ void ComponentVisualization::startAllTasks() {
 	} else {
 		managementTask->start();
 	}
+	// start task MarkerListTask
+	if(connections.markerListTask.scheduler != "DEFAULT") {
+		ACE_Sched_Params markerListTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
+		if(connections.markerListTask.scheduler == "FIFO") {
+			markerListTask_SchedParams.policy(ACE_SCHED_FIFO);
+			markerListTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+		} else if(connections.markerListTask.scheduler == "RR") {
+			markerListTask_SchedParams.policy(ACE_SCHED_RR);
+			markerListTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+		}
+		markerListTask->start(markerListTask_SchedParams, connections.markerListTask.cpuAffinity);
+	} else {
+		markerListTask->start();
+	}
 	// start task PersonDetectionTask
 	if(connections.personDetectionTask.scheduler != "DEFAULT") {
 		ACE_Sched_Params personDetectionTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
@@ -780,6 +832,7 @@ void ComponentVisualization::startAllTimers() {
 
 Smart::TaskTriggerSubject* ComponentVisualization::getInputTaskTriggerFromString(const std::string &client)
 {
+	if(client == "MarkerListDetectionServiceIn") return markerListDetectionServiceInInputTaskTrigger;
 	if(client == "baseClient") return baseClientInputTaskTrigger;
 	if(client == "curPushClient") return curPushClientInputTaskTrigger;
 	if(client == "depthPushNewestClient") return depthPushNewestClientInputTaskTrigger;
@@ -807,6 +860,8 @@ void ComponentVisualization::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of ComponentVisualizationROSExtension
 		
@@ -848,6 +903,7 @@ void ComponentVisualization::init(int argc, char *argv[])
 		// TODO: set minCycleTime from Ini-file
 		
 		// create client ports
+		markerListDetectionServiceIn = portFactoryRegistry[connections.markerListDetectionServiceIn.roboticMiddleware]->createMarkerListDetectionServiceIn();
 		rGBDImageQueryServiceReq = portFactoryRegistry[connections.rGBDImageQueryServiceReq.roboticMiddleware]->createRGBDImageQueryServiceReq();
 		baseClient = portFactoryRegistry[connections.baseClient.roboticMiddleware]->createBaseClient();
 		curPushClient = portFactoryRegistry[connections.curPushClient.roboticMiddleware]->createCurPushClient();
@@ -865,6 +921,8 @@ void ComponentVisualization::init(int argc, char *argv[])
 		ultrasonicPushNewestClient = portFactoryRegistry[connections.ultrasonicPushNewestClient.roboticMiddleware]->createUltrasonicPushNewestClient();
 		
 		// create InputTaskTriggers and UpcallManagers
+		markerListDetectionServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommTrackingObjects::CommDetectedMarkerList>(markerListDetectionServiceIn);
+		markerListDetectionServiceInUpcallManager = new MarkerListDetectionServiceInUpcallManager(markerListDetectionServiceIn);
 		baseClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(baseClient);
 		baseClientUpcallManager = new BaseClientUpcallManager(baseClient);
 		curPushClientInputTaskTrigger = new Smart::InputTaskTrigger<CommNavigationObjects::CommGridMap>(curPushClient);
@@ -881,7 +939,7 @@ void ComponentVisualization::init(int argc, char *argv[])
 		laserClient2UpcallManager = new LaserClient2UpcallManager(laserClient2);
 		laserClient3InputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan>(laserClient3);
 		laserClient3UpcallManager = new LaserClient3UpcallManager(laserClient3);
-		personDetectionEventClientInputTaskTrigger = new Smart::InputTaskTrigger<Smart::EventInputType<CommTrackingObjects::CommPersonDetectionEventResult,SmartACE::EventId>>(personDetectionEventClient);
+		personDetectionEventClientInputTaskTrigger = new Smart::InputTaskTrigger<Smart::EventInputType<CommTrackingObjects::CommPersonDetectionEventResult>>(personDetectionEventClient);
 		personDetectionEventClientUpcallManager = new PersonDetectionEventClientUpcallManager(personDetectionEventClient);
 		rgbdPushNewestClientInputTaskTrigger = new Smart::InputTaskTrigger<DomainVision::CommRGBDImage>(rgbdPushNewestClient);
 		rgbdPushNewestClientUpcallManager = new RgbdPushNewestClientUpcallManager(rgbdPushNewestClient);
@@ -905,6 +963,10 @@ void ComponentVisualization::init(int argc, char *argv[])
 		
 		wiringSlave = new SmartACE::WiringSlave(component);
 		// add client port to wiring slave
+		if(connections.markerListDetectionServiceIn.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::PushClient<CommTrackingObjects::CommDetectedMarkerList>*>(markerListDetectionServiceIn)->add(wiringSlave, connections.markerListDetectionServiceIn.wiringName);
+		}
 		if(connections.rGBDImageQueryServiceReq.roboticMiddleware == "ACE_SmartSoft") {
 			//FIXME: this must also work with other implementations
 			dynamic_cast<SmartACE::QueryClient<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage>*>(rGBDImageQueryServiceReq)->add(wiringSlave, connections.rGBDImageQueryServiceReq.wiringName);
@@ -1195,6 +1257,31 @@ void ComponentVisualization::init(int argc, char *argv[])
 			}
 		} 
 		
+		// create Task MarkerListTask
+		markerListTask = new MarkerListTask(component);
+		// configure input-links
+		// configure task-trigger (if task is configurable)
+		if(connections.markerListTask.trigger == "PeriodicTimer") {
+			// create PeriodicTimerTrigger
+			int microseconds = 1000*1000 / connections.markerListTask.periodicActFreq;
+			if(microseconds > 0) {
+				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
+				triggerPtr->attach(markerListTask);
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				// store trigger in class member
+				markerListTaskTrigger = triggerPtr;
+			} else {
+				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task MarkerListTask" << std::endl;
+			}
+		} else if(connections.markerListTask.trigger == "DataTriggered") {
+			markerListTaskTrigger = getInputTaskTriggerFromString(connections.markerListTask.inPortRef);
+			if(markerListTaskTrigger != NULL) {
+				markerListTaskTrigger->attach(markerListTask, connections.markerListTask.prescale);
+			} else {
+				std::cerr << "ERROR: could not set-up InPort " << connections.markerListTask.inPortRef << " as activation source for Task MarkerListTask" << std::endl;
+			}
+		} 
+		
 		// create Task PersonDetectionTask
 		personDetectionTask = new PersonDetectionTask(component);
 		// configure input-links
@@ -1386,6 +1473,12 @@ void ComponentVisualization::fini()
 	}
 	// unlink all UpcallManagers
 	// unlink the TaskTrigger
+	if(markerListTaskTrigger != NULL){
+		markerListTaskTrigger->detach(markerListTask);
+		delete markerListTask;
+	}
+	// unlink all UpcallManagers
+	// unlink the TaskTrigger
 	if(personDetectionTaskTrigger != NULL){
 		personDetectionTaskTrigger->detach(personDetectionTask);
 		delete personDetectionTask;
@@ -1406,6 +1499,8 @@ void ComponentVisualization::fini()
 	// destroy all input-handler
 
 	// destroy InputTaskTriggers and UpcallManagers
+	delete markerListDetectionServiceInInputTaskTrigger;
+	delete markerListDetectionServiceInUpcallManager;
 	delete baseClientInputTaskTrigger;
 	delete baseClientUpcallManager;
 	delete curPushClientInputTaskTrigger;
@@ -1432,6 +1527,7 @@ void ComponentVisualization::fini()
 	delete ultrasonicPushNewestClientUpcallManager;
 
 	// destroy client ports
+	delete markerListDetectionServiceIn;
 	delete rGBDImageQueryServiceReq;
 	delete baseClient;
 	delete curPushClient;
@@ -1473,6 +1569,8 @@ void ComponentVisualization::fini()
 	{
 		portFactory->second->destroy();
 	}
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of ComponentVisualizationROSExtension
 	
@@ -1550,6 +1648,15 @@ void ComponentVisualization::loadParameter(int argc, char *argv[])
 			parameter.getBoolean("component", "useLogger", connections.component.useLogger);
 		}
 		
+		// load parameters for client MarkerListDetectionServiceIn
+		parameter.getBoolean("MarkerListDetectionServiceIn", "initialConnect", connections.markerListDetectionServiceIn.initialConnect);
+		parameter.getString("MarkerListDetectionServiceIn", "serviceName", connections.markerListDetectionServiceIn.serviceName);
+		parameter.getString("MarkerListDetectionServiceIn", "serverName", connections.markerListDetectionServiceIn.serverName);
+		parameter.getString("MarkerListDetectionServiceIn", "wiringName", connections.markerListDetectionServiceIn.wiringName);
+		parameter.getInteger("MarkerListDetectionServiceIn", "interval", connections.markerListDetectionServiceIn.interval);
+		if(parameter.checkIfParameterExists("MarkerListDetectionServiceIn", "roboticMiddleware")) {
+			parameter.getString("MarkerListDetectionServiceIn", "roboticMiddleware", connections.markerListDetectionServiceIn.roboticMiddleware);
+		}
 		// load parameters for client RGBDImageQueryServiceReq
 		parameter.getBoolean("RGBDImageQueryServiceReq", "initialConnect", connections.rGBDImageQueryServiceReq.initialConnect);
 		parameter.getString("RGBDImageQueryServiceReq", "serviceName", connections.rGBDImageQueryServiceReq.serviceName);
@@ -1854,6 +1961,25 @@ void ComponentVisualization::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("ManagementTask", "cpuAffinity")) {
 			parameter.getInteger("ManagementTask", "cpuAffinity", connections.managementTask.cpuAffinity);
 		}
+		// load parameters for task MarkerListTask
+		parameter.getDouble("MarkerListTask", "minActFreqHz", connections.markerListTask.minActFreq);
+		parameter.getDouble("MarkerListTask", "maxActFreqHz", connections.markerListTask.maxActFreq);
+		parameter.getString("MarkerListTask", "triggerType", connections.markerListTask.trigger);
+		if(connections.markerListTask.trigger == "PeriodicTimer") {
+			parameter.getDouble("MarkerListTask", "periodicActFreqHz", connections.markerListTask.periodicActFreq);
+		} else if(connections.markerListTask.trigger == "DataTriggered") {
+			parameter.getString("MarkerListTask", "inPortRef", connections.markerListTask.inPortRef);
+			parameter.getInteger("MarkerListTask", "prescale", connections.markerListTask.prescale);
+		}
+		if(parameter.checkIfParameterExists("MarkerListTask", "scheduler")) {
+			parameter.getString("MarkerListTask", "scheduler", connections.markerListTask.scheduler);
+		}
+		if(parameter.checkIfParameterExists("MarkerListTask", "priority")) {
+			parameter.getInteger("MarkerListTask", "priority", connections.markerListTask.priority);
+		}
+		if(parameter.checkIfParameterExists("MarkerListTask", "cpuAffinity")) {
+			parameter.getInteger("MarkerListTask", "cpuAffinity", connections.markerListTask.cpuAffinity);
+		}
 		// load parameters for task PersonDetectionTask
 		parameter.getDouble("PersonDetectionTask", "minActFreqHz", connections.personDetectionTask.minActFreq);
 		parameter.getDouble("PersonDetectionTask", "maxActFreqHz", connections.personDetectionTask.maxActFreq);
@@ -1911,6 +2037,8 @@ void ComponentVisualization::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("USArTask", "cpuAffinity")) {
 			parameter.getInteger("USArTask", "cpuAffinity", connections.uSArTask.cpuAffinity);
 		}
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for ComponentVisualizationROSExtension
 		

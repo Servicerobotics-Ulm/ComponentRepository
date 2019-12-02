@@ -254,7 +254,7 @@ int Communication_sock::handle_signal (int signum, siginfo_t *, ucontext_t *){
 }
 
 
-void Communication_sock::timerExpired(const std::chrono::system_clock::time_point &abs_time, const void * arg)
+void Communication_sock::timerExpired(const Smart::TimePoint &abs_time, const void * arg)
 {
 	std::cout<<"[Communication_sock:timerExpired] ERROR TIMEOUT on socket connection!"<<std::endl;
 	connection_timeout = true;

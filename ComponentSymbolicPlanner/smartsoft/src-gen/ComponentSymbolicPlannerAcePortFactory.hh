@@ -35,7 +35,7 @@ public:
 	virtual int onStartup() override;
 
 	
-	virtual Smart::IQueryServerPattern<DomainSymbolicPlanner::CommSymbolicPlannerRequest, DomainSymbolicPlanner::CommSymbolicPlannerPlan,SmartACE::QueryId> * createSymbolicPlannerQueryServer(const std::string &serviceName) override;
+	virtual Smart::IQueryServerPattern<DomainSymbolicPlanner::CommSymbolicPlannerRequest, DomainSymbolicPlanner::CommSymbolicPlannerPlan> * createSymbolicPlannerQueryServer(const std::string &serviceName) override;
 	
 	// get a pointer to the internal component implementation
 	SmartACE::SmartComponent* getComponentImpl();

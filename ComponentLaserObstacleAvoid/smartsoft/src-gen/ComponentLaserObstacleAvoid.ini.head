@@ -36,7 +36,7 @@ minActFreqHz 0.0
 maxActFreqHz 0.0
 # setup default trigger as PeriodicTimer
 triggerType PeriodicTimer
-periodicActFreqHz 1.0
+periodicActFreqHz 10.0
 # other trigger-types are:
 #triggerType PeriodicTimer
 #periodicActFreqHz 0.0
@@ -72,6 +72,9 @@ serviceName unknown
 wiringName NavigationVelocityServiceOut
 interval 1
 roboticMiddleware ACE_SmartSoft
+
+##########################
+## parameters of OpcUaBackendComponentGeneratorExtension
 
 ##########################
 ## parameters of ComponentLaserObstacleAvoidROSExtension

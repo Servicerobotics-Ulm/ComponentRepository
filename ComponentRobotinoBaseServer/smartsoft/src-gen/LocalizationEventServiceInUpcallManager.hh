@@ -26,23 +26,23 @@
  * of incoming data to all associated (i.e. attached) Upcalls.
  */
 class LocalizationEventServiceInUpcallManager
-:	public Smart::IInputHandler<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult,SmartACE::EventId>>
+:	public Smart::IInputHandler<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult>>
 {
 private:
 	// list of associated updalls
 	std::list<LocalizationEventServiceInUpcallInterface*> upcalls;
 
 	// call the on_LocalizationEventServiceIn of all the attached LocalizationEventServiceInUpcallInterfaces
-	void notify_upcalls(const Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult,SmartACE::EventId> &input);
+	void notify_upcalls(const Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult> &input);
 	
 protected:
-	virtual void handle_input(const Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult,SmartACE::EventId> &input) {
+	virtual void handle_input(const Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult> &input) {
 		// relay input-handling to all attached LocalizationEventServiceInUpcallInterfaces
 		this->notify_upcalls(input);
 	}
 public:
 	LocalizationEventServiceInUpcallManager(
-		Smart::InputSubject<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult,SmartACE::EventId>> *subject,
+		Smart::InputSubject<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult>> *subject,
 		const int &prescaleFactor=1
 	);
 	virtual ~LocalizationEventServiceInUpcallManager();

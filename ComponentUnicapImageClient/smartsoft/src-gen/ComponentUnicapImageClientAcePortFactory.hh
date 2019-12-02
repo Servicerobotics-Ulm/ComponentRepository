@@ -35,7 +35,7 @@ public:
 	virtual int onStartup() override;
 
 	virtual Smart::IPushClientPattern<DomainVision::CommVideoImage> * createPushNewestClient() override;
-	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage,SmartACE::QueryId> * createQueryClient() override;
+	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> * createQueryClient() override;
 	
 	
 	// get a pointer to the internal component implementation

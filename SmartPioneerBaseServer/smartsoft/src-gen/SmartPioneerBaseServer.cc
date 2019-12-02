@@ -37,7 +37,7 @@ SmartPioneerBaseServer::SmartPioneerBaseServer()
 	baseStateQueryServer = NULL;
 	baseStateQueryServerInputTaskTrigger = NULL;
 	batteryEventServer = NULL;
-	batteryEventServerEventTestHandler = NULL; 
+	batteryEventServerEventTestHandler = nullptr; 
 	//coordinationPort = NULL;
 	localizationUpdate = NULL;
 	localizationUpdateInputTaskTrigger = NULL;
@@ -83,6 +83,8 @@ SmartPioneerBaseServer::SmartPioneerBaseServer()
 	connections.robotTask.scheduler = "DEFAULT";
 	connections.robotTask.priority = -1;
 	connections.robotTask.cpuAffinity = -1;
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of SmartPioneerBaseServerROSExtension
 	
@@ -191,6 +193,8 @@ void SmartPioneerBaseServer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		// initializations of SmartPioneerBaseServerROSExtension
 		
 		// initializations of PlainOpcUaSmartPioneerBaseServerExtension
@@ -226,13 +230,14 @@ void SmartPioneerBaseServer::init(int argc, char *argv[])
 		}
 
 		// create event-test handlers (if needed)
-		batteryEventServerEventTestHandler = new BatteryEventServerEventTestHandler();
+		batteryEventServerEventTestHandler = std::make_shared<BatteryEventServerEventTestHandler>();
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
 		basePositionOut = portFactoryRegistry[connections.basePositionOut.roboticMiddleware]->createBasePositionOut(connections.basePositionOut.serviceName);
 		baseStateQueryServer = portFactoryRegistry[connections.baseStateQueryServer.roboticMiddleware]->createBaseStateQueryServer(connections.baseStateQueryServer.serviceName);
-		baseStateQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState,SmartACE::QueryId>(baseStateQueryServer);
+		baseStateQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>(baseStateQueryServer);
+		batteryEventServerEventTestHandler = std::make_shared<BatteryEventServerEventTestHandler>();
 		batteryEventServer = portFactoryRegistry[connections.batteryEventServer.roboticMiddleware]->createBatteryEventServer(connections.batteryEventServer.serviceName, batteryEventServerEventTestHandler);
 		localizationUpdate = portFactoryRegistry[connections.localizationUpdate.roboticMiddleware]->createLocalizationUpdate(connections.localizationUpdate.serviceName);
 		navVelIn = portFactoryRegistry[connections.navVelIn.roboticMiddleware]->createNavVelIn(connections.navVelIn.serviceName);
@@ -408,7 +413,7 @@ void SmartPioneerBaseServer::fini()
 	delete localizationUpdate;
 	delete navVelIn;
 	// destroy event-test handlers (if needed)
-	delete batteryEventServerEventTestHandler;
+	batteryEventServerEventTestHandler;
 	
 	// destroy request-handlers
 	delete baseStateQueryHandler;
@@ -433,6 +438,8 @@ void SmartPioneerBaseServer::fini()
 	{
 		portFactory->second->destroy();
 	}
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of SmartPioneerBaseServerROSExtension
 	
@@ -566,6 +573,8 @@ void SmartPioneerBaseServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("RobotTask", "cpuAffinity")) {
 			parameter.getInteger("RobotTask", "cpuAffinity", connections.robotTask.cpuAffinity);
 		}
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for SmartPioneerBaseServerROSExtension
 		

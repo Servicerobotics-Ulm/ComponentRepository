@@ -84,6 +84,8 @@ SmartMapperGridMap::SmartMapperGridMap()
 	connections.ltmMapTask.priority = -1;
 	connections.ltmMapTask.cpuAffinity = -1;
 	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of SmartMapperGridMapROSExtension
 	
 	// initialize members of PlainOpcUaSmartMapperGridMapExtension
@@ -206,6 +208,8 @@ void SmartMapperGridMap::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		// initializations of SmartMapperGridMapROSExtension
 		
 		// initializations of PlainOpcUaSmartMapperGridMapExtension
@@ -246,9 +250,9 @@ void SmartMapperGridMap::init(int argc, char *argv[])
 		// TODO: set minCycleTime from Ini-file
 		currMapOut = portFactoryRegistry[connections.currMapOut.roboticMiddleware]->createCurrMapOut(connections.currMapOut.serviceName);
 		currQueryServer = portFactoryRegistry[connections.currQueryServer.roboticMiddleware]->createCurrQueryServer(connections.currQueryServer.serviceName);
-		currQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap,SmartACE::QueryId>(currQueryServer);
+		currQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap>(currQueryServer);
 		ltmQueryServer = portFactoryRegistry[connections.ltmQueryServer.roboticMiddleware]->createLtmQueryServer(connections.ltmQueryServer.serviceName);
-		ltmQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap,SmartACE::QueryId>(ltmQueryServer);
+		ltmQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap>(ltmQueryServer);
 		
 		// create client ports
 		laserServiceIn = portFactoryRegistry[connections.laserServiceIn.roboticMiddleware]->createLaserServiceIn();
@@ -473,6 +477,8 @@ void SmartMapperGridMap::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of SmartMapperGridMapROSExtension
 	
 	// destruction of PlainOpcUaSmartMapperGridMapExtension
@@ -612,6 +618,8 @@ void SmartMapperGridMap::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("LtmMapTask", "cpuAffinity")) {
 			parameter.getInteger("LtmMapTask", "cpuAffinity", connections.ltmMapTask.cpuAffinity);
 		}
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for SmartMapperGridMapROSExtension
 		

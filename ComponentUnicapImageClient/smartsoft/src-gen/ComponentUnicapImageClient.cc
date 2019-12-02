@@ -81,6 +81,8 @@ ComponentUnicapImageClient::ComponentUnicapImageClient()
 	connections.imageTask.priority = -1;
 	connections.imageTask.cpuAffinity = -1;
 	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of ComponentUnicapImageClientROSExtension
 	
 	// initialize members of PlainOpcUaComponentUnicapImageClientExtension
@@ -223,6 +225,8 @@ void ComponentUnicapImageClient::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of ComponentUnicapImageClientROSExtension
 		
@@ -484,6 +488,8 @@ void ComponentUnicapImageClient::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of ComponentUnicapImageClientROSExtension
 	
 	// destruction of PlainOpcUaComponentUnicapImageClientExtension
@@ -617,6 +623,8 @@ void ComponentUnicapImageClient::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("ImageTask", "cpuAffinity")) {
 			parameter.getInteger("ImageTask", "cpuAffinity", connections.imageTask.cpuAffinity);
 		}
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for ComponentUnicapImageClientROSExtension
 		

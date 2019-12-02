@@ -52,12 +52,12 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK);
 		
-		int temp_x = 0.0;
-		if(request.getDouble("1", temp_x) != 0) {
+		int temp_x = 0;
+		if(request.getInteger("1", temp_x) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
-		int temp_y = 0.0;
-		if(request.getDouble("2", temp_y) != 0) {
+		int temp_y = 0;
+		if(request.getInteger("2", temp_y) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
 		double temp_a = 0.0;
@@ -143,11 +143,11 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.Filter.kld_z = commitState.Filter.kld_z;
 		}
-		if(parameter.getDouble("Filter", "max_particles", commitState.Filter.max_particles))
+		if(parameter.getInteger("Filter", "max_particles", commitState.Filter.max_particles))
 		{
 			globalState.Filter.max_particles = commitState.Filter.max_particles;
 		}
-		if(parameter.getDouble("Filter", "min_particles", commitState.Filter.min_particles))
+		if(parameter.getInteger("Filter", "min_particles", commitState.Filter.min_particles))
 		{
 			globalState.Filter.min_particles = commitState.Filter.min_particles;
 		}

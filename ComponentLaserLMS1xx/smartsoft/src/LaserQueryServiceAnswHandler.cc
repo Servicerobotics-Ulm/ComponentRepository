@@ -44,7 +44,7 @@
 #include "LaserQueryServiceAnswHandler.hh"
 #include "ComponentLaserLMS1xx.hh"
 
-LaserQueryServiceAnswHandler::LaserQueryServiceAnswHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan, SmartACE::QueryId>* server)
+LaserQueryServiceAnswHandler::LaserQueryServiceAnswHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan>* server)
 :	LaserQueryServiceAnswHandlerCore(server)
 {
 	
@@ -61,7 +61,7 @@ void LaserQueryServiceAnswHandler::on_update_from(const LaserTask* laserTask)
 	// (use a local mutex here, because this method is called from within the thread of LaserTask)
 }
 
-void LaserQueryServiceAnswHandler::handleQuery(const SmartACE::QueryId &id, const CommBasicObjects::CommVoid& request) 
+void LaserQueryServiceAnswHandler::handleQuery(const Smart::QueryIdPtr &id, const CommBasicObjects::CommVoid& request)
 {
 	CommBasicObjects::CommMobileLaserScan answer;
 	

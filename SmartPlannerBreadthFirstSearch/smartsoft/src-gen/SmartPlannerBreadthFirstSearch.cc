@@ -40,7 +40,7 @@ SmartPlannerBreadthFirstSearch::SmartPlannerBreadthFirstSearch()
 	curMapClientInputTaskTrigger = NULL;
 	curMapClientUpcallManager = NULL;
 	plannerEventServer = NULL;
-	plannerEventServerEventTestHandler = NULL; 
+	plannerEventServerEventTestHandler = nullptr; 
 	plannerGoalServer = NULL;
 	plannerTask = NULL;
 	plannerTaskTrigger = NULL;
@@ -78,6 +78,8 @@ SmartPlannerBreadthFirstSearch::SmartPlannerBreadthFirstSearch()
 	connections.plannerTask.scheduler = "DEFAULT";
 	connections.plannerTask.priority = -1;
 	connections.plannerTask.cpuAffinity = -1;
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of SmartPlannerBreadthFirstSearchROSExtension
 	
@@ -204,6 +206,8 @@ void SmartPlannerBreadthFirstSearch::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		// initializations of SmartPlannerBreadthFirstSearchROSExtension
 		
 		// initializations of PlainOpcUaSmartPlannerBreadthFirstSearchExtension
@@ -239,10 +243,11 @@ void SmartPlannerBreadthFirstSearch::init(int argc, char *argv[])
 		}
 
 		// create event-test handlers (if needed)
-		plannerEventServerEventTestHandler = new PlannerEventServerEventTestHandler();
+		plannerEventServerEventTestHandler = std::make_shared<PlannerEventServerEventTestHandler>();
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
+		plannerEventServerEventTestHandler = std::make_shared<PlannerEventServerEventTestHandler>();
 		plannerEventServer = portFactoryRegistry[connections.plannerEventServer.roboticMiddleware]->createPlannerEventServer(connections.plannerEventServer.serviceName, plannerEventServerEventTestHandler);
 		plannerGoalServer = portFactoryRegistry[connections.plannerGoalServer.roboticMiddleware]->createPlannerGoalServer(connections.plannerGoalServer.serviceName);
 		
@@ -410,7 +415,7 @@ void SmartPlannerBreadthFirstSearch::fini()
 	delete plannerEventServer;
 	delete plannerGoalServer;
 	// destroy event-test handlers (if needed)
-	delete plannerEventServerEventTestHandler;
+	plannerEventServerEventTestHandler;
 	
 	// destroy request-handlers
 	
@@ -434,6 +439,8 @@ void SmartPlannerBreadthFirstSearch::fini()
 	{
 		portFactory->second->destroy();
 	}
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of SmartPlannerBreadthFirstSearchROSExtension
 	
@@ -558,6 +565,8 @@ void SmartPlannerBreadthFirstSearch::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("PlannerTask", "cpuAffinity")) {
 			parameter.getInteger("PlannerTask", "cpuAffinity", connections.plannerTask.cpuAffinity);
 		}
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for SmartPlannerBreadthFirstSearchROSExtension
 		

@@ -109,6 +109,8 @@ ComponentRealSenseV2Server::ComponentRealSenseV2Server()
 	
 	// initialize members of PlainOpcUaComponentRealSenseV2ServerExtension
 	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 }
 
 void ComponentRealSenseV2Server::addPortFactory(const std::string &name, ComponentRealSenseV2ServerPortFactoryInterface *portFactory)
@@ -269,6 +271,8 @@ void ComponentRealSenseV2Server::init(int argc, char *argv[])
 		
 		// initializations of PlainOpcUaComponentRealSenseV2ServerExtension
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		
 		// initialize all registered port-factories
 		for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
@@ -305,11 +309,11 @@ void ComponentRealSenseV2Server::init(int argc, char *argv[])
 		// TODO: set minCycleTime from Ini-file
 		colorImagePushNewestServer = portFactoryRegistry[connections.colorImagePushNewestServer.roboticMiddleware]->createColorImagePushNewestServer(connections.colorImagePushNewestServer.serviceName);
 		colorImageQueryServer = portFactoryRegistry[connections.colorImageQueryServer.roboticMiddleware]->createColorImageQueryServer(connections.colorImageQueryServer.serviceName);
-		colorImageQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommVideoImage,SmartACE::QueryId>(colorImageQueryServer);
+		colorImageQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommVideoImage>(colorImageQueryServer);
 		depthPushNewestServer = portFactoryRegistry[connections.depthPushNewestServer.roboticMiddleware]->createDepthPushNewestServer(connections.depthPushNewestServer.serviceName);
 		imagePushNewestServer = portFactoryRegistry[connections.imagePushNewestServer.roboticMiddleware]->createImagePushNewestServer(connections.imagePushNewestServer.serviceName);
 		imageQueryServer = portFactoryRegistry[connections.imageQueryServer.roboticMiddleware]->createImageQueryServer(connections.imageQueryServer.serviceName);
-		imageQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage,SmartACE::QueryId>(imageQueryServer);
+		imageQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage>(imageQueryServer);
 		
 		// create client ports
 		urPosePushTimedClient = portFactoryRegistry[connections.urPosePushTimedClient.roboticMiddleware]->createUrPosePushTimedClient();
@@ -531,6 +535,8 @@ void ComponentRealSenseV2Server::fini()
 	
 	// destruction of PlainOpcUaComponentRealSenseV2ServerExtension
 	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 }
 
 void ComponentRealSenseV2Server::loadParameter(int argc, char *argv[])
@@ -685,6 +691,8 @@ void ComponentRealSenseV2Server::loadParameter(int argc, char *argv[])
 		// load parameters for ComponentRealSenseV2ServerROSExtension
 		
 		// load parameters for PlainOpcUaComponentRealSenseV2ServerExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		
 		// load parameters for all registered component-extensions

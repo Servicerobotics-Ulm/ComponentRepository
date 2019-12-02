@@ -80,6 +80,8 @@ ComponentLaserFromRGBDServer::ComponentLaserFromRGBDServer()
 	connections.visTask.priority = -1;
 	connections.visTask.cpuAffinity = -1;
 	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of ComponentLaserFromRGBDServerROSExtension
 	
 	// initialize members of PlainOpcUaComponentLaserFromRGBDServerExtension
@@ -205,6 +207,8 @@ void ComponentLaserFromRGBDServer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		// initializations of ComponentLaserFromRGBDServerROSExtension
 		
 		// initializations of PlainOpcUaComponentLaserFromRGBDServerExtension
@@ -245,7 +249,7 @@ void ComponentLaserFromRGBDServer::init(int argc, char *argv[])
 		// TODO: set minCycleTime from Ini-file
 		laserPushNewestServer = portFactoryRegistry[connections.laserPushNewestServer.roboticMiddleware]->createLaserPushNewestServer(connections.laserPushNewestServer.serviceName);
 		laserQueryServer = portFactoryRegistry[connections.laserQueryServer.roboticMiddleware]->createLaserQueryServer(connections.laserQueryServer.serviceName);
-		laserQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan,SmartACE::QueryId>(laserQueryServer);
+		laserQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan>(laserQueryServer);
 		
 		// create client ports
 		rgbdClient = portFactoryRegistry[connections.rgbdClient.roboticMiddleware]->createRgbdClient();
@@ -455,6 +459,8 @@ void ComponentLaserFromRGBDServer::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of ComponentLaserFromRGBDServerROSExtension
 	
 	// destruction of PlainOpcUaComponentLaserFromRGBDServerExtension
@@ -590,6 +596,8 @@ void ComponentLaserFromRGBDServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("VisTask", "cpuAffinity")) {
 			parameter.getInteger("VisTask", "cpuAffinity", connections.visTask.cpuAffinity);
 		}
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for ComponentLaserFromRGBDServerROSExtension
 		

@@ -16,14 +16,14 @@
 #include "PersonDetectionEventClientUpcallManager.hh"
 
 PersonDetectionEventClientUpcallManager::PersonDetectionEventClientUpcallManager(
-	Smart::InputSubject<Smart::EventInputType<CommTrackingObjects::CommPersonDetectionEventResult,SmartACE::EventId>> *subject,
+	Smart::InputSubject<Smart::EventInputType<CommTrackingObjects::CommPersonDetectionEventResult>> *subject,
 	const int &prescaleFactor)
-	:	Smart::IInputHandler<Smart::EventInputType<CommTrackingObjects::CommPersonDetectionEventResult,SmartACE::EventId>>(subject, prescaleFactor)
+	:	Smart::IInputHandler<Smart::EventInputType<CommTrackingObjects::CommPersonDetectionEventResult>>(subject, prescaleFactor)
 {  }
 PersonDetectionEventClientUpcallManager::~PersonDetectionEventClientUpcallManager()
 {  }
 
-void PersonDetectionEventClientUpcallManager::notify_upcalls(const Smart::EventInputType<CommTrackingObjects::CommPersonDetectionEventResult,SmartACE::EventId> &input)
+void PersonDetectionEventClientUpcallManager::notify_upcalls(const Smart::EventInputType<CommTrackingObjects::CommPersonDetectionEventResult> &input)
 {
 	for(auto it=upcalls.begin(); it!=upcalls.end(); it++) {
 		(*it)->on_personDetectionEventClient(input);

@@ -17,7 +17,7 @@
 #include "LtmQueryServerHandler.hh"
 #include "SmartMapperGridMap.hh"
 
-LtmQueryServerHandler::LtmQueryServerHandler(Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap, SmartACE::QueryId>* server)
+LtmQueryServerHandler::LtmQueryServerHandler(Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap>* server)
 :	LtmQueryServerHandlerCore(server)
 {
 	
@@ -34,7 +34,7 @@ void LtmQueryServerHandler::on_update_from(const LtmMapTask* ltmMapTask)
 	// (use a local mutex here, because this method is called from within the thread of LtmMapTask)
 }
 
-void LtmQueryServerHandler::handleQuery(const SmartACE::QueryId &id, const CommNavigationObjects::CommGridMapRequest& request) 
+void LtmQueryServerHandler::handleQuery(const Smart::QueryIdPtr &id, const CommNavigationObjects::CommGridMapRequest& request) 
 {
 	CommNavigationObjects::CommGridMap answer;
 	

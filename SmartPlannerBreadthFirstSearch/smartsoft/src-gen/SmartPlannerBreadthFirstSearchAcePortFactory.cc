@@ -63,7 +63,7 @@ Smart::IPushClientPattern<CommNavigationObjects::CommGridMap> * SmartPlannerBrea
 }
 
 
-Smart::IEventServerPattern<CommNavigationObjects::CommPlannerEventParameter, CommNavigationObjects::CommPlannerEventResult, CommNavigationObjects::PlannerEventState,SmartACE::EventId> * SmartPlannerBreadthFirstSearchAcePortFactory::createPlannerEventServer(const std::string &serviceName, Smart::IEventTestHandler<CommNavigationObjects::CommPlannerEventParameter, CommNavigationObjects::CommPlannerEventResult, CommNavigationObjects::PlannerEventState> *plannerEventServerEventTestHandler)
+Smart::IEventServerPattern<CommNavigationObjects::CommPlannerEventParameter, CommNavigationObjects::CommPlannerEventResult, CommNavigationObjects::PlannerEventState> * SmartPlannerBreadthFirstSearchAcePortFactory::createPlannerEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommNavigationObjects::CommPlannerEventParameter, CommNavigationObjects::CommPlannerEventResult, CommNavigationObjects::PlannerEventState>> plannerEventServerEventTestHandler)
 {
 	return new SmartACE::EventServer<CommNavigationObjects::CommPlannerEventParameter, CommNavigationObjects::CommPlannerEventResult, CommNavigationObjects::PlannerEventState>(componentImpl, serviceName, plannerEventServerEventTestHandler);
 }

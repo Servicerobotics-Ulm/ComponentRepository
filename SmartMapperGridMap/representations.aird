@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ComponentDefinition="http://www.ecore.org/component/ComponentDefinition" xmlns:ComponentParameter="http://www.ecore.org/component/ComponentParameter" xmlns:CoordinationExtension="http://www.ecore.org/component/CoordinationExtension" xmlns:PerformanceExtension="http://www.ecore.org/component/PerformanceExtension" xmlns:StateExtension="http://www.ecore.org/component/StateExtension" xmlns:StateMachine="http://www.ecore.org/base/StateMachine" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:diagram="http://www.eclipse.org/sirius/diagram/1.1.0" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xsi:schemaLocation="http://www.eclipse.org/sirius/description/1.1.0 http://www.eclipse.org/sirius/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/style/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description/style">
-  <viewpoint:DAnalysis xmi:id="_xgQeEOSYEeeovOxnrSAxQA" selectedViews="_xiocoOSYEeeovOxnrSAxQA" version="12.1.0.201708031200">
+  <viewpoint:DAnalysis uid="_xgQeEOSYEeeovOxnrSAxQA" selectedViews="_xiocoOSYEeeovOxnrSAxQA" version="14.1.0.201810161215">
     <semanticResources>model/SmartMapperGridMap.component</semanticResources>
     <semanticResources>model/SmartMapperGridMap.componentParameters</semanticResources>
     <semanticResources>platform:/resource/.org.eclipse.jdt.core.external.folders/.link0/componentLifecycle/ComponentLifecycle.automaton</semanticResources>
@@ -16,23 +16,23 @@
     <semanticResources>platform:/plugin/org.xtext.service.parameterDefinition/defaultParameterLib/defaultParameterLib.parameters</semanticResources>
     <semanticResources>platform:/plugin/org.xtext.base.stateMachine/componentLifecycle/ComponentLifecycle.automaton</semanticResources>
     <semanticResources>platform:/resource/CommNavigationObjects/model/CommNavigationObjects.types</semanticResources>
-    <ownedViews xmi:type="viewpoint:DView" xmi:id="_xiocoOSYEeeovOxnrSAxQA">
+    <ownedViews xmi:type="viewpoint:DView" uid="_xiocoOSYEeeovOxnrSAxQA">
       <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']"/>
-      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" xmi:id="_xi0p6OSYEeeovOxnrSAxQA" name="SmartMapperGridMap" repPath="#_opwlgBGdEei2ZrKya4E0lg">
+      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_xi0p6OSYEeeovOxnrSAxQA" name="SmartMapperGridMap" repPath="#_xi0p4OSYEeeovOxnrSAxQA">
         <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
         <target xmi:type="ComponentDefinition:ComponentDefModel" href="model/SmartMapperGridMap.component#/"/>
       </ownedRepresentationDescriptors>
-      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" xmi:id="_BKGx2-SiEeeovOxnrSAxQA" name="SmartMapperGridMapStates" repPath="#_op36QBGdEei2ZrKya4E0lg">
+      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_BKGx2-SiEeeovOxnrSAxQA" name="SmartMapperGridMapStates" repPath="#_BKGxsOSiEeeovOxnrSAxQA">
         <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']"/>
         <target xmi:type="StateExtension:ComponentStates" href="model/SmartMapperGridMap.component#//@component/@extensions.1"/>
       </ownedRepresentationDescriptors>
     </ownedViews>
   </viewpoint:DAnalysis>
-  <diagram:DSemanticDiagram xmi:id="_xi0p4OSYEeeovOxnrSAxQA" name="SmartMapperGridMap" uid="_opwlgBGdEei2ZrKya4E0lg">
-    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" xmi:id="_xi0p4eSYEeeovOxnrSAxQA" source="DANNOTATION_CUSTOMIZATION_KEY">
-      <data xmi:type="diagram:ComputedStyleDescriptionRegistry" xmi:id="_xi0p4uSYEeeovOxnrSAxQA"/>
+  <diagram:DSemanticDiagram uid="_xi0p4OSYEeeovOxnrSAxQA" name="SmartMapperGridMap">
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="_xi0p4eSYEeeovOxnrSAxQA" source="DANNOTATION_CUSTOMIZATION_KEY">
+      <data xmi:type="diagram:ComputedStyleDescriptionRegistry" uid="_xi0p4uSYEeeovOxnrSAxQA"/>
     </ownedAnnotationEntries>
-    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" xmi:id="_xi1Q8OSYEeeovOxnrSAxQA" source="GMF_DIAGRAMS">
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="_xi1Q8OSYEeeovOxnrSAxQA" source="GMF_DIAGRAMS">
       <data xmi:type="notation:Diagram" xmi:id="_xi1Q8eSYEeeovOxnrSAxQA" type="Sirius" element="_xi0p4OSYEeeovOxnrSAxQA" measurementUnit="Pixel">
         <children xmi:type="notation:Node" xmi:id="_xi1Q8-SYEeeovOxnrSAxQA" type="2002" element="_xi0p5OSYEeeovOxnrSAxQA">
           <children xmi:type="notation:Node" xmi:id="_xi1Q9uSYEeeovOxnrSAxQA" type="5006"/>
@@ -467,60 +467,60 @@
         </edges>
       </data>
     </ownedAnnotationEntries>
-    <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_xi0p5OSYEeeovOxnrSAxQA" name="SmartMapperGridMap" tooltipText="ComponentDefinition">
+    <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_xi0p5OSYEeeovOxnrSAxQA" name="SmartMapperGridMap" tooltipText="ComponentDefinition: SmartMapperGridMap&#xA;">
       <target xmi:type="ComponentDefinition:ComponentDefinition" href="model/SmartMapperGridMap.component#//@component"/>
       <semanticElements xmi:type="ComponentDefinition:ComponentDefinition" href="model/SmartMapperGridMap.component#//@component"/>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_TO2CYIUoEeiewJjIahDJig" name="CurrQueryServer" tooltipText="AnswerPort" outgoingEdges="_TRz20IUoEeiewJjIahDJig" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_TO2CYIUoEeiewJjIahDJig" name="CurrQueryServer" tooltipText="AnswerPort" outgoingEdges="_TRz20IUoEeiewJjIahDJig" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:AnswerPort" href="model/SmartMapperGridMap.component#//@component/@elements.2"/>
         <semanticElements xmi:type="ComponentDefinition:AnswerPort" href="model/SmartMapperGridMap.component#//@component/@elements.2"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:CustomStyle" xmi:id="_TO2CYYUoEeiewJjIahDJig" showIcon="false" id="answer">
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_TO2CYYUoEeiewJjIahDJig" showIcon="false" id="answer">
           <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='AnswerPortNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='AnswerPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_TO2pcIUoEeiewJjIahDJig" name="CoordinationPort" tooltipText="CoordinationSlavePort" outgoingEdges="_qbm7QIkKEeit4-fWZqJ6Ew" incomingEdges="_GPq9MIm9EeiIjfG8jCfj9g" width="-1" height="-1" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_TO2pcIUoEeiewJjIahDJig" name="CoordinationPort" tooltipText="CoordinationSlavePort" outgoingEdges="_qbm7QIkKEeit4-fWZqJ6Ew" incomingEdges="_GPq9MIm9EeiIjfG8jCfj9g" width="-1" height="-1" resizeKind="NSEW">
         <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/SmartMapperGridMap.component#//@component/@elements.0"/>
         <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/SmartMapperGridMap.component#//@component/@elements.0"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:WorkspaceImage" xmi:id="_TO3QgIUoEeiewJjIahDJig" showIcon="false" workspacePath="/org.sirius.component.design/icons/CoordinationSlave.png">
+        <ownedStyle xmi:type="diagram:WorkspaceImage" uid="_TO3QgIUoEeiewJjIahDJig" showIcon="false" workspacePath="/org.sirius.component.design/icons/CoordinationSlave.png">
           <description xmi:type="style:WorkspaceImageDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='CoordinationSlaveNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='CoordinationSlaveNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_NpPBMIm8Eeim8v7wv_JlLA" name="LaserServiceIn" tooltipText="InputPort" outgoingEdges="_NvvR0Im8Eeim8v7wv_JlLA _Nv9UQIm8Eeim8v7wv_JlLA" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_NpPBMIm8Eeim8v7wv_JlLA" name="LaserServiceIn" tooltipText="InputPort: LaserServiceIn&#xA;" outgoingEdges="_NvvR0Im8Eeim8v7wv_JlLA _Nv9UQIm8Eeim8v7wv_JlLA" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:InputPort" href="model/SmartMapperGridMap.component#//@component/@elements.1"/>
         <semanticElements xmi:type="ComponentDefinition:InputPort" href="model/SmartMapperGridMap.component#//@component/@elements.1"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:CustomStyle" xmi:id="_NpQPUIm8Eeim8v7wv_JlLA" showIcon="false" id="input">
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_NpQPUIm8Eeim8v7wv_JlLA" showIcon="false" id="input">
           <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_NpSEgIm8Eeim8v7wv_JlLA" name="CurrMapOut" tooltipText="OutputPort" incomingEdges="_NwCMwIm8Eeim8v7wv_JlLA" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_NpSEgIm8Eeim8v7wv_JlLA" name="CurrMapOut" tooltipText="OutputPort" incomingEdges="_NwCMwIm8Eeim8v7wv_JlLA" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:OutputPort" href="model/SmartMapperGridMap.component#//@component/@elements.6"/>
         <semanticElements xmi:type="ComponentDefinition:OutputPort" href="model/SmartMapperGridMap.component#//@component/@elements.6"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:CustomStyle" xmi:id="_NpSEgYm8Eeim8v7wv_JlLA" showIcon="false" id="output">
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_NpSEgYm8Eeim8v7wv_JlLA" showIcon="false" id="output">
           <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='OutputPortNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='OutputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_NpSrkIm8Eeim8v7wv_JlLA" name="LtmQueryServer" tooltipText="AnswerPort" outgoingEdges="_NwYyEIm8Eeim8v7wv_JlLA" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_NpSrkIm8Eeim8v7wv_JlLA" name="LtmQueryServer" tooltipText="AnswerPort" outgoingEdges="_NwYyEIm8Eeim8v7wv_JlLA" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:AnswerPort" href="model/SmartMapperGridMap.component#//@component/@elements.3"/>
         <semanticElements xmi:type="ComponentDefinition:AnswerPort" href="model/SmartMapperGridMap.component#//@component/@elements.3"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:CustomStyle" xmi:id="_NpTSoIm8Eeim8v7wv_JlLA" showIcon="false" id="answer">
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_NpTSoIm8Eeim8v7wv_JlLA" showIcon="false" id="answer">
           <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='AnswerPortNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='AnswerPortNode']"/>
@@ -528,309 +528,309 @@
       <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
       <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
       <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-      <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_xi0p5uSYEeeovOxnrSAxQA" labelSize="10" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,245,181">
+      <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_xi0p5uSYEeeovOxnrSAxQA" labelSize="10" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,245,181">
         <labelFormat>bold</labelFormat>
         <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@style"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']"/>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_TO4eoIUoEeiewJjIahDJig" name="CurMapTask" tooltipText="Activity" outgoingEdges="_TRyBoIUoEeiewJjIahDJig _NwCMwIm8Eeim8v7wv_JlLA _fqeG4Bf3Eem4y4qWo8qoPQ" incomingEdges="_NvvR0Im8Eeim8v7wv_JlLA">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_TO4eoIUoEeiewJjIahDJig" name="CurMapTask" tooltipText="Activity" outgoingEdges="_TRyBoIUoEeiewJjIahDJig _NwCMwIm8Eeim8v7wv_JlLA _fqeG4Bf3Eem4y4qWo8qoPQ" incomingEdges="_NvvR0Im8Eeim8v7wv_JlLA">
         <target xmi:type="ComponentDefinition:Activity" href="model/SmartMapperGridMap.component#//@component/@elements.4"/>
         <semanticElements xmi:type="ComponentDefinition:Activity" href="model/SmartMapperGridMap.component#//@component/@elements.4"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_TO4eoYUoEeiewJjIahDJig" borderSize="1" borderSizeComputationExpression="1">
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_TO4eoYUoEeiewJjIahDJig" borderSize="1" borderSizeComputationExpression="1">
           <labelFormat>bold</labelFormat>
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']"/>
-        <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_VvhYoIkIEeii2LAAMuNflg" name="ActivationConstraints" tooltipText="ActivationConstraints" width="9">
+        <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_VvhYoIkIEeii2LAAMuNflg" name="ActivationConstraints" tooltipText="ActivationConstraints" width="9">
           <target xmi:type="PerformanceExtension:ActivationConstraints" href="model/SmartMapperGridMap.component#//@component/@elements.4/@extensions.0"/>
           <semanticElements xmi:type="PerformanceExtension:ActivationConstraints" href="model/SmartMapperGridMap.component#//@component/@elements.4/@extensions.0"/>
-          <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_Vvh_sIkIEeii2LAAMuNflg" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
+          <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_Vvh_sIkIEeii2LAAMuNflg" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
             <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@subContainerMappings[name='ActivationConstraintsContainer']/@style"/>
           </ownedStyle>
           <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@subContainerMappings[name='ActivationConstraintsContainer']"/>
         </ownedDiagramElements>
       </ownedDiagramElements>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_TP9csIUoEeiewJjIahDJig" name="CurrQueryServerHandler" tooltipText="RequestHandler" incomingEdges="_TRyBoIUoEeiewJjIahDJig _TRz20IUoEeiewJjIahDJig">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_TP9csIUoEeiewJjIahDJig" name="CurrQueryServerHandler" tooltipText="RequestHandler" incomingEdges="_TRyBoIUoEeiewJjIahDJig _TRz20IUoEeiewJjIahDJig">
         <target xmi:type="ComponentDefinition:RequestHandler" href="model/SmartMapperGridMap.component#//@component/@elements.7"/>
         <semanticElements xmi:type="ComponentDefinition:RequestHandler" href="model/SmartMapperGridMap.component#//@component/@elements.7"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_TP9csYUoEeiewJjIahDJig" borderSize="1" borderSizeComputationExpression="1">
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_TP9csYUoEeiewJjIahDJig" borderSize="1" borderSizeComputationExpression="1">
           <labelFormat>bold</labelFormat>
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='RequestHandlerContainer']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='RequestHandlerContainer']"/>
       </ownedDiagramElements>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_qYk1YIkKEeit4-fWZqJ6Ew" name="ComponentModes" tooltipText="ComponentModes" incomingEdges="_qbm7QIkKEeit4-fWZqJ6Ew">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_qYk1YIkKEeit4-fWZqJ6Ew" name="ComponentModes" tooltipText="ComponentModes" incomingEdges="_qbm7QIkKEeit4-fWZqJ6Ew">
         <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/SmartMapperGridMap.component#//@component/@elements.0"/>
         <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/SmartMapperGridMap.component#//@component/@elements.0"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_qYtYQIkKEeit4-fWZqJ6Ew" iconPath="/org.sirius.component.design/icons/switch2.png" borderSize="1" borderSizeComputationExpression="1">
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_qYtYQIkKEeit4-fWZqJ6Ew" iconPath="/org.sirius.component.design/icons/switch2.png" borderSize="1" borderSizeComputationExpression="1">
           <labelFormat>bold</labelFormat>
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']"/>
-        <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_fp6GMBf3Eem4y4qWo8qoPQ" name="BuildCurrMap" tooltipText="PublicOperationMode" outgoingEdges="_fqkNgBf3Eem4y4qWo8qoPQ">
+        <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_fp6GMBf3Eem4y4qWo8qoPQ" name="BuildCurrMap" tooltipText="PublicOperationMode" outgoingEdges="_fqkNgBf3Eem4y4qWo8qoPQ">
           <target xmi:type="CoordinationExtension:PublicOperationMode" href="model/SmartMapperGridMap.component#//@component/@elements.0/@elements.2"/>
           <semanticElements xmi:type="CoordinationExtension:PublicOperationMode" href="model/SmartMapperGridMap.component#//@component/@elements.0/@elements.2"/>
           <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
           <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
           <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-          <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_fp6GMRf3Eem4y4qWo8qoPQ" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
+          <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_fp6GMRf3Eem4y4qWo8qoPQ" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
             <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PublicOperationModeContainer']/@style"/>
           </ownedStyle>
           <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PublicOperationModeContainer']"/>
         </ownedDiagramElements>
-        <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_fp6tQBf3Eem4y4qWo8qoPQ" name="BuildLtmMap" tooltipText="PublicOperationMode" outgoingEdges="_fqk0khf3Eem4y4qWo8qoPQ">
+        <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_fp6tQBf3Eem4y4qWo8qoPQ" name="BuildLtmMap" tooltipText="PublicOperationMode" outgoingEdges="_fqk0khf3Eem4y4qWo8qoPQ">
           <target xmi:type="CoordinationExtension:PublicOperationMode" href="model/SmartMapperGridMap.component#//@component/@elements.0/@elements.3"/>
           <semanticElements xmi:type="CoordinationExtension:PublicOperationMode" href="model/SmartMapperGridMap.component#//@component/@elements.0/@elements.3"/>
           <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
           <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
           <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-          <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_fp6tQRf3Eem4y4qWo8qoPQ" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
+          <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_fp6tQRf3Eem4y4qWo8qoPQ" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
             <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PublicOperationModeContainer']/@style"/>
           </ownedStyle>
           <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PublicOperationModeContainer']"/>
         </ownedDiagramElements>
-        <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_fp6tQhf3Eem4y4qWo8qoPQ" name="BuildBothMaps" tooltipText="PublicOperationMode" outgoingEdges="_fqk0lRf3Eem4y4qWo8qoPQ _fqlboBf3Eem4y4qWo8qoPQ">
+        <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_fp6tQhf3Eem4y4qWo8qoPQ" name="BuildBothMaps" tooltipText="PublicOperationMode" outgoingEdges="_fqk0lRf3Eem4y4qWo8qoPQ _fqlboBf3Eem4y4qWo8qoPQ">
           <target xmi:type="CoordinationExtension:PublicOperationMode" href="model/SmartMapperGridMap.component#//@component/@elements.0/@elements.4"/>
           <semanticElements xmi:type="CoordinationExtension:PublicOperationMode" href="model/SmartMapperGridMap.component#//@component/@elements.0/@elements.4"/>
           <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
           <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
           <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-          <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_fp6tQxf3Eem4y4qWo8qoPQ" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
+          <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_fp6tQxf3Eem4y4qWo8qoPQ" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
             <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PublicOperationModeContainer']/@style"/>
           </ownedStyle>
           <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PublicOperationModeContainer']"/>
         </ownedDiagramElements>
-        <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_fp7UUBf3Eem4y4qWo8qoPQ" name="currMap" tooltipText="PrivateOperationMode" incomingEdges="_fqeG4Bf3Eem4y4qWo8qoPQ _fqkNgBf3Eem4y4qWo8qoPQ _fqk0lRf3Eem4y4qWo8qoPQ">
+        <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_fp7UUBf3Eem4y4qWo8qoPQ" name="currMap" tooltipText="PrivateOperationMode" incomingEdges="_fqeG4Bf3Eem4y4qWo8qoPQ _fqkNgBf3Eem4y4qWo8qoPQ _fqk0lRf3Eem4y4qWo8qoPQ">
           <target xmi:type="CoordinationExtension:PrivateOperationMode" href="model/SmartMapperGridMap.component#//@component/@elements.0/@elements.0"/>
           <semanticElements xmi:type="CoordinationExtension:PrivateOperationMode" href="model/SmartMapperGridMap.component#//@component/@elements.0/@elements.0"/>
           <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
           <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
           <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-          <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_fp77YBf3Eem4y4qWo8qoPQ" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
+          <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_fp77YBf3Eem4y4qWo8qoPQ" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
             <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PrivateOperationModeContainer']/@style"/>
           </ownedStyle>
           <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PrivateOperationModeContainer']"/>
         </ownedDiagramElements>
-        <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_fp77YRf3Eem4y4qWo8qoPQ" name="ltmMap" tooltipText="PrivateOperationMode" incomingEdges="_fqjmcBf3Eem4y4qWo8qoPQ _fqk0khf3Eem4y4qWo8qoPQ _fqlboBf3Eem4y4qWo8qoPQ">
+        <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_fp77YRf3Eem4y4qWo8qoPQ" name="ltmMap" tooltipText="PrivateOperationMode" incomingEdges="_fqjmcBf3Eem4y4qWo8qoPQ _fqk0khf3Eem4y4qWo8qoPQ _fqlboBf3Eem4y4qWo8qoPQ">
           <target xmi:type="CoordinationExtension:PrivateOperationMode" href="model/SmartMapperGridMap.component#//@component/@elements.0/@elements.1"/>
           <semanticElements xmi:type="CoordinationExtension:PrivateOperationMode" href="model/SmartMapperGridMap.component#//@component/@elements.0/@elements.1"/>
           <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
           <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
           <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-          <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_fp77Yhf3Eem4y4qWo8qoPQ" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
+          <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_fp77Yhf3Eem4y4qWo8qoPQ" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
             <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PrivateOperationModeContainer']/@style"/>
           </ownedStyle>
           <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PrivateOperationModeContainer']"/>
         </ownedDiagramElements>
       </ownedDiagramElements>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_NpVu4Im8Eeim8v7wv_JlLA" name="LtmMapTask" tooltipText="Activity" outgoingEdges="_NwVHsIm8Eeim8v7wv_JlLA _fqjmcBf3Eem4y4qWo8qoPQ" incomingEdges="_Nv9UQIm8Eeim8v7wv_JlLA">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_NpVu4Im8Eeim8v7wv_JlLA" name="LtmMapTask" tooltipText="Activity" outgoingEdges="_NwVHsIm8Eeim8v7wv_JlLA _fqjmcBf3Eem4y4qWo8qoPQ" incomingEdges="_Nv9UQIm8Eeim8v7wv_JlLA">
         <target xmi:type="ComponentDefinition:Activity" href="model/SmartMapperGridMap.component#//@component/@elements.5"/>
         <semanticElements xmi:type="ComponentDefinition:Activity" href="model/SmartMapperGridMap.component#//@component/@elements.5"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_NpVu4Ym8Eeim8v7wv_JlLA" borderSize="1" borderSizeComputationExpression="1">
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_NpVu4Ym8Eeim8v7wv_JlLA" borderSize="1" borderSizeComputationExpression="1">
           <labelFormat>bold</labelFormat>
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']"/>
-        <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_NpWV8Im8Eeim8v7wv_JlLA" name="ActivationConstraints" tooltipText="ActivationConstraints" width="9">
+        <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_NpWV8Im8Eeim8v7wv_JlLA" name="ActivationConstraints" tooltipText="ActivationConstraints" width="9">
           <target xmi:type="PerformanceExtension:ActivationConstraints" href="model/SmartMapperGridMap.component#//@component/@elements.5/@extensions.0"/>
           <semanticElements xmi:type="PerformanceExtension:ActivationConstraints" href="model/SmartMapperGridMap.component#//@component/@elements.5/@extensions.0"/>
           <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
           <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
           <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-          <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_Nui_AIm8Eeim8v7wv_JlLA" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
+          <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_Nui_AIm8Eeim8v7wv_JlLA" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
             <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@subContainerMappings[name='ActivationConstraintsContainer']/@style"/>
           </ownedStyle>
           <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@subContainerMappings[name='ActivationConstraintsContainer']"/>
         </ownedDiagramElements>
-        <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_NukNIIm8Eeim8v7wv_JlLA" name="PeriodicTimer" tooltipText="DefaultTrigger">
+        <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_NukNIIm8Eeim8v7wv_JlLA" name="PeriodicTimer" tooltipText="DefaultTrigger">
           <target xmi:type="PerformanceExtension:DefaultPeriodicTimer" href="model/SmartMapperGridMap.component#//@component/@elements.5/@extensions.1"/>
           <semanticElements xmi:type="PerformanceExtension:DefaultPeriodicTimer" href="model/SmartMapperGridMap.component#//@component/@elements.5/@extensions.1"/>
           <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
           <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
           <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-          <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_NuwaYIm8Eeim8v7wv_JlLA" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
+          <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_NuwaYIm8Eeim8v7wv_JlLA" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
             <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@subContainerMappings[name='DefaultPeriodicTimerContainer']/@style"/>
           </ownedStyle>
           <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@subContainerMappings[name='DefaultPeriodicTimerContainer']"/>
         </ownedDiagramElements>
       </ownedDiagramElements>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_NvCuQIm8Eeim8v7wv_JlLA" name="LtmQueryServerHandler" tooltipText="RequestHandler" incomingEdges="_NwVHsIm8Eeim8v7wv_JlLA _NwYyEIm8Eeim8v7wv_JlLA">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_NvCuQIm8Eeim8v7wv_JlLA" name="LtmQueryServerHandler" tooltipText="RequestHandler" incomingEdges="_NwVHsIm8Eeim8v7wv_JlLA _NwYyEIm8Eeim8v7wv_JlLA">
         <target xmi:type="ComponentDefinition:RequestHandler" href="model/SmartMapperGridMap.component#//@component/@elements.8"/>
         <semanticElements xmi:type="ComponentDefinition:RequestHandler" href="model/SmartMapperGridMap.component#//@component/@elements.8"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_NvDVUIm8Eeim8v7wv_JlLA" borderSize="1" borderSizeComputationExpression="1">
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_NvDVUIm8Eeim8v7wv_JlLA" borderSize="1" borderSizeComputationExpression="1">
           <labelFormat>bold</labelFormat>
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='RequestHandlerContainer']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='RequestHandlerContainer']"/>
       </ownedDiagramElements>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_NvSl4Im8Eeim8v7wv_JlLA" name="SmartMapperGridMapParams" tooltipText="ComponentParameters" outgoingEdges="_GPq9MIm9EeiIjfG8jCfj9g">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_NvSl4Im8Eeim8v7wv_JlLA" name="SmartMapperGridMapParams" tooltipText="ComponentParameters" outgoingEdges="_GPq9MIm9EeiIjfG8jCfj9g">
         <target xmi:type="ComponentParameter:ComponentParametersRef" href="model/SmartMapperGridMap.component#//@component/@elements.9"/>
         <semanticElements xmi:type="ComponentParameter:ComponentParametersRef" href="model/SmartMapperGridMap.component#//@component/@elements.9"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_NvTM8Im8Eeim8v7wv_JlLA" borderSize="1" borderSizeComputationExpression="1">
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_NvTM8Im8Eeim8v7wv_JlLA" borderSize="1" borderSizeComputationExpression="1">
           <labelFormat>bold</labelFormat>
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentParametersContainer']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentParametersContainer']"/>
       </ownedDiagramElements>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_TRyBoIUoEeiewJjIahDJig" sourceNode="_TO4eoIUoEeiewJjIahDJig" targetNode="_TP9csIUoEeiewJjIahDJig">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_TRyBoIUoEeiewJjIahDJig" sourceNode="_TO4eoIUoEeiewJjIahDJig" targetNode="_TP9csIUoEeiewJjIahDJig">
       <target xmi:type="ComponentDefinition:ComponentSubNodeObserver" href="model/SmartMapperGridMap.component#//@component/@elements.7/@links.0"/>
       <semanticElements xmi:type="ComponentDefinition:ComponentSubNodeObserver" href="model/SmartMapperGridMap.component#//@component/@elements.7/@links.0"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_TRyosIUoEeiewJjIahDJig" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_TRyosIUoEeiewJjIahDJig" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ObserverEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_TRyosYUoEeiewJjIahDJig"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_TRyosYUoEeiewJjIahDJig"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ObserverEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_TRz20IUoEeiewJjIahDJig" sourceNode="_TO2CYIUoEeiewJjIahDJig" targetNode="_TP9csIUoEeiewJjIahDJig">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_TRz20IUoEeiewJjIahDJig" sourceNode="_TO2CYIUoEeiewJjIahDJig" targetNode="_TP9csIUoEeiewJjIahDJig">
       <target xmi:type="ComponentDefinition:RequestHandler" href="model/SmartMapperGridMap.component#//@component/@elements.7"/>
       <semanticElements xmi:type="ComponentDefinition:RequestHandler" href="model/SmartMapperGridMap.component#//@component/@elements.7"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_TRz20YUoEeiewJjIahDJig" targetArrow="OutputClosedArrow" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_TRz20YUoEeiewJjIahDJig" targetArrow="OutputClosedArrow" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='RequestHandlerEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_TRz20oUoEeiewJjIahDJig" showIcon="false"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_TRz20oUoEeiewJjIahDJig" showIcon="false"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='RequestHandlerEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_qbm7QIkKEeit4-fWZqJ6Ew" sourceNode="_TO2pcIUoEeiewJjIahDJig" targetNode="_qYk1YIkKEeit4-fWZqJ6Ew">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_qbm7QIkKEeit4-fWZqJ6Ew" sourceNode="_TO2pcIUoEeiewJjIahDJig" targetNode="_qYk1YIkKEeit4-fWZqJ6Ew">
       <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/SmartMapperGridMap.component#//@component/@elements.0"/>
       <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/SmartMapperGridMap.component#//@component/@elements.0"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_qbm7QYkKEeit4-fWZqJ6Ew" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_qbm7QYkKEeit4-fWZqJ6Ew" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CoordinationSlaveEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_qbm7QokKEeit4-fWZqJ6Ew"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_qbm7QokKEeit4-fWZqJ6Ew"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CoordinationSlaveEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_NvvR0Im8Eeim8v7wv_JlLA" sourceNode="_NpPBMIm8Eeim8v7wv_JlLA" targetNode="_TO4eoIUoEeiewJjIahDJig">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_NvvR0Im8Eeim8v7wv_JlLA" sourceNode="_NpPBMIm8Eeim8v7wv_JlLA" targetNode="_TO4eoIUoEeiewJjIahDJig">
       <target xmi:type="PerformanceExtension:InputLinkExtension" href="model/SmartMapperGridMap.component#//@component/@elements.4/@links.0"/>
       <semanticElements xmi:type="PerformanceExtension:InputLinkExtension" href="model/SmartMapperGridMap.component#//@component/@elements.4/@links.0"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_Nv8GIIm8Eeim8v7wv_JlLA" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_Nv8GIIm8Eeim8v7wv_JlLA" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_Nv8GIYm8Eeim8v7wv_JlLA"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_Nv8GIYm8Eeim8v7wv_JlLA"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_Nv9UQIm8Eeim8v7wv_JlLA" sourceNode="_NpPBMIm8Eeim8v7wv_JlLA" targetNode="_NpVu4Im8Eeim8v7wv_JlLA">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_Nv9UQIm8Eeim8v7wv_JlLA" sourceNode="_NpPBMIm8Eeim8v7wv_JlLA" targetNode="_NpVu4Im8Eeim8v7wv_JlLA">
       <target xmi:type="PerformanceExtension:InputLinkExtension" href="model/SmartMapperGridMap.component#//@component/@elements.5/@links.0"/>
       <semanticElements xmi:type="PerformanceExtension:InputLinkExtension" href="model/SmartMapperGridMap.component#//@component/@elements.5/@links.0"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_Nv9UQYm8Eeim8v7wv_JlLA" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_Nv9UQYm8Eeim8v7wv_JlLA" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_Nv9UQom8Eeim8v7wv_JlLA"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_Nv9UQom8Eeim8v7wv_JlLA"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_NwCMwIm8Eeim8v7wv_JlLA" sourceNode="_TO4eoIUoEeiewJjIahDJig" targetNode="_NpSEgIm8Eeim8v7wv_JlLA">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_NwCMwIm8Eeim8v7wv_JlLA" sourceNode="_TO4eoIUoEeiewJjIahDJig" targetNode="_NpSEgIm8Eeim8v7wv_JlLA">
       <target xmi:type="ComponentDefinition:OutputPort" href="model/SmartMapperGridMap.component#//@component/@elements.6"/>
       <semanticElements xmi:type="ComponentDefinition:OutputPort" href="model/SmartMapperGridMap.component#//@component/@elements.6"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_NwCMwYm8Eeim8v7wv_JlLA" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_NwCMwYm8Eeim8v7wv_JlLA" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ActivityOutputEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_NwCMwom8Eeim8v7wv_JlLA"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_NwCMwom8Eeim8v7wv_JlLA"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ActivityOutputEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_NwVHsIm8Eeim8v7wv_JlLA" sourceNode="_NpVu4Im8Eeim8v7wv_JlLA" targetNode="_NvCuQIm8Eeim8v7wv_JlLA">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_NwVHsIm8Eeim8v7wv_JlLA" sourceNode="_NpVu4Im8Eeim8v7wv_JlLA" targetNode="_NvCuQIm8Eeim8v7wv_JlLA">
       <target xmi:type="ComponentDefinition:ComponentSubNodeObserver" href="model/SmartMapperGridMap.component#//@component/@elements.8/@links.0"/>
       <semanticElements xmi:type="ComponentDefinition:ComponentSubNodeObserver" href="model/SmartMapperGridMap.component#//@component/@elements.8/@links.0"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_NwVHsYm8Eeim8v7wv_JlLA" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_NwVHsYm8Eeim8v7wv_JlLA" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ObserverEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_NwVHsom8Eeim8v7wv_JlLA"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_NwVHsom8Eeim8v7wv_JlLA"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ObserverEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_NwYyEIm8Eeim8v7wv_JlLA" sourceNode="_NpSrkIm8Eeim8v7wv_JlLA" targetNode="_NvCuQIm8Eeim8v7wv_JlLA">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_NwYyEIm8Eeim8v7wv_JlLA" sourceNode="_NpSrkIm8Eeim8v7wv_JlLA" targetNode="_NvCuQIm8Eeim8v7wv_JlLA">
       <target xmi:type="ComponentDefinition:RequestHandler" href="model/SmartMapperGridMap.component#//@component/@elements.8"/>
       <semanticElements xmi:type="ComponentDefinition:RequestHandler" href="model/SmartMapperGridMap.component#//@component/@elements.8"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_NwYyEYm8Eeim8v7wv_JlLA" targetArrow="OutputClosedArrow" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_NwYyEYm8Eeim8v7wv_JlLA" targetArrow="OutputClosedArrow" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='RequestHandlerEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_NwYyEom8Eeim8v7wv_JlLA" showIcon="false"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_NwYyEom8Eeim8v7wv_JlLA" showIcon="false"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='RequestHandlerEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_GPq9MIm9EeiIjfG8jCfj9g" sourceNode="_NvSl4Im8Eeim8v7wv_JlLA" targetNode="_TO2pcIUoEeiewJjIahDJig">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_GPq9MIm9EeiIjfG8jCfj9g" sourceNode="_NvSl4Im8Eeim8v7wv_JlLA" targetNode="_TO2pcIUoEeiewJjIahDJig">
       <target xmi:type="ComponentParameter:ComponentParametersRef" href="model/SmartMapperGridMap.component#//@component/@elements.9"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_GPvOoIm9EeiIjfG8jCfj9g" sourceArrow="InputArrow" targetArrow="NoDecoration" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_GPvOoIm9EeiIjfG8jCfj9g" sourceArrow="InputArrow" targetArrow="NoDecoration" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ParametersEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_GPvOoYm9EeiIjfG8jCfj9g"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_GPvOoYm9EeiIjfG8jCfj9g"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ParametersEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_fqeG4Bf3Eem4y4qWo8qoPQ" name="uses" sourceNode="_TO4eoIUoEeiewJjIahDJig" targetNode="_fp7UUBf3Eem4y4qWo8qoPQ">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_fqeG4Bf3Eem4y4qWo8qoPQ" name="uses" sourceNode="_TO4eoIUoEeiewJjIahDJig" targetNode="_fp7UUBf3Eem4y4qWo8qoPQ">
       <target xmi:type="CoordinationExtension:OperationModeBinding" href="model/SmartMapperGridMap.component#//@component/@elements.4/@extensions.1"/>
       <semanticElements xmi:type="CoordinationExtension:OperationModeBinding" href="model/SmartMapperGridMap.component#//@component/@elements.4/@extensions.1"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_fqeG4Rf3Eem4y4qWo8qoPQ" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_fqeG4Rf3Eem4y4qWo8qoPQ" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='OperationModeBinding']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_fqeG4hf3Eem4y4qWo8qoPQ" showIcon="false"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_fqeG4hf3Eem4y4qWo8qoPQ" showIcon="false"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='OperationModeBinding']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_fqjmcBf3Eem4y4qWo8qoPQ" name="uses" sourceNode="_NpVu4Im8Eeim8v7wv_JlLA" targetNode="_fp77YRf3Eem4y4qWo8qoPQ">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_fqjmcBf3Eem4y4qWo8qoPQ" name="uses" sourceNode="_NpVu4Im8Eeim8v7wv_JlLA" targetNode="_fp77YRf3Eem4y4qWo8qoPQ">
       <target xmi:type="CoordinationExtension:OperationModeBinding" href="model/SmartMapperGridMap.component#//@component/@elements.5/@extensions.2"/>
       <semanticElements xmi:type="CoordinationExtension:OperationModeBinding" href="model/SmartMapperGridMap.component#//@component/@elements.5/@extensions.2"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_fqjmcRf3Eem4y4qWo8qoPQ" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_fqjmcRf3Eem4y4qWo8qoPQ" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='OperationModeBinding']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_fqjmchf3Eem4y4qWo8qoPQ" showIcon="false"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_fqjmchf3Eem4y4qWo8qoPQ" showIcon="false"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='OperationModeBinding']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_fqkNgBf3Eem4y4qWo8qoPQ" sourceNode="_fp6GMBf3Eem4y4qWo8qoPQ" targetNode="_fp7UUBf3Eem4y4qWo8qoPQ">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_fqkNgBf3Eem4y4qWo8qoPQ" sourceNode="_fp6GMBf3Eem4y4qWo8qoPQ" targetNode="_fp7UUBf3Eem4y4qWo8qoPQ">
       <target xmi:type="CoordinationExtension:PublicOperationMode" href="model/SmartMapperGridMap.component#//@component/@elements.0/@elements.2"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_fqk0kBf3Eem4y4qWo8qoPQ" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_fqk0kBf3Eem4y4qWo8qoPQ" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='PrivateOperationModeEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_fqk0kRf3Eem4y4qWo8qoPQ" showIcon="false"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_fqk0kRf3Eem4y4qWo8qoPQ" showIcon="false"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='PrivateOperationModeEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_fqk0khf3Eem4y4qWo8qoPQ" sourceNode="_fp6tQBf3Eem4y4qWo8qoPQ" targetNode="_fp77YRf3Eem4y4qWo8qoPQ">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_fqk0khf3Eem4y4qWo8qoPQ" sourceNode="_fp6tQBf3Eem4y4qWo8qoPQ" targetNode="_fp77YRf3Eem4y4qWo8qoPQ">
       <target xmi:type="CoordinationExtension:PublicOperationMode" href="model/SmartMapperGridMap.component#//@component/@elements.0/@elements.3"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_fqk0kxf3Eem4y4qWo8qoPQ" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_fqk0kxf3Eem4y4qWo8qoPQ" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='PrivateOperationModeEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_fqk0lBf3Eem4y4qWo8qoPQ" showIcon="false"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_fqk0lBf3Eem4y4qWo8qoPQ" showIcon="false"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='PrivateOperationModeEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_fqk0lRf3Eem4y4qWo8qoPQ" sourceNode="_fp6tQhf3Eem4y4qWo8qoPQ" targetNode="_fp7UUBf3Eem4y4qWo8qoPQ">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_fqk0lRf3Eem4y4qWo8qoPQ" sourceNode="_fp6tQhf3Eem4y4qWo8qoPQ" targetNode="_fp7UUBf3Eem4y4qWo8qoPQ">
       <target xmi:type="CoordinationExtension:PublicOperationMode" href="model/SmartMapperGridMap.component#//@component/@elements.0/@elements.4"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_fqk0lhf3Eem4y4qWo8qoPQ" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_fqk0lhf3Eem4y4qWo8qoPQ" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='PrivateOperationModeEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_fqk0lxf3Eem4y4qWo8qoPQ" showIcon="false"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_fqk0lxf3Eem4y4qWo8qoPQ" showIcon="false"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='PrivateOperationModeEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_fqlboBf3Eem4y4qWo8qoPQ" sourceNode="_fp6tQhf3Eem4y4qWo8qoPQ" targetNode="_fp77YRf3Eem4y4qWo8qoPQ">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_fqlboBf3Eem4y4qWo8qoPQ" sourceNode="_fp6tQhf3Eem4y4qWo8qoPQ" targetNode="_fp77YRf3Eem4y4qWo8qoPQ">
       <target xmi:type="CoordinationExtension:PublicOperationMode" href="model/SmartMapperGridMap.component#//@component/@elements.0/@elements.4"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_fqlboRf3Eem4y4qWo8qoPQ" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_fqlboRf3Eem4y4qWo8qoPQ" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='PrivateOperationModeEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_fqlbohf3Eem4y4qWo8qoPQ" showIcon="false"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_fqlbohf3Eem4y4qWo8qoPQ" showIcon="false"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='PrivateOperationModeEdge']"/>
     </ownedDiagramElements>
     <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
-    <filterVariableHistory xmi:type="diagram:FilterVariableHistory" xmi:id="_xi0p5-SYEeeovOxnrSAxQA"/>
+    <filterVariableHistory xmi:type="diagram:FilterVariableHistory" uid="_xi0p5-SYEeeovOxnrSAxQA"/>
     <activatedLayers xmi:type="description_1:Layer" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer"/>
     <target xmi:type="ComponentDefinition:ComponentDefModel" href="model/SmartMapperGridMap.component#/"/>
   </diagram:DSemanticDiagram>
-  <diagram:DSemanticDiagram xmi:id="_BKGxsOSiEeeovOxnrSAxQA" name="SmartMapperGridMapStates" uid="_op36QBGdEei2ZrKya4E0lg">
-    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" xmi:id="_BKGxseSiEeeovOxnrSAxQA" source="DANNOTATION_CUSTOMIZATION_KEY">
-      <data xmi:type="diagram:ComputedStyleDescriptionRegistry" xmi:id="_BKGxsuSiEeeovOxnrSAxQA"/>
+  <diagram:DSemanticDiagram uid="_BKGxsOSiEeeovOxnrSAxQA" name="SmartMapperGridMapStates">
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="_BKGxseSiEeeovOxnrSAxQA" source="DANNOTATION_CUSTOMIZATION_KEY">
+      <data xmi:type="diagram:ComputedStyleDescriptionRegistry" uid="_BKGxsuSiEeeovOxnrSAxQA"/>
     </ownedAnnotationEntries>
-    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" xmi:id="_BKJ1AOSiEeeovOxnrSAxQA" source="GMF_DIAGRAMS">
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="_BKJ1AOSiEeeovOxnrSAxQA" source="GMF_DIAGRAMS">
       <data xmi:type="notation:Diagram" xmi:id="_BKJ1AeSiEeeovOxnrSAxQA" type="Sirius" element="_BKGxsOSiEeeovOxnrSAxQA" measurementUnit="Pixel">
         <children xmi:type="notation:Node" xmi:id="_BKJ1A-SiEeeovOxnrSAxQA" type="2002" element="_BKGxtOSiEeeovOxnrSAxQA">
           <children xmi:type="notation:Node" xmi:id="_BKKcEOSiEeeovOxnrSAxQA" type="5006"/>
@@ -1019,16 +1019,16 @@
         </edges>
       </data>
     </ownedAnnotationEntries>
-    <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_BKGxtOSiEeeovOxnrSAxQA" name="BuildCurrMap" tooltipText="MainStateInstance" outgoingEdges="_BKGxyOSiEeeovOxnrSAxQA _BKGxy-SiEeeovOxnrSAxQA" incomingEdges="_BKGxzuSiEeeovOxnrSAxQA _BKGx1OSiEeeovOxnrSAxQA">
+    <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_BKGxtOSiEeeovOxnrSAxQA" name="BuildCurrMap" tooltipText="MainStateInstance" outgoingEdges="_BKGxyOSiEeeovOxnrSAxQA _BKGxy-SiEeeovOxnrSAxQA" incomingEdges="_BKGxzuSiEeeovOxnrSAxQA _BKGx1OSiEeeovOxnrSAxQA">
       <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
       <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
       <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-      <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_BKGxteSiEeeovOxnrSAxQA" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,245,181">
+      <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_BKGxteSiEeeovOxnrSAxQA" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,245,181">
         <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='MainStateContainer']/@conditionnalStyles.0/@style"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='MainStateContainer']"/>
-      <ownedDiagramElements xmi:type="diagram:DNode" xmi:id="_BKGxtuSiEeeovOxnrSAxQA" name="currMap" tooltipText="SubStateReference" width="7" height="3" resizeKind="NSEW">
-        <ownedStyle xmi:type="diagram:Ellipse" xmi:id="_BKGxt-SiEeeovOxnrSAxQA" showIcon="false" borderSize="1" borderSizeComputationExpression="1" labelPosition="node" horizontalDiameter="7" verticalDiameter="3" color="204,242,166">
+      <ownedDiagramElements xmi:type="diagram:DNode" uid="_BKGxtuSiEeeovOxnrSAxQA" name="currMap" tooltipText="SubStateReference" width="7" height="3" resizeKind="NSEW">
+        <ownedStyle xmi:type="diagram:Ellipse" uid="_BKGxt-SiEeeovOxnrSAxQA" showIcon="false" borderSize="1" borderSizeComputationExpression="1" labelPosition="node" horizontalDiameter="7" verticalDiameter="3" color="204,242,166">
           <description xmi:type="style:EllipseNodeDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='MainStateContainer']/@subNodeMappings[name='SubStateReferenceNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='MainStateContainer']/@subNodeMappings[name='SubStateReferenceNode']"/>
@@ -1038,16 +1038,16 @@
       <target xmi:type="StateExtension:MainStateInstance" href="model/SmartMapperGridMap.component#//@component/@extensions.1/@mainstates.0"/>
       <semanticElements xmi:type="StateExtension:MainStateInstance" href="model/SmartMapperGridMap.component#//@component/@extensions.1/@mainstates.0"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_BKGxuOSiEeeovOxnrSAxQA" name="BuildLtmMap" tooltipText="MainStateInstance" outgoingEdges="_BKGxzuSiEeeovOxnrSAxQA _BKGx0eSiEeeovOxnrSAxQA" incomingEdges="_BKGxyOSiEeeovOxnrSAxQA _BKGx1-SiEeeovOxnrSAxQA">
+    <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_BKGxuOSiEeeovOxnrSAxQA" name="BuildLtmMap" tooltipText="MainStateInstance" outgoingEdges="_BKGxzuSiEeeovOxnrSAxQA _BKGx0eSiEeeovOxnrSAxQA" incomingEdges="_BKGxyOSiEeeovOxnrSAxQA _BKGx1-SiEeeovOxnrSAxQA">
       <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
       <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
       <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-      <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_BKGxueSiEeeovOxnrSAxQA" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,245,181">
+      <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_BKGxueSiEeeovOxnrSAxQA" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,245,181">
         <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='MainStateContainer']/@conditionnalStyles.0/@style"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='MainStateContainer']"/>
-      <ownedDiagramElements xmi:type="diagram:DNode" xmi:id="_BKGxuuSiEeeovOxnrSAxQA" name="ltmMap" tooltipText="SubStateReference" width="6" height="3" resizeKind="NSEW">
-        <ownedStyle xmi:type="diagram:Ellipse" xmi:id="_BKGxu-SiEeeovOxnrSAxQA" showIcon="false" borderSize="1" borderSizeComputationExpression="1" labelPosition="node" horizontalDiameter="6" verticalDiameter="3" color="204,242,166">
+      <ownedDiagramElements xmi:type="diagram:DNode" uid="_BKGxuuSiEeeovOxnrSAxQA" name="ltmMap" tooltipText="SubStateReference" width="6" height="3" resizeKind="NSEW">
+        <ownedStyle xmi:type="diagram:Ellipse" uid="_BKGxu-SiEeeovOxnrSAxQA" showIcon="false" borderSize="1" borderSizeComputationExpression="1" labelPosition="node" horizontalDiameter="6" verticalDiameter="3" color="204,242,166">
           <description xmi:type="style:EllipseNodeDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='MainStateContainer']/@subNodeMappings[name='SubStateReferenceNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='MainStateContainer']/@subNodeMappings[name='SubStateReferenceNode']"/>
@@ -1057,30 +1057,30 @@
       <target xmi:type="StateExtension:MainStateInstance" href="model/SmartMapperGridMap.component#//@component/@extensions.1/@mainstates.1"/>
       <semanticElements xmi:type="StateExtension:MainStateInstance" href="model/SmartMapperGridMap.component#//@component/@extensions.1/@mainstates.1"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_BKGxvOSiEeeovOxnrSAxQA" name="BuildBothMaps" tooltipText="MainStateInstance" outgoingEdges="_BKGx1OSiEeeovOxnrSAxQA _BKGx1-SiEeeovOxnrSAxQA" incomingEdges="_BKGxy-SiEeeovOxnrSAxQA _BKGx0eSiEeeovOxnrSAxQA">
+    <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_BKGxvOSiEeeovOxnrSAxQA" name="BuildBothMaps" tooltipText="MainStateInstance" outgoingEdges="_BKGx1OSiEeeovOxnrSAxQA _BKGx1-SiEeeovOxnrSAxQA" incomingEdges="_BKGxy-SiEeeovOxnrSAxQA _BKGx0eSiEeeovOxnrSAxQA">
       <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
       <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
       <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-      <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_BKGxveSiEeeovOxnrSAxQA" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,245,181">
+      <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_BKGxveSiEeeovOxnrSAxQA" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,245,181">
         <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='MainStateContainer']/@conditionnalStyles.0/@style"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='MainStateContainer']"/>
-      <ownedDiagramElements xmi:type="diagram:DNode" xmi:id="_BKGxvuSiEeeovOxnrSAxQA" name="currMap" tooltipText="SubStateReference" width="7" height="3" resizeKind="NSEW">
+      <ownedDiagramElements xmi:type="diagram:DNode" uid="_BKGxvuSiEeeovOxnrSAxQA" name="currMap" tooltipText="SubStateReference" width="7" height="3" resizeKind="NSEW">
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:Ellipse" xmi:id="_BKGxv-SiEeeovOxnrSAxQA" showIcon="false" borderSize="1" borderSizeComputationExpression="1" labelPosition="node" horizontalDiameter="7" verticalDiameter="3" color="204,242,166">
+        <ownedStyle xmi:type="diagram:Ellipse" uid="_BKGxv-SiEeeovOxnrSAxQA" showIcon="false" borderSize="1" borderSizeComputationExpression="1" labelPosition="node" horizontalDiameter="7" verticalDiameter="3" color="204,242,166">
           <description xmi:type="style:EllipseNodeDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='MainStateContainer']/@subNodeMappings[name='SubStateReferenceNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='MainStateContainer']/@subNodeMappings[name='SubStateReferenceNode']"/>
         <target xmi:type="StateExtension:SubStateReference" href="model/SmartMapperGridMap.component#//@component/@extensions.1/@mainstates.2/@substates.0"/>
         <semanticElements xmi:type="StateExtension:SubStateReference" href="model/SmartMapperGridMap.component#//@component/@extensions.1/@mainstates.2/@substates.0"/>
       </ownedDiagramElements>
-      <ownedDiagramElements xmi:type="diagram:DNode" xmi:id="_BKGxwOSiEeeovOxnrSAxQA" name="ltmMap" tooltipText="SubStateReference" width="6" height="3" resizeKind="NSEW">
+      <ownedDiagramElements xmi:type="diagram:DNode" uid="_BKGxwOSiEeeovOxnrSAxQA" name="ltmMap" tooltipText="SubStateReference" width="6" height="3" resizeKind="NSEW">
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:Ellipse" xmi:id="_BKGxweSiEeeovOxnrSAxQA" showIcon="false" borderSize="1" borderSizeComputationExpression="1" labelPosition="node" horizontalDiameter="6" verticalDiameter="3" color="204,242,166">
+        <ownedStyle xmi:type="diagram:Ellipse" uid="_BKGxweSiEeeovOxnrSAxQA" showIcon="false" borderSize="1" borderSizeComputationExpression="1" labelPosition="node" horizontalDiameter="6" verticalDiameter="3" color="204,242,166">
           <description xmi:type="style:EllipseNodeDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='MainStateContainer']/@subNodeMappings[name='SubStateReferenceNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='MainStateContainer']/@subNodeMappings[name='SubStateReferenceNode']"/>
@@ -1090,25 +1090,25 @@
       <target xmi:type="StateExtension:MainStateInstance" href="model/SmartMapperGridMap.component#//@component/@extensions.1/@mainstates.2"/>
       <semanticElements xmi:type="StateExtension:MainStateInstance" href="model/SmartMapperGridMap.component#//@component/@extensions.1/@mainstates.2"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DNodeList" xmi:id="_BKGxwuSiEeeovOxnrSAxQA" name="SmartMapperGridMapStates" tooltipText="SubStates">
+    <ownedDiagramElements xmi:type="diagram:DNodeList" uid="_BKGxwuSiEeeovOxnrSAxQA" name="SmartMapperGridMapStates" tooltipText="SubStates">
       <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
       <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
       <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-      <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_BKGxw-SiEeeovOxnrSAxQA" borderSize="1" borderSizeComputationExpression="1">
+      <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_BKGxw-SiEeeovOxnrSAxQA" borderSize="1" borderSizeComputationExpression="1">
         <labelFormat>bold</labelFormat>
         <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='StateAutomatonContainer']/@style"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='StateAutomatonContainer']"/>
-      <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_BKGxxOSiEeeovOxnrSAxQA" name="currMap" tooltipText="SubStateNode">
-        <ownedStyle xmi:type="diagram:Square" xmi:id="_BKGxxeSiEeeovOxnrSAxQA" labelAlignment="LEFT" labelPosition="node" color="252,233,79">
+      <ownedElements xmi:type="diagram:DNodeListElement" uid="_BKGxxOSiEeeovOxnrSAxQA" name="currMap" tooltipText="SubStateNode">
+        <ownedStyle xmi:type="diagram:Square" uid="_BKGxxeSiEeeovOxnrSAxQA" labelAlignment="LEFT" labelPosition="node" color="252,233,79">
           <description xmi:type="style:SquareDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='StateAutomatonContainer']/@subNodeMappings[name='SubStateNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='StateAutomatonContainer']/@subNodeMappings[name='SubStateNode']"/>
         <target xmi:type="StateMachine:SubState" href="model/SmartMapperGridMap.component#//@component/@extensions.1/@substates.0"/>
         <semanticElements xmi:type="StateMachine:SubState" href="model/SmartMapperGridMap.component#//@component/@extensions.1/@substates.0"/>
       </ownedElements>
-      <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_BKGxxuSiEeeovOxnrSAxQA" name="ltmMap" tooltipText="SubStateNode">
-        <ownedStyle xmi:type="diagram:Square" xmi:id="_BKGxx-SiEeeovOxnrSAxQA" labelAlignment="LEFT" labelPosition="node" color="252,233,79">
+      <ownedElements xmi:type="diagram:DNodeListElement" uid="_BKGxxuSiEeeovOxnrSAxQA" name="ltmMap" tooltipText="SubStateNode">
+        <ownedStyle xmi:type="diagram:Square" uid="_BKGxx-SiEeeovOxnrSAxQA" labelAlignment="LEFT" labelPosition="node" color="252,233,79">
           <description xmi:type="style:SquareDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='StateAutomatonContainer']/@subNodeMappings[name='SubStateNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='StateAutomatonContainer']/@subNodeMappings[name='SubStateNode']"/>
@@ -1118,56 +1118,56 @@
       <target xmi:type="StateExtension:ComponentStates" href="model/SmartMapperGridMap.component#//@component/@extensions.1"/>
       <semanticElements xmi:type="StateExtension:ComponentStates" href="model/SmartMapperGridMap.component#//@component/@extensions.1"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_BKGxyOSiEeeovOxnrSAxQA" visible="false" sourceNode="_BKGxtOSiEeeovOxnrSAxQA" targetNode="_BKGxuOSiEeeovOxnrSAxQA">
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_BKGxyeSiEeeovOxnrSAxQA" size="2">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_BKGxyOSiEeeovOxnrSAxQA" visible="false" sourceNode="_BKGxtOSiEeeovOxnrSAxQA" targetNode="_BKGxuOSiEeeovOxnrSAxQA">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_BKGxyeSiEeeovOxnrSAxQA" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@additionalLayers[name='Transitions']/@edgeMappings[name='MainStateEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_BKGxyuSiEeeovOxnrSAxQA"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_BKGxyuSiEeeovOxnrSAxQA"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@additionalLayers[name='Transitions']/@edgeMappings[name='MainStateEdge']"/>
       <target xmi:type="StateExtension:MainStateInstance" href="model/SmartMapperGridMap.component#//@component/@extensions.1/@mainstates.0"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_BKGxy-SiEeeovOxnrSAxQA" visible="false" sourceNode="_BKGxtOSiEeeovOxnrSAxQA" targetNode="_BKGxvOSiEeeovOxnrSAxQA">
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_BKGxzOSiEeeovOxnrSAxQA" size="2">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_BKGxy-SiEeeovOxnrSAxQA" visible="false" sourceNode="_BKGxtOSiEeeovOxnrSAxQA" targetNode="_BKGxvOSiEeeovOxnrSAxQA">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_BKGxzOSiEeeovOxnrSAxQA" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@additionalLayers[name='Transitions']/@edgeMappings[name='MainStateEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_BKGxzeSiEeeovOxnrSAxQA"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_BKGxzeSiEeeovOxnrSAxQA"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@additionalLayers[name='Transitions']/@edgeMappings[name='MainStateEdge']"/>
       <target xmi:type="StateExtension:MainStateInstance" href="model/SmartMapperGridMap.component#//@component/@extensions.1/@mainstates.0"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_BKGxzuSiEeeovOxnrSAxQA" visible="false" sourceNode="_BKGxuOSiEeeovOxnrSAxQA" targetNode="_BKGxtOSiEeeovOxnrSAxQA">
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_BKGxz-SiEeeovOxnrSAxQA" size="2">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_BKGxzuSiEeeovOxnrSAxQA" visible="false" sourceNode="_BKGxuOSiEeeovOxnrSAxQA" targetNode="_BKGxtOSiEeeovOxnrSAxQA">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_BKGxz-SiEeeovOxnrSAxQA" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@additionalLayers[name='Transitions']/@edgeMappings[name='MainStateEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_BKGx0OSiEeeovOxnrSAxQA"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_BKGx0OSiEeeovOxnrSAxQA"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@additionalLayers[name='Transitions']/@edgeMappings[name='MainStateEdge']"/>
       <target xmi:type="StateExtension:MainStateInstance" href="model/SmartMapperGridMap.component#//@component/@extensions.1/@mainstates.1"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_BKGx0eSiEeeovOxnrSAxQA" visible="false" sourceNode="_BKGxuOSiEeeovOxnrSAxQA" targetNode="_BKGxvOSiEeeovOxnrSAxQA">
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_BKGx0uSiEeeovOxnrSAxQA" size="2">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_BKGx0eSiEeeovOxnrSAxQA" visible="false" sourceNode="_BKGxuOSiEeeovOxnrSAxQA" targetNode="_BKGxvOSiEeeovOxnrSAxQA">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_BKGx0uSiEeeovOxnrSAxQA" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@additionalLayers[name='Transitions']/@edgeMappings[name='MainStateEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_BKGx0-SiEeeovOxnrSAxQA"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_BKGx0-SiEeeovOxnrSAxQA"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@additionalLayers[name='Transitions']/@edgeMappings[name='MainStateEdge']"/>
       <target xmi:type="StateExtension:MainStateInstance" href="model/SmartMapperGridMap.component#//@component/@extensions.1/@mainstates.1"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_BKGx1OSiEeeovOxnrSAxQA" visible="false" sourceNode="_BKGxvOSiEeeovOxnrSAxQA" targetNode="_BKGxtOSiEeeovOxnrSAxQA">
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_BKGx1eSiEeeovOxnrSAxQA" size="2">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_BKGx1OSiEeeovOxnrSAxQA" visible="false" sourceNode="_BKGxvOSiEeeovOxnrSAxQA" targetNode="_BKGxtOSiEeeovOxnrSAxQA">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_BKGx1eSiEeeovOxnrSAxQA" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@additionalLayers[name='Transitions']/@edgeMappings[name='MainStateEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_BKGx1uSiEeeovOxnrSAxQA"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_BKGx1uSiEeeovOxnrSAxQA"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@additionalLayers[name='Transitions']/@edgeMappings[name='MainStateEdge']"/>
       <target xmi:type="StateExtension:MainStateInstance" href="model/SmartMapperGridMap.component#//@component/@extensions.1/@mainstates.2"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_BKGx1-SiEeeovOxnrSAxQA" visible="false" sourceNode="_BKGxvOSiEeeovOxnrSAxQA" targetNode="_BKGxuOSiEeeovOxnrSAxQA">
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_BKGx2OSiEeeovOxnrSAxQA" size="2">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_BKGx1-SiEeeovOxnrSAxQA" visible="false" sourceNode="_BKGxvOSiEeeovOxnrSAxQA" targetNode="_BKGxuOSiEeeovOxnrSAxQA">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_BKGx2OSiEeeovOxnrSAxQA" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@additionalLayers[name='Transitions']/@edgeMappings[name='MainStateEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_BKGx2eSiEeeovOxnrSAxQA"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_BKGx2eSiEeeovOxnrSAxQA"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@additionalLayers[name='Transitions']/@edgeMappings[name='MainStateEdge']"/>
       <target xmi:type="StateExtension:MainStateInstance" href="model/SmartMapperGridMap.component#//@component/@extensions.1/@mainstates.2"/>
     </ownedDiagramElements>
     <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']"/>
-    <filterVariableHistory xmi:type="diagram:FilterVariableHistory" xmi:id="_BKGx2uSiEeeovOxnrSAxQA"/>
+    <filterVariableHistory xmi:type="diagram:FilterVariableHistory" uid="_BKGx2uSiEeeovOxnrSAxQA"/>
     <activatedLayers xmi:type="description_1:Layer" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer"/>
     <target xmi:type="StateExtension:ComponentStates" href="model/SmartMapperGridMap.component#//@component/@extensions.1"/>
   </diagram:DSemanticDiagram>

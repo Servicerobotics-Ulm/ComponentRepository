@@ -27,10 +27,14 @@
 #include <BaseStateQueryServiceAnswHandlerObserverInterface.hh>
 
 class BaseStateQueryServiceAnswHandlerCore 
-:	public Smart::IQueryServerHandler<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState, SmartACE::QueryId>
+:	public Smart::IInputHandler<std::pair<Smart::QueryIdPtr,CommBasicObjects::CommVoid>>
 ,	public Smart::TaskTriggerSubject
 {
 private:
+virtual void handle_input(const std::pair<Smart::QueryIdPtr,CommBasicObjects::CommVoid> &input) override {
+	this->handleQuery(input.first, input.second);
+}
+
 
 	virtual void updateAllCommObjects();
 
@@ -49,8 +53,14 @@ public:
 protected:
 	
 public:
-	BaseStateQueryServiceAnswHandlerCore(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState, SmartACE::QueryId>* server);
-	virtual ~BaseStateQueryServiceAnswHandlerCore();
-	//virtual void handleQuery(const SmartACE::QueryId &id, const CommBasicObjects::CommVoid& request);
+	using IQueryServer = Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>;
+	using QueryId = Smart::QueryIdPtr;
+	BaseStateQueryServiceAnswHandlerCore(IQueryServer *server);
+	virtual ~BaseStateQueryServiceAnswHandlerCore() = default;
+	
+protected:
+	IQueryServer *server;
+	//this user-method has to be implemented in derived classes
+	virtual void handleQuery(const QueryId &id, const CommBasicObjects::CommVoid& request) = 0;
 };
 #endif

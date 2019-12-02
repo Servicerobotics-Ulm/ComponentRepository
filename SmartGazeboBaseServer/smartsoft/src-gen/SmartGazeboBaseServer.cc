@@ -94,6 +94,8 @@ SmartGazeboBaseServer::SmartGazeboBaseServer()
 	connections.localizationUpdateHandler.prescale = 1;
 	connections.velocityInpuHandler.prescale = 1;
 	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of SmartGazeboBaseServerROSExtension
 	
 	// initialize members of PlainOpcUaSmartGazeboBaseServerExtension
@@ -215,6 +217,8 @@ void SmartGazeboBaseServer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		// initializations of SmartGazeboBaseServerROSExtension
 		
 		// initializations of PlainOpcUaSmartGazeboBaseServerExtension
@@ -254,7 +258,7 @@ void SmartGazeboBaseServer::init(int argc, char *argv[])
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
 		baseSatateQueryAnsw = portFactoryRegistry[connections.baseSatateQueryAnsw.roboticMiddleware]->createBaseSatateQueryAnsw(connections.baseSatateQueryAnsw.serviceName);
-		baseSatateQueryAnswInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState,SmartACE::QueryId>(baseSatateQueryAnsw);
+		baseSatateQueryAnswInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>(baseSatateQueryAnsw);
 		baseStateServiceOut = portFactoryRegistry[connections.baseStateServiceOut.roboticMiddleware]->createBaseStateServiceOut(connections.baseStateServiceOut.serviceName);
 		laserServiceOut = portFactoryRegistry[connections.laserServiceOut.roboticMiddleware]->createLaserServiceOut(connections.laserServiceOut.serviceName);
 		localizationUpdateServiceIn = portFactoryRegistry[connections.localizationUpdateServiceIn.roboticMiddleware]->createLocalizationUpdateServiceIn(connections.localizationUpdateServiceIn.serviceName);
@@ -487,6 +491,8 @@ void SmartGazeboBaseServer::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of SmartGazeboBaseServerROSExtension
 	
 	// destruction of PlainOpcUaSmartGazeboBaseServerExtension
@@ -644,6 +650,8 @@ void SmartGazeboBaseServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("VelocityInpuHandler", "prescale")) {
 			parameter.getInteger("VelocityInpuHandler", "prescale", connections.velocityInpuHandler.prescale);
 		}
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for SmartGazeboBaseServerROSExtension
 		

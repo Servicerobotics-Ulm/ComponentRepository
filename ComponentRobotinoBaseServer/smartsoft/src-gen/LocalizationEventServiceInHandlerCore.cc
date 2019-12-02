@@ -17,9 +17,9 @@
 #include "LocalizationEventServiceInHandler.hh"
 
 LocalizationEventServiceInHandlerCore::LocalizationEventServiceInHandlerCore(
-	Smart::InputSubject<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult,SmartACE::EventId>> *subject,
+	Smart::InputSubject<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult>> *subject,
 	const int &prescaleFactor)
-	:	Smart::InputTaskTrigger<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult,SmartACE::EventId>>(subject, prescaleFactor)
+	:	Smart::InputTaskTrigger<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult>>(subject, prescaleFactor)
 {  
 	updateStatus = Smart::SMART_NODATA;
 }

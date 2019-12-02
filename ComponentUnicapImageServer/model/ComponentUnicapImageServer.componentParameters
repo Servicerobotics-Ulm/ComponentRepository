@@ -13,7 +13,7 @@ ComponentParameter ComponentUnicapImageServerParams component ComponentUnicapIma
 		debug_info:Boolean = false
 		
 		//@doc"String identifier that unicap uses to identify the camera."
-		identifier:String = "UVC Camera (046d:0809) (/dev/video0)"
+		identifier:String = "HD Pro Webcam C920 (/dev/video0)"
 		
 		//@doc"Protocol to use. USB|FireWire"
 		camera_type:String = "USB"
@@ -72,10 +72,10 @@ ComponentParameter ComponentUnicapImageServerParams component ComponentUnicapIma
 		format: String ="YUV 4:2:2 (YUYV) ( YUYV )"
 		
 		//@doc"Image width."
-		width: UInt32 = 800
+		width: UInt32 = 640
 		
 		//@doc"Image height."
-		height:UInt32 = 600
+		height:UInt32 = 480
 	}
 	
 	InternalParameter push_newest {
@@ -90,22 +90,22 @@ ComponentParameter ComponentUnicapImageServerParams component ComponentUnicapIma
 	
 	InternalParameter sensor_pose {
 		//@doc"The x position [mm] of the camera on the robot/ptu."
-		x: Int32 = 0
+		x: Int32 = 68
 		
 		//@doc"The y position [mm] of the camera on the robot/ptu."
 		y: Int32 = 0
 		
 		//@doc"The z position [mm] of the camera on the robot/ptu."
-		z: Int32 = 0
+		z: Int32 = 148
 		
 		//@doc"The azimuth orientation [rad] of the camera on the robot/ptu. "
-		azimuth: Double = 0
+		azimuth: Double = 1.5707963
 		
 		//@doc"The elevation orientation [rad] of the camera on the robot/ptu. "
-		elevation: Double = 0
+		elevation: Double = 3.14159265
 		
 		//@doc"The roll orientation [rad] of the camera on the robot/ptu. "
-		roll: Double = 0
+		roll: Double = 1.5707963
 	}
 	
 		InternalParameter base {
@@ -139,5 +139,20 @@ ComponentParameter ComponentUnicapImageServerParams component ComponentUnicapIma
 		//@doc"Unused."
 		valid_time_in_sec: Float = 1.0
 	}	
+	
+	//@doc "Instrinsic Parameters of camera, default values are for Logitech HD Webcam at 640x480 resolution"
+	InternalParameter IntrinsicParams{
+		fx: Double = 613.80156
+		fy: Double = 617.75798
+		cx:Double = 326.70589
+		cy:Double = 252.38709
+		distortion_coeffs:Double[5] = [1.241826e-01,  -2.757550e-01,  -6.637106e-04,  -3.005441e-03, 1.270525e-01]
+		//@doc " Width of image, which is used for calibration"
+		calib_width:UInt16 = 640
+    	//@doc " Height of image, which is used for calibration"
+		calib_height:UInt16 = 480
+	}
 
 }
+
+

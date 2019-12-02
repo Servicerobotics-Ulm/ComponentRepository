@@ -45,10 +45,10 @@ public:
 	virtual void initialize(ComponentKB *component, int argc, char* argv[]) = 0;
 	virtual int onStartup() = 0;
 
-	virtual Smart::IEventClientPattern<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult,SmartACE::EventId> * createKbChainedEntriesEventClient() = 0;
+	virtual Smart::IEventClientPattern<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult> * createKbChainedEntriesEventClient() = 0;
 	
-	virtual Smart::IEventServerPattern<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult, CommBasicObjects::CommVoid,SmartACE::EventId> * createKbEventServer(const std::string &serviceName, Smart::IEventTestHandler<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult, CommBasicObjects::CommVoid> *kbEventServerEventTestHandler) = 0;
-	virtual Smart::IQueryServerPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse,SmartACE::QueryId> * createKbQuery(const std::string &serviceName) = 0;
+	virtual Smart::IEventServerPattern<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult, CommBasicObjects::CommVoid> * createKbEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult, CommBasicObjects::CommVoid>> kbEventServerEventTestHandler) = 0;
+	virtual Smart::IQueryServerPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse> * createKbQuery(const std::string &serviceName) = 0;
 
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) = 0;
 	virtual void destroy() = 0;

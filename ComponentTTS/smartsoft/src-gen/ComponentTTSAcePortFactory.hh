@@ -35,7 +35,7 @@ public:
 	virtual int onStartup() override;
 
 	
-	virtual Smart::IQueryServerPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet,SmartACE::QueryId> * createSpeechQueryServiceAnsw(const std::string &serviceName) override;
+	virtual Smart::IQueryServerPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet> * createSpeechQueryServiceAnsw(const std::string &serviceName) override;
 	virtual Smart::ISendServerPattern<DomainSpeech::CommSpeechOutputMessage> * createSpeechSendServiceIn(const std::string &serviceName) override;
 	
 	// get a pointer to the internal component implementation

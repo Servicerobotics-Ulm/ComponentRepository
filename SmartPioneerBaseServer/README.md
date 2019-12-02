@@ -3,84 +3,186 @@
 
 # SmartPioneerBaseServer Component
 
-![SmartPioneerBaseServer-ComponentImage](model/SmartPioneerBaseServerComponentDefinition.jpg)
+<img src="model/SmartPioneerBaseServerComponentDefinition.jpg" alt="SmartPioneerBaseServer-ComponentImage" width="1000">
 
-The SmartPioneerBaseServer makes P2OS-based robot platforms available. It handles all the communication with the hardware. It offers several services for controlling the robot, such as sending navigation commands to the base and providing access to the robot's odometry. Position updates can be sent to the component to overcome odometry failures.
+*Component Short Description:* The SmartPioneerBaseServer makes P2OS-based robot platforms available.
 
-Note: This component is used in Tutorials (e.g. Lesson 1).
+## Component Documentation
+<p></p>
+<p> The SmartPioneerBaseServer makes P2OS-based robot platforms available.
+ It handles all the communication with the hardware.
+ It offers several services for controlling the robot,
+ such as sending navigation commands to the base and providing access to the robot's odometry.
+ Position updates can be sent to the component to overcome odometry failures.
+</p>
+<p> GPL-License: includes Code from the Player Project.
+</p>
+<p></p>
 
-GPL-License: includes Code from the Player Project.
+## Component-Datasheet Properties
 
-| Metaelement | Documentation |
-|-------------|---------------|
-| License | GPL |
-| Hardware Requirements | P2OS-based platforms. Currently supported: P3DX, P3DXSH, P3ATSH. Others can simply be added. |
-| Purpose | Hardware-Driver |
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Component-Datasheet Properties</caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Property Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Property Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Property Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">SpdxLicense</td>
+<td style="border:1px solid black; padding: 5px;">LGPL-2.0-or-later</td>
+<td style="border:1px solid black; padding: 5px;">https://spdx.org/licenses/LGPL-2.0-or-later.html</td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">TechnologyReadinessLevel</td>
+<td style="border:1px solid black; padding: 5px;">TRL5</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Homepage</td>
+<td style="border:1px solid black; padding: 5px;">http://servicerobotik-ulm.de/components</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Supplier</td>
+<td style="border:1px solid black; padding: 5px;">Servicerobotics Ulm</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Purpose</td>
+<td style="border:1px solid black; padding: 5px;">Mobile-Base</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
 
-
-## Coordination Port CoordinationPort
-
-
-### States
-
-
-| MainState Name | MainState Description |
-|----------------|-----------------------|
-
-### DynamicWiring
-
-
-### Parameter
-
-Accept parameters at runtime. See section Parameters.
-
-## Service Ports
-
-### LocalizationUpdate
-
-Port to send corrections of base pose to overcome the odometry failure. Accepts a pair of an old uncorrected pose and a new corrected pose. The deviation between these two poses is applied to correct the current pose of the robot.
+## Component Ports
 
 ### NavVelIn
 
-Send new navigation velocity commands v and omega to hardware base. The values are thresholded by the min and max values specified in the ini file before being sent.
-						Note that the base will perform an emergency stop if no new velocity command was sent within the timeout specified in firmware.
+*Documentation:*
+
+
+### LocalizationUpdate
+
+*Documentation:*
+
 
 ### BasePositionOut
 
-Push the base state containing current information about the robot's velocity, pose, raw pose. Should be used when a continuous base pose is required. For example, the SmartLaserLMS200Server uses the latest base pose (received continuously) to stamp the laser scan with the robot's pose at the time the scan was recorded.
+*Documentation:*
+
+
+### BatteryEventServer
+
+*Documentation:*
+
 
 ### BaseStateQueryServer
 
-Query port to request the base state. Analogous to basePositionPushTimedServer, but a query service. Should be used when the base pose is needed sporadically, for example by a behavior component which explicitly needs to query the base pose from time to time.
+*Documentation:*
 
 
-## Component Parameters SmartPioneerBaseServerParams
 
-### InternalParameter Robot
 
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| enable_motors | Boolean | Enable (true) or disable (false) motors at startup. Defines the state of the base' 'motors'-button on startup. |
-| enable_sonar | Boolean | Enable (true) or disable (false) sonar at startup. |
-| maxVel | Int32 | Set maximum translation velocity of robot [mm/s]. |
-| maxVelAcc | Int32 | Set maximum translation acceleration of robot [mm/s^2]. |
-| maxVelDecel | Int32 | Set maximum translation deceleration of robot [mm/s^2]. Negative value. |
-| maxRotVel | Int32 | Set maximum rotation velocity of robot [deg/s]. |
-| maxRotVelAcc | Int32 | Set maximum rotation acceleration of robot [deg/s^2]. |
-| maxRotVelDecel | Int32 | Set maximum rotation deceleration of robot [deg/s^2]. Negative value. |
-| serialport | String | Device name to access Pioneer Base, e.g. /dev/ttyS0 |
-| robotType | String | Type of pioneer platform. Currently supported: p3dx, p3dxsh, p3atsh. |
+## Component Parameters: SmartPioneerBaseServerParams
 
-### ParameterSetInstance BaseParams
+### Internal Parameter: Robot
 
-#### TriggerInstance BASE_RESET
+*Documentation:*
 
-active = false
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Internal Parameter <b>Robot</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>enable_motors</b></td>
+<td style="border:1px solid black; padding: 5px;">Boolean</td>
+<td style="border:1px solid black; padding: 5px;">true</td>
+<td style="border:1px solid black; padding: 5px;"><p>Enable (true) or disable (false) motors at startup. Defines the state of the base' 'motors'-button on startup.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>enable_sonar</b></td>
+<td style="border:1px solid black; padding: 5px;">Boolean</td>
+<td style="border:1px solid black; padding: 5px;">false</td>
+<td style="border:1px solid black; padding: 5px;"><p>Enable (true) or disable (false) sonar at startup.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>maxVel</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">1000</td>
+<td style="border:1px solid black; padding: 5px;"><p>Set maximum translation velocity of robot [mm/s].
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>maxVelAcc</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">300</td>
+<td style="border:1px solid black; padding: 5px;"><p>Set maximum translation acceleration of robot [mm/s^2].
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>maxVelDecel</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">300</td>
+<td style="border:1px solid black; padding: 5px;"><p>Set maximum translation deceleration of robot [mm/s^2]. Negative value.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>maxRotVel</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">300</td>
+<td style="border:1px solid black; padding: 5px;"><p>Set maximum rotation velocity of robot [deg/s].
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>maxRotVelAcc</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">100</td>
+<td style="border:1px solid black; padding: 5px;"><p>Set maximum rotation acceleration of robot [deg/s^2].
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>maxRotVelDecel</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">100</td>
+<td style="border:1px solid black; padding: 5px;"><p>Set maximum rotation deceleration of robot [deg/s^2]. Negative value.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>serialport</b></td>
+<td style="border:1px solid black; padding: 5px;">String</td>
+<td style="border:1px solid black; padding: 5px;">"/dev/ttyS0"</td>
+<td style="border:1px solid black; padding: 5px;"><p>Device name to access Pioneer Base, e.g. /dev/ttyS0
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>robotType</b></td>
+<td style="border:1px solid black; padding: 5px;">String</td>
+<td style="border:1px solid black; padding: 5px;">"p3dx"</td>
+<td style="border:1px solid black; padding: 5px;"><p>Type of pioneer platform. Currently supported: p3dx, p3dxsh, p3atsh.
+</p></td>
+</tr>
+</table>
 
-Reset the connection to the base at runtime. The serial connection is closed and reopened. All estimated positions are set to zero.
+### ParameterSetInstance: BaseParams
 
-#### TriggerInstance BASE_SONAR
+#### Trigger Instance: BASE_RESET
 
-active = false
+*Property:* active = **false**
 
+*Documentation:*
+<p>Reset the connection to the base at runtime. The serial connection is closed and reopened. All estimated positions are set to zero.
+</p>
+
+#### Trigger Instance: BASE_SONAR
+
+*Property:* active = **false**
+
+*Documentation:*
 

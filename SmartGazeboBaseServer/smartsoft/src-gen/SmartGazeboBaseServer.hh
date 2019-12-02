@@ -29,6 +29,8 @@
 class SmartGazeboBaseServerPortFactoryInterface;
 class SmartGazeboBaseServerExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for SmartGazeboBaseServerROSExtension
 
 // includes for PlainOpcUaSmartGazeboBaseServerExtension
@@ -56,10 +58,10 @@ class SmartGazeboBaseServerExtension;
 #include "LocalizationUpdateServiceInUpcallManager.hh"
 #include "NavVelServiceInUpcallManager.hh"
 
-// include input-handler
+// include input-handler(s)
 #include "LocalizationUpdateHandler.hh"
 #include "VelocityInpuHandler.hh"
-// include input-handler
+// include request-handler(s)
 #include "BaseStateQueryHandler.hh"
 
 // include handler
@@ -140,11 +142,13 @@ public:
 	Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> *laserServiceOut;
 	
 	// define answer-ports
-	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState,SmartACE::QueryId> *baseSatateQueryAnsw;
-	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState,SmartACE::QueryId> *baseSatateQueryAnswInputTaskTrigger;
+	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState> *baseSatateQueryAnsw;
+	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState> *baseSatateQueryAnswInputTaskTrigger;
 	
 	// define request-handlers
 	BaseStateQueryHandler *baseStateQueryHandler;
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of SmartGazeboBaseServerROSExtension
 	
@@ -298,6 +302,8 @@ public:
 		} navVelServiceIn;
 	
 		//--- client port parameter ---
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for SmartGazeboBaseServerROSExtension
 		

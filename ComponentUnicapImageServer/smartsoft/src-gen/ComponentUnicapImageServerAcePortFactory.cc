@@ -68,7 +68,7 @@ Smart::IPushServerPattern<DomainVision::CommVideoImage> * ComponentUnicapImageSe
 	return new SmartACE::PushServer<DomainVision::CommVideoImage>(componentImpl, serviceName);
 }
 
-Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage,SmartACE::QueryId> * ComponentUnicapImageServerAcePortFactory::createImageQueryServer(const std::string &serviceName)
+Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> * ComponentUnicapImageServerAcePortFactory::createImageQueryServer(const std::string &serviceName)
 {
 	return new SmartACE::QueryServer<CommBasicObjects::CommVoid, DomainVision::CommVideoImage>(componentImpl, serviceName);
 }

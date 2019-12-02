@@ -53,7 +53,7 @@ int SmartGazeboBaseServerAcePortFactory::onStartup()
 }
 
 
-Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState,SmartACE::QueryId> * SmartGazeboBaseServerAcePortFactory::createBaseSatateQueryAnsw(const std::string &serviceName)
+Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState> * SmartGazeboBaseServerAcePortFactory::createBaseSatateQueryAnsw(const std::string &serviceName)
 {
 	return new SmartACE::QueryServer<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>(componentImpl, serviceName);
 }

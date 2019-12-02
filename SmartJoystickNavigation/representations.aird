@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ComponentDefinition="http://www.ecore.org/component/ComponentDefinition" xmlns:ComponentParameter="http://www.ecore.org/component/ComponentParameter" xmlns:CoordinationExtension="http://www.ecore.org/component/CoordinationExtension" xmlns:PerformanceExtension="http://www.ecore.org/component/PerformanceExtension" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:diagram="http://www.eclipse.org/sirius/diagram/1.1.0" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xsi:schemaLocation="http://www.eclipse.org/sirius/description/1.1.0 http://www.eclipse.org/sirius/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/style/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description/style">
-  <viewpoint:DAnalysis xmi:id="_WcXH8LlsEeeZYY-A-z9Qgw" selectedViews="_WfZ04LlsEeeZYY-A-z9Qgw" version="12.1.0.201708031200">
+  <viewpoint:DAnalysis uid="_WcXH8LlsEeeZYY-A-z9Qgw" selectedViews="_WfZ04LlsEeeZYY-A-z9Qgw" version="14.1.0.201810161215">
     <semanticResources>model/SmartJoystickNavigation.component</semanticResources>
     <semanticResources>model/SmartJoystickNavigation.componentParameters</semanticResources>
     <semanticResources>platform:/resource/.org.eclipse.jdt.core.external.folders/.link0/componentLifecycle/ComponentLifecycle.automaton</semanticResources>
@@ -17,19 +17,19 @@
     <semanticResources>platform:/plugin/org.xtext.service.parameterDefinition/defaultParameterLib/defaultParameterLib.parameters</semanticResources>
     <semanticResources>platform:/plugin/org.xtext.base.stateMachine/componentLifecycle/ComponentLifecycle.automaton</semanticResources>
     <semanticResources>platform:/resource/CommNavigationObjects/model/CommNavigationObjects.types</semanticResources>
-    <ownedViews xmi:type="viewpoint:DView" xmi:id="_WfZ04LlsEeeZYY-A-z9Qgw">
+    <ownedViews xmi:type="viewpoint:DView" uid="_WfZ04LlsEeeZYY-A-z9Qgw">
       <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']"/>
-      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" xmi:id="_WfhwsLlsEeeZYY-A-z9Qgw" name="SmartJoystickNavigation" repPath="#_WR_kABGdEei2ZrKya4E0lg">
+      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_WfhwsLlsEeeZYY-A-z9Qgw" name="SmartJoystickNavigation" repPath="#_WfhJoLlsEeeZYY-A-z9Qgw">
         <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
         <target xmi:type="ComponentDefinition:ComponentDefModel" href="model/SmartJoystickNavigation.component#/"/>
       </ownedRepresentationDescriptors>
     </ownedViews>
   </viewpoint:DAnalysis>
-  <diagram:DSemanticDiagram xmi:id="_WfhJoLlsEeeZYY-A-z9Qgw" name="SmartJoystickNavigation" uid="_WR_kABGdEei2ZrKya4E0lg">
-    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" xmi:id="_WfhJoblsEeeZYY-A-z9Qgw" source="DANNOTATION_CUSTOMIZATION_KEY">
-      <data xmi:type="diagram:ComputedStyleDescriptionRegistry" xmi:id="_WfhJorlsEeeZYY-A-z9Qgw"/>
+  <diagram:DSemanticDiagram uid="_WfhJoLlsEeeZYY-A-z9Qgw" name="SmartJoystickNavigation">
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="_WfhJoblsEeeZYY-A-z9Qgw" source="DANNOTATION_CUSTOMIZATION_KEY">
+      <data xmi:type="diagram:ComputedStyleDescriptionRegistry" uid="_WfhJorlsEeeZYY-A-z9Qgw"/>
     </ownedAnnotationEntries>
-    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" xmi:id="_WfhwsblsEeeZYY-A-z9Qgw" source="GMF_DIAGRAMS">
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="_WfhwsblsEeeZYY-A-z9Qgw" source="GMF_DIAGRAMS">
       <data xmi:type="notation:Diagram" xmi:id="_WfhwsrlsEeeZYY-A-z9Qgw" type="Sirius" element="_WfhJoLlsEeeZYY-A-z9Qgw" measurementUnit="Pixel">
         <children xmi:type="notation:Node" xmi:id="_kr38oItMEeiwN8sGfb9BPQ" type="2002" element="_kkosMItMEeiwN8sGfb9BPQ">
           <children xmi:type="notation:Node" xmi:id="_kr-qUItMEeiwN8sGfb9BPQ" type="5006"/>
@@ -176,38 +176,38 @@
         </edges>
       </data>
     </ownedAnnotationEntries>
-    <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_kkosMItMEeiwN8sGfb9BPQ" name="SmartJoystickNavigation" tooltipText="ComponentDefinition">
+    <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_kkosMItMEeiwN8sGfb9BPQ" name="SmartJoystickNavigation" tooltipText="ComponentDefinition: SmartJoystickNavigation&#xA;">
       <target xmi:type="ComponentDefinition:ComponentDefinition" href="model/SmartJoystickNavigation.component#//@component"/>
       <semanticElements xmi:type="ComponentDefinition:ComponentDefinition" href="model/SmartJoystickNavigation.component#//@component"/>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_kkxPEItMEeiwN8sGfb9BPQ" name="JoystickServiceIn" tooltipText="InputPort" outgoingEdges="_kq4eIItMEeiwN8sGfb9BPQ" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_kkxPEItMEeiwN8sGfb9BPQ" name="JoystickServiceIn" tooltipText="InputPort: JoystickServiceIn&#xA;" outgoingEdges="_kq4eIItMEeiwN8sGfb9BPQ" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:InputPort" href="model/SmartJoystickNavigation.component#//@component/@elements.1"/>
         <semanticElements xmi:type="ComponentDefinition:InputPort" href="model/SmartJoystickNavigation.component#//@component/@elements.1"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:CustomStyle" xmi:id="_kkydMItMEeiwN8sGfb9BPQ" showIcon="false" id="input">
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_kkydMItMEeiwN8sGfb9BPQ" showIcon="false" id="input">
           <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_kkzrUItMEeiwN8sGfb9BPQ" name="NavVelServiceOut" tooltipText="OutputPort" incomingEdges="_krN1UItMEeiwN8sGfb9BPQ" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_kkzrUItMEeiwN8sGfb9BPQ" name="NavVelServiceOut" tooltipText="OutputPort" incomingEdges="_krN1UItMEeiwN8sGfb9BPQ" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:OutputPort" href="model/SmartJoystickNavigation.component#//@component/@elements.3"/>
         <semanticElements xmi:type="ComponentDefinition:OutputPort" href="model/SmartJoystickNavigation.component#//@component/@elements.3"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:CustomStyle" xmi:id="_kk0SYItMEeiwN8sGfb9BPQ" showIcon="false" id="output">
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_kk0SYItMEeiwN8sGfb9BPQ" showIcon="false" id="output">
           <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='OutputPortNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='OutputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_kk1ggItMEeiwN8sGfb9BPQ" name="CoordinationPort" tooltipText="CoordinationSlavePort" outgoingEdges="_krgJMItMEeiwN8sGfb9BPQ" incomingEdges="_krlowItMEeiwN8sGfb9BPQ" width="-1" height="-1" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_kk1ggItMEeiwN8sGfb9BPQ" name="CoordinationPort" tooltipText="CoordinationSlavePort" outgoingEdges="_krgJMItMEeiwN8sGfb9BPQ" incomingEdges="_krlowItMEeiwN8sGfb9BPQ" width="-1" height="-1" resizeKind="NSEW">
         <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/SmartJoystickNavigation.component#//@component/@elements.0"/>
         <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/SmartJoystickNavigation.component#//@component/@elements.0"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:WorkspaceImage" xmi:id="_kk2HkItMEeiwN8sGfb9BPQ" showIcon="false" workspacePath="/org.sirius.component.design/icons/CoordinationSlave.png">
+        <ownedStyle xmi:type="diagram:WorkspaceImage" uid="_kk2HkItMEeiwN8sGfb9BPQ" showIcon="false" workspacePath="/org.sirius.component.design/icons/CoordinationSlave.png">
           <description xmi:type="style:WorkspaceImageDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='CoordinationSlaveNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='CoordinationSlaveNode']"/>
@@ -215,96 +215,96 @@
       <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
       <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
       <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-      <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_kkuy0ItMEeiwN8sGfb9BPQ" labelSize="10" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,245,181">
+      <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_kkuy0ItMEeiwN8sGfb9BPQ" labelSize="10" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,245,181">
         <labelFormat>bold</labelFormat>
         <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@style"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']"/>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_kk38wItMEeiwN8sGfb9BPQ" name="JoystickNavTask" tooltipText="Activity" outgoingEdges="_krN1UItMEeiwN8sGfb9BPQ" incomingEdges="_kq4eIItMEeiwN8sGfb9BPQ">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_kk38wItMEeiwN8sGfb9BPQ" name="JoystickNavTask" tooltipText="Activity" outgoingEdges="_krN1UItMEeiwN8sGfb9BPQ" incomingEdges="_kq4eIItMEeiwN8sGfb9BPQ">
         <target xmi:type="ComponentDefinition:Activity" href="model/SmartJoystickNavigation.component#//@component/@elements.2"/>
         <semanticElements xmi:type="ComponentDefinition:Activity" href="model/SmartJoystickNavigation.component#//@component/@elements.2"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_kk4j0ItMEeiwN8sGfb9BPQ" borderSize="1" borderSizeComputationExpression="1">
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_kk4j0ItMEeiwN8sGfb9BPQ" borderSize="1" borderSizeComputationExpression="1">
           <labelFormat>bold</labelFormat>
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']"/>
-        <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_kk6ZAItMEeiwN8sGfb9BPQ" name="InputTrigger">
+        <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_kk6ZAItMEeiwN8sGfb9BPQ" name="InputTrigger">
           <target xmi:type="PerformanceExtension:DefaultInputTrigger" href="model/SmartJoystickNavigation.component#//@component/@elements.2/@extensions.0"/>
           <semanticElements xmi:type="PerformanceExtension:DefaultInputTrigger" href="model/SmartJoystickNavigation.component#//@component/@elements.2/@extensions.0"/>
           <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
           <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
           <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-          <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_kp8C8ItMEeiwN8sGfb9BPQ" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
+          <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_kp8C8ItMEeiwN8sGfb9BPQ" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
             <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@subContainerMappings[name='DefaultInputTriggerContainer']/@style"/>
           </ownedStyle>
           <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@subContainerMappings[name='DefaultInputTriggerContainer']"/>
         </ownedDiagramElements>
       </ownedDiagramElements>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_kp94IItMEeiwN8sGfb9BPQ" name="ComponentModes" tooltipText="ComponentModes" incomingEdges="_krgJMItMEeiwN8sGfb9BPQ">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_kp94IItMEeiwN8sGfb9BPQ" name="ComponentModes" tooltipText="ComponentModes" incomingEdges="_krgJMItMEeiwN8sGfb9BPQ">
         <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/SmartJoystickNavigation.component#//@component/@elements.0"/>
         <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/SmartJoystickNavigation.component#//@component/@elements.0"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_kqMhoItMEeiwN8sGfb9BPQ" iconPath="/org.sirius.component.design/icons/switch2.png" borderSize="1" borderSizeComputationExpression="1">
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_kqMhoItMEeiwN8sGfb9BPQ" iconPath="/org.sirius.component.design/icons/switch2.png" borderSize="1" borderSizeComputationExpression="1">
           <labelFormat>bold</labelFormat>
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']"/>
       </ownedDiagramElements>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_kqO94ItMEeiwN8sGfb9BPQ" name="SmartJoystickNavigationParameters" tooltipText="ComponentParameters" outgoingEdges="_krlowItMEeiwN8sGfb9BPQ">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_kqO94ItMEeiwN8sGfb9BPQ" name="SmartJoystickNavigationParameters" tooltipText="ComponentParameters" outgoingEdges="_krlowItMEeiwN8sGfb9BPQ">
         <target xmi:type="ComponentParameter:ComponentParametersRef" href="model/SmartJoystickNavigation.component#//@component/@elements.4"/>
         <semanticElements xmi:type="ComponentParameter:ComponentParametersRef" href="model/SmartJoystickNavigation.component#//@component/@elements.4"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_kqQMAItMEeiwN8sGfb9BPQ" borderSize="1" borderSizeComputationExpression="1">
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_kqQMAItMEeiwN8sGfb9BPQ" borderSize="1" borderSizeComputationExpression="1">
           <labelFormat>bold</labelFormat>
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentParametersContainer']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentParametersContainer']"/>
       </ownedDiagramElements>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_kq4eIItMEeiwN8sGfb9BPQ" sourceNode="_kkxPEItMEeiwN8sGfb9BPQ" targetNode="_kk38wItMEeiwN8sGfb9BPQ">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_kq4eIItMEeiwN8sGfb9BPQ" sourceNode="_kkxPEItMEeiwN8sGfb9BPQ" targetNode="_kk38wItMEeiwN8sGfb9BPQ">
       <target xmi:type="PerformanceExtension:InputLinkExtension" href="model/SmartJoystickNavigation.component#//@component/@elements.2/@links.0"/>
       <semanticElements xmi:type="PerformanceExtension:InputLinkExtension" href="model/SmartJoystickNavigation.component#//@component/@elements.2/@links.0"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_krI80ItMEeiwN8sGfb9BPQ" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_krI80ItMEeiwN8sGfb9BPQ" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_krI80YtMEeiwN8sGfb9BPQ"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_krI80YtMEeiwN8sGfb9BPQ"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_krN1UItMEeiwN8sGfb9BPQ" sourceNode="_kk38wItMEeiwN8sGfb9BPQ" targetNode="_kkzrUItMEeiwN8sGfb9BPQ">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_krN1UItMEeiwN8sGfb9BPQ" sourceNode="_kk38wItMEeiwN8sGfb9BPQ" targetNode="_kkzrUItMEeiwN8sGfb9BPQ">
       <target xmi:type="ComponentDefinition:OutputPort" href="model/SmartJoystickNavigation.component#//@component/@elements.3"/>
       <semanticElements xmi:type="ComponentDefinition:OutputPort" href="model/SmartJoystickNavigation.component#//@component/@elements.3"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_krPDcItMEeiwN8sGfb9BPQ" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_krPDcItMEeiwN8sGfb9BPQ" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ActivityOutputEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_krPDcYtMEeiwN8sGfb9BPQ"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_krPDcYtMEeiwN8sGfb9BPQ"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ActivityOutputEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_krgJMItMEeiwN8sGfb9BPQ" sourceNode="_kk1ggItMEeiwN8sGfb9BPQ" targetNode="_kp94IItMEeiwN8sGfb9BPQ">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_krgJMItMEeiwN8sGfb9BPQ" sourceNode="_kk1ggItMEeiwN8sGfb9BPQ" targetNode="_kp94IItMEeiwN8sGfb9BPQ">
       <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/SmartJoystickNavigation.component#//@component/@elements.0"/>
       <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/SmartJoystickNavigation.component#//@component/@elements.0"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_krgwQItMEeiwN8sGfb9BPQ" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_krgwQItMEeiwN8sGfb9BPQ" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CoordinationSlaveEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_krgwQYtMEeiwN8sGfb9BPQ"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_krgwQYtMEeiwN8sGfb9BPQ"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CoordinationSlaveEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_krlowItMEeiwN8sGfb9BPQ" sourceNode="_kqO94ItMEeiwN8sGfb9BPQ" targetNode="_kk1ggItMEeiwN8sGfb9BPQ">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_krlowItMEeiwN8sGfb9BPQ" sourceNode="_kqO94ItMEeiwN8sGfb9BPQ" targetNode="_kk1ggItMEeiwN8sGfb9BPQ">
       <target xmi:type="ComponentParameter:ComponentParametersRef" href="model/SmartJoystickNavigation.component#//@component/@elements.4"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_krmP0ItMEeiwN8sGfb9BPQ" sourceArrow="InputArrow" targetArrow="NoDecoration" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_krmP0ItMEeiwN8sGfb9BPQ" sourceArrow="InputArrow" targetArrow="NoDecoration" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ParametersEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_krmP0YtMEeiwN8sGfb9BPQ"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_krmP0YtMEeiwN8sGfb9BPQ"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ParametersEdge']"/>
     </ownedDiagramElements>
     <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
-    <filterVariableHistory xmi:type="diagram:FilterVariableHistory" xmi:id="_WfhJp7lsEeeZYY-A-z9Qgw"/>
+    <filterVariableHistory xmi:type="diagram:FilterVariableHistory" uid="_WfhJp7lsEeeZYY-A-z9Qgw"/>
     <activatedLayers xmi:type="description_1:Layer" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer"/>
     <activatedLayers xmi:type="description_1:AdditionalLayer" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@additionalLayers[name='SeRoNetLayer']"/>
     <target xmi:type="ComponentDefinition:ComponentDefModel" href="model/SmartJoystickNavigation.component#/"/>

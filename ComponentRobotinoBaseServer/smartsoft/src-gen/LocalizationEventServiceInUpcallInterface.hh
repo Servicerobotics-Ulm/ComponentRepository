@@ -23,7 +23,7 @@ class LocalizationEventServiceInUpcallInterface {
 public:
 	virtual ~LocalizationEventServiceInUpcallInterface() {  }
 
-	virtual void on_LocalizationEventServiceIn(const Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult,SmartACE::EventId> &input) = 0;
+	virtual void on_LocalizationEventServiceIn(const Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult> &input) = 0;
 };
 
 #endif

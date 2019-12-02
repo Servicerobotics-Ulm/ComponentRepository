@@ -39,15 +39,15 @@ class KbQueryHandler : public KbQueryHandlerCore
 	mutable SmartACE::SmartSemaphore sema;
 
 	std::list< internal_KB_query > request_list;
-	std::map<SmartACE::QueryId, internal_KB_queryAnswer > ans_list;
+	std::map<long, internal_KB_queryAnswer > ans_list;
 
 
 
 protected:
 public:
-	KbQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse, SmartACE::QueryId>* server);
+	KbQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse>* server);
 	virtual ~KbQueryHandler();
-	virtual void handleQuery(const SmartACE::QueryId &id, const CommBasicObjects::CommKBRequest& request);
+	virtual void handleQuery(const Smart::QueryIdPtr &id, const CommBasicObjects::CommKBRequest& request);
 
 	int getQuery(CommBasicObjects::CommKBRequest &request, long &req_id);
 	void answerQuery(const CommBasicObjects::CommKBResponse &answer, const long &req_id);

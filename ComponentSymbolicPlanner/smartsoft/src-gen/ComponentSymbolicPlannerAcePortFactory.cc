@@ -53,7 +53,7 @@ int ComponentSymbolicPlannerAcePortFactory::onStartup()
 }
 
 
-Smart::IQueryServerPattern<DomainSymbolicPlanner::CommSymbolicPlannerRequest, DomainSymbolicPlanner::CommSymbolicPlannerPlan,SmartACE::QueryId> * ComponentSymbolicPlannerAcePortFactory::createSymbolicPlannerQueryServer(const std::string &serviceName)
+Smart::IQueryServerPattern<DomainSymbolicPlanner::CommSymbolicPlannerRequest, DomainSymbolicPlanner::CommSymbolicPlannerPlan> * ComponentSymbolicPlannerAcePortFactory::createSymbolicPlannerQueryServer(const std::string &serviceName)
 {
 	return new SmartACE::QueryServer<DomainSymbolicPlanner::CommSymbolicPlannerRequest, DomainSymbolicPlanner::CommSymbolicPlannerPlan>(componentImpl, serviceName);
 }

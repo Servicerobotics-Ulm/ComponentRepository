@@ -71,7 +71,7 @@ int CompTask::task_execution()
 	COMP->comp_shutdown = true;
 
 	std::cout<<__FUNCTION__<<" COMPONENT SHUTDOWN = true"<<std::endl;
-	dynamic_cast<KbEventServerEventTestHandler*>(COMP->kbEventServerEventTestHandler)->shutdownReleaseSema();
+	std::dynamic_pointer_cast<KbEventServerEventTestHandler>(COMP->kbEventServerEventTestHandler)->shutdownReleaseSema();
 	COMP->kbQueryHandler->insertCompShutdownQuery();
 
 	ACE_OS::sleep(ACE_Time_Value(0,250000));

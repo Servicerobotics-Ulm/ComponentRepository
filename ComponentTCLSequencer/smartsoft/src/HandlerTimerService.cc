@@ -51,7 +51,7 @@
 
 #include <iostream>
 
-void HandlerTimerService::timerExpired(const std::chrono::system_clock::time_point &abs_time, const void * arg)
+void HandlerTimerService::timerExpired(const Smart::TimePoint &abs_time, const void * arg)
 {
 	long *currCounter = (long*)arg;
 	TimerParam param = ids[*currCounter];

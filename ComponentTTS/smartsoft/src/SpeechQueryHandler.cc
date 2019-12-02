@@ -45,7 +45,7 @@
 #include "SpeechQueryHandler.hh"
 #include "ComponentTTS.hh"
 
-SpeechQueryHandler::SpeechQueryHandler(Smart::IQueryServerPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet, SmartACE::QueryId>* server)
+SpeechQueryHandler::SpeechQueryHandler(Smart::IQueryServerPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet>* server)
 :	SpeechQueryHandlerCore(server)
 {
 	
@@ -57,7 +57,7 @@ SpeechQueryHandler::~SpeechQueryHandler()
 }
 
 
-void SpeechQueryHandler::handleQuery(const SmartACE::QueryId &id, const DomainSpeech::CommSpeechOutputMessage& request) 
+void SpeechQueryHandler::handleQuery(const Smart::QueryIdPtr &id, const DomainSpeech::CommSpeechOutputMessage& request)
 {
 	CommBasicObjects::CommPropertySet answer;
 	  std::cout << "Message Received : " << request;

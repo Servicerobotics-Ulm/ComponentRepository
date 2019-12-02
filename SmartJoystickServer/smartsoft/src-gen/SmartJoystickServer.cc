@@ -54,6 +54,8 @@ SmartJoystickServer::SmartJoystickServer()
 	connections.joystickTask.priority = -1;
 	connections.joystickTask.cpuAffinity = -1;
 	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of SmartJoystickServerROSExtension
 	
 	// initialize members of PlainOpcUaSmartJoystickServerExtension
@@ -144,6 +146,8 @@ void SmartJoystickServer::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of SmartJoystickServerROSExtension
 		
@@ -314,6 +318,8 @@ void SmartJoystickServer::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of SmartJoystickServerROSExtension
 	
 	// destruction of PlainOpcUaSmartJoystickServerExtension
@@ -407,6 +413,8 @@ void SmartJoystickServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("JoystickTask", "cpuAffinity")) {
 			parameter.getInteger("JoystickTask", "cpuAffinity", connections.joystickTask.cpuAffinity);
 		}
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for SmartJoystickServerROSExtension
 		

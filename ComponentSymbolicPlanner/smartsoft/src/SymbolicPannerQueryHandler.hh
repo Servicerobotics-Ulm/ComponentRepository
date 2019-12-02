@@ -51,8 +51,8 @@ class SymbolicPannerQueryHandler : public SymbolicPannerQueryHandlerCore
 {
 protected:
 public:
-	SymbolicPannerQueryHandler(Smart::IQueryServerPattern<DomainSymbolicPlanner::CommSymbolicPlannerRequest, DomainSymbolicPlanner::CommSymbolicPlannerPlan, SmartACE::QueryId>* server);
+	SymbolicPannerQueryHandler(Smart::IQueryServerPattern<DomainSymbolicPlanner::CommSymbolicPlannerRequest, DomainSymbolicPlanner::CommSymbolicPlannerPlan>* server);
 	virtual ~SymbolicPannerQueryHandler();
-	virtual void handleQuery(const SmartACE::QueryId &id, const DomainSymbolicPlanner::CommSymbolicPlannerRequest& request);
+	virtual void handleQuery(const Smart::QueryIdPtr &id, const DomainSymbolicPlanner::CommSymbolicPlannerRequest& request);
 };
 #endif

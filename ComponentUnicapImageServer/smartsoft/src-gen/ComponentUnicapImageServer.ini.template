@@ -86,6 +86,9 @@ roboticMiddleware ACE_SmartSoft
 ## parameters of PlainOpcUaComponentUnicapImageServerExtension
 
 
+##########################
+## parameters of OpcUaBackendComponentGeneratorExtension
+
 
 #####################
 # internal parameters
@@ -96,6 +99,22 @@ roboticMiddleware ACE_SmartSoft
 debug_info false
 smart_format yuv422
 valid_time_in_sec 1.0
+
+##########################
+# InternalParameter IntrinsicParams
+[IntrinsicParams]
+calib_height 480
+calib_width 640
+cx 326.70589
+cy 252.38709
+# distortion_coeffs has an array value (defined by assigning each array element in a separate line)
+distortion_coeffs 0.1241826
+distortion_coeffs -0.275755
+distortion_coeffs -6.637106E-4
+distortion_coeffs -0.003005441
+distortion_coeffs 0.1270525
+fx 613.80156
+fy 617.75798
 
 ##########################
 # InternalParameter base
@@ -115,7 +134,7 @@ z 0
 camera_type USB
 debug_info false
 device /dev/video0
-identifier UVC Camera (046d:0809) (/dev/video0)
+identifier HD Pro Webcam C920 (/dev/video0)
 
 ##########################
 # InternalParameter hardware_properties
@@ -128,7 +147,7 @@ format YUV 4:2:2 (YUYV) ( YUYV )
 framerate 15
 gain 100
 gamma 128
-height 600
+height 480
 hue 128
 saturation 128
 sharpness 3.0
@@ -138,7 +157,7 @@ trigger_polarity 0
 white_balance_mode 3.0
 white_balance_u 2000.0
 white_balance_v 2000.0
-width 800
+width 640
 
 ##########################
 # InternalParameter push_newest
@@ -153,12 +172,12 @@ debug_info false
 ##########################
 # InternalParameter sensor_pose
 [sensor_pose]
-azimuth 0
-elevation 0
-roll 0
-x 0
+azimuth 1.5707963
+elevation 3.14159265
+roll 1.5707963
+x 68
 y 0
-z 0
+z 148
 
 ##########################
 # InternalParameter settings

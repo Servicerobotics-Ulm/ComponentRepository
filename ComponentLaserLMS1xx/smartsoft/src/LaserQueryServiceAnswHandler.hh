@@ -51,8 +51,8 @@ class LaserQueryServiceAnswHandler : public LaserQueryServiceAnswHandlerCore
 protected:
 	virtual void on_update_from(const LaserTask* laserTask);
 public:
-	LaserQueryServiceAnswHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan, SmartACE::QueryId>* server);
+	LaserQueryServiceAnswHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan>* server);
 	virtual ~LaserQueryServiceAnswHandler();
-	virtual void handleQuery(const SmartACE::QueryId &id, const CommBasicObjects::CommVoid& request);
+	virtual void handleQuery(const Smart::QueryIdPtr &id, const CommBasicObjects::CommVoid& request);
 };
 #endif

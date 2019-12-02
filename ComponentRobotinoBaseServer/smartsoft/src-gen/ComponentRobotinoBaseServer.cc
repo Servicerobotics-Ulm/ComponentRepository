@@ -40,15 +40,15 @@ ComponentRobotinoBaseServer::ComponentRobotinoBaseServer()
 	baseStateQueryServiceAnswHandler = NULL;
 	baseStateServiceOut = NULL;
 	batteryEventServiceOut = NULL;
-	batteryEventServiceOutEventTestHandler = NULL; 
+	batteryEventServiceOutEventTestHandler = nullptr; 
 	bumperEventServiceOut = NULL;
-	bumperEventServiceOutEventTestHandler = NULL; 
+	bumperEventServiceOutEventTestHandler = nullptr; 
 	//componentRobotinoBaseServerParams = NULL;
 	//coordinationPort = NULL;
 	digitalInputEventOut = NULL;
-	digitalInputEventOutEventTestHandler = NULL; 
+	digitalInputEventOutEventTestHandler = nullptr; 
 	laserSafetyEventServiceOut = NULL;
-	laserSafetyEventServiceOutEventTestHandler = NULL; 
+	laserSafetyEventServiceOutEventTestHandler = nullptr; 
 	localizationEventServiceIn = NULL;
 	localizationEventServiceInInputTaskTrigger = NULL;
 	localizationEventServiceInUpcallManager = NULL;
@@ -135,6 +135,8 @@ ComponentRobotinoBaseServer::ComponentRobotinoBaseServer()
 	connections.localizationUpdateServiceInHandler.prescale = 1;
 	connections.navigationVelocityServiceInHandler.prescale = 1;
 	connections.powerOutputSendInHandler.prescale = 1;
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of ComponentRobotinoBaseServerROSExtension
 	
@@ -277,6 +279,8 @@ void ComponentRobotinoBaseServer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		// initializations of ComponentRobotinoBaseServerROSExtension
 		
 		// initializations of PlainOpcUaComponentRobotinoBaseServerExtension
@@ -312,31 +316,35 @@ void ComponentRobotinoBaseServer::init(int argc, char *argv[])
 		}
 
 		// create event-test handlers (if needed)
-		batteryEventServiceOutEventTestHandler = new BatteryEventServiceOutEventTestHandler();
-		bumperEventServiceOutEventTestHandler = new BumperEventServiceOutEventTestHandler();
-		digitalInputEventOutEventTestHandler = new DigitalInputEventOutEventTestHandler();
-		laserSafetyEventServiceOutEventTestHandler = new LaserSafetyEventServiceOutEventTestHandler();
+		batteryEventServiceOutEventTestHandler = std::make_shared<BatteryEventServiceOutEventTestHandler>();
+		bumperEventServiceOutEventTestHandler = std::make_shared<BumperEventServiceOutEventTestHandler>();
+		digitalInputEventOutEventTestHandler = std::make_shared<DigitalInputEventOutEventTestHandler>();
+		laserSafetyEventServiceOutEventTestHandler = std::make_shared<LaserSafetyEventServiceOutEventTestHandler>();
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
 		baseStateQueryServiceAnsw = portFactoryRegistry[connections.baseStateQueryServiceAnsw.roboticMiddleware]->createBaseStateQueryServiceAnsw(connections.baseStateQueryServiceAnsw.serviceName);
-		baseStateQueryServiceAnswInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState,SmartACE::QueryId>(baseStateQueryServiceAnsw);
+		baseStateQueryServiceAnswInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>(baseStateQueryServiceAnsw);
 		baseStateServiceOut = portFactoryRegistry[connections.baseStateServiceOut.roboticMiddleware]->createBaseStateServiceOut(connections.baseStateServiceOut.serviceName);
+		batteryEventServiceOutEventTestHandler = std::make_shared<BatteryEventServiceOutEventTestHandler>();
 		batteryEventServiceOut = portFactoryRegistry[connections.batteryEventServiceOut.roboticMiddleware]->createBatteryEventServiceOut(connections.batteryEventServiceOut.serviceName, batteryEventServiceOutEventTestHandler);
+		bumperEventServiceOutEventTestHandler = std::make_shared<BumperEventServiceOutEventTestHandler>();
 		bumperEventServiceOut = portFactoryRegistry[connections.bumperEventServiceOut.roboticMiddleware]->createBumperEventServiceOut(connections.bumperEventServiceOut.serviceName, bumperEventServiceOutEventTestHandler);
+		digitalInputEventOutEventTestHandler = std::make_shared<DigitalInputEventOutEventTestHandler>();
 		digitalInputEventOut = portFactoryRegistry[connections.digitalInputEventOut.roboticMiddleware]->createDigitalInputEventOut(connections.digitalInputEventOut.serviceName, digitalInputEventOutEventTestHandler);
+		laserSafetyEventServiceOutEventTestHandler = std::make_shared<LaserSafetyEventServiceOutEventTestHandler>();
 		laserSafetyEventServiceOut = portFactoryRegistry[connections.laserSafetyEventServiceOut.roboticMiddleware]->createLaserSafetyEventServiceOut(connections.laserSafetyEventServiceOut.serviceName, laserSafetyEventServiceOutEventTestHandler);
 		localizationUpdateServiceIn = portFactoryRegistry[connections.localizationUpdateServiceIn.roboticMiddleware]->createLocalizationUpdateServiceIn(connections.localizationUpdateServiceIn.serviceName);
 		navigationVelocityServiceIn = portFactoryRegistry[connections.navigationVelocityServiceIn.roboticMiddleware]->createNavigationVelocityServiceIn(connections.navigationVelocityServiceIn.serviceName);
 		powerOutputSendIn = portFactoryRegistry[connections.powerOutputSendIn.roboticMiddleware]->createPowerOutputSendIn(connections.powerOutputSendIn.serviceName);
 		robotinoIOValuesQueryServiceAnsw = portFactoryRegistry[connections.robotinoIOValuesQueryServiceAnsw.roboticMiddleware]->createRobotinoIOValuesQueryServiceAnsw(connections.robotinoIOValuesQueryServiceAnsw.serviceName);
-		robotinoIOValuesQueryServiceAnswInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommRobotinoObjects::CommRobotinoIOValues, CommRobotinoObjects::CommRobotinoIOValues,SmartACE::QueryId>(robotinoIOValuesQueryServiceAnsw);
+		robotinoIOValuesQueryServiceAnswInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommRobotinoObjects::CommRobotinoIOValues, CommRobotinoObjects::CommRobotinoIOValues>(robotinoIOValuesQueryServiceAnsw);
 		
 		// create client ports
 		localizationEventServiceIn = portFactoryRegistry[connections.localizationEventServiceIn.roboticMiddleware]->createLocalizationEventServiceIn();
 		
 		// create InputTaskTriggers and UpcallManagers
-		localizationEventServiceInInputTaskTrigger = new Smart::InputTaskTrigger<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult,SmartACE::EventId>>(localizationEventServiceIn);
+		localizationEventServiceInInputTaskTrigger = new Smart::InputTaskTrigger<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult>>(localizationEventServiceIn);
 		localizationEventServiceInUpcallManager = new LocalizationEventServiceInUpcallManager(localizationEventServiceIn);
 		localizationUpdateServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBasePositionUpdate>(localizationUpdateServiceIn);
 		localizationUpdateServiceInUpcallManager = new LocalizationUpdateServiceInUpcallManager(localizationUpdateServiceIn);
@@ -576,10 +584,10 @@ void ComponentRobotinoBaseServer::fini()
 	delete robotinoIOValuesQueryServiceAnsw;
 	delete robotinoIOValuesQueryServiceAnswInputTaskTrigger;
 	// destroy event-test handlers (if needed)
-	delete batteryEventServiceOutEventTestHandler;
-	delete bumperEventServiceOutEventTestHandler;
-	delete digitalInputEventOutEventTestHandler;
-	delete laserSafetyEventServiceOutEventTestHandler;
+	batteryEventServiceOutEventTestHandler;
+	bumperEventServiceOutEventTestHandler;
+	digitalInputEventOutEventTestHandler;
+	laserSafetyEventServiceOutEventTestHandler;
 	
 	// destroy request-handlers
 	delete baseStateQueryServiceAnswHandler;
@@ -605,6 +613,8 @@ void ComponentRobotinoBaseServer::fini()
 	{
 		portFactory->second->destroy();
 	}
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of ComponentRobotinoBaseServerROSExtension
 	
@@ -811,6 +821,8 @@ void ComponentRobotinoBaseServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("PowerOutputSendInHandler", "prescale")) {
 			parameter.getInteger("PowerOutputSendInHandler", "prescale", connections.powerOutputSendInHandler.prescale);
 		}
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for ComponentRobotinoBaseServerROSExtension
 		

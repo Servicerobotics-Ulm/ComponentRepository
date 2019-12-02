@@ -29,6 +29,8 @@
 class ComponentTrafficLightTestPortFactoryInterface;
 class ComponentTrafficLightTestExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for ComponentTrafficLightTestROSExtension
 
 // includes for PlainOpcUaComponentTrafficLightTestExtension
@@ -44,8 +46,8 @@ class ComponentTrafficLightTestExtension;
 #include "GenerateOut.hh"
 // include UpcallManagers
 
-// include input-handler
-// include input-handler
+// include input-handler(s)
+// include request-handler(s)
 
 // include handler
 #include "CompHandler.hh"
@@ -101,6 +103,8 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of ComponentTrafficLightTestROSExtension
 	
@@ -213,6 +217,8 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} trafficLightServiceOut;
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for ComponentTrafficLightTestROSExtension
 		

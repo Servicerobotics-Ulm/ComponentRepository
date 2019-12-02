@@ -19,6 +19,7 @@
 
 #include <iostream>
 
+
 ManagementTask::ManagementTask(SmartACE::SmartComponent *comp) 
 :	ManagementTaskCore(comp)
 {
@@ -59,6 +60,10 @@ int ManagementTask::on_entry()
 	for(int i = 0; i<sizeof(connected)/sizeof(int); i++){
 		connected[i] = 0;
 	}
+
+	// show default visual objects here i.e coordinate axis, origin
+	default_visualization = std::unique_ptr<DefaultVisualization>(new DefaultVisualization(COMP->getWindow3d(), "default"));
+
 	return 0;
 }
 int ManagementTask::on_execute()
@@ -68,10 +73,12 @@ int ManagementTask::on_execute()
 		// also do not use blocking calls which do not result from smartsoft kernel
 
 		int disconnect = 0;
-		std::cout << "\n########################\n";
+
+		//std::cout << "\n########################\n";
+		printFormattedLine();
 		printPorts();
-		std::cout << std::endl;
-		std::cout << "\n########################\n";
+		printFormattedLine();
+		//std::cout << "\n########################\n";
 		std::cout << "Please choose connect or disconnect" << std::endl;
 		std::cout << "(0) connect \n(1) disconnect\n";
 		if(!(std::cin >> disconnect) || disconnect < 0 || disconnect > 1){
@@ -83,7 +90,8 @@ int ManagementTask::on_execute()
 
 
 		//SmartVisualization port
-		std::cout << "\n########################\n";
+		printFormattedLine();
+		//std::cout << "\n########################\n";
 		if(disconnect){
 			std::cout << "Please choose the service which should be disconnected or -1 to abort" << std::endl;
 		}else{
@@ -111,10 +119,10 @@ int ManagementTask::on_execute()
 					COMP->baseTask->disconnectServices();
 					COMP->baseTask->stop();
 					connected[port_base_push_timed] = 0;
-					std::cout << "baseClient disconnected." << std::endl;
+					std::cout << display_names[port_base_push_timed]<<" disconnected." << std::endl;
 					return 0;
 				}
-				portType = "Push";
+				portType = port_type_name[port_types::port_push_type];
 				commObject1 = "CommBasicObjects::CommBaseState";
 				break;
 			case port_grid_push_newest:
@@ -122,10 +130,10 @@ int ManagementTask::on_execute()
 					COMP->curMapTask->disconnectServices();
 					COMP->curMapTask->stop();
 					connected[port_grid_push_newest] = 0;
-					std::cout << "curPushClient disconnected." << std::endl;
+					std::cout << display_names[port_grid_push_newest]<<" disconnected." << std::endl;
 					return 0;
 				}
-				portType = "Push";
+				portType = port_type_name[port_types::port_push_type];
 				commObject1 = "CommNavigationObjects::CommGridMap";
 				break;
 			case port_laser1_push_newest:
@@ -133,10 +141,10 @@ int ManagementTask::on_execute()
 					COMP->laser1Task->disconnectServices();
 					COMP->laser1Task->stop();
 					connected[port_laser1_push_newest] = 0;
-					std::cout << "laserClient1 disconnected." << std::endl;
+					std::cout << display_names[port_laser1_push_newest]<<" disconnected." << std::endl;
 					return 0;
 				}
-				portType = "Push";
+				portType = port_type_name[port_types::port_push_type];
 				commObject1 = "CommBasicObjects::CommMobileLaserScan";
 
 				std::cout << " laser 2 is selected" <<std::endl;
@@ -146,10 +154,10 @@ int ManagementTask::on_execute()
 					COMP->laser2Task->disconnectServices();
 					COMP->laser2Task->stop();
 					connected[port_laser2_push_newest] = 0;
-					std::cout << "laserClient2 disconnected." << std::endl;
+					std::cout << display_names[port_laser2_push_newest]<<" disconnected." << std::endl;
 					return 0;
 				}
-				portType = "Push";
+				portType = port_type_name[port_types::port_push_type];
 				commObject1 = "CommBasicObjects::CommMobileLaserScan";
 				break;
 			case port_laser3_push_newest:
@@ -157,10 +165,10 @@ int ManagementTask::on_execute()
 					COMP->laser3Task->disconnectServices();
 					COMP->laser3Task->stop();
 					connected[port_laser3_push_newest] = 0;
-					std::cout << "laserClient3 disconnected." << std::endl;
+					std::cout << display_names[port_laser3_push_newest]<<" disconnected." << std::endl;
 					return 0;
 				}
-				portType = "Push";
+				portType = port_type_name[port_types::port_push_type];
 				commObject1 = "CommBasicObjects::CommMobileLaserScan";
 				break;
 //			case port_person_detection_query:
@@ -189,10 +197,10 @@ int ManagementTask::on_execute()
 					COMP->iRTask->disconnectServices();
 					COMP->iRTask->stop();
 					connected[port_iRTask_push_newest] = 0;
-					std::cout << "irPushNewestClient disconnected." << std::endl;
+					std::cout << display_names[port_iRTask_push_newest]<<" disconnected." << std::endl;
 					return 0;
 				}
-				portType = "Push";
+				portType = port_type_name[port_types::port_push_type];
 				commObject1 = "CommBasicObjects::CommMobileIRScan";
 				break;
 //			case port_ltm_query:
@@ -212,10 +220,10 @@ int ManagementTask::on_execute()
 					COMP->imageTask->disconnectServices();
 					COMP->imageTask->stop();
 					connected[port_video_image_push_newest] = 0;
-					std::cout << "imagePushNewestClient disconnected." << std::endl;
+					std::cout << display_names[port_video_image_push_newest]<<" disconnected." << std::endl;
 					return 0;
 				}
-				portType = "Push";
+				portType = port_type_name[port_types::port_push_type];
 				commObject1 = "DomainVision::CommVideoImage";
 				break;
 			case port_rgbd_image_push_newest:
@@ -223,10 +231,10 @@ int ManagementTask::on_execute()
 					COMP->rGBDTask->disconnectServices();
 					COMP->rGBDTask->stop();
 					connected[port_rgbd_image_push_newest] = 0;
-					std::cout << "imagePushNewestClient disconnected." << std::endl;
+					std::cout << display_names[port_rgbd_image_push_newest]<<" disconnected." << std::endl;
 					return 0;
 				}
-				portType = "Push";
+				portType = port_type_name[port_types::port_push_type];
 				commObject1 = "DomainVision::CommRGBDImage";
 				break;
 			case port_depth_image_client:
@@ -234,11 +242,22 @@ int ManagementTask::on_execute()
 					COMP->depthTask->disconnectServices();
 					COMP->depthTask->stop();
 					connected[port_depth_image_client] = 0;
-					std::cout << "depthPushNewestClient disconnected." << std::endl;
+					std::cout << display_names[port_depth_image_client]<<" disconnected." << std::endl;
 					return 0;
 				}
-				portType = "Push";
+				portType = port_type_name[port_types::port_push_type];
 				commObject1 = "DomainVision::CommDepthImage";
+				break;
+			case port_marker_detection_list_client:
+				if(disconnect && connected[port_marker_detection_list_client]){
+					COMP->markerListTask->disconnectServices();
+					COMP->markerListTask->stop();
+					connected[port_marker_detection_list_client] = 0;
+					std::cout << display_names[port_marker_detection_list_client]<<" disconnected." << std::endl;
+					return 0;
+				}
+				portType = port_type_name[port_types::port_push_type];
+				commObject1 = "CommTrackingObjects::CommDetectedMarkerList";
 				break;
 			default:  //port_max
 				std::cout << "invalid input!" << std::endl;
@@ -259,9 +278,11 @@ int ManagementTask::on_execute()
 		//list all appropriate components with appropriate ports
 		std::map<std::string, std::list<SmartACE::NSKeyType> >::iterator it;
 		if(port == port_ltm_query){
-			std::cout << "\n########################\nPlease choose a QueryServer or -1 to abort.\n";
+			printFormattedLine();
+			std::cout << "Please choose a QueryServer or -1 to abort.\n";
 		}else{
-			std::cout << "\n########################\nPlease choose a service to connect to or -1 to abort.\n";
+			printFormattedLine();
+			std::cout << "Please choose a service to connect to or -1 to abort.\n";
 		}
 		int i = 0;
 
@@ -270,7 +291,7 @@ int ManagementTask::on_execute()
 			for(it_port = it->second.begin(); it_port != it->second.end(); it_port++){
 				if(portType == it_port->names[SmartACE::NSKeyType::PATTERN_NAME]){
 					if(commObject2 == "" && commObject1 == it_port->names[SmartACE::NSKeyType::COMMOBJ1_NAME]){
-						std::cout << "------------------------" << std::endl;
+						printFormattedLine();
 						std::cout << it->first << std::endl;
 						std::cout << "(" << i << ")";
 						std::cout << "\t Port-Type: " << it_port->names[SmartACE::NSKeyType::PATTERN_NAME] << std::endl;
@@ -280,7 +301,7 @@ int ManagementTask::on_execute()
 					}else if(commObject2 != ""){
 						if((commObject1 == it_port->names[SmartACE::NSKeyType::COMMOBJ1_NAME] && commObject2 == it_port->names[SmartACE::NSKeyType::COMMOBJ2_NAME])
 						 || (commObject2 == it_port->names[SmartACE::NSKeyType::COMMOBJ1_NAME] || commObject1 == it_port->names[SmartACE::NSKeyType::COMMOBJ2_NAME])){
-							std::cout << "------------------------" << std::endl;
+							printFormattedLine();
 							std::cout << it->first << std::endl;
 							std::cout << "(" << i << ")";
 							std::cout << "\t Port-Type: " << it_port->names[SmartACE::NSKeyType::PATTERN_NAME] << std::endl;
@@ -440,6 +461,15 @@ int ManagementTask::on_execute()
 					COMP->depthTask->connectServices();
 					COMP->depthTask->start();
 					connected[port_depth_image_client] = 1;
+					break;
+				case port_marker_detection_list_client:
+					COMP->connections.markerListDetectionServiceIn.serverName = con[toCon].first;
+					COMP->connections.markerListDetectionServiceIn.serviceName = con[toCon].second;
+					std::cout << "starting markerListTask " << std::endl;
+					COMP->markerListTask->connectServices();
+					COMP->markerListTask->start();
+					connected[port_marker_detection_list_client] = 1;
+					break;
 			}
 		}
 		con.clear();
@@ -456,55 +486,18 @@ int ManagementTask::on_exit()
 void ManagementTask::printPorts(){
 	std::cout << "Available services: \n\n";
 
-	std::cout << "("<< int(port_base_push_timed)<<") baseClient";
-	if(connected[port_base_push_timed]) std::cout << " (connected)";
-	std::cout << std::endl;
+	for(int i = service_ports::port_base_push_timed; i < service_ports::port_max; ++i)
+	{
+		std::cout <<"("<<std::setw(2)<< i<<") "<<display_names[i];
+		if(connected[i]) std::cout << " (connected)";
+		std::cout << std::endl;
+	}
+}
 
-	std::cout << "("<< int(port_grid_push_newest)<<") curPushClient";
-	if(connected[port_grid_push_newest]) std::cout << " (connected)";
-	std::cout << std::endl;
-
-	std::cout << "("<< int(port_laser1_push_newest)<<") laserClient1";
-	if(connected[port_laser1_push_newest]) std::cout << " (connected)";
-	std::cout << std::endl;
-
-
-	std::cout << "("<< int(port_laser2_push_newest)<<") laserClient2";
-	if(connected[port_laser2_push_newest]) std::cout << " (connected)";
-	std::cout << std::endl;
-
-
-	std::cout << "("<< int(port_laser3_push_newest)<<") laserClient3";
-	if(connected[port_laser3_push_newest]) std::cout << " (connected)";
-	std::cout << std::endl;
-
-
-	std::cout << "("<< int(port_person_detection_query)<<") personDetection";
-	if(connected[port_person_detection_query]) std::cout << " (connected)";
-	std::cout << std::endl;
-
-	std::cout << "("<< int(port_uSAr_push_newest)<<") ultrasonicPushNewestClient";
-	if(connected[port_uSAr_push_newest]) std::cout << " (connected)";
-	std::cout << std::endl;
-
-	std::cout << "("<< int(port_iRTask_push_newest)<<") irPushNewestClient";
-	if(connected[port_iRTask_push_newest]) std::cout << " (connected)";
-	std::cout << std::endl;
-
-
-	std::cout << "("<< int(port_ltm_query)<<") ltmQueryClient";
-	if(connected[port_ltm_query]) std::cout << " (connected)";
-	std::cout << std::endl;
-
-	std::cout << "("<< int(port_video_image_push_newest)<<") RGBClient";
-	if(connected[port_video_image_push_newest]) std::cout << " (connected)";
-	std::cout << std::endl;
-
-	std::cout << "("<< int(port_rgbd_image_push_newest)<<") RGBDClient";
-	if(connected[port_rgbd_image_push_newest]) std::cout << " (connected)";
-	std::cout << std::endl;
-
-	std::cout << "("<< int(port_depth_image_client)<<") DepthImageClient";
-	if(connected[port_depth_image_client]) std::cout << " (connected)";
-	std::cout << std::endl;
+void ManagementTask::printFormattedLine()
+{
+	std::cout.width(40);
+	std::cout.fill('-');
+	std::cout << "\n";
+	std::cout.fill(' ');
 }

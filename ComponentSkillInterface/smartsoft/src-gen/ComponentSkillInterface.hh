@@ -29,6 +29,8 @@
 class ComponentSkillInterfacePortFactoryInterface;
 class ComponentSkillInterfaceExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for ComponentSkillInterfaceROSExtension
 
 // includes for PlainOpcUaComponentSkillInterfaceExtension
@@ -47,8 +49,8 @@ class ComponentSkillInterfaceExtension;
 #include "CommunicationTask.hh"
 // include UpcallManagers
 
-// include input-handler
-// include input-handler
+// include input-handler(s)
+// include request-handler(s)
 
 // include handler
 #include "CompHandler.hh"
@@ -108,7 +110,7 @@ public:
 	// define input-ports
 	
 	// define request-ports
-	Smart::IQueryClientPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse,SmartACE::QueryId> *kBQueryClient;
+	Smart::IQueryClientPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse> *kBQueryClient;
 	
 	// define input-handler
 	
@@ -117,6 +119,8 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of ComponentSkillInterfaceROSExtension
 	
@@ -247,6 +251,8 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} kBQueryClient;
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for ComponentSkillInterfaceROSExtension
 		

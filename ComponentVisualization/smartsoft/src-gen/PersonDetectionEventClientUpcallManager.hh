@@ -26,23 +26,23 @@
  * of incoming data to all associated (i.e. attached) Upcalls.
  */
 class PersonDetectionEventClientUpcallManager
-:	public Smart::IInputHandler<Smart::EventInputType<CommTrackingObjects::CommPersonDetectionEventResult,SmartACE::EventId>>
+:	public Smart::IInputHandler<Smart::EventInputType<CommTrackingObjects::CommPersonDetectionEventResult>>
 {
 private:
 	// list of associated updalls
 	std::list<PersonDetectionEventClientUpcallInterface*> upcalls;
 
 	// call the on_personDetectionEventClient of all the attached PersonDetectionEventClientUpcallInterfaces
-	void notify_upcalls(const Smart::EventInputType<CommTrackingObjects::CommPersonDetectionEventResult,SmartACE::EventId> &input);
+	void notify_upcalls(const Smart::EventInputType<CommTrackingObjects::CommPersonDetectionEventResult> &input);
 	
 protected:
-	virtual void handle_input(const Smart::EventInputType<CommTrackingObjects::CommPersonDetectionEventResult,SmartACE::EventId> &input) {
+	virtual void handle_input(const Smart::EventInputType<CommTrackingObjects::CommPersonDetectionEventResult> &input) {
 		// relay input-handling to all attached PersonDetectionEventClientUpcallInterfaces
 		this->notify_upcalls(input);
 	}
 public:
 	PersonDetectionEventClientUpcallManager(
-		Smart::InputSubject<Smart::EventInputType<CommTrackingObjects::CommPersonDetectionEventResult,SmartACE::EventId>> *subject,
+		Smart::InputSubject<Smart::EventInputType<CommTrackingObjects::CommPersonDetectionEventResult>> *subject,
 		const int &prescaleFactor=1
 	);
 	virtual ~PersonDetectionEventClientUpcallManager();

@@ -1,6 +1,6 @@
 /*--------------------------------------------------------------------------
 
- Copyright (C) 2011 
+ Copyright (C) 2017
 
  Created on: Oct 27, 2017
  Author    : Nayabrasul Shaik (shaik@hs-ulm.de)
@@ -47,10 +47,18 @@ AbstractVisualization(window3D, identifier)
 {
 	opengl::COpenGLScenePtr &ptrScene = window3D.get3DSceneAndLock();
 		{
+			// point cloud
 			opengl::CPointCloudColouredPtr cloud = opengl::CPointCloudColoured::Create();
 			cloud->setName(identifier + "_cloud");
-			cloud->setPointSize(3.0);
+			cloud->setPointSize(2.0);
 			ptrScene->insert(cloud);
+
+			//camera origin
+			mrpt::opengl::CSetOfObjectsPtr gl_corner = mrpt::opengl::stock_objects::CornerXYZSimple(0.25);
+			gl_corner->setName(identifier + "_camera_origin");
+			gl_corner->setScale(0.5);
+			ptrScene->insert(gl_corner);
+
 		}
 		window3D.unlockAccess3DScene();
 
@@ -61,8 +69,14 @@ AbstractVisualization(window3D, identifier)
 RGBDVisualization::~RGBDVisualization() {
 	opengl::COpenGLScenePtr & ptrScene = window3D.get3DSceneAndLock();
 		{
+		    // remove pointcloud
 			opengl::CPointCloudColouredPtr cloud = (opengl::CPointCloudColouredPtr) ptrScene->getByName(identifier + "_cloud");
 			ptrScene->removeObject(cloud);
+
+			// remove origin
+			mrpt::opengl::CSetOfObjectsPtr gl_corner = (opengl::CSetOfObjectsPtr) ptrScene->getByName(identifier + "_camera_origin");
+			ptrScene->removeObject(gl_corner);
+
 		}
 		window3D.unlockAccess3DScene();
 		window3D.forceRepaint();
@@ -104,24 +118,12 @@ void RGBDVisualization::displayImage(DomainVision::CommRGBDImage& rgbd_image)
 			createColorPointCloud (cloud, &comm_color_image, &comm_depth_image);
 			cloud->setPose(mrpt_sensorPose);
 
-		}
 
-		//show camera frame
-		{
-
-			opengl::CAxisPtr obj = opengl::CAxis::Create(-3,-3,-3, 3,3,3,0.1);
-			obj->setFrequency(5);
-			obj->enableTickMarks();
-			obj->setAxisLimits(-3,-3,-3, 3,3,3);
-			ptrScene->insert( obj );
+			mrpt::opengl::CSetOfObjectsPtr gl_origin = (mrpt::opengl::CSetOfObjectsPtr) ptrScene->getByName(identifier + "_camera_origin");
+			gl_origin->setPose(mrpt_sensorPose);
 
 		}
 
-		{
-			mrpt::opengl::CSetOfObjectsPtr gl_corner = mrpt::opengl::stock_objects::CornerXYZ();
-			gl_corner->setScale(0.5);
-			ptrScene->insert(gl_corner);
-		}
 		// Frustum
 //		{
 //
@@ -336,19 +338,6 @@ void RGBDVisualization::createColorPointCloud (opengl::CPointCloudColouredPtr cl
 
 
 	}
-
-
-	// add extra
-	uint8_t r, g,b;
-	r = 255;
-	g = 1;
-	b = 1;
-	x_in_m =0.0f, y_in_m=0.0f, z_in_m=1.0f;
-	cloud->push_back(x_in_m, y_in_m, z_in_m, r/255.0, g/255.0, b/255.0);
-
-	x_in_m =0.0f, y_in_m=0.0f, z_in_m=-1.0f;
-		cloud->push_back(x_in_m, y_in_m, z_in_m, r/255.0, g/255.0, b/255.0);
-
 
 //	for (int i =0; i<1; i++)
 //	{

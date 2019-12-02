@@ -28,7 +28,7 @@ class PersonDetectionTask  : public PersonDetectionTaskCore
 {
 private:
 	PersonDetectionVisualization* personDetection;
-	SmartACE::EventId id;
+	Smart::EventIdPtr id;
 	//CommBasicObjects::CommVoid eventParameter;
 	CommTrackingObjects::CommPersonLostEventParameter eventParameter;
 	CommTrackingObjects::CommPersonDetectionEventResult eventResult;

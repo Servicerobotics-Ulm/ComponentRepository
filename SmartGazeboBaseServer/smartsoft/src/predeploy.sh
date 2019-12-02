@@ -16,5 +16,7 @@
 # $SMART_ROOT_ACE/myFILE2
 # "
 
-DEPLOY_LIBRARIES=""
+DEPLOY_LIBRARIES="libNewDiffDrivePlugin.so
+libNewOmniDrivePlugin.so
+libPubBasePosePlugin.so"
 DEPLOY_COMPONENT_FILES=""

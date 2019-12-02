@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ComponentDefinition="http://www.ecore.org/component/ComponentDefinition" xmlns:PerformanceExtension="http://www.ecore.org/component/PerformanceExtension" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:diagram="http://www.eclipse.org/sirius/diagram/1.1.0" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xsi:schemaLocation="http://www.eclipse.org/sirius/description/1.1.0 http://www.eclipse.org/sirius/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/style/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description/style">
-  <viewpoint:DAnalysis xmi:id="_yFwYwCoGEemVTK0tKLfwvw" selectedViews="_yLJ2ICoGEemVTK0tKLfwvw" version="12.1.0.201708031200">
+  <viewpoint:DAnalysis uid="_yFwYwCoGEemVTK0tKLfwvw" selectedViews="_yLJ2ICoGEemVTK0tKLfwvw" version="14.1.0.201810161215">
     <semanticResources>model/ComponentTrafficLightTest.component</semanticResources>
     <semanticResources>model/ComponentTrafficLightTest.componentDocumentation</semanticResources>
     <semanticResources>model/ComponentTrafficLightTest.componentParameters</semanticResources>
     <semanticResources>platform:/resource/DomainHMI/model/DomainHMI.services</semanticResources>
     <semanticResources>platform:/resource/DomainHMI/model/DomainHMI.types</semanticResources>
-    <ownedViews xmi:type="viewpoint:DView" xmi:id="_yLJ2ICoGEemVTK0tKLfwvw">
+    <ownedViews xmi:type="viewpoint:DView" uid="_yLJ2ICoGEemVTK0tKLfwvw">
       <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']"/>
-      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" xmi:id="_yLWDZyoGEemVTK0tKLfwvw" name="ComponentTrafficLightTest" repPath="#_yLPVsCoGEemVTK0tKLfwvw">
+      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_yLWDZyoGEemVTK0tKLfwvw" name="ComponentTrafficLightTest" repPath="#_yLWDYCoGEemVTK0tKLfwvw">
         <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
         <target xmi:type="ComponentDefinition:ComponentDefModel" href="model/ComponentTrafficLightTest.component#/"/>
       </ownedRepresentationDescriptors>
     </ownedViews>
   </viewpoint:DAnalysis>
-  <diagram:DSemanticDiagram xmi:id="_yLWDYCoGEemVTK0tKLfwvw" name="ComponentTrafficLightTest" uid="_yLPVsCoGEemVTK0tKLfwvw">
-    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" xmi:id="_yLWDYSoGEemVTK0tKLfwvw" source="DANNOTATION_CUSTOMIZATION_KEY">
-      <data xmi:type="diagram:ComputedStyleDescriptionRegistry" xmi:id="_yLWDYioGEemVTK0tKLfwvw"/>
+  <diagram:DSemanticDiagram uid="_yLWDYCoGEemVTK0tKLfwvw" name="ComponentTrafficLightTest">
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="_yLWDYSoGEemVTK0tKLfwvw" source="DANNOTATION_CUSTOMIZATION_KEY">
+      <data xmi:type="diagram:ComputedStyleDescriptionRegistry" uid="_yLWDYioGEemVTK0tKLfwvw"/>
     </ownedAnnotationEntries>
-    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" xmi:id="_yLXRgCoGEemVTK0tKLfwvw" source="GMF_DIAGRAMS">
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="_yLXRgCoGEemVTK0tKLfwvw" source="GMF_DIAGRAMS">
       <data xmi:type="notation:Diagram" xmi:id="_yLX4kCoGEemVTK0tKLfwvw" type="Sirius" element="_yLWDYCoGEemVTK0tKLfwvw" measurementUnit="Pixel">
         <children xmi:type="notation:Node" xmi:id="_yLX4kioGEemVTK0tKLfwvw" type="2002" element="_yLWDZCoGEemVTK0tKLfwvw">
           <children xmi:type="notation:Node" xmi:id="_yLX4lSoGEemVTK0tKLfwvw" type="5006"/>
@@ -77,13 +77,13 @@
         </edges>
       </data>
     </ownedAnnotationEntries>
-    <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_yLWDZCoGEemVTK0tKLfwvw" name="ComponentTrafficLightTest" tooltipText="ComponentDefinition">
+    <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_yLWDZCoGEemVTK0tKLfwvw" name="ComponentTrafficLightTest" tooltipText="ComponentDefinition: ComponentTrafficLightTest&#xA;">
       <target xmi:type="ComponentDefinition:ComponentDefinition" href="model/ComponentTrafficLightTest.component#//@component"/>
       <semanticElements xmi:type="ComponentDefinition:ComponentDefinition" href="model/ComponentTrafficLightTest.component#//@component"/>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_H04-sCoHEemVTK0tKLfwvw" name="TrafficLightServiceOut" tooltipText="OutputPort" incomingEdges="_H1CIoCoHEemVTK0tKLfwvw" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_H04-sCoHEemVTK0tKLfwvw" name="TrafficLightServiceOut" tooltipText="OutputPort" incomingEdges="_H1CIoCoHEemVTK0tKLfwvw" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:OutputPort" href="model/ComponentTrafficLightTest.component#//@component/@elements.1"/>
         <semanticElements xmi:type="ComponentDefinition:OutputPort" href="model/ComponentTrafficLightTest.component#//@component/@elements.1"/>
-        <ownedStyle xmi:type="diagram:CustomStyle" xmi:id="_H05lwCoHEemVTK0tKLfwvw" showIcon="false" id="output">
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_H05lwCoHEemVTK0tKLfwvw" showIcon="false" id="output">
           <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='OutputPortNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='OutputPortNode']"/>
@@ -91,43 +91,43 @@
       <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
       <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
       <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-      <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_yLWDZSoGEemVTK0tKLfwvw" labelSize="10" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,245,181">
+      <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_yLWDZSoGEemVTK0tKLfwvw" labelSize="10" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,245,181">
         <labelFormat>bold</labelFormat>
         <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@style"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']"/>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_67Go0CoGEemVTK0tKLfwvw" name="GenerateOut" tooltipText="Activity" outgoingEdges="_H1CIoCoHEemVTK0tKLfwvw">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_67Go0CoGEemVTK0tKLfwvw" name="GenerateOut" tooltipText="Activity" outgoingEdges="_H1CIoCoHEemVTK0tKLfwvw">
         <target xmi:type="ComponentDefinition:Activity" href="model/ComponentTrafficLightTest.component#//@component/@elements.0"/>
         <semanticElements xmi:type="ComponentDefinition:Activity" href="model/ComponentTrafficLightTest.component#//@component/@elements.0"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_67HP4CoGEemVTK0tKLfwvw" borderSize="1" borderSizeComputationExpression="1">
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_67HP4CoGEemVTK0tKLfwvw" borderSize="1" borderSizeComputationExpression="1">
           <labelFormat>bold</labelFormat>
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']"/>
-        <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_DExeoCoHEemVTK0tKLfwvw" name="PeriodicTimer" tooltipText="DefaultTrigger">
+        <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_DExeoCoHEemVTK0tKLfwvw" name="PeriodicTimer" tooltipText="DefaultTrigger">
           <target xmi:type="PerformanceExtension:DefaultPeriodicTimer" href="model/ComponentTrafficLightTest.component#//@component/@elements.0/@extensions.0"/>
           <semanticElements xmi:type="PerformanceExtension:DefaultPeriodicTimer" href="model/ComponentTrafficLightTest.component#//@component/@elements.0/@extensions.0"/>
-          <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_DE1JACoHEemVTK0tKLfwvw" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
+          <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_DE1JACoHEemVTK0tKLfwvw" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
             <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@subContainerMappings[name='DefaultPeriodicTimerContainer']/@style"/>
           </ownedStyle>
           <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@subContainerMappings[name='DefaultPeriodicTimerContainer']"/>
         </ownedDiagramElements>
       </ownedDiagramElements>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_H1CIoCoHEemVTK0tKLfwvw" sourceNode="_67Go0CoGEemVTK0tKLfwvw" targetNode="_H04-sCoHEemVTK0tKLfwvw">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_H1CIoCoHEemVTK0tKLfwvw" sourceNode="_67Go0CoGEemVTK0tKLfwvw" targetNode="_H04-sCoHEemVTK0tKLfwvw">
       <target xmi:type="ComponentDefinition:OutputPort" href="model/ComponentTrafficLightTest.component#//@component/@elements.1"/>
       <semanticElements xmi:type="ComponentDefinition:OutputPort" href="model/ComponentTrafficLightTest.component#//@component/@elements.1"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_H1CIoSoHEemVTK0tKLfwvw" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_H1CIoSoHEemVTK0tKLfwvw" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ActivityOutputEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_H1CIoioHEemVTK0tKLfwvw"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_H1CIoioHEemVTK0tKLfwvw"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ActivityOutputEdge']"/>
     </ownedDiagramElements>
     <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
-    <filterVariableHistory xmi:type="diagram:FilterVariableHistory" xmi:id="_yLWDZioGEemVTK0tKLfwvw"/>
+    <filterVariableHistory xmi:type="diagram:FilterVariableHistory" uid="_yLWDZioGEemVTK0tKLfwvw"/>
     <activatedLayers xmi:type="description_1:Layer" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer"/>
     <target xmi:type="ComponentDefinition:ComponentDefModel" href="model/ComponentTrafficLightTest.component#/"/>
   </diagram:DSemanticDiagram>

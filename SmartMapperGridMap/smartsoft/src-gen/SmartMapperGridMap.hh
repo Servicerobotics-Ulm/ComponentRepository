@@ -29,6 +29,8 @@
 class SmartMapperGridMapPortFactoryInterface;
 class SmartMapperGridMapExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for SmartMapperGridMapROSExtension
 
 // includes for PlainOpcUaSmartMapperGridMapExtension
@@ -50,8 +52,8 @@ class SmartMapperGridMapExtension;
 // include UpcallManagers
 #include "LaserServiceInUpcallManager.hh"
 
-// include input-handler
-// include input-handler
+// include input-handler(s)
+// include request-handler(s)
 #include "CurrQueryServerHandler.hh"
 #include "LtmQueryServerHandler.hh"
 
@@ -124,14 +126,16 @@ public:
 	Smart::IPushServerPattern<CommNavigationObjects::CommGridMap> *currMapOut;
 	
 	// define answer-ports
-	Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap,SmartACE::QueryId> *currQueryServer;
-	Smart::QueryServerTaskTrigger<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap,SmartACE::QueryId> *currQueryServerInputTaskTrigger;
-	Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap,SmartACE::QueryId> *ltmQueryServer;
-	Smart::QueryServerTaskTrigger<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap,SmartACE::QueryId> *ltmQueryServerInputTaskTrigger;
+	Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap> *currQueryServer;
+	Smart::QueryServerTaskTrigger<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap> *currQueryServerInputTaskTrigger;
+	Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap> *ltmQueryServer;
+	Smart::QueryServerTaskTrigger<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap> *ltmQueryServerInputTaskTrigger;
 	
 	// define request-handlers
 	CurrQueryServerHandler *currQueryServerHandler;
 	LtmQueryServerHandler *ltmQueryServerHandler;
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of SmartMapperGridMapROSExtension
 	
@@ -273,6 +277,8 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} laserServiceIn;
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for SmartMapperGridMapROSExtension
 		

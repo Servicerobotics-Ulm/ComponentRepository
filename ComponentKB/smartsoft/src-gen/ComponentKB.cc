@@ -41,7 +41,7 @@ ComponentKB::ComponentKB()
 	kbChainedEntriesEventClientUpcallManager = NULL;
 	kbChainedEntriesEventClientHandler = NULL;
 	kbEventServer = NULL;
-	kbEventServerEventTestHandler = NULL; 
+	kbEventServerEventTestHandler = nullptr; 
 	kbQuery = NULL;
 	kbQueryInputTaskTrigger = NULL;
 	kbQueryHandler = NULL;
@@ -73,6 +73,8 @@ ComponentKB::ComponentKB()
 	connections.dummy.priority = -1;
 	connections.dummy.cpuAffinity = -1;
 	connections.kbChainedEntriesEventClientHandler.prescale = 1;
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of ComponentKBROSExtension
 	
@@ -184,6 +186,8 @@ void ComponentKB::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		// initializations of ComponentKBROSExtension
 		
 		// initializations of PlainOpcUaComponentKBExtension
@@ -219,19 +223,20 @@ void ComponentKB::init(int argc, char *argv[])
 		}
 
 		// create event-test handlers (if needed)
-		kbEventServerEventTestHandler = new KbEventServerEventTestHandler();
+		kbEventServerEventTestHandler = std::make_shared<KbEventServerEventTestHandler>();
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
+		kbEventServerEventTestHandler = std::make_shared<KbEventServerEventTestHandler>();
 		kbEventServer = portFactoryRegistry[connections.kbEventServer.roboticMiddleware]->createKbEventServer(connections.kbEventServer.serviceName, kbEventServerEventTestHandler);
 		kbQuery = portFactoryRegistry[connections.kbQuery.roboticMiddleware]->createKbQuery(connections.kbQuery.serviceName);
-		kbQueryInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse,SmartACE::QueryId>(kbQuery);
+		kbQueryInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse>(kbQuery);
 		
 		// create client ports
 		kbChainedEntriesEventClient = portFactoryRegistry[connections.kbChainedEntriesEventClient.roboticMiddleware]->createKbChainedEntriesEventClient();
 		
 		// create InputTaskTriggers and UpcallManagers
-		kbChainedEntriesEventClientInputTaskTrigger = new Smart::InputTaskTrigger<Smart::EventInputType<CommBasicObjects::CommKBEventResult,SmartACE::EventId>>(kbChainedEntriesEventClient);
+		kbChainedEntriesEventClientInputTaskTrigger = new Smart::InputTaskTrigger<Smart::EventInputType<CommBasicObjects::CommKBEventResult>>(kbChainedEntriesEventClient);
 		kbChainedEntriesEventClientUpcallManager = new KbChainedEntriesEventClientUpcallManager(kbChainedEntriesEventClient);
 		
 		// create input-handler
@@ -367,7 +372,7 @@ void ComponentKB::fini()
 	delete kbQuery;
 	delete kbQueryInputTaskTrigger;
 	// destroy event-test handlers (if needed)
-	delete kbEventServerEventTestHandler;
+	kbEventServerEventTestHandler;
 	
 	// destroy request-handlers
 	delete kbQueryHandler;
@@ -392,6 +397,8 @@ void ComponentKB::fini()
 	{
 		portFactory->second->destroy();
 	}
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of ComponentKBROSExtension
 	
@@ -511,6 +518,8 @@ void ComponentKB::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("kbChainedEntriesEventClientHandler", "prescale")) {
 			parameter.getInteger("kbChainedEntriesEventClientHandler", "prescale", connections.kbChainedEntriesEventClientHandler.prescale);
 		}
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for ComponentKBROSExtension
 		

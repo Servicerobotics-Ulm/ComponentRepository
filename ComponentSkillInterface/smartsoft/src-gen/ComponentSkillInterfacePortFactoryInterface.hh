@@ -39,7 +39,7 @@ public:
 	virtual void initialize(ComponentSkillInterface *component, int argc, char* argv[]) = 0;
 	virtual int onStartup() = 0;
 
-	virtual Smart::IQueryClientPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse,SmartACE::QueryId> * createKBQueryClient() = 0;
+	virtual Smart::IQueryClientPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse> * createKBQueryClient() = 0;
 	
 
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) = 0;

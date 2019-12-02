@@ -80,12 +80,12 @@ public:
 			    QueueEntry(const DomainSpeech::CommSpeechOutputMessage &m)
 			    : msg(m), query_server(0) {}
 
-			    QueueEntry(const DomainSpeech::CommSpeechOutputMessage &m, Smart::IQueryServerPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet, SmartACE::QueryId> *s, SmartACE::QueryId i)
+			    QueueEntry(const DomainSpeech::CommSpeechOutputMessage &m, Smart::IQueryServerPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet> *s, Smart::QueryIdPtr i)
 			    : msg(m), query_server(s), id(i) {}
 
 			    DomainSpeech::CommSpeechOutputMessage msg;
-			    Smart::IQueryServerPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet, SmartACE::QueryId> *query_server;
-			    SmartACE::QueryId id;
+			    Smart::IQueryServerPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet> *query_server;
+			    Smart::QueryIdPtr id;
 			  };
 
 			std::list<QueueEntry> _queue;

@@ -44,7 +44,20 @@ ComponentDefinition ComponentOpenRave logo "/ComponentOpenRave/model/logo.png"
 	RequestHandler ObjectQueryServiceAnswHandler triggeredFrom ObjectQueryServiceAnsw {
 	}
 
-	CoordinationSlavePort CoordinationPort implements CommManipulationPlannerObjects.OpenRaveCoordinationService { PrivateOperationMode trajectory PublicOperationMode CommManipulationPlannerObjects.OpenRaveStates.Trajectory { activates ( trajectory ) } PrivateOperationMode demonstration PublicOperationMode CommManipulationPlannerObjects.OpenRaveStates.Demonstration { activates ( demonstration ) } PrivateOperationMode simulation PublicOperationMode CommManipulationPlannerObjects.OpenRaveStates.Simulation { activates ( simulation ) } }
+	CoordinationSlavePort CoordinationPort implements CommManipulationPlannerObjects.ManipulationPlannerCoordinationService { 
+		PrivateOperationMode trajectory 
+		PublicOperationMode CommManipulationPlannerObjects.OpenRaveStates.Trajectory { 
+			activates ( trajectory )
+		} PrivateOperationMode demonstration 
+		PublicOperationMode CommManipulationPlannerObjects.OpenRaveStates.Demonstration { 
+			activates ( demonstration )
+		} PrivateOperationMode simulation 
+		PublicOperationMode CommManipulationPlannerObjects.OpenRaveStates.Simulation { 
+			activates ( simulation )
+		}
+		with plannerevent realizedBy PlanningEventServiceOut
+		SkillRealizationsRef manipulationPlanning
+	}
 	ComponentParameters ComponentOpenRaveParams slave CoordinationPort
 	InputHandler GripperEventServiceInHandler triggeredFrom GripperEventServiceIn { }
 }

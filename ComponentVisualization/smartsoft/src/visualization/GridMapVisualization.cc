@@ -27,9 +27,17 @@
 // --------------------------------------------------------------------------
 
 #include "GridMapVisualization.hh"
-#include <mrpt/opengl/CTexturedPlane.h>
-#include <mrpt/opengl/CAxis.h>
 
+#include <mrpt/opengl.h>
+#include <mrpt/opengl/CAxis.h>
+#include <mrpt/opengl/CGridPlaneXY.h>
+#include <mrpt/opengl/CTexturedPlane.h>
+
+using namespace mrpt;
+using namespace mrpt::gui;
+using namespace mrpt::opengl;
+using namespace mrpt::math;
+using namespace mrpt::utils;
 
 GridMapVisualization::GridMapVisualization(CDisplayWindow3D& window3D, const std::string& identifier, bool showAxis,
 		bool activateTransparency) :
@@ -44,6 +52,20 @@ GridMapVisualization::GridMapVisualization(CDisplayWindow3D& window3D, const std
 		objs->setName(identifier + "_ltm");
 		objs->setPlaneCorners(0, 0, 0, 0);
 		ptrScene->insert(objs);
+
+		//show coordinate frame
+		{
+			mrpt::opengl::CSetOfObjectsPtr gl_corner = mrpt::opengl::stock_objects::CornerXYZ();
+			gl_corner->setScale(0.4);
+			ptrScene->insert(gl_corner);
+
+		}
+		//show axis
+		{
+			mrpt::opengl::CGridPlaneXYPtr gl_grid = mrpt::opengl::CGridPlaneXY::Create();
+			gl_grid->setColor(0.6,0.6,0.6);
+			ptrScene->insert( gl_grid );
+		}
 
 		if (showAxis) {
 			opengl::CAxisPtr axis = opengl::CAxis::Create(-10, -10, 0, 10, 10, 2, 1, 1, true);
@@ -105,28 +127,31 @@ void GridMapVisualization::displayGridMap(const CommNavigationObjects::CommGridM
 			uint8_t cell = map.get_cells(i, j);
 			*imgTrans(i, j) = 255;
 
-			if (cell <= 127) {
-				//free
-				uint8_t cell255 = 254 - (cell * 2);
-				imgColor.setPixel(i, j, utils::TColor(cell255, cell255, cell255));
+			imgColor.setPixel(i, j, utils::TColor(cell, cell, cell));
 
-			//	if (activateTransparency) {
-			//		*imgTrans(i, j) = 255 - cell255;
-			//	}
 
-			} else if (cell == 128) {
-				// obstacle
-				imgColor.setPixel(i, j, utils::TColor::black);
-			} else if (cell == 129) {
-				// obstacle growing
-				imgColor.setPixel(i, j, utils::TColor::blue);
-			} else if (cell == 130) {
-				//undeletable grids
-				imgColor.setPixel(i, j, utils::TColor::red);
-			} else if (cell == 205) {
-				//unkown grids
-				imgColor.setPixel(i, j, utils::TColor::gray);
-			}
+//			if (cell <= 127) {
+//				//free
+//				uint8_t cell255 = 254 - (cell * 2);
+//				imgColor.setPixel(i, j, utils::TColor(cell255, cell255, cell255));
+//
+//			//	if (activateTransparency) {
+//			//		*imgTrans(i, j) = 255 - cell255;
+//			//	}
+//
+//			} else if (cell == 128) {
+//				// obstacle
+//				imgColor.setPixel(i, j, utils::TColor::black);
+//			} else if (cell == 129) {
+//				// obstacle growing
+//				imgColor.setPixel(i, j, utils::TColor::blue);
+//			} else if (cell == 130) {
+//				//undeletable grids
+//				imgColor.setPixel(i, j, utils::TColor::red);
+//			} else if (cell == 205) {
+//				//unkown grids
+//				imgColor.setPixel(i, j, utils::TColor::gray);
+//			}
 
 		}
 	}

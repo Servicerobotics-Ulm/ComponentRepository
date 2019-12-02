@@ -24,8 +24,8 @@ class CurrQueryServerHandler : public CurrQueryServerHandlerCore
 protected:
 	virtual void on_update_from(const CurMapTask* curMapTask);
 public:
-	CurrQueryServerHandler(Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap, SmartACE::QueryId>* server);
+	CurrQueryServerHandler(Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap>* server);
 	virtual ~CurrQueryServerHandler();
-	virtual void handleQuery(const SmartACE::QueryId &id, const CommNavigationObjects::CommGridMapRequest& request);
+	virtual void handleQuery(const Smart::QueryIdPtr &id, const CommNavigationObjects::CommGridMapRequest& request);
 };
 #endif

@@ -3,131 +3,414 @@
 
 # SmartAmcl Component
 
-![SmartAmcl-ComponentImage](model/SmartAmclComponentDefinition.jpg)
+<img src="model/SmartAmclComponentDefinition.jpg" alt="SmartAmcl-ComponentImage" width="1000">
 
-SmartAmcl implements the Adaptive Monte-Carlo Localization (Amcl) algorithm.
-Localization is based on a particle filter and a pre-captured grid map of the environment. Amcl maintains a set of possible robot poses and updates this distribution by comparing laser scans against the pre-captured map. Amcl is adaptive because the amount of particles depends on the pose certainty: large number of particles if uncertainty increases and vice versa.
+*Component Short Description:* The SmartAmcl implements the Adaptive Monte-Carlo Localization (AMCL) algorithm.
 
-Based on its localization, SmartAmcl sends position updates to the base server (e.g. SmartPioneerBaseServer).
+## Component Documentation
+<p></p>
+<p> SmartAmcl implements the Adaptive Monte-Carlo Localization (AMCL) algorithm.
+	Localization is based on a particle filter and a pre-captured grid map of the environment.
+	AMCL maintains a set of possible robot poses and updates this distribution by comparing laser scans against the pre-captured map.
+	AMCL is adaptive because the amount of particles depends on the pose certainty: large number of particles if uncertainty increases and vice versa.
+</p>
+<p>	Based on its localization, SmartAmcl sends position updates to the base server (e.g. SmartPioneerBaseServer).
+</p>
+<p>	GPL-License: includes Code from the Player Project.
+</p>
+<p>	See also: http://playerstage.sourceforge.net/doc/Player-2.0.0/player/group__driver__amcl.html
+</p>
+<p></p>
 
-GPL-License: includes Code from the Player Project.
+## Component-Datasheet Properties
 
-See also: http://playerstage.sourceforge.net/doc/Player-2.0.0/player/group__driver__amcl.html 
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Component-Datasheet Properties</caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Property Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Property Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Property Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">SpdxLicense</td>
+<td style="border:1px solid black; padding: 5px;">LGPL-2.0-or-later</td>
+<td style="border:1px solid black; padding: 5px;">https://spdx.org/licenses/LGPL-2.0-or-later.html</td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">TechnologyReadinessLevel</td>
+<td style="border:1px solid black; padding: 5px;">TRL5</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Homepage</td>
+<td style="border:1px solid black; padding: 5px;">http://servicerobotik-ulm.de/components</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Supplier</td>
+<td style="border:1px solid black; padding: 5px;">Servicerobotics Ulm</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Purpose</td>
+<td style="border:1px solid black; padding: 5px;">Localization</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
 
-| Metaelement | Documentation |
-|-------------|---------------|
-| License | GPL |
-| Hardware Requirements | - |
-| Purpose | Navigation |
-
-
-## Coordination Port CoordinationPort
-
-
-### States
-
-See States for descriptions of possible states and their meaning.
-
-| MainState Name | MainState Description |
-|----------------|-----------------------|
-| Neutral | No localization is performed. No position updates will be sent. |
-| Active | Localization is performed as described, position updates are sent. |
-
-### DynamicWiring
-
-Slave part of wiring pattern. It is responsible for changing the port connections within the component.
-
-### Parameter
-
-Accepts parameters to configure and trigger localization. See Parameters.
-
-## Service Ports
-
-### LocalizationUpdateServiceOut
-
-Typically connected to the robot base (e.g. SmartPioneerBaseServer). This port sends position updates.
+## Component Ports
 
 ### LaserServiceIn
 
-The laser scans that the Amcl algorithm uses for localization, e.g. from SmartLaserLMS200Server.
+*Documentation:*
 
 
-## Component Parameters SmartAmclParams
+### LocalizationUpdateServiceOut
 
-### InternalParameter Filter
+*Documentation:*
 
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| min_particles | Int32 | Lower bound for amount of particles. |
-| max_particles | Int32 | Upper bound for amount of particles. |
-| recovery_alpha_slow | Double | Decay rates for running averages. Used in deciding when to recover by adding random poses. |
-| recovery_alpha_fast | Double | Decay rates for running averages. Used in deciding when to recover by adding random poses. |
-| kld_err | Double | Population size error. |
-| kld_z | Double | Population size. |
-| update_min_d | Double | Update filter if x or y pos delta greater than update_min_d or delta of alpha > update_min_alpha. |
-| update_min_alpha | Double | Update filter if x or y pos delta greater than update_min_d or delta of alpha > update_min_alpha. |
-| resample_interval | Double | The distributions will be resampled every x'th time. |
 
-### InternalParameter Laser
+### LocalizationEventServiceOut
 
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| max_beams | UInt32 | Consider at most max_beams beams from laser for localization. |
-| z_hit | Double |  |
-| z_short | Double |  |
-| z_max | Double |  |
-| z_rand | Double |  |
-| sigma_hit | Double |  |
-| lambda_short | Double |  |
-| laser_likelihood_max_dist | Double |  |
-| laser_model_type | String | Values: beam | likelihood_field. |
+*Documentation:*
 
-### InternalParameter Odometry
 
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| alpha1 | Double | Drift parameter/odometry error. |
-| alpha2 | Double | Drift parameter/odometry error. |
-| alpha3 | Double | Drift parameter/odometry error. |
-| alpha4 | Double | Drift parameter/odometry error. |
-| alpha5 | Double | Drift parameter/odometry error. |
-| odom_model_type | String | Specifies type of odometry. Values: diff | omni. |
 
-### InternalParameter General
 
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| initalizationType | InlineEnumeration |  |
-| initPoseFileName | String |  |
-| verbose | Boolean | Print debug messages. |
-| connect_services | Boolean | UNUSED. |
-| yaml_file | String | Load map and parameters from this file. |
-| initial_x | Double | x value [m] of initial pose for Amcl. See also parameters. |
-| initial_y | Double | y value [m] of initial pose for Amcl. See also parameters. |
-| initial_a | Double | alpha/rotation [rad] of initial pose for Amcl. See also parameters. |
-| initial_cov_xx | Double | Initial pose covariance x. See also parameters. |
-| initial_cov_yy | Double | Initial pose covariance y. See also parameters. |
-| initial_cov_aa | Double | Initial pose covariance alpha. See also parameters. |
-| enable_visualization | Boolean | Show visualization window. Displays particles in map. WARNING: visualization might fail with X windows forwarding |
-| lostEventMaxHypothese | UInt32 |  |
-| lostEventMaxEigValueSum | Double |  |
+## Component Parameters: SmartAmclParams
 
-### ParameterSetInstance LocalizationParameter
+### Internal Parameter: Filter
 
-#### TriggerInstance INITIALPOSE
+*Documentation:*
 
-active = false
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Internal Parameter <b>Filter</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>min_particles</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">500</td>
+<td style="border:1px solid black; padding: 5px;"><p>Lower bound for amount of particles.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>max_particles</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">5000</td>
+<td style="border:1px solid black; padding: 5px;"><p>Upper bound for amount of particles.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>recovery_alpha_slow</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.001</td>
+<td style="border:1px solid black; padding: 5px;"><p>Decay rates for running averages. Used in deciding when to recover by adding random poses.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>recovery_alpha_fast</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.1</td>
+<td style="border:1px solid black; padding: 5px;"><p>Decay rates for running averages. Used in deciding when to recover by adding random poses.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>kld_err</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.05</td>
+<td style="border:1px solid black; padding: 5px;"><p>Population size error.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>kld_z</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.99</td>
+<td style="border:1px solid black; padding: 5px;"><p>Population size.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>update_min_d</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.2</td>
+<td style="border:1px solid black; padding: 5px;"><p>Update filter if x or y pos delta greater than update_min_d or delta of alpha > update_min_alpha.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>update_min_alpha</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.5236</td>
+<td style="border:1px solid black; padding: 5px;"><p>Update filter if x or y pos delta greater than update_min_d or delta of alpha > update_min_alpha.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>resample_interval</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">1.0</td>
+<td style="border:1px solid black; padding: 5px;"><p>The distributions will be resampled every x'th time.
+</p></td>
+</tr>
+</table>
 
-Set the initial pose in normal distribution. ?x = x coordinate [m], ?y = y coordinate [m], ?a = rotation in [rad].
+### Internal Parameter: Laser
 
-#### TriggerInstance GLOBALLOCALIZATION
+*Documentation:*
 
-active = false
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Internal Parameter <b>Laser</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>max_beams</b></td>
+<td style="border:1px solid black; padding: 5px;">UInt32</td>
+<td style="border:1px solid black; padding: 5px;">30</td>
+<td style="border:1px solid black; padding: 5px;"><p>Consider at most max_beams beams from laser for localization.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>z_hit</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.95</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>z_short</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.1</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>z_max</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.05</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>z_rand</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.05</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>sigma_hit</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.2</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>lambda_short</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.1</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>laser_likelihood_max_dist</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">2.0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>laser_model_type</b></td>
+<td style="border:1px solid black; padding: 5px;">String</td>
+<td style="border:1px solid black; padding: 5px;">"likelihood_field"</td>
+<td style="border:1px solid black; padding: 5px;"><p>Values: beam | likelihood_field.
+</p></td>
+</tr>
+</table>
 
-Initializes the Amcl, particles equally distributed.
+### Internal Parameter: Odometry
 
-#### TriggerInstance LOADMAP
+*Documentation:*
 
-active = false
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Internal Parameter <b>Odometry</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>alpha1</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.2</td>
+<td style="border:1px solid black; padding: 5px;"><p>Drift parameter/odometry error.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>alpha2</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.2</td>
+<td style="border:1px solid black; padding: 5px;"><p>Drift parameter/odometry error.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>alpha3</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.8</td>
+<td style="border:1px solid black; padding: 5px;"><p>Drift parameter/odometry error.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>alpha4</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.2</td>
+<td style="border:1px solid black; padding: 5px;"><p>Drift parameter/odometry error.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>alpha5</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.2</td>
+<td style="border:1px solid black; padding: 5px;"><p>Drift parameter/odometry error.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>odom_model_type</b></td>
+<td style="border:1px solid black; padding: 5px;">String</td>
+<td style="border:1px solid black; padding: 5px;">"diff"</td>
+<td style="border:1px solid black; padding: 5px;"><p>Specifies type of odometry. Values: diff | omni.
+</p></td>
+</tr>
+</table>
 
+### Internal Parameter: General
+
+*Documentation:*
+
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Internal Parameter <b>General</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>initalizationType</b></td>
+<td style="border:1px solid black; padding: 5px;">InlineEnumeration</td>
+<td style="border:1px solid black; padding: 5px;">INI_POSE</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>initPoseFileName</b></td>
+<td style="border:1px solid black; padding: 5px;">String</td>
+<td style="border:1px solid black; padding: 5px;">"/tmp/lastRobotPose.txt"</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>verbose</b></td>
+<td style="border:1px solid black; padding: 5px;">Boolean</td>
+<td style="border:1px solid black; padding: 5px;">false</td>
+<td style="border:1px solid black; padding: 5px;"><p>Print debug messages.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>connect_services</b></td>
+<td style="border:1px solid black; padding: 5px;">Boolean</td>
+<td style="border:1px solid black; padding: 5px;">true</td>
+<td style="border:1px solid black; padding: 5px;"><p>UNUSED.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>yaml_file</b></td>
+<td style="border:1px solid black; padding: 5px;">String</td>
+<td style="border:1px solid black; padding: 5px;">"data/maps/amcl-c26.yaml"</td>
+<td style="border:1px solid black; padding: 5px;"><p>Load map and parameters from this file.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>initial_x</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.0</td>
+<td style="border:1px solid black; padding: 5px;"><p>x value [m] of initial pose for Amcl. See also parameters.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>initial_y</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.0</td>
+<td style="border:1px solid black; padding: 5px;"><p>y value [m] of initial pose for Amcl. See also parameters.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>initial_a</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.0</td>
+<td style="border:1px solid black; padding: 5px;"><p>alpha/rotation [rad] of initial pose for Amcl. See also parameters.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>initial_cov_xx</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.03</td>
+<td style="border:1px solid black; padding: 5px;"><p>Initial pose covariance x. See also parameters.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>initial_cov_yy</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.03</td>
+<td style="border:1px solid black; padding: 5px;"><p>Initial pose covariance y. See also parameters.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>initial_cov_aa</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.068539</td>
+<td style="border:1px solid black; padding: 5px;"><p>Initial pose covariance alpha. See also parameters.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>enable_visualization</b></td>
+<td style="border:1px solid black; padding: 5px;">Boolean</td>
+<td style="border:1px solid black; padding: 5px;">false</td>
+<td style="border:1px solid black; padding: 5px;"><p>Show visualization window. Displays particles in map. WARNING: visualization might fail with X windows forwarding
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>lostEventMaxHypothese</b></td>
+<td style="border:1px solid black; padding: 5px;">UInt32</td>
+<td style="border:1px solid black; padding: 5px;">3</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>lostEventMaxEigValueSum</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.2</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
+
+### ParameterSetInstance: LocalizationParameter
+
+#### Trigger Instance: INITIALPOSE
+
+*Property:* active = **false**
+
+*Documentation:*
+<p>Set the initial pose in normal distribution. ?x = x coordinate [m], ?y = y coordinate [m], ?a = rotation in [rad].
+</p>
+
+#### Trigger Instance: GLOBALLOCALIZATION
+
+*Property:* active = **false**
+
+*Documentation:*
+<p>Initializes the Amcl, particles equally distributed.
+</p>
+
+#### Trigger Instance: LOADMAP
+
+*Property:* active = **false**
+
+*Documentation:*
 

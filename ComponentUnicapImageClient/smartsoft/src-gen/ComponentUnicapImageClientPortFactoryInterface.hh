@@ -40,7 +40,7 @@ public:
 	virtual int onStartup() = 0;
 
 	virtual Smart::IPushClientPattern<DomainVision::CommVideoImage> * createPushNewestClient() = 0;
-	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage,SmartACE::QueryId> * createQueryClient() = 0;
+	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> * createQueryClient() = 0;
 	
 
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) = 0;

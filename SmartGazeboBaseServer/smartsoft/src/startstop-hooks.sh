@@ -7,11 +7,11 @@ pre-start)
 	# Insert commands you want to call prior to starting the components
 	
 	echo -e "\n\n\n"
-	bash $SMART_ROOT_ACE/repos/DataRepository/gazebo/startGazebo.sh worlds/tiagoOffice_nav.world
+	#bash $SMART_ROOT_ACE/repos/DataRepository/gazebo/startGazebo.sh worlds/tiagoOffice_nav.world
 	#bash $SMART_ROOT_ACE/repos/DataRepository/gazebo/startGazebo.sh
 
-	echo "Wait for Simulator to start..."
-	sleep 10
+	#echo "Wait for Simulator to start..."
+	#sleep 10
 	
 ;;
 
@@ -29,8 +29,8 @@ post-stop)
 	echo "Triggering post-stop hooks FROM COMPONENT SmartGazeboBaseServer ..."
 	# Insert commands you want to call after all components were stopped
 	
-	killall gzserver
-	killall gzclient
+	#killall gzserver
+	#killall gzclient
 	
 ;;
 

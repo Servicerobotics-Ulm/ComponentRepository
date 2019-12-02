@@ -30,8 +30,8 @@ protected:
 
 	virtual void on_update_from(const RobotTask* robotTask);
 public:
-	BaseStateQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState, SmartACE::QueryId>* server);
+	BaseStateQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>* server);
 	virtual ~BaseStateQueryHandler();
-	virtual void handleQuery(const SmartACE::QueryId &id, const CommBasicObjects::CommVoid& request);
+	virtual void handleQuery(const Smart::QueryIdPtr &id, const CommBasicObjects::CommVoid& request);
 };
 #endif

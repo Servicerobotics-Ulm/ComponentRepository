@@ -74,4 +74,9 @@ RequestPort personDetectionQueryClient implements CommTrackingObjects.PersonDete
 		SkillRealizationsRef visualizationmod
 		
 	}
+Activity MarkerListTask
+	{
+	}
+	InputPort MarkerListDetectionServiceIn implements CommTrackingObjects.MarkerListDetectionService {
+	}
 }

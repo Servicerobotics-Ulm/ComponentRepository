@@ -29,6 +29,8 @@
 class SmartAmclPortFactoryInterface;
 class SmartAmclExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for SmartAmclROSExtension
 
 // includes for PlainOpcUaSmartAmclExtension
@@ -53,8 +55,8 @@ class SmartAmclExtension;
 // include UpcallManagers
 #include "LaserServiceInUpcallManager.hh"
 
-// include input-handler
-// include input-handler
+// include input-handler(s)
+// include request-handler(s)
 
 // include handler
 #include "CompHandler.hh"
@@ -120,13 +122,15 @@ public:
 	// define input-handler
 	
 	// define output-ports
-	Smart::IEventServerPattern<CommLocalizationObjects::CommLocalizationEventParameter, CommLocalizationObjects::CommLocalizationEventResult, CommLocalizationObjects::LocalizationEventState,SmartACE::EventId> *localizationEventServiceOut;
-	Smart::IEventTestHandler<CommLocalizationObjects::CommLocalizationEventParameter, CommLocalizationObjects::CommLocalizationEventResult, CommLocalizationObjects::LocalizationEventState> *localizationEventServiceOutEventTestHandler; 
+	Smart::IEventServerPattern<CommLocalizationObjects::CommLocalizationEventParameter, CommLocalizationObjects::CommLocalizationEventResult, CommLocalizationObjects::LocalizationEventState> *localizationEventServiceOut;
+	std::shared_ptr<Smart::IEventTestHandler<CommLocalizationObjects::CommLocalizationEventParameter, CommLocalizationObjects::CommLocalizationEventResult, CommLocalizationObjects::LocalizationEventState>> localizationEventServiceOutEventTestHandler;
 	Smart::ISendClientPattern<CommBasicObjects::CommBasePositionUpdate> *localizationUpdateServiceOut;
 	
 	// define answer-ports
 	
 	// define request-handlers
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of SmartAmclROSExtension
 	
@@ -253,6 +257,8 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} localizationUpdateServiceOut;
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for SmartAmclROSExtension
 		

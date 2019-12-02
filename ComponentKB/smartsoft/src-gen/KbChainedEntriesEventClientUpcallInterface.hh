@@ -23,7 +23,7 @@ class KbChainedEntriesEventClientUpcallInterface {
 public:
 	virtual ~KbChainedEntriesEventClientUpcallInterface() {  }
 
-	virtual void on_kbChainedEntriesEventClient(const Smart::EventInputType<CommBasicObjects::CommKBEventResult,SmartACE::EventId> &input) = 0;
+	virtual void on_kbChainedEntriesEventClient(const Smart::EventInputType<CommBasicObjects::CommKBEventResult> &input) = 0;
 };
 
 #endif

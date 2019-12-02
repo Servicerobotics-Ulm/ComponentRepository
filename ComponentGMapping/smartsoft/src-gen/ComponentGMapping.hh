@@ -29,6 +29,8 @@
 class ComponentGMappingPortFactoryInterface;
 class ComponentGMappingExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for ComponentGMappingROSExtension
 
 // includes for PlainOpcUaComponentGMappingExtension
@@ -49,8 +51,8 @@ class ComponentGMappingExtension;
 // include UpcallManagers
 #include "LaserClientUpcallManager.hh"
 
-// include input-handler
-// include input-handler
+// include input-handler(s)
+// include request-handler(s)
 
 // include handler
 #include "CompHandler.hh"
@@ -122,6 +124,8 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of ComponentGMappingROSExtension
 	
@@ -249,6 +253,8 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} laserClient;
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for ComponentGMappingROSExtension
 		

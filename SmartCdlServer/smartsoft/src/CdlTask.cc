@@ -1996,12 +1996,12 @@ int CdlTask::on_execute()
 				std::cout<<"Robot is stalled first time"<<std::endl;
 				// first occurence of stalling situation
 				stalledFlag = 1;
-				gettimeofday(&beginStalledTime,0);
+				::gettimeofday(&beginStalledTime,0);
 			}
 			else
 			{
 				// not the first occurence of stalling situation
-				gettimeofday(&currentTime,0);
+				::gettimeofday(&currentTime,0);
 				timeDiff  = (double)(currentTime.tv_usec - beginStalledTime.tv_usec)/1000000.0;
 				timeDiff += (double)(currentTime.tv_sec  - beginStalledTime.tv_sec);
 

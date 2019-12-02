@@ -23,8 +23,8 @@ class SpeechQueryHandler : public SpeechQueryHandlerCore
 {
 protected:
 public:
-	SpeechQueryHandler(Smart::IQueryServerPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet, SmartACE::QueryId>* server);
+	SpeechQueryHandler(Smart::IQueryServerPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet>* server);
 	virtual ~SpeechQueryHandler();
-	virtual void handleQuery(const SmartACE::QueryId &id, const DomainSpeech::CommSpeechOutputMessage& request);
+	virtual void handleQuery(const Smart::QueryIdPtr &id, const DomainSpeech::CommSpeechOutputMessage& request);
 };
 #endif

@@ -29,6 +29,8 @@
 class SmartCdlServerPortFactoryInterface;
 class SmartCdlServerExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for SmartCdlServerROSExtension
 
 // includes for PlainOpcUaSmartCdlServerExtension
@@ -76,8 +78,8 @@ class SmartCdlServerExtension;
 #include "PlannerClientUpcallManager.hh"
 #include "TrackingClientUpcallManager.hh"
 
-// include input-handler
-// include input-handler
+// include input-handler(s)
+// include request-handler(s)
 
 // include handler
 #include "CompHandler.hh"
@@ -171,15 +173,17 @@ public:
 	// define input-handler
 	
 	// define output-ports
-	Smart::IEventServerPattern<CommNavigationObjects::CommCdlGoalEventParameter, CommNavigationObjects::CommCdlGoalEventResult, CommNavigationObjects::CdlGoalEventState,SmartACE::EventId> *goalEventServer;
-	Smart::IEventTestHandler<CommNavigationObjects::CommCdlGoalEventParameter, CommNavigationObjects::CommCdlGoalEventResult, CommNavigationObjects::CdlGoalEventState> *goalEventServerEventTestHandler; 
+	Smart::IEventServerPattern<CommNavigationObjects::CommCdlGoalEventParameter, CommNavigationObjects::CommCdlGoalEventResult, CommNavigationObjects::CdlGoalEventState> *goalEventServer;
+	std::shared_ptr<Smart::IEventTestHandler<CommNavigationObjects::CommCdlGoalEventParameter, CommNavigationObjects::CommCdlGoalEventResult, CommNavigationObjects::CdlGoalEventState>> goalEventServerEventTestHandler;
 	Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> *navVelSendClient;
-	Smart::IEventServerPattern<CommNavigationObjects::CommCdlRobotBlockedEventParameter, CommNavigationObjects::CommCdlRobotBlockedEventResult, CommNavigationObjects::CommCdlRobotBlockedState,SmartACE::EventId> *robotBlockedEventServer;
-	Smart::IEventTestHandler<CommNavigationObjects::CommCdlRobotBlockedEventParameter, CommNavigationObjects::CommCdlRobotBlockedEventResult, CommNavigationObjects::CommCdlRobotBlockedState> *robotBlockedEventServerEventTestHandler; 
+	Smart::IEventServerPattern<CommNavigationObjects::CommCdlRobotBlockedEventParameter, CommNavigationObjects::CommCdlRobotBlockedEventResult, CommNavigationObjects::CommCdlRobotBlockedState> *robotBlockedEventServer;
+	std::shared_ptr<Smart::IEventTestHandler<CommNavigationObjects::CommCdlRobotBlockedEventParameter, CommNavigationObjects::CommCdlRobotBlockedEventResult, CommNavigationObjects::CommCdlRobotBlockedState>> robotBlockedEventServerEventTestHandler;
 	
 	// define answer-ports
 	
 	// define request-handlers
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of SmartCdlServerROSExtension
 	
@@ -368,6 +372,8 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} trackingClient;
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for SmartCdlServerROSExtension
 		

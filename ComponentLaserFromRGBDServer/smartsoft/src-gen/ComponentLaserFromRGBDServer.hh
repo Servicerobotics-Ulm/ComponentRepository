@@ -29,6 +29,8 @@
 class ComponentLaserFromRGBDServerPortFactoryInterface;
 class ComponentLaserFromRGBDServerExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for ComponentLaserFromRGBDServerROSExtension
 
 // includes for PlainOpcUaComponentLaserFromRGBDServerExtension
@@ -50,8 +52,8 @@ class ComponentLaserFromRGBDServerExtension;
 // include UpcallManagers
 #include "RgbdClientUpcallManager.hh"
 
-// include input-handler
-// include input-handler
+// include input-handler(s)
+// include request-handler(s)
 #include "LaserQueryHandler.hh"
 
 // include handler
@@ -123,11 +125,13 @@ public:
 	Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> *laserPushNewestServer;
 	
 	// define answer-ports
-	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan,SmartACE::QueryId> *laserQueryServer;
-	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan,SmartACE::QueryId> *laserQueryServerInputTaskTrigger;
+	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan> *laserQueryServer;
+	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan> *laserQueryServerInputTaskTrigger;
 	
 	// define request-handlers
 	LaserQueryHandler *laserQueryHandler;
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of ComponentLaserFromRGBDServerROSExtension
 	
@@ -266,6 +270,8 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} rgbdClient;
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for ComponentLaserFromRGBDServerROSExtension
 		

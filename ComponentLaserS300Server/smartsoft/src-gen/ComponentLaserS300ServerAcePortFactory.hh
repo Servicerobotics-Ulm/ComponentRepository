@@ -37,8 +37,8 @@ public:
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * createBaseTimedClient() override;
 	
 	virtual Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * createLaserPushNewestServer(const std::string &serviceName) override;
-	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan,SmartACE::QueryId> * createLaserQueryServer(const std::string &serviceName) override;
-	virtual Smart::IEventServerPattern<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState,SmartACE::EventId> * createSafetyfieldEventServer(const std::string &serviceName, Smart::IEventTestHandler<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState> *safetyfieldEventServerEventTestHandler) override;
+	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan> * createLaserQueryServer(const std::string &serviceName) override;
+	virtual Smart::IEventServerPattern<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState> * createSafetyfieldEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState>> safetyfieldEventServerEventTestHandler) override;
 	
 	// get a pointer to the internal component implementation
 	SmartACE::SmartComponent* getComponentImpl();

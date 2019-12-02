@@ -29,6 +29,8 @@
 class ComponentTTSPortFactoryInterface;
 class ComponentTTSExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for ComponentTTSROSExtension
 
 // includes for PlainOpcUaComponentTTSExtension
@@ -47,9 +49,9 @@ class ComponentTTSExtension;
 // include UpcallManagers
 #include "SpeechSendServiceInUpcallManager.hh"
 
-// include input-handler
+// include input-handler(s)
 #include "SpeechSendHandler.hh"
-// include input-handler
+// include request-handler(s)
 #include "SpeechQueryHandler.hh"
 
 // include handler
@@ -119,11 +121,13 @@ public:
 	// define output-ports
 	
 	// define answer-ports
-	Smart::IQueryServerPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet,SmartACE::QueryId> *speechQueryServiceAnsw;
-	Smart::QueryServerTaskTrigger<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet,SmartACE::QueryId> *speechQueryServiceAnswInputTaskTrigger;
+	Smart::IQueryServerPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet> *speechQueryServiceAnsw;
+	Smart::QueryServerTaskTrigger<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet> *speechQueryServiceAnswInputTaskTrigger;
 	
 	// define request-handlers
 	SpeechQueryHandler *speechQueryHandler;
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of ComponentTTSROSExtension
 	
@@ -240,6 +244,8 @@ public:
 		} speechSendServiceIn;
 	
 		//--- client port parameter ---
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for ComponentTTSROSExtension
 		

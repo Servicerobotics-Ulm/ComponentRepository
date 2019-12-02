@@ -48,6 +48,8 @@ ComponentSymbolicPlanner::ComponentSymbolicPlanner()
 	connections.symbolicPlannerQueryServer.serviceName = "SymbolicPlannerQueryServer";
 	connections.symbolicPlannerQueryServer.roboticMiddleware = "ACE_SmartSoft";
 	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of ComponentSymbolicPlannerROSExtension
 	
 	// initialize members of PlainOpcUaComponentSymbolicPlannerExtension
@@ -123,6 +125,8 @@ void ComponentSymbolicPlanner::init(int argc, char *argv[])
 		loadParameter(argc, argv);
 		
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		// initializations of ComponentSymbolicPlannerROSExtension
 		
 		// initializations of PlainOpcUaComponentSymbolicPlannerExtension
@@ -162,7 +166,7 @@ void ComponentSymbolicPlanner::init(int argc, char *argv[])
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
 		symbolicPlannerQueryServer = portFactoryRegistry[connections.symbolicPlannerQueryServer.roboticMiddleware]->createSymbolicPlannerQueryServer(connections.symbolicPlannerQueryServer.serviceName);
-		symbolicPlannerQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<DomainSymbolicPlanner::CommSymbolicPlannerRequest, DomainSymbolicPlanner::CommSymbolicPlannerPlan,SmartACE::QueryId>(symbolicPlannerQueryServer);
+		symbolicPlannerQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<DomainSymbolicPlanner::CommSymbolicPlannerRequest, DomainSymbolicPlanner::CommSymbolicPlannerPlan>(symbolicPlannerQueryServer);
 		
 		// create client ports
 		
@@ -282,6 +286,8 @@ void ComponentSymbolicPlanner::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of ComponentSymbolicPlannerROSExtension
 	
 	// destruction of PlainOpcUaComponentSymbolicPlannerExtension
@@ -365,6 +371,8 @@ void ComponentSymbolicPlanner::loadParameter(int argc, char *argv[])
 			parameter.getString("SymbolicPlannerQueryServer", "roboticMiddleware", connections.symbolicPlannerQueryServer.roboticMiddleware);
 		}
 		
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for ComponentSymbolicPlannerROSExtension
 		

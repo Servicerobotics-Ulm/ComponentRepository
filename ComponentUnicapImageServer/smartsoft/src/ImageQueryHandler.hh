@@ -51,8 +51,8 @@ class ImageQueryHandler : public ImageQueryHandlerCore
 {
 protected:
 public:
-	ImageQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage, SmartACE::QueryId>* server);
+	ImageQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage>* server);
 	virtual ~ImageQueryHandler();
-	virtual void handleQuery(const SmartACE::QueryId &id, const CommBasicObjects::CommVoid& request);
+	virtual void handleQuery(const Smart::QueryIdPtr &id, const CommBasicObjects::CommVoid& request);
 };
 #endif

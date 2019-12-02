@@ -29,6 +29,8 @@
 class SmartPioneerBaseServerPortFactoryInterface;
 class SmartPioneerBaseServerExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for SmartPioneerBaseServerROSExtension
 
 // includes for PlainOpcUaSmartPioneerBaseServerExtension
@@ -59,8 +61,8 @@ class SmartPioneerBaseServerExtension;
 #include "LocalizationUpdateUpcallManager.hh"
 #include "NavVelInUpcallManager.hh"
 
-// include input-handler
-// include input-handler
+// include input-handler(s)
+// include request-handler(s)
 #include "BaseStateQueryHandler.hh"
 
 // include handler
@@ -134,15 +136,17 @@ public:
 	
 	// define output-ports
 	Smart::IPushServerPattern<CommBasicObjects::CommBaseState> *basePositionOut;
-	Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState,SmartACE::EventId> *batteryEventServer;
-	Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> *batteryEventServerEventTestHandler; 
+	Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> *batteryEventServer;
+	std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>> batteryEventServerEventTestHandler;
 	
 	// define answer-ports
-	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState,SmartACE::QueryId> *baseStateQueryServer;
-	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState,SmartACE::QueryId> *baseStateQueryServerInputTaskTrigger;
+	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState> *baseStateQueryServer;
+	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState> *baseStateQueryServerInputTaskTrigger;
 	
 	// define request-handlers
 	BaseStateQueryHandler *baseStateQueryHandler;
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of SmartPioneerBaseServerROSExtension
 	
@@ -274,6 +278,8 @@ public:
 		} navVelIn;
 	
 		//--- client port parameter ---
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for SmartPioneerBaseServerROSExtension
 		

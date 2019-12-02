@@ -17,7 +17,7 @@
 #include "CurrQueryServerHandler.hh"
 #include "SmartMapperGridMap.hh"
 
-CurrQueryServerHandler::CurrQueryServerHandler(Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap, SmartACE::QueryId>* server)
+CurrQueryServerHandler::CurrQueryServerHandler(Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap>* server)
 :	CurrQueryServerHandlerCore(server)
 {
 	
@@ -34,7 +34,7 @@ void CurrQueryServerHandler::on_update_from(const CurMapTask* curMapTask)
 	// (use a local mutex here, because this method is called from within the thread of CurMapTask)
 }
 
-void CurrQueryServerHandler::handleQuery(const SmartACE::QueryId &id, const CommNavigationObjects::CommGridMapRequest& request) 
+void CurrQueryServerHandler::handleQuery(const Smart::QueryIdPtr &id, const CommNavigationObjects::CommGridMapRequest& request) 
 {
 	CommNavigationObjects::CommGridMap answer;
 	

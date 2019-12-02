@@ -26,25 +26,25 @@
 #include <KbChainedEntriesEventClientHandlerObserverInterface.hh>
 
 class KbChainedEntriesEventClientHandlerCore
-:	public Smart::InputTaskTrigger<Smart::EventInputType<CommBasicObjects::CommKBEventResult,SmartACE::EventId>>
+:	public Smart::InputTaskTrigger<Smart::EventInputType<CommBasicObjects::CommKBEventResult>>
 ,	public KbChainedEntriesEventClientUpcallInterface
 {
 private:
 	Smart::StatusCode updateStatus;
-	Smart::EventInputType<CommBasicObjects::CommKBEventResult,SmartACE::EventId> lastUpdate;
+	Smart::EventInputType<CommBasicObjects::CommKBEventResult> lastUpdate;
 	
 	
 	virtual void updateAllCommObjects();
 	
 	// internal input handling method
-	virtual void handle_input(const Smart::EventInputType<CommBasicObjects::CommKBEventResult,SmartACE::EventId>& input) {
+	virtual void handle_input(const Smart::EventInputType<CommBasicObjects::CommKBEventResult>& input) {
 		this->updateAllCommObjects();
 		// call the input handler method (which has to be implemented in derived classes)
 		this->on_kbChainedEntriesEventClient(input);
 		// notify all attached interaction observers
 		this->notify_all_interaction_observers();
 		// call implementation of base class
-		Smart::InputTaskTrigger<Smart::EventInputType<CommBasicObjects::CommKBEventResult,SmartACE::EventId>>::handle_input(input);
+		Smart::InputTaskTrigger<Smart::EventInputType<CommBasicObjects::CommKBEventResult>>::handle_input(input);
 	}
 	
 /**
@@ -63,7 +63,7 @@ protected:
 
 public:
 	KbChainedEntriesEventClientHandlerCore(
-		Smart::InputSubject<Smart::EventInputType<CommBasicObjects::CommKBEventResult,SmartACE::EventId>> *subject,
+		Smart::InputSubject<Smart::EventInputType<CommBasicObjects::CommKBEventResult>> *subject,
 		const int &prescaleFactor=1);
 	virtual ~KbChainedEntriesEventClientHandlerCore();
 };

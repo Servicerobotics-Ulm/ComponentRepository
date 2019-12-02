@@ -40,7 +40,7 @@ public:
 	virtual int onStartup() = 0;
 
 	
-	virtual Smart::IQueryServerPattern<DomainSymbolicPlanner::CommSymbolicPlannerRequest, DomainSymbolicPlanner::CommSymbolicPlannerPlan,SmartACE::QueryId> * createSymbolicPlannerQueryServer(const std::string &serviceName) = 0;
+	virtual Smart::IQueryServerPattern<DomainSymbolicPlanner::CommSymbolicPlannerRequest, DomainSymbolicPlanner::CommSymbolicPlannerPlan> * createSymbolicPlannerQueryServer(const std::string &serviceName) = 0;
 
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) = 0;
 	virtual void destroy() = 0;

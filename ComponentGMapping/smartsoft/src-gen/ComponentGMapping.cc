@@ -72,6 +72,8 @@ ComponentGMapping::ComponentGMapping()
 	connections.gMappingTask.priority = -1;
 	connections.gMappingTask.cpuAffinity = -1;
 	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of ComponentGMappingROSExtension
 	
 	// initialize members of PlainOpcUaComponentGMappingExtension
@@ -200,6 +202,8 @@ void ComponentGMapping::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of ComponentGMappingROSExtension
 		
@@ -407,6 +411,8 @@ void ComponentGMapping::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of ComponentGMappingROSExtension
 	
 	// destruction of PlainOpcUaComponentGMappingExtension
@@ -526,6 +532,8 @@ void ComponentGMapping::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("GMappingTask", "cpuAffinity")) {
 			parameter.getInteger("GMappingTask", "cpuAffinity", connections.gMappingTask.cpuAffinity);
 		}
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for ComponentGMappingROSExtension
 		

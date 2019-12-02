@@ -1,0 +1,10 @@
+SkillRealizationModel {
+	CoordinationModuleRealization manipulationPlanning coordModuleDef CommManipulationPlannerObjects.manipulationPlannerModule 
+	uses {
+		CommManipulationPlannerObjects.ManipulationPlannerCoordinationService intsName manipPlanning 
+		CommManipulatorObjects.ManipulatorCoordinationService intsName gazeboManip
+	}
+	{
+		SkillRealization graspobjects { action() }
+	} 
+}

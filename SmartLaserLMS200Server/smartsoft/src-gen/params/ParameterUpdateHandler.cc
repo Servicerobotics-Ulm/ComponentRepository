@@ -110,7 +110,7 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.Laser.azimuth = commitState.Laser.azimuth;
 		}
-		if(parameter.getDouble("Laser", "baudrate", commitState.Laser.baudrate))
+		if(parameter.getInteger("Laser", "baudrate", commitState.Laser.baudrate))
 		{
 			globalState.Laser.baudrate = commitState.Laser.baudrate;
 		}
@@ -118,11 +118,11 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.Laser.device = commitState.Laser.device;
 		}
-		if(parameter.getDouble("Laser", "length_unit", commitState.Laser.length_unit))
+		if(parameter.getInteger("Laser", "length_unit", commitState.Laser.length_unit))
 		{
 			globalState.Laser.length_unit = commitState.Laser.length_unit;
 		}
-		if(parameter.getDouble("Laser", "resolution", commitState.Laser.resolution))
+		if(parameter.getInteger("Laser", "resolution", commitState.Laser.resolution))
 		{
 			globalState.Laser.resolution = commitState.Laser.resolution;
 		}

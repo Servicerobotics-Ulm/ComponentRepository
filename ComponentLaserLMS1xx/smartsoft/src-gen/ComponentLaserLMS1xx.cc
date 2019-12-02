@@ -70,6 +70,8 @@ ComponentLaserLMS1xx::ComponentLaserLMS1xx()
 	connections.laserTask.priority = -1;
 	connections.laserTask.cpuAffinity = -1;
 	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of ComponentLaserLMS1xxROSExtension
 	
 	// initialize members of PlainOpcUaComponentLaserLMS1xxExtension
@@ -181,6 +183,8 @@ void ComponentLaserLMS1xx::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		// initializations of ComponentLaserLMS1xxROSExtension
 		
 		// initializations of PlainOpcUaComponentLaserLMS1xxExtension
@@ -220,7 +224,7 @@ void ComponentLaserLMS1xx::init(int argc, char *argv[])
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
 		laserQueryServiceAnsw = portFactoryRegistry[connections.laserQueryServiceAnsw.roboticMiddleware]->createLaserQueryServiceAnsw(connections.laserQueryServiceAnsw.serviceName);
-		laserQueryServiceAnswInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan,SmartACE::QueryId>(laserQueryServiceAnsw);
+		laserQueryServiceAnswInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan>(laserQueryServiceAnsw);
 		laserServiceOut = portFactoryRegistry[connections.laserServiceOut.roboticMiddleware]->createLaserServiceOut(connections.laserServiceOut.serviceName);
 		
 		// create client ports
@@ -390,6 +394,8 @@ void ComponentLaserLMS1xx::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of ComponentLaserLMS1xxROSExtension
 	
 	// destruction of PlainOpcUaComponentLaserLMS1xxExtension
@@ -506,6 +512,8 @@ void ComponentLaserLMS1xx::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("LaserTask", "cpuAffinity")) {
 			parameter.getInteger("LaserTask", "cpuAffinity", connections.laserTask.cpuAffinity);
 		}
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for ComponentLaserLMS1xxROSExtension
 		

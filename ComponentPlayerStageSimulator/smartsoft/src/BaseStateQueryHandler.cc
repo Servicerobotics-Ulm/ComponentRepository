@@ -84,7 +84,7 @@
 #include "BaseStateQueryHandler.hh"
 #include "ComponentPlayerStageSimulator.hh"
 
-BaseStateQueryHandler::BaseStateQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState, SmartACE::QueryId>* server)
+BaseStateQueryHandler::BaseStateQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>* server)
 :	BaseStateQueryHandlerCore(server)
 {
 	
@@ -96,7 +96,7 @@ BaseStateQueryHandler::~BaseStateQueryHandler()
 }
 
 
-void BaseStateQueryHandler::handleQuery(const SmartACE::QueryId &id, const CommBasicObjects::CommVoid& request) 
+void BaseStateQueryHandler::handleQuery(const Smart::QueryIdPtr &id, const CommBasicObjects::CommVoid& request)
 {
 	CommBasicObjects::CommBaseState answer;
 	

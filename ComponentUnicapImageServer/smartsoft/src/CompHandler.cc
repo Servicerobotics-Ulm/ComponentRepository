@@ -57,10 +57,6 @@
 
 void CompHandler::onStartup() 
 {
-	std::cout << "startup - put your startupCode in CompHandler::onStartup()!!!\n";
-
-	std::cout << "Format :" <<"h:"<<COMP->getGlobalState().getHardware_properties().getHeight() <<"w:"<<COMP->getGlobalState().getHardware_properties().getWidth() <<"\n";
-
 	Smart::StatusCode status;
 
 	// Start all services. If you need manual control, use the content of this function to
@@ -107,14 +103,17 @@ void CompHandler::onStartup()
 
 	try{
 		UNICAPINZ->init();
-		std::cout << "Unicap successful init!\n";
+		std::cout <<TEXT_COLOR_GREEN<<"Unicap initialized Successfully"<< TEXT_COLOR_RESET <<std::endl;
 	} catch(Unicap::UnicapException& e){
-		std::cerr << "Unicap init failed!" << std::endl;
+		std::cerr <<TEXT_COLOR_RED<<"Unicap init failed!\n";
 		std::cerr << "Error: " << e.what() << " [CompHandler].\n";
+		std::cerr<< TEXT_COLOR_RESET<< std::endl;
 	} catch(...){
-		std::cerr << "Unicap init failed!" << std::endl;
+		std::cerr <<TEXT_COLOR_RED<< "Unicap init failed! \n";
 		std::cerr << "Error: Undefined Error. [CompHandler]\n";
+		std::cerr<< TEXT_COLOR_RESET<< std::endl;
 	}
+
 
 	// start push timed server
 	//COMP->imagePushTimedServer->start();

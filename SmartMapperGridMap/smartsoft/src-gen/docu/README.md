@@ -3,218 +3,415 @@
 
 # SmartMapperGridMap Component
 
-![SmartMapperGridMap-ComponentImage](model/SmartMapperGridMapComponentDefinition.jpg)
+<img src="model/SmartMapperGridMapComponentDefinition.jpg" alt="SmartMapperGridMap-ComponentImage" width="1000">
 
-The SmartMapperGridMap provides mapping services based on occupancy grid maps. Laser scans are taken for building a current and a longterm map.
+*Component Short Description:* The SmartMapperGridMap provides mapping services based on occupancy grid maps.
 
-The current map represents the latest environment of the robot. It can be preoccupied with grids of the longterm map and can be used for path planning e.g. with SmartPlannerBreadthFirstSearch. It contains either occupied cells or free cells (binary). An optional obstacle growing can be applied to the current map.
+## Component Documentation
+<p></p>
+<p> The SmartMapperGridMap provides mapping services based on occupancy grid maps.
+ Laser scans are taken for building a current and a longterm map.
+</p>
+<p> The current map represents the latest environment of the robot.
+ It can be preoccupied with grids of the longterm map and can be used for path planning e.g. with SmartPlannerBreadthFirstSearch.
+ It contains either occupied cells or free cells (binary). An optional obstacle growing can be applied to the current map.
+</p>
+<p> The longterm map holds cell values from 0 to 255. Values from 0 to 127 denote the traversability where 0 is completely free.
+ Values from 128 to 255 are special values: Obstacles are marked with 128,
+ cells occupied by obstacle growing with 129 and undeletable grids are marked with 130.
+ The cell values can be accumulated over time to represent the environment over a longer period.
+</p>
+<p> Both grid maps can be saved to XPM and XML and loaded from XML files.
+</p>
+<p></p>
 
-The longterm map holds cell values from 0 to 255. Values from 0 to 127 denote the traversability where 0 is completely free. Values from 128 to 255 are special values: Obstacles are marked with 128, cells occupied by obstacle growing with 129 and undeletable grids are marked with 130. The cell values can be accumulated over time to represent the environment over a longer period.
+## Component-Datasheet Properties
 
-Both grid maps can be saved to XPM and XML and loaded from XML files.
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Component-Datasheet Properties</caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Property Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Property Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Property Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">SpdxLicense</td>
+<td style="border:1px solid black; padding: 5px;">LGPL-2.0-or-later</td>
+<td style="border:1px solid black; padding: 5px;">https://spdx.org/licenses/LGPL-2.0-or-later.html</td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">TechnologyReadinessLevel</td>
+<td style="border:1px solid black; padding: 5px;">TRL5</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Homepage</td>
+<td style="border:1px solid black; padding: 5px;">http://servicerobotik-ulm.de/components</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Supplier</td>
+<td style="border:1px solid black; padding: 5px;">Servicerobotics Ulm</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Purpose</td>
+<td style="border:1px solid black; padding: 5px;">Mapping</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
 
-Note: This component is used in Tutorials (e.g. Lesson 1). 
-
-| Metaelement | Documentation |
-|-------------|---------------|
-| License | LGPL |
-| Hardware Requirements | - |
-| Purpose | Navigation |
-
-
-## Coordination Port CoordinationPort
-
-
-### States
-
-See States for descriptions of possible states and their meaning.
-
-| MainState Name | MainState Description |
-|----------------|-----------------------|
-| Neutral | No maps are being built. |
-| BuildBothMaps | Both the current and the longterm maps are being built. |
-| BuildCurrMap | The current map is being built. |
-| BuildLtmMap | The longterm map is being built. |
-
-### DynamicWiring
-
-Slave part of wiring pattern. It is responsible for changing the port connections within the component.
-
-### Parameter
-
- Accepts parameters to handle the current and longterm map. See Parameters.
-
-						Please note that the following parameters can only be sent when the component is in state neutral:
-
-    					- CURPARAMETER
-    					- CURLOAD
-    					- CURLOADLTM
-    					- LTMPARAMETER
-    					- LTMLOAD
-
-
-## Service Ports
+## Component Ports
 
 ### LaserServiceIn
 
-Port has to be connected to the laser component (e.g. SmartLaserLMS200Server). The received laser scan is used for building the maps.
+*Documentation:*
 
-### CurrMapOut
-
-Pushes the current map to subscribers (e.g. SmartPlannerBreadthFirstSearch) if the current map is being built (component is in state buildbothmaps or buildcurrentmap).
-						This port should be used if a map is required continuously. For example, the SmartPlannerBreadthFirstSearch always requires an up-to-date-map for proper path planning. Other components may require the map only occasionally and shall use the query port: curGridMapQueryServer.
 
 ### CurrQueryServer
 
-Port to query the current map. If the current map is not being built (component in state neutral or buildcurrentmap), the answer is stamped invalid. It will be stamped valid if the current map is being built (component in state buildbothmaps or buildcurrentmap).
-						The query port should be used if a map is required only occasionally. The port currentGridMapServer (a SmartPushNewestServer) should be used in components where it is necessary to continuously receive the latest map.
+*Documentation:*
+
 
 ### LtmQueryServer
 
-Port to query the longterm map. Queries will be replied to in every state.
+*Documentation:*
 
 
-## Component Parameters SmartMapperGridMapParams
+### CurrMapOut
 
-### InternalParameter CurrentMap
+*Documentation:*
 
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| interval | UInt32 | Specify the interval for considering laser scans to build the current map. The component will process every nth laser scan. The actual interval for building the current map thus depends on the value of this setting and on the rate of the laser scan for pushing new scans. This can be used to slow down the building of the current map. |
-| growing | String | Obstacle growing mode. Obstacle can be grown in circles with 8 (circle8) or 16 (circle16) (circle40) (circle32)  occupied cells around the obstacle or as a star of 8 (star8) or 16 (star16) occupied cells around the obstacle. Obstacle growing can also be deactivated with value no. |
-| xsize | UInt32 | Initial value for x size of current map. [mm]. |
-| ysize | UInt32 | Initial value for y size of current map. [mm]. |
-| xpos | Int32 | Initial value for x offset of current map relative to world. [mm]. |
-| ypos | Int32 | Initial value for y offset of current map relative to world. [mm]. |
-| id | UInt32 | Initial id of the current map. Can later be set with parameter CURPARAMETER. The id ?id will be assigned to the current map to synchronize components, for example with SmartPlannerBreadthFirstSearch and SmartCdlServer. |
 
-### InternalParameter LtmMap
 
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| kalman | Int32 | Adaption rate for kalman filter weighting. [0-255]. |
-| xsize | UInt32 | Initial value for x size of longterm map. [mm]. |
-| ysize | UInt32 | Initial value for y size of longterm map. [mm] |
-| xpos | Int32 | Initial value for x offset of longterm map relative to world. [mm] |
-| ypos | Int32 | Initial value for y offset of longterm map relative to world. [mm] |
-| id | UInt32 | Initial id of the map. Can later be set with LTMPARAMETER. The id ?id will be assigned to the longterm map for identification. |
 
-### InternalParameter General
+## Component Parameters: SmartMapperGridMapParams
 
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| cellsize | UInt32 | Specify the size of the cells in the grid maps. [mm]. |
-| connectLaser | Boolean | To use mapper as map server only set to false |
-| verbose | Boolean | Print debug messages? |
-| mapDataDir | String |  |
+### Internal Parameter: CurrentMap
 
-### ParameterSetInstance MapperParams
+*Documentation:*
 
-#### TriggerInstance CURPARAMETER
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Internal Parameter <b>CurrentMap</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>interval</b></td>
+<td style="border:1px solid black; padding: 5px;">UInt32</td>
+<td style="border:1px solid black; padding: 5px;">10</td>
+<td style="border:1px solid black; padding: 5px;"><p>Specify the interval for considering laser scans to build the current map. The component will process every nth laser scan. The actual interval for building the current map thus depends on the value of this setting and on the rate of the laser scan for pushing new scans. This can be used to slow down the building of the current map.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>growing</b></td>
+<td style="border:1px solid black; padding: 5px;">String</td>
+<td style="border:1px solid black; padding: 5px;">"star16"</td>
+<td style="border:1px solid black; padding: 5px;"><p>Obstacle growing mode. Obstacle can be grown in circles with 8 (circle8) or 16 (circle16) (circle40) (circle32)  occupied cells around the obstacle or as a star of 8 (star8) or 16 (star16) occupied cells around the obstacle. Obstacle growing can also be deactivated with value no.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>xsize</b></td>
+<td style="border:1px solid black; padding: 5px;">UInt32</td>
+<td style="border:1px solid black; padding: 5px;">20000</td>
+<td style="border:1px solid black; padding: 5px;"><p>Initial value for x size of current map. [mm].
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>ysize</b></td>
+<td style="border:1px solid black; padding: 5px;">UInt32</td>
+<td style="border:1px solid black; padding: 5px;">20000</td>
+<td style="border:1px solid black; padding: 5px;"><p>Initial value for y size of current map. [mm].
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>xpos</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">-10000</td>
+<td style="border:1px solid black; padding: 5px;"><p>Initial value for x offset of current map relative to world. [mm].
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>ypos</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">-10000</td>
+<td style="border:1px solid black; padding: 5px;"><p>Initial value for y offset of current map relative to world. [mm].
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>id</b></td>
+<td style="border:1px solid black; padding: 5px;">UInt32</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"><p>Initial id of the current map. Can later be set with parameter CURPARAMETER. The id ?id will be assigned to the current map to synchronize components, for example with SmartPlannerBreadthFirstSearch and SmartCdlServer.
+</p></td>
+</tr>
+</table>
 
-active = false
+### Internal Parameter: LtmMap
 
-Drop the current map and create a new map with free cells of dimensions [mm] ?xsize and ?ysize. The map is initialized with an offset [mm] ?xoff and ?yoff relative to world coordinates. The cellsize used for this map as well as the obstacle growing type are specified in the ini-configuration. The id ?id will be assigned to the map to synchronize components, for example with SmartPlannerBreadthFirstSearch and SmartCdlServer.
+*Documentation:*
+
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Internal Parameter <b>LtmMap</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>kalman</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">100</td>
+<td style="border:1px solid black; padding: 5px;"><p>Adaption rate for kalman filter weighting. [0-255].
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>xsize</b></td>
+<td style="border:1px solid black; padding: 5px;">UInt32</td>
+<td style="border:1px solid black; padding: 5px;">20000</td>
+<td style="border:1px solid black; padding: 5px;"><p>Initial value for x size of longterm map. [mm].
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>ysize</b></td>
+<td style="border:1px solid black; padding: 5px;">UInt32</td>
+<td style="border:1px solid black; padding: 5px;">20000</td>
+<td style="border:1px solid black; padding: 5px;"><p>Initial value for y size of longterm map. [mm]
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>xpos</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">-10000</td>
+<td style="border:1px solid black; padding: 5px;"><p>Initial value for x offset of longterm map relative to world. [mm]
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>ypos</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">-10000</td>
+<td style="border:1px solid black; padding: 5px;"><p>Initial value for y offset of longterm map relative to world. [mm]
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>id</b></td>
+<td style="border:1px solid black; padding: 5px;">UInt32</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"><p>Initial id of the map. Can later be set with LTMPARAMETER. The id ?id will be assigned to the longterm map for identification.
+</p></td>
+</tr>
+</table>
+
+### Internal Parameter: General
+
+*Documentation:*
+
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Internal Parameter <b>General</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>cellsize</b></td>
+<td style="border:1px solid black; padding: 5px;">UInt32</td>
+<td style="border:1px solid black; padding: 5px;">50</td>
+<td style="border:1px solid black; padding: 5px;"><p>Specify the size of the cells in the grid maps. [mm].
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>connectLaser</b></td>
+<td style="border:1px solid black; padding: 5px;">Boolean</td>
+<td style="border:1px solid black; padding: 5px;">true</td>
+<td style="border:1px solid black; padding: 5px;"><p>To use mapper as map server only set to false
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>verbose</b></td>
+<td style="border:1px solid black; padding: 5px;">Boolean</td>
+<td style="border:1px solid black; padding: 5px;">false</td>
+<td style="border:1px solid black; padding: 5px;"><p>Print debug messages?
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>mapDataDir</b></td>
+<td style="border:1px solid black; padding: 5px;">String</td>
+<td style="border:1px solid black; padding: 5px;">"data/maps/"</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
+
+### ParameterSetInstance: MapperParams
+
+#### Trigger Instance: CURPARAMETER
+
+*Property:* active = **false**
+
+*Documentation:*
+<p>Drop the current map and create a new map with free cells of dimensions [mm] ?xsize and ?ysize. The map is initialized with an offset [mm] ?xoff and ?yoff relative to world coordinates. The cellsize used for this map as well as the obstacle growing type are specified in the ini-configuration. The id ?id will be assigned to the map to synchronize components, for example with SmartPlannerBreadthFirstSearch and SmartCdlServer.
 Using this parameter is only allowed in neutral state.
+</p>
 
-#### TriggerInstance LTMPARAMETER
+#### Trigger Instance: LTMPARAMETER
 
-active = false
+*Property:* active = **false**
 
-Drop the longterm map and create a new map with free cells of dimensions [mm] ?xsize and ?ysize. The map is initialized at offset [mm] ?xoff and ?yoff. The cellsize used for this map is specified in the ini-configuration. The id ?id will be assigned to the map to identify it.
+*Documentation:*
+<p>Drop the longterm map and create a new map with free cells of dimensions [mm] ?xsize and ?ysize. The map is initialized at offset [mm] ?xoff and ?yoff. The cellsize used for this map is specified in the ini-configuration. The id ?id will be assigned to the map to identify it.
 Using this parameter is only allowed in neutral state.
+</p>
 
-#### TriggerInstance LTMINITIALIZE
+#### Trigger Instance: LTMINITIALIZE
 
-active = false
+*Property:* active = **false**
 
-Clear the longterm map and initialize the cells with value ?value.
+*Documentation:*
+<p>Clear the longterm map and initialize the cells with value ?value.
+</p>
 
-#### TriggerInstance CURSAVE
+#### Trigger Instance: CURSAVE
 
-active = false
+*Property:* active = **false**
 
-Save the current map to XML file test-cur-?number.xml.
+*Documentation:*
+<p>Save the current map to XML file test-cur-?number.xml.
+</p>
 
-#### TriggerInstance CURLOAD
+#### Trigger Instance: CURLOAD
 
-active = false
+*Property:* active = **false**
 
-Load the current map from XML file test-cur-?number.xml.
+*Documentation:*
+<p>Load the current map from XML file test-cur-?number.xml.
 Using this parameter is only allowed in neutral state.
+</p>
 
-#### TriggerInstance CURLOADLTM
+#### Trigger Instance: CURLOADLTM
 
-active = false
+*Property:* active = **false**
 
-Load the current map from longterm map. The long term map is thresholded to meet the binary representation of the current map. See parameter CURLTM for information on the threshold.
+*Documentation:*
+<p>Load the current map from longterm map. The long term map is thresholded to meet the binary representation of the current map. See parameter CURLTM for information on the threshold.
 Using this parameter is only allowed in neutral state.
+</p>
 
-#### TriggerInstance CURSAVEXPM
+#### Trigger Instance: CURSAVEXPM
 
-active = false
+*Property:* active = **false**
 
-Save the current map to XPM file test-cur-?number.xpm.
+*Documentation:*
+<p>Save the current map to XPM file test-cur-?number.xpm.
+</p>
 
-#### TriggerInstance LTMSAVE
+#### Trigger Instance: LTMSAVE
 
-active = false
+*Property:* active = **false**
 
-Save the longterm map to XML file test-ltm-.xml.
+*Documentation:*
+<p>Save the longterm map to XML file test-ltm-.xml.
+</p>
 
-#### TriggerInstance LTMLOAD
+#### Trigger Instance: LTMLOAD
 
-active = false
+*Property:* active = **false**
 
-Load the longterm map from XML file test-ltm-.xml.
+*Documentation:*
+<p>Load the longterm map from XML file test-ltm-.xml.
 Using this parameter is only allowed in neutral state.
+</p>
 
-#### TriggerInstance LTMSAVEXPM
+#### Trigger Instance: LTMSAVEXPM
 
-active = false
+*Property:* active = **false**
 
-Save the longterm map to XPM file test-ltm-.xpm.
+*Documentation:*
+<p>Save the longterm map to XPM file test-ltm-.xpm.
+</p>
 
-#### TriggerInstance LTMSAVEYAMLPGM
+#### Trigger Instance: LTMSAVEYAMLPGM
 
-active = false
+*Property:* active = **false**
 
+*Documentation:*
 
-#### TriggerInstance LTMSAVEYAMLPPM
+#### Trigger Instance: LTMSAVEYAMLPPM
 
-active = false
+*Property:* active = **false**
 
+*Documentation:*
 
-#### TriggerInstance LTMLOADYAML
+#### Trigger Instance: LTMLOADYAML
 
-active = false
+*Property:* active = **false**
 
+*Documentation:*
 
-#### TriggerInstance LTMSAVEIEEESTD
+#### Trigger Instance: LTMSAVEIEEESTD
 
-active = false
+*Property:* active = **false**
 
+*Documentation:*
 
-#### TriggerInstance LTMLOADIEEESTD
+#### Trigger Instance: LTMLOADIEEESTD
 
-active = false
+*Property:* active = **false**
 
+*Documentation:*
 
-#### ParameterInstance CURLTM
+#### Parameter Instance: CURLTM
 
-Configures whether the current map is preoccupied from the longterm map. Possible values for ?preoccupy: ENABLE will cause the component to load values from the longterm map in each cycle to the current map by applying the threshold ?thresh to decide on the occupancy of the cell. If DISABLE, the current map is not preoccupied.
+*Documentation:*
+<p>Configures whether the current map is preoccupied from the longterm map. Possible values for ?preoccupy: ENABLE will cause the component to load values from the longterm map in each cycle to the current map by applying the threshold ?thresh to decide on the occupancy of the cell. If DISABLE, the current map is not preoccupied.
 A threshold is applied to preoccupy the binary current map: The cells of the new current map will be marked free if the value from the long term map is smaller than the threshold ?thresh. The cells will be marked as occupied if the long term map value is above the threshold.
+</p>
 
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| preoccupation | InlineEnumeration |  |
-| threshold | Int32 |  |
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Parameter-Instance <b>CURLTM</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>preoccupation</b></td>
+<td style="border:1px solid black; padding: 5px;">InlineEnumeration</td>
+<td style="border:1px solid black; padding: 5px;">DISABLE</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>threshold</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">20</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
 
-#### ParameterInstance CUREMPTY
+#### Parameter Instance: CUREMPTY
 
-Change the mode ?mode of building the current map: ACCUMULATE will add new occupied cells from the laser scan while EMPTY will clear the map in each cycle before adding occupied cells from the laser scan.
+*Documentation:*
+<p>Change the mode ?mode of building the current map: ACCUMULATE will add new occupied cells from the laser scan while EMPTY will clear the map in each cycle before adding occupied cells from the laser scan.
+</p>
 
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| mapmode | InlineEnumeration |  |
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Parameter-Instance <b>CUREMPTY</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>mapmode</b></td>
+<td style="border:1px solid black; padding: 5px;">InlineEnumeration</td>
+<td style="border:1px solid black; padding: 5px;">ACCUMULATE</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
 

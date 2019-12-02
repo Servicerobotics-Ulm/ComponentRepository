@@ -17,7 +17,7 @@
 #include "BaseStateQueryHandler.hh"
 #include "SmartGazeboBaseServer.hh"
 
-BaseStateQueryHandler::BaseStateQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState, SmartACE::QueryId>* server)
+BaseStateQueryHandler::BaseStateQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>* server)
 :	BaseStateQueryHandlerCore(server)
 {
 	
@@ -29,7 +29,7 @@ BaseStateQueryHandler::~BaseStateQueryHandler()
 }
 
 
-void BaseStateQueryHandler::handleQuery(const SmartACE::QueryId &id, const CommBasicObjects::CommVoid& request) 
+void BaseStateQueryHandler::handleQuery(const Smart::QueryIdPtr &id, const CommBasicObjects::CommVoid& request) 
 {
     std::cout << "Query for basestate \n";
 	CommBasicObjects::CommBaseState commCurrentBaseState;

@@ -24,8 +24,8 @@ class LtmQueryServerHandler : public LtmQueryServerHandlerCore
 protected:
 	virtual void on_update_from(const LtmMapTask* ltmMapTask);
 public:
-	LtmQueryServerHandler(Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap, SmartACE::QueryId>* server);
+	LtmQueryServerHandler(Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap>* server);
 	virtual ~LtmQueryServerHandler();
-	virtual void handleQuery(const SmartACE::QueryId &id, const CommNavigationObjects::CommGridMapRequest& request);
+	virtual void handleQuery(const Smart::QueryIdPtr &id, const CommNavigationObjects::CommGridMapRequest& request);
 };
 #endif

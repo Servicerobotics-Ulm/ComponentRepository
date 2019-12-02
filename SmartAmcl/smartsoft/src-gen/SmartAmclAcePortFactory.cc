@@ -63,7 +63,7 @@ Smart::ISendClientPattern<CommBasicObjects::CommBasePositionUpdate> * SmartAmclA
 }
 
 
-Smart::IEventServerPattern<CommLocalizationObjects::CommLocalizationEventParameter, CommLocalizationObjects::CommLocalizationEventResult, CommLocalizationObjects::LocalizationEventState,SmartACE::EventId> * SmartAmclAcePortFactory::createLocalizationEventServiceOut(const std::string &serviceName, Smart::IEventTestHandler<CommLocalizationObjects::CommLocalizationEventParameter, CommLocalizationObjects::CommLocalizationEventResult, CommLocalizationObjects::LocalizationEventState> *localizationEventServiceOutEventTestHandler)
+Smart::IEventServerPattern<CommLocalizationObjects::CommLocalizationEventParameter, CommLocalizationObjects::CommLocalizationEventResult, CommLocalizationObjects::LocalizationEventState> * SmartAmclAcePortFactory::createLocalizationEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommLocalizationObjects::CommLocalizationEventParameter, CommLocalizationObjects::CommLocalizationEventResult, CommLocalizationObjects::LocalizationEventState>> localizationEventServiceOutEventTestHandler)
 {
 	return new SmartACE::EventServer<CommLocalizationObjects::CommLocalizationEventParameter, CommLocalizationObjects::CommLocalizationEventResult, CommLocalizationObjects::LocalizationEventState>(componentImpl, serviceName, localizationEventServiceOutEventTestHandler);
 }

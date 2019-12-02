@@ -48,7 +48,7 @@ public:
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * createLaserServiceIn() = 0;
 	virtual Smart::ISendClientPattern<CommBasicObjects::CommBasePositionUpdate> * createLocalizationUpdateServiceOut() = 0;
 	
-	virtual Smart::IEventServerPattern<CommLocalizationObjects::CommLocalizationEventParameter, CommLocalizationObjects::CommLocalizationEventResult, CommLocalizationObjects::LocalizationEventState,SmartACE::EventId> * createLocalizationEventServiceOut(const std::string &serviceName, Smart::IEventTestHandler<CommLocalizationObjects::CommLocalizationEventParameter, CommLocalizationObjects::CommLocalizationEventResult, CommLocalizationObjects::LocalizationEventState> *localizationEventServiceOutEventTestHandler) = 0;
+	virtual Smart::IEventServerPattern<CommLocalizationObjects::CommLocalizationEventParameter, CommLocalizationObjects::CommLocalizationEventResult, CommLocalizationObjects::LocalizationEventState> * createLocalizationEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommLocalizationObjects::CommLocalizationEventParameter, CommLocalizationObjects::CommLocalizationEventResult, CommLocalizationObjects::LocalizationEventState>> localizationEventServiceOutEventTestHandler) = 0;
 
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) = 0;
 	virtual void destroy() = 0;

@@ -85,8 +85,8 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
-		int temp_threshold = 0.0;
-		if(request.getDouble("2", temp_threshold) == 0) {
+		int temp_threshold = 0;
+		if(request.getInteger("2", temp_threshold) == 0) {
 			commitState.CommNavigationObjects.MapperParams.CURLTM.threshold = temp_threshold;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
@@ -97,24 +97,24 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK);
 		
-		int temp_xsize = 0.0;
-		if(request.getDouble("1", temp_xsize) != 0) {
+		int temp_xsize = 0;
+		if(request.getInteger("1", temp_xsize) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
-		int temp_ysize = 0.0;
-		if(request.getDouble("2", temp_ysize) != 0) {
+		int temp_ysize = 0;
+		if(request.getInteger("2", temp_ysize) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
-		int temp_xpos = 0.0;
-		if(request.getDouble("3", temp_xpos) != 0) {
+		int temp_xpos = 0;
+		if(request.getInteger("3", temp_xpos) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
-		int temp_ypos = 0.0;
-		if(request.getDouble("4", temp_ypos) != 0) {
+		int temp_ypos = 0;
+		if(request.getInteger("4", temp_ypos) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
-		int temp_id = 0.0;
-		if(request.getDouble("5", temp_id) != 0) {
+		int temp_id = 0;
+		if(request.getInteger("5", temp_id) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
 		
@@ -162,8 +162,8 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK);
 		
-		int temp_value = 0.0;
-		if(request.getDouble("1", temp_value) != 0) {
+		int temp_value = 0;
+		if(request.getInteger("1", temp_value) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
 		
@@ -222,24 +222,24 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK);
 		
-		int temp_xsize = 0.0;
-		if(request.getDouble("1", temp_xsize) != 0) {
+		int temp_xsize = 0;
+		if(request.getInteger("1", temp_xsize) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
-		int temp_ysize = 0.0;
-		if(request.getDouble("2", temp_ysize) != 0) {
+		int temp_ysize = 0;
+		if(request.getInteger("2", temp_ysize) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
-		int temp_xpos = 0.0;
-		if(request.getDouble("3", temp_xpos) != 0) {
+		int temp_xpos = 0;
+		if(request.getInteger("3", temp_xpos) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
-		int temp_ypos = 0.0;
-		if(request.getDouble("4", temp_ypos) != 0) {
+		int temp_ypos = 0;
+		if(request.getInteger("4", temp_ypos) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
-		int temp_id = 0.0;
-		if(request.getDouble("5", temp_id) != 0) {
+		int temp_id = 0;
+		if(request.getInteger("5", temp_id) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
 		
@@ -387,7 +387,7 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.CurrentMap.interval = commitState.CurrentMap.interval;
 		}
-		if(parameter.getDouble("CurrentMap", "xpos", commitState.CurrentMap.xpos))
+		if(parameter.getInteger("CurrentMap", "xpos", commitState.CurrentMap.xpos))
 		{
 			globalState.CurrentMap.xpos = commitState.CurrentMap.xpos;
 		}
@@ -395,7 +395,7 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.CurrentMap.xsize = commitState.CurrentMap.xsize;
 		}
-		if(parameter.getDouble("CurrentMap", "ypos", commitState.CurrentMap.ypos))
+		if(parameter.getInteger("CurrentMap", "ypos", commitState.CurrentMap.ypos))
 		{
 			globalState.CurrentMap.ypos = commitState.CurrentMap.ypos;
 		}
@@ -425,11 +425,11 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.LtmMap.id = commitState.LtmMap.id;
 		}
-		if(parameter.getDouble("LtmMap", "kalman", commitState.LtmMap.kalman))
+		if(parameter.getInteger("LtmMap", "kalman", commitState.LtmMap.kalman))
 		{
 			globalState.LtmMap.kalman = commitState.LtmMap.kalman;
 		}
-		if(parameter.getDouble("LtmMap", "xpos", commitState.LtmMap.xpos))
+		if(parameter.getInteger("LtmMap", "xpos", commitState.LtmMap.xpos))
 		{
 			globalState.LtmMap.xpos = commitState.LtmMap.xpos;
 		}
@@ -437,7 +437,7 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.LtmMap.xsize = commitState.LtmMap.xsize;
 		}
-		if(parameter.getDouble("LtmMap", "ypos", commitState.LtmMap.ypos))
+		if(parameter.getInteger("LtmMap", "ypos", commitState.LtmMap.ypos))
 		{
 			globalState.LtmMap.ypos = commitState.LtmMap.ypos;
 		}
@@ -467,7 +467,7 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 			commitState.CommNavigationObjects.MapperParams.CURLTM.preoccupation = temp_CommNavigationObjects_MapperParams_CURLTM_preoccupation;
 			globalState.CommNavigationObjects.MapperParams.CURLTM.preoccupation = commitState.CommNavigationObjects.MapperParams.CURLTM.preoccupation;
 		}
-		if(parameter.getDouble("CommNavigationObjects.MapperParams.CURLTM", "threshold", commitState.CommNavigationObjects.MapperParams.CURLTM.threshold))
+		if(parameter.getInteger("CommNavigationObjects.MapperParams.CURLTM", "threshold", commitState.CommNavigationObjects.MapperParams.CURLTM.threshold))
 		{
 			globalState.CommNavigationObjects.MapperParams.CURLTM.threshold = commitState.CommNavigationObjects.MapperParams.CURLTM.threshold;
 		}

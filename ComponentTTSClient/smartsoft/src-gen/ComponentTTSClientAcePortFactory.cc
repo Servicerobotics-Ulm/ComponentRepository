@@ -52,7 +52,7 @@ int ComponentTTSClientAcePortFactory::onStartup()
 	return componentImpl->startComponentInfrastructure();
 }
 
-Smart::IQueryClientPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet,SmartACE::QueryId> * ComponentTTSClientAcePortFactory::createSpeechQueryServiceReq()
+Smart::IQueryClientPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet> * ComponentTTSClientAcePortFactory::createSpeechQueryServiceReq()
 {
 	return new SmartACE::QueryClient<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet>(componentImpl);
 }

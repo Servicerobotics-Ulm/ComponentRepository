@@ -3,112 +3,161 @@
 
 # SmartPlannerBreadthFirstSearch Component
 
-![SmartPlannerBreadthFirstSearch-ComponentImage](model/SmartPlannerBreadthFirstSearchComponentDefinition.jpg)
+<img src="model/SmartPlannerBreadthFirstSearchComponentDefinition.jpg" alt="SmartPlannerBreadthFirstSearch-ComponentImage" width="1000">
 
-The SmartPlannerBreadthFirstSearch provides path planning services based on grid maps. It uses a grid map from a map building component (e.g. SmartMapperGridMap) and sends an intermediate waypoint as well as the goalpoint to the motion execution (e.g. SmartCdlServer).
+*Component Short Description:* The SmartPlannerBreadthFirstSearch provides path planning services based on grid maps.
 
-A wave propagation algorithm starting from goal cells backward to the current position of the robot is used to calculate a path. The path planning is further enhanced by a path shortening heuristic: the path is followed starting at the current robot position until a straight line from the robot position to the cell in question on the path interferes with an obstacle. The prior cell is then sent as an intermediate waypoint. The geometric path planning is applied continuously every one second.
+## Component Documentation
+<p></p>
+<p> The SmartPlannerBreadthFirstSearch provides path planning services based on grid maps.
+ It uses a grid map from a map building component (e.g. SmartMapperGridMap) and sends an intermediate waypoint
+ as well as the goalpoint to the motion execution (e.g. SmartCdlServer).
+</p>
+<p> A wave propagation algorithm starting from goal cells backward to the current position of the robot is used to calculate a path.
+ The path planning is further enhanced by a path shortening heuristic: the path is followed starting at the current robot position
+ until a straight line from the robot position to the cell in question on the path interferes with an obstacle.
+ The prior cell is then sent as an intermediate waypoint. The geometric path planning is applied continuously every one second.
+</p>
+<p> Several goal circles and/or goal lines can be specified as goals in the planner.
+ The planner will generate a path to the goal with the shortest distance.
+</p>
+<p> The SmartPlannerBreadthFirstSearch for example can be used with SmartCdlServer which cannot handle local minimas.
+ Goals are then specified in the SmartPlannerBreadthFirstSearch.
+ A CDL_GOAL_REACHED event is fired by the CDL component as soon as the final goal is reached.
+</p>
+<p> See also:
+ Christian Schlegel. Navigation and Execution for Mobile Robots in Dynamic Environments: An Integrated Approach. p. 27-29. Dissertation,
+ Fakultät für Informatik, Universität Ulm, 2004.
+</p>
+<p></p>
 
-Several goal circles and/or goal lines can be specified as goals in the planner. The planner will generate a path to the goal with the shortest distance.
+## Component-Datasheet Properties
 
-The SmartPlannerBreadthFirstSearch for example can be used with SmartCdlServer which cannot handle local minimas. Goals are then specified in the SmartPlannerBreadthFirstSearch. A CDL_GOAL_REACHED event is fired by the CDL component as soon as the final goal is reached.
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Component-Datasheet Properties</caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Property Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Property Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Property Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">SpdxLicense</td>
+<td style="border:1px solid black; padding: 5px;">LGPL-2.0-or-later</td>
+<td style="border:1px solid black; padding: 5px;">https://spdx.org/licenses/LGPL-2.0-or-later.html</td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">TechnologyReadinessLevel</td>
+<td style="border:1px solid black; padding: 5px;">TRL5</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Homepage</td>
+<td style="border:1px solid black; padding: 5px;">http://servicerobotik-ulm.de/components</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Supplier</td>
+<td style="border:1px solid black; padding: 5px;">Servicerobotics Ulm</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Purpose</td>
+<td style="border:1px solid black; padding: 5px;">Planner</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
 
-Note: This component is used in Tutorials (e.g. Lesson 1).
-
-See also:
-Christian Schlegel. Navigation and Execution for Mobile Robots in Dynamic Environments: An Integrated Approach. p. 27-29. Dissertation, Fakultät für Informatik, Universität Ulm, 2004. 
-
-| Metaelement | Documentation |
-|-------------|---------------|
-| License | LGPL |
-| Hardware Requirements | - |
-| Purpose | 	Navigation |
-
-
-## Coordination Port CoordinationPort
-
-
-### States
-
-See States for descriptions of possible states and their meaning.
-
-| MainState Name | MainState Description |
-|----------------|-----------------------|
-| Neutral | The path planning execution cycle is stopped. No path planning is performed, no intermediate waypoints and goal points are sent. |
-| PathPlanning | The component will continuously (every 1 second) plan a path to the goalpoints. Intermediate waypoints and goals are sent. |
-
-### DynamicWiring
-
-Slave part of wiring pattern. It is responsible for changing the port connections within the component.
-
-### Parameter
-
-Accepts various parameters for managing goals. See Parameters.
-
-## Service Ports
+## Component Ports
 
 ### CurMapClient
 
-The planner will plan paths in grid maps sent to this port. Typically connected to a map building component such as SmartMapperGridMap.
+*Documentation:*
+
 
 ### BaseStateClient
 
-Base states as input for path planning shall be sent to this port. The path is planned based on the current position sent through this port. Typically connected to the robot base, e.g. SmartPioneerBaseServer.
+*Documentation:*
+
 
 ### PlannerGoalServer
 
-If a path was found (event PLANNER_NO_ERROR fired), this port pushes an valid (invalid flag set to false) intermediate waypoint and goal point calculated by the planner to the motion execution. If no path was found, the waypoint and goalpoint are sent with the invalid flag set to true.
+*Documentation:*
+
 
 ### PlannerEventServer
 
- The event state PLANNER_UNKNOWN can be used for activation if the current state is unknown. Events are sent on every change.
-
-						The port will send the events listed below:
-
-						- PLANNER_NO_PATH: Fired if no path could be found for at least five seconds. Invalid goals (invalid flag=true) are pushed via plannerUpdateNewestServer when no path was found.
-						- PLANNER_NO_ERROR: No errors in planner, valid goals (invalid flag=false) are pushed via plannerUpdateNewestServer.
-						- PLANNER_UNKNOWN_ERROR: An unknown error occurred.
-						- PLANNER_NO_GOAL_AVAILABLE: No goals available.
-						- PLANNER_GOAL_NOT_MARKED: Every goal cell is already occupied. The goal cells could not be marked.
-						- PLANNER_START_OCCUPIED_OBSTACLE: The start cell (current robot position) is occupied by an obstacle.
-						- PLANNER_START_OCCUPIED_GOAL: The robot is standing on the goal cell.
-						- PLANNER_WRONG_MAPID: The latest grid map is of another id than the current planner id. The planner will not plan anything and will not send intermediate waypoints and goal points.
+*Documentation:*
 
 
 
-## Component Parameters SmartPlannerParams
 
-### InternalParameter Settings
+## Component Parameters: SmartPlannerParams
 
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| no_path_event_timeout | Double |  |
+### Internal Parameter: Settings
 
-### ParameterSetInstance PlannerParams
+*Documentation:*
 
-#### ParameterInstance ID
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Internal Parameter <b>Settings</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>no_path_event_timeout</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">5.0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
 
-Set the goal id. Used to synchronize components, for example with SmartMapperGridMap and SmartCdlServer.
+### ParameterSetInstance: PlannerParams
 
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| id | UInt32 |  |
+#### Parameter Instance: ID
 
-#### TriggerInstance DELETEGOAL
+*Documentation:*
+<p>Set the goal id. Used to synchronize components, for example with SmartMapperGridMap and SmartCdlServer.
+</p>
 
-active = false
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Parameter-Instance <b>ID</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>id</b></td>
+<td style="border:1px solid black; padding: 5px;">UInt32</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
 
-Delete all specified planner goals.
+#### Trigger Instance: DELETEGOAL
 
-#### TriggerInstance SETDESTINATIONCIRCLE
+*Property:* active = **false**
 
-active = false
+*Documentation:*
+<p>Delete all specified planner goals.
+</p>
 
-Specify a goal point by setting the coordinates [mm] ?x, ?y and radius ?r for the goal circle.
+#### Trigger Instance: SETDESTINATIONCIRCLE
 
-#### TriggerInstance SETDESTINATIONLINE
+*Property:* active = **false**
 
-active = false
+*Documentation:*
+<p>Specify a goal point by setting the coordinates [mm] ?x, ?y and radius ?r for the goal circle.
+</p>
 
-Specify a goal as a line: the planner will plan the shortest path from the current position to a line between the point ?x1,?y1 and ?x2, ?y2.
+#### Trigger Instance: SETDESTINATIONLINE
+
+*Property:* active = **false**
+
+*Documentation:*
+<p>Specify a goal as a line: the planner will plan the shortest path from the current position to a line between the point ?x1,?y1 and ?x2, ?y2.
+</p>
 

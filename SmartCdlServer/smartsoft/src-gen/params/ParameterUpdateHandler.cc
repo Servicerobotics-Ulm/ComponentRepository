@@ -102,8 +102,8 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK); // TODO: this should be decided according to validation checks defined in the model (not yet implemented)
 		
-		int temp_id = 0.0;
-		if(request.getDouble("1", temp_id) == 0) {
+		int temp_id = 0;
+		if(request.getInteger("1", temp_id) == 0) {
 			commitState.CommNavigationObjects.CdlParameter.ID.id = temp_id;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
@@ -156,8 +156,8 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK); // TODO: this should be decided according to validation checks defined in the model (not yet implemented)
 		
-		int temp_safetyClearance = 0.0;
-		if(request.getDouble("1", temp_safetyClearance) == 0) {
+		int temp_safetyClearance = 0;
+		if(request.getInteger("1", temp_safetyClearance) == 0) {
 			commitState.CommNavigationObjects.CdlParameter.SAFETYCL.safetyClearance = temp_safetyClearance;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
@@ -168,8 +168,8 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK);
 		
-		int temp_goalId = 0.0;
-		if(request.getDouble("1", temp_goalId) != 0) {
+		int temp_goalId = 0;
+		if(request.getInteger("1", temp_goalId) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
 		
@@ -183,8 +183,8 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK);
 		
-		int temp_goalId = 0.0;
-		if(request.getDouble("1", temp_goalId) != 0) {
+		int temp_goalId = 0;
+		if(request.getInteger("1", temp_goalId) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
 		
@@ -490,7 +490,7 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 			globalState.CommNavigationObjects.CdlParameter.GOALREGION.goalY = commitState.CommNavigationObjects.CdlParameter.GOALREGION.goalY;
 		}
 		// parameter CommNavigationObjects.CdlParameter.ID
-		if(parameter.getDouble("CommNavigationObjects.CdlParameter.ID", "id", commitState.CommNavigationObjects.CdlParameter.ID.id))
+		if(parameter.getInteger("CommNavigationObjects.CdlParameter.ID", "id", commitState.CommNavigationObjects.CdlParameter.ID.id))
 		{
 			globalState.CommNavigationObjects.CdlParameter.ID.id = commitState.CommNavigationObjects.CdlParameter.ID.id;
 		}
@@ -518,7 +518,7 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 			globalState.CommNavigationObjects.CdlParameter.ROTVEL.wmin = commitState.CommNavigationObjects.CdlParameter.ROTVEL.wmin;
 		}
 		// parameter CommNavigationObjects.CdlParameter.SAFETYCL
-		if(parameter.getDouble("CommNavigationObjects.CdlParameter.SAFETYCL", "safetyClearance", commitState.CommNavigationObjects.CdlParameter.SAFETYCL.safetyClearance))
+		if(parameter.getInteger("CommNavigationObjects.CdlParameter.SAFETYCL", "safetyClearance", commitState.CommNavigationObjects.CdlParameter.SAFETYCL.safetyClearance))
 		{
 			globalState.CommNavigationObjects.CdlParameter.SAFETYCL.safetyClearance = commitState.CommNavigationObjects.CdlParameter.SAFETYCL.safetyClearance;
 		}

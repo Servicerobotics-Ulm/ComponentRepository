@@ -173,11 +173,11 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		// load internal parameters (if any)
 		//
 		// parameter Bumper
-		if(parameter.getDouble("Bumper", "bumperTimeOutMSec", commitState.Bumper.bumperTimeOutMSec))
+		if(parameter.getInteger("Bumper", "bumperTimeOutMSec", commitState.Bumper.bumperTimeOutMSec))
 		{
 			globalState.Bumper.bumperTimeOutMSec = commitState.Bumper.bumperTimeOutMSec;
 		}
-		if(parameter.getDouble("Bumper", "bumperTimeOutSec", commitState.Bumper.bumperTimeOutSec))
+		if(parameter.getInteger("Bumper", "bumperTimeOutSec", commitState.Bumper.bumperTimeOutSec))
 		{
 			globalState.Bumper.bumperTimeOutSec = commitState.Bumper.bumperTimeOutSec;
 		}
@@ -207,11 +207,11 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.LaserSafetyField.generateLaserSafetyFieldEvents = commitState.LaserSafetyField.generateLaserSafetyFieldEvents;
 		}
-		if(parameter.getDouble("LaserSafetyField", "laserSafetyfFieldTimeOutMSec", commitState.LaserSafetyField.laserSafetyfFieldTimeOutMSec))
+		if(parameter.getInteger("LaserSafetyField", "laserSafetyfFieldTimeOutMSec", commitState.LaserSafetyField.laserSafetyfFieldTimeOutMSec))
 		{
 			globalState.LaserSafetyField.laserSafetyfFieldTimeOutMSec = commitState.LaserSafetyField.laserSafetyfFieldTimeOutMSec;
 		}
-		if(parameter.getDouble("LaserSafetyField", "laserSafetyfFieldTimeOutSec", commitState.LaserSafetyField.laserSafetyfFieldTimeOutSec))
+		if(parameter.getInteger("LaserSafetyField", "laserSafetyfFieldTimeOutSec", commitState.LaserSafetyField.laserSafetyfFieldTimeOutSec))
 		{
 			globalState.LaserSafetyField.laserSafetyfFieldTimeOutSec = commitState.LaserSafetyField.laserSafetyfFieldTimeOutSec;
 		}
