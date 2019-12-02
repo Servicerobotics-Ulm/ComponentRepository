@@ -105,15 +105,15 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.Base_manipulator.on_manipulator = commitState.Base_manipulator.on_manipulator;
 		}
-		if(parameter.getDouble("Base_manipulator", "x", commitState.Base_manipulator.x))
+		if(parameter.getInteger("Base_manipulator", "x", commitState.Base_manipulator.x))
 		{
 			globalState.Base_manipulator.x = commitState.Base_manipulator.x;
 		}
-		if(parameter.getDouble("Base_manipulator", "y", commitState.Base_manipulator.y))
+		if(parameter.getInteger("Base_manipulator", "y", commitState.Base_manipulator.y))
 		{
 			globalState.Base_manipulator.y = commitState.Base_manipulator.y;
 		}
-		if(parameter.getDouble("Base_manipulator", "z", commitState.Base_manipulator.z))
+		if(parameter.getInteger("Base_manipulator", "z", commitState.Base_manipulator.z))
 		{
 			globalState.Base_manipulator.z = commitState.Base_manipulator.z;
 		}
@@ -150,15 +150,15 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.Scanner.verbose = commitState.Scanner.verbose;
 		}
-		if(parameter.getDouble("Scanner", "x", commitState.Scanner.x))
+		if(parameter.getInteger("Scanner", "x", commitState.Scanner.x))
 		{
 			globalState.Scanner.x = commitState.Scanner.x;
 		}
-		if(parameter.getDouble("Scanner", "y", commitState.Scanner.y))
+		if(parameter.getInteger("Scanner", "y", commitState.Scanner.y))
 		{
 			globalState.Scanner.y = commitState.Scanner.y;
 		}
-		if(parameter.getDouble("Scanner", "z", commitState.Scanner.z))
+		if(parameter.getInteger("Scanner", "z", commitState.Scanner.z))
 		{
 			globalState.Scanner.z = commitState.Scanner.z;
 		}

@@ -1,8 +1,8 @@
 # target configurations for OpcUaBackendComponentGeneratorExtension
 IF(SeRoNetSDK_FOUND)
 #TARGET_LINK_LIBRARIES(${PROJECT_NAME} SeRoNetSDK::SeRoNetSDK)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} CommLocalizationObjectsOpcUa)
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} CommBasicObjectsOpcUa)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} CommLocalizationObjectsOpcUa)
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} CommRobotinoObjectsOpcUa)
 ENDIF(SeRoNetSDK_FOUND)
 

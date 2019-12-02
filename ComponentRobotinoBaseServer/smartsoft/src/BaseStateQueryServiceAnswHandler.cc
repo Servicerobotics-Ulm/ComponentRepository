@@ -47,7 +47,7 @@
 #include <iostream>
 
 #include "ComponentRobotinoBaseServer.hh"
-BaseStateQueryServiceAnswHandler::BaseStateQueryServiceAnswHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState, SmartACE::QueryId>* server)
+BaseStateQueryServiceAnswHandler::BaseStateQueryServiceAnswHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>* server)
 :	BaseStateQueryServiceAnswHandlerCore(server)
 {
 	
@@ -59,7 +59,7 @@ BaseStateQueryServiceAnswHandler::~BaseStateQueryServiceAnswHandler()
 }
 
 
-void BaseStateQueryServiceAnswHandler::handleQuery(const SmartACE::QueryId &id, const CommBasicObjects::CommVoid& request) 
+void BaseStateQueryServiceAnswHandler::handleQuery(const Smart::QueryIdPtr &id, const CommBasicObjects::CommVoid& request)
 {
 	CommBasicObjects::CommBaseState answer;
 	

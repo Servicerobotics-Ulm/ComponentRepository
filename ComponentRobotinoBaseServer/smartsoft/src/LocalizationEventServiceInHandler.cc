@@ -52,7 +52,7 @@
 #include <iostream>
 #include "ComponentRobotinoBaseServer.hh"
 
-LocalizationEventServiceInHandler::LocalizationEventServiceInHandler(Smart::InputSubject<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult,SmartACE::EventId>> *subject, const int &prescaleFactor)
+LocalizationEventServiceInHandler::LocalizationEventServiceInHandler(Smart::InputSubject<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult>> *subject, const int &prescaleFactor)
 :	LocalizationEventServiceInHandlerCore(subject, prescaleFactor)
 {
 	std::cout << "constructor LocalizationEventServiceInHandler\n";
@@ -62,7 +62,7 @@ LocalizationEventServiceInHandler::~LocalizationEventServiceInHandler()
 	std::cout << "destructor LocalizationEventServiceInHandler\n";
 }
 
-void LocalizationEventServiceInHandler::on_LocalizationEventServiceIn(const Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult,SmartACE::EventId> &input)
+void LocalizationEventServiceInHandler::on_LocalizationEventServiceIn(const Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult> &input)
 {
 	std::cout << "LocalizationEventHandler event handler: "<<input.event <<" event received.";
 

@@ -92,7 +92,7 @@ int SignalStateTask::on_entry()
 	}
 	std::cout << "connected.\n";
 
-	int id = 0;
+	Smart::EventIdPtr id;
 	CommLocalizationObjects::CommLocalizationEventParameter p;
 	p.set(CommLocalizationObjects::LocalizationEventType::LOCALIZATION_UNKNOWN);
 	status = COMP->localizationEventServiceIn->activate(Smart::continuous, p, id);

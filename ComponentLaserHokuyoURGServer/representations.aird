@@ -14,6 +14,7 @@
     <semanticResources>platform:/resource/CommManipulatorObjects/model/CommManipulatorObjects.services</semanticResources>
     <semanticResources>platform:/resource/CommManipulatorObjects/model/CommManipulatorObjects.types</semanticResources>
     <semanticResources>platform:/resource/CommManipulatorObjects/model/CommManipulatorObjects.modes</semanticResources>
+    <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.parameters</semanticResources>
     <ownedViews xmi:type="viewpoint:DView" uid="_SVOLcGAhEemx5L5WkXlWkw">
       <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']"/>
       <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_SWxDkGAhEemx5L5WkXlWkw" name="ComponentLaserHokuyoURGServer" repPath="#_SVsskGAhEemx5L5WkXlWkw">
@@ -213,7 +214,7 @@
         </edges>
       </data>
     </ownedAnnotationEntries>
-    <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_SWQGMGAhEemx5L5WkXlWkw" name="ComponentLaserHokuyoURGServer" tooltipText="ComponentDefinition">
+    <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_SWQGMGAhEemx5L5WkXlWkw" name="ComponentLaserHokuyoURGServer" tooltipText="ComponentDefinition: ComponentLaserHokuyoURGServer&#xA;">
       <target xmi:type="ComponentDefinition:ComponentDefinition" href="model/ComponentLaserHokuyoURGServer.component#//@component"/>
       <semanticElements xmi:type="ComponentDefinition:ComponentDefinition" href="model/ComponentLaserHokuyoURGServer.component#//@component"/>
       <ownedBorderedNodes xmi:type="diagram:DNode" uid="_m8r-sGAhEemx5L5WkXlWkw" name="laserQueryServer" tooltipText="AnswerPort" outgoingEdges="_m9AHwGAhEemx5L5WkXlWkw" width="3" height="3" resizeKind="NSEW">
@@ -235,7 +236,7 @@
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='OutputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_ZLbY0GAiEemx5L5WkXlWkw" name="manipulatorTimedClient" tooltipText="InputPort" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_ZLbY0GAiEemx5L5WkXlWkw" name="manipulatorTimedClient" tooltipText="InputPort: manipulatorTimedClient&#xA;" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:InputPort" href="model/ComponentLaserHokuyoURGServer.component#//@component/@elements.5"/>
         <semanticElements xmi:type="ComponentDefinition:InputPort" href="model/ComponentLaserHokuyoURGServer.component#//@component/@elements.5"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
@@ -246,7 +247,7 @@
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_fhrJMGAiEemx5L5WkXlWkw" name="baseTimedClient" tooltipText="InputPort" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_fhrJMGAiEemx5L5WkXlWkw" name="baseTimedClient" tooltipText="InputPort: baseTimedClient&#xA;" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:InputPort" href="model/ComponentLaserHokuyoURGServer.component#//@component/@elements.6"/>
         <semanticElements xmi:type="ComponentDefinition:InputPort" href="model/ComponentLaserHokuyoURGServer.component#//@component/@elements.6"/>
         <ownedStyle xmi:type="diagram:CustomStyle" uid="_fhrwQGAiEemx5L5WkXlWkw" showIcon="false" id="input">

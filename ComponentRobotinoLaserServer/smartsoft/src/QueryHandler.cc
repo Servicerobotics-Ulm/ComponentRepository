@@ -44,7 +44,7 @@
 #include "QueryHandler.hh"
 #include "ComponentRobotinoLaserServer.hh"
 
-QueryHandler::QueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan, SmartACE::QueryId>* server)
+QueryHandler::QueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan>* server)
 :	QueryHandlerCore(server)
 {
 	
@@ -56,7 +56,7 @@ QueryHandler::~QueryHandler()
 }
 
 
-void QueryHandler::handleQuery(const SmartACE::QueryId &id, const CommBasicObjects::CommVoid& request) 
+void QueryHandler::handleQuery(const Smart::QueryIdPtr &id, const CommBasicObjects::CommVoid& request)
 {
 	CommBasicObjects::CommMobileLaserScan answer;
 

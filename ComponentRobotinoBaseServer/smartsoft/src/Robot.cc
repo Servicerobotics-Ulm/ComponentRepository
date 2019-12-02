@@ -807,7 +807,7 @@ bool Robot::getBumperState(){
 
 
 //void Robot::timerExpired(const ACE_Time_Value & absolute_time,const void * arg){
-void Robot::timerExpired(const std::chrono::system_clock::time_point &abs_time, const void * arg){
+void Robot::timerExpired(const Smart::TimePoint &abs_time, const void * arg){
 
 	std::cout<<"[Robot:laserSafetyFieldTimerExpired] LaserSafetyField blocked timeout!"<<std::endl;
 

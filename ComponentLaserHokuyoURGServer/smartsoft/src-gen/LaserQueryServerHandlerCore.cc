@@ -18,13 +18,9 @@
 
 // include observers
 
-LaserQueryServerHandlerCore::LaserQueryServerHandlerCore(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan, SmartACE::QueryId>* server)
-:	Smart::IQueryServerHandler<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan, SmartACE::QueryId>(server)
-{
-	
-}
-
-LaserQueryServerHandlerCore::~LaserQueryServerHandlerCore()
+LaserQueryServerHandlerCore::LaserQueryServerHandlerCore(IQueryServer* server)
+:	Smart::IInputHandler<std::pair<Smart::QueryIdPtr,CommBasicObjects::CommVoid>>(server)
+,	server(server)
 {
 	
 }

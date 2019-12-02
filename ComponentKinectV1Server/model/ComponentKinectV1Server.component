@@ -23,6 +23,6 @@ InputPort basePushTimedClient implements CommBasicObjects.BaseStateService {
 	}
 	RequestHandler ColorImageQueryHandler triggeredFrom colorImageQueryServer {
 	}
-	CoordinationSlavePort CoordinationPort implements DomainVision.ImageProvisionCoordinationService { PublicOperationMode DomainVision.ImageProvisionModes.PushImage { activates ( PushImage ) } PublicOperationMode DomainVision.ImageProvisionModes.QueryImage { activates ( QueryImage ) } PrivateOperationMode PushImage PrivateOperationMode QueryImage }
+	CoordinationSlavePort CoordinationPort implements DomainVision.VisionCoordinationService { PublicOperationMode DomainVision.ImageProvisionModes.PushImage { activates ( PushImage ) } PublicOperationMode DomainVision.ImageProvisionModes.QueryImage { activates ( QueryImage ) } PrivateOperationMode PushImage PrivateOperationMode QueryImage }
 	ComponentParameters ComponentKinectV1ServerParams slave CoordinationPort
 }

@@ -17,7 +17,7 @@
 #include "RobotinoIOValuesQueryServiceAnswHandler.hh"
 #include "ComponentRobotinoBaseServer.hh"
 
-RobotinoIOValuesQueryServiceAnswHandler::RobotinoIOValuesQueryServiceAnswHandler(Smart::IQueryServerPattern<CommRobotinoObjects::CommRobotinoIOValues, CommRobotinoObjects::CommRobotinoIOValues, SmartACE::QueryId>* server)
+RobotinoIOValuesQueryServiceAnswHandler::RobotinoIOValuesQueryServiceAnswHandler(Smart::IQueryServerPattern<CommRobotinoObjects::CommRobotinoIOValues, CommRobotinoObjects::CommRobotinoIOValues>* server)
 :	RobotinoIOValuesQueryServiceAnswHandlerCore(server)
 {
 	
@@ -29,7 +29,7 @@ RobotinoIOValuesQueryServiceAnswHandler::~RobotinoIOValuesQueryServiceAnswHandle
 }
 
 
-void RobotinoIOValuesQueryServiceAnswHandler::handleQuery(const SmartACE::QueryId &id, const CommRobotinoObjects::CommRobotinoIOValues& request) 
+void RobotinoIOValuesQueryServiceAnswHandler::handleQuery(const Smart::QueryIdPtr &id, const CommRobotinoObjects::CommRobotinoIOValues& request)
 {
 	CommRobotinoObjects::CommRobotinoIOValues answer;
 	

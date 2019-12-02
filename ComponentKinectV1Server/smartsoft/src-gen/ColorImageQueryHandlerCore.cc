@@ -18,13 +18,9 @@
 
 // include observers
 
-ColorImageQueryHandlerCore::ColorImageQueryHandlerCore(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage, SmartACE::QueryId>* server)
-:	Smart::IQueryServerHandler<CommBasicObjects::CommVoid, DomainVision::CommVideoImage, SmartACE::QueryId>(server)
-{
-	
-}
-
-ColorImageQueryHandlerCore::~ColorImageQueryHandlerCore()
+ColorImageQueryHandlerCore::ColorImageQueryHandlerCore(IQueryServer* server)
+:	Smart::IInputHandler<std::pair<Smart::QueryIdPtr,CommBasicObjects::CommVoid>>(server)
+,	server(server)
 {
 	
 }
