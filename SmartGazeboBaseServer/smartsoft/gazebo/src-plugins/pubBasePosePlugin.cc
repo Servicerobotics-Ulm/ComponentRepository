@@ -33,8 +33,6 @@
 #include <gazebo/sensors/sensors.hh>
 #include <gazebo/msgs/msgs.hh>
 
-#include <ignition/math4/ignition/math/Pose3.hh>
-
 namespace gazebo
 {
   class PubBasePosePlugin : public ModelPlugin
@@ -58,11 +56,10 @@ namespace gazebo
 
 	void Update()
 	{
-	  //gazebo::math::Pose currentPose = this->model->WorldPose();
-	  ignition::math::Pose3d currentPose = this->model->WorldPose();
 	  gazebo::msgs::Pose msg;
-	  //ignition::math::Pose3d pose (ignition::math::Vector3d(currentPose.pos.x, currentPose.pos.y, currentPose.pos.z), ignition::math::Quaterniond(currentPose.rot.w, currentPose.rot.x, currentPose.rot.y, currentPose.rot.z));
+	  ignition::math::Pose3d currentPose = this->model->WorldPose();
 	  ignition::math::Pose3d pose (ignition::math::Vector3d(currentPose.Pos().X(), currentPose.Pos().Y(), currentPose.Pos().Z()), ignition::math::Quaterniond(currentPose.Rot().W(), currentPose.Rot().X(), currentPose.Rot().Y(), currentPose.Rot().Z()));
+
 	  gazebo::msgs::Set(&msg, pose);
 	  this->pub->Publish(msg);
 	}
