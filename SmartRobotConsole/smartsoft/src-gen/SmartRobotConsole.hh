@@ -29,6 +29,8 @@
 class SmartRobotConsolePortFactoryInterface;
 class SmartRobotConsoleExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for SmartRobotConsoleROSExtension
 
 // includes for PlainOpcUaSmartRobotConsoleExtension
@@ -42,8 +44,8 @@ class SmartRobotConsoleExtension;
 #include "ConsoleTask.hh"
 // include UpcallManagers
 
-// include input-handler
-// include input-handler
+// include input-handler(s)
+// include request-handler(s)
 
 // include handler
 #include "CompHandler.hh"
@@ -98,6 +100,8 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of SmartRobotConsoleROSExtension
 	
@@ -205,6 +209,8 @@ public:
 		//--- server port parameter ---
 	
 		//--- client port parameter ---
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for SmartRobotConsoleROSExtension
 		

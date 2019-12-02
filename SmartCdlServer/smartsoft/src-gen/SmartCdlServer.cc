@@ -40,7 +40,7 @@ SmartCdlServer::SmartCdlServer()
 	cdlTaskTrigger = NULL;
 	//coordinationPort = NULL;
 	goalEventServer = NULL;
-	goalEventServerEventTestHandler = NULL; 
+	goalEventServerEventTestHandler = nullptr; 
 	iRClient = NULL;
 	iRClientInputTaskTrigger = NULL;
 	iRClientUpcallManager = NULL;
@@ -61,7 +61,7 @@ SmartCdlServer::SmartCdlServer()
 	plannerClientInputTaskTrigger = NULL;
 	plannerClientUpcallManager = NULL;
 	robotBlockedEventServer = NULL;
-	robotBlockedEventServerEventTestHandler = NULL; 
+	robotBlockedEventServerEventTestHandler = nullptr; 
 	//smartCdlServerParams = NULL;
 	trackingClient = NULL;
 	trackingClientInputTaskTrigger = NULL;
@@ -138,6 +138,8 @@ SmartCdlServer::SmartCdlServer()
 	connections.cdlTask.scheduler = "DEFAULT";
 	connections.cdlTask.priority = -1;
 	connections.cdlTask.cpuAffinity = -1;
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of SmartCdlServerROSExtension
 	
@@ -386,6 +388,8 @@ void SmartCdlServer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		// initializations of SmartCdlServerROSExtension
 		
 		// initializations of PlainOpcUaSmartCdlServerExtension
@@ -421,13 +425,15 @@ void SmartCdlServer::init(int argc, char *argv[])
 		}
 
 		// create event-test handlers (if needed)
-		goalEventServerEventTestHandler = new GoalEventServerEventTestHandler();
-		robotBlockedEventServerEventTestHandler = new RobotBlockedEventServerEventTestHandler();
+		goalEventServerEventTestHandler = std::make_shared<GoalEventServerEventTestHandler>();
+		robotBlockedEventServerEventTestHandler = std::make_shared<RobotBlockedEventServerEventTestHandler>();
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
+		goalEventServerEventTestHandler = std::make_shared<GoalEventServerEventTestHandler>();
 		goalEventServer = portFactoryRegistry[connections.goalEventServer.roboticMiddleware]->createGoalEventServer(connections.goalEventServer.serviceName, goalEventServerEventTestHandler);
 		navVelSendServer = portFactoryRegistry[connections.navVelSendServer.roboticMiddleware]->createNavVelSendServer(connections.navVelSendServer.serviceName);
+		robotBlockedEventServerEventTestHandler = std::make_shared<RobotBlockedEventServerEventTestHandler>();
 		robotBlockedEventServer = portFactoryRegistry[connections.robotBlockedEventServer.roboticMiddleware]->createRobotBlockedEventServer(connections.robotBlockedEventServer.serviceName, robotBlockedEventServerEventTestHandler);
 		
 		// create client ports
@@ -667,8 +673,8 @@ void SmartCdlServer::fini()
 	delete navVelSendServer;
 	delete robotBlockedEventServer;
 	// destroy event-test handlers (if needed)
-	delete goalEventServerEventTestHandler;
-	delete robotBlockedEventServerEventTestHandler;
+	goalEventServerEventTestHandler;
+	robotBlockedEventServerEventTestHandler;
 	
 	// destroy request-handlers
 	
@@ -692,6 +698,8 @@ void SmartCdlServer::fini()
 	{
 		portFactory->second->destroy();
 	}
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of SmartCdlServerROSExtension
 	
@@ -875,6 +883,8 @@ void SmartCdlServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("CdlTask", "cpuAffinity")) {
 			parameter.getInteger("CdlTask", "cpuAffinity", connections.cdlTask.cpuAffinity);
 		}
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for SmartCdlServerROSExtension
 		

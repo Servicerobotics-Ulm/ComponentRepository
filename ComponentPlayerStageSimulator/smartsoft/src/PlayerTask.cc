@@ -171,7 +171,7 @@ int PlayerTask::on_execute()
 
 		    // set timestamp
 		    timeval _receive_time;
-		    gettimeofday(&_receive_time, 0);
+		    ::gettimeofday(&_receive_time, 0);
 		    scan.set_scan_time_stamp(CommBasicObjects::CommTimeStamp(_receive_time));
 
 		    //////////////////////////

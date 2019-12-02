@@ -79,12 +79,9 @@ void Unicap::init_getCameraAndOpenCamera() {
 	unicap_status_t status = STATUS_SUCCESS;
 
 	// Iterate over all cameras which are attached at the computer
-	std::cout << "Available Cameras:\n";
 	for (; SUCCESS(status) && (dev_count < MAX_DEVICES); dev_count++) {
 		status = unicap_enumerate_devices(NULL, &devices[dev_count], dev_count);
 		if (SUCCESS(status)) {
-			std::cout << "Device: " << devices[dev_count].device << " | Identifier: " << devices[dev_count].identifier
-					<< std::endl;
 			// Compare the current device of the camera with the device specified in the ini-File
 			if (strcmp(devices[dev_count].device, localState.getHardware().getDevice().c_str()) == 0) {
 				// Get first camera on the device
@@ -95,6 +92,8 @@ void Unicap::init_getCameraAndOpenCamera() {
 				if (strcmp(devices[dev_count].identifier, localState.getHardware().getIdentifier().c_str()) == 0) {
 					dev = dev_count;
 				}
+				std::cout << "---------------------------------------------------------------------------\n";
+				std::cout <<"Camera \n"<<std::setw(15)<< std::left<<"Identifier"<<" : "<<devices[dev_count].identifier<<"\n";
 			}
 		} else {
 			break;
@@ -150,30 +149,33 @@ void Unicap::init_getAndSetFormatOfCamera() {
 	} else if (strcmp(localState.getHardware().getCamera_type().c_str(), "USB") == 0) {
 		formatIni << localState.getHardware_properties().getFormat();
 
+
 		// Iterate over all formats given by the camera
 		for (; SUCCESS(status) && (format_count < MAX_FORMATS); format_count++) {
 			status = unicap_enumerate_formats(_handle, NULL, &formats[format_count], format_count);
 			if (SUCCESS(status)) {
 				// Compare the current format of the camera with the format specified in the ini-File
-					std::cout << "Format :" << formats[format_count].identifier <<"h:"<<localState.getHardware_properties().getHeight() <<"w:"<<localState.getHardware_properties().getWidth() <<"\n";
 				if (strcmp(formats[format_count].identifier, formatIni.str().c_str()) == 0) {
-					formats[format_count].size.height = localState.getHardware_properties().getHeight();
-					formats[format_count].size.width = localState.getHardware_properties().getWidth();
+					//formats[format_count].size.height = localState.getHardware_properties().getHeight();
+					//formats[format_count].size.width = localState.getHardware_properties().getWidth();
 					format = format_count;
-					std::cout << "Format :" << formats[format_count].identifier << "h:"<<formats[format_count].size.height<< "w:"<< formats[format_count].size.width<<"\n";
+					std::cout <<std::setw(15)<< std::left<< "Image Format"<<" : "<< formats[format_count].identifier<<"\n"
+							   <<std::setw(15)<< std::left<< "Size"<<" : "<<formats[format_count].size.width<< " x "<< formats[format_count].size.height<<"\n";
+					std::cout << "---------------------------------------------------------------------------\n";
 					break;
 				}
 			} else {
 				break;
 			}
 		}
+
 	}
 
 	// If the specified format is not available, all possible formats will be printed.
 	if (format == -1) {
 		status = STATUS_SUCCESS;
 		format_count = 0;
-		std::cout << "Specified Format: " << formatIni.str().c_str() << std::endl;
+		std::cout << "Requested Image Format : " << formatIni.str().c_str() << std::endl;
 		for (; SUCCESS(status) && (format_count < MAX_FORMATS); format_count++) {
 			status = unicap_enumerate_formats(_handle, NULL, &formats[format_count], format_count);
 			if (SUCCESS(status)) {
@@ -192,7 +194,6 @@ void Unicap::init_getAndSetFormatOfCamera() {
 		}
 		throw UnicapException("Specified format not found.");
 	}
-	std::cout<<"format.buffer_size"<<formats[format].buffer_size<<"w: "<<formats[format].size.width<<"h: "<<formats[format].size.height<<std::endl;
 
 	// Set the format
 	if (!SUCCESS(unicap_set_format(_handle, &formats[format]))) {
@@ -367,9 +368,6 @@ void Unicap::init_setImageCapturing() {
 	}
 
 	uniFormat.buffer_type = UNICAP_BUFFER_TYPE_USER;
-
-	std::cout<<"format.buffer_size"<<uniFormat.buffer_size<<"w: "<<uniFormat.size.width<<"h: "<<uniFormat.size.height<<std::endl;
-
 
 	if (!SUCCESS(unicap_set_format(_handle, &uniFormat))) {
 		throw UnicapException("Format for video capturing cannot be set.");

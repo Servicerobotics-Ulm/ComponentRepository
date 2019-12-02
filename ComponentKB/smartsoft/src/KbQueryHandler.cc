@@ -17,7 +17,7 @@
 #include "KbQueryHandler.hh"
 #include "ComponentKB.hh"
 
-KbQueryHandler::KbQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse, SmartACE::QueryId>* server)
+KbQueryHandler::KbQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse>* server)
 :	KbQueryHandlerCore(server),
 	lock(),
 	sema(0)
@@ -31,16 +31,17 @@ KbQueryHandler::~KbQueryHandler()
 }
 
 
-void KbQueryHandler::handleQuery(const SmartACE::QueryId &id, const CommBasicObjects::CommKBRequest& request) 
+void KbQueryHandler::handleQuery(const Smart::QueryIdPtr &id, const CommBasicObjects::CommKBRequest& request) 
 {
 	CommBasicObjects::CommKBResponse answer;
 	
 	ACE_Time_Value start = ACE_OS::gettimeofday();
 //	std::cout<<"Enter Handler: "<<start<<std::endl;
+	long int_id = *std::dynamic_pointer_cast<Smart::NumericCorrelationId>(id);
 	lock.acquire();
 	internal_KB_query req_item;
 	req_item.msg = request;
-	req_item.id = id;
+	req_item.id = int_id;
 	req_item.requires_answ = true;
 	req_item.cond = new SmartACE::SmartConditionMutex(lock);
 	this->request_list.push_back(req_item);
@@ -52,8 +53,8 @@ void KbQueryHandler::handleQuery(const SmartACE::QueryId &id, const CommBasicObj
 	ACE_Time_Value past_wait = ACE_OS::gettimeofday();
 //	std::cout<<"past wait: "<<past_wait-start<<std::endl;
 
-   	this->server->answer(id,this->ans_list[id].answ);
-   	this->ans_list.erase(id);
+   	this->server->answer(id, this->ans_list[int_id].answ);
+   	this->ans_list.erase(int_id);
 	lock.release();
 	ACE_Time_Value end = ACE_OS::gettimeofday();
 //	std::cout<<"Quit Handler: "<<end<<std::endl;

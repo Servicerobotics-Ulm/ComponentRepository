@@ -29,6 +29,8 @@
 class ComponentLaserLMS1xxPortFactoryInterface;
 class ComponentLaserLMS1xxExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for ComponentLaserLMS1xxROSExtension
 
 // includes for PlainOpcUaComponentLaserLMS1xxExtension
@@ -49,8 +51,8 @@ class ComponentLaserLMS1xxExtension;
 // include UpcallManagers
 #include "BaseStateServiceInUpcallManager.hh"
 
-// include input-handler
-// include input-handler
+// include input-handler(s)
+// include request-handler(s)
 #include "LaserQueryServiceAnswHandler.hh"
 
 // include handler
@@ -120,11 +122,13 @@ public:
 	Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> *laserServiceOut;
 	
 	// define answer-ports
-	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan,SmartACE::QueryId> *laserQueryServiceAnsw;
-	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan,SmartACE::QueryId> *laserQueryServiceAnswInputTaskTrigger;
+	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan> *laserQueryServiceAnsw;
+	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan> *laserQueryServiceAnswInputTaskTrigger;
 	
 	// define request-handlers
 	LaserQueryServiceAnswHandler *laserQueryServiceAnswHandler;
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of ComponentLaserLMS1xxROSExtension
 	
@@ -247,6 +251,8 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} baseStateServiceIn;
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for ComponentLaserLMS1xxROSExtension
 		

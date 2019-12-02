@@ -52,7 +52,12 @@ int ComponentVisualizationAcePortFactory::onStartup()
 	return componentImpl->startComponentInfrastructure();
 }
 
-Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage,SmartACE::QueryId> * ComponentVisualizationAcePortFactory::createRGBDImageQueryServiceReq()
+Smart::IPushClientPattern<CommTrackingObjects::CommDetectedMarkerList> * ComponentVisualizationAcePortFactory::createMarkerListDetectionServiceIn()
+{
+	return new SmartACE::PushClient<CommTrackingObjects::CommDetectedMarkerList>(componentImpl);
+}
+
+Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> * ComponentVisualizationAcePortFactory::createRGBDImageQueryServiceReq()
 {
 	return new SmartACE::QueryClient<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage>(componentImpl);
 }
@@ -97,17 +102,17 @@ Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * ComponentVisu
 	return new SmartACE::PushClient<CommBasicObjects::CommMobileLaserScan>(componentImpl);
 }
 
-Smart::IQueryClientPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap,SmartACE::QueryId> * ComponentVisualizationAcePortFactory::createLtmQueryClient()
+Smart::IQueryClientPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap> * ComponentVisualizationAcePortFactory::createLtmQueryClient()
 {
 	return new SmartACE::QueryClient<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap>(componentImpl);
 }
 
-Smart::IEventClientPattern<CommTrackingObjects::CommPersonLostEventParameter, CommTrackingObjects::CommPersonDetectionEventResult,SmartACE::EventId> * ComponentVisualizationAcePortFactory::createPersonDetectionEventClient()
+Smart::IEventClientPattern<CommTrackingObjects::CommPersonLostEventParameter, CommTrackingObjects::CommPersonDetectionEventResult> * ComponentVisualizationAcePortFactory::createPersonDetectionEventClient()
 {
 	return new SmartACE::EventClient<CommTrackingObjects::CommPersonLostEventParameter, CommTrackingObjects::CommPersonDetectionEventResult>(componentImpl);
 }
 
-Smart::IQueryClientPattern<CommTrackingObjects::CommPersonId, CommTrackingObjects::CommDetectedPerson,SmartACE::QueryId> * ComponentVisualizationAcePortFactory::createPersonDetectionQueryClient()
+Smart::IQueryClientPattern<CommTrackingObjects::CommPersonId, CommTrackingObjects::CommDetectedPerson> * ComponentVisualizationAcePortFactory::createPersonDetectionQueryClient()
 {
 	return new SmartACE::QueryClient<CommTrackingObjects::CommPersonId, CommTrackingObjects::CommDetectedPerson>(componentImpl);
 }

@@ -31,6 +31,10 @@
 #include "aceSmartSoft.hh"
 #include <DomainVision/CommVideoImage.hh>
 #include <unicap.h>
+
+#define TEXT_COLOR_RESET   "\033[0m"
+#define TEXT_COLOR_GREEN   "\033[32m"       /* Green */
+#define TEXT_COLOR_RED     "\033[31m"       /* Red   */
 #include "ParameterStateStruct.hh"
 /**
  * Define for better usage.

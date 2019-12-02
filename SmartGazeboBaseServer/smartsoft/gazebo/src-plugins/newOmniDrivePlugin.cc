@@ -37,7 +37,8 @@ namespace gazebo
 	private: void OnUpdate() {
 		//Apply movement command
 		float x,y;
-		float yaw = this->model->GetWorldPose().rot.GetAsEuler().z;
+		//float yaw = this->model->GetWorldPose().rot.GetAsEuler().z;
+		float yaw = this->model->WorldPose().Rot().Euler().Z();
 		//foward part
 		x = cos(yaw) * vx_;
 		y = sin(yaw) * vx_;

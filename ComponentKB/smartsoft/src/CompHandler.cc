@@ -72,7 +72,6 @@ extern "C" void answerquery(char* inString, long id)
 extern "C" __declspec(dllexport) void answerquery(char* inString, long id)
 #endif
 {
-
 	CommBasicObjects::CommKBResponse answer;
 	answer.setResponse(inString);
 	COMP->kbQueryHandler->answerQuery(answer, id);
@@ -106,7 +105,7 @@ extern "C" __declspec(dllexport) char* getcheckparamevent()
 
 	std::cout<<"Wait for CheckParamForEvent!"<<std::endl;
 	CommBasicObjects::CommKBEventParam param;
-	if(dynamic_cast<KbEventServerEventTestHandler*>(COMP->kbEventServerEventTestHandler)->getCheckEventParam(param) != 0){
+	if(std::dynamic_pointer_cast<KbEventServerEventTestHandler>(COMP->kbEventServerEventTestHandler)->getCheckEventParam(param) != 0){
 		std::cout<<__FUNCTION__<<":"<<__LINE__<<std::endl;
 		char_size +=100;
 		result = (char *)malloc(char_size * sizeof(char));
@@ -142,7 +141,7 @@ extern "C" __declspec(dllexport) void answercheckeventparam(char* inString, bool
 	CommBasicObjects::CommKBEventResult answer;
 	answer.setResult(inString);
 	answer.setFormatedResult(formatedAnswer);
-	dynamic_cast<KbEventServerEventTestHandler*>(COMP->kbEventServerEventTestHandler)->answerCheckEventParam(answer,fireEvent);
+	std::dynamic_pointer_cast<KbEventServerEventTestHandler>(COMP->kbEventServerEventTestHandler)->answerCheckEventParam(answer,fireEvent);
 }
 
 
@@ -157,10 +156,10 @@ extern "C" __declspec(dllexport) int registerslavedentry(char* key, char* values
 	CommBasicObjects::CommKBEventParam eventParam;
 	eventParam.setQuery(ss.str());
 //	locationsEventsParam.setFormatingClause(),
-	SmartACE::EventId eventID;
+	Smart::EventIdPtr eventID;
 	Smart::StatusCode status = COMP->kbChainedEntriesEventClient->activate(Smart::continuous, eventParam, eventID);
 	std::cout<<"Event Activate result: "<<Smart::StatusCodeConversion(status)<<" EventID: "<<eventID<<std::endl;
-	return eventID;
+	return *std::dynamic_pointer_cast<Smart::NumericCorrelationId>(eventID);
 }
 
 void CompHandler::onStartup() 

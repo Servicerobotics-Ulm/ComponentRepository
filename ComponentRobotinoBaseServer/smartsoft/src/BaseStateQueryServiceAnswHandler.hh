@@ -58,8 +58,8 @@ private:
 	  CommBasicObjects::CommBaseState base_state;
 protected:
 public:
-	BaseStateQueryServiceAnswHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState, SmartACE::QueryId>* server);
+	BaseStateQueryServiceAnswHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>* server);
 	virtual ~BaseStateQueryServiceAnswHandler();
-	virtual void handleQuery(const SmartACE::QueryId &id, const CommBasicObjects::CommVoid& request);
+	virtual void handleQuery(const Smart::QueryIdPtr &id, const CommBasicObjects::CommVoid& request);
 };
 #endif

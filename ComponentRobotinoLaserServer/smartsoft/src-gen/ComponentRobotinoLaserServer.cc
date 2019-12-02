@@ -44,7 +44,7 @@ ComponentRobotinoLaserServer::ComponentRobotinoLaserServer()
 	queryServer = NULL;
 	queryServerInputTaskTrigger = NULL;
 	safetyfieldEventServer = NULL;
-	safetyfieldEventServerEventTestHandler = NULL; 
+	safetyfieldEventServerEventTestHandler = nullptr; 
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
@@ -74,6 +74,8 @@ ComponentRobotinoLaserServer::ComponentRobotinoLaserServer()
 	connections.readLaserTask.scheduler = "DEFAULT";
 	connections.readLaserTask.priority = -1;
 	connections.readLaserTask.cpuAffinity = -1;
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of ComponentRobotinoLaserServerROSExtension
 	
@@ -186,6 +188,8 @@ void ComponentRobotinoLaserServer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		// initializations of ComponentRobotinoLaserServerROSExtension
 		
 		// initializations of PlainOpcUaComponentRobotinoLaserServerExtension
@@ -221,13 +225,14 @@ void ComponentRobotinoLaserServer::init(int argc, char *argv[])
 		}
 
 		// create event-test handlers (if needed)
-		safetyfieldEventServerEventTestHandler = new SafetyfieldEventServerEventTestHandler();
+		safetyfieldEventServerEventTestHandler = std::make_shared<SafetyfieldEventServerEventTestHandler>();
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
 		pushNewestServer = portFactoryRegistry[connections.pushNewestServer.roboticMiddleware]->createPushNewestServer(connections.pushNewestServer.serviceName);
 		queryServer = portFactoryRegistry[connections.queryServer.roboticMiddleware]->createQueryServer(connections.queryServer.serviceName);
-		queryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan,SmartACE::QueryId>(queryServer);
+		queryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan>(queryServer);
+		safetyfieldEventServerEventTestHandler = std::make_shared<SafetyfieldEventServerEventTestHandler>();
 		safetyfieldEventServer = portFactoryRegistry[connections.safetyfieldEventServer.roboticMiddleware]->createSafetyfieldEventServer(connections.safetyfieldEventServer.serviceName, safetyfieldEventServerEventTestHandler);
 		
 		// create client ports
@@ -369,7 +374,7 @@ void ComponentRobotinoLaserServer::fini()
 	delete queryServerInputTaskTrigger;
 	delete safetyfieldEventServer;
 	// destroy event-test handlers (if needed)
-	delete safetyfieldEventServerEventTestHandler;
+	safetyfieldEventServerEventTestHandler;
 	
 	// destroy request-handlers
 	delete queryHandler;
@@ -394,6 +399,8 @@ void ComponentRobotinoLaserServer::fini()
 	{
 		portFactory->second->destroy();
 	}
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of ComponentRobotinoLaserServerROSExtension
 	
@@ -516,6 +523,8 @@ void ComponentRobotinoLaserServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("ReadLaserTask", "cpuAffinity")) {
 			parameter.getInteger("ReadLaserTask", "cpuAffinity", connections.readLaserTask.cpuAffinity);
 		}
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for ComponentRobotinoLaserServerROSExtension
 		

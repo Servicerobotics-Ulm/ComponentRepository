@@ -35,6 +35,8 @@ class ComponentRealSenseV2ServerExtension;
 // include plain OPC UA device clients
 // include plain OPC UA status servers
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 
 // include communication objects
 #include <CommBasicObjects/CommBaseState.hh>
@@ -59,8 +61,8 @@ class ComponentRealSenseV2ServerExtension;
 #include "BasePushTimedClientUpcallManager.hh"
 #include "PtuPosePushNewestClientUpcallManager.hh"
 
-// include input-handler
-// include input-handler
+// include input-handler(s)
+// include request-handler(s)
 #include "ColorImageQueryHandler.hh"
 #include "ImageQueryHandler.hh"
 
@@ -132,7 +134,7 @@ public:
 	PtuPosePushNewestClientUpcallManager *ptuPosePushNewestClientUpcallManager;
 	
 	// define request-ports
-	Smart::IQueryClientPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorState,SmartACE::QueryId> *urPoseQueryClient;
+	Smart::IQueryClientPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorState> *urPoseQueryClient;
 	
 	// define input-handler
 	
@@ -142,10 +144,10 @@ public:
 	Smart::IPushServerPattern<DomainVision::CommRGBDImage> *imagePushNewestServer;
 	
 	// define answer-ports
-	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage,SmartACE::QueryId> *colorImageQueryServer;
-	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommVideoImage,SmartACE::QueryId> *colorImageQueryServerInputTaskTrigger;
-	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage,SmartACE::QueryId> *imageQueryServer;
-	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage,SmartACE::QueryId> *imageQueryServerInputTaskTrigger;
+	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> *colorImageQueryServer;
+	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> *colorImageQueryServerInputTaskTrigger;
+	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> *imageQueryServer;
+	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> *imageQueryServerInputTaskTrigger;
 	
 	// define request-handlers
 	ColorImageQueryHandler *colorImageQueryHandler;
@@ -154,6 +156,8 @@ public:
 	// definitions of ComponentRealSenseV2ServerROSExtension
 	
 	// definitions of PlainOpcUaComponentRealSenseV2ServerExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	
 	// define default slave ports
@@ -312,6 +316,8 @@ public:
 		// -- parameters for ComponentRealSenseV2ServerROSExtension
 		
 		// -- parameters for PlainOpcUaComponentRealSenseV2ServerExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 	} connections;
 };

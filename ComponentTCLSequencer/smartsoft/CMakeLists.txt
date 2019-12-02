@@ -62,6 +62,11 @@ FILE(GLOB_RECURSE SRC_GEN_PARAMS ${CMAKE_CURRENT_LIST_DIR}/src-gen/params/*.cc)
 # create the executable using collected source-files
 ADD_LIBRARY(${PROJECT_NAME} SHARED ${SRC} ${SRC_GEN} ${SRC_GEN_PARAMS} ${FURTHER_SRCS}) # add ${USER_SRC} (if needed)
 
+# workaround for the special case of Sequencer component
+IF(SeRoNetSDK_FOUND)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} SeRoNetSDK::SeRoNetSDK)
+ENDIF(SeRoNetSDK_FOUND)
+
 # link your external libraries here (if there are any)
 #TARGET_LINK_LIBRARIES(${PROJECT_NAME} <your-libs>)
 

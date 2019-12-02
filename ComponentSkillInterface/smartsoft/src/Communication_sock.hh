@@ -62,7 +62,7 @@ private:
 	bool verbose;
 
 	int handle_signal (int signum, siginfo_t *, ucontext_t *);
-	virtual void timerExpired(const std::chrono::system_clock::time_point &abs_time, const void * arg) override;
+	virtual void timerExpired(const Smart::TimePoint &abs_time, const void * arg) override;
 	int recv(std::string & msg);
 
 

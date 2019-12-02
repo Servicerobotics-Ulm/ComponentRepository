@@ -52,7 +52,7 @@ int ComponentSkillInterfaceAcePortFactory::onStartup()
 	return componentImpl->startComponentInfrastructure();
 }
 
-Smart::IQueryClientPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse,SmartACE::QueryId> * ComponentSkillInterfaceAcePortFactory::createKBQueryClient()
+Smart::IQueryClientPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse> * ComponentSkillInterfaceAcePortFactory::createKBQueryClient()
 {
 	return new SmartACE::QueryClient<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse>(componentImpl);
 }

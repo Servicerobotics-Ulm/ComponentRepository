@@ -16,14 +16,14 @@
 #include "LocalizationEventServiceInUpcallManager.hh"
 
 LocalizationEventServiceInUpcallManager::LocalizationEventServiceInUpcallManager(
-	Smart::InputSubject<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult,SmartACE::EventId>> *subject,
+	Smart::InputSubject<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult>> *subject,
 	const int &prescaleFactor)
-	:	Smart::IInputHandler<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult,SmartACE::EventId>>(subject, prescaleFactor)
+	:	Smart::IInputHandler<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult>>(subject, prescaleFactor)
 {  }
 LocalizationEventServiceInUpcallManager::~LocalizationEventServiceInUpcallManager()
 {  }
 
-void LocalizationEventServiceInUpcallManager::notify_upcalls(const Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult,SmartACE::EventId> &input)
+void LocalizationEventServiceInUpcallManager::notify_upcalls(const Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult> &input)
 {
 	for(auto it=upcalls.begin(); it!=upcalls.end(); it++) {
 		(*it)->on_LocalizationEventServiceIn(input);

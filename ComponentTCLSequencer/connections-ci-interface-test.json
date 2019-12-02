@@ -1,0 +1,30 @@
+{
+	"modules-insts" : [
+	{
+		"coordination-module-inst" : {
+		"type" : "KBModule",
+		"inst-name" : "kbModInst",
+		"coordination-interfaces-instances" : [
+		{ "type" : "KBCoordinationService",
+		"inst-name" : "kb",
+		"component-inst" : "ComponentKB_11",
+		"services" : [{ "coordservice" : "kbQuery", "compservice" : "kbQuery"},{ "coordservice" : "kbEvent", "compservice" : "kbEventServer"}]
+		} 
+		]
+		}
+	},
+	{
+		"coordination-module-inst" : {
+		"type" : "CoordinationTestModule",
+		"inst-name" : "testInst",
+		"coordination-interfaces-instances" : [
+		{ "type" : "TestCoordinationService",
+		"inst-name" : "test",
+		"component-inst" : "ComponentSkillInterfaceSlaveTest",
+		"services" : [{ "coordservice" : "testEvent", "compservice" : "TestEventServer"},{ "coordservice" : "testQuery", "compservice" : "TestQueryServer"},{ "coordservice" : "testSend", "compservice" : "TestSendServer"}]
+		} 
+		]
+		}
+	}
+	]
+}

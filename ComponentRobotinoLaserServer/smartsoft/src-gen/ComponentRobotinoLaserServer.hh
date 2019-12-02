@@ -29,6 +29,8 @@
 class ComponentRobotinoLaserServerPortFactoryInterface;
 class ComponentRobotinoLaserServerExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for ComponentRobotinoLaserServerROSExtension
 
 // includes for PlainOpcUaComponentRobotinoLaserServerExtension
@@ -55,8 +57,8 @@ class ComponentRobotinoLaserServerExtension;
 // include UpcallManagers
 #include "BaseTimedClientUpcallManager.hh"
 
-// include input-handler
-// include input-handler
+// include input-handler(s)
+// include request-handler(s)
 #include "QueryHandler.hh"
 
 // include handler
@@ -124,15 +126,17 @@ public:
 	
 	// define output-ports
 	Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> *pushNewestServer;
-	Smart::IEventServerPattern<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState,SmartACE::EventId> *safetyfieldEventServer;
-	Smart::IEventTestHandler<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState> *safetyfieldEventServerEventTestHandler; 
+	Smart::IEventServerPattern<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState> *safetyfieldEventServer;
+	std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState>> safetyfieldEventServerEventTestHandler;
 	
 	// define answer-ports
-	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan,SmartACE::QueryId> *queryServer;
-	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan,SmartACE::QueryId> *queryServerInputTaskTrigger;
+	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan> *queryServer;
+	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan> *queryServerInputTaskTrigger;
 	
 	// define request-handlers
 	QueryHandler *queryHandler;
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of ComponentRobotinoLaserServerROSExtension
 	
@@ -259,6 +263,8 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} baseTimedClient;
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for ComponentRobotinoLaserServerROSExtension
 		

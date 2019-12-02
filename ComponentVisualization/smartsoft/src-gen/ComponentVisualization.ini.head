@@ -166,6 +166,21 @@ maxActFreqHz 0.0
 # priority 0
 # cpuAffinity 0
 
+[MarkerListTask]
+minActFreqHz 0.0
+maxActFreqHz 0.0
+# other trigger-types are:
+#triggerType PeriodicTimer
+#periodicActFreqHz 0.0
+# or alternatively:
+#triggerType DataTriggered
+#inPortRef <InPortName>
+#prescale 1
+# optional scheduling parameters
+# scheduler FIFO
+# priority 0
+# cpuAffinity 0
+
 [PersonDetectionTask]
 minActFreqHz 0.0
 maxActFreqHz 0.0
@@ -219,6 +234,14 @@ maxActFreqHz 0.0
 
 ##########################
 # client port parameter
+
+[MarkerListDetectionServiceIn]
+initialConnect false
+serverName unknown
+serviceName unknown
+wiringName MarkerListDetectionServiceIn
+interval 1
+roboticMiddleware ACE_SmartSoft
 
 [RGBDImageQueryServiceReq]
 initialConnect false
@@ -339,6 +362,9 @@ serviceName unknown
 wiringName ultrasonicPushNewestClient
 interval 1
 roboticMiddleware ACE_SmartSoft
+
+##########################
+## parameters of OpcUaBackendComponentGeneratorExtension
 
 ##########################
 ## parameters of ComponentVisualizationROSExtension

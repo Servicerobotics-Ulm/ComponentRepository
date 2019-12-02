@@ -83,6 +83,8 @@ ComponentUnicapImageServer::ComponentUnicapImageServer()
 	
 	// initialize members of PlainOpcUaComponentUnicapImageServerExtension
 	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 }
 
 void ComponentUnicapImageServer::addPortFactory(const std::string &name, ComponentUnicapImageServerPortFactoryInterface *portFactory)
@@ -214,6 +216,8 @@ void ComponentUnicapImageServer::init(int argc, char *argv[])
 		
 		// initializations of PlainOpcUaComponentUnicapImageServerExtension
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		
 		// initialize all registered port-factories
 		for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
@@ -250,7 +254,7 @@ void ComponentUnicapImageServer::init(int argc, char *argv[])
 		// TODO: set minCycleTime from Ini-file
 		imagePushNewestServer = portFactoryRegistry[connections.imagePushNewestServer.roboticMiddleware]->createImagePushNewestServer(connections.imagePushNewestServer.serviceName);
 		imageQueryServer = portFactoryRegistry[connections.imageQueryServer.roboticMiddleware]->createImageQueryServer(connections.imageQueryServer.serviceName);
-		imageQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommVideoImage,SmartACE::QueryId>(imageQueryServer);
+		imageQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommVideoImage>(imageQueryServer);
 		
 		// create client ports
 		basePushTimedClient = portFactoryRegistry[connections.basePushTimedClient.roboticMiddleware]->createBasePushTimedClient();
@@ -431,6 +435,8 @@ void ComponentUnicapImageServer::fini()
 	
 	// destruction of PlainOpcUaComponentUnicapImageServerExtension
 	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 }
 
 void ComponentUnicapImageServer::loadParameter(int argc, char *argv[])
@@ -556,6 +562,8 @@ void ComponentUnicapImageServer::loadParameter(int argc, char *argv[])
 		// load parameters for ComponentUnicapImageServerROSExtension
 		
 		// load parameters for PlainOpcUaComponentUnicapImageServerExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		
 		// load parameters for all registered component-extensions

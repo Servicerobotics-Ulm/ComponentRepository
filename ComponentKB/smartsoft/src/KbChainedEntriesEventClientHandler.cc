@@ -18,7 +18,7 @@
 #include "ComponentKB.hh"
 #include <iostream>
 
-KbChainedEntriesEventClientHandler::KbChainedEntriesEventClientHandler(Smart::InputSubject<Smart::EventInputType<CommBasicObjects::CommKBEventResult,SmartACE::EventId>> *subject, const int &prescaleFactor)
+KbChainedEntriesEventClientHandler::KbChainedEntriesEventClientHandler(Smart::InputSubject<Smart::EventInputType<CommBasicObjects::CommKBEventResult>> *subject, const int &prescaleFactor)
 :	KbChainedEntriesEventClientHandlerCore(subject, prescaleFactor)
 {
 	std::cout << "constructor KbChainedEntriesEventClientHandler\n";
@@ -28,7 +28,7 @@ KbChainedEntriesEventClientHandler::~KbChainedEntriesEventClientHandler()
 	std::cout << "destructor KbChainedEntriesEventClientHandler\n";
 }
 
-void KbChainedEntriesEventClientHandler::on_kbChainedEntriesEventClient(const Smart::EventInputType<CommBasicObjects::CommKBEventResult,SmartACE::EventId> &input)
+void KbChainedEntriesEventClientHandler::on_kbChainedEntriesEventClient(const Smart::EventInputType<CommBasicObjects::CommKBEventResult> &input)
 {
 	std::cout << "ChainedEntriesEventHandler id: "<<input.event_id<< " entries: "<<input.event << std::endl;
 	std::stringstream ss;

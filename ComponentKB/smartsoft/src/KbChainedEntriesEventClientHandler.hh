@@ -22,10 +22,10 @@
 class KbChainedEntriesEventClientHandler  : public KbChainedEntriesEventClientHandlerCore
 {		
 public:
-	KbChainedEntriesEventClientHandler(Smart::InputSubject<Smart::EventInputType<CommBasicObjects::CommKBEventResult,SmartACE::EventId>> *subject, const int &prescaleFactor=1);
+	KbChainedEntriesEventClientHandler(Smart::InputSubject<Smart::EventInputType<CommBasicObjects::CommKBEventResult>> *subject, const int &prescaleFactor=1);
 	virtual ~KbChainedEntriesEventClientHandler();
 	
-	virtual void on_kbChainedEntriesEventClient(const Smart::EventInputType<CommBasicObjects::CommKBEventResult,SmartACE::EventId> &input);
+	virtual void on_kbChainedEntriesEventClient(const Smart::EventInputType<CommBasicObjects::CommKBEventResult> &input);
 };
 
 #endif

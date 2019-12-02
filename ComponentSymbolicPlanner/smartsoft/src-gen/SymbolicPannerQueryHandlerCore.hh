@@ -27,10 +27,14 @@
 #include <SymbolicPannerQueryHandlerObserverInterface.hh>
 
 class SymbolicPannerQueryHandlerCore 
-:	public Smart::IQueryServerHandler<DomainSymbolicPlanner::CommSymbolicPlannerRequest, DomainSymbolicPlanner::CommSymbolicPlannerPlan, SmartACE::QueryId>
+:	public Smart::IInputHandler<std::pair<Smart::QueryIdPtr,DomainSymbolicPlanner::CommSymbolicPlannerRequest>>
 ,	public Smart::TaskTriggerSubject
 {
 private:
+virtual void handle_input(const std::pair<Smart::QueryIdPtr,DomainSymbolicPlanner::CommSymbolicPlannerRequest> &input) override {
+	this->handleQuery(input.first, input.second);
+}
+
 
 	virtual void updateAllCommObjects();
 
@@ -49,8 +53,14 @@ public:
 protected:
 	
 public:
-	SymbolicPannerQueryHandlerCore(Smart::IQueryServerPattern<DomainSymbolicPlanner::CommSymbolicPlannerRequest, DomainSymbolicPlanner::CommSymbolicPlannerPlan, SmartACE::QueryId>* server);
-	virtual ~SymbolicPannerQueryHandlerCore();
-	//virtual void handleQuery(const SmartACE::QueryId &id, const DomainSymbolicPlanner::CommSymbolicPlannerRequest& request);
+	using IQueryServer = Smart::IQueryServerPattern<DomainSymbolicPlanner::CommSymbolicPlannerRequest, DomainSymbolicPlanner::CommSymbolicPlannerPlan>;
+	using QueryId = Smart::QueryIdPtr;
+	SymbolicPannerQueryHandlerCore(IQueryServer *server);
+	virtual ~SymbolicPannerQueryHandlerCore() = default;
+	
+protected:
+	IQueryServer *server;
+	//this user-method has to be implemented in derived classes
+	virtual void handleQuery(const QueryId &id, const DomainSymbolicPlanner::CommSymbolicPlannerRequest& request) = 0;
 };
 #endif

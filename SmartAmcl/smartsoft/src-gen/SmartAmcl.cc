@@ -39,7 +39,7 @@ SmartAmcl::SmartAmcl()
 	laserServiceInInputTaskTrigger = NULL;
 	laserServiceInUpcallManager = NULL;
 	localizationEventServiceOut = NULL;
-	localizationEventServiceOutEventTestHandler = NULL; 
+	localizationEventServiceOutEventTestHandler = nullptr; 
 	localizationUpdateServiceOut = NULL;
 	//smartAmclParams = NULL;
 	stateChangeHandler = NULL;
@@ -75,6 +75,8 @@ SmartAmcl::SmartAmcl()
 	connections.amclTask.scheduler = "DEFAULT";
 	connections.amclTask.priority = -1;
 	connections.amclTask.cpuAffinity = -1;
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of SmartAmclROSExtension
 	
@@ -202,6 +204,8 @@ void SmartAmcl::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		// initializations of SmartAmclROSExtension
 		
 		// initializations of PlainOpcUaSmartAmclExtension
@@ -237,10 +241,11 @@ void SmartAmcl::init(int argc, char *argv[])
 		}
 
 		// create event-test handlers (if needed)
-		localizationEventServiceOutEventTestHandler = new LocalizationEventServiceOutEventTestHandler();
+		localizationEventServiceOutEventTestHandler = std::make_shared<LocalizationEventServiceOutEventTestHandler>();
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
+		localizationEventServiceOutEventTestHandler = std::make_shared<LocalizationEventServiceOutEventTestHandler>();
 		localizationEventServiceOut = portFactoryRegistry[connections.localizationEventServiceOut.roboticMiddleware]->createLocalizationEventServiceOut(connections.localizationEventServiceOut.serviceName, localizationEventServiceOutEventTestHandler);
 		
 		// create client ports
@@ -396,7 +401,7 @@ void SmartAmcl::fini()
 	// destroy server ports
 	delete localizationEventServiceOut;
 	// destroy event-test handlers (if needed)
-	delete localizationEventServiceOutEventTestHandler;
+	localizationEventServiceOutEventTestHandler;
 	
 	// destroy request-handlers
 	
@@ -420,6 +425,8 @@ void SmartAmcl::fini()
 	{
 		portFactory->second->destroy();
 	}
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of SmartAmclROSExtension
 	
@@ -539,6 +546,8 @@ void SmartAmcl::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("AmclTask", "cpuAffinity")) {
 			parameter.getInteger("AmclTask", "cpuAffinity", connections.amclTask.cpuAffinity);
 		}
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for SmartAmclROSExtension
 		

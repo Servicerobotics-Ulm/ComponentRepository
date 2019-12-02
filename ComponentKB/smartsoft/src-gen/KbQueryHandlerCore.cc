@@ -18,13 +18,9 @@
 
 // include observers
 
-KbQueryHandlerCore::KbQueryHandlerCore(Smart::IQueryServerPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse, SmartACE::QueryId>* server)
-:	Smart::IQueryServerHandler<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse, SmartACE::QueryId>(server)
-{
-	
-}
-
-KbQueryHandlerCore::~KbQueryHandlerCore()
+KbQueryHandlerCore::KbQueryHandlerCore(IQueryServer* server)
+:	Smart::IInputHandler<std::pair<Smart::QueryIdPtr,CommBasicObjects::CommKBRequest>>(server)
+,	server(server)
 {
 	
 }

@@ -43,13 +43,13 @@ namespace gazebo
     		std::cout << "Unable to find right wheel joint" << std::endl;
 		}
       
-      	this->pid = common::PID(0.1, 0, 0);
+      	/*this->pid = common::PID(0.1, 0, 0);
 
       	this->model->GetJointController()->SetVelocityPID(
         this->leftWheelJoint->GetScopedName(), this->pid);
 
         this->model->GetJointController()->SetVelocityPID(
-        this->rightWheelJoint->GetScopedName(), this->pid);
+        this->rightWheelJoint->GetScopedName(), this->pid);*/
 
 		// https://bitbucket.org/osrf/gazebo/src/56be256c4ba911e9ffb6fece23b0c51170f6dbdf/plugins/DiffDrivePlugin.cc?at=default&fileviewer=file-view-default
  		this->wheelSeparation = this->leftWheelJoint->Anchor(0).Distance(this->rightWheelJoint->Anchor(0));
@@ -60,6 +60,9 @@ namespace gazebo
 
 		this->leftWheelJoint->SetVelocity(0, 0);
 		this->rightWheelJoint->SetVelocity(0, 0);
+
+		this->leftWheelSpeed = 0.0;
+		this->rightWheelSpeed = 0.0;
 
       	this->node = transport::NodePtr(new transport::Node());
       	this->node->Init(this->model->GetWorld()->Name());

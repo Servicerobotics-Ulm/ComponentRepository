@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ComponentDefinition="http://www.ecore.org/component/ComponentDefinition" xmlns:ComponentParameter="http://www.ecore.org/component/ComponentParameter" xmlns:CoordinationExtension="http://www.ecore.org/component/CoordinationExtension" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:diagram="http://www.eclipse.org/sirius/diagram/1.1.0" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xsi:schemaLocation="http://www.eclipse.org/sirius/description/1.1.0 http://www.eclipse.org/sirius/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/style/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description/style">
-  <viewpoint:DAnalysis xmi:id="_uJLPEAKhEemlz-WSOEgBsw" selectedViews="_ujKcYAKhEemlz-WSOEgBsw" version="12.1.0.201708031200">
+  <viewpoint:DAnalysis uid="_uJLPEAKhEemlz-WSOEgBsw" selectedViews="_ujKcYAKhEemlz-WSOEgBsw" version="14.1.0.201810161215">
     <semanticResources>model/ComponentKB.component</semanticResources>
     <semanticResources>model/ComponentKB.componentDocumentation</semanticResources>
     <semanticResources>model/ComponentKB.componentParameters</semanticResources>
@@ -13,19 +13,19 @@
     <semanticResources>model/TestTasks.taskRealization</semanticResources>
     <semanticResources>model/ComponentKB.skillRealization</semanticResources>
     <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.skills</semanticResources>
-    <ownedViews xmi:type="viewpoint:DView" xmi:id="_ujKcYAKhEemlz-WSOEgBsw">
+    <ownedViews xmi:type="viewpoint:DView" uid="_ujKcYAKhEemlz-WSOEgBsw">
       <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']"/>
-      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" xmi:id="_utUd8AKhEemlz-WSOEgBsw" name="ComponentKB" repPath="#_usCrkAKhEemlz-WSOEgBsw">
+      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_utUd8AKhEemlz-WSOEgBsw" name="ComponentKB" repPath="#_utQMgAKhEemlz-WSOEgBsw">
         <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
         <target xmi:type="ComponentDefinition:ComponentDefModel" href="model/ComponentKB.component#/"/>
       </ownedRepresentationDescriptors>
     </ownedViews>
   </viewpoint:DAnalysis>
-  <diagram:DSemanticDiagram xmi:id="_utQMgAKhEemlz-WSOEgBsw" name="ComponentKB" uid="_usCrkAKhEemlz-WSOEgBsw">
-    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" xmi:id="_utQMgQKhEemlz-WSOEgBsw" source="DANNOTATION_CUSTOMIZATION_KEY">
-      <data xmi:type="diagram:ComputedStyleDescriptionRegistry" xmi:id="_utQMggKhEemlz-WSOEgBsw"/>
+  <diagram:DSemanticDiagram uid="_utQMgAKhEemlz-WSOEgBsw" name="ComponentKB">
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="_utQMgQKhEemlz-WSOEgBsw" source="DANNOTATION_CUSTOMIZATION_KEY">
+      <data xmi:type="diagram:ComputedStyleDescriptionRegistry" uid="_utQMggKhEemlz-WSOEgBsw"/>
     </ownedAnnotationEntries>
-    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" xmi:id="_utsRYAKhEemlz-WSOEgBsw" source="GMF_DIAGRAMS">
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="_utsRYAKhEemlz-WSOEgBsw" source="GMF_DIAGRAMS">
       <data xmi:type="notation:Diagram" xmi:id="_utsRYQKhEemlz-WSOEgBsw" type="Sirius" element="_utQMgAKhEemlz-WSOEgBsw" measurementUnit="Pixel">
         <children xmi:type="notation:Node" xmi:id="_ut_MUAKhEemlz-WSOEgBsw" type="2002" element="_utQMhAKhEemlz-WSOEgBsw">
           <children xmi:type="notation:Node" xmi:id="_uu2H8AKhEemlz-WSOEgBsw" type="5006"/>
@@ -240,49 +240,49 @@
         </edges>
       </data>
     </ownedAnnotationEntries>
-    <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_utQMhAKhEemlz-WSOEgBsw" name="ComponentKB" tooltipText="ComponentDefinition">
+    <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_utQMhAKhEemlz-WSOEgBsw" name="ComponentKB" tooltipText="ComponentDefinition: ComponentKB&#xA;">
       <target xmi:type="ComponentDefinition:ComponentDefinition" href="model/ComponentKB.component#//@component"/>
       <semanticElements xmi:type="ComponentDefinition:ComponentDefinition" href="model/ComponentKB.component#//@component"/>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_ezeJAAKkEemlz-WSOEgBsw" name="kbEventServer" tooltipText="OutputPort" incomingEdges="_ezuAogKkEemlz-WSOEgBsw _ZTtp0AKmEemlz-WSOEgBsw" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_ezeJAAKkEemlz-WSOEgBsw" name="kbEventServer" tooltipText="OutputPort" incomingEdges="_ezuAogKkEemlz-WSOEgBsw _ZTtp0AKmEemlz-WSOEgBsw" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:OutputPort" href="model/ComponentKB.component#//@component/@elements.3"/>
         <semanticElements xmi:type="ComponentDefinition:OutputPort" href="model/ComponentKB.component#//@component/@elements.3"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:CustomStyle" xmi:id="_ezeJAQKkEemlz-WSOEgBsw" showIcon="false" id="output">
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_ezeJAQKkEemlz-WSOEgBsw" showIcon="false" id="output">
           <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='OutputPortNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='OutputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_ezf-MAKkEemlz-WSOEgBsw" name="CoordinationSlave" tooltipText="CoordinationSlavePort" outgoingEdges="_ezq9UAKkEemlz-WSOEgBsw _ezuAogKkEemlz-WSOEgBsw _ZTx7QAKmEemlz-WSOEgBsw" incomingEdges="_wD5dEAKmEemlz-WSOEgBsw" width="-1" height="-1" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_ezf-MAKkEemlz-WSOEgBsw" name="CoordinationSlave" tooltipText="CoordinationSlavePort" outgoingEdges="_ezq9UAKkEemlz-WSOEgBsw _ezuAogKkEemlz-WSOEgBsw _ZTx7QAKmEemlz-WSOEgBsw" incomingEdges="_wD5dEAKmEemlz-WSOEgBsw" width="-1" height="-1" resizeKind="NSEW">
         <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentKB.component#//@component/@elements.0"/>
         <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentKB.component#//@component/@elements.0"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:WorkspaceImage" xmi:id="_ezf-MQKkEemlz-WSOEgBsw" showIcon="false" workspacePath="/org.sirius.component.design/icons/CoordinationSlave.png">
+        <ownedStyle xmi:type="diagram:WorkspaceImage" uid="_ezf-MQKkEemlz-WSOEgBsw" showIcon="false" workspacePath="/org.sirius.component.design/icons/CoordinationSlave.png">
           <description xmi:type="style:WorkspaceImageDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='CoordinationSlaveNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='CoordinationSlaveNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_XsQj0AKmEemlz-WSOEgBsw" name="kbChainedEntriesEventClient" tooltipText="InputPort" outgoingEdges="_US3JoAKnEemlz-WSOEgBsw" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_XsQj0AKmEemlz-WSOEgBsw" name="kbChainedEntriesEventClient" tooltipText="InputPort: kbChainedEntriesEventClient&#xA;" outgoingEdges="_US3JoAKnEemlz-WSOEgBsw" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:InputPort" href="model/ComponentKB.component#//@component/@elements.4"/>
         <semanticElements xmi:type="ComponentDefinition:InputPort" href="model/ComponentKB.component#//@component/@elements.4"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:CustomStyle" xmi:id="_XsQj0QKmEemlz-WSOEgBsw" showIcon="false" id="input">
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_XsQj0QKmEemlz-WSOEgBsw" showIcon="false" id="input">
           <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_ZTp_cAKmEemlz-WSOEgBsw" name="kbQuery" tooltipText="AnswerPort" outgoingEdges="_Jc8wAAKnEemlz-WSOEgBsw" incomingEdges="_ZTx7QAKmEemlz-WSOEgBsw" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_ZTp_cAKmEemlz-WSOEgBsw" name="kbQuery" tooltipText="AnswerPort" outgoingEdges="_Jc8wAAKnEemlz-WSOEgBsw" incomingEdges="_ZTx7QAKmEemlz-WSOEgBsw" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:AnswerPort" href="model/ComponentKB.component#//@component/@elements.1"/>
         <semanticElements xmi:type="ComponentDefinition:AnswerPort" href="model/ComponentKB.component#//@component/@elements.1"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:CustomStyle" xmi:id="_ZTp_cQKmEemlz-WSOEgBsw" showIcon="false" id="answer">
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_ZTp_cQKmEemlz-WSOEgBsw" showIcon="false" id="answer">
           <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='AnswerPortNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='AnswerPortNode']"/>
@@ -290,139 +290,139 @@
       <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
       <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
       <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-      <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_utQMhQKhEemlz-WSOEgBsw" labelSize="10" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,245,181">
+      <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_utQMhQKhEemlz-WSOEgBsw" labelSize="10" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,245,181">
         <labelFormat>bold</labelFormat>
         <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@style"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']"/>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_ezhMUAKkEemlz-WSOEgBsw" name="ComponentModes" tooltipText="ComponentModes" incomingEdges="_ezq9UAKkEemlz-WSOEgBsw">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_ezhMUAKkEemlz-WSOEgBsw" name="ComponentModes" tooltipText="ComponentModes" incomingEdges="_ezq9UAKkEemlz-WSOEgBsw">
         <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentKB.component#//@component/@elements.0"/>
         <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentKB.component#//@component/@elements.0"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_ezhzYAKkEemlz-WSOEgBsw" iconPath="/org.sirius.component.design/icons/switch2.png" borderSize="1" borderSizeComputationExpression="1">
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_ezhzYAKkEemlz-WSOEgBsw" iconPath="/org.sirius.component.design/icons/switch2.png" borderSize="1" borderSizeComputationExpression="1">
           <labelFormat>bold</labelFormat>
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']"/>
       </ownedDiagramElements>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_ZTrNkAKmEemlz-WSOEgBsw" name="dummy" tooltipText="Activity" outgoingEdges="_ZTtp0AKmEemlz-WSOEgBsw">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_ZTrNkAKmEemlz-WSOEgBsw" name="dummy" tooltipText="Activity" outgoingEdges="_ZTtp0AKmEemlz-WSOEgBsw">
         <target xmi:type="ComponentDefinition:Activity" href="model/ComponentKB.component#//@component/@elements.2"/>
         <semanticElements xmi:type="ComponentDefinition:Activity" href="model/ComponentKB.component#//@component/@elements.2"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_ZTrNkQKmEemlz-WSOEgBsw" borderSize="1" borderSizeComputationExpression="1">
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_ZTrNkQKmEemlz-WSOEgBsw" borderSize="1" borderSizeComputationExpression="1">
           <labelFormat>bold</labelFormat>
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']"/>
       </ownedDiagramElements>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_wDZGwAKmEemlz-WSOEgBsw" name="ComponentKBParams" tooltipText="ComponentParameters" outgoingEdges="_wD5dEAKmEemlz-WSOEgBsw">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_wDZGwAKmEemlz-WSOEgBsw" name="ComponentKBParams" tooltipText="ComponentParameters" outgoingEdges="_wD5dEAKmEemlz-WSOEgBsw">
         <target xmi:type="ComponentParameter:ComponentParametersRef" href="model/ComponentKB.component#//@component/@elements.5"/>
         <semanticElements xmi:type="ComponentParameter:ComponentParametersRef" href="model/ComponentKB.component#//@component/@elements.5"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_wDZGwQKmEemlz-WSOEgBsw" borderSize="1" borderSizeComputationExpression="1">
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_wDZGwQKmEemlz-WSOEgBsw" borderSize="1" borderSizeComputationExpression="1">
           <labelFormat>bold</labelFormat>
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentParametersContainer']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentParametersContainer']"/>
       </ownedDiagramElements>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_JcwiwAKnEemlz-WSOEgBsw" name="kbQueryHandler" tooltipText="RequestHandler" incomingEdges="_Jc8wAAKnEemlz-WSOEgBsw">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_JcwiwAKnEemlz-WSOEgBsw" name="kbQueryHandler" tooltipText="RequestHandler" incomingEdges="_Jc8wAAKnEemlz-WSOEgBsw">
         <target xmi:type="ComponentDefinition:RequestHandler" href="model/ComponentKB.component#//@component/@elements.6"/>
         <semanticElements xmi:type="ComponentDefinition:RequestHandler" href="model/ComponentKB.component#//@component/@elements.6"/>
-        <decorations xmi:type="viewpoint:Decoration" xmi:id="_QVwa4AKnEemlz-WSOEgBsw">
+        <decorations xmi:type="viewpoint:Decoration" uid="_QVwa4AKnEemlz-WSOEgBsw">
           <description xmi:type="description_1:MappingBasedDecoration" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@decorationDescriptionsSet/@decorationDescriptions[name='ActiveQueueDeco']"/>
         </decorations>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_JcwiwQKnEemlz-WSOEgBsw" borderSize="1" borderSizeComputationExpression="1">
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_JcwiwQKnEemlz-WSOEgBsw" borderSize="1" borderSizeComputationExpression="1">
           <labelFormat>bold</labelFormat>
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='RequestHandlerContainer']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='RequestHandlerContainer']"/>
       </ownedDiagramElements>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_USkOsAKnEemlz-WSOEgBsw" name="kbChainedEntriesEventClientHandler" tooltipText="InputHandler" incomingEdges="_US3JoAKnEemlz-WSOEgBsw">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_USkOsAKnEemlz-WSOEgBsw" name="kbChainedEntriesEventClientHandler" tooltipText="InputHandler" incomingEdges="_US3JoAKnEemlz-WSOEgBsw">
         <target xmi:type="ComponentDefinition:InputHandler" href="model/ComponentKB.component#//@component/@elements.7"/>
         <semanticElements xmi:type="ComponentDefinition:InputHandler" href="model/ComponentKB.component#//@component/@elements.7"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_USkOsQKnEemlz-WSOEgBsw" borderSize="1" borderSizeComputationExpression="1">
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_USkOsQKnEemlz-WSOEgBsw" borderSize="1" borderSizeComputationExpression="1">
           <labelFormat>bold</labelFormat>
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='InputHandlerContainer']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='InputHandlerContainer']"/>
       </ownedDiagramElements>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_ezq9UAKkEemlz-WSOEgBsw" sourceNode="_ezf-MAKkEemlz-WSOEgBsw" targetNode="_ezhMUAKkEemlz-WSOEgBsw">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_ezq9UAKkEemlz-WSOEgBsw" sourceNode="_ezf-MAKkEemlz-WSOEgBsw" targetNode="_ezhMUAKkEemlz-WSOEgBsw">
       <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentKB.component#//@component/@elements.0"/>
       <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentKB.component#//@component/@elements.0"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_ezq9UQKkEemlz-WSOEgBsw" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_ezq9UQKkEemlz-WSOEgBsw" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CoordinationSlaveEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_ezq9UgKkEemlz-WSOEgBsw"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_ezq9UgKkEemlz-WSOEgBsw"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CoordinationSlaveEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_ezuAogKkEemlz-WSOEgBsw" sourceNode="_ezf-MAKkEemlz-WSOEgBsw" targetNode="_ezeJAAKkEemlz-WSOEgBsw">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_ezuAogKkEemlz-WSOEgBsw" sourceNode="_ezf-MAKkEemlz-WSOEgBsw" targetNode="_ezeJAAKkEemlz-WSOEgBsw">
       <target xmi:type="CoordinationExtension:CommunicationServiceUsageRealization" href="model/ComponentKB.component#//@component/@elements.0/@elements.1"/>
       <semanticElements xmi:type="CoordinationExtension:CommunicationServiceUsageRealization" href="model/ComponentKB.component#//@component/@elements.0/@elements.1"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_ezuAowKkEemlz-WSOEgBsw" targetArrow="NoDecoration" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_ezuAowKkEemlz-WSOEgBsw" targetArrow="NoDecoration" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CommunicationServiceUsageRealizationEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_ezuApAKkEemlz-WSOEgBsw"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_ezuApAKkEemlz-WSOEgBsw"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CommunicationServiceUsageRealizationEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_ZTtp0AKmEemlz-WSOEgBsw" sourceNode="_ZTrNkAKmEemlz-WSOEgBsw" targetNode="_ezeJAAKkEemlz-WSOEgBsw">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_ZTtp0AKmEemlz-WSOEgBsw" sourceNode="_ZTrNkAKmEemlz-WSOEgBsw" targetNode="_ezeJAAKkEemlz-WSOEgBsw">
       <target xmi:type="ComponentDefinition:OutputPort" href="model/ComponentKB.component#//@component/@elements.3"/>
       <semanticElements xmi:type="ComponentDefinition:OutputPort" href="model/ComponentKB.component#//@component/@elements.3"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_ZTuQ4AKmEemlz-WSOEgBsw" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_ZTuQ4AKmEemlz-WSOEgBsw" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ActivityOutputEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_ZTuQ4QKmEemlz-WSOEgBsw"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_ZTuQ4QKmEemlz-WSOEgBsw"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ActivityOutputEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_ZTx7QAKmEemlz-WSOEgBsw" sourceNode="_ezf-MAKkEemlz-WSOEgBsw" targetNode="_ZTp_cAKmEemlz-WSOEgBsw">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_ZTx7QAKmEemlz-WSOEgBsw" sourceNode="_ezf-MAKkEemlz-WSOEgBsw" targetNode="_ZTp_cAKmEemlz-WSOEgBsw">
       <target xmi:type="CoordinationExtension:CommunicationServiceUsageRealization" href="model/ComponentKB.component#//@component/@elements.0/@elements.0"/>
       <semanticElements xmi:type="CoordinationExtension:CommunicationServiceUsageRealization" href="model/ComponentKB.component#//@component/@elements.0/@elements.0"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_ZTx7QQKmEemlz-WSOEgBsw" targetArrow="NoDecoration" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_ZTx7QQKmEemlz-WSOEgBsw" targetArrow="NoDecoration" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CommunicationServiceUsageRealizationEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_ZTx7QgKmEemlz-WSOEgBsw"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_ZTx7QgKmEemlz-WSOEgBsw"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CommunicationServiceUsageRealizationEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_wD5dEAKmEemlz-WSOEgBsw" sourceNode="_wDZGwAKmEemlz-WSOEgBsw" targetNode="_ezf-MAKkEemlz-WSOEgBsw">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_wD5dEAKmEemlz-WSOEgBsw" sourceNode="_wDZGwAKmEemlz-WSOEgBsw" targetNode="_ezf-MAKkEemlz-WSOEgBsw">
       <target xmi:type="ComponentParameter:ComponentParametersRef" href="model/ComponentKB.component#//@component/@elements.5"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_wD5dEQKmEemlz-WSOEgBsw" sourceArrow="InputArrow" targetArrow="NoDecoration" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_wD5dEQKmEemlz-WSOEgBsw" sourceArrow="InputArrow" targetArrow="NoDecoration" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ParametersEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_wD5dEgKmEemlz-WSOEgBsw"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_wD5dEgKmEemlz-WSOEgBsw"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ParametersEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_Jc8wAAKnEemlz-WSOEgBsw" sourceNode="_ZTp_cAKmEemlz-WSOEgBsw" targetNode="_JcwiwAKnEemlz-WSOEgBsw">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_Jc8wAAKnEemlz-WSOEgBsw" sourceNode="_ZTp_cAKmEemlz-WSOEgBsw" targetNode="_JcwiwAKnEemlz-WSOEgBsw">
       <target xmi:type="ComponentDefinition:RequestHandler" href="model/ComponentKB.component#//@component/@elements.6"/>
       <semanticElements xmi:type="ComponentDefinition:RequestHandler" href="model/ComponentKB.component#//@component/@elements.6"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_Jc8wAQKnEemlz-WSOEgBsw" targetArrow="OutputClosedArrow" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_Jc8wAQKnEemlz-WSOEgBsw" targetArrow="OutputClosedArrow" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='RequestHandlerEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_Jc8wAgKnEemlz-WSOEgBsw" showIcon="false"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_Jc8wAgKnEemlz-WSOEgBsw" showIcon="false"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='RequestHandlerEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_US3JoAKnEemlz-WSOEgBsw" name="upcall" sourceNode="_XsQj0AKmEemlz-WSOEgBsw" targetNode="_USkOsAKnEemlz-WSOEgBsw">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_US3JoAKnEemlz-WSOEgBsw" name="upcall" sourceNode="_XsQj0AKmEemlz-WSOEgBsw" targetNode="_USkOsAKnEemlz-WSOEgBsw">
       <target xmi:type="ComponentDefinition:InputHandler" href="model/ComponentKB.component#//@component/@elements.7"/>
       <semanticElements xmi:type="ComponentDefinition:InputHandler" href="model/ComponentKB.component#//@component/@elements.7"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_US3JoQKnEemlz-WSOEgBsw" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_US3JoQKnEemlz-WSOEgBsw" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputHandlerLink']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_US3JogKnEemlz-WSOEgBsw" showIcon="false"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_US3JogKnEemlz-WSOEgBsw" showIcon="false"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputHandlerLink']"/>
     </ownedDiagramElements>
     <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
-    <filterVariableHistory xmi:type="diagram:FilterVariableHistory" xmi:id="_utQMhgKhEemlz-WSOEgBsw"/>
+    <filterVariableHistory xmi:type="diagram:FilterVariableHistory" uid="_utQMhgKhEemlz-WSOEgBsw"/>
     <activatedLayers xmi:type="description_1:Layer" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer"/>
     <target xmi:type="ComponentDefinition:ComponentDefModel" href="model/ComponentKB.component#/"/>
   </diagram:DSemanticDiagram>

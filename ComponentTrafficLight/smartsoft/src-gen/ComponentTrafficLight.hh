@@ -29,6 +29,8 @@
 class ComponentTrafficLightPortFactoryInterface;
 class ComponentTrafficLightExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for ComponentTrafficLightROSExtension
 
 // includes for PlainOpcUaComponentTrafficLightExtension
@@ -44,9 +46,9 @@ class ComponentTrafficLightExtension;
 // include UpcallManagers
 #include "TrafficLightServiceInUpcallManager.hh"
 
-// include input-handler
+// include input-handler(s)
 #include "TrafficLightServiceInHandler.hh"
-// include input-handler
+// include request-handler(s)
 
 // include handler
 #include "CompHandler.hh"
@@ -104,6 +106,8 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of ComponentTrafficLightROSExtension
 	
@@ -198,6 +202,8 @@ public:
 		} trafficLightServiceIn;
 	
 		//--- client port parameter ---
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for ComponentTrafficLightROSExtension
 		

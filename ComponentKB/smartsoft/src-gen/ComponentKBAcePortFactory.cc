@@ -52,18 +52,18 @@ int ComponentKBAcePortFactory::onStartup()
 	return componentImpl->startComponentInfrastructure();
 }
 
-Smart::IEventClientPattern<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult,SmartACE::EventId> * ComponentKBAcePortFactory::createKbChainedEntriesEventClient()
+Smart::IEventClientPattern<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult> * ComponentKBAcePortFactory::createKbChainedEntriesEventClient()
 {
 	return new SmartACE::EventClient<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult>(componentImpl);
 }
 
 
-Smart::IEventServerPattern<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult, CommBasicObjects::CommVoid,SmartACE::EventId> * ComponentKBAcePortFactory::createKbEventServer(const std::string &serviceName, Smart::IEventTestHandler<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult, CommBasicObjects::CommVoid> *kbEventServerEventTestHandler)
+Smart::IEventServerPattern<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult, CommBasicObjects::CommVoid> * ComponentKBAcePortFactory::createKbEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult, CommBasicObjects::CommVoid>> kbEventServerEventTestHandler)
 {
 	return new SmartACE::EventServer<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult, CommBasicObjects::CommVoid>(componentImpl, serviceName, kbEventServerEventTestHandler);
 }
 
-Smart::IQueryServerPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse,SmartACE::QueryId> * ComponentKBAcePortFactory::createKbQuery(const std::string &serviceName)
+Smart::IQueryServerPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse> * ComponentKBAcePortFactory::createKbQuery(const std::string &serviceName)
 {
 	return new SmartACE::QueryServer<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse>(componentImpl, serviceName);
 }

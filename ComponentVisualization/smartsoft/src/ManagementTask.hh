@@ -16,8 +16,10 @@
 //--------------------------------------------------------------------------
 #ifndef _MANAGEMENTTASK_HH
 #define _MANAGEMENTTASK_HH
-
+#include <memory>
 #include "ManagementTaskCore.hh"
+#include "visualization/DefaultVisualization.hh"
+
 enum service_ports {
 	port_base_push_timed = 0,
 	port_grid_push_newest = 1,
@@ -31,15 +33,46 @@ enum service_ports {
 	port_video_image_push_newest = 9,
 	port_rgbd_image_push_newest = 10,
 	port_depth_image_client=11,
+	port_marker_detection_list_client=12,
 	port_max};
+
+enum port_types{
+	port_push_type =0,
+	port_query_type,
+	port_type_max
+};
+
 class ManagementTask  : public ManagementTaskCore
 {
 private:
+	std::unique_ptr<DefaultVisualization> default_visualization;
 	std::map<std::string, std::list<SmartACE::NSKeyType> > components;
 	std::map<int, std::pair<std::string, std::string> > con;
 	service_ports service_port;
 	int connected[port_max];
+	const std::string display_names[service_ports::port_max] = {
+			"BasePose_push_client",
+			"GridMap_push_client",
+			"Laser1_push_client",
+			"Laser2_push_client",
+			"Laser3_push_client",
+			"PersonDetection_query_client",
+			"UltraSonic_push_client",
+			"Infrared_push_client",
+			"LTM_query_client",
+			"RGB_image_push_client",
+			"RGBD_push_client",
+			"Depth_image_push_client",
+			"MarkerDetectionList_client"
+	};
+
+	const char* port_type_name[port_types::port_type_max] = {
+			"Push",
+			"Query"
+	};
+
 	void printPorts();
+	void printFormattedLine();
 public:
 	ManagementTask(SmartACE::SmartComponent *comp);
 	virtual ~ManagementTask();

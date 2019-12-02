@@ -26,6 +26,9 @@
     <semanticResources>platform:/resource/CommNavigationObjects/model/CommNavigationObjects.skills</semanticResources>
     <semanticResources>platform:/resource/CommLocalizationObjects/model/CommLocalizationObjects.parameters</semanticResources>
     <semanticResources>platform:/resource/CommLocalizationObjects/model/CommLocalizationObjects.modes</semanticResources>
+    <semanticResources>platform:/resource/CommRobotinoObjects/model/CommRobotinoObjects.modes</semanticResources>
+    <semanticResources>platform:/resource/CommRobotinoObjects/model/CommRobotinoObjects.parameters</semanticResources>
+    <semanticResources>platform:/resource/CommTrackingObjects/model/CommTrackingObjects.modes</semanticResources>
     <ownedViews xmi:type="viewpoint:DView" uid="_tYvsYNOpEei_nIljlYip5w">
       <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']"/>
       <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_tY4PR9OpEei_nIljlYip5w" name="ComponentRobotinoBaseServer" repPath="#_tY4PQNOpEei_nIljlYip5w">
@@ -591,10 +594,10 @@
         </edges>
       </data>
     </ownedAnnotationEntries>
-    <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_tY4PRNOpEei_nIljlYip5w" name="ComponentRobotinoBaseServer" tooltipText="ComponentDefinition">
+    <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_tY4PRNOpEei_nIljlYip5w" name="ComponentRobotinoBaseServer" tooltipText="ComponentDefinition: ComponentRobotinoBaseServer&#xA;">
       <target xmi:type="ComponentDefinition:ComponentDefinition" href="model/ComponentRobotinoBaseServer.component#//@component"/>
       <semanticElements xmi:type="ComponentDefinition:ComponentDefinition" href="model/ComponentRobotinoBaseServer.component#//@component"/>
-      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_1mKZwNOpEei_nIljlYip5w" name="NavigationVelocityServiceIn" tooltipText="InputPort" outgoingEdges="_8tMt4NOpEei_nIljlYip5w" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_1mKZwNOpEei_nIljlYip5w" name="NavigationVelocityServiceIn" tooltipText="InputPort: NavigationVelocityServiceIn&#xA;" outgoingEdges="_8tMt4NOpEei_nIljlYip5w" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:InputPort" href="model/ComponentRobotinoBaseServer.component#//@component/@elements.0"/>
         <semanticElements xmi:type="ComponentDefinition:InputPort" href="model/ComponentRobotinoBaseServer.component#//@component/@elements.0"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
@@ -605,7 +608,7 @@
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_4LkVwNOpEei_nIljlYip5w" name="LocalizationEventServiceIn" tooltipText="InputPort" outgoingEdges="__DKfsNOpEei_nIljlYip5w" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_4LkVwNOpEei_nIljlYip5w" name="LocalizationEventServiceIn" tooltipText="InputPort: LocalizationEventServiceIn&#xA;" outgoingEdges="__DKfsNOpEei_nIljlYip5w" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:InputPort" href="model/ComponentRobotinoBaseServer.component#//@component/@elements.1"/>
         <semanticElements xmi:type="ComponentDefinition:InputPort" href="model/ComponentRobotinoBaseServer.component#//@component/@elements.1"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
@@ -693,7 +696,7 @@
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='OutputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_W1dQoNz0EeiKRtTo50NJBQ" name="LocalizationUpdateServiceIn" tooltipText="InputPort" outgoingEdges="_YmyEUNz0EeiKRtTo50NJBQ" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_W1dQoNz0EeiKRtTo50NJBQ" name="LocalizationUpdateServiceIn" tooltipText="InputPort: LocalizationUpdateServiceIn&#xA;" outgoingEdges="_YmyEUNz0EeiKRtTo50NJBQ" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:InputPort" href="model/ComponentRobotinoBaseServer.component#//@component/@elements.16"/>
         <semanticElements xmi:type="ComponentDefinition:InputPort" href="model/ComponentRobotinoBaseServer.component#//@component/@elements.16"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
@@ -715,7 +718,7 @@
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='OutputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_7z8S4EzEEemPgIkMZoDQIw" name="PowerOutputSendIn" tooltipText="InputPort" outgoingEdges="_IS9YVkzFEemPgIkMZoDQIw" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_7z8S4EzEEemPgIkMZoDQIw" name="PowerOutputSendIn" tooltipText="InputPort: PowerOutputSendIn&#xA;" outgoingEdges="_IS9YVkzFEemPgIkMZoDQIw" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:InputPort" href="model/ComponentRobotinoBaseServer.component#//@component/@elements.20"/>
         <semanticElements xmi:type="ComponentDefinition:InputPort" href="model/ComponentRobotinoBaseServer.component#//@component/@elements.20"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>

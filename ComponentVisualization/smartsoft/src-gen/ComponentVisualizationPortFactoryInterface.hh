@@ -22,6 +22,8 @@
 #include <CommBasicObjects/CommBaseStateACE.hh>
 #include <DomainVision/CommDepthImage.hh>
 #include <DomainVision/CommDepthImageACE.hh>
+#include <CommTrackingObjects/CommDetectedMarkerList.hh>
+#include <CommTrackingObjects/CommDetectedMarkerListACE.hh>
 #include <CommTrackingObjects/CommDetectedPerson.hh>
 #include <CommTrackingObjects/CommDetectedPersonACE.hh>
 #include <CommNavigationObjects/CommGridMap.hh>
@@ -65,7 +67,8 @@ public:
 	virtual void initialize(ComponentVisualization *component, int argc, char* argv[]) = 0;
 	virtual int onStartup() = 0;
 
-	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage,SmartACE::QueryId> * createRGBDImageQueryServiceReq() = 0;
+	virtual Smart::IPushClientPattern<CommTrackingObjects::CommDetectedMarkerList> * createMarkerListDetectionServiceIn() = 0;
+	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> * createRGBDImageQueryServiceReq() = 0;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * createBaseClient() = 0;
 	virtual Smart::IPushClientPattern<CommNavigationObjects::CommGridMap> * createCurPushClient() = 0;
 	virtual Smart::IPushClientPattern<DomainVision::CommDepthImage> * createDepthPushNewestClient() = 0;
@@ -74,9 +77,9 @@ public:
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * createLaserClient1() = 0;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * createLaserClient2() = 0;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * createLaserClient3() = 0;
-	virtual Smart::IQueryClientPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap,SmartACE::QueryId> * createLtmQueryClient() = 0;
-	virtual Smart::IEventClientPattern<CommTrackingObjects::CommPersonLostEventParameter, CommTrackingObjects::CommPersonDetectionEventResult,SmartACE::EventId> * createPersonDetectionEventClient() = 0;
-	virtual Smart::IQueryClientPattern<CommTrackingObjects::CommPersonId, CommTrackingObjects::CommDetectedPerson,SmartACE::QueryId> * createPersonDetectionQueryClient() = 0;
+	virtual Smart::IQueryClientPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap> * createLtmQueryClient() = 0;
+	virtual Smart::IEventClientPattern<CommTrackingObjects::CommPersonLostEventParameter, CommTrackingObjects::CommPersonDetectionEventResult> * createPersonDetectionEventClient() = 0;
+	virtual Smart::IQueryClientPattern<CommTrackingObjects::CommPersonId, CommTrackingObjects::CommDetectedPerson> * createPersonDetectionQueryClient() = 0;
 	virtual Smart::IPushClientPattern<DomainVision::CommRGBDImage> * createRgbdPushNewestClient() = 0;
 	virtual Smart::IPushClientPattern<DomainVision::CommDepthImage> * createRgbdQueryClient() = 0;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileUltrasonicScan> * createUltrasonicPushNewestClient() = 0;

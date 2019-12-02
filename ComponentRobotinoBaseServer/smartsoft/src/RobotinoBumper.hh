@@ -42,7 +42,7 @@ public:
         }
 
         void bumperEvent( bool hasContact );
-    	void timerExpired(const std::chrono::system_clock::time_point &abs_time, const void * arg);
+    	void timerExpired(const Smart::TimePoint &abs_time, const void * arg);
     //	void timerExpired(const ACE_Time_Value & absolute_time,const void * arg);
     	void timerCancelled();
     	void timerDeleted(const void * arg);

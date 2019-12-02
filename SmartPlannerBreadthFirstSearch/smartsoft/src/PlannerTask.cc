@@ -410,12 +410,12 @@ int PlannerTask::on_execute()
 	   {
 		   // first occurence of noPath situation
 		   COMP->noPathFlag = 1;
-		   gettimeofday(&(COMP->beginNoPathTime),0);
+		   ::gettimeofday(&(COMP->beginNoPathTime),0);
 	   }
 	   else
 	   {
 		   // not the first occurence of noPath situation
-		   gettimeofday(&(COMP->currentTime),0);
+		   ::gettimeofday(&(COMP->currentTime),0);
 		   timeDiff  = (double)(COMP->currentTime.tv_usec - COMP->beginNoPathTime.tv_usec)/1000000.0;
 		   timeDiff += (double)(COMP->currentTime.tv_sec  - COMP->beginNoPathTime.tv_sec);
 
@@ -445,7 +445,7 @@ int PlannerTask::on_execute()
    #endif
 
    #if DEBUGMODE
-	 gettimeofday(&timeEnd,(struct timezone*)NULL);
+	 ::gettimeofday(&timeEnd,(struct timezone*)NULL);
 	 subTime(timeEnd,timeStart);
 
 	 cout << "Needed path planning time: " << timeEnd.tv_sec << " " << timeEnd.tv_usec << "\n";

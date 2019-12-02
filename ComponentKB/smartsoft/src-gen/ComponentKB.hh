@@ -29,6 +29,8 @@
 class ComponentKBPortFactoryInterface;
 class ComponentKBExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for ComponentKBROSExtension
 
 // includes for PlainOpcUaComponentKBExtension
@@ -53,9 +55,9 @@ class ComponentKBExtension;
 // include UpcallManagers
 #include "KbChainedEntriesEventClientUpcallManager.hh"
 
-// include input-handler
+// include input-handler(s)
 #include "KbChainedEntriesEventClientHandler.hh"
-// include input-handler
+// include request-handler(s)
 #include "KbQueryHandler.hh"
 
 // include handler
@@ -113,8 +115,8 @@ public:
 	
 	// define input-ports
 	// InputPort kbChainedEntriesEventClient
-	Smart::IEventClientPattern<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult,SmartACE::EventId> *kbChainedEntriesEventClient;
-	Smart::InputTaskTrigger<Smart::EventInputType<CommBasicObjects::CommKBEventResult,SmartACE::EventId>> *kbChainedEntriesEventClientInputTaskTrigger;
+	Smart::IEventClientPattern<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult> *kbChainedEntriesEventClient;
+	Smart::InputTaskTrigger<Smart::EventInputType<CommBasicObjects::CommKBEventResult>> *kbChainedEntriesEventClientInputTaskTrigger;
 	KbChainedEntriesEventClientUpcallManager *kbChainedEntriesEventClientUpcallManager;
 	
 	// define request-ports
@@ -123,15 +125,17 @@ public:
 	KbChainedEntriesEventClientHandler *kbChainedEntriesEventClientHandler;
 	
 	// define output-ports
-	Smart::IEventServerPattern<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult, CommBasicObjects::CommVoid,SmartACE::EventId> *kbEventServer;
-	Smart::IEventTestHandler<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult, CommBasicObjects::CommVoid> *kbEventServerEventTestHandler; 
+	Smart::IEventServerPattern<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult, CommBasicObjects::CommVoid> *kbEventServer;
+	std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult, CommBasicObjects::CommVoid>> kbEventServerEventTestHandler;
 	
 	// define answer-ports
-	Smart::IQueryServerPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse,SmartACE::QueryId> *kbQuery;
-	Smart::QueryServerTaskTrigger<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse,SmartACE::QueryId> *kbQueryInputTaskTrigger;
+	Smart::IQueryServerPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse> *kbQuery;
+	Smart::QueryServerTaskTrigger<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse> *kbQueryInputTaskTrigger;
 	
 	// define request-handlers
 	KbQueryHandler *kbQueryHandler;
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of ComponentKBROSExtension
 	
@@ -257,6 +261,8 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} kbChainedEntriesEventClient;
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for ComponentKBROSExtension
 		

@@ -18,13 +18,9 @@
 
 // include observers
 
-BaseStateQueryServiceAnswHandlerCore::BaseStateQueryServiceAnswHandlerCore(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState, SmartACE::QueryId>* server)
-:	Smart::IQueryServerHandler<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState, SmartACE::QueryId>(server)
-{
-	
-}
-
-BaseStateQueryServiceAnswHandlerCore::~BaseStateQueryServiceAnswHandlerCore()
+BaseStateQueryServiceAnswHandlerCore::BaseStateQueryServiceAnswHandlerCore(IQueryServer* server)
+:	Smart::IInputHandler<std::pair<Smart::QueryIdPtr,CommBasicObjects::CommVoid>>(server)
+,	server(server)
 {
 	
 }

@@ -3,7 +3,7 @@ ComponentDefinition ComponentLaserObstacleAvoid
 	Activity RobotTask
 	{
 		InputPortLink LaserServiceIn { oversamplingOk undersamplingOk }
-	DefaultTrigger PeriodicTimer 1.0 Hz
+	DefaultTrigger PeriodicTimer 10.0 Hz
 	}
 	InputPort LaserServiceIn implements CommBasicObjects.LaserService {
 	}

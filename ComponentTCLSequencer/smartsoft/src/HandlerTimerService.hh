@@ -70,7 +70,7 @@ public:
 	long scheduleTimer(const std::string &param, const ACE_Time_Value & absolute_time);
 	int cancelTimer(long id);
 
-	virtual void timerExpired(const std::chrono::system_clock::time_point &abs_time, const void * arg) override;
+	virtual void timerExpired(const Smart::TimePoint &abs_time, const void * arg) override;
 
 };
 

@@ -104,6 +104,7 @@ void ImageVisualization::displayImage(DomainVision::CommVideoImage& image) {
 		}
 
 	}
+	cvReleaseImage(&currentImage);
 
 }
 
@@ -165,6 +166,7 @@ void ImageVisualization::displayDepthImage(DomainVision::CommDepthImage& image) 
 
 	m_image_window->showImage(depthImage);
 	m_image_window->setWindowTitle(str_dimension.str());
+	cvReleaseImage(&currentImage);
 
 }
 void ImageVisualization::clear() {

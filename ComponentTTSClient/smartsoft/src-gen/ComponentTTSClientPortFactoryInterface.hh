@@ -39,7 +39,7 @@ public:
 	virtual void initialize(ComponentTTSClient *component, int argc, char* argv[]) = 0;
 	virtual int onStartup() = 0;
 
-	virtual Smart::IQueryClientPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet,SmartACE::QueryId> * createSpeechQueryServiceReq() = 0;
+	virtual Smart::IQueryClientPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet> * createSpeechQueryServiceReq() = 0;
 	virtual Smart::ISendClientPattern<DomainSpeech::CommSpeechOutputMessage> * createSpeechSendServiceOut() = 0;
 	
 

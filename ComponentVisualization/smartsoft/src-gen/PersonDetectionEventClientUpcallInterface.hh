@@ -23,7 +23,7 @@ class PersonDetectionEventClientUpcallInterface {
 public:
 	virtual ~PersonDetectionEventClientUpcallInterface() {  }
 
-	virtual void on_personDetectionEventClient(const Smart::EventInputType<CommTrackingObjects::CommPersonDetectionEventResult,SmartACE::EventId> &input) = 0;
+	virtual void on_personDetectionEventClient(const Smart::EventInputType<CommTrackingObjects::CommPersonDetectionEventResult> &input) = 0;
 };
 
 #endif

@@ -85,7 +85,7 @@ public:
 				camera_type = "USB";
 				debug_info = false;
 				device = "/dev/video0";
-				identifier = "UVC Camera (046d:0809) (/dev/video0)";
+				identifier = "HD Pro Webcam C920 (/dev/video0)";
 			}
 		
 			/**
@@ -149,7 +149,7 @@ public:
 				framerate = 15;
 				gain = 100;
 				gamma = 128;
-				height = 600;
+				height = 480;
 				hue = 128;
 				saturation = 128;
 				sharpness = 3.0;
@@ -159,7 +159,7 @@ public:
 				white_balance_mode = 3.0;
 				white_balance_u = 2000.0;
 				white_balance_v = 2000.0;
-				width = 800;
+				width = 640;
 			}
 		
 			/**
@@ -296,12 +296,12 @@ public:
 		public:
 			// default constructor
 			sensor_poseType() {
-				azimuth = 0;
-				elevation = 0;
-				roll = 0;
-				x = 0;
+				azimuth = 1.5707963;
+				elevation = 3.14159265;
+				roll = 1.5707963;
+				x = 68;
 				y = 0;
-				z = 0;
+				z = 148;
 			}
 		
 			/**
@@ -428,6 +428,74 @@ public:
 			
 		}; // end class ImageType
 		
+		/**
+		 * Definition of Parameter IntrinsicParams
+		 */
+		class IntrinsicParamsType 
+		{
+			friend class ParamUpdateHandler;
+		protected:
+			/**
+			 * here are the member definitions
+			 */
+			unsigned short calib_height;
+			unsigned short calib_width;
+			double cx;
+			double cy;
+			std::list<double> distortion_coeffs;
+			double fx;
+			double fy;
+		
+		public:
+			// default constructor
+			IntrinsicParamsType() {
+				calib_height = 480;
+				calib_width = 640;
+				cx = 326.70589;
+				cy = 252.38709;
+				distortion_coeffs.push_back(0.1241826);
+				distortion_coeffs.push_back(-0.275755);
+				distortion_coeffs.push_back(-6.637106E-4);
+				distortion_coeffs.push_back(-0.003005441);
+				distortion_coeffs.push_back(0.1270525);
+				fx = 613.80156;
+				fy = 617.75798;
+			}
+		
+			/**
+			 * here are the public getters
+			 */
+			inline unsigned short getCalib_height() const { return calib_height; }
+			inline unsigned short getCalib_width() const { return calib_width; }
+			inline double getCx() const { return cx; }
+			inline double getCy() const { return cy; }
+			inline std::list<double> getDistortion_coeffs() const { return distortion_coeffs; }
+			inline double getFx() const { return fx; }
+			inline double getFy() const { return fy; }
+			
+			void to_ostream(std::ostream &os = std::cout) const
+			{
+				os << "IntrinsicParams(";
+				os << "calib_height = " << calib_height << ", ";
+				os << "calib_width = " << calib_width << ", ";
+				os << "cx = " << cx << ", ";
+				os << "cy = " << cy << ", ";
+				std::list<double>::const_iterator distortion_coeffsIt;
+				for(distortion_coeffsIt=distortion_coeffs.begin(); distortion_coeffsIt!=distortion_coeffs.end(); distortion_coeffsIt++)
+				{
+				os << "distortion_coeffs = " << *distortion_coeffsIt << ", ";
+				os << "distortion_coeffs = " << *distortion_coeffsIt << ", ";
+				os << "distortion_coeffs = " << *distortion_coeffsIt << ", ";
+				os << "distortion_coeffs = " << *distortion_coeffsIt << ", ";
+				os << "distortion_coeffs = " << *distortion_coeffsIt << ", ";
+				}
+				os << "fx = " << fx << ", ";
+				os << "fy = " << fy << ", ";
+				os << ")\n";
+			}
+			
+		}; // end class IntrinsicParamsType
+		
 	
 		///////////////////////////////////////////
 		// External params
@@ -443,6 +511,7 @@ protected:
 
 	// Internal params
 	ImageType Image;
+	IntrinsicParamsType IntrinsicParams;
 	baseType base;
 	hardwareType hardware;
 	hardware_propertiesType hardware_properties;
@@ -470,6 +539,9 @@ public:
 	// internal param getters
 	ImageType getImage() const {
 		return Image;
+	}
+	IntrinsicParamsType getIntrinsicParams() const {
+		return IntrinsicParams;
 	}
 	baseType getBase() const {
 		return base;
@@ -502,6 +574,7 @@ public:
 	{
 		// Internal params
 		Image.to_ostream(os);
+		IntrinsicParams.to_ostream(os);
 		base.to_ostream(os);
 		hardware.to_ostream(os);
 		hardware_properties.to_ostream(os);

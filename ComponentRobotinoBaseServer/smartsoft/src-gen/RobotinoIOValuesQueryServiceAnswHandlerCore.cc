@@ -18,13 +18,9 @@
 
 // include observers
 
-RobotinoIOValuesQueryServiceAnswHandlerCore::RobotinoIOValuesQueryServiceAnswHandlerCore(Smart::IQueryServerPattern<CommRobotinoObjects::CommRobotinoIOValues, CommRobotinoObjects::CommRobotinoIOValues, SmartACE::QueryId>* server)
-:	Smart::IQueryServerHandler<CommRobotinoObjects::CommRobotinoIOValues, CommRobotinoObjects::CommRobotinoIOValues, SmartACE::QueryId>(server)
-{
-	
-}
-
-RobotinoIOValuesQueryServiceAnswHandlerCore::~RobotinoIOValuesQueryServiceAnswHandlerCore()
+RobotinoIOValuesQueryServiceAnswHandlerCore::RobotinoIOValuesQueryServiceAnswHandlerCore(IQueryServer* server)
+:	Smart::IInputHandler<std::pair<Smart::QueryIdPtr,CommRobotinoObjects::CommRobotinoIOValues>>(server)
+,	server(server)
 {
 	
 }

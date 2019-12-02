@@ -61,11 +61,13 @@ ComponentLaserObstacleAvoid::ComponentLaserObstacleAvoid()
 	connections.robotTask.minActFreq = 0.0;
 	connections.robotTask.maxActFreq = 0.0;
 	connections.robotTask.trigger = "PeriodicTimer";
-	connections.robotTask.periodicActFreq = 1.0;
+	connections.robotTask.periodicActFreq = 10.0;
 	// scheduling default parameters
 	connections.robotTask.scheduler = "DEFAULT";
 	connections.robotTask.priority = -1;
 	connections.robotTask.cpuAffinity = -1;
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of ComponentLaserObstacleAvoidROSExtension
 	
@@ -191,6 +193,8 @@ void ComponentLaserObstacleAvoid::init(int argc, char *argv[])
 		loadParameter(argc, argv);
 		
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		// initializations of ComponentLaserObstacleAvoidROSExtension
 		
 		// initializations of PlainOpcUaComponentLaserObstacleAvoidExtension
@@ -292,7 +296,7 @@ void ComponentLaserObstacleAvoid::init(int argc, char *argv[])
 		{
 			// setup default task-trigger as PeriodicTimer
 			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-			int microseconds = 1000*1000 / 1.0;
+			int microseconds = 1000*1000 / 10.0;
 			if(microseconds > 0) {
 				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				triggerPtr->attach(robotTask);
@@ -405,6 +409,8 @@ void ComponentLaserObstacleAvoid::fini()
 	{
 		portFactory->second->destroy();
 	}
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of ComponentLaserObstacleAvoidROSExtension
 	
@@ -519,6 +525,8 @@ void ComponentLaserObstacleAvoid::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("RobotTask", "cpuAffinity")) {
 			parameter.getInteger("RobotTask", "cpuAffinity", connections.robotTask.cpuAffinity);
 		}
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for ComponentLaserObstacleAvoidROSExtension
 		

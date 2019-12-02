@@ -59,6 +59,8 @@ ComponentTrafficLightTest::ComponentTrafficLightTest()
 	connections.generateOut.priority = -1;
 	connections.generateOut.cpuAffinity = -1;
 	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of ComponentTrafficLightTestROSExtension
 	
 	// initialize members of PlainOpcUaComponentTrafficLightTestExtension
@@ -165,6 +167,8 @@ void ComponentTrafficLightTest::init(int argc, char *argv[])
 		// load initial parameters from ini-file (if found)
 		loadParameter(argc, argv);
 		
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of ComponentTrafficLightTestROSExtension
 		
@@ -369,6 +373,8 @@ void ComponentTrafficLightTest::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of ComponentTrafficLightTestROSExtension
 	
 	// destruction of PlainOpcUaComponentTrafficLightTestExtension
@@ -474,6 +480,8 @@ void ComponentTrafficLightTest::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("GenerateOut", "cpuAffinity")) {
 			parameter.getInteger("GenerateOut", "cpuAffinity", connections.generateOut.cpuAffinity);
 		}
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for ComponentTrafficLightTestROSExtension
 		

@@ -18,13 +18,9 @@
 
 // include observers
 
-SpeechQueryHandlerCore::SpeechQueryHandlerCore(Smart::IQueryServerPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet, SmartACE::QueryId>* server)
-:	Smart::IQueryServerHandler<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet, SmartACE::QueryId>(server)
-{
-	
-}
-
-SpeechQueryHandlerCore::~SpeechQueryHandlerCore()
+SpeechQueryHandlerCore::SpeechQueryHandlerCore(IQueryServer* server)
+:	Smart::IInputHandler<std::pair<Smart::QueryIdPtr,DomainSpeech::CommSpeechOutputMessage>>(server)
+,	server(server)
 {
 	
 }

@@ -47,7 +47,7 @@ public:
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommDevicePoseState> * createPtuPushTimedClient() = 0;
 	
 	virtual Smart::IPushServerPattern<DomainVision::CommVideoImage> * createImagePushNewestServer(const std::string &serviceName) = 0;
-	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage,SmartACE::QueryId> * createImageQueryServer(const std::string &serviceName) = 0;
+	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> * createImageQueryServer(const std::string &serviceName) = 0;
 
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) = 0;
 	virtual void destroy() = 0;

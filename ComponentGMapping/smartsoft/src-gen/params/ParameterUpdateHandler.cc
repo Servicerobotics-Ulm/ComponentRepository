@@ -42,16 +42,16 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK);
 		
-		int temp_x = 0.0;
-		if(request.getDouble("1", temp_x) != 0) {
+		int temp_x = 0;
+		if(request.getInteger("1", temp_x) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
-		int temp_y = 0.0;
-		if(request.getDouble("2", temp_y) != 0) {
+		int temp_y = 0;
+		if(request.getInteger("2", temp_y) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
-		int temp_a = 0.0;
-		if(request.getDouble("3", temp_a) != 0) {
+		int temp_a = 0;
+		if(request.getInteger("3", temp_a) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
 		
@@ -150,11 +150,11 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.gfs.generateMap = commitState.gfs.generateMap;
 		}
-		if(parameter.getDouble("gfs", "iterations", commitState.gfs.iterations))
+		if(parameter.getInteger("gfs", "iterations", commitState.gfs.iterations))
 		{
 			globalState.gfs.iterations = commitState.gfs.iterations;
 		}
-		if(parameter.getDouble("gfs", "kernelSize", commitState.gfs.kernelSize))
+		if(parameter.getInteger("gfs", "kernelSize", commitState.gfs.kernelSize))
 		{
 			globalState.gfs.kernelSize = commitState.gfs.kernelSize;
 		}
@@ -166,7 +166,7 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.gfs.lsigma = commitState.gfs.lsigma;
 		}
-		if(parameter.getDouble("gfs", "lskip", commitState.gfs.lskip))
+		if(parameter.getInteger("gfs", "lskip", commitState.gfs.lskip))
 		{
 			globalState.gfs.lskip = commitState.gfs.lskip;
 		}
@@ -186,11 +186,11 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.gfs.maxrange = commitState.gfs.maxrange;
 		}
-		if(parameter.getDouble("gfs", "ogain", commitState.gfs.ogain))
+		if(parameter.getInteger("gfs", "ogain", commitState.gfs.ogain))
 		{
 			globalState.gfs.ogain = commitState.gfs.ogain;
 		}
-		if(parameter.getDouble("gfs", "particles", commitState.gfs.particles))
+		if(parameter.getInteger("gfs", "particles", commitState.gfs.particles))
 		{
 			globalState.gfs.particles = commitState.gfs.particles;
 		}

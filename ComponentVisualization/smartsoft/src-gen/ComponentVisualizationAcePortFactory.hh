@@ -34,7 +34,8 @@ public:
 	virtual void initialize(ComponentVisualization *component, int argc, char* argv[]) override;
 	virtual int onStartup() override;
 
-	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage,SmartACE::QueryId> * createRGBDImageQueryServiceReq() override;
+	virtual Smart::IPushClientPattern<CommTrackingObjects::CommDetectedMarkerList> * createMarkerListDetectionServiceIn() override;
+	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> * createRGBDImageQueryServiceReq() override;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * createBaseClient() override;
 	virtual Smart::IPushClientPattern<CommNavigationObjects::CommGridMap> * createCurPushClient() override;
 	virtual Smart::IPushClientPattern<DomainVision::CommDepthImage> * createDepthPushNewestClient() override;
@@ -43,9 +44,9 @@ public:
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * createLaserClient1() override;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * createLaserClient2() override;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * createLaserClient3() override;
-	virtual Smart::IQueryClientPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap,SmartACE::QueryId> * createLtmQueryClient() override;
-	virtual Smart::IEventClientPattern<CommTrackingObjects::CommPersonLostEventParameter, CommTrackingObjects::CommPersonDetectionEventResult,SmartACE::EventId> * createPersonDetectionEventClient() override;
-	virtual Smart::IQueryClientPattern<CommTrackingObjects::CommPersonId, CommTrackingObjects::CommDetectedPerson,SmartACE::QueryId> * createPersonDetectionQueryClient() override;
+	virtual Smart::IQueryClientPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap> * createLtmQueryClient() override;
+	virtual Smart::IEventClientPattern<CommTrackingObjects::CommPersonLostEventParameter, CommTrackingObjects::CommPersonDetectionEventResult> * createPersonDetectionEventClient() override;
+	virtual Smart::IQueryClientPattern<CommTrackingObjects::CommPersonId, CommTrackingObjects::CommDetectedPerson> * createPersonDetectionQueryClient() override;
 	virtual Smart::IPushClientPattern<DomainVision::CommRGBDImage> * createRgbdPushNewestClient() override;
 	virtual Smart::IPushClientPattern<DomainVision::CommDepthImage> * createRgbdQueryClient() override;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileUltrasonicScan> * createUltrasonicPushNewestClient() override;

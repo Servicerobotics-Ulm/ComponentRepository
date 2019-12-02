@@ -40,7 +40,7 @@ public:
 	virtual int onStartup() = 0;
 
 	
-	virtual Smart::IQueryServerPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet,SmartACE::QueryId> * createSpeechQueryServiceAnsw(const std::string &serviceName) = 0;
+	virtual Smart::IQueryServerPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet> * createSpeechQueryServiceAnsw(const std::string &serviceName) = 0;
 	virtual Smart::ISendServerPattern<DomainSpeech::CommSpeechOutputMessage> * createSpeechSendServiceIn(const std::string &serviceName) = 0;
 
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) = 0;

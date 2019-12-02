@@ -57,7 +57,7 @@ Smart::IPushClientPattern<DomainVision::CommVideoImage> * ComponentUnicapImageCl
 	return new SmartACE::PushClient<DomainVision::CommVideoImage>(componentImpl);
 }
 
-Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage,SmartACE::QueryId> * ComponentUnicapImageClientAcePortFactory::createQueryClient()
+Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> * ComponentUnicapImageClientAcePortFactory::createQueryClient()
 {
 	return new SmartACE::QueryClient<CommBasicObjects::CommVoid, DomainVision::CommVideoImage>(componentImpl);
 }

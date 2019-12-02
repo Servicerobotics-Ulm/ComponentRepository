@@ -56,7 +56,7 @@
 	#define strncasecmp _strnicmp
 #endif
 
-SymbolicPannerQueryHandler::SymbolicPannerQueryHandler(Smart::IQueryServerPattern<DomainSymbolicPlanner::CommSymbolicPlannerRequest, DomainSymbolicPlanner::CommSymbolicPlannerPlan, SmartACE::QueryId>* server)
+SymbolicPannerQueryHandler::SymbolicPannerQueryHandler(Smart::IQueryServerPattern<DomainSymbolicPlanner::CommSymbolicPlannerRequest, DomainSymbolicPlanner::CommSymbolicPlannerPlan>* server)
 :	SymbolicPannerQueryHandlerCore(server)
 {
 	
@@ -68,7 +68,7 @@ SymbolicPannerQueryHandler::~SymbolicPannerQueryHandler()
 }
 
 
-void SymbolicPannerQueryHandler::handleQuery(const SmartACE::QueryId &id, const DomainSymbolicPlanner::CommSymbolicPlannerRequest& request) 
+void SymbolicPannerQueryHandler::handleQuery(const Smart::QueryIdPtr &id, const DomainSymbolicPlanner::CommSymbolicPlannerRequest& request)
 {
 	DomainSymbolicPlanner::CommSymbolicPlannerPlan answer;
 

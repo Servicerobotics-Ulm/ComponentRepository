@@ -1,5 +1,12 @@
 Requires Unicap 0.9.8 from source.
 
+git clone https://github.com/unicap/unicap.git
+cd unicap
+git checkout unicap-0-9-8 
+./configure
+make all
+sudo make install
+
 Additionally, install from ubuntu 12.04:
 apt-get install libv4l-dev intltool
 

@@ -13,7 +13,7 @@ Activity ImageTask
 	}
 	InputPort ptuPushTimedClient implements CommBasicObjects.DevicePoseUpdateService {
 	}
-	CoordinationSlavePort CoordinationPort implements DomainVision.ImageProvisionCoordinationService { PublicOperationMode DomainVision.ImageProvisionModes.PushImage { activates ( PushImage ) } PublicOperationMode DomainVision.ImageProvisionModes.QueryImage { activates ( QueryImage ) } PrivateOperationMode PushImage PrivateOperationMode QueryImage }
+	CoordinationSlavePort CoordinationPort implements DomainVision.VisionCoordinationService { PublicOperationMode DomainVision.ImageProvisionModes.PushImage { activates ( PushImage ) } PublicOperationMode DomainVision.ImageProvisionModes.QueryImage { activates ( QueryImage ) } PrivateOperationMode PushImage PrivateOperationMode QueryImage }
 	ComponentParameters ComponentUnicapImageServerParams slave CoordinationPort
 	InputPort basePushTimedClient implements CommBasicObjects.BaseStateService {
 	}

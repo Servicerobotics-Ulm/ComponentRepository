@@ -29,6 +29,8 @@
 class SmartJoystickServerPortFactoryInterface;
 class SmartJoystickServerExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for SmartJoystickServerROSExtension
 
 // includes for PlainOpcUaSmartJoystickServerExtension
@@ -44,8 +46,8 @@ class SmartJoystickServerExtension;
 #include "JoystickTask.hh"
 // include UpcallManagers
 
-// include input-handler
-// include input-handler
+// include input-handler(s)
+// include request-handler(s)
 
 // include handler
 #include "CompHandler.hh"
@@ -112,6 +114,8 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of SmartJoystickServerROSExtension
 	
@@ -211,6 +215,8 @@ public:
 		} joystickServcieOut;
 	
 		//--- client port parameter ---
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for SmartJoystickServerROSExtension
 		

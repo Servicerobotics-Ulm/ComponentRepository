@@ -27,10 +27,14 @@
 #include <SpeechQueryHandlerObserverInterface.hh>
 
 class SpeechQueryHandlerCore 
-:	public Smart::IQueryServerHandler<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet, SmartACE::QueryId>
+:	public Smart::IInputHandler<std::pair<Smart::QueryIdPtr,DomainSpeech::CommSpeechOutputMessage>>
 ,	public Smart::TaskTriggerSubject
 {
 private:
+virtual void handle_input(const std::pair<Smart::QueryIdPtr,DomainSpeech::CommSpeechOutputMessage> &input) override {
+	this->handleQuery(input.first, input.second);
+}
+
 
 	virtual void updateAllCommObjects();
 
@@ -49,8 +53,14 @@ public:
 protected:
 	
 public:
-	SpeechQueryHandlerCore(Smart::IQueryServerPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet, SmartACE::QueryId>* server);
-	virtual ~SpeechQueryHandlerCore();
-	//virtual void handleQuery(const SmartACE::QueryId &id, const DomainSpeech::CommSpeechOutputMessage& request);
+	using IQueryServer = Smart::IQueryServerPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet>;
+	using QueryId = Smart::QueryIdPtr;
+	SpeechQueryHandlerCore(IQueryServer *server);
+	virtual ~SpeechQueryHandlerCore() = default;
+	
+protected:
+	IQueryServer *server;
+	//this user-method has to be implemented in derived classes
+	virtual void handleQuery(const QueryId &id, const DomainSpeech::CommSpeechOutputMessage& request) = 0;
 };
 #endif

@@ -26,23 +26,23 @@
  * of incoming data to all associated (i.e. attached) Upcalls.
  */
 class KbChainedEntriesEventClientUpcallManager
-:	public Smart::IInputHandler<Smart::EventInputType<CommBasicObjects::CommKBEventResult,SmartACE::EventId>>
+:	public Smart::IInputHandler<Smart::EventInputType<CommBasicObjects::CommKBEventResult>>
 {
 private:
 	// list of associated updalls
 	std::list<KbChainedEntriesEventClientUpcallInterface*> upcalls;
 
 	// call the on_kbChainedEntriesEventClient of all the attached KbChainedEntriesEventClientUpcallInterfaces
-	void notify_upcalls(const Smart::EventInputType<CommBasicObjects::CommKBEventResult,SmartACE::EventId> &input);
+	void notify_upcalls(const Smart::EventInputType<CommBasicObjects::CommKBEventResult> &input);
 	
 protected:
-	virtual void handle_input(const Smart::EventInputType<CommBasicObjects::CommKBEventResult,SmartACE::EventId> &input) {
+	virtual void handle_input(const Smart::EventInputType<CommBasicObjects::CommKBEventResult> &input) {
 		// relay input-handling to all attached KbChainedEntriesEventClientUpcallInterfaces
 		this->notify_upcalls(input);
 	}
 public:
 	KbChainedEntriesEventClientUpcallManager(
-		Smart::InputSubject<Smart::EventInputType<CommBasicObjects::CommKBEventResult,SmartACE::EventId>> *subject,
+		Smart::InputSubject<Smart::EventInputType<CommBasicObjects::CommKBEventResult>> *subject,
 		const int &prescaleFactor=1
 	);
 	virtual ~KbChainedEntriesEventClientUpcallManager();

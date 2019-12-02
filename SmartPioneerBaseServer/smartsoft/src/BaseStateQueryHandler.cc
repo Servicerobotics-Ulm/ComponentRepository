@@ -17,7 +17,7 @@
 #include "BaseStateQueryHandler.hh"
 #include "SmartPioneerBaseServer.hh"
 
-BaseStateQueryHandler::BaseStateQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState, SmartACE::QueryId>* server)
+BaseStateQueryHandler::BaseStateQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>* server)
 :	BaseStateQueryHandlerCore(server)
 {
 	
@@ -47,7 +47,7 @@ void BaseStateQueryHandler::on_update_from(const RobotTask* robotTask)
 	mutex.release();
 }
 
-void BaseStateQueryHandler::handleQuery(const SmartACE::QueryId &id, const CommBasicObjects::CommVoid& request)
+void BaseStateQueryHandler::handleQuery(const Smart::QueryIdPtr &id, const CommBasicObjects::CommVoid& request)
 {
 	mutex.acquire();
 	// the base_state object is updated within the method on_update_from(RobotTask), see implementation above

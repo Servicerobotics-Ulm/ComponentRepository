@@ -34,7 +34,7 @@ public:
 	virtual void initialize(ComponentSkillInterface *component, int argc, char* argv[]) override;
 	virtual int onStartup() override;
 
-	virtual Smart::IQueryClientPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse,SmartACE::QueryId> * createKBQueryClient() override;
+	virtual Smart::IQueryClientPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse> * createKBQueryClient() override;
 	
 	
 	// get a pointer to the internal component implementation

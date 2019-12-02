@@ -38,7 +38,7 @@ public:
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommDevicePoseState> * createPtuPushTimedClient() override;
 	
 	virtual Smart::IPushServerPattern<DomainVision::CommVideoImage> * createImagePushNewestServer(const std::string &serviceName) override;
-	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage,SmartACE::QueryId> * createImageQueryServer(const std::string &serviceName) override;
+	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> * createImageQueryServer(const std::string &serviceName) override;
 	
 	// get a pointer to the internal component implementation
 	SmartACE::SmartComponent* getComponentImpl();

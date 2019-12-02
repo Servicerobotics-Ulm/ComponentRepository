@@ -163,27 +163,27 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.Robot.enable_sonar = commitState.Robot.enable_sonar;
 		}
-		if(parameter.getDouble("Robot", "maxRotVel", commitState.Robot.maxRotVel))
+		if(parameter.getInteger("Robot", "maxRotVel", commitState.Robot.maxRotVel))
 		{
 			globalState.Robot.maxRotVel = commitState.Robot.maxRotVel;
 		}
-		if(parameter.getDouble("Robot", "maxRotVelAcc", commitState.Robot.maxRotVelAcc))
+		if(parameter.getInteger("Robot", "maxRotVelAcc", commitState.Robot.maxRotVelAcc))
 		{
 			globalState.Robot.maxRotVelAcc = commitState.Robot.maxRotVelAcc;
 		}
-		if(parameter.getDouble("Robot", "maxRotVelDecel", commitState.Robot.maxRotVelDecel))
+		if(parameter.getInteger("Robot", "maxRotVelDecel", commitState.Robot.maxRotVelDecel))
 		{
 			globalState.Robot.maxRotVelDecel = commitState.Robot.maxRotVelDecel;
 		}
-		if(parameter.getDouble("Robot", "maxVel", commitState.Robot.maxVel))
+		if(parameter.getInteger("Robot", "maxVel", commitState.Robot.maxVel))
 		{
 			globalState.Robot.maxVel = commitState.Robot.maxVel;
 		}
-		if(parameter.getDouble("Robot", "maxVelAcc", commitState.Robot.maxVelAcc))
+		if(parameter.getInteger("Robot", "maxVelAcc", commitState.Robot.maxVelAcc))
 		{
 			globalState.Robot.maxVelAcc = commitState.Robot.maxVelAcc;
 		}
-		if(parameter.getDouble("Robot", "maxVelDecel", commitState.Robot.maxVelDecel))
+		if(parameter.getInteger("Robot", "maxVelDecel", commitState.Robot.maxVelDecel))
 		{
 			globalState.Robot.maxVelDecel = commitState.Robot.maxVelDecel;
 		}

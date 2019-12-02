@@ -71,6 +71,8 @@ private:
 	CommBasicObjects::CommBaseVelocity zero_velocity;
 
 	DomainVision::CommVideoImage* image;
+	bool set_camera_params;
+	void set_camera_intrinsic_params();
 };
 
 #endif

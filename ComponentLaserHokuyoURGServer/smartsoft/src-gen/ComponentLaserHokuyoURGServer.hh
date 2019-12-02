@@ -29,6 +29,8 @@
 class ComponentLaserHokuyoURGServerPortFactoryInterface;
 class ComponentLaserHokuyoURGServerExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for ComponentLaserHokuyoURGServerROSExtension
 
 // includes for PlainOpcUaComponentLaserHokuyoURGServerExtension
@@ -53,8 +55,8 @@ class ComponentLaserHokuyoURGServerExtension;
 #include "BaseTimedClientUpcallManager.hh"
 #include "ManipulatorTimedClientUpcallManager.hh"
 
-// include input-handler
-// include input-handler
+// include input-handler(s)
+// include request-handler(s)
 #include "LaserQueryServerHandler.hh"
 
 // include handler
@@ -130,11 +132,13 @@ public:
 	Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> *laserPushNewestServer;
 	
 	// define answer-ports
-	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan,SmartACE::QueryId> *laserQueryServer;
-	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan,SmartACE::QueryId> *laserQueryServerInputTaskTrigger;
+	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan> *laserQueryServer;
+	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan> *laserQueryServerInputTaskTrigger;
 	
 	// define request-handlers
 	LaserQueryServerHandler *laserQueryServerHandler;
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of ComponentLaserHokuyoURGServerROSExtension
 	
@@ -282,6 +286,8 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} manipulatorTimedClient;
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for ComponentLaserHokuyoURGServerROSExtension
 		

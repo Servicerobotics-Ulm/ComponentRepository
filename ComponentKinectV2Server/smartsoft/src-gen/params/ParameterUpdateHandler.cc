@@ -101,15 +101,15 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.base.steer_a = commitState.base.steer_a;
 		}
-		if(parameter.getDouble("base", "x", commitState.base.x))
+		if(parameter.getInteger("base", "x", commitState.base.x))
 		{
 			globalState.base.x = commitState.base.x;
 		}
-		if(parameter.getDouble("base", "y", commitState.base.y))
+		if(parameter.getInteger("base", "y", commitState.base.y))
 		{
 			globalState.base.y = commitState.base.y;
 		}
-		if(parameter.getDouble("base", "z", commitState.base.z))
+		if(parameter.getInteger("base", "z", commitState.base.z))
 		{
 			globalState.base.z = commitState.base.z;
 		}

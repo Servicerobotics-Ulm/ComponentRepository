@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ComponentDefinition="http://www.ecore.org/component/ComponentDefinition" xmlns:ComponentParameter="http://www.ecore.org/component/ComponentParameter" xmlns:CoordinationExtension="http://www.ecore.org/component/CoordinationExtension" xmlns:PerformanceExtension="http://www.ecore.org/component/PerformanceExtension" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:diagram="http://www.eclipse.org/sirius/diagram/1.1.0" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xsi:schemaLocation="http://www.eclipse.org/sirius/description/1.1.0 http://www.eclipse.org/sirius/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/style/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description/style">
-  <viewpoint:DAnalysis xmi:id="_c4ZagOSeEeeovOxnrSAxQA" selectedViews="_c6MKQOSeEeeovOxnrSAxQA" version="12.1.0.201708031200">
+  <viewpoint:DAnalysis uid="_c4ZagOSeEeeovOxnrSAxQA" selectedViews="_c6MKQOSeEeeovOxnrSAxQA" version="14.1.0.201810161215">
     <semanticResources>model/SmartLaserLMS200Server.component</semanticResources>
     <semanticResources>model/SmartLaserLMS200Server.componentParameters</semanticResources>
     <semanticResources>platform:/resource/.org.eclipse.jdt.core.external.folders/.link0/componentLifecycle/ComponentLifecycle.automaton</semanticResources>
@@ -8,19 +8,22 @@
     <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.parameters</semanticResources>
     <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.modes</semanticResources>
     <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.services</semanticResources>
-    <ownedViews xmi:type="viewpoint:DView" xmi:id="_c6MKQOSeEeeovOxnrSAxQA">
+    <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.types</semanticResources>
+    <semanticResources>platform:/plugin/org.xtext.service.parameterDefinition/defaultParameterLib/defaultParameterLib.parameters</semanticResources>
+    <semanticResources>platform:/plugin/org.xtext.base.stateMachine/componentLifecycle/ComponentLifecycle.automaton</semanticResources>
+    <ownedViews xmi:type="viewpoint:DView" uid="_c6MKQOSeEeeovOxnrSAxQA">
       <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']"/>
-      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" xmi:id="_c6Rp2OSeEeeovOxnrSAxQA" name="SmartLaserLMS200Server" repPath="#_iXwb8BGdEei2ZrKya4E0lg">
+      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_c6Rp2OSeEeeovOxnrSAxQA" name="SmartLaserLMS200Server" repPath="#_c6Rp0OSeEeeovOxnrSAxQA">
         <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
         <target xmi:type="ComponentDefinition:ComponentDefModel" href="model/SmartLaserLMS200Server.component#/"/>
       </ownedRepresentationDescriptors>
     </ownedViews>
   </viewpoint:DAnalysis>
-  <diagram:DSemanticDiagram xmi:id="_c6Rp0OSeEeeovOxnrSAxQA" name="SmartLaserLMS200Server" uid="_iXwb8BGdEei2ZrKya4E0lg">
-    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" xmi:id="_c6Rp0eSeEeeovOxnrSAxQA" source="DANNOTATION_CUSTOMIZATION_KEY">
-      <data xmi:type="diagram:ComputedStyleDescriptionRegistry" xmi:id="_c6Rp0uSeEeeovOxnrSAxQA"/>
+  <diagram:DSemanticDiagram uid="_c6Rp0OSeEeeovOxnrSAxQA" name="SmartLaserLMS200Server">
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="_c6Rp0eSeEeeovOxnrSAxQA" source="DANNOTATION_CUSTOMIZATION_KEY">
+      <data xmi:type="diagram:ComputedStyleDescriptionRegistry" uid="_c6Rp0uSeEeeovOxnrSAxQA"/>
     </ownedAnnotationEntries>
-    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" xmi:id="_c6Rp2eSeEeeovOxnrSAxQA" source="GMF_DIAGRAMS">
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="_c6Rp2eSeEeeovOxnrSAxQA" source="GMF_DIAGRAMS">
       <data xmi:type="notation:Diagram" xmi:id="_c6Rp2uSeEeeovOxnrSAxQA" type="Sirius" element="_c6Rp0OSeEeeovOxnrSAxQA" measurementUnit="Pixel">
         <children xmi:type="notation:Node" xmi:id="_c6Rp3OSeEeeovOxnrSAxQA" type="2002" element="_c6Rp1OSeEeeovOxnrSAxQA">
           <children xmi:type="notation:Node" xmi:id="_c6SQ4OSeEeeovOxnrSAxQA" type="5006"/>
@@ -219,49 +222,49 @@
         </edges>
       </data>
     </ownedAnnotationEntries>
-    <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_c6Rp1OSeEeeovOxnrSAxQA" name="SmartLaserLMS200Server" tooltipText="ComponentDefinition">
+    <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_c6Rp1OSeEeeovOxnrSAxQA" name="SmartLaserLMS200Server" tooltipText="ComponentDefinition: SmartLaserLMS200Server&#xA;">
       <target xmi:type="ComponentDefinition:ComponentDefinition" href="model/SmartLaserLMS200Server.component#//@component"/>
       <semanticElements xmi:type="ComponentDefinition:ComponentDefinition" href="model/SmartLaserLMS200Server.component#//@component"/>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_y0w8sIUnEeiewJjIahDJig" name="BaseStateIn" tooltipText="InputPort" outgoingEdges="_y2xu4IUnEeiewJjIahDJig" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_y0w8sIUnEeiewJjIahDJig" name="BaseStateIn" tooltipText="InputPort: BaseStateIn&#xA;" outgoingEdges="_y2xu4IUnEeiewJjIahDJig" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:InputPort" href="model/SmartLaserLMS200Server.component#//@component/@elements.1"/>
         <semanticElements xmi:type="ComponentDefinition:InputPort" href="model/SmartLaserLMS200Server.component#//@component/@elements.1"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:CustomStyle" xmi:id="_y0w8sYUnEeiewJjIahDJig" showIcon="false" id="input">
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_y0w8sYUnEeiewJjIahDJig" showIcon="false" id="input">
           <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_y0xjwIUnEeiewJjIahDJig" name="LaserScanOut" tooltipText="OutputPort" incomingEdges="_y23OcIUnEeiewJjIahDJig" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_y0xjwIUnEeiewJjIahDJig" name="LaserScanOut" tooltipText="OutputPort" incomingEdges="_y23OcIUnEeiewJjIahDJig" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:OutputPort" href="model/SmartLaserLMS200Server.component#//@component/@elements.3"/>
         <semanticElements xmi:type="ComponentDefinition:OutputPort" href="model/SmartLaserLMS200Server.component#//@component/@elements.3"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:CustomStyle" xmi:id="_y0xjwYUnEeiewJjIahDJig" showIcon="false" id="output">
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_y0xjwYUnEeiewJjIahDJig" showIcon="false" id="output">
           <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='OutputPortNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='OutputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_y0yK0IUnEeiewJjIahDJig" name="LaserQueryServiceAnsw" tooltipText="AnswerPort" outgoingEdges="_y298IIUnEeiewJjIahDJig" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_y0yK0IUnEeiewJjIahDJig" name="LaserQueryServiceAnsw" tooltipText="AnswerPort" outgoingEdges="_y298IIUnEeiewJjIahDJig" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:AnswerPort" href="model/SmartLaserLMS200Server.component#//@component/@elements.4"/>
         <semanticElements xmi:type="ComponentDefinition:AnswerPort" href="model/SmartLaserLMS200Server.component#//@component/@elements.4"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:CustomStyle" xmi:id="_y0yK0YUnEeiewJjIahDJig" showIcon="false" id="answer">
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_y0yK0YUnEeiewJjIahDJig" showIcon="false" id="answer">
           <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='AnswerPortNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='AnswerPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_y0yx4IUnEeiewJjIahDJig" name="CoordinationPort" tooltipText="CoordinationSlavePort" outgoingEdges="_dtgsYInYEeiz_YYPzaIrAA" incomingEdges="_dth6gInYEeiz_YYPzaIrAA" width="-1" height="-1" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_y0yx4IUnEeiewJjIahDJig" name="CoordinationPort" tooltipText="CoordinationSlavePort" outgoingEdges="_dtgsYInYEeiz_YYPzaIrAA" incomingEdges="_dth6gInYEeiz_YYPzaIrAA" width="-1" height="-1" resizeKind="NSEW">
         <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/SmartLaserLMS200Server.component#//@component/@elements.0"/>
         <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/SmartLaserLMS200Server.component#//@component/@elements.0"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:WorkspaceImage" xmi:id="_y0yx4YUnEeiewJjIahDJig" showIcon="false" workspacePath="/org.sirius.component.design/icons/CoordinationSlave.png">
+        <ownedStyle xmi:type="diagram:WorkspaceImage" uid="_y0yx4YUnEeiewJjIahDJig" showIcon="false" workspacePath="/org.sirius.component.design/icons/CoordinationSlave.png">
           <description xmi:type="style:WorkspaceImageDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='CoordinationSlaveNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='CoordinationSlaveNode']"/>
@@ -269,126 +272,126 @@
       <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
       <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
       <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-      <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_c6Rp1uSeEeeovOxnrSAxQA" labelSize="10" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,245,181">
+      <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_c6Rp1uSeEeeovOxnrSAxQA" labelSize="10" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,245,181">
         <labelFormat>bold</labelFormat>
         <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@style"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']"/>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_y0zY8IUnEeiewJjIahDJig" name="LaserTask" tooltipText="Activity" outgoingEdges="_y23OcIUnEeiewJjIahDJig _y28uAIUnEeiewJjIahDJig" incomingEdges="_y2xu4IUnEeiewJjIahDJig">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_y0zY8IUnEeiewJjIahDJig" name="LaserTask" tooltipText="Activity" outgoingEdges="_y23OcIUnEeiewJjIahDJig _y28uAIUnEeiewJjIahDJig" incomingEdges="_y2xu4IUnEeiewJjIahDJig">
         <target xmi:type="ComponentDefinition:Activity" href="model/SmartLaserLMS200Server.component#//@component/@elements.2"/>
         <semanticElements xmi:type="ComponentDefinition:Activity" href="model/SmartLaserLMS200Server.component#//@component/@elements.2"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_y0zY8YUnEeiewJjIahDJig" borderSize="1" borderSizeComputationExpression="1">
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_y0zY8YUnEeiewJjIahDJig" borderSize="1" borderSizeComputationExpression="1">
           <labelFormat>bold</labelFormat>
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']"/>
-        <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_dsMdwInYEeiz_YYPzaIrAA" name="ActivationConstraints" tooltipText="ActivationConstraints" width="9">
+        <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_dsMdwInYEeiz_YYPzaIrAA" name="ActivationConstraints" tooltipText="ActivationConstraints" width="9">
           <target xmi:type="PerformanceExtension:ActivationConstraints" href="model/SmartLaserLMS200Server.component#//@component/@elements.2/@extensions.0"/>
           <semanticElements xmi:type="PerformanceExtension:ActivationConstraints" href="model/SmartLaserLMS200Server.component#//@component/@elements.2/@extensions.0"/>
           <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
           <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
           <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-          <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_dtDZYInYEeiz_YYPzaIrAA" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
+          <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_dtDZYInYEeiz_YYPzaIrAA" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
             <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@subContainerMappings[name='ActivationConstraintsContainer']/@style"/>
           </ownedStyle>
           <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@subContainerMappings[name='ActivationConstraintsContainer']"/>
         </ownedDiagramElements>
       </ownedDiagramElements>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_y2FyYIUnEeiewJjIahDJig" name="LaserQueryServiceAnswHandler" tooltipText="RequestHandler" incomingEdges="_y28uAIUnEeiewJjIahDJig _y298IIUnEeiewJjIahDJig">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_y2FyYIUnEeiewJjIahDJig" name="LaserQueryServiceAnswHandler" tooltipText="RequestHandler" incomingEdges="_y28uAIUnEeiewJjIahDJig _y298IIUnEeiewJjIahDJig">
         <target xmi:type="ComponentDefinition:RequestHandler" href="model/SmartLaserLMS200Server.component#//@component/@elements.5"/>
         <semanticElements xmi:type="ComponentDefinition:RequestHandler" href="model/SmartLaserLMS200Server.component#//@component/@elements.5"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_y2FyYYUnEeiewJjIahDJig" borderSize="1" borderSizeComputationExpression="1">
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_y2FyYYUnEeiewJjIahDJig" borderSize="1" borderSizeComputationExpression="1">
           <labelFormat>bold</labelFormat>
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='RequestHandlerContainer']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='RequestHandlerContainer']"/>
       </ownedDiagramElements>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_dtIR4InYEeiz_YYPzaIrAA" name="ComponentModes" tooltipText="ComponentModes" incomingEdges="_dtgsYInYEeiz_YYPzaIrAA">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_dtIR4InYEeiz_YYPzaIrAA" name="ComponentModes" tooltipText="ComponentModes" incomingEdges="_dtgsYInYEeiz_YYPzaIrAA">
         <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/SmartLaserLMS200Server.component#//@component/@elements.0"/>
         <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/SmartLaserLMS200Server.component#//@component/@elements.0"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_dtMjUInYEeiz_YYPzaIrAA" iconPath="/org.sirius.component.design/icons/switch2.png" borderSize="1" borderSizeComputationExpression="1">
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_dtMjUInYEeiz_YYPzaIrAA" iconPath="/org.sirius.component.design/icons/switch2.png" borderSize="1" borderSizeComputationExpression="1">
           <labelFormat>bold</labelFormat>
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']"/>
       </ownedDiagramElements>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_dtMjUYnYEeiz_YYPzaIrAA" name="SmartLaserLMS200ServerParams" tooltipText="ComponentParameters" outgoingEdges="_dth6gInYEeiz_YYPzaIrAA">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_dtMjUYnYEeiz_YYPzaIrAA" name="SmartLaserLMS200ServerParams" tooltipText="ComponentParameters" outgoingEdges="_dth6gInYEeiz_YYPzaIrAA">
         <target xmi:type="ComponentParameter:ComponentParametersRef" href="model/SmartLaserLMS200Server.component#//@component/@elements.6"/>
         <semanticElements xmi:type="ComponentParameter:ComponentParametersRef" href="model/SmartLaserLMS200Server.component#//@component/@elements.6"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_dtNKYInYEeiz_YYPzaIrAA" borderSize="1" borderSizeComputationExpression="1">
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_dtNKYInYEeiz_YYPzaIrAA" borderSize="1" borderSizeComputationExpression="1">
           <labelFormat>bold</labelFormat>
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentParametersContainer']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentParametersContainer']"/>
       </ownedDiagramElements>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_y2xu4IUnEeiewJjIahDJig" sourceNode="_y0w8sIUnEeiewJjIahDJig" targetNode="_y0zY8IUnEeiewJjIahDJig">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_y2xu4IUnEeiewJjIahDJig" sourceNode="_y0w8sIUnEeiewJjIahDJig" targetNode="_y0zY8IUnEeiewJjIahDJig">
       <target xmi:type="PerformanceExtension:InputLinkExtension" href="model/SmartLaserLMS200Server.component#//@component/@elements.2/@links.0"/>
       <semanticElements xmi:type="PerformanceExtension:InputLinkExtension" href="model/SmartLaserLMS200Server.component#//@component/@elements.2/@links.0"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_y22AUIUnEeiewJjIahDJig" lineStyle="dash" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_y22AUIUnEeiewJjIahDJig" lineStyle="dash" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']/@conditionnalStyles.0/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_y22AUYUnEeiewJjIahDJig"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_y22AUYUnEeiewJjIahDJig"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_y23OcIUnEeiewJjIahDJig" sourceNode="_y0zY8IUnEeiewJjIahDJig" targetNode="_y0xjwIUnEeiewJjIahDJig">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_y23OcIUnEeiewJjIahDJig" sourceNode="_y0zY8IUnEeiewJjIahDJig" targetNode="_y0xjwIUnEeiewJjIahDJig">
       <target xmi:type="ComponentDefinition:OutputPort" href="model/SmartLaserLMS200Server.component#//@component/@elements.3"/>
       <semanticElements xmi:type="ComponentDefinition:OutputPort" href="model/SmartLaserLMS200Server.component#//@component/@elements.3"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_y23OcYUnEeiewJjIahDJig" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_y23OcYUnEeiewJjIahDJig" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ActivityOutputEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_y23OcoUnEeiewJjIahDJig"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_y23OcoUnEeiewJjIahDJig"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ActivityOutputEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_y28uAIUnEeiewJjIahDJig" sourceNode="_y0zY8IUnEeiewJjIahDJig" targetNode="_y2FyYIUnEeiewJjIahDJig">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_y28uAIUnEeiewJjIahDJig" sourceNode="_y0zY8IUnEeiewJjIahDJig" targetNode="_y2FyYIUnEeiewJjIahDJig">
       <target xmi:type="ComponentDefinition:ComponentSubNodeObserver" href="model/SmartLaserLMS200Server.component#//@component/@elements.5/@links.0"/>
       <semanticElements xmi:type="ComponentDefinition:ComponentSubNodeObserver" href="model/SmartLaserLMS200Server.component#//@component/@elements.5/@links.0"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_y28uAYUnEeiewJjIahDJig" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_y28uAYUnEeiewJjIahDJig" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ObserverEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_y28uAoUnEeiewJjIahDJig"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_y28uAoUnEeiewJjIahDJig"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ObserverEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_y298IIUnEeiewJjIahDJig" sourceNode="_y0yK0IUnEeiewJjIahDJig" targetNode="_y2FyYIUnEeiewJjIahDJig">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_y298IIUnEeiewJjIahDJig" sourceNode="_y0yK0IUnEeiewJjIahDJig" targetNode="_y2FyYIUnEeiewJjIahDJig">
       <target xmi:type="ComponentDefinition:RequestHandler" href="model/SmartLaserLMS200Server.component#//@component/@elements.5"/>
       <semanticElements xmi:type="ComponentDefinition:RequestHandler" href="model/SmartLaserLMS200Server.component#//@component/@elements.5"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_y298IYUnEeiewJjIahDJig" targetArrow="OutputClosedArrow" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_y298IYUnEeiewJjIahDJig" targetArrow="OutputClosedArrow" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='RequestHandlerEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_y298IoUnEeiewJjIahDJig" showIcon="false"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_y298IoUnEeiewJjIahDJig" showIcon="false"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='RequestHandlerEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_dtgsYInYEeiz_YYPzaIrAA" sourceNode="_y0yx4IUnEeiewJjIahDJig" targetNode="_dtIR4InYEeiz_YYPzaIrAA">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_dtgsYInYEeiz_YYPzaIrAA" sourceNode="_y0yx4IUnEeiewJjIahDJig" targetNode="_dtIR4InYEeiz_YYPzaIrAA">
       <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/SmartLaserLMS200Server.component#//@component/@elements.0"/>
       <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/SmartLaserLMS200Server.component#//@component/@elements.0"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_dtgsYYnYEeiz_YYPzaIrAA" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_dtgsYYnYEeiz_YYPzaIrAA" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CoordinationSlaveEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_dtgsYonYEeiz_YYPzaIrAA"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_dtgsYonYEeiz_YYPzaIrAA"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CoordinationSlaveEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_dth6gInYEeiz_YYPzaIrAA" sourceNode="_dtMjUYnYEeiz_YYPzaIrAA" targetNode="_y0yx4IUnEeiewJjIahDJig">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_dth6gInYEeiz_YYPzaIrAA" sourceNode="_dtMjUYnYEeiz_YYPzaIrAA" targetNode="_y0yx4IUnEeiewJjIahDJig">
       <target xmi:type="ComponentParameter:ComponentParametersRef" href="model/SmartLaserLMS200Server.component#//@component/@elements.6"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_dtihkInYEeiz_YYPzaIrAA" sourceArrow="InputArrow" targetArrow="NoDecoration" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_dtihkInYEeiz_YYPzaIrAA" sourceArrow="InputArrow" targetArrow="NoDecoration" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ParametersEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_dtihkYnYEeiz_YYPzaIrAA"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_dtihkYnYEeiz_YYPzaIrAA"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ParametersEdge']"/>
     </ownedDiagramElements>
     <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
-    <filterVariableHistory xmi:type="diagram:FilterVariableHistory" xmi:id="_c6Rp1-SeEeeovOxnrSAxQA"/>
+    <filterVariableHistory xmi:type="diagram:FilterVariableHistory" uid="_c6Rp1-SeEeeovOxnrSAxQA"/>
     <activatedLayers xmi:type="description_1:Layer" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer"/>
     <target xmi:type="ComponentDefinition:ComponentDefModel" href="model/SmartLaserLMS200Server.component#/"/>
   </diagram:DSemanticDiagram>

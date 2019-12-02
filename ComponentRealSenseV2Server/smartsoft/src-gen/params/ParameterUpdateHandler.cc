@@ -85,28 +85,28 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		// load internal parameters (if any)
 		//
 		// parameter Depth_config
-		if(parameter.getDouble("Depth_config", "framerate", commitState.Depth_config.framerate))
+		if(parameter.getInteger("Depth_config", "framerate", commitState.Depth_config.framerate))
 		{
 			globalState.Depth_config.framerate = commitState.Depth_config.framerate;
 		}
-		if(parameter.getDouble("Depth_config", "height", commitState.Depth_config.height))
+		if(parameter.getInteger("Depth_config", "height", commitState.Depth_config.height))
 		{
 			globalState.Depth_config.height = commitState.Depth_config.height;
 		}
-		if(parameter.getDouble("Depth_config", "width", commitState.Depth_config.width))
+		if(parameter.getInteger("Depth_config", "width", commitState.Depth_config.width))
 		{
 			globalState.Depth_config.width = commitState.Depth_config.width;
 		}
 		// parameter RGB_config
-		if(parameter.getDouble("RGB_config", "framerate", commitState.RGB_config.framerate))
+		if(parameter.getInteger("RGB_config", "framerate", commitState.RGB_config.framerate))
 		{
 			globalState.RGB_config.framerate = commitState.RGB_config.framerate;
 		}
-		if(parameter.getDouble("RGB_config", "height", commitState.RGB_config.height))
+		if(parameter.getInteger("RGB_config", "height", commitState.RGB_config.height))
 		{
 			globalState.RGB_config.height = commitState.RGB_config.height;
 		}
-		if(parameter.getDouble("RGB_config", "width", commitState.RGB_config.width))
+		if(parameter.getInteger("RGB_config", "width", commitState.RGB_config.width))
 		{
 			globalState.RGB_config.width = commitState.RGB_config.width;
 		}
@@ -135,15 +135,15 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.base.steer_a = commitState.base.steer_a;
 		}
-		if(parameter.getDouble("base", "x", commitState.base.x))
+		if(parameter.getInteger("base", "x", commitState.base.x))
 		{
 			globalState.base.x = commitState.base.x;
 		}
-		if(parameter.getDouble("base", "y", commitState.base.y))
+		if(parameter.getInteger("base", "y", commitState.base.y))
 		{
 			globalState.base.y = commitState.base.y;
 		}
-		if(parameter.getDouble("base", "z", commitState.base.z))
+		if(parameter.getInteger("base", "z", commitState.base.z))
 		{
 			globalState.base.z = commitState.base.z;
 		}

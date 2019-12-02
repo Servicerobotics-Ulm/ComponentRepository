@@ -17,7 +17,7 @@
 #include "LaserQueryServerHandler.hh"
 #include "ComponentLaserHokuyoURGServer.hh"
 
-LaserQueryServerHandler::LaserQueryServerHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan, SmartACE::QueryId>* server)
+LaserQueryServerHandler::LaserQueryServerHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan>* server)
 :	LaserQueryServerHandlerCore(server)
 {
 
@@ -29,7 +29,7 @@ LaserQueryServerHandler::~LaserQueryServerHandler()
 }
 
 
-void LaserQueryServerHandler::handleQuery(const SmartACE::QueryId &id, const CommBasicObjects::CommVoid& request)
+void LaserQueryServerHandler::handleQuery(const Smart::QueryIdPtr &id, const CommBasicObjects::CommVoid& request)
 {
 	CommBasicObjects::CommMobileLaserScan answer;
 

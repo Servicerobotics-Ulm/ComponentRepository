@@ -97,6 +97,35 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.Image.valid_time_in_sec = commitState.Image.valid_time_in_sec;
 		}
+		// parameter IntrinsicParams
+		if(parameter.getInteger("IntrinsicParams", "calib_height", commitState.IntrinsicParams.calib_height))
+		{
+			globalState.IntrinsicParams.calib_height = commitState.IntrinsicParams.calib_height;
+		}
+		if(parameter.getInteger("IntrinsicParams", "calib_width", commitState.IntrinsicParams.calib_width))
+		{
+			globalState.IntrinsicParams.calib_width = commitState.IntrinsicParams.calib_width;
+		}
+		if(parameter.getDouble("IntrinsicParams", "cx", commitState.IntrinsicParams.cx))
+		{
+			globalState.IntrinsicParams.cx = commitState.IntrinsicParams.cx;
+		}
+		if(parameter.getDouble("IntrinsicParams", "cy", commitState.IntrinsicParams.cy))
+		{
+			globalState.IntrinsicParams.cy = commitState.IntrinsicParams.cy;
+		}
+		if(parameter.getDoubleList("IntrinsicParams", "distortion_coeffs", commitState.IntrinsicParams.distortion_coeffs))
+		{
+			globalState.IntrinsicParams.distortion_coeffs = commitState.IntrinsicParams.distortion_coeffs;
+		}
+		if(parameter.getDouble("IntrinsicParams", "fx", commitState.IntrinsicParams.fx))
+		{
+			globalState.IntrinsicParams.fx = commitState.IntrinsicParams.fx;
+		}
+		if(parameter.getDouble("IntrinsicParams", "fy", commitState.IntrinsicParams.fy))
+		{
+			globalState.IntrinsicParams.fy = commitState.IntrinsicParams.fy;
+		}
 		// parameter base
 		if(parameter.getDouble("base", "azimuth", commitState.base.azimuth))
 		{
@@ -118,15 +147,15 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.base.roll = commitState.base.roll;
 		}
-		if(parameter.getDouble("base", "x", commitState.base.x))
+		if(parameter.getInteger("base", "x", commitState.base.x))
 		{
 			globalState.base.x = commitState.base.x;
 		}
-		if(parameter.getDouble("base", "y", commitState.base.y))
+		if(parameter.getInteger("base", "y", commitState.base.y))
 		{
 			globalState.base.y = commitState.base.y;
 		}
-		if(parameter.getDouble("base", "z", commitState.base.z))
+		if(parameter.getInteger("base", "z", commitState.base.z))
 		{
 			globalState.base.z = commitState.base.z;
 		}
@@ -247,15 +276,15 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.sensor_pose.roll = commitState.sensor_pose.roll;
 		}
-		if(parameter.getDouble("sensor_pose", "x", commitState.sensor_pose.x))
+		if(parameter.getInteger("sensor_pose", "x", commitState.sensor_pose.x))
 		{
 			globalState.sensor_pose.x = commitState.sensor_pose.x;
 		}
-		if(parameter.getDouble("sensor_pose", "y", commitState.sensor_pose.y))
+		if(parameter.getInteger("sensor_pose", "y", commitState.sensor_pose.y))
 		{
 			globalState.sensor_pose.y = commitState.sensor_pose.y;
 		}
-		if(parameter.getDouble("sensor_pose", "z", commitState.sensor_pose.z))
+		if(parameter.getInteger("sensor_pose", "z", commitState.sensor_pose.z))
 		{
 			globalState.sensor_pose.z = commitState.sensor_pose.z;
 		}

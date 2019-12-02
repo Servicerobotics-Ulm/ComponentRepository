@@ -49,6 +49,8 @@ ComponentTrafficLight::ComponentTrafficLight()
 	connections.trafficLightServiceIn.roboticMiddleware = "ACE_SmartSoft";
 	connections.trafficLightServiceInHandler.prescale = 1;
 	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of ComponentTrafficLightROSExtension
 	
 	// initialize members of PlainOpcUaComponentTrafficLightExtension
@@ -124,6 +126,8 @@ void ComponentTrafficLight::init(int argc, char *argv[])
 		// load initial parameters from ini-file (if found)
 		loadParameter(argc, argv);
 		
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of ComponentTrafficLightROSExtension
 		
@@ -286,6 +290,8 @@ void ComponentTrafficLight::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of ComponentTrafficLightROSExtension
 	
 	// destruction of PlainOpcUaComponentTrafficLightExtension
@@ -372,6 +378,8 @@ void ComponentTrafficLight::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("TrafficLightServiceInHandler", "prescale")) {
 			parameter.getInteger("TrafficLightServiceInHandler", "prescale", connections.trafficLightServiceInHandler.prescale);
 		}
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for ComponentTrafficLightROSExtension
 		

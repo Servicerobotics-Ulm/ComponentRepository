@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ComponentDefinition="http://www.ecore.org/component/ComponentDefinition" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:diagram="http://www.eclipse.org/sirius/diagram/1.1.0" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xsi:schemaLocation="http://www.eclipse.org/sirius/description/1.1.0 http://www.eclipse.org/sirius/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/style/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description/style">
-  <viewpoint:DAnalysis xmi:id="_c6CMEB0vEei0AJJE7ZZN2w" selectedViews="_c-rbgB0vEei0AJJE7ZZN2w" version="12.1.0.201708031200">
+  <viewpoint:DAnalysis uid="_c6CMEB0vEei0AJJE7ZZN2w" selectedViews="_c-rbgB0vEei0AJJE7ZZN2w" version="14.1.0.201810161215">
     <semanticResources>model/SmartRobotConsole.component</semanticResources>
     <semanticResources>model/SmartRobotConsole.componentParameters</semanticResources>
     <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.parameters</semanticResources>
     <semanticResources>model/SmartRobotConsole.componentDocumentation</semanticResources>
     <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.modes</semanticResources>
     <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.services</semanticResources>
-    <ownedViews xmi:type="viewpoint:DView" xmi:id="_c-rbgB0vEei0AJJE7ZZN2w">
+    <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.types</semanticResources>
+    <semanticResources>platform:/plugin/org.xtext.service.parameterDefinition/defaultParameterLib/defaultParameterLib.parameters</semanticResources>
+    <semanticResources>platform:/plugin/org.xtext.base.stateMachine/componentLifecycle/ComponentLifecycle.automaton</semanticResources>
+    <ownedViews xmi:type="viewpoint:DView" uid="_c-rbgB0vEei0AJJE7ZZN2w">
       <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']"/>
-      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" xmi:id="_c_mokB0vEei0AJJE7ZZN2w" name="SmartRobotConsole" repPath="#_c_EdEB0vEei0AJJE7ZZN2w">
+      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_c_mokB0vEei0AJJE7ZZN2w" name="SmartRobotConsole" repPath="#_c_kMUB0vEei0AJJE7ZZN2w">
         <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
         <target xmi:type="ComponentDefinition:ComponentDefModel" href="model/SmartRobotConsole.component#/"/>
       </ownedRepresentationDescriptors>
     </ownedViews>
   </viewpoint:DAnalysis>
-  <diagram:DSemanticDiagram xmi:id="_c_kMUB0vEei0AJJE7ZZN2w" name="SmartRobotConsole" uid="_c_EdEB0vEei0AJJE7ZZN2w">
-    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" xmi:id="_c_kMUR0vEei0AJJE7ZZN2w" source="DANNOTATION_CUSTOMIZATION_KEY">
-      <data xmi:type="diagram:ComputedStyleDescriptionRegistry" xmi:id="_c_kMUh0vEei0AJJE7ZZN2w"/>
+  <diagram:DSemanticDiagram uid="_c_kMUB0vEei0AJJE7ZZN2w" name="SmartRobotConsole">
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="_c_kMUR0vEei0AJJE7ZZN2w" source="DANNOTATION_CUSTOMIZATION_KEY">
+      <data xmi:type="diagram:ComputedStyleDescriptionRegistry" uid="_c_kMUh0vEei0AJJE7ZZN2w"/>
     </ownedAnnotationEntries>
-    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" xmi:id="_c_1SEB0vEei0AJJE7ZZN2w" source="GMF_DIAGRAMS">
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="_c_1SEB0vEei0AJJE7ZZN2w" source="GMF_DIAGRAMS">
       <data xmi:type="notation:Diagram" xmi:id="_c_1SER0vEei0AJJE7ZZN2w" type="Sirius" element="_c_kMUB0vEei0AJJE7ZZN2w" measurementUnit="Pixel">
         <children xmi:type="notation:Node" xmi:id="_dLOpwB0vEei0AJJE7ZZN2w" type="2002" element="_dK-yIB0vEei0AJJE7ZZN2w">
           <children xmi:type="notation:Node" xmi:id="_dLUJUB0vEei0AJJE7ZZN2w" type="5006"/>
@@ -42,24 +45,24 @@
         <styles xmi:type="notation:DiagramStyle" xmi:id="_c_1SEh0vEei0AJJE7ZZN2w"/>
       </data>
     </ownedAnnotationEntries>
-    <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_dK-yIB0vEei0AJJE7ZZN2w" name="SmartRobotConsole" tooltipText="ComponentDefinition">
+    <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_dK-yIB0vEei0AJJE7ZZN2w" name="SmartRobotConsole" tooltipText="ComponentDefinition: SmartRobotConsole&#xA;">
       <target xmi:type="ComponentDefinition:ComponentDefinition" href="model/SmartRobotConsole.component#//@component"/>
       <semanticElements xmi:type="ComponentDefinition:ComponentDefinition" href="model/SmartRobotConsole.component#//@component"/>
       <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
       <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
       <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-      <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_dLCcgB0vEei0AJJE7ZZN2w" labelSize="10" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,245,181">
+      <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_dLCcgB0vEei0AJJE7ZZN2w" labelSize="10" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,245,181">
         <labelFormat>bold</labelFormat>
         <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@style"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']"/>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_szM7gIUqEeilSKhMSCP88g" name="ConsoleTask" tooltipText="Activity">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_szM7gIUqEeilSKhMSCP88g" name="ConsoleTask" tooltipText="Activity">
         <target xmi:type="ComponentDefinition:Activity" href="model/SmartRobotConsole.component#//@component/@elements.0"/>
         <semanticElements xmi:type="ComponentDefinition:Activity" href="model/SmartRobotConsole.component#//@component/@elements.0"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_szM7gYUqEeilSKhMSCP88g" borderSize="1" borderSizeComputationExpression="1">
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_szM7gYUqEeilSKhMSCP88g" borderSize="1" borderSizeComputationExpression="1">
           <labelFormat>bold</labelFormat>
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@style"/>
         </ownedStyle>
@@ -67,7 +70,7 @@
       </ownedDiagramElements>
     </ownedDiagramElements>
     <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
-    <filterVariableHistory xmi:type="diagram:FilterVariableHistory" xmi:id="_c_kMVB0vEei0AJJE7ZZN2w"/>
+    <filterVariableHistory xmi:type="diagram:FilterVariableHistory" uid="_c_kMVB0vEei0AJJE7ZZN2w"/>
     <activatedLayers xmi:type="description_1:Layer" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer"/>
     <target xmi:type="ComponentDefinition:ComponentDefModel" href="model/SmartRobotConsole.component#/"/>
   </diagram:DSemanticDiagram>

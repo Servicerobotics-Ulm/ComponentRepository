@@ -56,10 +56,10 @@
 class LocalizationEventServiceInHandler  : public LocalizationEventServiceInHandlerCore
 {		
 public:
-	LocalizationEventServiceInHandler(Smart::InputSubject<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult,SmartACE::EventId>> *subject, const int &prescaleFactor=1);
+	LocalizationEventServiceInHandler(Smart::InputSubject<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult>> *subject, const int &prescaleFactor=1);
 	virtual ~LocalizationEventServiceInHandler();
 	
-	virtual void on_LocalizationEventServiceIn(const Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult,SmartACE::EventId> &input);
+	virtual void on_LocalizationEventServiceIn(const Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult> &input);
 };
 
 #endif

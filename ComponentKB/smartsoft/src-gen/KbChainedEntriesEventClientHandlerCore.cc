@@ -17,9 +17,9 @@
 #include "KbChainedEntriesEventClientHandler.hh"
 
 KbChainedEntriesEventClientHandlerCore::KbChainedEntriesEventClientHandlerCore(
-	Smart::InputSubject<Smart::EventInputType<CommBasicObjects::CommKBEventResult,SmartACE::EventId>> *subject,
+	Smart::InputSubject<Smart::EventInputType<CommBasicObjects::CommKBEventResult>> *subject,
 	const int &prescaleFactor)
-	:	Smart::InputTaskTrigger<Smart::EventInputType<CommBasicObjects::CommKBEventResult,SmartACE::EventId>>(subject, prescaleFactor)
+	:	Smart::InputTaskTrigger<Smart::EventInputType<CommBasicObjects::CommKBEventResult>>(subject, prescaleFactor)
 {  
 	updateStatus = Smart::SMART_NODATA;
 }

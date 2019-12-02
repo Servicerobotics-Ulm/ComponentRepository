@@ -29,6 +29,8 @@
 class ComponentLaserObstacleAvoidPortFactoryInterface;
 class ComponentLaserObstacleAvoidExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for ComponentLaserObstacleAvoidROSExtension
 
 // includes for PlainOpcUaComponentLaserObstacleAvoidExtension
@@ -47,8 +49,8 @@ class ComponentLaserObstacleAvoidExtension;
 // include UpcallManagers
 #include "LaserServiceInUpcallManager.hh"
 
-// include input-handler
-// include input-handler
+// include input-handler(s)
+// include request-handler(s)
 
 // include handler
 #include "CompHandler.hh"
@@ -108,6 +110,8 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of ComponentLaserObstacleAvoidROSExtension
 	
@@ -228,6 +232,8 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} navigationVelocityServiceOut;
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for ComponentLaserObstacleAvoidROSExtension
 		

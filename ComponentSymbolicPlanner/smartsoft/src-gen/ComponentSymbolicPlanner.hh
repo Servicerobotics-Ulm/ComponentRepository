@@ -29,6 +29,8 @@
 class ComponentSymbolicPlannerPortFactoryInterface;
 class ComponentSymbolicPlannerExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for ComponentSymbolicPlannerROSExtension
 
 // includes for PlainOpcUaComponentSymbolicPlannerExtension
@@ -45,8 +47,8 @@ class ComponentSymbolicPlannerExtension;
 // include tasks
 // include UpcallManagers
 
-// include input-handler
-// include input-handler
+// include input-handler(s)
+// include request-handler(s)
 #include "SymbolicPannerQueryHandler.hh"
 
 // include handler
@@ -98,11 +100,13 @@ public:
 	// define output-ports
 	
 	// define answer-ports
-	Smart::IQueryServerPattern<DomainSymbolicPlanner::CommSymbolicPlannerRequest, DomainSymbolicPlanner::CommSymbolicPlannerPlan,SmartACE::QueryId> *symbolicPlannerQueryServer;
-	Smart::QueryServerTaskTrigger<DomainSymbolicPlanner::CommSymbolicPlannerRequest, DomainSymbolicPlanner::CommSymbolicPlannerPlan,SmartACE::QueryId> *symbolicPlannerQueryServerInputTaskTrigger;
+	Smart::IQueryServerPattern<DomainSymbolicPlanner::CommSymbolicPlannerRequest, DomainSymbolicPlanner::CommSymbolicPlannerPlan> *symbolicPlannerQueryServer;
+	Smart::QueryServerTaskTrigger<DomainSymbolicPlanner::CommSymbolicPlannerRequest, DomainSymbolicPlanner::CommSymbolicPlannerPlan> *symbolicPlannerQueryServerInputTaskTrigger;
 	
 	// define request-handlers
 	SymbolicPannerQueryHandler *symbolicPannerQueryHandler;
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of ComponentSymbolicPlannerROSExtension
 	
@@ -194,6 +198,8 @@ public:
 		} symbolicPlannerQueryServer;
 	
 		//--- client port parameter ---
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for ComponentSymbolicPlannerROSExtension
 		

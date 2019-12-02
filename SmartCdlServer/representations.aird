@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ComponentDefinition="http://www.ecore.org/component/ComponentDefinition" xmlns:ComponentParameter="http://www.ecore.org/component/ComponentParameter" xmlns:CoordinationExtension="http://www.ecore.org/component/CoordinationExtension" xmlns:PerformanceExtension="http://www.ecore.org/component/PerformanceExtension" xmlns:StateExtension="http://www.ecore.org/component/StateExtension" xmlns:StateMachine="http://www.ecore.org/base/StateMachine" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:diagram="http://www.eclipse.org/sirius/diagram/1.1.0" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xsi:schemaLocation="http://www.eclipse.org/sirius/description/1.1.0 http://www.eclipse.org/sirius/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/style/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description/style">
-  <viewpoint:DAnalysis xmi:id="_N00AMOSWEeeovOxnrSAxQA" selectedViews="_lhw9sOSWEeeovOxnrSAxQA" version="12.1.0.201708031200">
+  <viewpoint:DAnalysis uid="_N00AMOSWEeeovOxnrSAxQA" selectedViews="_lhw9sOSWEeeovOxnrSAxQA" version="14.1.0.201810161215">
     <semanticResources>model/SmartCdlServer.component</semanticResources>
     <semanticResources>model/SmartCdlServer.componentParameters</semanticResources>
     <semanticResources>platform:/resource/.org.eclipse.jdt.core.external.folders/.link0/componentLifecycle/ComponentLifecycle.automaton</semanticResources>
@@ -24,23 +24,26 @@
     <semanticResources>platform:/resource/CommTrackingObjects/model/CommTrackingObjects.types</semanticResources>
     <semanticResources>model/SmartCdlServer.skillRealization</semanticResources>
     <semanticResources>platform:/resource/CommNavigationObjects/model/CommNavigationObjects.skills</semanticResources>
-    <ownedViews xmi:type="viewpoint:DView" xmi:id="_lhw9sOSWEeeovOxnrSAxQA">
+    <semanticResources>platform:/resource/CommRobotinoObjects/model/CommRobotinoObjects.modes</semanticResources>
+    <semanticResources>platform:/resource/CommRobotinoObjects/model/CommRobotinoObjects.parameters</semanticResources>
+    <semanticResources>platform:/resource/CommTrackingObjects/model/CommTrackingObjects.modes</semanticResources>
+    <ownedViews xmi:type="viewpoint:DView" uid="_lhw9sOSWEeeovOxnrSAxQA">
       <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']"/>
-      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" xmi:id="_mXrSAOSWEeeovOxnrSAxQA" name="SmartCdlServer" repPath="#_DaM-oBGdEei2ZrKya4E0lg">
+      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_mXrSAOSWEeeovOxnrSAxQA" name="SmartCdlServer" repPath="#_mXRCUOSWEeeovOxnrSAxQA">
         <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
         <target xmi:type="ComponentDefinition:ComponentDefModel" href="model/SmartCdlServer.component#/"/>
       </ownedRepresentationDescriptors>
-      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" xmi:id="_UBCQ4OShEeeovOxnrSAxQA" name="SmartCdlServerStates" repPath="#_DaWvoBGdEei2ZrKya4E0lg">
+      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_UBCQ4OShEeeovOxnrSAxQA" name="SmartCdlServerStates" repPath="#_UBBp0OShEeeovOxnrSAxQA">
         <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']"/>
         <target xmi:type="StateExtension:ComponentStates" href="model/SmartCdlServer.component#//@component/@extensions.1"/>
       </ownedRepresentationDescriptors>
     </ownedViews>
   </viewpoint:DAnalysis>
-  <diagram:DSemanticDiagram xmi:id="_mXRCUOSWEeeovOxnrSAxQA" name="SmartCdlServer" uid="_DaM-oBGdEei2ZrKya4E0lg">
-    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" xmi:id="_mXRCUeSWEeeovOxnrSAxQA" source="DANNOTATION_CUSTOMIZATION_KEY">
-      <data xmi:type="diagram:ComputedStyleDescriptionRegistry" xmi:id="_mXRCUuSWEeeovOxnrSAxQA"/>
+  <diagram:DSemanticDiagram uid="_mXRCUOSWEeeovOxnrSAxQA" name="SmartCdlServer">
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="_mXRCUeSWEeeovOxnrSAxQA" source="DANNOTATION_CUSTOMIZATION_KEY">
+      <data xmi:type="diagram:ComputedStyleDescriptionRegistry" uid="_mXRCUuSWEeeovOxnrSAxQA"/>
     </ownedAnnotationEntries>
-    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" xmi:id="_mgCj0OSWEeeovOxnrSAxQA" source="GMF_DIAGRAMS">
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="_mgCj0OSWEeeovOxnrSAxQA" source="GMF_DIAGRAMS">
       <data xmi:type="notation:Diagram" xmi:id="_mgCj0eSWEeeovOxnrSAxQA" type="Sirius" element="_mXRCUOSWEeeovOxnrSAxQA" measurementUnit="Pixel">
         <children xmi:type="notation:Node" xmi:id="_mkwEsOSWEeeovOxnrSAxQA" type="2002" element="_mXRpYeSWEeeovOxnrSAxQA">
           <children xmi:type="notation:Node" xmi:id="_moXZYOSWEeeovOxnrSAxQA" type="5006"/>
@@ -520,137 +523,137 @@
         </edges>
       </data>
     </ownedAnnotationEntries>
-    <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_mXRpYeSWEeeovOxnrSAxQA" name="SmartCdlServer" tooltipText="ComponentDefinition">
+    <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_mXRpYeSWEeeovOxnrSAxQA" name="SmartCdlServer" tooltipText="ComponentDefinition: SmartCdlServer&#xA;">
       <target xmi:type="ComponentDefinition:ComponentDefinition" href="model/SmartCdlServer.component#//@component"/>
       <semanticElements xmi:type="ComponentDefinition:ComponentDefinition" href="model/SmartCdlServer.component#//@component"/>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_Gib64BGdEei2ZrKya4E0lg" name="LaserClient" tooltipText="InputPort" outgoingEdges="__HWM0IUgEeizp5Kji_q0-Q" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_Gib64BGdEei2ZrKya4E0lg" name="LaserClient" tooltipText="InputPort: LaserClient&#xA;" outgoingEdges="__HWM0IUgEeizp5Kji_q0-Q" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:InputPort" href="model/SmartCdlServer.component#//@component/@elements.1"/>
         <semanticElements xmi:type="ComponentDefinition:InputPort" href="model/SmartCdlServer.component#//@component/@elements.1"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:CustomStyle" xmi:id="_Gib64RGdEei2ZrKya4E0lg" showIcon="false" id="input">
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_Gib64RGdEei2ZrKya4E0lg" showIcon="false" id="input">
           <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_Gib64hGdEei2ZrKya4E0lg" name="LaserClient2" tooltipText="InputPort" outgoingEdges="__Hf90oUgEeizp5Kji_q0-Q" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_Gib64hGdEei2ZrKya4E0lg" name="LaserClient2" tooltipText="InputPort: LaserClient2&#xA;" outgoingEdges="__Hf90oUgEeizp5Kji_q0-Q" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:InputPort" href="model/SmartCdlServer.component#//@component/@elements.2"/>
         <semanticElements xmi:type="ComponentDefinition:InputPort" href="model/SmartCdlServer.component#//@component/@elements.2"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:CustomStyle" xmi:id="_Gib64xGdEei2ZrKya4E0lg" showIcon="false" id="input">
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_Gib64xGdEei2ZrKya4E0lg" showIcon="false" id="input">
           <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_OXrZcBYqEeire4W6RsZu-w" name="PlannerClient" tooltipText="InputPort" outgoingEdges="__HdhkoUgEeizp5Kji_q0-Q" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_OXrZcBYqEeire4W6RsZu-w" name="PlannerClient" tooltipText="InputPort: PlannerClient&#xA;" outgoingEdges="__HdhkoUgEeizp5Kji_q0-Q" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:InputPort" href="model/SmartCdlServer.component#//@component/@elements.3"/>
         <semanticElements xmi:type="ComponentDefinition:InputPort" href="model/SmartCdlServer.component#//@component/@elements.3"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:CustomStyle" xmi:id="_OXrZcRYqEeire4W6RsZu-w" showIcon="false" id="input">
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_OXrZcRYqEeire4W6RsZu-w" showIcon="false" id="input">
           <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_kYzHQBYqEeire4W6RsZu-w" name="NavVelSendServer" tooltipText="InputPort" outgoingEdges="__HevsoUgEeizp5Kji_q0-Q" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_kYzHQBYqEeire4W6RsZu-w" name="NavVelSendServer" tooltipText="InputPort: NavVelSendServer&#xA;" outgoingEdges="__HevsoUgEeizp5Kji_q0-Q" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:InputPort" href="model/SmartCdlServer.component#//@component/@elements.4"/>
         <semanticElements xmi:type="ComponentDefinition:InputPort" href="model/SmartCdlServer.component#//@component/@elements.4"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:CustomStyle" xmi:id="_kYzHQRYqEeire4W6RsZu-w" showIcon="false" id="input">
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_kYzHQRYqEeire4W6RsZu-w" showIcon="false" id="input">
           <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_FAr_cBYrEeire4W6RsZu-w" name="TrackingClient" tooltipText="InputPort" outgoingEdges="__HfWwoUgEeizp5Kji_q0-Q" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_FAr_cBYrEeire4W6RsZu-w" name="TrackingClient" tooltipText="InputPort: TrackingClient&#xA;" outgoingEdges="__HfWwoUgEeizp5Kji_q0-Q" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:InputPort" href="model/SmartCdlServer.component#//@component/@elements.5"/>
         <semanticElements xmi:type="ComponentDefinition:InputPort" href="model/SmartCdlServer.component#//@component/@elements.5"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:CustomStyle" xmi:id="_FAsmgBYrEeire4W6RsZu-w" showIcon="false" id="input">
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_FAsmgBYrEeire4W6RsZu-w" showIcon="false" id="input">
           <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_vEFv0BYrEeire4W6RsZu-w" name="IRClient" tooltipText="InputPort" outgoingEdges="__Hgk4oUgEeizp5Kji_q0-Q" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_vEFv0BYrEeire4W6RsZu-w" name="IRClient" tooltipText="InputPort: IRClient&#xA;" outgoingEdges="__Hgk4oUgEeizp5Kji_q0-Q" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:InputPort" href="model/SmartCdlServer.component#//@component/@elements.6"/>
         <semanticElements xmi:type="ComponentDefinition:InputPort" href="model/SmartCdlServer.component#//@component/@elements.6"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:CustomStyle" xmi:id="_vEFv0RYrEeire4W6RsZu-w" showIcon="false" id="input">
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_vEFv0RYrEeire4W6RsZu-w" showIcon="false" id="input">
           <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_vEGW4BYrEeire4W6RsZu-w" name="PathNavigationGoalClient" tooltipText="InputPort" outgoingEdges="__HhL8oUgEeizp5Kji_q0-Q" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_vEGW4BYrEeire4W6RsZu-w" name="PathNavigationGoalClient" tooltipText="InputPort: PathNavigationGoalClient&#xA;" outgoingEdges="__HhL8oUgEeizp5Kji_q0-Q" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:InputPort" href="model/SmartCdlServer.component#//@component/@elements.7"/>
         <semanticElements xmi:type="ComponentDefinition:InputPort" href="model/SmartCdlServer.component#//@component/@elements.7"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:CustomStyle" xmi:id="_vEGW4RYrEeire4W6RsZu-w" showIcon="false" id="input">
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_vEGW4RYrEeire4W6RsZu-w" showIcon="false" id="input">
           <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_vEHlABYrEeire4W6RsZu-w" name="NavVelSendClient" tooltipText="OutputPort" incomingEdges="__HnSkIUgEeizp5Kji_q0-Q" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_vEHlABYrEeire4W6RsZu-w" name="NavVelSendClient" tooltipText="OutputPort" incomingEdges="__HnSkIUgEeizp5Kji_q0-Q" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:OutputPort" href="model/SmartCdlServer.component#//@component/@elements.10"/>
         <semanticElements xmi:type="ComponentDefinition:OutputPort" href="model/SmartCdlServer.component#//@component/@elements.10"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:CustomStyle" xmi:id="_vEHlARYrEeire4W6RsZu-w" showIcon="false" id="output">
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_vEHlARYrEeire4W6RsZu-w" showIcon="false" id="output">
           <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='OutputPortNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='OutputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_vEHlAhYrEeire4W6RsZu-w" name="GoalEventServer" tooltipText="OutputPort" incomingEdges="__Hn5ooUgEeizp5Kji_q0-Q _PtLyQMWOEei9Ovi0pVVHTQ" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_vEHlAhYrEeire4W6RsZu-w" name="GoalEventServer" tooltipText="OutputPort" incomingEdges="__Hn5ooUgEeizp5Kji_q0-Q _PtLyQMWOEei9Ovi0pVVHTQ" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:OutputPort" href="model/SmartCdlServer.component#//@component/@elements.11"/>
         <semanticElements xmi:type="ComponentDefinition:OutputPort" href="model/SmartCdlServer.component#//@component/@elements.11"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:CustomStyle" xmi:id="_vEHlAxYrEeire4W6RsZu-w" showIcon="false" id="output">
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_vEHlAxYrEeire4W6RsZu-w" showIcon="false" id="output">
           <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='OutputPortNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='OutputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="__EDoQIUgEeizp5Kji_q0-Q" name="BaseStateClient" tooltipText="InputPort" outgoingEdges="__HhzAoUgEeizp5Kji_q0-Q" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="__EDoQIUgEeizp5Kji_q0-Q" name="BaseStateClient" tooltipText="InputPort: BaseStateClient&#xA;" outgoingEdges="__HhzAoUgEeizp5Kji_q0-Q" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:InputPort" href="model/SmartCdlServer.component#//@component/@elements.8"/>
         <semanticElements xmi:type="ComponentDefinition:InputPort" href="model/SmartCdlServer.component#//@component/@elements.8"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:CustomStyle" xmi:id="__EEPUIUgEeizp5Kji_q0-Q" showIcon="false" id="input">
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="__EEPUIUgEeizp5Kji_q0-Q" showIcon="false" id="input">
           <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="__EHSoIUgEeizp5Kji_q0-Q" name="RobotBlockedEventServer" tooltipText="OutputPort" incomingEdges="__HogsoUgEeizp5Kji_q0-Q _PtIu8MWOEei9Ovi0pVVHTQ" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="__EHSoIUgEeizp5Kji_q0-Q" name="RobotBlockedEventServer" tooltipText="OutputPort" incomingEdges="__HogsoUgEeizp5Kji_q0-Q _PtIu8MWOEei9Ovi0pVVHTQ" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="ComponentDefinition:OutputPort" href="model/SmartCdlServer.component#//@component/@elements.12"/>
         <semanticElements xmi:type="ComponentDefinition:OutputPort" href="model/SmartCdlServer.component#//@component/@elements.12"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:CustomStyle" xmi:id="__EH5sIUgEeizp5Kji_q0-Q" showIcon="false" id="output">
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="__EH5sIUgEeizp5Kji_q0-Q" showIcon="false" id="output">
           <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='OutputPortNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='OutputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_Rg8vcIUjEeiFsdlAUb1SEQ" name="CoordinationPort" tooltipText="CoordinationSlavePort" outgoingEdges="_eL0OcInXEeiz_YYPzaIrAA _PtIu8MWOEei9Ovi0pVVHTQ _PtLyQMWOEei9Ovi0pVVHTQ" incomingEdges="_eMHwcInXEeiz_YYPzaIrAA" width="-1" height="-1" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_Rg8vcIUjEeiFsdlAUb1SEQ" name="CoordinationPort" tooltipText="CoordinationSlavePort" outgoingEdges="_eL0OcInXEeiz_YYPzaIrAA _PtIu8MWOEei9Ovi0pVVHTQ _PtLyQMWOEei9Ovi0pVVHTQ" incomingEdges="_eMHwcInXEeiz_YYPzaIrAA" width="-1" height="-1" resizeKind="NSEW">
         <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/SmartCdlServer.component#//@component/@elements.0"/>
         <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/SmartCdlServer.component#//@component/@elements.0"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:WorkspaceImage" xmi:id="_Rg_LsIUjEeiFsdlAUb1SEQ" showIcon="false" workspacePath="/org.sirius.component.design/icons/CoordinationSlave.png">
+        <ownedStyle xmi:type="diagram:WorkspaceImage" uid="_Rg_LsIUjEeiFsdlAUb1SEQ" showIcon="false" workspacePath="/org.sirius.component.design/icons/CoordinationSlave.png">
           <description xmi:type="style:WorkspaceImageDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='CoordinationSlaveNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='CoordinationSlaveNode']"/>
@@ -658,250 +661,250 @@
       <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
       <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
       <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-      <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_mXRpY-SWEeeovOxnrSAxQA" labelSize="10" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,245,181">
+      <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_mXRpY-SWEeeovOxnrSAxQA" labelSize="10" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,245,181">
         <labelFormat>bold</labelFormat>
         <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@style"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']"/>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="__EKV8IUgEeizp5Kji_q0-Q" name="CdlTask" tooltipText="Activity" outgoingEdges="__HnSkIUgEeizp5Kji_q0-Q __Hn5ooUgEeizp5Kji_q0-Q __HogsoUgEeizp5Kji_q0-Q _gcq1UBf2Eem4y4qWo8qoPQ" incomingEdges="__HWM0IUgEeizp5Kji_q0-Q __HdhkoUgEeizp5Kji_q0-Q __HevsoUgEeizp5Kji_q0-Q __HfWwoUgEeizp5Kji_q0-Q __Hf90oUgEeizp5Kji_q0-Q __Hgk4oUgEeizp5Kji_q0-Q __HhL8oUgEeizp5Kji_q0-Q __HhzAoUgEeizp5Kji_q0-Q">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="__EKV8IUgEeizp5Kji_q0-Q" name="CdlTask" tooltipText="Activity" outgoingEdges="__HnSkIUgEeizp5Kji_q0-Q __Hn5ooUgEeizp5Kji_q0-Q __HogsoUgEeizp5Kji_q0-Q _gcq1UBf2Eem4y4qWo8qoPQ" incomingEdges="__HWM0IUgEeizp5Kji_q0-Q __HdhkoUgEeizp5Kji_q0-Q __HevsoUgEeizp5Kji_q0-Q __HfWwoUgEeizp5Kji_q0-Q __Hf90oUgEeizp5Kji_q0-Q __Hgk4oUgEeizp5Kji_q0-Q __HhL8oUgEeizp5Kji_q0-Q __HhzAoUgEeizp5Kji_q0-Q">
         <target xmi:type="ComponentDefinition:Activity" href="model/SmartCdlServer.component#//@component/@elements.9"/>
         <semanticElements xmi:type="ComponentDefinition:Activity" href="model/SmartCdlServer.component#//@component/@elements.9"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="__EK9AIUgEeizp5Kji_q0-Q" borderSize="1" borderSizeComputationExpression="1">
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="__EK9AIUgEeizp5Kji_q0-Q" borderSize="1" borderSizeComputationExpression="1">
           <labelFormat>bold</labelFormat>
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']"/>
-        <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_eKHlUInXEeiz_YYPzaIrAA" name="ActivationConstraints" tooltipText="ActivationConstraints" width="9">
+        <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_eKHlUInXEeiz_YYPzaIrAA" name="ActivationConstraints" tooltipText="ActivationConstraints" width="9">
           <target xmi:type="PerformanceExtension:ActivationConstraints" href="model/SmartCdlServer.component#//@component/@elements.9/@extensions.0"/>
           <semanticElements xmi:type="PerformanceExtension:ActivationConstraints" href="model/SmartCdlServer.component#//@component/@elements.9/@extensions.0"/>
-          <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_eKwegInXEeiz_YYPzaIrAA" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
+          <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_eKwegInXEeiz_YYPzaIrAA" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
             <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@subContainerMappings[name='ActivationConstraintsContainer']/@style"/>
           </ownedStyle>
           <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@subContainerMappings[name='ActivationConstraintsContainer']"/>
         </ownedDiagramElements>
-        <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_eKyTsInXEeiz_YYPzaIrAA" name="PeriodicTimer" tooltipText="DefaultTrigger">
+        <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_eKyTsInXEeiz_YYPzaIrAA" name="PeriodicTimer" tooltipText="DefaultTrigger">
           <target xmi:type="PerformanceExtension:DefaultPeriodicTimer" href="model/SmartCdlServer.component#//@component/@elements.9/@extensions.1"/>
           <semanticElements xmi:type="PerformanceExtension:DefaultPeriodicTimer" href="model/SmartCdlServer.component#//@component/@elements.9/@extensions.1"/>
           <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
           <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
           <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-          <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_eK5BYInXEeiz_YYPzaIrAA" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
+          <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_eK5BYInXEeiz_YYPzaIrAA" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
             <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@subContainerMappings[name='DefaultPeriodicTimerContainer']/@style"/>
           </ownedStyle>
           <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@subContainerMappings[name='DefaultPeriodicTimerContainer']"/>
         </ownedDiagramElements>
       </ownedDiagramElements>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_eK6PgInXEeiz_YYPzaIrAA" name="ComponentModes" tooltipText="ComponentModes" incomingEdges="_eL0OcInXEeiz_YYPzaIrAA">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_eK6PgInXEeiz_YYPzaIrAA" name="ComponentModes" tooltipText="ComponentModes" incomingEdges="_eL0OcInXEeiz_YYPzaIrAA">
         <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/SmartCdlServer.component#//@component/@elements.0"/>
         <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/SmartCdlServer.component#//@component/@elements.0"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_eLAWIInXEeiz_YYPzaIrAA" iconPath="/org.sirius.component.design/icons/switch2.png" borderSize="1" borderSizeComputationExpression="1">
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_eLAWIInXEeiz_YYPzaIrAA" iconPath="/org.sirius.component.design/icons/switch2.png" borderSize="1" borderSizeComputationExpression="1">
           <labelFormat>bold</labelFormat>
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']"/>
-        <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_gabZoBf2Eem4y4qWo8qoPQ" name="MoveRobot" tooltipText="PublicOperationMode" outgoingEdges="_gcz_QBf2Eem4y4qWo8qoPQ">
+        <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_gabZoBf2Eem4y4qWo8qoPQ" name="MoveRobot" tooltipText="PublicOperationMode" outgoingEdges="_gcz_QBf2Eem4y4qWo8qoPQ">
           <target xmi:type="CoordinationExtension:PublicOperationMode" href="model/SmartCdlServer.component#//@component/@elements.0/@elements.1"/>
           <semanticElements xmi:type="CoordinationExtension:PublicOperationMode" href="model/SmartCdlServer.component#//@component/@elements.0/@elements.1"/>
           <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
           <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
           <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-          <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_gacAsBf2Eem4y4qWo8qoPQ" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
+          <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_gacAsBf2Eem4y4qWo8qoPQ" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
             <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PublicOperationModeContainer']/@style"/>
           </ownedStyle>
           <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PublicOperationModeContainer']"/>
         </ownedDiagramElements>
-        <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_gad14Bf2Eem4y4qWo8qoPQ" name="moveRobot" tooltipText="PrivateOperationMode" incomingEdges="_gcq1UBf2Eem4y4qWo8qoPQ _gcz_QBf2Eem4y4qWo8qoPQ">
+        <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_gad14Bf2Eem4y4qWo8qoPQ" name="moveRobot" tooltipText="PrivateOperationMode" incomingEdges="_gcq1UBf2Eem4y4qWo8qoPQ _gcz_QBf2Eem4y4qWo8qoPQ">
           <target xmi:type="CoordinationExtension:PrivateOperationMode" href="model/SmartCdlServer.component#//@component/@elements.0/@elements.0"/>
           <semanticElements xmi:type="CoordinationExtension:PrivateOperationMode" href="model/SmartCdlServer.component#//@component/@elements.0/@elements.0"/>
           <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
           <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
           <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-          <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_gad14Rf2Eem4y4qWo8qoPQ" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
+          <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_gad14Rf2Eem4y4qWo8qoPQ" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
             <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PrivateOperationModeContainer']/@style"/>
           </ownedStyle>
           <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PrivateOperationModeContainer']"/>
         </ownedDiagramElements>
       </ownedDiagramElements>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_eLCyYInXEeiz_YYPzaIrAA" name="SmartCdlServerParams" tooltipText="ComponentParameters" outgoingEdges="_eMHwcInXEeiz_YYPzaIrAA">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_eLCyYInXEeiz_YYPzaIrAA" name="SmartCdlServerParams" tooltipText="ComponentParameters" outgoingEdges="_eMHwcInXEeiz_YYPzaIrAA">
         <target xmi:type="ComponentParameter:ComponentParametersRef" href="model/SmartCdlServer.component#//@component/@elements.13"/>
         <semanticElements xmi:type="ComponentParameter:ComponentParametersRef" href="model/SmartCdlServer.component#//@component/@elements.13"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_eLCyYYnXEeiz_YYPzaIrAA" borderSize="1" borderSizeComputationExpression="1">
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_eLCyYYnXEeiz_YYPzaIrAA" borderSize="1" borderSizeComputationExpression="1">
           <labelFormat>bold</labelFormat>
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentParametersContainer']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentParametersContainer']"/>
       </ownedDiagramElements>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="__HWM0IUgEeizp5Kji_q0-Q" sourceNode="_Gib64BGdEei2ZrKya4E0lg" targetNode="__EKV8IUgEeizp5Kji_q0-Q">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="__HWM0IUgEeizp5Kji_q0-Q" sourceNode="_Gib64BGdEei2ZrKya4E0lg" targetNode="__EKV8IUgEeizp5Kji_q0-Q">
       <target xmi:type="PerformanceExtension:InputLinkExtension" href="model/SmartCdlServer.component#//@component/@elements.9/@links.0"/>
       <semanticElements xmi:type="PerformanceExtension:InputLinkExtension" href="model/SmartCdlServer.component#//@component/@elements.9/@links.0"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="__HdhkIUgEeizp5Kji_q0-Q" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="__HdhkIUgEeizp5Kji_q0-Q" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="__HdhkYUgEeizp5Kji_q0-Q"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="__HdhkYUgEeizp5Kji_q0-Q"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="__HdhkoUgEeizp5Kji_q0-Q" sourceNode="_OXrZcBYqEeire4W6RsZu-w" targetNode="__EKV8IUgEeizp5Kji_q0-Q">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="__HdhkoUgEeizp5Kji_q0-Q" sourceNode="_OXrZcBYqEeire4W6RsZu-w" targetNode="__EKV8IUgEeizp5Kji_q0-Q">
       <target xmi:type="PerformanceExtension:InputLinkExtension" href="model/SmartCdlServer.component#//@component/@elements.9/@links.1"/>
       <semanticElements xmi:type="PerformanceExtension:InputLinkExtension" href="model/SmartCdlServer.component#//@component/@elements.9/@links.1"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="__HevsIUgEeizp5Kji_q0-Q" lineStyle="dash" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="__HevsIUgEeizp5Kji_q0-Q" lineStyle="dash" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']/@conditionnalStyles.0/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="__HevsYUgEeizp5Kji_q0-Q"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="__HevsYUgEeizp5Kji_q0-Q"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="__HevsoUgEeizp5Kji_q0-Q" sourceNode="_kYzHQBYqEeire4W6RsZu-w" targetNode="__EKV8IUgEeizp5Kji_q0-Q">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="__HevsoUgEeizp5Kji_q0-Q" sourceNode="_kYzHQBYqEeire4W6RsZu-w" targetNode="__EKV8IUgEeizp5Kji_q0-Q">
       <target xmi:type="PerformanceExtension:InputLinkExtension" href="model/SmartCdlServer.component#//@component/@elements.9/@links.2"/>
       <semanticElements xmi:type="PerformanceExtension:InputLinkExtension" href="model/SmartCdlServer.component#//@component/@elements.9/@links.2"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="__HfWwIUgEeizp5Kji_q0-Q" lineStyle="dash" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="__HfWwIUgEeizp5Kji_q0-Q" lineStyle="dash" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']/@conditionnalStyles.0/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="__HfWwYUgEeizp5Kji_q0-Q"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="__HfWwYUgEeizp5Kji_q0-Q"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="__HfWwoUgEeizp5Kji_q0-Q" sourceNode="_FAr_cBYrEeire4W6RsZu-w" targetNode="__EKV8IUgEeizp5Kji_q0-Q">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="__HfWwoUgEeizp5Kji_q0-Q" sourceNode="_FAr_cBYrEeire4W6RsZu-w" targetNode="__EKV8IUgEeizp5Kji_q0-Q">
       <target xmi:type="PerformanceExtension:InputLinkExtension" href="model/SmartCdlServer.component#//@component/@elements.9/@links.3"/>
       <semanticElements xmi:type="PerformanceExtension:InputLinkExtension" href="model/SmartCdlServer.component#//@component/@elements.9/@links.3"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="__Hf90IUgEeizp5Kji_q0-Q" lineStyle="dash" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="__Hf90IUgEeizp5Kji_q0-Q" lineStyle="dash" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']/@conditionnalStyles.0/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="__Hf90YUgEeizp5Kji_q0-Q"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="__Hf90YUgEeizp5Kji_q0-Q"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="__Hf90oUgEeizp5Kji_q0-Q" sourceNode="_Gib64hGdEei2ZrKya4E0lg" targetNode="__EKV8IUgEeizp5Kji_q0-Q">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="__Hf90oUgEeizp5Kji_q0-Q" sourceNode="_Gib64hGdEei2ZrKya4E0lg" targetNode="__EKV8IUgEeizp5Kji_q0-Q">
       <target xmi:type="PerformanceExtension:InputLinkExtension" href="model/SmartCdlServer.component#//@component/@elements.9/@links.4"/>
       <semanticElements xmi:type="PerformanceExtension:InputLinkExtension" href="model/SmartCdlServer.component#//@component/@elements.9/@links.4"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="__Hgk4IUgEeizp5Kji_q0-Q" lineStyle="dash" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="__Hgk4IUgEeizp5Kji_q0-Q" lineStyle="dash" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']/@conditionnalStyles.0/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="__Hgk4YUgEeizp5Kji_q0-Q"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="__Hgk4YUgEeizp5Kji_q0-Q"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="__Hgk4oUgEeizp5Kji_q0-Q" sourceNode="_vEFv0BYrEeire4W6RsZu-w" targetNode="__EKV8IUgEeizp5Kji_q0-Q">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="__Hgk4oUgEeizp5Kji_q0-Q" sourceNode="_vEFv0BYrEeire4W6RsZu-w" targetNode="__EKV8IUgEeizp5Kji_q0-Q">
       <target xmi:type="PerformanceExtension:InputLinkExtension" href="model/SmartCdlServer.component#//@component/@elements.9/@links.5"/>
       <semanticElements xmi:type="PerformanceExtension:InputLinkExtension" href="model/SmartCdlServer.component#//@component/@elements.9/@links.5"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="__HhL8IUgEeizp5Kji_q0-Q" lineStyle="dash" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="__HhL8IUgEeizp5Kji_q0-Q" lineStyle="dash" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']/@conditionnalStyles.0/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="__HhL8YUgEeizp5Kji_q0-Q"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="__HhL8YUgEeizp5Kji_q0-Q"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="__HhL8oUgEeizp5Kji_q0-Q" sourceNode="_vEGW4BYrEeire4W6RsZu-w" targetNode="__EKV8IUgEeizp5Kji_q0-Q">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="__HhL8oUgEeizp5Kji_q0-Q" sourceNode="_vEGW4BYrEeire4W6RsZu-w" targetNode="__EKV8IUgEeizp5Kji_q0-Q">
       <target xmi:type="PerformanceExtension:InputLinkExtension" href="model/SmartCdlServer.component#//@component/@elements.9/@links.6"/>
       <semanticElements xmi:type="PerformanceExtension:InputLinkExtension" href="model/SmartCdlServer.component#//@component/@elements.9/@links.6"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="__HhzAIUgEeizp5Kji_q0-Q" lineStyle="dash" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="__HhzAIUgEeizp5Kji_q0-Q" lineStyle="dash" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']/@conditionnalStyles.0/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="__HhzAYUgEeizp5Kji_q0-Q"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="__HhzAYUgEeizp5Kji_q0-Q"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="__HhzAoUgEeizp5Kji_q0-Q" sourceNode="__EDoQIUgEeizp5Kji_q0-Q" targetNode="__EKV8IUgEeizp5Kji_q0-Q">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="__HhzAoUgEeizp5Kji_q0-Q" sourceNode="__EDoQIUgEeizp5Kji_q0-Q" targetNode="__EKV8IUgEeizp5Kji_q0-Q">
       <target xmi:type="PerformanceExtension:InputLinkExtension" href="model/SmartCdlServer.component#//@component/@elements.9/@links.7"/>
       <semanticElements xmi:type="PerformanceExtension:InputLinkExtension" href="model/SmartCdlServer.component#//@component/@elements.9/@links.7"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="__HiaEIUgEeizp5Kji_q0-Q" lineStyle="dash" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="__HiaEIUgEeizp5Kji_q0-Q" lineStyle="dash" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']/@conditionnalStyles.0/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="__HiaEYUgEeizp5Kji_q0-Q"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="__HiaEYUgEeizp5Kji_q0-Q"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="__HnSkIUgEeizp5Kji_q0-Q" sourceNode="__EKV8IUgEeizp5Kji_q0-Q" targetNode="_vEHlABYrEeire4W6RsZu-w">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="__HnSkIUgEeizp5Kji_q0-Q" sourceNode="__EKV8IUgEeizp5Kji_q0-Q" targetNode="_vEHlABYrEeire4W6RsZu-w">
       <target xmi:type="ComponentDefinition:OutputPort" href="model/SmartCdlServer.component#//@component/@elements.10"/>
       <semanticElements xmi:type="ComponentDefinition:OutputPort" href="model/SmartCdlServer.component#//@component/@elements.10"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="__Hn5oIUgEeizp5Kji_q0-Q" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="__Hn5oIUgEeizp5Kji_q0-Q" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ActivityOutputEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="__Hn5oYUgEeizp5Kji_q0-Q"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="__Hn5oYUgEeizp5Kji_q0-Q"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ActivityOutputEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="__Hn5ooUgEeizp5Kji_q0-Q" sourceNode="__EKV8IUgEeizp5Kji_q0-Q" targetNode="_vEHlAhYrEeire4W6RsZu-w">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="__Hn5ooUgEeizp5Kji_q0-Q" sourceNode="__EKV8IUgEeizp5Kji_q0-Q" targetNode="_vEHlAhYrEeire4W6RsZu-w">
       <target xmi:type="ComponentDefinition:OutputPort" href="model/SmartCdlServer.component#//@component/@elements.11"/>
       <semanticElements xmi:type="ComponentDefinition:OutputPort" href="model/SmartCdlServer.component#//@component/@elements.11"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="__HogsIUgEeizp5Kji_q0-Q" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="__HogsIUgEeizp5Kji_q0-Q" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ActivityOutputEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="__HogsYUgEeizp5Kji_q0-Q"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="__HogsYUgEeizp5Kji_q0-Q"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ActivityOutputEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="__HogsoUgEeizp5Kji_q0-Q" sourceNode="__EKV8IUgEeizp5Kji_q0-Q" targetNode="__EHSoIUgEeizp5Kji_q0-Q">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="__HogsoUgEeizp5Kji_q0-Q" sourceNode="__EKV8IUgEeizp5Kji_q0-Q" targetNode="__EHSoIUgEeizp5Kji_q0-Q">
       <target xmi:type="ComponentDefinition:OutputPort" href="model/SmartCdlServer.component#//@component/@elements.12"/>
       <semanticElements xmi:type="ComponentDefinition:OutputPort" href="model/SmartCdlServer.component#//@component/@elements.12"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="__HpHwIUgEeizp5Kji_q0-Q" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="__HpHwIUgEeizp5Kji_q0-Q" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ActivityOutputEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="__HpHwYUgEeizp5Kji_q0-Q"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="__HpHwYUgEeizp5Kji_q0-Q"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ActivityOutputEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_eL0OcInXEeiz_YYPzaIrAA" sourceNode="_Rg8vcIUjEeiFsdlAUb1SEQ" targetNode="_eK6PgInXEeiz_YYPzaIrAA">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_eL0OcInXEeiz_YYPzaIrAA" sourceNode="_Rg8vcIUjEeiFsdlAUb1SEQ" targetNode="_eK6PgInXEeiz_YYPzaIrAA">
       <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/SmartCdlServer.component#//@component/@elements.0"/>
       <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/SmartCdlServer.component#//@component/@elements.0"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_eL01gInXEeiz_YYPzaIrAA" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_eL01gInXEeiz_YYPzaIrAA" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CoordinationSlaveEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_eL01gYnXEeiz_YYPzaIrAA"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_eL01gYnXEeiz_YYPzaIrAA"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CoordinationSlaveEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_eMHwcInXEeiz_YYPzaIrAA" sourceNode="_eLCyYInXEeiz_YYPzaIrAA" targetNode="_Rg8vcIUjEeiFsdlAUb1SEQ">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_eMHwcInXEeiz_YYPzaIrAA" sourceNode="_eLCyYInXEeiz_YYPzaIrAA" targetNode="_Rg8vcIUjEeiFsdlAUb1SEQ">
       <target xmi:type="ComponentParameter:ComponentParametersRef" href="model/SmartCdlServer.component#//@component/@elements.13"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_eMIXgInXEeiz_YYPzaIrAA" sourceArrow="InputArrow" targetArrow="NoDecoration" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_eMIXgInXEeiz_YYPzaIrAA" sourceArrow="InputArrow" targetArrow="NoDecoration" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ParametersEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_eMIXgYnXEeiz_YYPzaIrAA"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_eMIXgYnXEeiz_YYPzaIrAA"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ParametersEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_PtIu8MWOEei9Ovi0pVVHTQ" sourceNode="_Rg8vcIUjEeiFsdlAUb1SEQ" targetNode="__EHSoIUgEeizp5Kji_q0-Q">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_PtIu8MWOEei9Ovi0pVVHTQ" sourceNode="_Rg8vcIUjEeiFsdlAUb1SEQ" targetNode="__EHSoIUgEeizp5Kji_q0-Q">
       <target xmi:type="CoordinationExtension:CommunicationServiceUsageRealization" href="model/SmartCdlServer.component#//@component/@elements.0/@elements.2"/>
       <semanticElements xmi:type="CoordinationExtension:CommunicationServiceUsageRealization" href="model/SmartCdlServer.component#//@component/@elements.0/@elements.2"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_PtLLMMWOEei9Ovi0pVVHTQ" targetArrow="NoDecoration" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_PtLLMMWOEei9Ovi0pVVHTQ" targetArrow="NoDecoration" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CommunicationServiceUsageRealizationEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_PtLLMcWOEei9Ovi0pVVHTQ"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_PtLLMcWOEei9Ovi0pVVHTQ"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CommunicationServiceUsageRealizationEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_PtLyQMWOEei9Ovi0pVVHTQ" sourceNode="_Rg8vcIUjEeiFsdlAUb1SEQ" targetNode="_vEHlAhYrEeire4W6RsZu-w">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_PtLyQMWOEei9Ovi0pVVHTQ" sourceNode="_Rg8vcIUjEeiFsdlAUb1SEQ" targetNode="_vEHlAhYrEeire4W6RsZu-w">
       <target xmi:type="CoordinationExtension:CommunicationServiceUsageRealization" href="model/SmartCdlServer.component#//@component/@elements.0/@elements.3"/>
       <semanticElements xmi:type="CoordinationExtension:CommunicationServiceUsageRealization" href="model/SmartCdlServer.component#//@component/@elements.0/@elements.3"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_PtLyQcWOEei9Ovi0pVVHTQ" targetArrow="NoDecoration" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_PtLyQcWOEei9Ovi0pVVHTQ" targetArrow="NoDecoration" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CommunicationServiceUsageRealizationEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_PtLyQsWOEei9Ovi0pVVHTQ"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_PtLyQsWOEei9Ovi0pVVHTQ"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CommunicationServiceUsageRealizationEdge']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_gcq1UBf2Eem4y4qWo8qoPQ" name="uses" sourceNode="__EKV8IUgEeizp5Kji_q0-Q" targetNode="_gad14Bf2Eem4y4qWo8qoPQ">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_gcq1UBf2Eem4y4qWo8qoPQ" name="uses" sourceNode="__EKV8IUgEeizp5Kji_q0-Q" targetNode="_gad14Bf2Eem4y4qWo8qoPQ">
       <target xmi:type="CoordinationExtension:OperationModeBinding" href="model/SmartCdlServer.component#//@component/@elements.9/@extensions.2"/>
       <semanticElements xmi:type="CoordinationExtension:OperationModeBinding" href="model/SmartCdlServer.component#//@component/@elements.9/@extensions.2"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_gcq1URf2Eem4y4qWo8qoPQ" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_gcq1URf2Eem4y4qWo8qoPQ" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='OperationModeBinding']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_gcq1Uhf2Eem4y4qWo8qoPQ" showIcon="false"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_gcq1Uhf2Eem4y4qWo8qoPQ" showIcon="false"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='OperationModeBinding']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_gcz_QBf2Eem4y4qWo8qoPQ" sourceNode="_gabZoBf2Eem4y4qWo8qoPQ" targetNode="_gad14Bf2Eem4y4qWo8qoPQ">
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_gcz_QBf2Eem4y4qWo8qoPQ" sourceNode="_gabZoBf2Eem4y4qWo8qoPQ" targetNode="_gad14Bf2Eem4y4qWo8qoPQ">
       <target xmi:type="CoordinationExtension:PublicOperationMode" href="model/SmartCdlServer.component#//@component/@elements.0/@elements.1"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_gcz_QRf2Eem4y4qWo8qoPQ" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_gcz_QRf2Eem4y4qWo8qoPQ" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='PrivateOperationModeEdge']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_gcz_Qhf2Eem4y4qWo8qoPQ" showIcon="false"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_gcz_Qhf2Eem4y4qWo8qoPQ" showIcon="false"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='PrivateOperationModeEdge']"/>
     </ownedDiagramElements>
     <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
-    <filterVariableHistory xmi:type="diagram:FilterVariableHistory" xmi:id="_mXRpZOSWEeeovOxnrSAxQA"/>
+    <filterVariableHistory xmi:type="diagram:FilterVariableHistory" uid="_mXRpZOSWEeeovOxnrSAxQA"/>
     <activatedLayers xmi:type="description_1:Layer" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer"/>
     <target xmi:type="ComponentDefinition:ComponentDefModel" href="model/SmartCdlServer.component#/"/>
   </diagram:DSemanticDiagram>
-  <diagram:DSemanticDiagram xmi:id="_UBBp0OShEeeovOxnrSAxQA" name="SmartCdlServerStates" uid="_DaWvoBGdEei2ZrKya4E0lg">
-    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" xmi:id="_UBBp0eShEeeovOxnrSAxQA" source="DANNOTATION_CUSTOMIZATION_KEY">
-      <data xmi:type="diagram:ComputedStyleDescriptionRegistry" xmi:id="_UBBp0uShEeeovOxnrSAxQA"/>
+  <diagram:DSemanticDiagram uid="_UBBp0OShEeeovOxnrSAxQA" name="SmartCdlServerStates">
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="_UBBp0eShEeeovOxnrSAxQA" source="DANNOTATION_CUSTOMIZATION_KEY">
+      <data xmi:type="diagram:ComputedStyleDescriptionRegistry" uid="_UBBp0uShEeeovOxnrSAxQA"/>
     </ownedAnnotationEntries>
-    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" xmi:id="_UBLa0OShEeeovOxnrSAxQA" source="GMF_DIAGRAMS">
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="_UBLa0OShEeeovOxnrSAxQA" source="GMF_DIAGRAMS">
       <data xmi:type="notation:Diagram" xmi:id="_UBLa0eShEeeovOxnrSAxQA" type="Sirius" element="_UBBp0OShEeeovOxnrSAxQA" measurementUnit="Pixel">
         <children xmi:type="notation:Node" xmi:id="_UBMB4OShEeeovOxnrSAxQA" type="2003" element="_UBBp1OShEeeovOxnrSAxQA">
           <children xmi:type="notation:Node" xmi:id="_UBMo8OShEeeovOxnrSAxQA" type="5007"/>
@@ -939,17 +942,17 @@
         <styles xmi:type="notation:DiagramStyle" xmi:id="_UBLa0uShEeeovOxnrSAxQA"/>
       </data>
     </ownedAnnotationEntries>
-    <ownedDiagramElements xmi:type="diagram:DNodeList" xmi:id="_UBBp1OShEeeovOxnrSAxQA" name="SmartCdlServerStates" tooltipText="SubStates">
+    <ownedDiagramElements xmi:type="diagram:DNodeList" uid="_UBBp1OShEeeovOxnrSAxQA" name="SmartCdlServerStates" tooltipText="SubStates">
       <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
       <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
       <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-      <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_UBBp1eShEeeovOxnrSAxQA" borderSize="1" borderSizeComputationExpression="1">
+      <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_UBBp1eShEeeovOxnrSAxQA" borderSize="1" borderSizeComputationExpression="1">
         <labelFormat>bold</labelFormat>
         <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='StateAutomatonContainer']/@style"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='StateAutomatonContainer']"/>
-      <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_b9OrYOShEeeovOxnrSAxQA" name="moveRobot" tooltipText="SubStateNode">
-        <ownedStyle xmi:type="diagram:Square" xmi:id="_b9PScOShEeeovOxnrSAxQA" labelAlignment="LEFT" labelPosition="node" color="252,233,79">
+      <ownedElements xmi:type="diagram:DNodeListElement" uid="_b9OrYOShEeeovOxnrSAxQA" name="moveRobot" tooltipText="SubStateNode">
+        <ownedStyle xmi:type="diagram:Square" uid="_b9PScOShEeeovOxnrSAxQA" labelAlignment="LEFT" labelPosition="node" color="252,233,79">
           <description xmi:type="style:SquareDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='StateAutomatonContainer']/@subNodeMappings[name='SubStateNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='StateAutomatonContainer']/@subNodeMappings[name='SubStateNode']"/>
@@ -959,19 +962,19 @@
       <target xmi:type="StateExtension:ComponentStates" href="model/SmartCdlServer.component#//@component/@extensions.1"/>
       <semanticElements xmi:type="StateExtension:ComponentStates" href="model/SmartCdlServer.component#//@component/@extensions.1"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_b9FhcOShEeeovOxnrSAxQA" name="MoveRobot" tooltipText="MainStateInstance">
+    <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_b9FhcOShEeeovOxnrSAxQA" name="MoveRobot" tooltipText="MainStateInstance">
       <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
       <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
       <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-      <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_b9Jy4OShEeeovOxnrSAxQA" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,245,181">
+      <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_b9Jy4OShEeeovOxnrSAxQA" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,245,181">
         <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='MainStateContainer']/@conditionnalStyles.0/@style"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='MainStateContainer']"/>
-      <ownedDiagramElements xmi:type="diagram:DNode" xmi:id="_b9Jy4eShEeeovOxnrSAxQA" name="moveRobot" tooltipText="SubStateReference" width="9" height="3" resizeKind="NSEW">
+      <ownedDiagramElements xmi:type="diagram:DNode" uid="_b9Jy4eShEeeovOxnrSAxQA" name="moveRobot" tooltipText="SubStateReference" width="9" height="3" resizeKind="NSEW">
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:Ellipse" xmi:id="_b9KZ8OShEeeovOxnrSAxQA" showIcon="false" borderSize="1" borderSizeComputationExpression="1" labelPosition="node" horizontalDiameter="9" verticalDiameter="3" color="204,242,166">
+        <ownedStyle xmi:type="diagram:Ellipse" uid="_b9KZ8OShEeeovOxnrSAxQA" showIcon="false" borderSize="1" borderSizeComputationExpression="1" labelPosition="node" horizontalDiameter="9" verticalDiameter="3" color="204,242,166">
           <description xmi:type="style:EllipseNodeDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='MainStateContainer']/@subNodeMappings[name='SubStateReferenceNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer/@containerMappings[name='MainStateContainer']/@subNodeMappings[name='SubStateReferenceNode']"/>
@@ -982,7 +985,7 @@
       <semanticElements xmi:type="StateExtension:MainStateInstance" href="model/SmartCdlServer.component#//@component/@extensions.1/@mainstates.0"/>
     </ownedDiagramElements>
     <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']"/>
-    <filterVariableHistory xmi:type="diagram:FilterVariableHistory" xmi:id="_UBBp1uShEeeovOxnrSAxQA"/>
+    <filterVariableHistory xmi:type="diagram:FilterVariableHistory" uid="_UBBp1uShEeeovOxnrSAxQA"/>
     <activatedLayers xmi:type="description_1:Layer" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@defaultLayer"/>
     <activatedLayers xmi:type="description_1:AdditionalLayer" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='StateAutomatonDiagram']/@additionalLayers[name='Transitions']"/>
     <target xmi:type="StateExtension:ComponentStates" href="model/SmartCdlServer.component#//@component/@extensions.1"/>

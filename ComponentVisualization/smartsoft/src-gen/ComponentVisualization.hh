@@ -29,6 +29,8 @@
 class ComponentVisualizationPortFactoryInterface;
 class ComponentVisualizationExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for ComponentVisualizationROSExtension
 
 // includes for PlainOpcUaComponentVisualizationExtension
@@ -41,6 +43,8 @@ class ComponentVisualizationExtension;
 #include <CommBasicObjects/CommBaseStateACE.hh>
 #include <DomainVision/CommDepthImage.hh>
 #include <DomainVision/CommDepthImageACE.hh>
+#include <CommTrackingObjects/CommDetectedMarkerList.hh>
+#include <CommTrackingObjects/CommDetectedMarkerListACE.hh>
 #include <CommTrackingObjects/CommDetectedPerson.hh>
 #include <CommTrackingObjects/CommDetectedPersonACE.hh>
 #include <CommNavigationObjects/CommGridMap.hh>
@@ -78,10 +82,12 @@ class ComponentVisualizationExtension;
 #include "Laser2Task.hh"
 #include "Laser3Task.hh"
 #include "ManagementTask.hh"
+#include "MarkerListTask.hh"
 #include "PersonDetectionTask.hh"
 #include "RGBDTask.hh"
 #include "USArTask.hh"
 // include UpcallManagers
+#include "MarkerListDetectionServiceInUpcallManager.hh"
 #include "BaseClientUpcallManager.hh"
 #include "CurPushClientUpcallManager.hh"
 #include "DepthPushNewestClientUpcallManager.hh"
@@ -95,8 +101,8 @@ class ComponentVisualizationExtension;
 #include "RgbdQueryClientUpcallManager.hh"
 #include "UltrasonicPushNewestClientUpcallManager.hh"
 
-// include input-handler
-// include input-handler
+// include input-handler(s)
+// include request-handler(s)
 
 // include handler
 #include "CompHandler.hh"
@@ -166,6 +172,8 @@ public:
 	Laser3Task *laser3Task;
 	Smart::TaskTriggerSubject* managementTaskTrigger;
 	ManagementTask *managementTask;
+	Smart::TaskTriggerSubject* markerListTaskTrigger;
+	MarkerListTask *markerListTask;
 	Smart::TaskTriggerSubject* personDetectionTaskTrigger;
 	PersonDetectionTask *personDetectionTask;
 	Smart::TaskTriggerSubject* rGBDTaskTrigger;
@@ -174,6 +182,10 @@ public:
 	USArTask *uSArTask;
 	
 	// define input-ports
+	// InputPort MarkerListDetectionServiceIn
+	Smart::IPushClientPattern<CommTrackingObjects::CommDetectedMarkerList> *markerListDetectionServiceIn;
+	Smart::InputTaskTrigger<CommTrackingObjects::CommDetectedMarkerList> *markerListDetectionServiceInInputTaskTrigger;
+	MarkerListDetectionServiceInUpcallManager *markerListDetectionServiceInUpcallManager;
 	// InputPort baseClient
 	Smart::IPushClientPattern<CommBasicObjects::CommBaseState> *baseClient;
 	Smart::InputTaskTrigger<CommBasicObjects::CommBaseState> *baseClientInputTaskTrigger;
@@ -207,8 +219,8 @@ public:
 	Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan> *laserClient3InputTaskTrigger;
 	LaserClient3UpcallManager *laserClient3UpcallManager;
 	// InputPort personDetectionEventClient
-	Smart::IEventClientPattern<CommTrackingObjects::CommPersonLostEventParameter, CommTrackingObjects::CommPersonDetectionEventResult,SmartACE::EventId> *personDetectionEventClient;
-	Smart::InputTaskTrigger<Smart::EventInputType<CommTrackingObjects::CommPersonDetectionEventResult,SmartACE::EventId>> *personDetectionEventClientInputTaskTrigger;
+	Smart::IEventClientPattern<CommTrackingObjects::CommPersonLostEventParameter, CommTrackingObjects::CommPersonDetectionEventResult> *personDetectionEventClient;
+	Smart::InputTaskTrigger<Smart::EventInputType<CommTrackingObjects::CommPersonDetectionEventResult>> *personDetectionEventClientInputTaskTrigger;
 	PersonDetectionEventClientUpcallManager *personDetectionEventClientUpcallManager;
 	// InputPort rgbdPushNewestClient
 	Smart::IPushClientPattern<DomainVision::CommRGBDImage> *rgbdPushNewestClient;
@@ -224,9 +236,9 @@ public:
 	UltrasonicPushNewestClientUpcallManager *ultrasonicPushNewestClientUpcallManager;
 	
 	// define request-ports
-	Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage,SmartACE::QueryId> *rGBDImageQueryServiceReq;
-	Smart::IQueryClientPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap,SmartACE::QueryId> *ltmQueryClient;
-	Smart::IQueryClientPattern<CommTrackingObjects::CommPersonId, CommTrackingObjects::CommDetectedPerson,SmartACE::QueryId> *personDetectionQueryClient;
+	Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> *rGBDImageQueryServiceReq;
+	Smart::IQueryClientPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap> *ltmQueryClient;
+	Smart::IQueryClientPattern<CommTrackingObjects::CommPersonId, CommTrackingObjects::CommDetectedPerson> *personDetectionQueryClient;
 	
 	// define input-handler
 	
@@ -235,6 +247,8 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of ComponentVisualizationROSExtension
 	
@@ -288,6 +302,7 @@ public:
 	/// start all associated timers
 	void startAllTimers();
 	
+	Smart::StatusCode connectMarkerListDetectionServiceIn(const std::string &serverName, const std::string &serviceName);
 	Smart::StatusCode connectRGBDImageQueryServiceReq(const std::string &serverName, const std::string &serviceName);
 	Smart::StatusCode connectBaseClient(const std::string &serverName, const std::string &serviceName);
 	Smart::StatusCode connectCurPushClient(const std::string &serverName, const std::string &serviceName);
@@ -477,6 +492,22 @@ public:
 			int priority;
 			int cpuAffinity;
 		} managementTask;
+		struct MarkerListTask_struct {
+			double minActFreq;
+			double maxActFreq;
+			std::string trigger;
+			// only one of the following two params is 
+			// actually used at run-time according 
+			// to the system config model
+			double periodicActFreq;
+			// or
+			std::string inPortRef;
+			int prescale;
+			// scheduling parameters
+			std::string scheduler;
+			int priority;
+			int cpuAffinity;
+		} markerListTask;
 		struct PersonDetectionTask_struct {
 			double minActFreq;
 			double maxActFreq;
@@ -531,6 +562,14 @@ public:
 		//--- server port parameter ---
 	
 		//--- client port parameter ---
+		struct MarkerListDetectionServiceIn_struct {
+			bool initialConnect;
+			std::string serverName;
+			std::string serviceName;
+			std::string wiringName;
+			long interval;
+			std::string roboticMiddleware;
+		} markerListDetectionServiceIn;
 		struct RGBDImageQueryServiceReq_struct {
 			bool initialConnect;
 			std::string serverName;
@@ -651,6 +690,8 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} ultrasonicPushNewestClient;
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for ComponentVisualizationROSExtension
 		

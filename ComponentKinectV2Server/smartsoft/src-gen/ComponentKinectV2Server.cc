@@ -87,6 +87,8 @@ ComponentKinectV2Server::ComponentKinectV2Server()
 	connections.imageTask.priority = -1;
 	connections.imageTask.cpuAffinity = -1;
 	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of ComponentKinectV2ServerROSExtension
 	
 	// initialize members of PlainOpcUaComponentKinectV2ServerExtension
@@ -218,6 +220,8 @@ void ComponentKinectV2Server::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		// initializations of ComponentKinectV2ServerROSExtension
 		
 		// initializations of PlainOpcUaComponentKinectV2ServerExtension
@@ -258,10 +262,10 @@ void ComponentKinectV2Server::init(int argc, char *argv[])
 		// TODO: set minCycleTime from Ini-file
 		colorImagePushNewestServer = portFactoryRegistry[connections.colorImagePushNewestServer.roboticMiddleware]->createColorImagePushNewestServer(connections.colorImagePushNewestServer.serviceName);
 		colorImageQueryServer = portFactoryRegistry[connections.colorImageQueryServer.roboticMiddleware]->createColorImageQueryServer(connections.colorImageQueryServer.serviceName);
-		colorImageQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommVideoImage,SmartACE::QueryId>(colorImageQueryServer);
+		colorImageQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommVideoImage>(colorImageQueryServer);
 		imagePushNewestServer = portFactoryRegistry[connections.imagePushNewestServer.roboticMiddleware]->createImagePushNewestServer(connections.imagePushNewestServer.serviceName);
 		imageQueryV2Server = portFactoryRegistry[connections.imageQueryV2Server.roboticMiddleware]->createImageQueryV2Server(connections.imageQueryV2Server.serviceName);
-		imageQueryV2ServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage,SmartACE::QueryId>(imageQueryV2Server);
+		imageQueryV2ServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage>(imageQueryV2Server);
 		
 		// create client ports
 		basePushTimedClient = portFactoryRegistry[connections.basePushTimedClient.roboticMiddleware]->createBasePushTimedClient();
@@ -443,6 +447,8 @@ void ComponentKinectV2Server::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of ComponentKinectV2ServerROSExtension
 	
 	// destruction of PlainOpcUaComponentKinectV2ServerExtension
@@ -578,6 +584,8 @@ void ComponentKinectV2Server::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("ImageTask", "cpuAffinity")) {
 			parameter.getInteger("ImageTask", "cpuAffinity", connections.imageTask.cpuAffinity);
 		}
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for ComponentKinectV2ServerROSExtension
 		

@@ -35,6 +35,8 @@ class ComponentUnicapImageServerExtension;
 // include plain OPC UA device clients
 // include plain OPC UA status servers
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 
 // include communication objects
 #include <CommBasicObjects/CommBaseState.hh>
@@ -52,8 +54,8 @@ class ComponentUnicapImageServerExtension;
 #include "BasePushTimedClientUpcallManager.hh"
 #include "PtuPushTimedClientUpcallManager.hh"
 
-// include input-handler
-// include input-handler
+// include input-handler(s)
+// include request-handler(s)
 #include "ImageQueryHandler.hh"
 
 // include handler
@@ -127,8 +129,8 @@ public:
 	Smart::IPushServerPattern<DomainVision::CommVideoImage> *imagePushNewestServer;
 	
 	// define answer-ports
-	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage,SmartACE::QueryId> *imageQueryServer;
-	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommVideoImage,SmartACE::QueryId> *imageQueryServerInputTaskTrigger;
+	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> *imageQueryServer;
+	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> *imageQueryServerInputTaskTrigger;
 	
 	// define request-handlers
 	ImageQueryHandler *imageQueryHandler;
@@ -136,6 +138,8 @@ public:
 	// definitions of ComponentUnicapImageServerROSExtension
 	
 	// definitions of PlainOpcUaComponentUnicapImageServerExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	
 	// define default slave ports
@@ -267,6 +271,8 @@ public:
 		// -- parameters for ComponentUnicapImageServerROSExtension
 		
 		// -- parameters for PlainOpcUaComponentUnicapImageServerExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 	} connections;
 };

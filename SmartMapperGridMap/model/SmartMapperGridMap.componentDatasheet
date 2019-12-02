@@ -1,22 +1,20 @@
 ComponentDatasheet SmartMapperGridMap {
-	baseURI : "http://servicerobotik-ulm.de"
-	shortDescription : "The SmartMapperGridMap provides mapping services based on occupancy grid maps."
-	longDescription : $%The SmartMapperGridMap provides mapping services based on occupancy grid maps. 
-	Laser scans are taken for building a current and a longterm map.
-
-	The current map represents the latest environment of the robot. 
-	It can be preoccupied with grids of the longterm map and can be used for path planning e.g. with SmartPlannerBreadthFirstSearch. 
-	It contains either occupied cells or free cells (binary). An optional obstacle growing can be applied to the current map.
-
-	The longterm map holds cell values from 0 to 255. Values from 0 to 127 denote the traversability where 0 is completely free. 
-	Values from 128 to 255 are special values: Obstacles are marked with 128, 
-	cells occupied by obstacle growing with 129 and undeletable grids are marked with 130. 
-	The cell values can be accumulated over time to represent the environment over a longer period.
-
-	Both grid maps can be saved to XPM and XML and loaded from XML files.%$
-	license : spdx("LGPL-2.0-or-later")
-	trl : Level5
-	homepage : "http://servicerobotik-ulm.de/components"
-	supplierDescription : "Servicerobotics Ulm"
-	purposeDescription : "Mapping"
+	BaseURI "http://servicerobotik-ulm.de"
+	ShortDescription "The SmartMapperGridMap provides mapping services based on occupancy grid maps."
+	DatasheetProperty SpdxLicense {
+		value "LGPL-2.0-or-later"
+		semanticID "https://spdx.org/licenses/LGPL-2.0-or-later.html"
+	}
+	DatasheetProperty TechnologyReadinessLevel {
+		value "TRL5"
+	}
+	DatasheetProperty Homepage {
+		value "http://servicerobotik-ulm.de/components"
+	}
+	DatasheetProperty Supplier {
+		value "Servicerobotics Ulm"
+	}
+	DatasheetProperty Purpose {
+		value "Mapping"
+	}
 }

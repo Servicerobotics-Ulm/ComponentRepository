@@ -19,13 +19,9 @@
 // include observers
 #include "BaseStateTask.hh"
 
-BaseStateQueryHandlerCore::BaseStateQueryHandlerCore(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState, SmartACE::QueryId>* server)
-:	Smart::IQueryServerHandler<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState, SmartACE::QueryId>(server)
-{
-	
-}
-
-BaseStateQueryHandlerCore::~BaseStateQueryHandlerCore()
+BaseStateQueryHandlerCore::BaseStateQueryHandlerCore(IQueryServer* server)
+:	Smart::IInputHandler<std::pair<Smart::QueryIdPtr,CommBasicObjects::CommVoid>>(server)
+,	server(server)
 {
 	
 }

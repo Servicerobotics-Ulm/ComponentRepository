@@ -3,51 +3,126 @@
 
 # SmartGazeboBaseServer Component
 
-![SmartGazeboBaseServer-ComponentImage](model/SmartGazeboBaseServerComponentDefinition.jpg)
+<img src="model/SmartGazeboBaseServerComponentDefinition.jpg" alt="SmartGazeboBaseServer-ComponentImage" width="1000">
 
-The SmartGazeboBaseServer can be used to command a robot in a 3D environment using the Gazebo simulator. It offers services for controlling the robot via SmartCDL or SmartJoystickNavigation by receiving v and omega values from SmartCDL or SmartJoystickNavigation. Those values are directly handed over to the Gazebo simulator in case of a differential drive. The communication between the SmartGazeboBaseServer and Gazebo is based on the communication lib of gazebo.
+*Component Short Description:* The SmartGazeboBaseServer can be used to command a robot in a 3D environment using the Gazebo simulator.
 
-See also: http://servicerobotik-ulm.de
+## Component Documentation
+<p></p>
+<p> The SmartGazeboBaseServer can be used to command a robot in a 3D environment using the Gazebo simulator.
+ It offers services for controlling the robot via SmartCDL or
+ SmartJoystickNavigation by receiving v and omega values from SmartCDL or SmartJoystickNavigation.
+ Those values are directly handed over to the Gazebo simulator in case of a differential drive.
+ The communication between the SmartGazeboBaseServer and Gazebo is based on the communication lib of gazebo..
+</p>
+<p> GPL-License: includes Code from the Player Project.
+</p>
+<p> See also: http://playerstage.sourceforge.net/doc/Player-2.0.0/player/group__driver__amcl.html
+</p>
+<p></p>
 
-| Metaelement | Documentation |
-|-------------|---------------|
-| License | LGPL |
-| Hardware Requirements | - |
-| Purpose | Simulation |
+## Component-Datasheet Properties
 
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Component-Datasheet Properties</caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Property Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Property Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Property Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">SpdxLicense</td>
+<td style="border:1px solid black; padding: 5px;">LGPL-2.0-or-later</td>
+<td style="border:1px solid black; padding: 5px;">https://spdx.org/licenses/LGPL-2.0-or-later.html</td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">TechnologyReadinessLevel</td>
+<td style="border:1px solid black; padding: 5px;">TRL5</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Homepage</td>
+<td style="border:1px solid black; padding: 5px;">http://servicerobotik-ulm.de/components</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Supplier</td>
+<td style="border:1px solid black; padding: 5px;">Servicerobotics Ulm</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Purpose</td>
+<td style="border:1px solid black; padding: 5px;">Simulation</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
 
-
-## Service Ports
-
-### LocalizationUpdateServiceIn
-
-Port to receive corrections of base pose to overcome the odometry failure. Accepts a pair of old uncorrected pose and new corrected pose. The deviation between these two poses is applied to correct the current pose of the robot.
+## Component Ports
 
 ### NavVelServiceIn
 
-Send new navigation velocity commands v and omega to the Gazebo Simulator.
+*Documentation:*
 
-### BaseStateServiceOut
 
-Push the base state containing current information about the robot's velocity, pose and raw pose. Should be used when a continuous base pose is required.
+### LocalizationUpdateServiceIn
+
+*Documentation:*
+
 
 ### BaseSatateQueryAnsw
 
-Query port to request the base state. Analogous to basePositionPushTimedServer, but a query service. Should be used when the base pose is needed sporadically, for example by a behavior component which explicitly needs to query the base pose from time to time.
+*Documentation:*
+
 
 ### LaserServiceOut
 
-Push latest laser scan. The rate with which the server pushes is the same as in the basePositionPushTimedServer.
+*Documentation:*
 
 
-## Component Parameters SmartGazeboBaseServerParams
+### BaseStateServiceOut
 
-### InternalParameter Settings
+*Documentation:*
 
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| sendVelTopic | String |  |
-| basePoseTopic | String |  |
-| baseVelTopic | String |  |
-| laserTopic | String |  |
+
+
+
+## Component Parameters: SmartGazeboBaseServerParams
+
+### Internal Parameter: Settings
+
+*Documentation:*
+
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Internal Parameter <b>Settings</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>sendVelTopic</b></td>
+<td style="border:1px solid black; padding: 5px;">String</td>
+<td style="border:1px solid black; padding: 5px;">"~/robot/vel_cmd"</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>basePoseTopic</b></td>
+<td style="border:1px solid black; padding: 5px;">String</td>
+<td style="border:1px solid black; padding: 5px;">"~/robot/basePose"</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>baseVelTopic</b></td>
+<td style="border:1px solid black; padding: 5px;">String</td>
+<td style="border:1px solid black; padding: 5px;">"~/robot::robot::base_footprint"</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>laserTopic</b></td>
+<td style="border:1px solid black; padding: 5px;">String</td>
+<td style="border:1px solid black; padding: 5px;">"~/robot/robot/base_footprint/base_laser/scan"</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
 

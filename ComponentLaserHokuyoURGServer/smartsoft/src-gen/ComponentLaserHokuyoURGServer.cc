@@ -89,6 +89,8 @@ ComponentLaserHokuyoURGServer::ComponentLaserHokuyoURGServer()
 	connections.watchDogTask.priority = -1;
 	connections.watchDogTask.cpuAffinity = -1;
 	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of ComponentLaserHokuyoURGServerROSExtension
 	
 	// initialize members of PlainOpcUaComponentLaserHokuyoURGServerExtension
@@ -234,6 +236,8 @@ void ComponentLaserHokuyoURGServer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		// initializations of ComponentLaserHokuyoURGServerROSExtension
 		
 		// initializations of PlainOpcUaComponentLaserHokuyoURGServerExtension
@@ -274,7 +278,7 @@ void ComponentLaserHokuyoURGServer::init(int argc, char *argv[])
 		// TODO: set minCycleTime from Ini-file
 		laserPushNewestServer = portFactoryRegistry[connections.laserPushNewestServer.roboticMiddleware]->createLaserPushNewestServer(connections.laserPushNewestServer.serviceName);
 		laserQueryServer = portFactoryRegistry[connections.laserQueryServer.roboticMiddleware]->createLaserQueryServer(connections.laserQueryServer.serviceName);
-		laserQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan,SmartACE::QueryId>(laserQueryServer);
+		laserQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan>(laserQueryServer);
 		
 		// create client ports
 		baseTimedClient = portFactoryRegistry[connections.baseTimedClient.roboticMiddleware]->createBaseTimedClient();
@@ -493,6 +497,8 @@ void ComponentLaserHokuyoURGServer::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of ComponentLaserHokuyoURGServerROSExtension
 	
 	// destruction of PlainOpcUaComponentLaserHokuyoURGServerExtension
@@ -637,6 +643,8 @@ void ComponentLaserHokuyoURGServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("WatchDogTask", "cpuAffinity")) {
 			parameter.getInteger("WatchDogTask", "cpuAffinity", connections.watchDogTask.cpuAffinity);
 		}
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for ComponentLaserHokuyoURGServerROSExtension
 		

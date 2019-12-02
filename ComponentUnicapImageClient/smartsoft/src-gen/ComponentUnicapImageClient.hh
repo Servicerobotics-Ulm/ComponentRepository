@@ -29,6 +29,8 @@
 class ComponentUnicapImageClientPortFactoryInterface;
 class ComponentUnicapImageClientExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for ComponentUnicapImageClientROSExtension
 
 // includes for PlainOpcUaComponentUnicapImageClientExtension
@@ -48,8 +50,8 @@ class ComponentUnicapImageClientExtension;
 // include UpcallManagers
 #include "PushNewestClientUpcallManager.hh"
 
-// include input-handler
-// include input-handler
+// include input-handler(s)
+// include request-handler(s)
 
 // include handler
 #include "CompHandler.hh"
@@ -113,7 +115,7 @@ public:
 	PushNewestClientUpcallManager *pushNewestClientUpcallManager;
 	
 	// define request-ports
-	Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage,SmartACE::QueryId> *queryClient;
+	Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> *queryClient;
 	
 	// define input-handler
 	
@@ -122,6 +124,8 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of ComponentUnicapImageClientROSExtension
 	
@@ -261,6 +265,8 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} queryClient;
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for ComponentUnicapImageClientROSExtension
 		

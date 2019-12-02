@@ -16,14 +16,14 @@
 #include "KbChainedEntriesEventClientUpcallManager.hh"
 
 KbChainedEntriesEventClientUpcallManager::KbChainedEntriesEventClientUpcallManager(
-	Smart::InputSubject<Smart::EventInputType<CommBasicObjects::CommKBEventResult,SmartACE::EventId>> *subject,
+	Smart::InputSubject<Smart::EventInputType<CommBasicObjects::CommKBEventResult>> *subject,
 	const int &prescaleFactor)
-	:	Smart::IInputHandler<Smart::EventInputType<CommBasicObjects::CommKBEventResult,SmartACE::EventId>>(subject, prescaleFactor)
+	:	Smart::IInputHandler<Smart::EventInputType<CommBasicObjects::CommKBEventResult>>(subject, prescaleFactor)
 {  }
 KbChainedEntriesEventClientUpcallManager::~KbChainedEntriesEventClientUpcallManager()
 {  }
 
-void KbChainedEntriesEventClientUpcallManager::notify_upcalls(const Smart::EventInputType<CommBasicObjects::CommKBEventResult,SmartACE::EventId> &input)
+void KbChainedEntriesEventClientUpcallManager::notify_upcalls(const Smart::EventInputType<CommBasicObjects::CommKBEventResult> &input)
 {
 	for(auto it=upcalls.begin(); it!=upcalls.end(); it++) {
 		(*it)->on_kbChainedEntriesEventClient(input);

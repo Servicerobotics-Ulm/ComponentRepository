@@ -58,12 +58,12 @@ ImageTask::ImageTask(SmartACE::SmartComponent *comp)
 	std::cout << "constructor ImageTask\n";
 		_image_buffer_index = 0;
 		_image_buffer.resize(2);
+		 set_camera_params = true;
 }
 ImageTask::~ImageTask() 
 {
 	std::cout << "destructor ImageTask\n";
 }
-
 
 
 int ImageTask::on_entry()
@@ -129,6 +129,12 @@ int ImageTask::on_execute()
 				} catch (...) {
 					std::cerr << "Error: Undefined Error. [ImageTask]\n";
 					return -1;
+				}
+
+				if(set_camera_params)
+				{
+					set_camera_intrinsic_params();
+					set_camera_params = false;
 				}
 
 				arma::mat sensorMat;
@@ -294,3 +300,45 @@ IplImage* ImageTask::convertDataArrayToIplImage(DomainVision::CommVideoImage &qu
 //
 //ImageTask::ImageCleanupThread::~ImageCleanupThread() {
 //}
+
+void ImageTask::set_camera_intrinsic_params()
+{
+	ParameterStateStruct localState = COMP->getGlobalState();
+	double fx = localState.getIntrinsicParams().getFx();
+	double fy = localState.getIntrinsicParams().getFy();
+	double cx = localState.getIntrinsicParams().getCx();
+	double cy = localState.getIntrinsicParams().getCy();
+	double calib_width = localState.getIntrinsicParams().getCalib_width();
+	double calib_height = localState.getIntrinsicParams().getCalib_height();
+	std::list<double> dc = localState.getIntrinsicParams().getDistortion_coeffs();
+
+	for (unsigned int i = 0; i < _image_buffer.size(); ++i) {
+
+		//set camera matrix (K 4x4)
+		_image_buffer[i]->setIntrinsic_mElemAtPos(0, fx);
+		_image_buffer[i]->setIntrinsic_mElemAtPos(5, fy);
+		_image_buffer[i]->setIntrinsic_mElemAtPos(2, cx);
+		_image_buffer[i]->setIntrinsic_mElemAtPos(6, cy);
+		_image_buffer[i]->setIntrinsic_mElemAtPos(10, 1);
+
+		// set distortion coefficients (D 1x5)
+		std::vector<double> distortion_v{ std::begin(dc), std::end(dc) };
+		_image_buffer[i]->setDistortion_m(distortion_v);
+
+		// Update camera martix, if the image width and height are not same as the width and height of images used for calibration
+		unsigned int image_width = _image_buffer[i]->get_width();
+		unsigned int image_height = _image_buffer[i]->get_height();
+
+		if(calib_height != image_height || calib_width != image_width)
+		{
+			_image_buffer[i]->setIntrinsic_mElemAtPos(0, fx*(double(image_width)/double(calib_width)));
+			_image_buffer[i]->setIntrinsic_mElemAtPos(5, fy*(double(image_height)/double(calib_height)));
+			_image_buffer[i]->setIntrinsic_mElemAtPos(2, cx*(double(image_width)/double(calib_width)));
+			_image_buffer[i]->setIntrinsic_mElemAtPos(6, cy*(double(image_height)/double(calib_height)));
+
+			std::cout << " Camera parameters scaled according to the image Height and Width" << std::endl;
+
+		}
+
+	}
+}

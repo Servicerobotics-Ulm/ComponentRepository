@@ -29,6 +29,8 @@
 class ComponentTTSClientPortFactoryInterface;
 class ComponentTTSClientExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for ComponentTTSClientROSExtension
 
 // includes for PlainOpcUaComponentTTSClientExtension
@@ -46,8 +48,8 @@ class ComponentTTSClientExtension;
 #include "ConsoleTask.hh"
 // include UpcallManagers
 
-// include input-handler
-// include input-handler
+// include input-handler(s)
+// include request-handler(s)
 
 // include handler
 #include "CompHandler.hh"
@@ -105,7 +107,7 @@ public:
 	// define input-ports
 	
 	// define request-ports
-	Smart::IQueryClientPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet,SmartACE::QueryId> *speechQueryServiceReq;
+	Smart::IQueryClientPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet> *speechQueryServiceReq;
 	
 	// define input-handler
 	
@@ -115,6 +117,8 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of ComponentTTSClientROSExtension
 	
@@ -238,6 +242,8 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} speechSendServiceOut;
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for ComponentTTSClientROSExtension
 		

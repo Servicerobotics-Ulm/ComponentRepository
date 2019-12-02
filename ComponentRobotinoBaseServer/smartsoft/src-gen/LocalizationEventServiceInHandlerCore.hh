@@ -26,25 +26,25 @@
 #include <LocalizationEventServiceInHandlerObserverInterface.hh>
 
 class LocalizationEventServiceInHandlerCore
-:	public Smart::InputTaskTrigger<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult,SmartACE::EventId>>
+:	public Smart::InputTaskTrigger<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult>>
 ,	public LocalizationEventServiceInUpcallInterface
 {
 private:
 	Smart::StatusCode updateStatus;
-	Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult,SmartACE::EventId> lastUpdate;
+	Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult> lastUpdate;
 	
 	
 	virtual void updateAllCommObjects();
 	
 	// internal input handling method
-	virtual void handle_input(const Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult,SmartACE::EventId>& input) {
+	virtual void handle_input(const Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult>& input) {
 		this->updateAllCommObjects();
 		// call the input handler method (which has to be implemented in derived classes)
 		this->on_LocalizationEventServiceIn(input);
 		// notify all attached interaction observers
 		this->notify_all_interaction_observers();
 		// call implementation of base class
-		Smart::InputTaskTrigger<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult,SmartACE::EventId>>::handle_input(input);
+		Smart::InputTaskTrigger<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult>>::handle_input(input);
 	}
 	
 /**
@@ -63,7 +63,7 @@ protected:
 
 public:
 	LocalizationEventServiceInHandlerCore(
-		Smart::InputSubject<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult,SmartACE::EventId>> *subject,
+		Smart::InputSubject<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult>> *subject,
 		const int &prescaleFactor=1);
 	virtual ~LocalizationEventServiceInHandlerCore();
 };

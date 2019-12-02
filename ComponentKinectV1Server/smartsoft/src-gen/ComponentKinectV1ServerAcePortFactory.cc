@@ -68,7 +68,7 @@ Smart::IPushServerPattern<DomainVision::CommVideoImage> * ComponentKinectV1Serve
 	return new SmartACE::PushServer<DomainVision::CommVideoImage>(componentImpl, serviceName);
 }
 
-Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage,SmartACE::QueryId> * ComponentKinectV1ServerAcePortFactory::createColorImageQueryServer(const std::string &serviceName)
+Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> * ComponentKinectV1ServerAcePortFactory::createColorImageQueryServer(const std::string &serviceName)
 {
 	return new SmartACE::QueryServer<CommBasicObjects::CommVoid, DomainVision::CommVideoImage>(componentImpl, serviceName);
 }
@@ -83,7 +83,7 @@ Smart::IPushServerPattern<DomainVision::CommRGBDImage> * ComponentKinectV1Server
 	return new SmartACE::PushServer<DomainVision::CommRGBDImage>(componentImpl, serviceName);
 }
 
-Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage,SmartACE::QueryId> * ComponentKinectV1ServerAcePortFactory::createImageQueryServer(const std::string &serviceName)
+Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> * ComponentKinectV1ServerAcePortFactory::createImageQueryServer(const std::string &serviceName)
 {
 	return new SmartACE::QueryServer<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage>(componentImpl, serviceName);
 }

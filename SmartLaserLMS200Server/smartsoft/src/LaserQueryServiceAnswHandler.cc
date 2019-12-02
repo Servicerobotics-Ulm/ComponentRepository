@@ -17,7 +17,7 @@
 #include "LaserQueryServiceAnswHandler.hh"
 #include "SmartLaserLMS200Server.hh"
 
-LaserQueryServiceAnswHandler::LaserQueryServiceAnswHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan, SmartACE::QueryId>* server)
+LaserQueryServiceAnswHandler::LaserQueryServiceAnswHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan>* server)
 :	LaserQueryServiceAnswHandlerCore(server)
 {
 	
@@ -34,7 +34,7 @@ void LaserQueryServiceAnswHandler::on_update_from(const LaserTask* laserTask)
 	laser_scan =  laserTask->getLaserScan();
 }
 
-void LaserQueryServiceAnswHandler::handleQuery(const SmartACE::QueryId &id, const CommBasicObjects::CommVoid& request) 
+void LaserQueryServiceAnswHandler::handleQuery(const Smart::QueryIdPtr &id, const CommBasicObjects::CommVoid& request)
 {
 	SmartACE::SmartGuard g(mutex);
 	this->server->answer(id, laser_scan);

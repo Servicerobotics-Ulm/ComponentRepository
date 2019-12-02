@@ -47,7 +47,7 @@
 #include "ParameterStateStruct.hh"
 
 #include "EulerTransformationMatrices.hh"
-ImageQueryHandler::ImageQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage, SmartACE::QueryId>* server)
+ImageQueryHandler::ImageQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage>* server)
 :	ImageQueryHandlerCore(server)
 {
 	
@@ -58,8 +58,8 @@ ImageQueryHandler::~ImageQueryHandler()
 	
 }
 
+void ImageQueryHandler::handleQuery(const Smart::QueryIdPtr &id, const CommBasicObjects::CommVoid& request)
 
-void ImageQueryHandler::handleQuery(const SmartACE::QueryId &id, const CommBasicObjects::CommVoid& request) 
 {
 	Smart::StatusCode status;
 		DomainVision::CommVideoImage image;

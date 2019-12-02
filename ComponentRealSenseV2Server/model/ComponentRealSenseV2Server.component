@@ -31,7 +31,7 @@ Activity ImageTask
 	RequestHandler ColorImageQueryHandler triggeredFrom colorImageQueryServer {
 	}
 	
-	CoordinationSlavePort CoordinationPort implements DomainVision.ImageProvisionCoordinationService 
+	CoordinationSlavePort CoordinationPort implements DomainVision.VisionCoordinationService 
 	{ 
 		PublicOperationMode DomainVision.ImageProvisionModes.PushImage 
 		{ 

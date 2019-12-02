@@ -29,6 +29,8 @@
 class ComponentPlayerStageSimulatorPortFactoryInterface;
 class ComponentPlayerStageSimulatorExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for ComponentPlayerStageSimulatorROSExtension
 
 // includes for PlainOpcUaComponentPlayerStageSimulatorExtension
@@ -61,10 +63,10 @@ class ComponentPlayerStageSimulatorExtension;
 #include "LocalizationUpdateServiceInUpcallManager.hh"
 #include "NavigationVelocityServiceInUpcallManager.hh"
 
-// include input-handler
+// include input-handler(s)
 #include "LocalizationUpdateHandler.hh"
 #include "NavigationVelocityHandler.hh"
-// include input-handler
+// include request-handler(s)
 #include "BaseStateQueryHandler.hh"
 
 // include handler
@@ -140,16 +142,18 @@ public:
 	
 	// define output-ports
 	Smart::IPushServerPattern<CommBasicObjects::CommBaseState> *baseStateServiceOut;
-	Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState,SmartACE::EventId> *batteryEventServiceOut;
-	Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> *batteryEventServiceOutEventTestHandler; 
+	Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> *batteryEventServiceOut;
+	std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>> batteryEventServiceOutEventTestHandler;
 	Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> *laserServiceOut;
 	
 	// define answer-ports
-	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState,SmartACE::QueryId> *baseStateAnswerer;
-	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState,SmartACE::QueryId> *baseStateAnswererInputTaskTrigger;
+	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState> *baseStateAnswerer;
+	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState> *baseStateAnswererInputTaskTrigger;
 	
 	// define request-handlers
 	BaseStateQueryHandler *baseStateQueryHandler;
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of ComponentPlayerStageSimulatorROSExtension
 	
@@ -301,6 +305,8 @@ public:
 		} navigationVelocityServiceIn;
 	
 		//--- client port parameter ---
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for ComponentPlayerStageSimulatorROSExtension
 		

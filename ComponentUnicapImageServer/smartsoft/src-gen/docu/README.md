@@ -102,3 +102,15 @@
 | smart_format | String |  |
 | valid_time_in_sec | Float |  |
 
+### InternalParameter IntrinsicParams
+
+| Attribute Name | Attribute Type | Description |
+|----------------|----------------|-------------|
+| fx | Double |  |
+| fy | Double |  |
+| cx | Double |  |
+| cy | Double |  |
+| distortion_coeffs | Double |  |
+| calib_width | UInt16 |  |
+| calib_height | UInt16 |  |
+

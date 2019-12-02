@@ -29,6 +29,8 @@
 class SmartPlannerBreadthFirstSearchPortFactoryInterface;
 class SmartPlannerBreadthFirstSearchExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for SmartPlannerBreadthFirstSearchROSExtension
 
 // includes for PlainOpcUaSmartPlannerBreadthFirstSearchExtension
@@ -56,8 +58,8 @@ class SmartPlannerBreadthFirstSearchExtension;
 #include "BaseStateClientUpcallManager.hh"
 #include "CurMapClientUpcallManager.hh"
 
-// include input-handler
-// include input-handler
+// include input-handler(s)
+// include request-handler(s)
 
 // include handler
 #include "CompHandler.hh"
@@ -127,13 +129,15 @@ public:
 	// define input-handler
 	
 	// define output-ports
-	Smart::IEventServerPattern<CommNavigationObjects::CommPlannerEventParameter, CommNavigationObjects::CommPlannerEventResult, CommNavigationObjects::PlannerEventState,SmartACE::EventId> *plannerEventServer;
-	Smart::IEventTestHandler<CommNavigationObjects::CommPlannerEventParameter, CommNavigationObjects::CommPlannerEventResult, CommNavigationObjects::PlannerEventState> *plannerEventServerEventTestHandler; 
+	Smart::IEventServerPattern<CommNavigationObjects::CommPlannerEventParameter, CommNavigationObjects::CommPlannerEventResult, CommNavigationObjects::PlannerEventState> *plannerEventServer;
+	std::shared_ptr<Smart::IEventTestHandler<CommNavigationObjects::CommPlannerEventParameter, CommNavigationObjects::CommPlannerEventResult, CommNavigationObjects::PlannerEventState>> plannerEventServerEventTestHandler;
 	Smart::IPushServerPattern<CommNavigationObjects::CommPlannerGoal> *plannerGoalServer;
 	
 	// define answer-ports
 	
 	// define request-handlers
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of SmartPlannerBreadthFirstSearchROSExtension
 	
@@ -263,6 +267,8 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} curMapClient;
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for SmartPlannerBreadthFirstSearchROSExtension
 		

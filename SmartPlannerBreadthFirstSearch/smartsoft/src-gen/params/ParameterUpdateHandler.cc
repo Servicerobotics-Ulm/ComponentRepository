@@ -76,12 +76,12 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK);
 		
-		int temp_x = 0.0;
-		if(request.getDouble("1", temp_x) != 0) {
+		int temp_x = 0;
+		if(request.getInteger("1", temp_x) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
-		int temp_y = 0.0;
-		if(request.getDouble("2", temp_y) != 0) {
+		int temp_y = 0;
+		if(request.getInteger("2", temp_y) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
 		unsigned int temp_r = 0;
@@ -101,20 +101,20 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK);
 		
-		int temp_x1 = 0.0;
-		if(request.getDouble("1", temp_x1) != 0) {
+		int temp_x1 = 0;
+		if(request.getInteger("1", temp_x1) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
-		int temp_y1 = 0.0;
-		if(request.getDouble("2", temp_y1) != 0) {
+		int temp_y1 = 0;
+		if(request.getInteger("2", temp_y1) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
-		int temp_x2 = 0.0;
-		if(request.getDouble("3", temp_x2) != 0) {
+		int temp_x2 = 0;
+		if(request.getInteger("3", temp_x2) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
-		int temp_y2 = 0.0;
-		if(request.getDouble("4", temp_y2) != 0) {
+		int temp_y2 = 0;
+		if(request.getInteger("4", temp_y2) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
 		}
 		

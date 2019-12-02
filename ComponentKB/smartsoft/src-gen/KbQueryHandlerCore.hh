@@ -27,10 +27,14 @@
 #include <KbQueryHandlerObserverInterface.hh>
 
 class KbQueryHandlerCore 
-:	public Smart::IQueryServerHandler<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse, SmartACE::QueryId>
+:	public Smart::IInputHandler<std::pair<Smart::QueryIdPtr,CommBasicObjects::CommKBRequest>>
 ,	public Smart::TaskTriggerSubject
 {
 private:
+virtual void handle_input(const std::pair<Smart::QueryIdPtr,CommBasicObjects::CommKBRequest> &input) override {
+	this->handleQuery(input.first, input.second);
+}
+
 
 	virtual void updateAllCommObjects();
 
@@ -49,8 +53,14 @@ public:
 protected:
 	
 public:
-	KbQueryHandlerCore(Smart::IQueryServerPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse, SmartACE::QueryId>* server);
-	virtual ~KbQueryHandlerCore();
-	//virtual void handleQuery(const SmartACE::QueryId &id, const CommBasicObjects::CommKBRequest& request);
+	using IQueryServer = Smart::IQueryServerPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse>;
+	using QueryId = Smart::QueryIdPtr;
+	KbQueryHandlerCore(IQueryServer *server);
+	virtual ~KbQueryHandlerCore() = default;
+	
+protected:
+	IQueryServer *server;
+	//this user-method has to be implemented in derived classes
+	virtual void handleQuery(const QueryId &id, const CommBasicObjects::CommKBRequest& request) = 0;
 };
 #endif

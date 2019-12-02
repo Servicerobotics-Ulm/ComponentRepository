@@ -18,13 +18,9 @@
 
 // include observers
 
-SymbolicPannerQueryHandlerCore::SymbolicPannerQueryHandlerCore(Smart::IQueryServerPattern<DomainSymbolicPlanner::CommSymbolicPlannerRequest, DomainSymbolicPlanner::CommSymbolicPlannerPlan, SmartACE::QueryId>* server)
-:	Smart::IQueryServerHandler<DomainSymbolicPlanner::CommSymbolicPlannerRequest, DomainSymbolicPlanner::CommSymbolicPlannerPlan, SmartACE::QueryId>(server)
-{
-	
-}
-
-SymbolicPannerQueryHandlerCore::~SymbolicPannerQueryHandlerCore()
+SymbolicPannerQueryHandlerCore::SymbolicPannerQueryHandlerCore(IQueryServer* server)
+:	Smart::IInputHandler<std::pair<Smart::QueryIdPtr,DomainSymbolicPlanner::CommSymbolicPlannerRequest>>(server)
+,	server(server)
 {
 	
 }

@@ -1,19 +1,20 @@
 ComponentDatasheet SmartAmcl {
-	baseURI : "http://servicerobotik-ulm.de"
-	shortDescription : "The SmartAmcl implements the Adaptive Monte-Carlo Localization (AMCL) algorithm."
-	longDescription : $%SmartAmcl implements the Adaptive Monte-Carlo Localization (AMCL) algorithm.
-	Localization is based on a particle filter and a pre-captured grid map of the environment. 
-	AMCL maintains a set of possible robot poses and updates this distribution by comparing laser scans against the pre-captured map. 
-	AMCL is adaptive because the amount of particles depends on the pose certainty: large number of particles if uncertainty increases and vice versa.
-					
-	Based on its localization, SmartAmcl sends position updates to the base server (e.g. SmartPioneerBaseServer).
-
-	GPL-License: includes Code from the Player Project.
-
-	See also: http://playerstage.sourceforge.net/doc/Player-2.0.0/player/group__driver__amcl.html%$
-	license : spdx("LGPL-2.0-or-later")
-	trl : Level5
-	homepage : "http://servicerobotik-ulm.de/components"
-	supplierDescription : "Servicerobotics Ulm"
-	purposeDescription : "Localization"
+	BaseURI "http://servicerobotik-ulm.de"
+	ShortDescription "The SmartAmcl implements the Adaptive Monte-Carlo Localization (AMCL) algorithm."
+	DatasheetProperty SpdxLicense {
+		value "LGPL-2.0-or-later"
+		semanticID "https://spdx.org/licenses/LGPL-2.0-or-later.html"
+	}
+	DatasheetProperty TechnologyReadinessLevel {
+		value "TRL5"
+	}
+	DatasheetProperty Homepage {
+		value "http://servicerobotik-ulm.de/components"
+	}
+	DatasheetProperty Supplier {
+		value "Servicerobotics Ulm"
+	}
+	DatasheetProperty Purpose {
+		value "Localization"
+	}
 }

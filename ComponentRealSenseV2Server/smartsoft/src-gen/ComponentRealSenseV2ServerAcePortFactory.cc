@@ -57,7 +57,7 @@ Smart::IPushClientPattern<CommManipulatorObjects::CommMobileManipulatorState> * 
 	return new SmartACE::PushClient<CommManipulatorObjects::CommMobileManipulatorState>(componentImpl);
 }
 
-Smart::IQueryClientPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorState,SmartACE::QueryId> * ComponentRealSenseV2ServerAcePortFactory::createUrPoseQueryClient()
+Smart::IQueryClientPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorState> * ComponentRealSenseV2ServerAcePortFactory::createUrPoseQueryClient()
 {
 	return new SmartACE::QueryClient<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorState>(componentImpl);
 }
@@ -78,7 +78,7 @@ Smart::IPushServerPattern<DomainVision::CommVideoImage> * ComponentRealSenseV2Se
 	return new SmartACE::PushServer<DomainVision::CommVideoImage>(componentImpl, serviceName);
 }
 
-Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage,SmartACE::QueryId> * ComponentRealSenseV2ServerAcePortFactory::createColorImageQueryServer(const std::string &serviceName)
+Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> * ComponentRealSenseV2ServerAcePortFactory::createColorImageQueryServer(const std::string &serviceName)
 {
 	return new SmartACE::QueryServer<CommBasicObjects::CommVoid, DomainVision::CommVideoImage>(componentImpl, serviceName);
 }
@@ -93,7 +93,7 @@ Smart::IPushServerPattern<DomainVision::CommRGBDImage> * ComponentRealSenseV2Ser
 	return new SmartACE::PushServer<DomainVision::CommRGBDImage>(componentImpl, serviceName);
 }
 
-Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage,SmartACE::QueryId> * ComponentRealSenseV2ServerAcePortFactory::createImageQueryServer(const std::string &serviceName)
+Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> * ComponentRealSenseV2ServerAcePortFactory::createImageQueryServer(const std::string &serviceName)
 {
 	return new SmartACE::QueryServer<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage>(componentImpl, serviceName);
 }

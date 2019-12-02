@@ -28,11 +28,15 @@
 #include <CurMapTaskObserverInterface.hh>
 
 class CurrQueryServerHandlerCore 
-:	public Smart::IQueryServerHandler<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap, SmartACE::QueryId>
+:	public Smart::IInputHandler<std::pair<Smart::QueryIdPtr,CommNavigationObjects::CommGridMapRequest>>
 ,	public Smart::TaskTriggerSubject
 ,	public CurMapTaskObserverInterface
 {
 private:
+virtual void handle_input(const std::pair<Smart::QueryIdPtr,CommNavigationObjects::CommGridMapRequest> &input) override {
+	this->handleQuery(input.first, input.second);
+}
+
 
 	virtual void updateAllCommObjects();
 
@@ -55,8 +59,14 @@ protected:
 	}
 	
 public:
-	CurrQueryServerHandlerCore(Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap, SmartACE::QueryId>* server);
-	virtual ~CurrQueryServerHandlerCore();
-	//virtual void handleQuery(const SmartACE::QueryId &id, const CommNavigationObjects::CommGridMapRequest& request);
+	using IQueryServer = Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap>;
+	using QueryId = Smart::QueryIdPtr;
+	CurrQueryServerHandlerCore(IQueryServer *server);
+	virtual ~CurrQueryServerHandlerCore() = default;
+	
+protected:
+	IQueryServer *server;
+	//this user-method has to be implemented in derived classes
+	virtual void handleQuery(const QueryId &id, const CommNavigationObjects::CommGridMapRequest& request) = 0;
 };
 #endif

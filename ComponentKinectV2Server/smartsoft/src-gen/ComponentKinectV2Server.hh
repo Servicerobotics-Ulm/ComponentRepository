@@ -29,6 +29,8 @@
 class ComponentKinectV2ServerPortFactoryInterface;
 class ComponentKinectV2ServerExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for ComponentKinectV2ServerROSExtension
 
 // includes for PlainOpcUaComponentKinectV2ServerExtension
@@ -54,8 +56,8 @@ class ComponentKinectV2ServerExtension;
 #include "BasePushTimedClientUpcallManager.hh"
 #include "PtuPosePushNewestClientUpcallManager.hh"
 
-// include input-handler
-// include input-handler
+// include input-handler(s)
+// include request-handler(s)
 #include "ColorImageQueryHandler.hh"
 #include "ImageQueryHandler.hh"
 
@@ -131,14 +133,16 @@ public:
 	Smart::IPushServerPattern<DomainVision::CommRGBDImage> *imagePushNewestServer;
 	
 	// define answer-ports
-	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage,SmartACE::QueryId> *colorImageQueryServer;
-	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommVideoImage,SmartACE::QueryId> *colorImageQueryServerInputTaskTrigger;
-	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage,SmartACE::QueryId> *imageQueryV2Server;
-	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage,SmartACE::QueryId> *imageQueryV2ServerInputTaskTrigger;
+	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> *colorImageQueryServer;
+	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> *colorImageQueryServerInputTaskTrigger;
+	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> *imageQueryV2Server;
+	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> *imageQueryV2ServerInputTaskTrigger;
 	
 	// define request-handlers
 	ColorImageQueryHandler *colorImageQueryHandler;
 	ImageQueryHandler *imageQueryHandler;
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of ComponentKinectV2ServerROSExtension
 	
@@ -278,6 +282,8 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} ptuPosePushNewestClient;
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for ComponentKinectV2ServerROSExtension
 		
