@@ -81,9 +81,9 @@ ComponentUnicapImageServer::ComponentUnicapImageServer()
 	
 	// initialize members of ComponentUnicapImageServerROSExtension
 	
-	// initialize members of PlainOpcUaComponentUnicapImageServerExtension
-	
 	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
+	// initialize members of PlainOpcUaComponentUnicapImageServerExtension
 	
 }
 
@@ -214,9 +214,9 @@ void ComponentUnicapImageServer::init(int argc, char *argv[])
 		
 		// initializations of ComponentUnicapImageServerROSExtension
 		
-		// initializations of PlainOpcUaComponentUnicapImageServerExtension
-		
 		// initializations of OpcUaBackendComponentGeneratorExtension
+		
+		// initializations of PlainOpcUaComponentUnicapImageServerExtension
 		
 		
 		// initialize all registered port-factories
@@ -433,9 +433,9 @@ void ComponentUnicapImageServer::fini()
 	
 	// destruction of ComponentUnicapImageServerROSExtension
 	
-	// destruction of PlainOpcUaComponentUnicapImageServerExtension
-	
 	// destruction of OpcUaBackendComponentGeneratorExtension
+	
+	// destruction of PlainOpcUaComponentUnicapImageServerExtension
 	
 }
 
@@ -561,9 +561,9 @@ void ComponentUnicapImageServer::loadParameter(int argc, char *argv[])
 		
 		// load parameters for ComponentUnicapImageServerROSExtension
 		
-		// load parameters for PlainOpcUaComponentUnicapImageServerExtension
-		
 		// load parameters for OpcUaBackendComponentGeneratorExtension
+		
+		// load parameters for PlainOpcUaComponentUnicapImageServerExtension
 		
 		
 		// load parameters for all registered component-extensions

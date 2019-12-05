@@ -136,9 +136,9 @@ ComponentRobotinoBaseServer::ComponentRobotinoBaseServer()
 	connections.navigationVelocityServiceInHandler.prescale = 1;
 	connections.powerOutputSendInHandler.prescale = 1;
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
 	// initialize members of ComponentRobotinoBaseServerROSExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentRobotinoBaseServerExtension
 	
@@ -279,9 +279,9 @@ void ComponentRobotinoBaseServer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of ComponentRobotinoBaseServerROSExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentRobotinoBaseServerExtension
 		
@@ -614,9 +614,9 @@ void ComponentRobotinoBaseServer::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
 	// destruction of ComponentRobotinoBaseServerROSExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentRobotinoBaseServerExtension
 	
@@ -822,9 +822,9 @@ void ComponentRobotinoBaseServer::loadParameter(int argc, char *argv[])
 			parameter.getInteger("PowerOutputSendInHandler", "prescale", connections.powerOutputSendInHandler.prescale);
 		}
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// load parameters for ComponentRobotinoBaseServerROSExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentRobotinoBaseServerExtension
 		

@@ -29,19 +29,19 @@
 #include <SeRoNetSDK/SeRoNet/OPCUA/Server/QueryServer.hpp>
 
 // include referenced CommunicationObject SeRoNetSDK self description implementations
-#include "CommManipulatorObjectsOpcUa/CommManipulatorEventResultOpcUa.hh"
-#include "CommManipulatorObjectsOpcUa/CommManipulatorTrajectoryOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
+#include "CommManipulationPlannerObjectsOpcUa/CommManipulationPlannerEventParameterOpcUa.hh"
 #include "CommManipulationPlannerObjectsOpcUa/CommManipulationPlannerEventResultOpcUa.hh"
+#include "CommManipulationPlannerObjectsOpcUa/CommManipulationPlannerEventStateOpcUa.hh"
 #include "CommManipulatorObjectsOpcUa/CommGripperStateOpcUa.hh"
 #include "CommManipulatorObjectsOpcUa/CommManipulatorEventParameterOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
-#include "CommObjectRecognitionObjectsOpcUa/CommObjectRecognitionEnvironmentOpcUa.hh"
+#include "CommManipulatorObjectsOpcUa/CommManipulatorEventResultOpcUa.hh"
 #include "CommManipulatorObjectsOpcUa/CommManipulatorEventStateOpcUa.hh"
-#include "CommObjectRecognitionObjectsOpcUa/CommObjectRecognitionObjectPropertiesOpcUa.hh"
-#include "CommManipulationPlannerObjectsOpcUa/CommManipulationPlannerEventParameterOpcUa.hh"
+#include "CommManipulatorObjectsOpcUa/CommManipulatorTrajectoryOpcUa.hh"
 #include "CommManipulatorObjectsOpcUa/CommMobileManipulatorStateOpcUa.hh"
-#include "CommManipulationPlannerObjectsOpcUa/CommManipulationPlannerEventStateOpcUa.hh"
+#include "CommObjectRecognitionObjectsOpcUa/CommObjectRecognitionEnvironmentOpcUa.hh"
 #include "CommObjectRecognitionObjectsOpcUa/CommObjectRecognitionIdOpcUa.hh"
+#include "CommObjectRecognitionObjectsOpcUa/CommObjectRecognitionObjectPropertiesOpcUa.hh"
 
 // create a static instance of the OpcUaBackendPortFactory
 static ComponentOpenRaveOpcUaBackendPortFactory OpcUaBackendPortFactory;
@@ -69,16 +69,6 @@ int ComponentOpenRaveOpcUaBackendPortFactory::onStartup()
 	return -1;
 }
 
-Smart::IEventClientPattern<CommManipulatorObjects::CommManipulatorEventParameter, CommManipulatorObjects::CommManipulatorEventResult> * ComponentOpenRaveOpcUaBackendPortFactory::createManipulatorEventServiceIn()
-{
-	return new SeRoNet::OPCUA::Client::EventClient<CommManipulatorObjects::CommManipulatorEventParameter, CommManipulatorObjects::CommManipulatorEventResult>(componentImpl);
-}
-
-Smart::IQueryClientPattern<CommObjectRecognitionObjects::CommObjectRecognitionId, CommObjectRecognitionObjects::CommObjectRecognitionObjectProperties> * ComponentOpenRaveOpcUaBackendPortFactory::createObjectQueryServiceReq()
-{
-	return new SeRoNet::OPCUA::Client::QueryClient<CommObjectRecognitionObjects::CommObjectRecognitionId, CommObjectRecognitionObjects::CommObjectRecognitionObjectProperties>(componentImpl);
-}
-
 Smart::IQueryClientPattern<CommObjectRecognitionObjects::CommObjectRecognitionId, CommObjectRecognitionObjects::CommObjectRecognitionEnvironment> * ComponentOpenRaveOpcUaBackendPortFactory::createEnvironmentQueryServiceReq()
 {
 	return new SeRoNet::OPCUA::Client::QueryClient<CommObjectRecognitionObjects::CommObjectRecognitionId, CommObjectRecognitionObjects::CommObjectRecognitionEnvironment>(componentImpl);
@@ -89,9 +79,9 @@ Smart::IEventClientPattern<CommManipulatorObjects::CommManipulatorEventParameter
 	return new SeRoNet::OPCUA::Client::EventClient<CommManipulatorObjects::CommManipulatorEventParameter, CommManipulatorObjects::CommManipulatorEventResult>(componentImpl);
 }
 
-Smart::IQueryClientPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorState> * ComponentOpenRaveOpcUaBackendPortFactory::createMobileManipulatorStateQueryServiceReq()
+Smart::IQueryClientPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::CommGripperState> * ComponentOpenRaveOpcUaBackendPortFactory::createGripperStateQueryServiceReq()
 {
-	return new SeRoNet::OPCUA::Client::QueryClient<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorState>(componentImpl);
+	return new SeRoNet::OPCUA::Client::QueryClient<CommBasicObjects::CommVoid, CommManipulatorObjects::CommGripperState>(componentImpl);
 }
 
 Smart::IPushClientPattern<CommManipulatorObjects::CommGripperState> * ComponentOpenRaveOpcUaBackendPortFactory::createGripperStateServiceIn()
@@ -99,14 +89,14 @@ Smart::IPushClientPattern<CommManipulatorObjects::CommGripperState> * ComponentO
 	return new SeRoNet::OPCUA::Client::PushClient<CommManipulatorObjects::CommGripperState>(componentImpl);
 }
 
-Smart::ISendClientPattern<CommManipulatorObjects::CommManipulatorTrajectory> * ComponentOpenRaveOpcUaBackendPortFactory::createSendTrajectoryOut()
+Smart::IEventClientPattern<CommManipulatorObjects::CommManipulatorEventParameter, CommManipulatorObjects::CommManipulatorEventResult> * ComponentOpenRaveOpcUaBackendPortFactory::createManipulatorEventServiceIn()
 {
-	return new SeRoNet::OPCUA::Client::SendClient<CommManipulatorObjects::CommManipulatorTrajectory>(componentImpl);
+	return new SeRoNet::OPCUA::Client::EventClient<CommManipulatorObjects::CommManipulatorEventParameter, CommManipulatorObjects::CommManipulatorEventResult>(componentImpl);
 }
 
-Smart::IQueryClientPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::CommGripperState> * ComponentOpenRaveOpcUaBackendPortFactory::createGripperStateQueryServiceReq()
+Smart::IQueryClientPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorState> * ComponentOpenRaveOpcUaBackendPortFactory::createMobileManipulatorStateQueryServiceReq()
 {
-	return new SeRoNet::OPCUA::Client::QueryClient<CommBasicObjects::CommVoid, CommManipulatorObjects::CommGripperState>(componentImpl);
+	return new SeRoNet::OPCUA::Client::QueryClient<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorState>(componentImpl);
 }
 
 Smart::IPushClientPattern<CommManipulatorObjects::CommMobileManipulatorState> * ComponentOpenRaveOpcUaBackendPortFactory::createMobileManipulatorStateServiceIn()
@@ -114,15 +104,25 @@ Smart::IPushClientPattern<CommManipulatorObjects::CommMobileManipulatorState> * 
 	return new SeRoNet::OPCUA::Client::PushClient<CommManipulatorObjects::CommMobileManipulatorState>(componentImpl);
 }
 
-
-Smart::IEventServerPattern<CommManipulationPlannerObjects::CommManipulationPlannerEventParameter, CommManipulationPlannerObjects::CommManipulationPlannerEventResult, CommManipulationPlannerObjects::CommManipulationPlannerEventState> * ComponentOpenRaveOpcUaBackendPortFactory::createPlanningEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommManipulationPlannerObjects::CommManipulationPlannerEventParameter, CommManipulationPlannerObjects::CommManipulationPlannerEventResult, CommManipulationPlannerObjects::CommManipulationPlannerEventState>> planningEventServiceOutEventTestHandler)
+Smart::IQueryClientPattern<CommObjectRecognitionObjects::CommObjectRecognitionId, CommObjectRecognitionObjects::CommObjectRecognitionObjectProperties> * ComponentOpenRaveOpcUaBackendPortFactory::createObjectQueryServiceReq()
 {
-	return new SeRoNet::OPCUA::Server::EventServer<CommManipulationPlannerObjects::CommManipulationPlannerEventParameter, CommManipulationPlannerObjects::CommManipulationPlannerEventResult, CommManipulationPlannerObjects::CommManipulationPlannerEventState>(componentImpl, serviceName, planningEventServiceOutEventTestHandler);
+	return new SeRoNet::OPCUA::Client::QueryClient<CommObjectRecognitionObjects::CommObjectRecognitionId, CommObjectRecognitionObjects::CommObjectRecognitionObjectProperties>(componentImpl);
 }
+
+Smart::ISendClientPattern<CommManipulatorObjects::CommManipulatorTrajectory> * ComponentOpenRaveOpcUaBackendPortFactory::createSendTrajectoryOut()
+{
+	return new SeRoNet::OPCUA::Client::SendClient<CommManipulatorObjects::CommManipulatorTrajectory>(componentImpl);
+}
+
 
 Smart::IQueryServerPattern<CommObjectRecognitionObjects::CommObjectRecognitionId, CommObjectRecognitionObjects::CommObjectRecognitionObjectProperties> * ComponentOpenRaveOpcUaBackendPortFactory::createObjectQueryServiceAnsw(const std::string &serviceName)
 {
 	return new SeRoNet::OPCUA::Server::QueryServer<CommObjectRecognitionObjects::CommObjectRecognitionId, CommObjectRecognitionObjects::CommObjectRecognitionObjectProperties>(componentImpl, serviceName);
+}
+
+Smart::IEventServerPattern<CommManipulationPlannerObjects::CommManipulationPlannerEventParameter, CommManipulationPlannerObjects::CommManipulationPlannerEventResult, CommManipulationPlannerObjects::CommManipulationPlannerEventState> * ComponentOpenRaveOpcUaBackendPortFactory::createPlanningEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommManipulationPlannerObjects::CommManipulationPlannerEventParameter, CommManipulationPlannerObjects::CommManipulationPlannerEventResult, CommManipulationPlannerObjects::CommManipulationPlannerEventState>> planningEventServiceOutEventTestHandler)
+{
+	return new SeRoNet::OPCUA::Server::EventServer<CommManipulationPlannerObjects::CommManipulationPlannerEventParameter, CommManipulationPlannerObjects::CommManipulationPlannerEventResult, CommManipulationPlannerObjects::CommManipulationPlannerEventState>(componentImpl, serviceName, planningEventServiceOutEventTestHandler);
 }
 
 

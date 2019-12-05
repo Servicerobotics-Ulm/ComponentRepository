@@ -29,9 +29,9 @@
 class ComponentLaserObstacleAvoidPortFactoryInterface;
 class ComponentLaserObstacleAvoidExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for ComponentLaserObstacleAvoidROSExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
 
 // includes for PlainOpcUaComponentLaserObstacleAvoidExtension
 // include plain OPC UA device clients
@@ -111,9 +111,9 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
 	// definitions of ComponentLaserObstacleAvoidROSExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentLaserObstacleAvoidExtension
 	
@@ -233,9 +233,9 @@ public:
 			std::string roboticMiddleware;
 		} navigationVelocityServiceOut;
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// -- parameters for ComponentLaserObstacleAvoidROSExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentLaserObstacleAvoidExtension
 		

@@ -48,15 +48,15 @@ public:
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * createBaseStateServiceIn() override;
 	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan> * createLaserQueryServiceReq() override;
 	
-	virtual Smart::IPushServerPattern<CommManipulatorObjects::CommMobileManipulatorState> * createPosePushServer(const std::string &serviceName) override;
-	virtual Smart::IQueryServerPattern<CommManipulatorObjects::CommManipulatorId, DomainVision::Comm3dPointCloud> * createScan3dQueryServer(const std::string &serviceName) override;
-	virtual Smart::IQueryServerPattern<CommRobotinoObjects::CommRobotinoIOValues, CommRobotinoObjects::CommRobotinoIOValues> * createIoQueryServer(const std::string &serviceName) override;
-	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorState> * createPoseQueryServer(const std::string &serviceName) override;
-	virtual Smart::IEventServerPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::CommManipulatorId, CommManipulatorObjects::CommScanEventState> * createScan3dEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommVoid, CommManipulatorObjects::CommManipulatorId, CommManipulatorObjects::CommScanEventState>> scan3dEventServerEventTestHandler) override;
 	virtual Smart::IEventServerPattern<CommRobotinoObjects::CommDigitalInputEventParameter, CommRobotinoObjects::CommDigitalInputEventResult, CommRobotinoObjects::CommDigitalInputEventState> * createDigitalInputEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommRobotinoObjects::CommDigitalInputEventParameter, CommRobotinoObjects::CommDigitalInputEventResult, CommRobotinoObjects::CommDigitalInputEventState>> digitalInputEventServerEventTestHandler) override;
-	virtual Smart::ISendServerPattern<CommManipulatorObjects::CommManipulatorTrajectory> * createTrajectorySendServer(const std::string &serviceName) override;
+	virtual Smart::IQueryServerPattern<CommRobotinoObjects::CommRobotinoIOValues, CommRobotinoObjects::CommRobotinoIOValues> * createIoQueryServer(const std::string &serviceName) override;
 	virtual Smart::IEventServerPattern<CommManipulatorObjects::CommManipulatorEventParameter, CommManipulatorObjects::CommManipulatorEventResult, CommManipulatorObjects::CommManipulatorEventState> * createManipulatorEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommManipulatorObjects::CommManipulatorEventParameter, CommManipulatorObjects::CommManipulatorEventResult, CommManipulatorObjects::CommManipulatorEventState>> manipulatorEventServiceOutEventTestHandler) override;
+	virtual Smart::IPushServerPattern<CommManipulatorObjects::CommMobileManipulatorState> * createPosePushServer(const std::string &serviceName) override;
+	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorState> * createPoseQueryServer(const std::string &serviceName) override;
 	virtual Smart::ISendServerPattern<CommManipulatorObjects::CommManipulatorRequestScan3d> * createRequestScan3dSendServer(const std::string &serviceName) override;
+	virtual Smart::IEventServerPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::CommManipulatorId, CommManipulatorObjects::CommScanEventState> * createScan3dEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommVoid, CommManipulatorObjects::CommManipulatorId, CommManipulatorObjects::CommScanEventState>> scan3dEventServerEventTestHandler) override;
+	virtual Smart::IQueryServerPattern<CommManipulatorObjects::CommManipulatorId, DomainVision::Comm3dPointCloud> * createScan3dQueryServer(const std::string &serviceName) override;
+	virtual Smart::ISendServerPattern<CommManipulatorObjects::CommManipulatorTrajectory> * createTrajectorySendServer(const std::string &serviceName) override;
 	
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) override;
 	virtual void destroy() override;

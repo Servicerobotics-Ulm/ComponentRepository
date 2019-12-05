@@ -29,9 +29,9 @@
 class ComponentLaserFromRGBDServerPortFactoryInterface;
 class ComponentLaserFromRGBDServerExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for ComponentLaserFromRGBDServerROSExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
 
 // includes for PlainOpcUaComponentLaserFromRGBDServerExtension
 // include plain OPC UA device clients
@@ -131,9 +131,9 @@ public:
 	// define request-handlers
 	LaserQueryHandler *laserQueryHandler;
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
 	// definitions of ComponentLaserFromRGBDServerROSExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentLaserFromRGBDServerExtension
 	
@@ -271,9 +271,9 @@ public:
 			std::string roboticMiddleware;
 		} rgbdClient;
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// -- parameters for ComponentLaserFromRGBDServerROSExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentLaserFromRGBDServerExtension
 		

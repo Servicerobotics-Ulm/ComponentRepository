@@ -58,14 +58,14 @@ int SmartJoystickNavigationOpcUaBackendPortFactory::onStartup()
 	return -1;
 }
 
-Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> * SmartJoystickNavigationOpcUaBackendPortFactory::createNavVelServiceOut()
-{
-	return new SeRoNet::OPCUA::Client::SendClient<CommBasicObjects::CommNavigationVelocity>(componentImpl);
-}
-
 Smart::IPushClientPattern<CommBasicObjects::CommJoystick> * SmartJoystickNavigationOpcUaBackendPortFactory::createJoystickServiceIn()
 {
 	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommJoystick>(componentImpl);
+}
+
+Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> * SmartJoystickNavigationOpcUaBackendPortFactory::createNavVelServiceOut()
+{
+	return new SeRoNet::OPCUA::Client::SendClient<CommBasicObjects::CommNavigationVelocity>(componentImpl);
 }
 
 

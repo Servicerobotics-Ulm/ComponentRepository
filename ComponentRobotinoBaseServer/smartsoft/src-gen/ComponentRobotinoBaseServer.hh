@@ -29,9 +29,9 @@
 class ComponentRobotinoBaseServerPortFactoryInterface;
 class ComponentRobotinoBaseServerExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for ComponentRobotinoBaseServerROSExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
 
 // includes for PlainOpcUaComponentRobotinoBaseServerExtension
 // include plain OPC UA device clients
@@ -205,9 +205,9 @@ public:
 	BaseStateQueryServiceAnswHandler *baseStateQueryServiceAnswHandler;
 	RobotinoIOValuesQueryServiceAnswHandler *robotinoIOValuesQueryServiceAnswHandler;
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
 	// definitions of ComponentRobotinoBaseServerROSExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentRobotinoBaseServerExtension
 	
@@ -405,9 +405,9 @@ public:
 			std::string roboticMiddleware;
 		} localizationEventServiceIn;
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// -- parameters for ComponentRobotinoBaseServerROSExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentRobotinoBaseServerExtension
 		

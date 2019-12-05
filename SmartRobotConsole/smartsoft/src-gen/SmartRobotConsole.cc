@@ -56,9 +56,9 @@ SmartRobotConsole::SmartRobotConsole()
 	
 	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
-	// initialize members of SmartRobotConsoleROSExtension
-	
 	// initialize members of PlainOpcUaSmartRobotConsoleExtension
+	
+	// initialize members of SmartRobotConsoleROSExtension
 	
 }
 
@@ -147,9 +147,9 @@ void SmartRobotConsole::init(int argc, char *argv[])
 		
 		// initializations of OpcUaBackendComponentGeneratorExtension
 		
-		// initializations of SmartRobotConsoleROSExtension
-		
 		// initializations of PlainOpcUaSmartRobotConsoleExtension
+		
+		// initializations of SmartRobotConsoleROSExtension
 		
 		
 		// initialize all registered port-factories
@@ -341,9 +341,9 @@ void SmartRobotConsole::fini()
 	
 	// destruction of OpcUaBackendComponentGeneratorExtension
 	
-	// destruction of SmartRobotConsoleROSExtension
-	
 	// destruction of PlainOpcUaSmartRobotConsoleExtension
+	
+	// destruction of SmartRobotConsoleROSExtension
 	
 }
 
@@ -441,9 +441,9 @@ void SmartRobotConsole::loadParameter(int argc, char *argv[])
 		
 		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
-		// load parameters for SmartRobotConsoleROSExtension
-		
 		// load parameters for PlainOpcUaSmartRobotConsoleExtension
+		
+		// load parameters for SmartRobotConsoleROSExtension
 		
 		
 		// load parameters for all registered component-extensions

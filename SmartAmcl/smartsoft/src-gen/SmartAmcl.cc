@@ -78,9 +78,9 @@ SmartAmcl::SmartAmcl()
 	
 	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
-	// initialize members of SmartAmclROSExtension
-	
 	// initialize members of PlainOpcUaSmartAmclExtension
+	
+	// initialize members of SmartAmclROSExtension
 	
 }
 
@@ -206,9 +206,9 @@ void SmartAmcl::init(int argc, char *argv[])
 		
 		// initializations of OpcUaBackendComponentGeneratorExtension
 		
-		// initializations of SmartAmclROSExtension
-		
 		// initializations of PlainOpcUaSmartAmclExtension
+		
+		// initializations of SmartAmclROSExtension
 		
 		
 		// initialize all registered port-factories
@@ -428,9 +428,9 @@ void SmartAmcl::fini()
 	
 	// destruction of OpcUaBackendComponentGeneratorExtension
 	
-	// destruction of SmartAmclROSExtension
-	
 	// destruction of PlainOpcUaSmartAmclExtension
+	
+	// destruction of SmartAmclROSExtension
 	
 }
 
@@ -549,9 +549,9 @@ void SmartAmcl::loadParameter(int argc, char *argv[])
 		
 		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
-		// load parameters for SmartAmclROSExtension
-		
 		// load parameters for PlainOpcUaSmartAmclExtension
+		
+		// load parameters for SmartAmclROSExtension
 		
 		
 		// load parameters for all registered component-extensions

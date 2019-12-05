@@ -29,19 +29,19 @@
 #include <SeRoNetSDK/SeRoNet/OPCUA/Server/QueryServer.hpp>
 
 // include referenced CommunicationObject SeRoNetSDK self description implementations
-#include "CommNavigationObjectsOpcUa/CommPlannerGoalOpcUa.hh"
-#include "CommNavigationObjectsOpcUa/CommCdlGoalEventResultOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommNavigationVelocityOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommMobileIRScanOpcUa.hh"
-#include "CommNavigationObjectsOpcUa/CommCdlRobotBlockedEventParameterOpcUa.hh"
-#include "CommNavigationObjectsOpcUa/CommCdlGoalEventParameterOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommMobileLaserScanOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommNavigationVelocityOpcUa.hh"
+#include "CommNavigationObjectsOpcUa/CdlGoalEventStateOpcUa.hh"
+#include "CommNavigationObjectsOpcUa/CommCdlGoalEventParameterOpcUa.hh"
+#include "CommNavigationObjectsOpcUa/CommCdlGoalEventResultOpcUa.hh"
+#include "CommNavigationObjectsOpcUa/CommCdlRobotBlockedEventParameterOpcUa.hh"
 #include "CommNavigationObjectsOpcUa/CommCdlRobotBlockedEventResultOpcUa.hh"
+#include "CommNavigationObjectsOpcUa/CommCdlRobotBlockedStateOpcUa.hh"
+#include "CommNavigationObjectsOpcUa/CommPlannerGoalOpcUa.hh"
 #include "CommRobotinoObjectsOpcUa/CommPathNavigationGoalOpcUa.hh"
 #include "CommTrackingObjectsOpcUa/CommTrackingGoalOpcUa.hh"
-#include "CommNavigationObjectsOpcUa/CommCdlRobotBlockedStateOpcUa.hh"
-#include "CommNavigationObjectsOpcUa/CdlGoalEventStateOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
 
 // create a static instance of the OpcUaBackendPortFactory
 static SmartCdlServerOpcUaBackendPortFactory OpcUaBackendPortFactory;
@@ -69,9 +69,9 @@ int SmartCdlServerOpcUaBackendPortFactory::onStartup()
 	return -1;
 }
 
-Smart::IPushClientPattern<CommNavigationObjects::CommPlannerGoal> * SmartCdlServerOpcUaBackendPortFactory::createPlannerClient()
+Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * SmartCdlServerOpcUaBackendPortFactory::createBaseStateClient()
 {
-	return new SeRoNet::OPCUA::Client::PushClient<CommNavigationObjects::CommPlannerGoal>(componentImpl);
+	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommBaseState>(componentImpl);
 }
 
 Smart::IPushClientPattern<CommBasicObjects::CommMobileIRScan> * SmartCdlServerOpcUaBackendPortFactory::createIRClient()
@@ -79,9 +79,14 @@ Smart::IPushClientPattern<CommBasicObjects::CommMobileIRScan> * SmartCdlServerOp
 	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommMobileIRScan>(componentImpl);
 }
 
-Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * SmartCdlServerOpcUaBackendPortFactory::createBaseStateClient()
+Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * SmartCdlServerOpcUaBackendPortFactory::createLaserClient()
 {
-	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommBaseState>(componentImpl);
+	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommMobileLaserScan>(componentImpl);
+}
+
+Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * SmartCdlServerOpcUaBackendPortFactory::createLaserClient2()
+{
+	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommMobileLaserScan>(componentImpl);
 }
 
 Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> * SmartCdlServerOpcUaBackendPortFactory::createNavVelSendClient()
@@ -94,9 +99,9 @@ Smart::IPushClientPattern<CommRobotinoObjects::CommPathNavigationGoal> * SmartCd
 	return new SeRoNet::OPCUA::Client::PushClient<CommRobotinoObjects::CommPathNavigationGoal>(componentImpl);
 }
 
-Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * SmartCdlServerOpcUaBackendPortFactory::createLaserClient2()
+Smart::IPushClientPattern<CommNavigationObjects::CommPlannerGoal> * SmartCdlServerOpcUaBackendPortFactory::createPlannerClient()
 {
-	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommMobileLaserScan>(componentImpl);
+	return new SeRoNet::OPCUA::Client::PushClient<CommNavigationObjects::CommPlannerGoal>(componentImpl);
 }
 
 Smart::IPushClientPattern<CommTrackingObjects::CommTrackingGoal> * SmartCdlServerOpcUaBackendPortFactory::createTrackingClient()
@@ -104,15 +109,10 @@ Smart::IPushClientPattern<CommTrackingObjects::CommTrackingGoal> * SmartCdlServe
 	return new SeRoNet::OPCUA::Client::PushClient<CommTrackingObjects::CommTrackingGoal>(componentImpl);
 }
 
-Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * SmartCdlServerOpcUaBackendPortFactory::createLaserClient()
-{
-	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommMobileLaserScan>(componentImpl);
-}
 
-
-Smart::IEventServerPattern<CommNavigationObjects::CommCdlRobotBlockedEventParameter, CommNavigationObjects::CommCdlRobotBlockedEventResult, CommNavigationObjects::CommCdlRobotBlockedState> * SmartCdlServerOpcUaBackendPortFactory::createRobotBlockedEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommNavigationObjects::CommCdlRobotBlockedEventParameter, CommNavigationObjects::CommCdlRobotBlockedEventResult, CommNavigationObjects::CommCdlRobotBlockedState>> robotBlockedEventServerEventTestHandler)
+Smart::IEventServerPattern<CommNavigationObjects::CommCdlGoalEventParameter, CommNavigationObjects::CommCdlGoalEventResult, CommNavigationObjects::CdlGoalEventState> * SmartCdlServerOpcUaBackendPortFactory::createGoalEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommNavigationObjects::CommCdlGoalEventParameter, CommNavigationObjects::CommCdlGoalEventResult, CommNavigationObjects::CdlGoalEventState>> goalEventServerEventTestHandler)
 {
-	return new SeRoNet::OPCUA::Server::EventServer<CommNavigationObjects::CommCdlRobotBlockedEventParameter, CommNavigationObjects::CommCdlRobotBlockedEventResult, CommNavigationObjects::CommCdlRobotBlockedState>(componentImpl, serviceName, robotBlockedEventServerEventTestHandler);
+	return new SeRoNet::OPCUA::Server::EventServer<CommNavigationObjects::CommCdlGoalEventParameter, CommNavigationObjects::CommCdlGoalEventResult, CommNavigationObjects::CdlGoalEventState>(componentImpl, serviceName, goalEventServerEventTestHandler);
 }
 
 Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * SmartCdlServerOpcUaBackendPortFactory::createNavVelSendServer(const std::string &serviceName)
@@ -120,9 +120,9 @@ Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * SmartCdlSe
 	return new SeRoNet::OPCUA::Server::SendServer<CommBasicObjects::CommNavigationVelocity>(componentImpl, serviceName);
 }
 
-Smart::IEventServerPattern<CommNavigationObjects::CommCdlGoalEventParameter, CommNavigationObjects::CommCdlGoalEventResult, CommNavigationObjects::CdlGoalEventState> * SmartCdlServerOpcUaBackendPortFactory::createGoalEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommNavigationObjects::CommCdlGoalEventParameter, CommNavigationObjects::CommCdlGoalEventResult, CommNavigationObjects::CdlGoalEventState>> goalEventServerEventTestHandler)
+Smart::IEventServerPattern<CommNavigationObjects::CommCdlRobotBlockedEventParameter, CommNavigationObjects::CommCdlRobotBlockedEventResult, CommNavigationObjects::CommCdlRobotBlockedState> * SmartCdlServerOpcUaBackendPortFactory::createRobotBlockedEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommNavigationObjects::CommCdlRobotBlockedEventParameter, CommNavigationObjects::CommCdlRobotBlockedEventResult, CommNavigationObjects::CommCdlRobotBlockedState>> robotBlockedEventServerEventTestHandler)
 {
-	return new SeRoNet::OPCUA::Server::EventServer<CommNavigationObjects::CommCdlGoalEventParameter, CommNavigationObjects::CommCdlGoalEventResult, CommNavigationObjects::CdlGoalEventState>(componentImpl, serviceName, goalEventServerEventTestHandler);
+	return new SeRoNet::OPCUA::Server::EventServer<CommNavigationObjects::CommCdlRobotBlockedEventParameter, CommNavigationObjects::CommCdlRobotBlockedEventResult, CommNavigationObjects::CommCdlRobotBlockedState>(componentImpl, serviceName, robotBlockedEventServerEventTestHandler);
 }
 
 

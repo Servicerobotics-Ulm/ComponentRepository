@@ -86,9 +86,9 @@ SmartMapperGridMap::SmartMapperGridMap()
 	
 	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
-	// initialize members of SmartMapperGridMapROSExtension
-	
 	// initialize members of PlainOpcUaSmartMapperGridMapExtension
+	
+	// initialize members of SmartMapperGridMapROSExtension
 	
 }
 
@@ -210,9 +210,9 @@ void SmartMapperGridMap::init(int argc, char *argv[])
 		
 		// initializations of OpcUaBackendComponentGeneratorExtension
 		
-		// initializations of SmartMapperGridMapROSExtension
-		
 		// initializations of PlainOpcUaSmartMapperGridMapExtension
+		
+		// initializations of SmartMapperGridMapROSExtension
 		
 		
 		// initialize all registered port-factories
@@ -479,9 +479,9 @@ void SmartMapperGridMap::fini()
 	
 	// destruction of OpcUaBackendComponentGeneratorExtension
 	
-	// destruction of SmartMapperGridMapROSExtension
-	
 	// destruction of PlainOpcUaSmartMapperGridMapExtension
+	
+	// destruction of SmartMapperGridMapROSExtension
 	
 }
 
@@ -621,9 +621,9 @@ void SmartMapperGridMap::loadParameter(int argc, char *argv[])
 		
 		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
-		// load parameters for SmartMapperGridMapROSExtension
-		
 		// load parameters for PlainOpcUaSmartMapperGridMapExtension
+		
+		// load parameters for SmartMapperGridMapROSExtension
 		
 		
 		// load parameters for all registered component-extensions

@@ -107,9 +107,9 @@ ComponentRealSenseV2Server::ComponentRealSenseV2Server()
 	
 	// initialize members of ComponentRealSenseV2ServerROSExtension
 	
-	// initialize members of PlainOpcUaComponentRealSenseV2ServerExtension
-	
 	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
+	// initialize members of PlainOpcUaComponentRealSenseV2ServerExtension
 	
 }
 
@@ -269,9 +269,9 @@ void ComponentRealSenseV2Server::init(int argc, char *argv[])
 		
 		// initializations of ComponentRealSenseV2ServerROSExtension
 		
-		// initializations of PlainOpcUaComponentRealSenseV2ServerExtension
-		
 		// initializations of OpcUaBackendComponentGeneratorExtension
+		
+		// initializations of PlainOpcUaComponentRealSenseV2ServerExtension
 		
 		
 		// initialize all registered port-factories
@@ -533,9 +533,9 @@ void ComponentRealSenseV2Server::fini()
 	
 	// destruction of ComponentRealSenseV2ServerROSExtension
 	
-	// destruction of PlainOpcUaComponentRealSenseV2ServerExtension
-	
 	// destruction of OpcUaBackendComponentGeneratorExtension
+	
+	// destruction of PlainOpcUaComponentRealSenseV2ServerExtension
 	
 }
 
@@ -690,9 +690,9 @@ void ComponentRealSenseV2Server::loadParameter(int argc, char *argv[])
 		
 		// load parameters for ComponentRealSenseV2ServerROSExtension
 		
-		// load parameters for PlainOpcUaComponentRealSenseV2ServerExtension
-		
 		// load parameters for OpcUaBackendComponentGeneratorExtension
+		
+		// load parameters for PlainOpcUaComponentRealSenseV2ServerExtension
 		
 		
 		// load parameters for all registered component-extensions

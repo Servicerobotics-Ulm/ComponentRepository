@@ -74,9 +74,9 @@ ComponentKB::ComponentKB()
 	connections.dummy.cpuAffinity = -1;
 	connections.kbChainedEntriesEventClientHandler.prescale = 1;
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
 	// initialize members of ComponentKBROSExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentKBExtension
 	
@@ -186,9 +186,9 @@ void ComponentKB::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of ComponentKBROSExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentKBExtension
 		
@@ -398,9 +398,9 @@ void ComponentKB::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
 	// destruction of ComponentKBROSExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentKBExtension
 	
@@ -519,9 +519,9 @@ void ComponentKB::loadParameter(int argc, char *argv[])
 			parameter.getInteger("kbChainedEntriesEventClientHandler", "prescale", connections.kbChainedEntriesEventClientHandler.prescale);
 		}
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// load parameters for ComponentKBROSExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentKBExtension
 		

@@ -29,9 +29,9 @@
 #include <SeRoNetSDK/SeRoNet/OPCUA/Server/QueryServer.hpp>
 
 // include referenced CommunicationObject SeRoNetSDK self description implementations
-#include "CommNavigationObjectsOpcUa/CommGridMapOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommMobileLaserScanOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommBasePositionUpdateOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommMobileLaserScanOpcUa.hh"
+#include "CommNavigationObjectsOpcUa/CommGridMapOpcUa.hh"
 
 // create a static instance of the OpcUaBackendPortFactory
 static ComponentGMappingOpcUaBackendPortFactory OpcUaBackendPortFactory;
@@ -59,14 +59,14 @@ int ComponentGMappingOpcUaBackendPortFactory::onStartup()
 	return -1;
 }
 
-Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * ComponentGMappingOpcUaBackendPortFactory::createLaserClient()
-{
-	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommMobileLaserScan>(componentImpl);
-}
-
 Smart::ISendClientPattern<CommBasicObjects::CommBasePositionUpdate> * ComponentGMappingOpcUaBackendPortFactory::createBasePositionUpdateClient()
 {
 	return new SeRoNet::OPCUA::Client::SendClient<CommBasicObjects::CommBasePositionUpdate>(componentImpl);
+}
+
+Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * ComponentGMappingOpcUaBackendPortFactory::createLaserClient()
+{
+	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommMobileLaserScan>(componentImpl);
 }
 
 

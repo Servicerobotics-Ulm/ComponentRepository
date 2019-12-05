@@ -141,9 +141,9 @@ SmartCdlServer::SmartCdlServer()
 	
 	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
-	// initialize members of SmartCdlServerROSExtension
-	
 	// initialize members of PlainOpcUaSmartCdlServerExtension
+	
+	// initialize members of SmartCdlServerROSExtension
 	
 }
 
@@ -390,9 +390,9 @@ void SmartCdlServer::init(int argc, char *argv[])
 		
 		// initializations of OpcUaBackendComponentGeneratorExtension
 		
-		// initializations of SmartCdlServerROSExtension
-		
 		// initializations of PlainOpcUaSmartCdlServerExtension
+		
+		// initializations of SmartCdlServerROSExtension
 		
 		
 		// initialize all registered port-factories
@@ -701,9 +701,9 @@ void SmartCdlServer::fini()
 	
 	// destruction of OpcUaBackendComponentGeneratorExtension
 	
-	// destruction of SmartCdlServerROSExtension
-	
 	// destruction of PlainOpcUaSmartCdlServerExtension
+	
+	// destruction of SmartCdlServerROSExtension
 	
 }
 
@@ -886,9 +886,9 @@ void SmartCdlServer::loadParameter(int argc, char *argv[])
 		
 		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
-		// load parameters for SmartCdlServerROSExtension
-		
 		// load parameters for PlainOpcUaSmartCdlServerExtension
+		
+		// load parameters for SmartCdlServerROSExtension
 		
 		
 		// load parameters for all registered component-extensions

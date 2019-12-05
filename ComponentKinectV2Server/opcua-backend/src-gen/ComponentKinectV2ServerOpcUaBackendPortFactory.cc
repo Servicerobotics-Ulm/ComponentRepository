@@ -29,11 +29,11 @@
 #include <SeRoNetSDK/SeRoNet/OPCUA/Server/QueryServer.hpp>
 
 // include referenced CommunicationObject SeRoNetSDK self description implementations
-#include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommDevicePoseStateOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
 #include "DomainVisionOpcUa/CommRGBDImageOpcUa.hh"
 #include "DomainVisionOpcUa/CommVideoImageOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
 
 // create a static instance of the OpcUaBackendPortFactory
 static ComponentKinectV2ServerOpcUaBackendPortFactory OpcUaBackendPortFactory;
@@ -61,21 +61,16 @@ int ComponentKinectV2ServerOpcUaBackendPortFactory::onStartup()
 	return -1;
 }
 
-Smart::IPushClientPattern<CommBasicObjects::CommDevicePoseState> * ComponentKinectV2ServerOpcUaBackendPortFactory::createPtuPosePushNewestClient()
-{
-	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommDevicePoseState>(componentImpl);
-}
-
 Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * ComponentKinectV2ServerOpcUaBackendPortFactory::createBasePushTimedClient()
 {
 	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommBaseState>(componentImpl);
 }
 
-
-Smart::IPushServerPattern<DomainVision::CommRGBDImage> * ComponentKinectV2ServerOpcUaBackendPortFactory::createImagePushNewestServer(const std::string &serviceName)
+Smart::IPushClientPattern<CommBasicObjects::CommDevicePoseState> * ComponentKinectV2ServerOpcUaBackendPortFactory::createPtuPosePushNewestClient()
 {
-	return new SeRoNet::OPCUA::Server::PushServer<DomainVision::CommRGBDImage>(componentImpl, serviceName);
+	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommDevicePoseState>(componentImpl);
 }
+
 
 Smart::IPushServerPattern<DomainVision::CommVideoImage> * ComponentKinectV2ServerOpcUaBackendPortFactory::createColorImagePushNewestServer(const std::string &serviceName)
 {
@@ -85,6 +80,11 @@ Smart::IPushServerPattern<DomainVision::CommVideoImage> * ComponentKinectV2Serve
 Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> * ComponentKinectV2ServerOpcUaBackendPortFactory::createColorImageQueryServer(const std::string &serviceName)
 {
 	return new SeRoNet::OPCUA::Server::QueryServer<CommBasicObjects::CommVoid, DomainVision::CommVideoImage>(componentImpl, serviceName);
+}
+
+Smart::IPushServerPattern<DomainVision::CommRGBDImage> * ComponentKinectV2ServerOpcUaBackendPortFactory::createImagePushNewestServer(const std::string &serviceName)
+{
+	return new SeRoNet::OPCUA::Server::PushServer<DomainVision::CommRGBDImage>(componentImpl, serviceName);
 }
 
 Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> * ComponentKinectV2ServerOpcUaBackendPortFactory::createImageQueryV2Server(const std::string &serviceName)

@@ -29,11 +29,11 @@
 #include <SeRoNetSDK/SeRoNet/OPCUA/Server/QueryServer.hpp>
 
 // include referenced CommunicationObject SeRoNetSDK self description implementations
-#include "CommBasicObjectsOpcUa/CommLaserSafetyEventParamOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommMobileLaserScanOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommLaserSafetyEventParamOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommLaserSafetyEventStateOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommLaserSafetyFieldOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommMobileLaserScanOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
 
 // create a static instance of the OpcUaBackendPortFactory
@@ -68,11 +68,6 @@ Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * ComponentLaserS300S
 }
 
 
-Smart::IEventServerPattern<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState> * ComponentLaserS300ServerOpcUaBackendPortFactory::createSafetyfieldEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState>> safetyfieldEventServerEventTestHandler)
-{
-	return new SeRoNet::OPCUA::Server::EventServer<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState>(componentImpl, serviceName, safetyfieldEventServerEventTestHandler);
-}
-
 Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * ComponentLaserS300ServerOpcUaBackendPortFactory::createLaserPushNewestServer(const std::string &serviceName)
 {
 	return new SeRoNet::OPCUA::Server::PushServer<CommBasicObjects::CommMobileLaserScan>(componentImpl, serviceName);
@@ -81,6 +76,11 @@ Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * ComponentLase
 Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan> * ComponentLaserS300ServerOpcUaBackendPortFactory::createLaserQueryServer(const std::string &serviceName)
 {
 	return new SeRoNet::OPCUA::Server::QueryServer<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan>(componentImpl, serviceName);
+}
+
+Smart::IEventServerPattern<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState> * ComponentLaserS300ServerOpcUaBackendPortFactory::createSafetyfieldEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState>> safetyfieldEventServerEventTestHandler)
+{
+	return new SeRoNet::OPCUA::Server::EventServer<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState>(componentImpl, serviceName, safetyfieldEventServerEventTestHandler);
 }
 
 

@@ -96,9 +96,9 @@ SmartGazeboBaseServer::SmartGazeboBaseServer()
 	
 	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
-	// initialize members of SmartGazeboBaseServerROSExtension
-	
 	// initialize members of PlainOpcUaSmartGazeboBaseServerExtension
+	
+	// initialize members of SmartGazeboBaseServerROSExtension
 	
 }
 
@@ -219,9 +219,9 @@ void SmartGazeboBaseServer::init(int argc, char *argv[])
 		
 		// initializations of OpcUaBackendComponentGeneratorExtension
 		
-		// initializations of SmartGazeboBaseServerROSExtension
-		
 		// initializations of PlainOpcUaSmartGazeboBaseServerExtension
+		
+		// initializations of SmartGazeboBaseServerROSExtension
 		
 		
 		// initialize all registered port-factories
@@ -493,9 +493,9 @@ void SmartGazeboBaseServer::fini()
 	
 	// destruction of OpcUaBackendComponentGeneratorExtension
 	
-	// destruction of SmartGazeboBaseServerROSExtension
-	
 	// destruction of PlainOpcUaSmartGazeboBaseServerExtension
+	
+	// destruction of SmartGazeboBaseServerROSExtension
 	
 }
 
@@ -653,9 +653,9 @@ void SmartGazeboBaseServer::loadParameter(int argc, char *argv[])
 		
 		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
-		// load parameters for SmartGazeboBaseServerROSExtension
-		
 		// load parameters for PlainOpcUaSmartGazeboBaseServerExtension
+		
+		// load parameters for SmartGazeboBaseServerROSExtension
 		
 		
 		// load parameters for all registered component-extensions

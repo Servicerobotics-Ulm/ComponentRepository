@@ -70,9 +70,9 @@ SmartLaserLMS200Server::SmartLaserLMS200Server()
 	
 	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
-	// initialize members of SmartLaserLMS200ServerROSExtension
-	
 	// initialize members of PlainOpcUaSmartLaserLMS200ServerExtension
+	
+	// initialize members of SmartLaserLMS200ServerROSExtension
 	
 }
 
@@ -183,9 +183,9 @@ void SmartLaserLMS200Server::init(int argc, char *argv[])
 		
 		// initializations of OpcUaBackendComponentGeneratorExtension
 		
-		// initializations of SmartLaserLMS200ServerROSExtension
-		
 		// initializations of PlainOpcUaSmartLaserLMS200ServerExtension
+		
+		// initializations of SmartLaserLMS200ServerROSExtension
 		
 		
 		// initialize all registered port-factories
@@ -374,9 +374,9 @@ void SmartLaserLMS200Server::fini()
 	
 	// destruction of OpcUaBackendComponentGeneratorExtension
 	
-	// destruction of SmartLaserLMS200ServerROSExtension
-	
 	// destruction of PlainOpcUaSmartLaserLMS200ServerExtension
+	
+	// destruction of SmartLaserLMS200ServerROSExtension
 	
 }
 
@@ -484,9 +484,9 @@ void SmartLaserLMS200Server::loadParameter(int argc, char *argv[])
 		
 		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
-		// load parameters for SmartLaserLMS200ServerROSExtension
-		
 		// load parameters for PlainOpcUaSmartLaserLMS200ServerExtension
+		
+		// load parameters for SmartLaserLMS200ServerROSExtension
 		
 		
 		// load parameters for all registered component-extensions

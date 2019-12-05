@@ -31,11 +31,11 @@ class ComponentUnicapImageServerExtension;
 
 // includes for ComponentUnicapImageServerROSExtension
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for PlainOpcUaComponentUnicapImageServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
-
-// includes for OpcUaBackendComponentGeneratorExtension
 
 
 // include communication objects
@@ -137,9 +137,9 @@ public:
 	
 	// definitions of ComponentUnicapImageServerROSExtension
 	
-	// definitions of PlainOpcUaComponentUnicapImageServerExtension
-	
 	// definitions of OpcUaBackendComponentGeneratorExtension
+	
+	// definitions of PlainOpcUaComponentUnicapImageServerExtension
 	
 	
 	// define default slave ports
@@ -270,9 +270,9 @@ public:
 		
 		// -- parameters for ComponentUnicapImageServerROSExtension
 		
-		// -- parameters for PlainOpcUaComponentUnicapImageServerExtension
-		
 		// -- parameters for OpcUaBackendComponentGeneratorExtension
+		
+		// -- parameters for PlainOpcUaComponentUnicapImageServerExtension
 		
 	} connections;
 };

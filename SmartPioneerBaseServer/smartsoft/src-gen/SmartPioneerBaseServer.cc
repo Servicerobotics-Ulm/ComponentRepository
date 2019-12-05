@@ -86,9 +86,9 @@ SmartPioneerBaseServer::SmartPioneerBaseServer()
 	
 	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
-	// initialize members of SmartPioneerBaseServerROSExtension
-	
 	// initialize members of PlainOpcUaSmartPioneerBaseServerExtension
+	
+	// initialize members of SmartPioneerBaseServerROSExtension
 	
 }
 
@@ -195,9 +195,9 @@ void SmartPioneerBaseServer::init(int argc, char *argv[])
 		
 		// initializations of OpcUaBackendComponentGeneratorExtension
 		
-		// initializations of SmartPioneerBaseServerROSExtension
-		
 		// initializations of PlainOpcUaSmartPioneerBaseServerExtension
+		
+		// initializations of SmartPioneerBaseServerROSExtension
 		
 		
 		// initialize all registered port-factories
@@ -441,9 +441,9 @@ void SmartPioneerBaseServer::fini()
 	
 	// destruction of OpcUaBackendComponentGeneratorExtension
 	
-	// destruction of SmartPioneerBaseServerROSExtension
-	
 	// destruction of PlainOpcUaSmartPioneerBaseServerExtension
+	
+	// destruction of SmartPioneerBaseServerROSExtension
 	
 }
 
@@ -576,9 +576,9 @@ void SmartPioneerBaseServer::loadParameter(int argc, char *argv[])
 		
 		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
-		// load parameters for SmartPioneerBaseServerROSExtension
-		
 		// load parameters for PlainOpcUaSmartPioneerBaseServerExtension
+		
+		// load parameters for SmartPioneerBaseServerROSExtension
 		
 		
 		// load parameters for all registered component-extensions

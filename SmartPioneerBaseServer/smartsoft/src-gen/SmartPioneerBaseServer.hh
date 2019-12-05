@@ -31,11 +31,11 @@ class SmartPioneerBaseServerExtension;
 
 // includes for OpcUaBackendComponentGeneratorExtension
 
-// includes for SmartPioneerBaseServerROSExtension
-
 // includes for PlainOpcUaSmartPioneerBaseServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
+
+// includes for SmartPioneerBaseServerROSExtension
 
 
 // include communication objects
@@ -148,9 +148,9 @@ public:
 	
 	// definitions of OpcUaBackendComponentGeneratorExtension
 	
-	// definitions of SmartPioneerBaseServerROSExtension
-	
 	// definitions of PlainOpcUaSmartPioneerBaseServerExtension
+	
+	// definitions of SmartPioneerBaseServerROSExtension
 	
 	
 	// define default slave ports
@@ -281,9 +281,9 @@ public:
 		
 		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
-		// -- parameters for SmartPioneerBaseServerROSExtension
-		
 		// -- parameters for PlainOpcUaSmartPioneerBaseServerExtension
+		
+		// -- parameters for SmartPioneerBaseServerROSExtension
 		
 	} connections;
 };

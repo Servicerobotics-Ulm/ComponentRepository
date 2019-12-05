@@ -29,9 +29,9 @@
 #include <SeRoNetSDK/SeRoNet/OPCUA/Server/QueryServer.hpp>
 
 // include referenced CommunicationObject SeRoNetSDK self description implementations
+#include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommMobileLaserScanOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
 
 // create a static instance of the OpcUaBackendPortFactory
 static SmartLaserLMS200ServerOpcUaBackendPortFactory OpcUaBackendPortFactory;
@@ -65,14 +65,14 @@ Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * SmartLaserLMS200Ser
 }
 
 
-Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * SmartLaserLMS200ServerOpcUaBackendPortFactory::createLaserScanOut(const std::string &serviceName)
-{
-	return new SeRoNet::OPCUA::Server::PushServer<CommBasicObjects::CommMobileLaserScan>(componentImpl, serviceName);
-}
-
 Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan> * SmartLaserLMS200ServerOpcUaBackendPortFactory::createLaserQueryServiceAnsw(const std::string &serviceName)
 {
 	return new SeRoNet::OPCUA::Server::QueryServer<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan>(componentImpl, serviceName);
+}
+
+Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * SmartLaserLMS200ServerOpcUaBackendPortFactory::createLaserScanOut(const std::string &serviceName)
+{
+	return new SeRoNet::OPCUA::Server::PushServer<CommBasicObjects::CommMobileLaserScan>(componentImpl, serviceName);
 }
 
 

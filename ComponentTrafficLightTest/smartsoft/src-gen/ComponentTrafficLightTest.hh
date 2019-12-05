@@ -29,9 +29,9 @@
 class ComponentTrafficLightTestPortFactoryInterface;
 class ComponentTrafficLightTestExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for ComponentTrafficLightTestROSExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
 
 // includes for PlainOpcUaComponentTrafficLightTestExtension
 // include plain OPC UA device clients
@@ -104,9 +104,9 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
 	// definitions of ComponentTrafficLightTestROSExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentTrafficLightTestExtension
 	
@@ -218,9 +218,9 @@ public:
 			std::string roboticMiddleware;
 		} trafficLightServiceOut;
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// -- parameters for ComponentTrafficLightTestROSExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentTrafficLightTestExtension
 		

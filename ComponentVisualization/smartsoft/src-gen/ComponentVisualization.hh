@@ -29,9 +29,9 @@
 class ComponentVisualizationPortFactoryInterface;
 class ComponentVisualizationExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for ComponentVisualizationROSExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
 
 // includes for PlainOpcUaComponentVisualizationExtension
 // include plain OPC UA device clients
@@ -248,9 +248,9 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
 	// definitions of ComponentVisualizationROSExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentVisualizationExtension
 	
@@ -691,9 +691,9 @@ public:
 			std::string roboticMiddleware;
 		} ultrasonicPushNewestClient;
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// -- parameters for ComponentVisualizationROSExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentVisualizationExtension
 		

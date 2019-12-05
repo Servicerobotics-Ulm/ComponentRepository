@@ -58,14 +58,14 @@ int ComponentTTSClientOpcUaBackendPortFactory::onStartup()
 	return -1;
 }
 
-Smart::ISendClientPattern<DomainSpeech::CommSpeechOutputMessage> * ComponentTTSClientOpcUaBackendPortFactory::createSpeechSendServiceOut()
-{
-	return new SeRoNet::OPCUA::Client::SendClient<DomainSpeech::CommSpeechOutputMessage>(componentImpl);
-}
-
 Smart::IQueryClientPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet> * ComponentTTSClientOpcUaBackendPortFactory::createSpeechQueryServiceReq()
 {
 	return new SeRoNet::OPCUA::Client::QueryClient<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet>(componentImpl);
+}
+
+Smart::ISendClientPattern<DomainSpeech::CommSpeechOutputMessage> * ComponentTTSClientOpcUaBackendPortFactory::createSpeechSendServiceOut()
+{
+	return new SeRoNet::OPCUA::Client::SendClient<DomainSpeech::CommSpeechOutputMessage>(componentImpl);
 }
 
 

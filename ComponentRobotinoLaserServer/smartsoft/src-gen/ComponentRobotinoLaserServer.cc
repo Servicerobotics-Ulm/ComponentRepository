@@ -75,9 +75,9 @@ ComponentRobotinoLaserServer::ComponentRobotinoLaserServer()
 	connections.readLaserTask.priority = -1;
 	connections.readLaserTask.cpuAffinity = -1;
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
 	// initialize members of ComponentRobotinoLaserServerROSExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentRobotinoLaserServerExtension
 	
@@ -188,9 +188,9 @@ void ComponentRobotinoLaserServer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of ComponentRobotinoLaserServerROSExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentRobotinoLaserServerExtension
 		
@@ -400,9 +400,9 @@ void ComponentRobotinoLaserServer::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
 	// destruction of ComponentRobotinoLaserServerROSExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentRobotinoLaserServerExtension
 	
@@ -524,9 +524,9 @@ void ComponentRobotinoLaserServer::loadParameter(int argc, char *argv[])
 			parameter.getInteger("ReadLaserTask", "cpuAffinity", connections.readLaserTask.cpuAffinity);
 		}
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// load parameters for ComponentRobotinoLaserServerROSExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentRobotinoLaserServerExtension
 		

@@ -29,8 +29,8 @@
 #include <SeRoNetSDK/SeRoNet/OPCUA/Server/QueryServer.hpp>
 
 // include referenced CommunicationObject SeRoNetSDK self description implementations
-#include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommBasePositionUpdateOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommMobileLaserScanOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommNavigationVelocityOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
@@ -62,24 +62,24 @@ int SmartGazeboBaseServerOpcUaBackendPortFactory::onStartup()
 }
 
 
-Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * SmartGazeboBaseServerOpcUaBackendPortFactory::createBaseStateServiceOut(const std::string &serviceName)
-{
-	return new SeRoNet::OPCUA::Server::PushServer<CommBasicObjects::CommBaseState>(componentImpl, serviceName);
-}
-
-Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * SmartGazeboBaseServerOpcUaBackendPortFactory::createLocalizationUpdateServiceIn(const std::string &serviceName)
-{
-	return new SeRoNet::OPCUA::Server::SendServer<CommBasicObjects::CommBasePositionUpdate>(componentImpl, serviceName);
-}
-
 Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState> * SmartGazeboBaseServerOpcUaBackendPortFactory::createBaseSatateQueryAnsw(const std::string &serviceName)
 {
 	return new SeRoNet::OPCUA::Server::QueryServer<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>(componentImpl, serviceName);
 }
 
+Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * SmartGazeboBaseServerOpcUaBackendPortFactory::createBaseStateServiceOut(const std::string &serviceName)
+{
+	return new SeRoNet::OPCUA::Server::PushServer<CommBasicObjects::CommBaseState>(componentImpl, serviceName);
+}
+
 Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * SmartGazeboBaseServerOpcUaBackendPortFactory::createLaserServiceOut(const std::string &serviceName)
 {
 	return new SeRoNet::OPCUA::Server::PushServer<CommBasicObjects::CommMobileLaserScan>(componentImpl, serviceName);
+}
+
+Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * SmartGazeboBaseServerOpcUaBackendPortFactory::createLocalizationUpdateServiceIn(const std::string &serviceName)
+{
+	return new SeRoNet::OPCUA::Server::SendServer<CommBasicObjects::CommBasePositionUpdate>(componentImpl, serviceName);
 }
 
 Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * SmartGazeboBaseServerOpcUaBackendPortFactory::createNavVelServiceIn(const std::string &serviceName)

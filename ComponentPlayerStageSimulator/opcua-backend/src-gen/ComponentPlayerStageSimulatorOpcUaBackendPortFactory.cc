@@ -29,14 +29,14 @@
 #include <SeRoNetSDK/SeRoNet/OPCUA/Server/QueryServer.hpp>
 
 // include referenced CommunicationObject SeRoNetSDK self description implementations
-#include "CommBasicObjectsOpcUa/CommBatteryEventOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommBatteryStateOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommMobileLaserScanOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommBatteryParameterOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommBasePositionUpdateOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommBatteryEventOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommBatteryParameterOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommBatteryStateOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommMobileLaserScanOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommNavigationVelocityOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
 
 // create a static instance of the OpcUaBackendPortFactory
 static ComponentPlayerStageSimulatorOpcUaBackendPortFactory OpcUaBackendPortFactory;
@@ -65,14 +65,9 @@ int ComponentPlayerStageSimulatorOpcUaBackendPortFactory::onStartup()
 }
 
 
-Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * ComponentPlayerStageSimulatorOpcUaBackendPortFactory::createNavigationVelocityServiceIn(const std::string &serviceName)
+Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState> * ComponentPlayerStageSimulatorOpcUaBackendPortFactory::createBaseStateAnswerer(const std::string &serviceName)
 {
-	return new SeRoNet::OPCUA::Server::SendServer<CommBasicObjects::CommNavigationVelocity>(componentImpl, serviceName);
-}
-
-Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * ComponentPlayerStageSimulatorOpcUaBackendPortFactory::createLaserServiceOut(const std::string &serviceName)
-{
-	return new SeRoNet::OPCUA::Server::PushServer<CommBasicObjects::CommMobileLaserScan>(componentImpl, serviceName);
+	return new SeRoNet::OPCUA::Server::QueryServer<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>(componentImpl, serviceName);
 }
 
 Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * ComponentPlayerStageSimulatorOpcUaBackendPortFactory::createBaseStateServiceOut(const std::string &serviceName)
@@ -80,19 +75,24 @@ Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * ComponentPlayerStag
 	return new SeRoNet::OPCUA::Server::PushServer<CommBasicObjects::CommBaseState>(componentImpl, serviceName);
 }
 
+Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> * ComponentPlayerStageSimulatorOpcUaBackendPortFactory::createBatteryEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>> batteryEventServiceOutEventTestHandler)
+{
+	return new SeRoNet::OPCUA::Server::EventServer<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>(componentImpl, serviceName, batteryEventServiceOutEventTestHandler);
+}
+
+Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * ComponentPlayerStageSimulatorOpcUaBackendPortFactory::createLaserServiceOut(const std::string &serviceName)
+{
+	return new SeRoNet::OPCUA::Server::PushServer<CommBasicObjects::CommMobileLaserScan>(componentImpl, serviceName);
+}
+
 Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * ComponentPlayerStageSimulatorOpcUaBackendPortFactory::createLocalizationUpdateServiceIn(const std::string &serviceName)
 {
 	return new SeRoNet::OPCUA::Server::SendServer<CommBasicObjects::CommBasePositionUpdate>(componentImpl, serviceName);
 }
 
-Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState> * ComponentPlayerStageSimulatorOpcUaBackendPortFactory::createBaseStateAnswerer(const std::string &serviceName)
+Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * ComponentPlayerStageSimulatorOpcUaBackendPortFactory::createNavigationVelocityServiceIn(const std::string &serviceName)
 {
-	return new SeRoNet::OPCUA::Server::QueryServer<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>(componentImpl, serviceName);
-}
-
-Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> * ComponentPlayerStageSimulatorOpcUaBackendPortFactory::createBatteryEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>> batteryEventServiceOutEventTestHandler)
-{
-	return new SeRoNet::OPCUA::Server::EventServer<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>(componentImpl, serviceName, batteryEventServiceOutEventTestHandler);
+	return new SeRoNet::OPCUA::Server::SendServer<CommBasicObjects::CommNavigationVelocity>(componentImpl, serviceName);
 }
 
 

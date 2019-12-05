@@ -29,9 +29,9 @@
 #include <SeRoNetSDK/SeRoNet/OPCUA/Server/QueryServer.hpp>
 
 // include referenced CommunicationObject SeRoNetSDK self description implementations
-#include "CommNavigationObjectsOpcUa/CommGridMapRequestOpcUa.hh"
-#include "CommNavigationObjectsOpcUa/CommGridMapOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommMobileLaserScanOpcUa.hh"
+#include "CommNavigationObjectsOpcUa/CommGridMapOpcUa.hh"
+#include "CommNavigationObjectsOpcUa/CommGridMapRequestOpcUa.hh"
 
 // create a static instance of the OpcUaBackendPortFactory
 static SmartMapperGridMapOpcUaBackendPortFactory OpcUaBackendPortFactory;
@@ -65,14 +65,14 @@ Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * SmartMapperGr
 }
 
 
-Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap> * SmartMapperGridMapOpcUaBackendPortFactory::createCurrQueryServer(const std::string &serviceName)
-{
-	return new SeRoNet::OPCUA::Server::QueryServer<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap>(componentImpl, serviceName);
-}
-
 Smart::IPushServerPattern<CommNavigationObjects::CommGridMap> * SmartMapperGridMapOpcUaBackendPortFactory::createCurrMapOut(const std::string &serviceName)
 {
 	return new SeRoNet::OPCUA::Server::PushServer<CommNavigationObjects::CommGridMap>(componentImpl, serviceName);
+}
+
+Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap> * SmartMapperGridMapOpcUaBackendPortFactory::createCurrQueryServer(const std::string &serviceName)
+{
+	return new SeRoNet::OPCUA::Server::QueryServer<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap>(componentImpl, serviceName);
 }
 
 Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap> * SmartMapperGridMapOpcUaBackendPortFactory::createLtmQueryServer(const std::string &serviceName)

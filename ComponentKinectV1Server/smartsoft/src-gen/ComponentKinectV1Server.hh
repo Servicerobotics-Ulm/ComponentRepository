@@ -29,9 +29,9 @@
 class ComponentKinectV1ServerPortFactoryInterface;
 class ComponentKinectV1ServerExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for ComponentKinectV1ServerROSExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
 
 // includes for PlainOpcUaComponentKinectV1ServerExtension
 // include plain OPC UA device clients
@@ -145,9 +145,9 @@ public:
 	ColorImageQueryHandler *colorImageQueryHandler;
 	ImageQueryHandler *imageQueryHandler;
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
 	// definitions of ComponentKinectV1ServerROSExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentKinectV1ServerExtension
 	
@@ -290,9 +290,9 @@ public:
 			std::string roboticMiddleware;
 		} ptuPosePushNewestClient;
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// -- parameters for ComponentKinectV1ServerROSExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentKinectV1ServerExtension
 		

@@ -45,8 +45,8 @@ public:
 	virtual void initialize(ComponentTTSClient *component, int argc, char* argv[]) override;
 	virtual int onStartup() override;
 
-	virtual Smart::ISendClientPattern<DomainSpeech::CommSpeechOutputMessage> * createSpeechSendServiceOut() override;
 	virtual Smart::IQueryClientPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet> * createSpeechQueryServiceReq() override;
+	virtual Smart::ISendClientPattern<DomainSpeech::CommSpeechOutputMessage> * createSpeechSendServiceOut() override;
 	
 	
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) override;

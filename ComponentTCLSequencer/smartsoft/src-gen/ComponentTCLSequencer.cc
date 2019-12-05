@@ -49,9 +49,9 @@ ComponentTCLSequencer::ComponentTCLSequencer()
 	connections.component.useLogger = false;
 	
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
 	// initialize members of ComponentTCLSequencerROSExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentTCLSequencerExtension
 	
@@ -128,9 +128,9 @@ void ComponentTCLSequencer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of ComponentTCLSequencerROSExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentTCLSequencerExtension
 		
@@ -294,9 +294,9 @@ void ComponentTCLSequencer::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
 	// destruction of ComponentTCLSequencerROSExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentTCLSequencerExtension
 	
@@ -375,9 +375,9 @@ void ComponentTCLSequencer::loadParameter(int argc, char *argv[])
 		
 		
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// load parameters for ComponentTCLSequencerROSExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentTCLSequencerExtension
 		

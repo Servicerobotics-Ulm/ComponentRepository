@@ -45,13 +45,13 @@ public:
 	virtual void initialize(SmartObjectRecognition *component, int argc, char* argv[]) override;
 	virtual int onStartup() override;
 
+	virtual Smart::IQueryClientPattern<CommManipulatorObjects::CommManipulatorId, DomainVision::Comm3dPointCloud> * createPointCloudQueryServiceReq() override;
 	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> * createRGBDImageQueryServiceReq() override;
 	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> * createRGBImageQueryServiceReq() override;
-	virtual Smart::IQueryClientPattern<CommManipulatorObjects::CommManipulatorId, DomainVision::Comm3dPointCloud> * createPointCloudQueryServiceReq() override;
 	
-	virtual Smart::IQueryServerPattern<CommObjectRecognitionObjects::CommObjectRecognitionId, CommObjectRecognitionObjects::CommObjectRecognitionObjectProperties> * createObjectQueryServiceAnsw(const std::string &serviceName) override;
 	virtual Smart::IQueryServerPattern<CommObjectRecognitionObjects::CommObjectRecognitionId, CommObjectRecognitionObjects::CommObjectRecognitionEnvironment> * createEnvironmentQueryServiceAnsw(const std::string &serviceName) override;
 	virtual Smart::IEventServerPattern<CommBasicObjects::CommVoid, CommObjectRecognitionObjects::CommObjectRecognitionEventResult, CommObjectRecognitionObjects::CommObjectRecognitionEventState> * createObjectEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommVoid, CommObjectRecognitionObjects::CommObjectRecognitionEventResult, CommObjectRecognitionObjects::CommObjectRecognitionEventState>> objectEventServiceOutEventTestHandler) override;
+	virtual Smart::IQueryServerPattern<CommObjectRecognitionObjects::CommObjectRecognitionId, CommObjectRecognitionObjects::CommObjectRecognitionObjectProperties> * createObjectQueryServiceAnsw(const std::string &serviceName) override;
 	
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) override;
 	virtual void destroy() override;

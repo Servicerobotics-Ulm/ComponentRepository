@@ -29,27 +29,27 @@
 #include <SeRoNetSDK/SeRoNet/OPCUA/Server/QueryServer.hpp>
 
 // include referenced CommunicationObject SeRoNetSDK self description implementations
+#include "CommBasicObjectsOpcUa/CommBasePositionUpdateOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommBatteryEventOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommBatteryParameterOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommBatteryStateOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommBumperEventParameterOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommBumperEventResultOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommBumperEventStateOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommLaserSafetyEventParamOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommLaserSafetyEventStateOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommLaserSafetyFieldOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommNavigationVelocityOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
 #include "CommLocalizationObjectsOpcUa/CommLocalizationEventParameterOpcUa.hh"
-#include "CommRobotinoObjectsOpcUa/CommRobotinoPowerOutputValueOpcUa.hh"
-#include "CommLocalizationObjectsOpcUa/LocalizationEventStateOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommLaserSafetyEventParamOpcUa.hh"
-#include "CommRobotinoObjectsOpcUa/CommRobotinoIOValuesOpcUa.hh"
-#include "CommRobotinoObjectsOpcUa/CommDigitalInputEventResultOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommBatteryParameterOpcUa.hh"
-#include "CommRobotinoObjectsOpcUa/CommDigitalInputEventParameterOpcUa.hh"
 #include "CommLocalizationObjectsOpcUa/CommLocalizationEventResultOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommNavigationVelocityOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommBatteryStateOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommBatteryEventOpcUa.hh"
+#include "CommLocalizationObjectsOpcUa/LocalizationEventStateOpcUa.hh"
+#include "CommRobotinoObjectsOpcUa/CommDigitalInputEventParameterOpcUa.hh"
+#include "CommRobotinoObjectsOpcUa/CommDigitalInputEventResultOpcUa.hh"
 #include "CommRobotinoObjectsOpcUa/CommDigitalInputEventStateOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommBumperEventStateOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommLaserSafetyFieldOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommBasePositionUpdateOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommLaserSafetyEventStateOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommBumperEventResultOpcUa.hh"
+#include "CommRobotinoObjectsOpcUa/CommRobotinoIOValuesOpcUa.hh"
+#include "CommRobotinoObjectsOpcUa/CommRobotinoPowerOutputValueOpcUa.hh"
 
 // create a static instance of the OpcUaBackendPortFactory
 static ComponentRobotinoBaseServerOpcUaBackendPortFactory OpcUaBackendPortFactory;
@@ -83,29 +83,9 @@ Smart::IEventClientPattern<CommLocalizationObjects::CommLocalizationEventParamet
 }
 
 
-Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * ComponentRobotinoBaseServerOpcUaBackendPortFactory::createLocalizationUpdateServiceIn(const std::string &serviceName)
+Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState> * ComponentRobotinoBaseServerOpcUaBackendPortFactory::createBaseStateQueryServiceAnsw(const std::string &serviceName)
 {
-	return new SeRoNet::OPCUA::Server::SendServer<CommBasicObjects::CommBasePositionUpdate>(componentImpl, serviceName);
-}
-
-Smart::IQueryServerPattern<CommRobotinoObjects::CommRobotinoIOValues, CommRobotinoObjects::CommRobotinoIOValues> * ComponentRobotinoBaseServerOpcUaBackendPortFactory::createRobotinoIOValuesQueryServiceAnsw(const std::string &serviceName)
-{
-	return new SeRoNet::OPCUA::Server::QueryServer<CommRobotinoObjects::CommRobotinoIOValues, CommRobotinoObjects::CommRobotinoIOValues>(componentImpl, serviceName);
-}
-
-Smart::IEventServerPattern<CommRobotinoObjects::CommDigitalInputEventParameter, CommRobotinoObjects::CommDigitalInputEventResult, CommRobotinoObjects::CommDigitalInputEventState> * ComponentRobotinoBaseServerOpcUaBackendPortFactory::createDigitalInputEventOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommRobotinoObjects::CommDigitalInputEventParameter, CommRobotinoObjects::CommDigitalInputEventResult, CommRobotinoObjects::CommDigitalInputEventState>> digitalInputEventOutEventTestHandler)
-{
-	return new SeRoNet::OPCUA::Server::EventServer<CommRobotinoObjects::CommDigitalInputEventParameter, CommRobotinoObjects::CommDigitalInputEventResult, CommRobotinoObjects::CommDigitalInputEventState>(componentImpl, serviceName, digitalInputEventOutEventTestHandler);
-}
-
-Smart::IEventServerPattern<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState> * ComponentRobotinoBaseServerOpcUaBackendPortFactory::createBumperEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState>> bumperEventServiceOutEventTestHandler)
-{
-	return new SeRoNet::OPCUA::Server::EventServer<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState>(componentImpl, serviceName, bumperEventServiceOutEventTestHandler);
-}
-
-Smart::IEventServerPattern<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState> * ComponentRobotinoBaseServerOpcUaBackendPortFactory::createLaserSafetyEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState>> laserSafetyEventServiceOutEventTestHandler)
-{
-	return new SeRoNet::OPCUA::Server::EventServer<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState>(componentImpl, serviceName, laserSafetyEventServiceOutEventTestHandler);
+	return new SeRoNet::OPCUA::Server::QueryServer<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>(componentImpl, serviceName);
 }
 
 Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * ComponentRobotinoBaseServerOpcUaBackendPortFactory::createBaseStateServiceOut(const std::string &serviceName)
@@ -113,14 +93,34 @@ Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * ComponentRobotinoBa
 	return new SeRoNet::OPCUA::Server::PushServer<CommBasicObjects::CommBaseState>(componentImpl, serviceName);
 }
 
-Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState> * ComponentRobotinoBaseServerOpcUaBackendPortFactory::createBaseStateQueryServiceAnsw(const std::string &serviceName)
-{
-	return new SeRoNet::OPCUA::Server::QueryServer<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>(componentImpl, serviceName);
-}
-
 Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> * ComponentRobotinoBaseServerOpcUaBackendPortFactory::createBatteryEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>> batteryEventServiceOutEventTestHandler)
 {
 	return new SeRoNet::OPCUA::Server::EventServer<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>(componentImpl, serviceName, batteryEventServiceOutEventTestHandler);
+}
+
+Smart::IEventServerPattern<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState> * ComponentRobotinoBaseServerOpcUaBackendPortFactory::createBumperEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState>> bumperEventServiceOutEventTestHandler)
+{
+	return new SeRoNet::OPCUA::Server::EventServer<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState>(componentImpl, serviceName, bumperEventServiceOutEventTestHandler);
+}
+
+Smart::IEventServerPattern<CommRobotinoObjects::CommDigitalInputEventParameter, CommRobotinoObjects::CommDigitalInputEventResult, CommRobotinoObjects::CommDigitalInputEventState> * ComponentRobotinoBaseServerOpcUaBackendPortFactory::createDigitalInputEventOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommRobotinoObjects::CommDigitalInputEventParameter, CommRobotinoObjects::CommDigitalInputEventResult, CommRobotinoObjects::CommDigitalInputEventState>> digitalInputEventOutEventTestHandler)
+{
+	return new SeRoNet::OPCUA::Server::EventServer<CommRobotinoObjects::CommDigitalInputEventParameter, CommRobotinoObjects::CommDigitalInputEventResult, CommRobotinoObjects::CommDigitalInputEventState>(componentImpl, serviceName, digitalInputEventOutEventTestHandler);
+}
+
+Smart::IEventServerPattern<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState> * ComponentRobotinoBaseServerOpcUaBackendPortFactory::createLaserSafetyEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState>> laserSafetyEventServiceOutEventTestHandler)
+{
+	return new SeRoNet::OPCUA::Server::EventServer<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState>(componentImpl, serviceName, laserSafetyEventServiceOutEventTestHandler);
+}
+
+Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * ComponentRobotinoBaseServerOpcUaBackendPortFactory::createLocalizationUpdateServiceIn(const std::string &serviceName)
+{
+	return new SeRoNet::OPCUA::Server::SendServer<CommBasicObjects::CommBasePositionUpdate>(componentImpl, serviceName);
+}
+
+Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * ComponentRobotinoBaseServerOpcUaBackendPortFactory::createNavigationVelocityServiceIn(const std::string &serviceName)
+{
+	return new SeRoNet::OPCUA::Server::SendServer<CommBasicObjects::CommNavigationVelocity>(componentImpl, serviceName);
 }
 
 Smart::ISendServerPattern<CommRobotinoObjects::CommRobotinoPowerOutputValue> * ComponentRobotinoBaseServerOpcUaBackendPortFactory::createPowerOutputSendIn(const std::string &serviceName)
@@ -128,9 +128,9 @@ Smart::ISendServerPattern<CommRobotinoObjects::CommRobotinoPowerOutputValue> * C
 	return new SeRoNet::OPCUA::Server::SendServer<CommRobotinoObjects::CommRobotinoPowerOutputValue>(componentImpl, serviceName);
 }
 
-Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * ComponentRobotinoBaseServerOpcUaBackendPortFactory::createNavigationVelocityServiceIn(const std::string &serviceName)
+Smart::IQueryServerPattern<CommRobotinoObjects::CommRobotinoIOValues, CommRobotinoObjects::CommRobotinoIOValues> * ComponentRobotinoBaseServerOpcUaBackendPortFactory::createRobotinoIOValuesQueryServiceAnsw(const std::string &serviceName)
 {
-	return new SeRoNet::OPCUA::Server::SendServer<CommBasicObjects::CommNavigationVelocity>(componentImpl, serviceName);
+	return new SeRoNet::OPCUA::Server::QueryServer<CommRobotinoObjects::CommRobotinoIOValues, CommRobotinoObjects::CommRobotinoIOValues>(componentImpl, serviceName);
 }
 
 

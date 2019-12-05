@@ -1,12 +1,12 @@
-# target configurations for OpcUaBackendComponentGeneratorExtension
-IF(SeRoNetSDK_FOUND)
-#TARGET_LINK_LIBRARIES(${PROJECT_NAME} SeRoNetSDK::SeRoNetSDK)
-ENDIF(SeRoNetSDK_FOUND)
-
 # target configurations for ComponentTCLSequencerROSExtension
 IF(EXISTS ${ROS_DIR})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${ROS_LIBS})
 ENDIF(EXISTS ${ROS_DIR})
+
+# target configurations for OpcUaBackendComponentGeneratorExtension
+IF(SeRoNetSDK_FOUND)
+#TARGET_LINK_LIBRARIES(${PROJECT_NAME} SeRoNetSDK::SeRoNetSDK)
+ENDIF(SeRoNetSDK_FOUND)
 
 # target configurations for PlainOpcUaComponentTCLSequencerExtension
 IF(Open62541CppWrapper_FOUND)

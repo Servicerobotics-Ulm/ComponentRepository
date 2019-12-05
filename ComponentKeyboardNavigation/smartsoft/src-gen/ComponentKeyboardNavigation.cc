@@ -62,9 +62,9 @@ ComponentKeyboardNavigation::ComponentKeyboardNavigation()
 	connections.keyboardInputTask.priority = -1;
 	connections.keyboardInputTask.cpuAffinity = -1;
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
 	// initialize members of ComponentKeyboardNavigationROSExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentKeyboardNavigationExtension
 	
@@ -173,9 +173,9 @@ void ComponentKeyboardNavigation::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of ComponentKeyboardNavigationROSExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentKeyboardNavigationExtension
 		
@@ -381,9 +381,9 @@ void ComponentKeyboardNavigation::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
 	// destruction of ComponentKeyboardNavigationROSExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentKeyboardNavigationExtension
 	
@@ -489,9 +489,9 @@ void ComponentKeyboardNavigation::loadParameter(int argc, char *argv[])
 			parameter.getInteger("KeyboardInputTask", "cpuAffinity", connections.keyboardInputTask.cpuAffinity);
 		}
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// load parameters for ComponentKeyboardNavigationROSExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentKeyboardNavigationExtension
 		

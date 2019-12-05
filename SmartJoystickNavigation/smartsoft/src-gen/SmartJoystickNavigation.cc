@@ -73,9 +73,9 @@ SmartJoystickNavigation::SmartJoystickNavigation()
 	
 	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
-	// initialize members of SmartJoystickNavigationROSExtension
-	
 	// initialize members of PlainOpcUaSmartJoystickNavigationExtension
+	
+	// initialize members of SmartJoystickNavigationROSExtension
 	
 }
 
@@ -201,9 +201,9 @@ void SmartJoystickNavigation::init(int argc, char *argv[])
 		
 		// initializations of OpcUaBackendComponentGeneratorExtension
 		
-		// initializations of SmartJoystickNavigationROSExtension
-		
 		// initializations of PlainOpcUaSmartJoystickNavigationExtension
+		
+		// initializations of SmartJoystickNavigationROSExtension
 		
 		
 		// initialize all registered port-factories
@@ -417,9 +417,9 @@ void SmartJoystickNavigation::fini()
 	
 	// destruction of OpcUaBackendComponentGeneratorExtension
 	
-	// destruction of SmartJoystickNavigationROSExtension
-	
 	// destruction of PlainOpcUaSmartJoystickNavigationExtension
+	
+	// destruction of SmartJoystickNavigationROSExtension
 	
 }
 
@@ -533,9 +533,9 @@ void SmartJoystickNavigation::loadParameter(int argc, char *argv[])
 		
 		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
-		// load parameters for SmartJoystickNavigationROSExtension
-		
 		// load parameters for PlainOpcUaSmartJoystickNavigationExtension
+		
+		// load parameters for SmartJoystickNavigationROSExtension
 		
 		
 		// load parameters for all registered component-extensions

@@ -31,11 +31,11 @@ class SmartLaserLMS200ServerExtension;
 
 // includes for OpcUaBackendComponentGeneratorExtension
 
-// includes for SmartLaserLMS200ServerROSExtension
-
 // includes for PlainOpcUaSmartLaserLMS200ServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
+
+// includes for SmartLaserLMS200ServerROSExtension
 
 
 // include communication objects
@@ -130,9 +130,9 @@ public:
 	
 	// definitions of OpcUaBackendComponentGeneratorExtension
 	
-	// definitions of SmartLaserLMS200ServerROSExtension
-	
 	// definitions of PlainOpcUaSmartLaserLMS200ServerExtension
+	
+	// definitions of SmartLaserLMS200ServerROSExtension
 	
 	
 	// define default slave ports
@@ -244,9 +244,9 @@ public:
 		
 		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
-		// -- parameters for SmartLaserLMS200ServerROSExtension
-		
 		// -- parameters for PlainOpcUaSmartLaserLMS200ServerExtension
+		
+		// -- parameters for SmartLaserLMS200ServerROSExtension
 		
 	} connections;
 };

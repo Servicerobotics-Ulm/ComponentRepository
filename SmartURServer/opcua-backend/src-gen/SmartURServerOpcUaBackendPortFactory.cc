@@ -29,22 +29,22 @@
 #include <SeRoNetSDK/SeRoNet/OPCUA/Server/QueryServer.hpp>
 
 // include referenced CommunicationObject SeRoNetSDK self description implementations
-#include "CommManipulatorObjectsOpcUa/CommManipulatorEventResultOpcUa.hh"
-#include "DomainVisionOpcUa/Comm3dPointCloudOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
-#include "CommManipulatorObjectsOpcUa/CommScanEventStateOpcUa.hh"
-#include "CommManipulatorObjectsOpcUa/CommManipulatorEventStateOpcUa.hh"
-#include "CommRobotinoObjectsOpcUa/CommDigitalInputEventResultOpcUa.hh"
-#include "CommManipulatorObjectsOpcUa/CommManipulatorRequestScan3dOpcUa.hh"
-#include "CommManipulatorObjectsOpcUa/CommMobileManipulatorStateOpcUa.hh"
-#include "CommManipulatorObjectsOpcUa/CommManipulatorIdOpcUa.hh"
-#include "CommRobotinoObjectsOpcUa/CommRobotinoIOValuesOpcUa.hh"
-#include "CommManipulatorObjectsOpcUa/CommManipulatorTrajectoryOpcUa.hh"
-#include "CommManipulatorObjectsOpcUa/CommManipulatorEventParameterOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommMobileLaserScanOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
+#include "CommManipulatorObjectsOpcUa/CommManipulatorEventParameterOpcUa.hh"
+#include "CommManipulatorObjectsOpcUa/CommManipulatorEventResultOpcUa.hh"
+#include "CommManipulatorObjectsOpcUa/CommManipulatorEventStateOpcUa.hh"
+#include "CommManipulatorObjectsOpcUa/CommManipulatorIdOpcUa.hh"
+#include "CommManipulatorObjectsOpcUa/CommManipulatorRequestScan3dOpcUa.hh"
+#include "CommManipulatorObjectsOpcUa/CommManipulatorTrajectoryOpcUa.hh"
+#include "CommManipulatorObjectsOpcUa/CommMobileManipulatorStateOpcUa.hh"
+#include "CommManipulatorObjectsOpcUa/CommScanEventStateOpcUa.hh"
 #include "CommRobotinoObjectsOpcUa/CommDigitalInputEventParameterOpcUa.hh"
+#include "CommRobotinoObjectsOpcUa/CommDigitalInputEventResultOpcUa.hh"
 #include "CommRobotinoObjectsOpcUa/CommDigitalInputEventStateOpcUa.hh"
+#include "CommRobotinoObjectsOpcUa/CommRobotinoIOValuesOpcUa.hh"
+#include "DomainVisionOpcUa/Comm3dPointCloudOpcUa.hh"
 
 // create a static instance of the OpcUaBackendPortFactory
 static SmartURServerOpcUaBackendPortFactory OpcUaBackendPortFactory;
@@ -83,14 +83,9 @@ Smart::IQueryClientPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMob
 }
 
 
-Smart::IPushServerPattern<CommManipulatorObjects::CommMobileManipulatorState> * SmartURServerOpcUaBackendPortFactory::createPosePushServer(const std::string &serviceName)
+Smart::IEventServerPattern<CommRobotinoObjects::CommDigitalInputEventParameter, CommRobotinoObjects::CommDigitalInputEventResult, CommRobotinoObjects::CommDigitalInputEventState> * SmartURServerOpcUaBackendPortFactory::createDigitalInputEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommRobotinoObjects::CommDigitalInputEventParameter, CommRobotinoObjects::CommDigitalInputEventResult, CommRobotinoObjects::CommDigitalInputEventState>> digitalInputEventServerEventTestHandler)
 {
-	return new SeRoNet::OPCUA::Server::PushServer<CommManipulatorObjects::CommMobileManipulatorState>(componentImpl, serviceName);
-}
-
-Smart::IQueryServerPattern<CommManipulatorObjects::CommManipulatorId, DomainVision::Comm3dPointCloud> * SmartURServerOpcUaBackendPortFactory::createScan3dQueryServer(const std::string &serviceName)
-{
-	return new SeRoNet::OPCUA::Server::QueryServer<CommManipulatorObjects::CommManipulatorId, DomainVision::Comm3dPointCloud>(componentImpl, serviceName);
+	return new SeRoNet::OPCUA::Server::EventServer<CommRobotinoObjects::CommDigitalInputEventParameter, CommRobotinoObjects::CommDigitalInputEventResult, CommRobotinoObjects::CommDigitalInputEventState>(componentImpl, serviceName, digitalInputEventServerEventTestHandler);
 }
 
 Smart::IQueryServerPattern<CommRobotinoObjects::CommRobotinoIOValues, CommRobotinoObjects::CommRobotinoIOValues> * SmartURServerOpcUaBackendPortFactory::createIoQueryServer(const std::string &serviceName)
@@ -98,9 +93,24 @@ Smart::IQueryServerPattern<CommRobotinoObjects::CommRobotinoIOValues, CommRoboti
 	return new SeRoNet::OPCUA::Server::QueryServer<CommRobotinoObjects::CommRobotinoIOValues, CommRobotinoObjects::CommRobotinoIOValues>(componentImpl, serviceName);
 }
 
+Smart::IEventServerPattern<CommManipulatorObjects::CommManipulatorEventParameter, CommManipulatorObjects::CommManipulatorEventResult, CommManipulatorObjects::CommManipulatorEventState> * SmartURServerOpcUaBackendPortFactory::createManipulatorEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommManipulatorObjects::CommManipulatorEventParameter, CommManipulatorObjects::CommManipulatorEventResult, CommManipulatorObjects::CommManipulatorEventState>> manipulatorEventServiceOutEventTestHandler)
+{
+	return new SeRoNet::OPCUA::Server::EventServer<CommManipulatorObjects::CommManipulatorEventParameter, CommManipulatorObjects::CommManipulatorEventResult, CommManipulatorObjects::CommManipulatorEventState>(componentImpl, serviceName, manipulatorEventServiceOutEventTestHandler);
+}
+
+Smart::IPushServerPattern<CommManipulatorObjects::CommMobileManipulatorState> * SmartURServerOpcUaBackendPortFactory::createPosePushServer(const std::string &serviceName)
+{
+	return new SeRoNet::OPCUA::Server::PushServer<CommManipulatorObjects::CommMobileManipulatorState>(componentImpl, serviceName);
+}
+
 Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorState> * SmartURServerOpcUaBackendPortFactory::createPoseQueryServer(const std::string &serviceName)
 {
 	return new SeRoNet::OPCUA::Server::QueryServer<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorState>(componentImpl, serviceName);
+}
+
+Smart::ISendServerPattern<CommManipulatorObjects::CommManipulatorRequestScan3d> * SmartURServerOpcUaBackendPortFactory::createRequestScan3dSendServer(const std::string &serviceName)
+{
+	return new SeRoNet::OPCUA::Server::SendServer<CommManipulatorObjects::CommManipulatorRequestScan3d>(componentImpl, serviceName);
 }
 
 Smart::IEventServerPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::CommManipulatorId, CommManipulatorObjects::CommScanEventState> * SmartURServerOpcUaBackendPortFactory::createScan3dEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommVoid, CommManipulatorObjects::CommManipulatorId, CommManipulatorObjects::CommScanEventState>> scan3dEventServerEventTestHandler)
@@ -108,24 +118,14 @@ Smart::IEventServerPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::C
 	return new SeRoNet::OPCUA::Server::EventServer<CommBasicObjects::CommVoid, CommManipulatorObjects::CommManipulatorId, CommManipulatorObjects::CommScanEventState>(componentImpl, serviceName, scan3dEventServerEventTestHandler);
 }
 
-Smart::IEventServerPattern<CommRobotinoObjects::CommDigitalInputEventParameter, CommRobotinoObjects::CommDigitalInputEventResult, CommRobotinoObjects::CommDigitalInputEventState> * SmartURServerOpcUaBackendPortFactory::createDigitalInputEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommRobotinoObjects::CommDigitalInputEventParameter, CommRobotinoObjects::CommDigitalInputEventResult, CommRobotinoObjects::CommDigitalInputEventState>> digitalInputEventServerEventTestHandler)
+Smart::IQueryServerPattern<CommManipulatorObjects::CommManipulatorId, DomainVision::Comm3dPointCloud> * SmartURServerOpcUaBackendPortFactory::createScan3dQueryServer(const std::string &serviceName)
 {
-	return new SeRoNet::OPCUA::Server::EventServer<CommRobotinoObjects::CommDigitalInputEventParameter, CommRobotinoObjects::CommDigitalInputEventResult, CommRobotinoObjects::CommDigitalInputEventState>(componentImpl, serviceName, digitalInputEventServerEventTestHandler);
+	return new SeRoNet::OPCUA::Server::QueryServer<CommManipulatorObjects::CommManipulatorId, DomainVision::Comm3dPointCloud>(componentImpl, serviceName);
 }
 
 Smart::ISendServerPattern<CommManipulatorObjects::CommManipulatorTrajectory> * SmartURServerOpcUaBackendPortFactory::createTrajectorySendServer(const std::string &serviceName)
 {
 	return new SeRoNet::OPCUA::Server::SendServer<CommManipulatorObjects::CommManipulatorTrajectory>(componentImpl, serviceName);
-}
-
-Smart::IEventServerPattern<CommManipulatorObjects::CommManipulatorEventParameter, CommManipulatorObjects::CommManipulatorEventResult, CommManipulatorObjects::CommManipulatorEventState> * SmartURServerOpcUaBackendPortFactory::createManipulatorEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommManipulatorObjects::CommManipulatorEventParameter, CommManipulatorObjects::CommManipulatorEventResult, CommManipulatorObjects::CommManipulatorEventState>> manipulatorEventServiceOutEventTestHandler)
-{
-	return new SeRoNet::OPCUA::Server::EventServer<CommManipulatorObjects::CommManipulatorEventParameter, CommManipulatorObjects::CommManipulatorEventResult, CommManipulatorObjects::CommManipulatorEventState>(componentImpl, serviceName, manipulatorEventServiceOutEventTestHandler);
-}
-
-Smart::ISendServerPattern<CommManipulatorObjects::CommManipulatorRequestScan3d> * SmartURServerOpcUaBackendPortFactory::createRequestScan3dSendServer(const std::string &serviceName)
-{
-	return new SeRoNet::OPCUA::Server::SendServer<CommManipulatorObjects::CommManipulatorRequestScan3d>(componentImpl, serviceName);
 }
 
 

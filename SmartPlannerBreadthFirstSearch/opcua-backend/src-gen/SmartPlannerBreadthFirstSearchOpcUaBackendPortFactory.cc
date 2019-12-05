@@ -29,12 +29,12 @@
 #include <SeRoNetSDK/SeRoNet/OPCUA/Server/QueryServer.hpp>
 
 // include referenced CommunicationObject SeRoNetSDK self description implementations
-#include "CommNavigationObjectsOpcUa/CommGridMapOpcUa.hh"
-#include "CommNavigationObjectsOpcUa/CommPlannerEventResultOpcUa.hh"
-#include "CommNavigationObjectsOpcUa/CommPlannerEventParameterOpcUa.hh"
-#include "CommNavigationObjectsOpcUa/PlannerEventStateOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
+#include "CommNavigationObjectsOpcUa/CommGridMapOpcUa.hh"
+#include "CommNavigationObjectsOpcUa/CommPlannerEventParameterOpcUa.hh"
+#include "CommNavigationObjectsOpcUa/CommPlannerEventResultOpcUa.hh"
 #include "CommNavigationObjectsOpcUa/CommPlannerGoalOpcUa.hh"
+#include "CommNavigationObjectsOpcUa/PlannerEventStateOpcUa.hh"
 
 // create a static instance of the OpcUaBackendPortFactory
 static SmartPlannerBreadthFirstSearchOpcUaBackendPortFactory OpcUaBackendPortFactory;
@@ -73,14 +73,14 @@ Smart::IPushClientPattern<CommNavigationObjects::CommGridMap> * SmartPlannerBrea
 }
 
 
-Smart::IPushServerPattern<CommNavigationObjects::CommPlannerGoal> * SmartPlannerBreadthFirstSearchOpcUaBackendPortFactory::createPlannerGoalServer(const std::string &serviceName)
-{
-	return new SeRoNet::OPCUA::Server::PushServer<CommNavigationObjects::CommPlannerGoal>(componentImpl, serviceName);
-}
-
 Smart::IEventServerPattern<CommNavigationObjects::CommPlannerEventParameter, CommNavigationObjects::CommPlannerEventResult, CommNavigationObjects::PlannerEventState> * SmartPlannerBreadthFirstSearchOpcUaBackendPortFactory::createPlannerEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommNavigationObjects::CommPlannerEventParameter, CommNavigationObjects::CommPlannerEventResult, CommNavigationObjects::PlannerEventState>> plannerEventServerEventTestHandler)
 {
 	return new SeRoNet::OPCUA::Server::EventServer<CommNavigationObjects::CommPlannerEventParameter, CommNavigationObjects::CommPlannerEventResult, CommNavigationObjects::PlannerEventState>(componentImpl, serviceName, plannerEventServerEventTestHandler);
+}
+
+Smart::IPushServerPattern<CommNavigationObjects::CommPlannerGoal> * SmartPlannerBreadthFirstSearchOpcUaBackendPortFactory::createPlannerGoalServer(const std::string &serviceName)
+{
+	return new SeRoNet::OPCUA::Server::PushServer<CommNavigationObjects::CommPlannerGoal>(componentImpl, serviceName);
 }
 
 

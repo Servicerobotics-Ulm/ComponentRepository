@@ -29,9 +29,9 @@
 class ComponentKeyboardNavigationPortFactoryInterface;
 class ComponentKeyboardNavigationExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for ComponentKeyboardNavigationROSExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
 
 // includes for PlainOpcUaComponentKeyboardNavigationExtension
 // include plain OPC UA device clients
@@ -115,9 +115,9 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
 	// definitions of ComponentKeyboardNavigationROSExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentKeyboardNavigationExtension
 	
@@ -231,9 +231,9 @@ public:
 			std::string roboticMiddleware;
 		} navVelSendClient;
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// -- parameters for ComponentKeyboardNavigationROSExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentKeyboardNavigationExtension
 		

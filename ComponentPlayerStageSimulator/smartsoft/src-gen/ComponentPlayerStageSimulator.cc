@@ -91,9 +91,9 @@ ComponentPlayerStageSimulator::ComponentPlayerStageSimulator()
 	connections.localizationUpdateHandler.prescale = 1;
 	connections.navigationVelocityHandler.prescale = 1;
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
 	// initialize members of ComponentPlayerStageSimulatorROSExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentPlayerStageSimulatorExtension
 	
@@ -200,9 +200,9 @@ void ComponentPlayerStageSimulator::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of ComponentPlayerStageSimulatorROSExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentPlayerStageSimulatorExtension
 		
@@ -451,9 +451,9 @@ void ComponentPlayerStageSimulator::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
 	// destruction of ComponentPlayerStageSimulatorROSExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentPlayerStageSimulatorExtension
 	
@@ -606,9 +606,9 @@ void ComponentPlayerStageSimulator::loadParameter(int argc, char *argv[])
 			parameter.getInteger("NavigationVelocityHandler", "prescale", connections.navigationVelocityHandler.prescale);
 		}
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// load parameters for ComponentPlayerStageSimulatorROSExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentPlayerStageSimulatorExtension
 		

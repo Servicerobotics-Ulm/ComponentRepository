@@ -31,14 +31,14 @@
 // include referenced CommunicationObject SeRoNetSDK self description implementations
 #include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
 #include "CommManipulatorObjectsOpcUa/CommManipulatorIdOpcUa.hh"
-#include "CommObjectRecognitionObjectsOpcUa/CommObjectRecognitionEventStateOpcUa.hh"
+#include "CommObjectRecognitionObjectsOpcUa/CommObjectRecognitionEnvironmentOpcUa.hh"
 #include "CommObjectRecognitionObjectsOpcUa/CommObjectRecognitionEventResultOpcUa.hh"
+#include "CommObjectRecognitionObjectsOpcUa/CommObjectRecognitionEventStateOpcUa.hh"
+#include "CommObjectRecognitionObjectsOpcUa/CommObjectRecognitionIdOpcUa.hh"
+#include "CommObjectRecognitionObjectsOpcUa/CommObjectRecognitionObjectPropertiesOpcUa.hh"
+#include "DomainVisionOpcUa/Comm3dPointCloudOpcUa.hh"
 #include "DomainVisionOpcUa/CommRGBDImageOpcUa.hh"
 #include "DomainVisionOpcUa/CommVideoImageOpcUa.hh"
-#include "CommObjectRecognitionObjectsOpcUa/CommObjectRecognitionIdOpcUa.hh"
-#include "CommObjectRecognitionObjectsOpcUa/CommObjectRecognitionEnvironmentOpcUa.hh"
-#include "DomainVisionOpcUa/Comm3dPointCloudOpcUa.hh"
-#include "CommObjectRecognitionObjectsOpcUa/CommObjectRecognitionObjectPropertiesOpcUa.hh"
 
 // create a static instance of the OpcUaBackendPortFactory
 static SmartObjectRecognitionOpcUaBackendPortFactory OpcUaBackendPortFactory;
@@ -66,6 +66,11 @@ int SmartObjectRecognitionOpcUaBackendPortFactory::onStartup()
 	return -1;
 }
 
+Smart::IQueryClientPattern<CommManipulatorObjects::CommManipulatorId, DomainVision::Comm3dPointCloud> * SmartObjectRecognitionOpcUaBackendPortFactory::createPointCloudQueryServiceReq()
+{
+	return new SeRoNet::OPCUA::Client::QueryClient<CommManipulatorObjects::CommManipulatorId, DomainVision::Comm3dPointCloud>(componentImpl);
+}
+
 Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> * SmartObjectRecognitionOpcUaBackendPortFactory::createRGBDImageQueryServiceReq()
 {
 	return new SeRoNet::OPCUA::Client::QueryClient<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage>(componentImpl);
@@ -76,16 +81,6 @@ Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoIm
 	return new SeRoNet::OPCUA::Client::QueryClient<CommBasicObjects::CommVoid, DomainVision::CommVideoImage>(componentImpl);
 }
 
-Smart::IQueryClientPattern<CommManipulatorObjects::CommManipulatorId, DomainVision::Comm3dPointCloud> * SmartObjectRecognitionOpcUaBackendPortFactory::createPointCloudQueryServiceReq()
-{
-	return new SeRoNet::OPCUA::Client::QueryClient<CommManipulatorObjects::CommManipulatorId, DomainVision::Comm3dPointCloud>(componentImpl);
-}
-
-
-Smart::IQueryServerPattern<CommObjectRecognitionObjects::CommObjectRecognitionId, CommObjectRecognitionObjects::CommObjectRecognitionObjectProperties> * SmartObjectRecognitionOpcUaBackendPortFactory::createObjectQueryServiceAnsw(const std::string &serviceName)
-{
-	return new SeRoNet::OPCUA::Server::QueryServer<CommObjectRecognitionObjects::CommObjectRecognitionId, CommObjectRecognitionObjects::CommObjectRecognitionObjectProperties>(componentImpl, serviceName);
-}
 
 Smart::IQueryServerPattern<CommObjectRecognitionObjects::CommObjectRecognitionId, CommObjectRecognitionObjects::CommObjectRecognitionEnvironment> * SmartObjectRecognitionOpcUaBackendPortFactory::createEnvironmentQueryServiceAnsw(const std::string &serviceName)
 {
@@ -95,6 +90,11 @@ Smart::IQueryServerPattern<CommObjectRecognitionObjects::CommObjectRecognitionId
 Smart::IEventServerPattern<CommBasicObjects::CommVoid, CommObjectRecognitionObjects::CommObjectRecognitionEventResult, CommObjectRecognitionObjects::CommObjectRecognitionEventState> * SmartObjectRecognitionOpcUaBackendPortFactory::createObjectEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommVoid, CommObjectRecognitionObjects::CommObjectRecognitionEventResult, CommObjectRecognitionObjects::CommObjectRecognitionEventState>> objectEventServiceOutEventTestHandler)
 {
 	return new SeRoNet::OPCUA::Server::EventServer<CommBasicObjects::CommVoid, CommObjectRecognitionObjects::CommObjectRecognitionEventResult, CommObjectRecognitionObjects::CommObjectRecognitionEventState>(componentImpl, serviceName, objectEventServiceOutEventTestHandler);
+}
+
+Smart::IQueryServerPattern<CommObjectRecognitionObjects::CommObjectRecognitionId, CommObjectRecognitionObjects::CommObjectRecognitionObjectProperties> * SmartObjectRecognitionOpcUaBackendPortFactory::createObjectQueryServiceAnsw(const std::string &serviceName)
+{
+	return new SeRoNet::OPCUA::Server::QueryServer<CommObjectRecognitionObjects::CommObjectRecognitionId, CommObjectRecognitionObjects::CommObjectRecognitionObjectProperties>(componentImpl, serviceName);
 }
 
 

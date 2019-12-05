@@ -287,9 +287,9 @@ ComponentVisualization::ComponentVisualization()
 	connections.uSArTask.priority = -1;
 	connections.uSArTask.cpuAffinity = -1;
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
 	// initialize members of ComponentVisualizationROSExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentVisualizationExtension
 	
@@ -861,9 +861,9 @@ void ComponentVisualization::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of ComponentVisualizationROSExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentVisualizationExtension
 		
@@ -1570,9 +1570,9 @@ void ComponentVisualization::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
 	// destruction of ComponentVisualizationROSExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentVisualizationExtension
 	
@@ -2038,9 +2038,9 @@ void ComponentVisualization::loadParameter(int argc, char *argv[])
 			parameter.getInteger("USArTask", "cpuAffinity", connections.uSArTask.cpuAffinity);
 		}
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// load parameters for ComponentVisualizationROSExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentVisualizationExtension
 		

@@ -65,9 +65,9 @@ ComponentTTS::ComponentTTS()
 	connections.speechTask.cpuAffinity = -1;
 	connections.speechSendHandler.prescale = 1;
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
 	// initialize members of ComponentTTSROSExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentTTSExtension
 	
@@ -159,9 +159,9 @@ void ComponentTTS::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of ComponentTTSROSExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentTTSExtension
 		
@@ -362,9 +362,9 @@ void ComponentTTS::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
 	// destruction of ComponentTTSROSExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentTTSExtension
 	
@@ -475,9 +475,9 @@ void ComponentTTS::loadParameter(int argc, char *argv[])
 			parameter.getInteger("SpeechSendHandler", "prescale", connections.speechSendHandler.prescale);
 		}
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// load parameters for ComponentTTSROSExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentTTSExtension
 		

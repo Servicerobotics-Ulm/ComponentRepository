@@ -29,9 +29,9 @@
 class ComponentTTSClientPortFactoryInterface;
 class ComponentTTSClientExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for ComponentTTSClientROSExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
 
 // includes for PlainOpcUaComponentTTSClientExtension
 // include plain OPC UA device clients
@@ -118,9 +118,9 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
 	// definitions of ComponentTTSClientROSExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentTTSClientExtension
 	
@@ -243,9 +243,9 @@ public:
 			std::string roboticMiddleware;
 		} speechSendServiceOut;
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// -- parameters for ComponentTTSClientROSExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentTTSClientExtension
 		

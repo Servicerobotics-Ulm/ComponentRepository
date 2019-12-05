@@ -31,11 +31,11 @@ class SmartGazeboBaseServerExtension;
 
 // includes for OpcUaBackendComponentGeneratorExtension
 
-// includes for SmartGazeboBaseServerROSExtension
-
 // includes for PlainOpcUaSmartGazeboBaseServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
+
+// includes for SmartGazeboBaseServerROSExtension
 
 
 // include communication objects
@@ -150,9 +150,9 @@ public:
 	
 	// definitions of OpcUaBackendComponentGeneratorExtension
 	
-	// definitions of SmartGazeboBaseServerROSExtension
-	
 	// definitions of PlainOpcUaSmartGazeboBaseServerExtension
+	
+	// definitions of SmartGazeboBaseServerROSExtension
 	
 	
 	// define default slave ports
@@ -305,9 +305,9 @@ public:
 		
 		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
-		// -- parameters for SmartGazeboBaseServerROSExtension
-		
 		// -- parameters for PlainOpcUaSmartGazeboBaseServerExtension
+		
+		// -- parameters for SmartGazeboBaseServerROSExtension
 		
 	} connections;
 };

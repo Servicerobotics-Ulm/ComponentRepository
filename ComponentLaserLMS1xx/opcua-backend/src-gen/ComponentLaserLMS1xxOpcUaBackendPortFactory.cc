@@ -29,9 +29,9 @@
 #include <SeRoNetSDK/SeRoNet/OPCUA/Server/QueryServer.hpp>
 
 // include referenced CommunicationObject SeRoNetSDK self description implementations
-#include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommMobileLaserScanOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
 
 // create a static instance of the OpcUaBackendPortFactory
 static ComponentLaserLMS1xxOpcUaBackendPortFactory OpcUaBackendPortFactory;

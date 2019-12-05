@@ -45,16 +45,16 @@ public:
 	virtual void initialize(ComponentRealSenseV2Server *component, int argc, char* argv[]) override;
 	virtual int onStartup() override;
 
-	virtual Smart::IPushClientPattern<CommBasicObjects::CommDevicePoseState> * createPtuPosePushNewestClient() override;
-	virtual Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * createBasePushTimedClient() override;
-	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorState> * createUrPoseQueryClient() override;
 	virtual Smart::IPushClientPattern<CommManipulatorObjects::CommMobileManipulatorState> * createUrPosePushTimedClient() override;
+	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorState> * createUrPoseQueryClient() override;
+	virtual Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * createBasePushTimedClient() override;
+	virtual Smart::IPushClientPattern<CommBasicObjects::CommDevicePoseState> * createPtuPosePushNewestClient() override;
 	
 	virtual Smart::IPushServerPattern<DomainVision::CommVideoImage> * createColorImagePushNewestServer(const std::string &serviceName) override;
-	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> * createImageQueryServer(const std::string &serviceName) override;
+	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> * createColorImageQueryServer(const std::string &serviceName) override;
 	virtual Smart::IPushServerPattern<DomainVision::CommDepthImage> * createDepthPushNewestServer(const std::string &serviceName) override;
 	virtual Smart::IPushServerPattern<DomainVision::CommRGBDImage> * createImagePushNewestServer(const std::string &serviceName) override;
-	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> * createColorImageQueryServer(const std::string &serviceName) override;
+	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> * createImageQueryServer(const std::string &serviceName) override;
 	
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) override;
 	virtual void destroy() override;

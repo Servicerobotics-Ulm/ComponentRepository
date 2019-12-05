@@ -45,18 +45,18 @@ public:
 	virtual void initialize(SmartCdlServer *component, int argc, char* argv[]) override;
 	virtual int onStartup() override;
 
-	virtual Smart::IPushClientPattern<CommNavigationObjects::CommPlannerGoal> * createPlannerClient() override;
-	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileIRScan> * createIRClient() override;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * createBaseStateClient() override;
+	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileIRScan> * createIRClient() override;
+	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * createLaserClient() override;
+	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * createLaserClient2() override;
 	virtual Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> * createNavVelSendClient() override;
 	virtual Smart::IPushClientPattern<CommRobotinoObjects::CommPathNavigationGoal> * createPathNavigationGoalClient() override;
-	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * createLaserClient2() override;
+	virtual Smart::IPushClientPattern<CommNavigationObjects::CommPlannerGoal> * createPlannerClient() override;
 	virtual Smart::IPushClientPattern<CommTrackingObjects::CommTrackingGoal> * createTrackingClient() override;
-	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * createLaserClient() override;
 	
-	virtual Smart::IEventServerPattern<CommNavigationObjects::CommCdlRobotBlockedEventParameter, CommNavigationObjects::CommCdlRobotBlockedEventResult, CommNavigationObjects::CommCdlRobotBlockedState> * createRobotBlockedEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommNavigationObjects::CommCdlRobotBlockedEventParameter, CommNavigationObjects::CommCdlRobotBlockedEventResult, CommNavigationObjects::CommCdlRobotBlockedState>> robotBlockedEventServerEventTestHandler) override;
-	virtual Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * createNavVelSendServer(const std::string &serviceName) override;
 	virtual Smart::IEventServerPattern<CommNavigationObjects::CommCdlGoalEventParameter, CommNavigationObjects::CommCdlGoalEventResult, CommNavigationObjects::CdlGoalEventState> * createGoalEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommNavigationObjects::CommCdlGoalEventParameter, CommNavigationObjects::CommCdlGoalEventResult, CommNavigationObjects::CdlGoalEventState>> goalEventServerEventTestHandler) override;
+	virtual Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * createNavVelSendServer(const std::string &serviceName) override;
+	virtual Smart::IEventServerPattern<CommNavigationObjects::CommCdlRobotBlockedEventParameter, CommNavigationObjects::CommCdlRobotBlockedEventResult, CommNavigationObjects::CommCdlRobotBlockedState> * createRobotBlockedEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommNavigationObjects::CommCdlRobotBlockedEventParameter, CommNavigationObjects::CommCdlRobotBlockedEventResult, CommNavigationObjects::CommCdlRobotBlockedState>> robotBlockedEventServerEventTestHandler) override;
 	
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) override;
 	virtual void destroy() override;

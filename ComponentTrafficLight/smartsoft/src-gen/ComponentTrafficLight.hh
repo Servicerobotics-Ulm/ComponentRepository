@@ -29,9 +29,9 @@
 class ComponentTrafficLightPortFactoryInterface;
 class ComponentTrafficLightExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for ComponentTrafficLightROSExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
 
 // includes for PlainOpcUaComponentTrafficLightExtension
 // include plain OPC UA device clients
@@ -107,9 +107,9 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
 	// definitions of ComponentTrafficLightROSExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentTrafficLightExtension
 	
@@ -203,9 +203,9 @@ public:
 	
 		//--- client port parameter ---
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// -- parameters for ComponentTrafficLightROSExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentTrafficLightExtension
 		

@@ -29,9 +29,9 @@
 class ComponentLaserS300ServerPortFactoryInterface;
 class ComponentLaserS300ServerExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for ComponentLaserS300ServerROSExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
 
 // includes for PlainOpcUaComponentLaserS300ServerExtension
 // include plain OPC UA device clients
@@ -136,9 +136,9 @@ public:
 	// define request-handlers
 	LaserQueryServiceAnswHandler *laserQueryServiceAnswHandler;
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
 	// definitions of ComponentLaserS300ServerROSExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentLaserS300ServerExtension
 	
@@ -264,9 +264,9 @@ public:
 			std::string roboticMiddleware;
 		} baseTimedClient;
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// -- parameters for ComponentLaserS300ServerROSExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentLaserS300ServerExtension
 		

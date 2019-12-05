@@ -39,6 +39,8 @@ SMART_COMPONENT_AUTOBUILD_DEPENDENCIES()
 ## here you can put all your project-specific compiler configurations          ##
 ## using regular CMake commands (like FIND_PACKAGE, INCLUDE_DIRECTORIES, etc.) ##
 
+INCLUDE(${CMAKE_CURRENT_LIST_DIR}/src-gen/MixedPortIncludes.cmake)
+
 # you can add additional external libraries using regular CMake commands, e.g.:
 FIND_PACKAGE(ZLIB REQUIRED)
 
@@ -68,7 +70,7 @@ FILE(GLOB_RECURSE SRC_GEN_PARAMS ${CMAKE_CURRENT_LIST_DIR}/src-gen/params/*.cc)
 #FILE(GLOB_RECURSE USER_SRC ${CMAKE_CURRENT_LIST_DIR}/src/<your-sources>)
 
 # create the executable using collected source-files
-ADD_EXECUTABLE(${PROJECT_NAME} ${SRC} ${SRC_GEN} ${SRC_GEN_PARAMS}) # add ${USER_SRC} (if needed)
+ADD_EXECUTABLE(${PROJECT_NAME} ${SRC} ${SRC_GEN} ${SRC_GEN_PARAMS} ${FURTHER_SRCS}) # add ${USER_SRC} (if needed)
 
 # link your external libraries here (if there are any)
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${ZLIB_LIBRARIES})
@@ -81,6 +83,8 @@ ENDIF(WITH_OPENCV_CDL_LOOKUP_DEBUG)
 INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/../lookup-files DESTINATION data)
 
 #INSTALL(FILES ${PROJECT_SOURCE_DIR}/src-gen/${PROJECT_NAME}.ini.template DESTINATION etc)
+
+INCLUDE(${CMAKE_CURRENT_LIST_DIR}/src-gen/MixedPortTargetConfigs.cmake)
 
 ## end user-code                                                               ##
 #################################################################################

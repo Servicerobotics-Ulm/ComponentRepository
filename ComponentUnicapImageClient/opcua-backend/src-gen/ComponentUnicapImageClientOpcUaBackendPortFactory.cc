@@ -29,8 +29,8 @@
 #include <SeRoNetSDK/SeRoNet/OPCUA/Server/QueryServer.hpp>
 
 // include referenced CommunicationObject SeRoNetSDK self description implementations
-#include "DomainVisionOpcUa/CommVideoImageOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
+#include "DomainVisionOpcUa/CommVideoImageOpcUa.hh"
 
 // create a static instance of the OpcUaBackendPortFactory
 static ComponentUnicapImageClientOpcUaBackendPortFactory OpcUaBackendPortFactory;
@@ -58,14 +58,14 @@ int ComponentUnicapImageClientOpcUaBackendPortFactory::onStartup()
 	return -1;
 }
 
-Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> * ComponentUnicapImageClientOpcUaBackendPortFactory::createQueryClient()
-{
-	return new SeRoNet::OPCUA::Client::QueryClient<CommBasicObjects::CommVoid, DomainVision::CommVideoImage>(componentImpl);
-}
-
 Smart::IPushClientPattern<DomainVision::CommVideoImage> * ComponentUnicapImageClientOpcUaBackendPortFactory::createPushNewestClient()
 {
 	return new SeRoNet::OPCUA::Client::PushClient<DomainVision::CommVideoImage>(componentImpl);
+}
+
+Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> * ComponentUnicapImageClientOpcUaBackendPortFactory::createQueryClient()
+{
+	return new SeRoNet::OPCUA::Client::QueryClient<CommBasicObjects::CommVoid, DomainVision::CommVideoImage>(componentImpl);
 }
 
 

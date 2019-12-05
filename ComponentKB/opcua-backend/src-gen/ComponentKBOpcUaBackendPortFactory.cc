@@ -29,11 +29,11 @@
 #include <SeRoNetSDK/SeRoNet/OPCUA/Server/QueryServer.hpp>
 
 // include referenced CommunicationObject SeRoNetSDK self description implementations
-#include "CommBasicObjectsOpcUa/CommKBEventResultOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommKBEventParamOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommKBEventResultOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommKBRequestOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommKBResponseOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommKBRequestOpcUa.hh"
 
 // create a static instance of the OpcUaBackendPortFactory
 static ComponentKBOpcUaBackendPortFactory OpcUaBackendPortFactory;
@@ -67,14 +67,14 @@ Smart::IEventClientPattern<CommBasicObjects::CommKBEventParam, CommBasicObjects:
 }
 
 
-Smart::IQueryServerPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse> * ComponentKBOpcUaBackendPortFactory::createKbQuery(const std::string &serviceName)
-{
-	return new SeRoNet::OPCUA::Server::QueryServer<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse>(componentImpl, serviceName);
-}
-
 Smart::IEventServerPattern<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult, CommBasicObjects::CommVoid> * ComponentKBOpcUaBackendPortFactory::createKbEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult, CommBasicObjects::CommVoid>> kbEventServerEventTestHandler)
 {
 	return new SeRoNet::OPCUA::Server::EventServer<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult, CommBasicObjects::CommVoid>(componentImpl, serviceName, kbEventServerEventTestHandler);
+}
+
+Smart::IQueryServerPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse> * ComponentKBOpcUaBackendPortFactory::createKbQuery(const std::string &serviceName)
+{
+	return new SeRoNet::OPCUA::Server::QueryServer<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse>(componentImpl, serviceName);
 }
 
 

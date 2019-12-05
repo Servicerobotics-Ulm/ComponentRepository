@@ -45,8 +45,8 @@ public:
 	virtual void initialize(ComponentUnicapImageClient *component, int argc, char* argv[]) override;
 	virtual int onStartup() override;
 
-	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> * createQueryClient() override;
 	virtual Smart::IPushClientPattern<DomainVision::CommVideoImage> * createPushNewestClient() override;
+	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> * createQueryClient() override;
 	
 	
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) override;

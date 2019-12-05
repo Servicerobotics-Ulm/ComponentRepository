@@ -29,9 +29,9 @@
 class ComponentSkillInterfacePortFactoryInterface;
 class ComponentSkillInterfaceExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for ComponentSkillInterfaceROSExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
 
 // includes for PlainOpcUaComponentSkillInterfaceExtension
 // include plain OPC UA device clients
@@ -120,9 +120,9 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
 	// definitions of ComponentSkillInterfaceROSExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentSkillInterfaceExtension
 	
@@ -252,9 +252,9 @@ public:
 			std::string roboticMiddleware;
 		} kBQueryClient;
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// -- parameters for ComponentSkillInterfaceROSExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentSkillInterfaceExtension
 		

@@ -30,9 +30,9 @@
 
 // include referenced CommunicationObject SeRoNetSDK self description implementations
 #include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
-#include "DomainVisionOpcUa/CommVideoImageOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommDevicePoseStateOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
+#include "DomainVisionOpcUa/CommVideoImageOpcUa.hh"
 
 // create a static instance of the OpcUaBackendPortFactory
 static ComponentUnicapImageServerOpcUaBackendPortFactory OpcUaBackendPortFactory;
@@ -71,14 +71,14 @@ Smart::IPushClientPattern<CommBasicObjects::CommDevicePoseState> * ComponentUnic
 }
 
 
-Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> * ComponentUnicapImageServerOpcUaBackendPortFactory::createImageQueryServer(const std::string &serviceName)
-{
-	return new SeRoNet::OPCUA::Server::QueryServer<CommBasicObjects::CommVoid, DomainVision::CommVideoImage>(componentImpl, serviceName);
-}
-
 Smart::IPushServerPattern<DomainVision::CommVideoImage> * ComponentUnicapImageServerOpcUaBackendPortFactory::createImagePushNewestServer(const std::string &serviceName)
 {
 	return new SeRoNet::OPCUA::Server::PushServer<DomainVision::CommVideoImage>(componentImpl, serviceName);
+}
+
+Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> * ComponentUnicapImageServerOpcUaBackendPortFactory::createImageQueryServer(const std::string &serviceName)
+{
+	return new SeRoNet::OPCUA::Server::QueryServer<CommBasicObjects::CommVoid, DomainVision::CommVideoImage>(componentImpl, serviceName);
 }
 
 

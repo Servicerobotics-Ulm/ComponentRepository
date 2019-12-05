@@ -31,11 +31,11 @@ class ComponentRealSenseV2ServerExtension;
 
 // includes for ComponentRealSenseV2ServerROSExtension
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for PlainOpcUaComponentRealSenseV2ServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
-
-// includes for OpcUaBackendComponentGeneratorExtension
 
 
 // include communication objects
@@ -155,9 +155,9 @@ public:
 	
 	// definitions of ComponentRealSenseV2ServerROSExtension
 	
-	// definitions of PlainOpcUaComponentRealSenseV2ServerExtension
-	
 	// definitions of OpcUaBackendComponentGeneratorExtension
+	
+	// definitions of PlainOpcUaComponentRealSenseV2ServerExtension
 	
 	
 	// define default slave ports
@@ -315,9 +315,9 @@ public:
 		
 		// -- parameters for ComponentRealSenseV2ServerROSExtension
 		
-		// -- parameters for PlainOpcUaComponentRealSenseV2ServerExtension
-		
 		// -- parameters for OpcUaBackendComponentGeneratorExtension
+		
+		// -- parameters for PlainOpcUaComponentRealSenseV2ServerExtension
 		
 	} connections;
 };

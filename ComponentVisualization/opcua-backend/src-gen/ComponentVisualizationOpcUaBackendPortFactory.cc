@@ -29,22 +29,22 @@
 #include <SeRoNetSDK/SeRoNet/OPCUA/Server/QueryServer.hpp>
 
 // include referenced CommunicationObject SeRoNetSDK self description implementations
-#include "CommBasicObjectsOpcUa/CommMobileIRScanOpcUa.hh"
-#include "DomainVisionOpcUa/CommVideoImageOpcUa.hh"
-#include "CommTrackingObjectsOpcUa/CommPersonIdOpcUa.hh"
-#include "CommTrackingObjectsOpcUa/CommDetectedPersonOpcUa.hh"
-#include "CommTrackingObjectsOpcUa/PersonLostEventStateOpcUa.hh"
-#include "DomainVisionOpcUa/CommDepthImageOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
-#include "CommTrackingObjectsOpcUa/CommDetectedMarkerListOpcUa.hh"
-#include "CommTrackingObjectsOpcUa/CommPersonDetectionEventResultOpcUa.hh"
-#include "CommNavigationObjectsOpcUa/CommGridMapRequestOpcUa.hh"
-#include "DomainVisionOpcUa/CommRGBDImageOpcUa.hh"
-#include "CommNavigationObjectsOpcUa/CommGridMapOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommMobileIRScanOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommMobileLaserScanOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommMobileUltrasonicScanOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommMobileLaserScanOpcUa.hh"
+#include "CommNavigationObjectsOpcUa/CommGridMapOpcUa.hh"
+#include "CommNavigationObjectsOpcUa/CommGridMapRequestOpcUa.hh"
+#include "CommTrackingObjectsOpcUa/CommDetectedMarkerListOpcUa.hh"
+#include "CommTrackingObjectsOpcUa/CommDetectedPersonOpcUa.hh"
+#include "CommTrackingObjectsOpcUa/CommPersonDetectionEventResultOpcUa.hh"
+#include "CommTrackingObjectsOpcUa/CommPersonIdOpcUa.hh"
 #include "CommTrackingObjectsOpcUa/CommPersonLostEventParameterOpcUa.hh"
+#include "CommTrackingObjectsOpcUa/PersonLostEventStateOpcUa.hh"
+#include "DomainVisionOpcUa/CommDepthImageOpcUa.hh"
+#include "DomainVisionOpcUa/CommRGBDImageOpcUa.hh"
+#include "DomainVisionOpcUa/CommVideoImageOpcUa.hh"
 
 // create a static instance of the OpcUaBackendPortFactory
 static ComponentVisualizationOpcUaBackendPortFactory OpcUaBackendPortFactory;
@@ -72,24 +72,9 @@ int ComponentVisualizationOpcUaBackendPortFactory::onStartup()
 	return -1;
 }
 
-Smart::IPushClientPattern<CommBasicObjects::CommMobileUltrasonicScan> * ComponentVisualizationOpcUaBackendPortFactory::createUltrasonicPushNewestClient()
+Smart::IPushClientPattern<CommTrackingObjects::CommDetectedMarkerList> * ComponentVisualizationOpcUaBackendPortFactory::createMarkerListDetectionServiceIn()
 {
-	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommMobileUltrasonicScan>(componentImpl);
-}
-
-Smart::IPushClientPattern<DomainVision::CommRGBDImage> * ComponentVisualizationOpcUaBackendPortFactory::createRgbdPushNewestClient()
-{
-	return new SeRoNet::OPCUA::Client::PushClient<DomainVision::CommRGBDImage>(componentImpl);
-}
-
-Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * ComponentVisualizationOpcUaBackendPortFactory::createBaseClient()
-{
-	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommBaseState>(componentImpl);
-}
-
-Smart::IPushClientPattern<DomainVision::CommDepthImage> * ComponentVisualizationOpcUaBackendPortFactory::createDepthPushNewestClient()
-{
-	return new SeRoNet::OPCUA::Client::PushClient<DomainVision::CommDepthImage>(componentImpl);
+	return new SeRoNet::OPCUA::Client::PushClient<CommTrackingObjects::CommDetectedMarkerList>(componentImpl);
 }
 
 Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> * ComponentVisualizationOpcUaBackendPortFactory::createRGBDImageQueryServiceReq()
@@ -97,24 +82,19 @@ Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDIma
 	return new SeRoNet::OPCUA::Client::QueryClient<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage>(componentImpl);
 }
 
-Smart::IPushClientPattern<DomainVision::CommDepthImage> * ComponentVisualizationOpcUaBackendPortFactory::createRgbdQueryClient()
+Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * ComponentVisualizationOpcUaBackendPortFactory::createBaseClient()
+{
+	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommBaseState>(componentImpl);
+}
+
+Smart::IPushClientPattern<CommNavigationObjects::CommGridMap> * ComponentVisualizationOpcUaBackendPortFactory::createCurPushClient()
+{
+	return new SeRoNet::OPCUA::Client::PushClient<CommNavigationObjects::CommGridMap>(componentImpl);
+}
+
+Smart::IPushClientPattern<DomainVision::CommDepthImage> * ComponentVisualizationOpcUaBackendPortFactory::createDepthPushNewestClient()
 {
 	return new SeRoNet::OPCUA::Client::PushClient<DomainVision::CommDepthImage>(componentImpl);
-}
-
-Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * ComponentVisualizationOpcUaBackendPortFactory::createLaserClient3()
-{
-	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommMobileLaserScan>(componentImpl);
-}
-
-Smart::IPushClientPattern<CommBasicObjects::CommMobileIRScan> * ComponentVisualizationOpcUaBackendPortFactory::createIrPushNewestClient()
-{
-	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommMobileIRScan>(componentImpl);
-}
-
-Smart::IQueryClientPattern<CommTrackingObjects::CommPersonId, CommTrackingObjects::CommDetectedPerson> * ComponentVisualizationOpcUaBackendPortFactory::createPersonDetectionQueryClient()
-{
-	return new SeRoNet::OPCUA::Client::QueryClient<CommTrackingObjects::CommPersonId, CommTrackingObjects::CommDetectedPerson>(componentImpl);
 }
 
 Smart::IPushClientPattern<DomainVision::CommVideoImage> * ComponentVisualizationOpcUaBackendPortFactory::createImagePushNewestClient()
@@ -122,7 +102,22 @@ Smart::IPushClientPattern<DomainVision::CommVideoImage> * ComponentVisualization
 	return new SeRoNet::OPCUA::Client::PushClient<DomainVision::CommVideoImage>(componentImpl);
 }
 
+Smart::IPushClientPattern<CommBasicObjects::CommMobileIRScan> * ComponentVisualizationOpcUaBackendPortFactory::createIrPushNewestClient()
+{
+	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommMobileIRScan>(componentImpl);
+}
+
 Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * ComponentVisualizationOpcUaBackendPortFactory::createLaserClient1()
+{
+	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommMobileLaserScan>(componentImpl);
+}
+
+Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * ComponentVisualizationOpcUaBackendPortFactory::createLaserClient2()
+{
+	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommMobileLaserScan>(componentImpl);
+}
+
+Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * ComponentVisualizationOpcUaBackendPortFactory::createLaserClient3()
 {
 	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommMobileLaserScan>(componentImpl);
 }
@@ -132,24 +127,29 @@ Smart::IQueryClientPattern<CommNavigationObjects::CommGridMapRequest, CommNaviga
 	return new SeRoNet::OPCUA::Client::QueryClient<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap>(componentImpl);
 }
 
-Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * ComponentVisualizationOpcUaBackendPortFactory::createLaserClient2()
-{
-	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommMobileLaserScan>(componentImpl);
-}
-
 Smart::IEventClientPattern<CommTrackingObjects::CommPersonLostEventParameter, CommTrackingObjects::CommPersonDetectionEventResult> * ComponentVisualizationOpcUaBackendPortFactory::createPersonDetectionEventClient()
 {
 	return new SeRoNet::OPCUA::Client::EventClient<CommTrackingObjects::CommPersonLostEventParameter, CommTrackingObjects::CommPersonDetectionEventResult>(componentImpl);
 }
 
-Smart::IPushClientPattern<CommTrackingObjects::CommDetectedMarkerList> * ComponentVisualizationOpcUaBackendPortFactory::createMarkerListDetectionServiceIn()
+Smart::IQueryClientPattern<CommTrackingObjects::CommPersonId, CommTrackingObjects::CommDetectedPerson> * ComponentVisualizationOpcUaBackendPortFactory::createPersonDetectionQueryClient()
 {
-	return new SeRoNet::OPCUA::Client::PushClient<CommTrackingObjects::CommDetectedMarkerList>(componentImpl);
+	return new SeRoNet::OPCUA::Client::QueryClient<CommTrackingObjects::CommPersonId, CommTrackingObjects::CommDetectedPerson>(componentImpl);
 }
 
-Smart::IPushClientPattern<CommNavigationObjects::CommGridMap> * ComponentVisualizationOpcUaBackendPortFactory::createCurPushClient()
+Smart::IPushClientPattern<DomainVision::CommRGBDImage> * ComponentVisualizationOpcUaBackendPortFactory::createRgbdPushNewestClient()
 {
-	return new SeRoNet::OPCUA::Client::PushClient<CommNavigationObjects::CommGridMap>(componentImpl);
+	return new SeRoNet::OPCUA::Client::PushClient<DomainVision::CommRGBDImage>(componentImpl);
+}
+
+Smart::IPushClientPattern<DomainVision::CommDepthImage> * ComponentVisualizationOpcUaBackendPortFactory::createRgbdQueryClient()
+{
+	return new SeRoNet::OPCUA::Client::PushClient<DomainVision::CommDepthImage>(componentImpl);
+}
+
+Smart::IPushClientPattern<CommBasicObjects::CommMobileUltrasonicScan> * ComponentVisualizationOpcUaBackendPortFactory::createUltrasonicPushNewestClient()
+{
+	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommMobileUltrasonicScan>(componentImpl);
 }
 
 

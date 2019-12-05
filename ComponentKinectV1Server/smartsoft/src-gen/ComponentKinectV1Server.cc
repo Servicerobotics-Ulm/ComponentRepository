@@ -90,9 +90,9 @@ ComponentKinectV1Server::ComponentKinectV1Server()
 	connections.imageTask.priority = -1;
 	connections.imageTask.cpuAffinity = -1;
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
 	// initialize members of ComponentKinectV1ServerROSExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentKinectV1ServerExtension
 	
@@ -223,9 +223,9 @@ void ComponentKinectV1Server::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of ComponentKinectV1ServerROSExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentKinectV1ServerExtension
 		
@@ -452,9 +452,9 @@ void ComponentKinectV1Server::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
 	// destruction of ComponentKinectV1ServerROSExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentKinectV1ServerExtension
 	
@@ -595,9 +595,9 @@ void ComponentKinectV1Server::loadParameter(int argc, char *argv[])
 			parameter.getInteger("ImageTask", "cpuAffinity", connections.imageTask.cpuAffinity);
 		}
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// load parameters for ComponentKinectV1ServerROSExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentKinectV1ServerExtension
 		

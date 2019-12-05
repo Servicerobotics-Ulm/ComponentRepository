@@ -68,9 +68,9 @@ ComponentSkillInterface::ComponentSkillInterface()
 	connections.communicationTask.priority = -1;
 	connections.communicationTask.cpuAffinity = -1;
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
 	// initialize members of ComponentSkillInterfaceROSExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentSkillInterfaceExtension
 	
@@ -193,9 +193,9 @@ void ComponentSkillInterface::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of ComponentSkillInterfaceROSExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentSkillInterfaceExtension
 		
@@ -419,9 +419,9 @@ void ComponentSkillInterface::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
 	// destruction of ComponentSkillInterfaceROSExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentSkillInterfaceExtension
 	
@@ -546,9 +546,9 @@ void ComponentSkillInterface::loadParameter(int argc, char *argv[])
 			parameter.getInteger("communicationTask", "cpuAffinity", connections.communicationTask.cpuAffinity);
 		}
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// load parameters for ComponentSkillInterfaceROSExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentSkillInterfaceExtension
 		

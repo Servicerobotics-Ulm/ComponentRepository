@@ -31,11 +31,11 @@ class SmartRobotConsoleExtension;
 
 // includes for OpcUaBackendComponentGeneratorExtension
 
-// includes for SmartRobotConsoleROSExtension
-
 // includes for PlainOpcUaSmartRobotConsoleExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
+
+// includes for SmartRobotConsoleROSExtension
 
 
 // include communication objects
@@ -103,9 +103,9 @@ public:
 	
 	// definitions of OpcUaBackendComponentGeneratorExtension
 	
-	// definitions of SmartRobotConsoleROSExtension
-	
 	// definitions of PlainOpcUaSmartRobotConsoleExtension
+	
+	// definitions of SmartRobotConsoleROSExtension
 	
 	
 	// define default slave ports
@@ -212,9 +212,9 @@ public:
 		
 		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
-		// -- parameters for SmartRobotConsoleROSExtension
-		
 		// -- parameters for PlainOpcUaSmartRobotConsoleExtension
+		
+		// -- parameters for SmartRobotConsoleROSExtension
 		
 	} connections;
 };

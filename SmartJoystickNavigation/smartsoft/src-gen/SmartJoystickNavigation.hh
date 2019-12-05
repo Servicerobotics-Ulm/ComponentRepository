@@ -31,11 +31,11 @@ class SmartJoystickNavigationExtension;
 
 // includes for OpcUaBackendComponentGeneratorExtension
 
-// includes for SmartJoystickNavigationROSExtension
-
 // includes for PlainOpcUaSmartJoystickNavigationExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
+
+// includes for SmartJoystickNavigationROSExtension
 
 
 // include communication objects
@@ -124,9 +124,9 @@ public:
 	
 	// definitions of OpcUaBackendComponentGeneratorExtension
 	
-	// definitions of SmartJoystickNavigationROSExtension
-	
 	// definitions of PlainOpcUaSmartJoystickNavigationExtension
+	
+	// definitions of SmartJoystickNavigationROSExtension
 	
 	
 	// define default slave ports
@@ -248,9 +248,9 @@ public:
 		
 		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
-		// -- parameters for SmartJoystickNavigationROSExtension
-		
 		// -- parameters for PlainOpcUaSmartJoystickNavigationExtension
+		
+		// -- parameters for SmartJoystickNavigationROSExtension
 		
 	} connections;
 };

@@ -80,9 +80,9 @@ ComponentLaserFromRGBDServer::ComponentLaserFromRGBDServer()
 	connections.visTask.priority = -1;
 	connections.visTask.cpuAffinity = -1;
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
 	// initialize members of ComponentLaserFromRGBDServerROSExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentLaserFromRGBDServerExtension
 	
@@ -207,9 +207,9 @@ void ComponentLaserFromRGBDServer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of ComponentLaserFromRGBDServerROSExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentLaserFromRGBDServerExtension
 		
@@ -459,9 +459,9 @@ void ComponentLaserFromRGBDServer::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
 	// destruction of ComponentLaserFromRGBDServerROSExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentLaserFromRGBDServerExtension
 	
@@ -597,9 +597,9 @@ void ComponentLaserFromRGBDServer::loadParameter(int argc, char *argv[])
 			parameter.getInteger("VisTask", "cpuAffinity", connections.visTask.cpuAffinity);
 		}
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// load parameters for ComponentLaserFromRGBDServerROSExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentLaserFromRGBDServerExtension
 		

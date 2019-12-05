@@ -31,11 +31,11 @@ class SmartCdlServerExtension;
 
 // includes for OpcUaBackendComponentGeneratorExtension
 
-// includes for SmartCdlServerROSExtension
-
 // includes for PlainOpcUaSmartCdlServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
+
+// includes for SmartCdlServerROSExtension
 
 
 // include communication objects
@@ -185,9 +185,9 @@ public:
 	
 	// definitions of OpcUaBackendComponentGeneratorExtension
 	
-	// definitions of SmartCdlServerROSExtension
-	
 	// definitions of PlainOpcUaSmartCdlServerExtension
+	
+	// definitions of SmartCdlServerROSExtension
 	
 	
 	// define default slave ports
@@ -375,9 +375,9 @@ public:
 		
 		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
-		// -- parameters for SmartCdlServerROSExtension
-		
 		// -- parameters for PlainOpcUaSmartCdlServerExtension
+		
+		// -- parameters for SmartCdlServerROSExtension
 		
 	} connections;
 };

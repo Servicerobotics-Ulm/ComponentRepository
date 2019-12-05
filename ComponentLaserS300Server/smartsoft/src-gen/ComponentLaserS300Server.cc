@@ -75,9 +75,9 @@ ComponentLaserS300Server::ComponentLaserS300Server()
 	connections.laserTask.priority = -1;
 	connections.laserTask.cpuAffinity = -1;
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
 	// initialize members of ComponentLaserS300ServerROSExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentLaserS300ServerExtension
 	
@@ -188,9 +188,9 @@ void ComponentLaserS300Server::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of ComponentLaserS300ServerROSExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentLaserS300ServerExtension
 		
@@ -400,9 +400,9 @@ void ComponentLaserS300Server::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
 	// destruction of ComponentLaserS300ServerROSExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentLaserS300ServerExtension
 	
@@ -524,9 +524,9 @@ void ComponentLaserS300Server::loadParameter(int argc, char *argv[])
 			parameter.getInteger("LaserTask", "cpuAffinity", connections.laserTask.cpuAffinity);
 		}
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// load parameters for ComponentLaserS300ServerROSExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentLaserS300ServerExtension
 		

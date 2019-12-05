@@ -31,11 +31,11 @@ class SmartAmclExtension;
 
 // includes for OpcUaBackendComponentGeneratorExtension
 
-// includes for SmartAmclROSExtension
-
 // includes for PlainOpcUaSmartAmclExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
+
+// includes for SmartAmclROSExtension
 
 
 // include communication objects
@@ -132,9 +132,9 @@ public:
 	
 	// definitions of OpcUaBackendComponentGeneratorExtension
 	
-	// definitions of SmartAmclROSExtension
-	
 	// definitions of PlainOpcUaSmartAmclExtension
+	
+	// definitions of SmartAmclROSExtension
 	
 	
 	// define default slave ports
@@ -260,9 +260,9 @@ public:
 		
 		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
-		// -- parameters for SmartAmclROSExtension
-		
 		// -- parameters for PlainOpcUaSmartAmclExtension
+		
+		// -- parameters for SmartAmclROSExtension
 		
 	} connections;
 };

@@ -81,9 +81,9 @@ SmartPlannerBreadthFirstSearch::SmartPlannerBreadthFirstSearch()
 	
 	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
-	// initialize members of SmartPlannerBreadthFirstSearchROSExtension
-	
 	// initialize members of PlainOpcUaSmartPlannerBreadthFirstSearchExtension
+	
+	// initialize members of SmartPlannerBreadthFirstSearchROSExtension
 	
 }
 
@@ -208,9 +208,9 @@ void SmartPlannerBreadthFirstSearch::init(int argc, char *argv[])
 		
 		// initializations of OpcUaBackendComponentGeneratorExtension
 		
-		// initializations of SmartPlannerBreadthFirstSearchROSExtension
-		
 		// initializations of PlainOpcUaSmartPlannerBreadthFirstSearchExtension
+		
+		// initializations of SmartPlannerBreadthFirstSearchROSExtension
 		
 		
 		// initialize all registered port-factories
@@ -442,9 +442,9 @@ void SmartPlannerBreadthFirstSearch::fini()
 	
 	// destruction of OpcUaBackendComponentGeneratorExtension
 	
-	// destruction of SmartPlannerBreadthFirstSearchROSExtension
-	
 	// destruction of PlainOpcUaSmartPlannerBreadthFirstSearchExtension
+	
+	// destruction of SmartPlannerBreadthFirstSearchROSExtension
 	
 }
 
@@ -568,9 +568,9 @@ void SmartPlannerBreadthFirstSearch::loadParameter(int argc, char *argv[])
 		
 		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
-		// load parameters for SmartPlannerBreadthFirstSearchROSExtension
-		
 		// load parameters for PlainOpcUaSmartPlannerBreadthFirstSearchExtension
+		
+		// load parameters for SmartPlannerBreadthFirstSearchROSExtension
 		
 		
 		// load parameters for all registered component-extensions

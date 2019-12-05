@@ -31,11 +31,11 @@ class SmartPlannerBreadthFirstSearchExtension;
 
 // includes for OpcUaBackendComponentGeneratorExtension
 
-// includes for SmartPlannerBreadthFirstSearchROSExtension
-
 // includes for PlainOpcUaSmartPlannerBreadthFirstSearchExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
+
+// includes for SmartPlannerBreadthFirstSearchROSExtension
 
 
 // include communication objects
@@ -139,9 +139,9 @@ public:
 	
 	// definitions of OpcUaBackendComponentGeneratorExtension
 	
-	// definitions of SmartPlannerBreadthFirstSearchROSExtension
-	
 	// definitions of PlainOpcUaSmartPlannerBreadthFirstSearchExtension
+	
+	// definitions of SmartPlannerBreadthFirstSearchROSExtension
 	
 	
 	// define default slave ports
@@ -270,9 +270,9 @@ public:
 		
 		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
-		// -- parameters for SmartPlannerBreadthFirstSearchROSExtension
-		
 		// -- parameters for PlainOpcUaSmartPlannerBreadthFirstSearchExtension
+		
+		// -- parameters for SmartPlannerBreadthFirstSearchROSExtension
 		
 	} connections;
 };

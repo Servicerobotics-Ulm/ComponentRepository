@@ -29,9 +29,9 @@
 class ComponentGMappingPortFactoryInterface;
 class ComponentGMappingExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for ComponentGMappingROSExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
 
 // includes for PlainOpcUaComponentGMappingExtension
 // include plain OPC UA device clients
@@ -125,9 +125,9 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
 	// definitions of ComponentGMappingROSExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentGMappingExtension
 	
@@ -254,9 +254,9 @@ public:
 			std::string roboticMiddleware;
 		} laserClient;
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// -- parameters for ComponentGMappingROSExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentGMappingExtension
 		

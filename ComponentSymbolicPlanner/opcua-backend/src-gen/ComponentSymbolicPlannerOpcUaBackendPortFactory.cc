@@ -29,8 +29,8 @@
 #include <SeRoNetSDK/SeRoNet/OPCUA/Server/QueryServer.hpp>
 
 // include referenced CommunicationObject SeRoNetSDK self description implementations
-#include "DomainSymbolicPlannerOpcUa/CommSymbolicPlannerRequestOpcUa.hh"
 #include "DomainSymbolicPlannerOpcUa/CommSymbolicPlannerPlanOpcUa.hh"
+#include "DomainSymbolicPlannerOpcUa/CommSymbolicPlannerRequestOpcUa.hh"
 
 // create a static instance of the OpcUaBackendPortFactory
 static ComponentSymbolicPlannerOpcUaBackendPortFactory OpcUaBackendPortFactory;

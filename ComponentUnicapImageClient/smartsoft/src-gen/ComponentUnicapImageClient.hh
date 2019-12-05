@@ -29,9 +29,9 @@
 class ComponentUnicapImageClientPortFactoryInterface;
 class ComponentUnicapImageClientExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for ComponentUnicapImageClientROSExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
 
 // includes for PlainOpcUaComponentUnicapImageClientExtension
 // include plain OPC UA device clients
@@ -125,9 +125,9 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
 	// definitions of ComponentUnicapImageClientROSExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentUnicapImageClientExtension
 	
@@ -266,9 +266,9 @@ public:
 			std::string roboticMiddleware;
 		} queryClient;
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// -- parameters for ComponentUnicapImageClientROSExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentUnicapImageClientExtension
 		

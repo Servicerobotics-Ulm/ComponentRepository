@@ -29,13 +29,13 @@
 #include <SeRoNetSDK/SeRoNet/OPCUA/Server/QueryServer.hpp>
 
 // include referenced CommunicationObject SeRoNetSDK self description implementations
-#include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommBatteryParameterOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommNavigationVelocityOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommBatteryEventOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommBasePositionUpdateOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommBatteryEventOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommBatteryParameterOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommBatteryStateOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommNavigationVelocityOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
 
 // create a static instance of the OpcUaBackendPortFactory
 static SmartPioneerBaseServerOpcUaBackendPortFactory OpcUaBackendPortFactory;
@@ -64,6 +64,21 @@ int SmartPioneerBaseServerOpcUaBackendPortFactory::onStartup()
 }
 
 
+Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * SmartPioneerBaseServerOpcUaBackendPortFactory::createBasePositionOut(const std::string &serviceName)
+{
+	return new SeRoNet::OPCUA::Server::PushServer<CommBasicObjects::CommBaseState>(componentImpl, serviceName);
+}
+
+Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState> * SmartPioneerBaseServerOpcUaBackendPortFactory::createBaseStateQueryServer(const std::string &serviceName)
+{
+	return new SeRoNet::OPCUA::Server::QueryServer<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>(componentImpl, serviceName);
+}
+
+Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> * SmartPioneerBaseServerOpcUaBackendPortFactory::createBatteryEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>> batteryEventServerEventTestHandler)
+{
+	return new SeRoNet::OPCUA::Server::EventServer<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>(componentImpl, serviceName, batteryEventServerEventTestHandler);
+}
+
 Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * SmartPioneerBaseServerOpcUaBackendPortFactory::createLocalizationUpdate(const std::string &serviceName)
 {
 	return new SeRoNet::OPCUA::Server::SendServer<CommBasicObjects::CommBasePositionUpdate>(componentImpl, serviceName);
@@ -72,21 +87,6 @@ Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * SmartPione
 Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * SmartPioneerBaseServerOpcUaBackendPortFactory::createNavVelIn(const std::string &serviceName)
 {
 	return new SeRoNet::OPCUA::Server::SendServer<CommBasicObjects::CommNavigationVelocity>(componentImpl, serviceName);
-}
-
-Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> * SmartPioneerBaseServerOpcUaBackendPortFactory::createBatteryEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>> batteryEventServerEventTestHandler)
-{
-	return new SeRoNet::OPCUA::Server::EventServer<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>(componentImpl, serviceName, batteryEventServerEventTestHandler);
-}
-
-Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState> * SmartPioneerBaseServerOpcUaBackendPortFactory::createBaseStateQueryServer(const std::string &serviceName)
-{
-	return new SeRoNet::OPCUA::Server::QueryServer<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>(componentImpl, serviceName);
-}
-
-Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * SmartPioneerBaseServerOpcUaBackendPortFactory::createBasePositionOut(const std::string &serviceName)
-{
-	return new SeRoNet::OPCUA::Server::PushServer<CommBasicObjects::CommBaseState>(componentImpl, serviceName);
 }
 
 

@@ -56,9 +56,9 @@ SmartJoystickServer::SmartJoystickServer()
 	
 	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
-	// initialize members of SmartJoystickServerROSExtension
-	
 	// initialize members of PlainOpcUaSmartJoystickServerExtension
+	
+	// initialize members of SmartJoystickServerROSExtension
 	
 }
 
@@ -149,9 +149,9 @@ void SmartJoystickServer::init(int argc, char *argv[])
 		
 		// initializations of OpcUaBackendComponentGeneratorExtension
 		
-		// initializations of SmartJoystickServerROSExtension
-		
 		// initializations of PlainOpcUaSmartJoystickServerExtension
+		
+		// initializations of SmartJoystickServerROSExtension
 		
 		
 		// initialize all registered port-factories
@@ -320,9 +320,9 @@ void SmartJoystickServer::fini()
 	
 	// destruction of OpcUaBackendComponentGeneratorExtension
 	
-	// destruction of SmartJoystickServerROSExtension
-	
 	// destruction of PlainOpcUaSmartJoystickServerExtension
+	
+	// destruction of SmartJoystickServerROSExtension
 	
 }
 
@@ -416,9 +416,9 @@ void SmartJoystickServer::loadParameter(int argc, char *argv[])
 		
 		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
-		// load parameters for SmartJoystickServerROSExtension
-		
 		// load parameters for PlainOpcUaSmartJoystickServerExtension
+		
+		// load parameters for SmartJoystickServerROSExtension
 		
 		
 		// load parameters for all registered component-extensions

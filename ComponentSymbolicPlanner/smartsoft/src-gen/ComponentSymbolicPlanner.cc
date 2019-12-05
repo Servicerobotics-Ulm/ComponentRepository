@@ -48,9 +48,9 @@ ComponentSymbolicPlanner::ComponentSymbolicPlanner()
 	connections.symbolicPlannerQueryServer.serviceName = "SymbolicPlannerQueryServer";
 	connections.symbolicPlannerQueryServer.roboticMiddleware = "ACE_SmartSoft";
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
 	// initialize members of ComponentSymbolicPlannerROSExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentSymbolicPlannerExtension
 	
@@ -125,9 +125,9 @@ void ComponentSymbolicPlanner::init(int argc, char *argv[])
 		loadParameter(argc, argv);
 		
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of ComponentSymbolicPlannerROSExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentSymbolicPlannerExtension
 		
@@ -286,9 +286,9 @@ void ComponentSymbolicPlanner::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
 	// destruction of ComponentSymbolicPlannerROSExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentSymbolicPlannerExtension
 	
@@ -372,9 +372,9 @@ void ComponentSymbolicPlanner::loadParameter(int argc, char *argv[])
 		}
 		
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// load parameters for ComponentSymbolicPlannerROSExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentSymbolicPlannerExtension
 		

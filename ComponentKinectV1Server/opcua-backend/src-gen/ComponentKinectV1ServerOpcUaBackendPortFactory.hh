@@ -49,10 +49,10 @@ public:
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommDevicePoseState> * createPtuPosePushNewestClient() override;
 	
 	virtual Smart::IPushServerPattern<DomainVision::CommVideoImage> * createColorImagePushNewestServer(const std::string &serviceName) override;
-	virtual Smart::IPushServerPattern<DomainVision::CommDepthImage> * createDepthPushNewestServer(const std::string &serviceName) override;
-	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> * createImageQueryServer(const std::string &serviceName) override;
-	virtual Smart::IPushServerPattern<DomainVision::CommRGBDImage> * createImagePushNewestServer(const std::string &serviceName) override;
 	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> * createColorImageQueryServer(const std::string &serviceName) override;
+	virtual Smart::IPushServerPattern<DomainVision::CommDepthImage> * createDepthPushNewestServer(const std::string &serviceName) override;
+	virtual Smart::IPushServerPattern<DomainVision::CommRGBDImage> * createImagePushNewestServer(const std::string &serviceName) override;
+	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> * createImageQueryServer(const std::string &serviceName) override;
 	
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) override;
 	virtual void destroy() override;

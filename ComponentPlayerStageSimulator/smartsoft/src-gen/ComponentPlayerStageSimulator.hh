@@ -29,9 +29,9 @@
 class ComponentPlayerStageSimulatorPortFactoryInterface;
 class ComponentPlayerStageSimulatorExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for ComponentPlayerStageSimulatorROSExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
 
 // includes for PlainOpcUaComponentPlayerStageSimulatorExtension
 // include plain OPC UA device clients
@@ -153,9 +153,9 @@ public:
 	// define request-handlers
 	BaseStateQueryHandler *baseStateQueryHandler;
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
 	// definitions of ComponentPlayerStageSimulatorROSExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentPlayerStageSimulatorExtension
 	
@@ -306,9 +306,9 @@ public:
 	
 		//--- client port parameter ---
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// -- parameters for ComponentPlayerStageSimulatorROSExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentPlayerStageSimulatorExtension
 		

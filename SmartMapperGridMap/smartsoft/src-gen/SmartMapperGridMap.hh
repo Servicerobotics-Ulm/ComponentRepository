@@ -31,11 +31,11 @@ class SmartMapperGridMapExtension;
 
 // includes for OpcUaBackendComponentGeneratorExtension
 
-// includes for SmartMapperGridMapROSExtension
-
 // includes for PlainOpcUaSmartMapperGridMapExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
+
+// includes for SmartMapperGridMapROSExtension
 
 
 // include communication objects
@@ -137,9 +137,9 @@ public:
 	
 	// definitions of OpcUaBackendComponentGeneratorExtension
 	
-	// definitions of SmartMapperGridMapROSExtension
-	
 	// definitions of PlainOpcUaSmartMapperGridMapExtension
+	
+	// definitions of SmartMapperGridMapROSExtension
 	
 	
 	// define default slave ports
@@ -280,9 +280,9 @@ public:
 		
 		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
-		// -- parameters for SmartMapperGridMapROSExtension
-		
 		// -- parameters for PlainOpcUaSmartMapperGridMapExtension
+		
+		// -- parameters for SmartMapperGridMapROSExtension
 		
 	} connections;
 };
