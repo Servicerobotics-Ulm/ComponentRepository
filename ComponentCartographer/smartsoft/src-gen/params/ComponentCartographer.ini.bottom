@@ -1,0 +1,38 @@
+#####################
+# internal parameters
+#####################
+##########################
+# InternalParameter config
+[config]
+config_dir_path configuration_files
+
+##########################
+# InternalParameter general
+[general]
+enable_visualization false
+
+##########################
+# InternalParameter sensors
+[sensors]
+laser_frequency 25
+laser_subdivisions 1
+use_laser true
+use_odometry true
+
+##########################
+# InternalParameter state
+[state]
+load_previous_state false
+pb_stream test.pbstream
+pure_localization false
+
+
+#####################
+# extended parameters
+#####################
+
+#####################
+# instance parameters
+#####################
+##########################
+# ParameterSet SlamParameter

@@ -1,0 +1,41 @@
+ComponentParameter ComponentCartographer component ComponentCartographer
+{	
+	InternalParameter general {
+   	/** Visualize the trajectory path of robot from Cartographer*/
+	enable_visualization : Boolean = false
+	}
+	InternalParameter sensors{
+	use_laser:Boolean=true;
+	use_odometry:Boolean = true;
+	laser_subdivisions: UInt8 =1;
+	laser_frequency: UInt8 = 25;
+	}
+	
+
+	InternalParameter state{
+    	/** Continue the mapping from previous session*/
+		load_previous_state: Boolean = false;
+		
+		/** supply path of pbstream if we want to continue the mapping from previous session*/
+		pb_stream: String = "test.pbstream"
+		
+   	   /** Run Cartographer in localization mode, if set true, load_previous_state must be set true and pb_stream must contain path to valid pbstream*/
+	    pure_localization:Boolean = false
+	}
+	
+	InternalParameter config{
+		config_dir_path:String = "configuration_files"		
+	}
+	
+	ParameterSetInstance CommLocalizationObjects.SlamParameter {
+		TriggerInstance INITNEWMAP passive
+				
+		/** Stores the current grid map to <?dirname>/<?mapname>.pgm and meta information to data/<?mapname>.yaml.*/
+		TriggerInstance SAVEMAP passive
+	}
+}
+
+
+
+
+

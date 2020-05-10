@@ -1,0 +1,15 @@
+ComponentDefinition ComponentCartographer logo "/ComponentCartographer/model/logo.png"
+{
+Activity CartographerTask
+	{
+		OperationModeBinding CoordinationPort.active
+	}
+	CoordinationSlavePort CoordinationPort implements CommLocalizationObjects.SLAMCoordinationService { PublicOperationMode CommLocalizationObjects.localizationMode.Active { activates ( active ) } PrivateOperationMode active }
+	ComponentParameters ComponentCartographer slave CoordinationPort
+	OutputPort gridMapPushServiceOut implements CommNavigationObjects.CurrGridMapPushService realizedBy CartographerTask {
+	}
+	InputPort laserServiceIn implements CommBasicObjects.LaserService {
+	}
+OutputPort localized_robot_pose implements CommNavigationObjects.LocalizationUpdateService realizedBy CartographerTask {
+	}
+}
