@@ -18,7 +18,7 @@
 //
 //  Copyright (C) 2011, 2017 Matthias Lutz, Dennis Stampfer, Matthias Rollenhagen, Nayabrasul Shaik
 //
-//      lutz@hs-ulm.de
+//      lutz@hs-ulm.deSmartACE::QueryI
 //      stampfer@hs-ulm.de
 //      rollenhagen@hs-ulm.de
 //      shaik@hs-ulm.de
@@ -53,7 +53,7 @@
 
 #include "EulerTransformationMatrices.hh"
 
-ImageQueryHandler::ImageQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage, SmartACE::QueryId>* server)
+ImageQueryHandler::ImageQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage>* server)
 :	ImageQueryHandlerCore(server)
 {
 	
@@ -65,7 +65,7 @@ ImageQueryHandler::~ImageQueryHandler()
 }
 
 
-void ImageQueryHandler::handleQuery(const SmartACE::QueryId &id, const CommBasicObjects::CommVoid& request) 
+void ImageQueryHandler::handleQuery(const QueryId &id, const CommBasicObjects::CommVoid& request)
 {
 	std::cout<<"Query Request received.."<<std::endl;
 

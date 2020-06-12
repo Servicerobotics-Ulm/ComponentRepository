@@ -42,7 +42,7 @@ SMART_COMPONENT_AUTOBUILD_DEPENDENCIES()
 # you can add additional external libraries using regular CMake commands, e.g.:
 FIND_PACKAGE(MRPT REQUIRED hwdrivers)
 FIND_PACKAGE(OpenCV REQUIRED)
-#FIND_PACKAGE(libfreenect REQUIRED)
+FIND_PACKAGE(libfreenect REQUIRED)
 
 INCLUDE(${CMAKE_CURRENT_LIST_DIR}/src-gen/MixedPortIncludes.cmake)
 
@@ -65,7 +65,7 @@ FILE(GLOB_RECURSE SRC_GEN_PARAMS ${CMAKE_CURRENT_LIST_DIR}/src-gen/params/*.cc)
 ADD_EXECUTABLE(${PROJECT_NAME} ${SRC} ${SRC_GEN} ${SRC_GEN_PARAMS} ${FURTHER_SRCS}) # add ${USER_SRC} (if needed)
 
 # link your external libraries here (if there are any)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}  ${OpenCV_LIBS} ${MRPT_LIBS} "freenect")
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}  ${OpenCV_LIBS} ${MRPT_LIBS} ${FREENECT_LIBRARIES})
 
 INCLUDE(${CMAKE_CURRENT_LIST_DIR}/src-gen/MixedPortTargetConfigs.cmake)
 

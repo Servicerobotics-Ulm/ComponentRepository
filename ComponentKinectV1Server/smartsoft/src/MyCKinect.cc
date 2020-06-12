@@ -340,7 +340,9 @@ void MyCKinect::open(int rgb_mode, int depth_mode)
 
 	// Open the given device number:
 	if (freenect_open_device(f_ctx, f_dev_ptr, m_user_device_number) < 0)
-		THROW_EXCEPTION_CUSTOM_MSG1("Error opening Kinect sensor with index: %d",m_user_device_number)
+		THROW_EXCEPTION("Error openein Kinect sensor.")
+//		THROW_EXCEPTION_CUSTOM_MSG1("Error opening Kinect sensor with index: %d",m_user_device_number)
+//		THROW_STACKED_EXCEPTION_CUSTOM_MSG1("Error opening Kinect sensor with index: %d",m_user_device_number)
 
 	// Setup:
 	setTiltAngleDegrees(0);

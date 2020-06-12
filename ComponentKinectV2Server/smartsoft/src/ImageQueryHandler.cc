@@ -51,7 +51,7 @@
 #include <iostream>
 #include "EulerTransformationMatrices.hh"
 
-ImageQueryHandler::ImageQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage, SmartACE::QueryId>* server)
+ImageQueryHandler::ImageQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage>* server)
 :	ImageQueryHandlerCore(server)
 {
 	
@@ -63,7 +63,7 @@ ImageQueryHandler::~ImageQueryHandler()
 }
 
 
-void ImageQueryHandler::handleQuery(const SmartACE::QueryId &id, const CommBasicObjects::CommVoid& request) 
+void ImageQueryHandler::handleQuery(const QueryId &id, const CommBasicObjects::CommVoid& request)
 {
 	std::cout<<"Query Request received.."<<std::endl;
 
