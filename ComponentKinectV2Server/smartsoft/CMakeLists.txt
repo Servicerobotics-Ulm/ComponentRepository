@@ -42,6 +42,11 @@ SMART_COMPONENT_AUTOBUILD_DEPENDENCIES()
 # you can add additional external libraries using regular CMake commands, e.g.:
 FIND_PACKAGE(freenect2 REQUIRED)
 FIND_PACKAGE(OpenCV REQUIRED)
+IF(OpenCV_VERSION VERSION_LESS 4.2.0)
+  add_definitions(-DWITH_OLD_OPENCV_VERSION)
+ELSE()
+  add_definitions(-DWITH_OPENCV_4_2_VERSION)
+ENDIF()
 
 INCLUDE(${CMAKE_CURRENT_LIST_DIR}/src-gen/MixedPortIncludes.cmake)
 

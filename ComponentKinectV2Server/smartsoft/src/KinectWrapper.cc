@@ -154,11 +154,22 @@ void KinectWrapper::getImage(DomainVision::CommRGBDImage& image) {
 	cv::Mat flipped_color_image;
 	cv::flip(color, tmp, 1);
 
+
+
+
 	//reduce size
 	if (rgb->format == libfreenect2::Frame::BGRX){
+#ifdef WITH_OPENCV_4_2_VERSION
+		cv::cvtColor(tmp, flipped_color_image, cv::COLOR_BGR2RGB);
+#else
 		cv::cvtColor(tmp, flipped_color_image, CV_BGRA2RGB);
+#endif
 	}else{
+#ifdef WITH_OPENCV_4_2_VERSION
+		cv::cvtColor(tmp, flipped_color_image, cv::COLOR_RGBA2RGB);
+#else
 		cv::cvtColor(tmp, flipped_color_image, CV_RGBA2RGB);
+#endif
 	}
 
 //	if (rgb->format == libfreenect2::Frame::BGRX) {

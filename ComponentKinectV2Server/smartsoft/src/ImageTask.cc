@@ -49,7 +49,11 @@
 #include "ComponentKinectV2Server.hh"
 
 #include "EulerTransformationMatrices.hh"
-#include "highgui.h"
+#ifdef WITH_OPENCV_4_2_VERSION
+#include <opencv4/opencv2/highgui.hpp>
+#else
+#include <highgui.h>
+#endif
 #include <iostream>
 #include <armadillo.hh>
 #include "KinectWrapper.hh"
