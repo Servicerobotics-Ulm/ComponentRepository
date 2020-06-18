@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ComponentDefinition="http://www.ecore.org/component/ComponentDefinition" xmlns:ComponentParameter="http://www.ecore.org/component/ComponentParameter" xmlns:CoordinationExtension="http://www.ecore.org/component/CoordinationExtension" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:diagram="http://www.eclipse.org/sirius/diagram/1.1.0" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xsi:schemaLocation="http://www.eclipse.org/sirius/description/1.1.0 http://www.eclipse.org/sirius/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/style/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description/style">
+  <viewpoint:DAnalysis uid="_9hSE8Fd5Eemjb5TWagBZCQ" selectedViews="_9oWWQFd5Eemjb5TWagBZCQ" version="14.1.0.201810161215">
+    <semanticResources>model/ComponentFileProvider.component</semanticResources>
+    <semanticResources>model/ComponentFileProvider.componentDocumentation</semanticResources>
+    <semanticResources>model/ComponentFileProvider.componentParameters</semanticResources>
+    <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.services</semanticResources>
+    <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.types</semanticResources>
+    <semanticResources>platform:/plugin/org.xtext.base.stateMachine/componentLifecycle/ComponentLifecycle.automaton</semanticResources>
+    <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.modes</semanticResources>
+    <semanticResources>platform:/plugin/org.xtext.service.parameterDefinition/defaultParameterLib/defaultParameterLib.parameters</semanticResources>
+    <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.parameters</semanticResources>
+    <ownedViews xmi:type="viewpoint:DView" uid="_9oWWQFd5Eemjb5TWagBZCQ">
+      <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']"/>
+      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_9p4nUFd5Eemjb5TWagBZCQ" name="ComponentFileProvider" repPath="#_9p1kAFd5Eemjb5TWagBZCQ">
+        <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
+        <target xmi:type="ComponentDefinition:ComponentDefModel" href="model/ComponentFileProvider.component#/"/>
+      </ownedRepresentationDescriptors>
+    </ownedViews>
+  </viewpoint:DAnalysis>
+  <diagram:DSemanticDiagram uid="_9p1kAFd5Eemjb5TWagBZCQ" name="ComponentFileProvider">
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="_9p1kAVd5Eemjb5TWagBZCQ" source="DANNOTATION_CUSTOMIZATION_KEY">
+      <data xmi:type="diagram:ComputedStyleDescriptionRegistry" uid="_9p1kAld5Eemjb5TWagBZCQ"/>
+    </ownedAnnotationEntries>
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="_9qaLwFd5Eemjb5TWagBZCQ" source="GMF_DIAGRAMS">
+      <data xmi:type="notation:Diagram" xmi:id="_9qay0Fd5Eemjb5TWagBZCQ" type="Sirius" element="_9p1kAFd5Eemjb5TWagBZCQ" measurementUnit="Pixel">
+        <children xmi:type="notation:Node" xmi:id="_9qvi8Fd5Eemjb5TWagBZCQ" type="2002" element="_9p1kBFd5Eemjb5TWagBZCQ">
+          <children xmi:type="notation:Node" xmi:id="_9q7JIFd5Eemjb5TWagBZCQ" type="5006"/>
+          <children xmi:type="notation:Node" xmi:id="_9q7wMFd5Eemjb5TWagBZCQ" type="7001">
+            <children xmi:type="notation:Node" xmi:id="_aSMEgFd6Eemjb5TWagBZCQ" type="3008" element="_aRyb4Fd6Eemjb5TWagBZCQ">
+              <children xmi:type="notation:Node" xmi:id="_aSMrkFd6Eemjb5TWagBZCQ" type="5005"/>
+              <children xmi:type="notation:Node" xmi:id="_aSNSoFd6Eemjb5TWagBZCQ" type="7002">
+                <styles xmi:type="notation:SortingStyle" xmi:id="_aSNSoVd6Eemjb5TWagBZCQ"/>
+                <styles xmi:type="notation:FilteringStyle" xmi:id="_aSNSold6Eemjb5TWagBZCQ"/>
+              </children>
+              <styles xmi:type="notation:ShapeStyle" xmi:id="_aSMEgVd6Eemjb5TWagBZCQ" fontName="Ubuntu" fontHeight="8" bold="true"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_aSMEgld6Eemjb5TWagBZCQ" x="153" y="49" width="205"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_cNR4MFd6Eemjb5TWagBZCQ" type="3008" element="_cNCAkFd6Eemjb5TWagBZCQ">
+              <children xmi:type="notation:Node" xmi:id="_cNR4M1d6Eemjb5TWagBZCQ" type="5005"/>
+              <children xmi:type="notation:Node" xmi:id="_cNR4NFd6Eemjb5TWagBZCQ" type="7002">
+                <styles xmi:type="notation:SortingStyle" xmi:id="_cNR4NVd6Eemjb5TWagBZCQ"/>
+                <styles xmi:type="notation:FilteringStyle" xmi:id="_cNR4Nld6Eemjb5TWagBZCQ"/>
+              </children>
+              <styles xmi:type="notation:ShapeStyle" xmi:id="_cNR4MVd6Eemjb5TWagBZCQ" fontName="Ubuntu" fontHeight="8" bold="true"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_cNR4Mld6Eemjb5TWagBZCQ" x="151" y="133" width="207"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_thHXgFd6Eemjb5TWagBZCQ" type="3008" element="_tg3f4Fd6Eemjb5TWagBZCQ">
+              <children xmi:type="notation:Node" xmi:id="_thH-kFd6Eemjb5TWagBZCQ" type="5005"/>
+              <children xmi:type="notation:Node" xmi:id="_thH-kVd6Eemjb5TWagBZCQ" type="7002">
+                <styles xmi:type="notation:SortingStyle" xmi:id="_thH-kld6Eemjb5TWagBZCQ"/>
+                <styles xmi:type="notation:FilteringStyle" xmi:id="_thH-k1d6Eemjb5TWagBZCQ"/>
+              </children>
+              <styles xmi:type="notation:ShapeStyle" xmi:id="_thHXgVd6Eemjb5TWagBZCQ" fontName="Ubuntu" fontHeight="8" bold="true"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_thHXgld6Eemjb5TWagBZCQ" x="151" y="217" width="207"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_2Qka8Fd6Eemjb5TWagBZCQ" type="3008" element="_2P66sFd6Eemjb5TWagBZCQ">
+              <children xmi:type="notation:Node" xmi:id="_2Qka81d6Eemjb5TWagBZCQ" type="5005"/>
+              <children xmi:type="notation:Node" xmi:id="_2QlCAFd6Eemjb5TWagBZCQ" type="7002">
+                <styles xmi:type="notation:SortingStyle" xmi:id="_2QlCAVd6Eemjb5TWagBZCQ"/>
+                <styles xmi:type="notation:FilteringStyle" xmi:id="_2QlCAld6Eemjb5TWagBZCQ"/>
+              </children>
+              <styles xmi:type="notation:ShapeStyle" xmi:id="_2Qka8Vd6Eemjb5TWagBZCQ" fontName="Ubuntu" fontHeight="8" bold="true"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_2Qka8ld6Eemjb5TWagBZCQ" x="152" y="301" width="205"/>
+            </children>
+            <styles xmi:type="notation:SortingStyle" xmi:id="_9q8XQFd5Eemjb5TWagBZCQ"/>
+            <styles xmi:type="notation:FilteringStyle" xmi:id="_9q8XQVd5Eemjb5TWagBZCQ"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_aSHzEFd6Eemjb5TWagBZCQ" type="3012" element="_aRp5AFd6Eemjb5TWagBZCQ">
+            <children xmi:type="notation:Node" xmi:id="_aSJBMFd6Eemjb5TWagBZCQ" type="5010">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_aSJBMVd6Eemjb5TWagBZCQ" x="31" y="5"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_aSNSo1d6Eemjb5TWagBZCQ" type="3014" element="_aRqgEFd6Eemjb5TWagBZCQ">
+              <styles xmi:type="notation:ShapeStyle" xmi:id="_aSNSpFd6Eemjb5TWagBZCQ" fontName="Ubuntu"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_aSNSpVd6Eemjb5TWagBZCQ"/>
+            </children>
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_aSHzEVd6Eemjb5TWagBZCQ" fontName="Ubuntu" fontHeight="8"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_aSHzEld6Eemjb5TWagBZCQ" x="677" y="74" width="30" height="30"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_cNRRIFd6Eemjb5TWagBZCQ" type="3012" element="_cM9vIFd6Eemjb5TWagBZCQ">
+            <children xmi:type="notation:Node" xmi:id="_cNRRI1d6Eemjb5TWagBZCQ" type="5010">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_cNRRJFd6Eemjb5TWagBZCQ" x="31" y="5"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_cNSfQFd6Eemjb5TWagBZCQ" type="3014" element="_cM9vIVd6Eemjb5TWagBZCQ">
+              <styles xmi:type="notation:ShapeStyle" xmi:id="_cNSfQVd6Eemjb5TWagBZCQ" fontName="Ubuntu"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_cNSfQld6Eemjb5TWagBZCQ"/>
+            </children>
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_cNRRIVd6Eemjb5TWagBZCQ" fontName="Ubuntu" fontHeight="8"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_cNRRIld6Eemjb5TWagBZCQ" x="677" y="158" width="30" height="30"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_thGJYFd6Eemjb5TWagBZCQ" type="3012" element="_tgr5sFd6Eemjb5TWagBZCQ">
+            <children xmi:type="notation:Node" xmi:id="_thGJY1d6Eemjb5TWagBZCQ" type="5010">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_thGJZFd6Eemjb5TWagBZCQ" x="-27" y="-13"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_thIloFd6Eemjb5TWagBZCQ" type="3005" element="_tgr5sVd6Eemjb5TWagBZCQ">
+              <styles xmi:type="notation:ShapeStyle" xmi:id="_thIloVd6Eemjb5TWagBZCQ" fontName="Ubuntu"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_thIlold6Eemjb5TWagBZCQ"/>
+            </children>
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_thGJYVd6Eemjb5TWagBZCQ" fontName="Ubuntu" fontHeight="8"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_thGJYld6Eemjb5TWagBZCQ" x="-22" y="283" width="30" height="30"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_9qvi8Vd5Eemjb5TWagBZCQ" fontName="Ubuntu" fontHeight="10" bold="true"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_9qvi8ld5Eemjb5TWagBZCQ" x="192" y="120" width="687" height="411"/>
+        </children>
+        <styles xmi:type="notation:DiagramStyle" xmi:id="_9qay0Vd5Eemjb5TWagBZCQ"/>
+        <edges xmi:type="notation:Edge" xmi:id="_aSPH0Fd6Eemjb5TWagBZCQ" type="4001" element="_aR_QMFd6Eemjb5TWagBZCQ" source="_aSHzEFd6Eemjb5TWagBZCQ" target="_aSMEgFd6Eemjb5TWagBZCQ">
+          <children xmi:type="notation:Node" xmi:id="_aSPu4Fd6Eemjb5TWagBZCQ" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_aSPu4Vd6Eemjb5TWagBZCQ" x="-2" y="-8"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_aSQV8Fd6Eemjb5TWagBZCQ" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_aSQV8Vd6Eemjb5TWagBZCQ" x="8" y="11"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_aSQV8ld6Eemjb5TWagBZCQ" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_aSQV81d6Eemjb5TWagBZCQ" x="7" y="11"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_aSPH0Vd6Eemjb5TWagBZCQ"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_aSPH0ld6Eemjb5TWagBZCQ" fontName="Ubuntu" fontHeight="8"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_aSPH01d6Eemjb5TWagBZCQ" points="[-15, 0, 436, 0]$[-368, 0, 83, 0]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_aSWckFd6Eemjb5TWagBZCQ" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_aSWckVd6Eemjb5TWagBZCQ" id="(0.4088669950738916,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_cNSfQ1d6Eemjb5TWagBZCQ" type="4001" element="_cNLKgFd6Eemjb5TWagBZCQ" source="_cNRRIFd6Eemjb5TWagBZCQ" target="_cNR4MFd6Eemjb5TWagBZCQ">
+          <children xmi:type="notation:Node" xmi:id="_cNSfR1d6Eemjb5TWagBZCQ" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_cNSfSFd6Eemjb5TWagBZCQ" x="8" y="-6"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_cNSfSVd6Eemjb5TWagBZCQ" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_cNSfSld6Eemjb5TWagBZCQ" x="-4" y="9"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_cNTGUFd6Eemjb5TWagBZCQ" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_cNTGUVd6Eemjb5TWagBZCQ" x="-5" y="8"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_cNSfRFd6Eemjb5TWagBZCQ"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_cNSfRVd6Eemjb5TWagBZCQ" fontName="Ubuntu" fontHeight="8"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_cNSfRld6Eemjb5TWagBZCQ" points="[-15, 0, 437, 0]$[-367, 0, 85, 0]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_cNTGUld6Eemjb5TWagBZCQ" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_cNTGU1d6Eemjb5TWagBZCQ" id="(0.4121951219512195,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_thJMsFd6Eemjb5TWagBZCQ" type="4001" element="_thDGEFd6Eemjb5TWagBZCQ" source="_thGJYFd6Eemjb5TWagBZCQ" target="_thHXgFd6Eemjb5TWagBZCQ">
+          <children xmi:type="notation:Node" xmi:id="_thJMtFd6Eemjb5TWagBZCQ" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_thJMtVd6Eemjb5TWagBZCQ" x="2" y="-11"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_thJMtld6Eemjb5TWagBZCQ" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_thJMt1d6Eemjb5TWagBZCQ" x="-9" y="9"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_thJMuFd6Eemjb5TWagBZCQ" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_thJMuVd6Eemjb5TWagBZCQ" x="-5" y="8"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_thJMsVd6Eemjb5TWagBZCQ"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_thJMsld6Eemjb5TWagBZCQ" fontName="Ubuntu" fontHeight="8"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_thJMs1d6Eemjb5TWagBZCQ" points="[15, -3, -222, 38]$[163, -29, -74, 12]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_thJzwFd6Eemjb5TWagBZCQ" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_thJzwVd6Eemjb5TWagBZCQ" id="(0.36097560975609755,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_2QlCA1d6Eemjb5TWagBZCQ" type="4001" element="_2QilwFd6Eemjb5TWagBZCQ" source="_2Qka8Fd6Eemjb5TWagBZCQ" target="_thGJYFd6Eemjb5TWagBZCQ">
+          <children xmi:type="notation:Node" xmi:id="_2QlCB1d6Eemjb5TWagBZCQ" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_2QlCCFd6Eemjb5TWagBZCQ" x="-5" y="-5"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_2QlCCVd6Eemjb5TWagBZCQ" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_2QlCCld6Eemjb5TWagBZCQ" x="8" y="9"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_2QlCC1d6Eemjb5TWagBZCQ" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_2QlCDFd6Eemjb5TWagBZCQ" x="8" y="9"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_2QlCBFd6Eemjb5TWagBZCQ"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_2QlCBVd6Eemjb5TWagBZCQ" fontName="Ubuntu" fontHeight="8"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_2QlCBld6Eemjb5TWagBZCQ" points="[-91, -16, 164, 27]$[-240, -41, 15, 2]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_2QlpEFd6Eemjb5TWagBZCQ" id="(0.45073891625615764,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_2QlpEVd6Eemjb5TWagBZCQ" id="(0.5,0.5)"/>
+        </edges>
+      </data>
+    </ownedAnnotationEntries>
+    <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_9p1kBFd5Eemjb5TWagBZCQ" name="ComponentFileProvider" tooltipText="ComponentDefinition: ComponentFileProvider&#xA;">
+      <target xmi:type="ComponentDefinition:ComponentDefinition" href="model/ComponentFileProvider.component#//@component"/>
+      <semanticElements xmi:type="ComponentDefinition:ComponentDefinition" href="model/ComponentFileProvider.component#//@component"/>
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_aRp5AFd6Eemjb5TWagBZCQ" name="FileReadQueryAnsw" tooltipText="AnswerPort" outgoingEdges="_aR_QMFd6Eemjb5TWagBZCQ" width="3" height="3" resizeKind="NSEW">
+        <target xmi:type="ComponentDefinition:AnswerPort" href="model/ComponentFileProvider.component#//@component/@elements.0"/>
+        <semanticElements xmi:type="ComponentDefinition:AnswerPort" href="model/ComponentFileProvider.component#//@component/@elements.0"/>
+        <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+        <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+        <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_aRqgEFd6Eemjb5TWagBZCQ" showIcon="false" id="answer">
+          <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='AnswerPortNode']/@style"/>
+        </ownedStyle>
+        <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='AnswerPortNode']"/>
+      </ownedBorderedNodes>
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_cM9vIFd6Eemjb5TWagBZCQ" name="FileWriteQueryAnsw" tooltipText="AnswerPort" outgoingEdges="_cNLKgFd6Eemjb5TWagBZCQ" width="3" height="3" resizeKind="NSEW">
+        <target xmi:type="ComponentDefinition:AnswerPort" href="model/ComponentFileProvider.component#//@component/@elements.2"/>
+        <semanticElements xmi:type="ComponentDefinition:AnswerPort" href="model/ComponentFileProvider.component#//@component/@elements.2"/>
+        <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+        <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+        <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_cM9vIVd6Eemjb5TWagBZCQ" showIcon="false" id="answer">
+          <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='AnswerPortNode']/@style"/>
+        </ownedStyle>
+        <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='AnswerPortNode']"/>
+      </ownedBorderedNodes>
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_tgr5sFd6Eemjb5TWagBZCQ" name="CoordinationPort" tooltipText="CoordinationSlavePort" outgoingEdges="_thDGEFd6Eemjb5TWagBZCQ" incomingEdges="_2QilwFd6Eemjb5TWagBZCQ" width="-1" height="-1" resizeKind="NSEW">
+        <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentFileProvider.component#//@component/@elements.4"/>
+        <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentFileProvider.component#//@component/@elements.4"/>
+        <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+        <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+        <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
+        <ownedStyle xmi:type="diagram:WorkspaceImage" uid="_tgr5sVd6Eemjb5TWagBZCQ" showIcon="false" workspacePath="/org.sirius.component.design/icons/CoordinationSlave.png">
+          <description xmi:type="style:WorkspaceImageDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='CoordinationSlaveNode']/@style"/>
+        </ownedStyle>
+        <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='CoordinationSlaveNode']"/>
+      </ownedBorderedNodes>
+      <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+      <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+      <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
+      <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_9p1kBVd5Eemjb5TWagBZCQ" labelSize="10" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,245,181">
+        <labelFormat>bold</labelFormat>
+        <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']"/>
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_aRyb4Fd6Eemjb5TWagBZCQ" name="FileReadQueryAnswHandler" tooltipText="RequestHandler" incomingEdges="_aR_QMFd6Eemjb5TWagBZCQ">
+        <target xmi:type="ComponentDefinition:RequestHandler" href="model/ComponentFileProvider.component#//@component/@elements.1"/>
+        <semanticElements xmi:type="ComponentDefinition:RequestHandler" href="model/ComponentFileProvider.component#//@component/@elements.1"/>
+        <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+        <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+        <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_aRzC8Fd6Eemjb5TWagBZCQ" borderSize="1" borderSizeComputationExpression="1">
+          <labelFormat>bold</labelFormat>
+          <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='RequestHandlerContainer']/@style"/>
+        </ownedStyle>
+        <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='RequestHandlerContainer']"/>
+      </ownedDiagramElements>
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_cNCAkFd6Eemjb5TWagBZCQ" name="FileWriteQueryAnswHandler" tooltipText="RequestHandler" incomingEdges="_cNLKgFd6Eemjb5TWagBZCQ">
+        <target xmi:type="ComponentDefinition:RequestHandler" href="model/ComponentFileProvider.component#//@component/@elements.3"/>
+        <semanticElements xmi:type="ComponentDefinition:RequestHandler" href="model/ComponentFileProvider.component#//@component/@elements.3"/>
+        <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+        <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+        <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_cNCAkVd6Eemjb5TWagBZCQ" borderSize="1" borderSizeComputationExpression="1">
+          <labelFormat>bold</labelFormat>
+          <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='RequestHandlerContainer']/@style"/>
+        </ownedStyle>
+        <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='RequestHandlerContainer']"/>
+      </ownedDiagramElements>
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_tg3f4Fd6Eemjb5TWagBZCQ" name="ComponentModes" tooltipText="ComponentModes" incomingEdges="_thDGEFd6Eemjb5TWagBZCQ">
+        <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentFileProvider.component#//@component/@elements.4"/>
+        <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentFileProvider.component#//@component/@elements.4"/>
+        <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+        <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+        <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_tg8_cFd6Eemjb5TWagBZCQ" iconPath="/org.sirius.component.design/icons/switch2.png" borderSize="1" borderSizeComputationExpression="1">
+          <labelFormat>bold</labelFormat>
+          <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@style"/>
+        </ownedStyle>
+        <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']"/>
+      </ownedDiagramElements>
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_2P66sFd6Eemjb5TWagBZCQ" name="ComponentFileProviderParams" tooltipText="ComponentParameters" outgoingEdges="_2QilwFd6Eemjb5TWagBZCQ">
+        <target xmi:type="ComponentParameter:ComponentParametersRef" href="model/ComponentFileProvider.component#//@component/@elements.5"/>
+        <semanticElements xmi:type="ComponentParameter:ComponentParametersRef" href="model/ComponentFileProvider.component#//@component/@elements.5"/>
+        <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+        <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+        <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_2P7hwFd6Eemjb5TWagBZCQ" borderSize="1" borderSizeComputationExpression="1">
+          <labelFormat>bold</labelFormat>
+          <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentParametersContainer']/@style"/>
+        </ownedStyle>
+        <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentParametersContainer']"/>
+      </ownedDiagramElements>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_aR_QMFd6Eemjb5TWagBZCQ" sourceNode="_aRp5AFd6Eemjb5TWagBZCQ" targetNode="_aRyb4Fd6Eemjb5TWagBZCQ">
+      <target xmi:type="ComponentDefinition:RequestHandler" href="model/ComponentFileProvider.component#//@component/@elements.1"/>
+      <semanticElements xmi:type="ComponentDefinition:RequestHandler" href="model/ComponentFileProvider.component#//@component/@elements.1"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_aSAeUFd6Eemjb5TWagBZCQ" targetArrow="OutputClosedArrow" size="2">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='RequestHandlerEdge']/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_aSAeUVd6Eemjb5TWagBZCQ" showIcon="false"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='RequestHandlerEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_cNLKgFd6Eemjb5TWagBZCQ" sourceNode="_cM9vIFd6Eemjb5TWagBZCQ" targetNode="_cNCAkFd6Eemjb5TWagBZCQ">
+      <target xmi:type="ComponentDefinition:RequestHandler" href="model/ComponentFileProvider.component#//@component/@elements.3"/>
+      <semanticElements xmi:type="ComponentDefinition:RequestHandler" href="model/ComponentFileProvider.component#//@component/@elements.3"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_cNLKgVd6Eemjb5TWagBZCQ" targetArrow="OutputClosedArrow" size="2">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='RequestHandlerEdge']/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_cNLKgld6Eemjb5TWagBZCQ" showIcon="false"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='RequestHandlerEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_thDGEFd6Eemjb5TWagBZCQ" sourceNode="_tgr5sFd6Eemjb5TWagBZCQ" targetNode="_tg3f4Fd6Eemjb5TWagBZCQ">
+      <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentFileProvider.component#//@component/@elements.4"/>
+      <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentFileProvider.component#//@component/@elements.4"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_thDtIFd6Eemjb5TWagBZCQ" size="2">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CoordinationSlaveEdge']/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_thDtIVd6Eemjb5TWagBZCQ"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CoordinationSlaveEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_2QilwFd6Eemjb5TWagBZCQ" sourceNode="_2P66sFd6Eemjb5TWagBZCQ" targetNode="_tgr5sFd6Eemjb5TWagBZCQ">
+      <target xmi:type="ComponentParameter:ComponentParametersRef" href="model/ComponentFileProvider.component#//@component/@elements.5"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_2QilwVd6Eemjb5TWagBZCQ" sourceArrow="InputArrow" targetArrow="NoDecoration" size="2">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ParametersEdge']/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_2Qilwld6Eemjb5TWagBZCQ"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ParametersEdge']"/>
+    </ownedDiagramElements>
+    <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
+    <filterVariableHistory xmi:type="diagram:FilterVariableHistory" uid="_9p1kBld5Eemjb5TWagBZCQ"/>
+    <activatedLayers xmi:type="description_1:Layer" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer"/>
+    <target xmi:type="ComponentDefinition:ComponentDefModel" href="model/ComponentFileProvider.component#/"/>
+  </diagram:DSemanticDiagram>
+</xmi:XMI>

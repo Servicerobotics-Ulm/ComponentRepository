@@ -1,0 +1,18 @@
+ComponentDocumentation ComponentFileProvider 
+{
+	ComponentPort FileReadQueryAnsw 
+	{
+		Description: "An query send to this service will trigger the read of the queried file from the filesystem. 
+						In case the file could not be read the query answer will be invalid.
+                        The filename will be interpreted as is, including the path of the file."
+	}
+	ComponentPort FileWriteQueryAnsw 
+	{
+		Description: "An query send to this service will trigger the write of the queried file to the filesystem. 
+						In case the file could not be written the query answer will be invalid.
+						The filename will be interpreted as is, including the path of the file"
+	}
+
+
+	NeutralMode  : "The component does not provide user defined states."
+} 

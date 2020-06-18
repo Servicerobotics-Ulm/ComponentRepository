@@ -1,0 +1,14 @@
+ComponentDefinition ComponentFileProvider logo "/ComponentFileProvider/model/logo.png"
+{
+
+AnswerPort FileReadQueryAnsw implements CommBasicObjects.CommFileReadQuery {
+	}
+	RequestHandler FileReadQueryAnswHandler triggeredFrom FileReadQueryAnsw {
+	}
+	AnswerPort FileWriteQueryAnsw implements CommBasicObjects.CommFileWriteQuery {
+	}
+	RequestHandler FileWriteQueryAnswHandler triggeredFrom FileWriteQueryAnsw {
+	}
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService { }
+	ComponentParameters ComponentFileProviderParams slave CoordinationPort
+}
