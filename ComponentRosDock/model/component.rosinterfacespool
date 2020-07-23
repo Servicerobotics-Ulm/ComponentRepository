@@ -1,3 +1,4 @@
 RosInterfacesPool { 
 	RosSubscriber twist_sub { topicName "/base/twist_controller/command" type "geometry_msgs.Twist" }
+	RosPublisher twist_pub { topicName "/base/twist_controller_seronet/command" type "geometry_msgs.Twist" }
 }

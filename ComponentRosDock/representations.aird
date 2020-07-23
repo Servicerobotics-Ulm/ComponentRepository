@@ -63,6 +63,17 @@
             <styles xmi:type="notation:ShapeStyle" xmi:id="_pW3C0cwtEeq_AYLIjvmSwA" fontName="Ubuntu" fontHeight="8"/>
             <layoutConstraint xmi:type="notation:Bounds" xmi:id="_pW3C0swtEeq_AYLIjvmSwA" x="-22" y="168" width="30" height="30"/>
           </children>
+          <children xmi:type="notation:Node" xmi:id="_hhmAYMzVEeq_AYLIjvmSwA" type="3012" element="_hg6D4MzVEeq_AYLIjvmSwA">
+            <children xmi:type="notation:Node" xmi:id="_hhmAY8zVEeq_AYLIjvmSwA" type="5010">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_hhmAZMzVEeq_AYLIjvmSwA" x="31" y="5"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_hhmncMzVEeq_AYLIjvmSwA" type="3005" element="_hg8gIMzVEeq_AYLIjvmSwA">
+              <styles xmi:type="notation:ShapeStyle" xmi:id="_hhmncczVEeq_AYLIjvmSwA" fontName="Ubuntu"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_hhmncszVEeq_AYLIjvmSwA"/>
+            </children>
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_hhmAYczVEeq_AYLIjvmSwA" fontName="Ubuntu" fontHeight="8"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_hhmAYszVEeq_AYLIjvmSwA" x="-22" y="72" width="30" height="30"/>
+          </children>
           <styles xmi:type="notation:ShapeStyle" xmi:id="_TIva0cwtEeq_AYLIjvmSwA" fontName="Ubuntu" fontHeight="10" bold="true"/>
           <layoutConstraint xmi:type="notation:Bounds" xmi:id="_TIva0swtEeq_AYLIjvmSwA" x="240" y="96" width="543" height="303"/>
         </children>
@@ -99,6 +110,22 @@
           <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_q2-xwMwtEeq_AYLIjvmSwA" id="(0.0,0.3870967741935484)"/>
           <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_q2-xwcwtEeq_AYLIjvmSwA" id="(1.0,0.4)"/>
         </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_ivbsgMzVEeq_AYLIjvmSwA" type="4001" element="_ivRUcMzVEeq_AYLIjvmSwA" source="_j_TvUMwtEeq_AYLIjvmSwA" target="_hhmAYMzVEeq_AYLIjvmSwA">
+          <children xmi:type="notation:Node" xmi:id="_ivcTkMzVEeq_AYLIjvmSwA" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_ivcTkczVEeq_AYLIjvmSwA" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_ivcTkszVEeq_AYLIjvmSwA" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_ivcTk8zVEeq_AYLIjvmSwA" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_ivcTlMzVEeq_AYLIjvmSwA" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_ivcTlczVEeq_AYLIjvmSwA" y="10"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_ivbsgczVEeq_AYLIjvmSwA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_ivbsgszVEeq_AYLIjvmSwA" fontName="Ubuntu" fontHeight="12"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_ivbsg8zVEeq_AYLIjvmSwA" points="[0, 0, 220, 72]$[-220, -72, 0, 0]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ivglAMzVEeq_AYLIjvmSwA" id="(0.0,0.2903225806451613)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ivglAczVEeq_AYLIjvmSwA" id="(1.0,0.4)"/>
+        </edges>
       </data>
     </ownedAnnotationEntries>
     <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_TIT9AMwtEeq_AYLIjvmSwA" name="ComponentRosDock" tooltipText="ComponentDefinition: ComponentRosDock&#xA;">
@@ -120,6 +147,17 @@
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@additionalLayers[name='SeRoNet']/@containerMappings[name='ComponentContainerImport']/@borderedNodeMappings[name='RosMixedPortNode']"/>
       </ownedBorderedNodes>
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_hg6D4MzVEeq_AYLIjvmSwA" name="twist_pub" tooltipText="MixedPortROS" incomingEdges="_ivRUcMzVEeq_AYLIjvmSwA" width="-1" height="-1" resizeKind="NSEW">
+        <target xmi:type="SeronetExtension:MixedPortROS" href="model/ComponentRosDock.component#//@component/@elements.3"/>
+        <semanticElements xmi:type="SeronetExtension:MixedPortROS" href="model/ComponentRosDock.component#//@component/@elements.3"/>
+        <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+        <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+        <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
+        <ownedStyle xmi:type="diagram:WorkspaceImage" uid="_hg8gIMzVEeq_AYLIjvmSwA" showIcon="false" workspacePath="/org.sirius.component.design/icons/RosPort.png">
+          <description xmi:type="style:WorkspaceImageDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@additionalLayers[name='SeRoNet']/@containerMappings[name='ComponentContainerImport']/@borderedNodeMappings[name='RosMixedPortNode']/@style"/>
+        </ownedStyle>
+        <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@additionalLayers[name='SeRoNet']/@containerMappings[name='ComponentContainerImport']/@borderedNodeMappings[name='RosMixedPortNode']"/>
+      </ownedBorderedNodes>
       <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
       <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
       <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
@@ -128,7 +166,7 @@
         <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@style"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:ContainerMappingImport" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@additionalLayers[name='SeRoNet']/@containerMappings[name='ComponentContainerImport']"/>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_j_G7AMwtEeq_AYLIjvmSwA" name="DockActivity" tooltipText="Activity" outgoingEdges="_mr1nAMwtEeq_AYLIjvmSwA _q2tE8MwtEeq_AYLIjvmSwA">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_j_G7AMwtEeq_AYLIjvmSwA" name="DockActivity" tooltipText="Activity" outgoingEdges="_mr1nAMwtEeq_AYLIjvmSwA _q2tE8MwtEeq_AYLIjvmSwA _ivRUcMzVEeq_AYLIjvmSwA">
         <target xmi:type="ComponentDefinition:Activity" href="model/ComponentRosDock.component#//@component/@elements.0"/>
         <semanticElements xmi:type="ComponentDefinition:Activity" href="model/ComponentRosDock.component#//@component/@elements.0"/>
         <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_j_HiEMwtEeq_AYLIjvmSwA" borderSize="1" borderSizeComputationExpression="1">
@@ -161,6 +199,15 @@
       <ownedStyle xmi:type="diagram:EdgeStyle" uid="_q2uTEMwtEeq_AYLIjvmSwA" targetArrow="NoDecoration" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@additionalLayers[name='SeRoNet']/@edgeMappings[name='MixedPortROSLinkEdge']/@style"/>
         <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_q2uTEcwtEeq_AYLIjvmSwA" labelSize="12"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@additionalLayers[name='SeRoNet']/@edgeMappings[name='MixedPortROSLinkEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_ivRUcMzVEeq_AYLIjvmSwA" sourceNode="_j_G7AMwtEeq_AYLIjvmSwA" targetNode="_hg6D4MzVEeq_AYLIjvmSwA">
+      <target xmi:type="SeronetExtension:MixedPortROSLink" href="model/ComponentRosDock.component#//@component/@elements.0/@links.1"/>
+      <semanticElements xmi:type="SeronetExtension:MixedPortROSLink" href="model/ComponentRosDock.component#//@component/@elements.0/@links.1"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_ivRUcczVEeq_AYLIjvmSwA" targetArrow="NoDecoration" size="2">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@additionalLayers[name='SeRoNet']/@edgeMappings[name='MixedPortROSLinkEdge']/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_ivRUcszVEeq_AYLIjvmSwA" labelSize="12"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@additionalLayers[name='SeRoNet']/@edgeMappings[name='MixedPortROSLinkEdge']"/>
     </ownedDiagramElements>

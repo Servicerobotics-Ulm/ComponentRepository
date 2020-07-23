@@ -27,6 +27,7 @@ public:
 	ComponentRosDockRosPortBaseClass() { };
 	virtual ~ComponentRosDockRosPortBaseClass() { }
 	
+	ros::Publisher twist_pub;
 	ros::Subscriber twist_sub;
 };
 

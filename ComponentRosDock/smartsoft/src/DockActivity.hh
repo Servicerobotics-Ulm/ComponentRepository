@@ -19,6 +19,8 @@
 
 #include "DockActivityCore.hh"
 
+#include <geometry_msgs/Twist.h>
+
 class DockActivity  : public DockActivityCore
 {
 private:

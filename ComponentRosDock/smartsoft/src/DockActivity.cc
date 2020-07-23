@@ -71,7 +71,13 @@ int DockActivity::on_execute()
 	// to get the incoming data, use this methods:
 	Smart::StatusCode status;
 
-	std::cout << "Hello from DockActivity " << std::endl;
+
+	geometry_msgs::Twist twist_msg;
+	twist_msg.linear.x = 1.0;
+
+	std::cout << "publishing twist " << std::endl;
+	COMP -> rosPorts -> twist_pub.publish(twist_msg);
+	//twist_pub.publish(twist);
 
 
 	// it is possible to return != 0 (e.g. when the task detects errors), then the outer loop breaks and the task stops

@@ -44,6 +44,9 @@ public:
 	virtual void initialize(ComponentRosDock *component, int argc, char* argv[]) override;
 	virtual int onStartup() override;
 
+	inline ros::Publisher* getTwist_pubPtr() {
+		return &twist_pub;
+	}
 	inline ros::Subscriber* getTwist_subPtr() {
 		return &twist_sub;
 	}

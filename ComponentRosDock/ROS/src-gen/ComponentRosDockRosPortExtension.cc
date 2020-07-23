@@ -44,6 +44,7 @@ void ComponentRosDockRosPortExtension::initialize(ComponentRosDock *component, i
 	
 	component->rosPorts = this;
 	
+	twist_pub = nh->advertise<geometry_msgs::Twist>("/base/twist_controller_seronet/command", 10);
 	twist_sub = nh->subscribe("/base/twist_controller/command", 10, &ComponentRosDockRosPortCallbacks::twist_sub_cb, callbacksPtr);
 }
 

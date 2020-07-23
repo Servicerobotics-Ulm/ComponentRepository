@@ -3,9 +3,11 @@ ComponentDefinition ComponentRosDock logo "/ComponentRosDock/model/logo.png"
 Activity DockActivity
 	{
 		MixedPortROSLink twist_sub
+		MixedPortROSLink twist_pub
 		DefaultTrigger PeriodicTimer 1.0 Hz
 	}
 	OutputPort BaseStateServiceOut implements CommBasicObjects.BaseStateService realizedBy DockActivity {
 	}
 	MixedPortROS twist_sub
+	MixedPortROS twist_pub
 }

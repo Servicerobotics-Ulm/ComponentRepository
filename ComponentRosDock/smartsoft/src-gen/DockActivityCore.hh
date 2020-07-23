@@ -27,6 +27,7 @@
 #include <DockActivityObserverInterface.hh>
 
 #include <geometry_msgs/Twist.h>
+#include <geometry_msgs/Twist.h>
 
 class DockActivityCore
 :	public SmartACE::ManagedTask

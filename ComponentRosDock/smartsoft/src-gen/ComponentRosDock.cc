@@ -34,6 +34,7 @@ ComponentRosDock::ComponentRosDock()
 	baseStateServiceOut = NULL;
 	dockActivity = NULL;
 	dockActivityTrigger = NULL;
+	//twist_pub = NULL;
 	//twist_sub = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
