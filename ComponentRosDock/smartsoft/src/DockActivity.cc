@@ -85,11 +85,11 @@ int DockActivity::on_execute()
 	}
 
 
-	geometry_msgs::Twist twist_msg;
-	twist_msg.linear.x = 1.0;
-
-	std::cout << "publishing twist " << std::endl;
-	COMP -> rosPorts -> twist_pub.publish(twist_msg);
+//	geometry_msgs::Twist twist_msg;
+//	twist_msg.linear.x = 1.0;
+//
+//	std::cout << "publishing twist " << std::endl;
+//	COMP -> rosPorts -> twist_pub.publish(twist_msg);
 	//twist_pub.publish(twist);
 
 

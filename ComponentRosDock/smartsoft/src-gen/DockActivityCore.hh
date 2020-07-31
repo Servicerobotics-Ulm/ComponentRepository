@@ -29,7 +29,8 @@
 #include <DockActivityObserverInterface.hh>
 
 #include <geometry_msgs/Twist.h>
-#include <geometry_msgs/Twist.h>
+#include <std_msgs/String.h>
+#include <std_msgs/String.h>
 
 class DockActivityCore
 :	public SmartACE::ManagedTask
@@ -122,5 +123,6 @@ public:
 	}
 	
 	void twist_sub_cb (const geometry_msgs::Twist::ConstPtr &msg);
+	void dock_action_result_cb (const std_msgs::String::ConstPtr &msg);
 };
 #endif

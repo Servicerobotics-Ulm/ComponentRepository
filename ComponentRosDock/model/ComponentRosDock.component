@@ -3,18 +3,20 @@ ComponentDefinition ComponentRosDock logo "/ComponentRosDock/model/logo.png"
 Activity DockActivity
 	{
 		MixedPortROSLink twist_sub
-		MixedPortROSLink twist_pub
 		InputPortLink BaseStateServiceIn { oversamplingOk undersamplingOk }
 		InputPortLink LaserServiceIn { oversamplingOk undersamplingOk }
-		DefaultTrigger PeriodicTimer 1.0 Hz
+		MixedPortROSLink dock_action_goal
+		MixedPortROSLink dock_action_result
 	}
 
 	MixedPortROS twist_sub
-	MixedPortROS twist_pub
 Activity UndockActivity
 	{
 		InputPortLink BaseStateServiceIn { oversamplingOk undersamplingOk }
 		InputPortLink LaserServiceIn { oversamplingOk undersamplingOk }
+	MixedPortROSLink undock_action_goal
+		MixedPortROSLink undock_action_result
+		MixedPortROSLink twist_sub
 	}
 	InputPort BaseStateServiceIn implements CommBasicObjects.BaseStateService {
 	}
@@ -25,4 +27,8 @@ Activity UndockActivity
 	CoordinationSlavePort CoordinationPort implements CommNavigationObjects.RobotDockingCoordinationService
 	{
 	}
+MixedPortROS dock_action_goal
+	MixedPortROS dock_action_result
+	MixedPortROS undock_action_goal
+	MixedPortROS undock_action_result
 }

@@ -27,8 +27,11 @@ public:
 	ComponentRosDockRosPortBaseClass() { };
 	virtual ~ComponentRosDockRosPortBaseClass() { }
 	
-	ros::Publisher twist_pub;
+	ros::Publisher dock_action_goal;
+	ros::Subscriber dock_action_result;
 	ros::Subscriber twist_sub;
+	ros::Publisher undock_action_goal;
+	ros::Subscriber undock_action_result;
 };
 
 #endif // ROS_PORT_BASE_CLASS_H_

@@ -40,6 +40,9 @@ UndockActivityCore::~UndockActivityCore()
 {
 }
 
+void UndockActivityCore::undock_action_result_cb (const std_msgs::String::ConstPtr &msg) {
+	// implement this method
+}
 
 void UndockActivityCore::notify_all_interaction_observers() {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);

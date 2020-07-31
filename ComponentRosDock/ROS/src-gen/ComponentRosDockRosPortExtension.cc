@@ -44,8 +44,11 @@ void ComponentRosDockRosPortExtension::initialize(ComponentRosDock *component, i
 	
 	component->rosPorts = this;
 	
-	twist_pub = nh->advertise<geometry_msgs::Twist>("/base/twist_controller_seronet/command", 10);
+	dock_action_goal = nh->advertise<std_msgs::String>("/docker_control/dock_seronet/goal", 10);
+	dock_action_result = nh->subscribe("/docker_control/dock_seronet/result", 10, &ComponentRosDockRosPortCallbacks::dock_action_result_cb, callbacksPtr);
 	twist_sub = nh->subscribe("/base/twist_controller/command", 10, &ComponentRosDockRosPortCallbacks::twist_sub_cb, callbacksPtr);
+	undock_action_goal = nh->advertise<std_msgs::String>("/docker_control/undock_seronet/goal", 10);
+	undock_action_result = nh->subscribe("/docker_control/undock_seronet/result", 10, &ComponentRosDockRosPortCallbacks::undock_action_result_cb, callbacksPtr);
 }
 
 int ComponentRosDockRosPortExtension::onStartup()

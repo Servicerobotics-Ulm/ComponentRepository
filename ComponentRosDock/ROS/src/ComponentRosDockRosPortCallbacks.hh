@@ -27,7 +27,11 @@ public:
 	ComponentRosDockRosPortCallbacks();
 	virtual ~ComponentRosDockRosPortCallbacks();
 	
+	virtual void dock_action_result_cb (const std_msgs::String::ConstPtr &msg) override;
+	
 	virtual void twist_sub_cb (const geometry_msgs::Twist::ConstPtr &msg) override;
+	
+	virtual void undock_action_result_cb (const std_msgs::String::ConstPtr &msg) override;
 	
 };
 

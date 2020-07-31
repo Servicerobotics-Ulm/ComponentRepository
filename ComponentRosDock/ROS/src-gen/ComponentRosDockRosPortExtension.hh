@@ -44,11 +44,20 @@ public:
 	virtual void initialize(ComponentRosDock *component, int argc, char* argv[]) override;
 	virtual int onStartup() override;
 
-	inline ros::Publisher* getTwist_pubPtr() {
-		return &twist_pub;
+	inline ros::Publisher* getDock_action_goalPtr() {
+		return &dock_action_goal;
+	}
+	inline ros::Subscriber* getDock_action_resultPtr() {
+		return &dock_action_result;
 	}
 	inline ros::Subscriber* getTwist_subPtr() {
 		return &twist_sub;
+	}
+	inline ros::Publisher* getUndock_action_goalPtr() {
+		return &undock_action_goal;
+	}
+	inline ros::Subscriber* getUndock_action_resultPtr() {
+		return &undock_action_result;
 	}
 
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) override;

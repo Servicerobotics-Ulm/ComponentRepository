@@ -43,8 +43,11 @@ ComponentRosDock::ComponentRosDock()
 	navigationVelocityServiceOut = NULL;
 	undockActivity = NULL;
 	undockActivityTrigger = NULL;
-	//twist_pub = NULL;
+	//dock_action_goal = NULL;
+	//dock_action_result = NULL;
 	//twist_sub = NULL;
+	//undock_action_goal = NULL;
+	//undock_action_result = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;

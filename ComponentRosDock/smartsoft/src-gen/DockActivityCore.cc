@@ -43,6 +43,9 @@ DockActivityCore::~DockActivityCore()
 void DockActivityCore::twist_sub_cb (const geometry_msgs::Twist::ConstPtr &msg) {
 	// implement this method
 }
+void DockActivityCore::dock_action_result_cb (const std_msgs::String::ConstPtr &msg) {
+	// implement this method
+}
 
 void DockActivityCore::notify_all_interaction_observers() {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
