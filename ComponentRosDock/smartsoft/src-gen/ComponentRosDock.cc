@@ -31,9 +31,18 @@ ComponentRosDock::ComponentRosDock()
 	std::cout << "constructor of ComponentRosDock\n";
 	
 	// set all pointer members to NULL
-	baseStateServiceOut = NULL;
+	baseStateServiceIn = NULL;
+	baseStateServiceInInputTaskTrigger = NULL;
+	baseStateServiceInUpcallManager = NULL;
+	//coordinationPort = NULL;
 	dockActivity = NULL;
 	dockActivityTrigger = NULL;
+	laserServiceIn = NULL;
+	laserServiceInInputTaskTrigger = NULL;
+	laserServiceInUpcallManager = NULL;
+	navigationVelocityServiceOut = NULL;
+	undockActivity = NULL;
+	undockActivityTrigger = NULL;
 	//twist_pub = NULL;
 	//twist_sub = NULL;
 	stateChangeHandler = NULL;
@@ -46,8 +55,22 @@ ComponentRosDock::ComponentRosDock()
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
-	connections.baseStateServiceOut.serviceName = "BaseStateServiceOut";
-	connections.baseStateServiceOut.roboticMiddleware = "ACE_SmartSoft";
+	connections.baseStateServiceIn.wiringName = "BaseStateServiceIn";
+	connections.baseStateServiceIn.serverName = "unknown";
+	connections.baseStateServiceIn.serviceName = "unknown";
+	connections.baseStateServiceIn.interval = 1;
+	connections.baseStateServiceIn.roboticMiddleware = "ACE_SmartSoft";
+	connections.laserServiceIn.wiringName = "LaserServiceIn";
+	connections.laserServiceIn.serverName = "unknown";
+	connections.laserServiceIn.serviceName = "unknown";
+	connections.laserServiceIn.interval = 1;
+	connections.laserServiceIn.roboticMiddleware = "ACE_SmartSoft";
+	connections.navigationVelocityServiceOut.initialConnect = false;
+	connections.navigationVelocityServiceOut.wiringName = "NavigationVelocityServiceOut";
+	connections.navigationVelocityServiceOut.serverName = "unknown";
+	connections.navigationVelocityServiceOut.serviceName = "unknown";
+	connections.navigationVelocityServiceOut.interval = 1;
+	connections.navigationVelocityServiceOut.roboticMiddleware = "ACE_SmartSoft";
 	connections.dockActivity.minActFreq = 0.0;
 	connections.dockActivity.maxActFreq = 0.0;
 	connections.dockActivity.trigger = "PeriodicTimer";
@@ -56,6 +79,12 @@ ComponentRosDock::ComponentRosDock()
 	connections.dockActivity.scheduler = "DEFAULT";
 	connections.dockActivity.priority = -1;
 	connections.dockActivity.cpuAffinity = -1;
+	connections.undockActivity.minActFreq = 0.0;
+	connections.undockActivity.maxActFreq = 0.0;
+	// scheduling default parameters
+	connections.undockActivity.scheduler = "DEFAULT";
+	connections.undockActivity.priority = -1;
+	connections.undockActivity.cpuAffinity = -1;
 	
 	// initialize members of ComponentRosDockROSExtension
 	rosPorts = 0;
@@ -94,6 +123,50 @@ void ComponentRosDock::setStartupFinished() {
 }
 
 
+Smart::StatusCode ComponentRosDock::connectBaseStateServiceIn(const std::string &serverName, const std::string &serviceName) {
+	Smart::StatusCode status;
+	
+	std::cout << "connecting to: " << serverName << "; " << serviceName << std::endl;
+	status = baseStateServiceIn->connect(serverName, serviceName);
+	while(status != Smart::SMART_OK)
+	{
+		ACE_OS::sleep(ACE_Time_Value(0,500000));
+		status = COMP->baseStateServiceIn->connect(serverName, serviceName);
+	}
+	std::cout << "connected.\n";
+	baseStateServiceIn->subscribe(connections.baseStateServiceIn.interval);
+	return status;
+}
+Smart::StatusCode ComponentRosDock::connectLaserServiceIn(const std::string &serverName, const std::string &serviceName) {
+	Smart::StatusCode status;
+	
+	std::cout << "connecting to: " << serverName << "; " << serviceName << std::endl;
+	status = laserServiceIn->connect(serverName, serviceName);
+	while(status != Smart::SMART_OK)
+	{
+		ACE_OS::sleep(ACE_Time_Value(0,500000));
+		status = COMP->laserServiceIn->connect(serverName, serviceName);
+	}
+	std::cout << "connected.\n";
+	laserServiceIn->subscribe(connections.laserServiceIn.interval);
+	return status;
+}
+Smart::StatusCode ComponentRosDock::connectNavigationVelocityServiceOut(const std::string &serverName, const std::string &serviceName) {
+	Smart::StatusCode status;
+	
+	if(connections.navigationVelocityServiceOut.initialConnect == false) {
+		return Smart::SMART_OK;
+	}
+	std::cout << "connecting to: " << serverName << "; " << serviceName << std::endl;
+	status = navigationVelocityServiceOut->connect(serverName, serviceName);
+	while(status != Smart::SMART_OK)
+	{
+		ACE_OS::sleep(ACE_Time_Value(0,500000));
+		status = COMP->navigationVelocityServiceOut->connect(serverName, serviceName);
+	}
+	std::cout << "connected.\n";
+	return status;
+}
 
 
 /**
@@ -103,6 +176,12 @@ void ComponentRosDock::setStartupFinished() {
 Smart::StatusCode ComponentRosDock::connectAndStartAllServices() {
 	Smart::StatusCode status = Smart::SMART_OK;
 	
+	status = connectBaseStateServiceIn(connections.baseStateServiceIn.serverName, connections.baseStateServiceIn.serviceName);
+	if(status != Smart::SMART_OK) return status;
+	status = connectLaserServiceIn(connections.laserServiceIn.serverName, connections.laserServiceIn.serviceName);
+	if(status != Smart::SMART_OK) return status;
+	status = connectNavigationVelocityServiceOut(connections.navigationVelocityServiceOut.serverName, connections.navigationVelocityServiceOut.serviceName);
+	if(status != Smart::SMART_OK) return status;
 	return status;
 }
 
@@ -124,6 +203,20 @@ void ComponentRosDock::startAllTasks() {
 	} else {
 		dockActivity->start();
 	}
+	// start task UndockActivity
+	if(connections.undockActivity.scheduler != "DEFAULT") {
+		ACE_Sched_Params undockActivity_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
+		if(connections.undockActivity.scheduler == "FIFO") {
+			undockActivity_SchedParams.policy(ACE_SCHED_FIFO);
+			undockActivity_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+		} else if(connections.undockActivity.scheduler == "RR") {
+			undockActivity_SchedParams.policy(ACE_SCHED_RR);
+			undockActivity_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+		}
+		undockActivity->start(undockActivity_SchedParams, connections.undockActivity.cpuAffinity);
+	} else {
+		undockActivity->start();
+	}
 }
 
 /**
@@ -135,6 +228,8 @@ void ComponentRosDock::startAllTimers() {
 
 Smart::TaskTriggerSubject* ComponentRosDock::getInputTaskTriggerFromString(const std::string &client)
 {
+	if(client == "BaseStateServiceIn") return baseStateServiceInInputTaskTrigger;
+	if(client == "LaserServiceIn") return laserServiceInInputTaskTrigger;
 	
 	return NULL;
 }
@@ -189,11 +284,17 @@ void ComponentRosDock::init(int argc, char *argv[])
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
-		baseStateServiceOut = portFactoryRegistry[connections.baseStateServiceOut.roboticMiddleware]->createBaseStateServiceOut(connections.baseStateServiceOut.serviceName);
 		
 		// create client ports
+		baseStateServiceIn = portFactoryRegistry[connections.baseStateServiceIn.roboticMiddleware]->createBaseStateServiceIn();
+		laserServiceIn = portFactoryRegistry[connections.laserServiceIn.roboticMiddleware]->createLaserServiceIn();
+		navigationVelocityServiceOut = portFactoryRegistry[connections.navigationVelocityServiceOut.roboticMiddleware]->createNavigationVelocityServiceOut();
 		
 		// create InputTaskTriggers and UpcallManagers
+		baseStateServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(baseStateServiceIn);
+		baseStateServiceInUpcallManager = new BaseStateServiceInUpcallManager(baseStateServiceIn);
+		laserServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan>(laserServiceIn);
+		laserServiceInUpcallManager = new LaserServiceInUpcallManager(laserServiceIn);
 		
 		// create input-handler
 		
@@ -210,12 +311,26 @@ void ComponentRosDock::init(int argc, char *argv[])
 		
 		wiringSlave = new SmartACE::WiringSlave(component);
 		// add client port to wiring slave
+		if(connections.baseStateServiceIn.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::PushClient<CommBasicObjects::CommBaseState>*>(baseStateServiceIn)->add(wiringSlave, connections.baseStateServiceIn.wiringName);
+		}
+		if(connections.laserServiceIn.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::PushClient<CommBasicObjects::CommMobileLaserScan>*>(laserServiceIn)->add(wiringSlave, connections.laserServiceIn.wiringName);
+		}
+		if(connections.navigationVelocityServiceOut.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::SendClient<CommBasicObjects::CommNavigationVelocity>*>(navigationVelocityServiceOut)->add(wiringSlave, connections.navigationVelocityServiceOut.wiringName);
+		}
 		
 		
 		
 		// create Task DockActivity
 		dockActivity = new DockActivity(component);
 		// configure input-links
+		baseStateServiceInUpcallManager->attach(dockActivity);
+		laserServiceInUpcallManager->attach(dockActivity);
 		// configure task-trigger (if task is configurable)
 		if(connections.dockActivity.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
@@ -250,6 +365,33 @@ void ComponentRosDock::init(int argc, char *argv[])
 				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task DockActivity" << std::endl;
 			}
 		}
+		
+		// create Task UndockActivity
+		undockActivity = new UndockActivity(component);
+		// configure input-links
+		baseStateServiceInUpcallManager->attach(undockActivity);
+		laserServiceInUpcallManager->attach(undockActivity);
+		// configure task-trigger (if task is configurable)
+		if(connections.undockActivity.trigger == "PeriodicTimer") {
+			// create PeriodicTimerTrigger
+			int microseconds = 1000*1000 / connections.undockActivity.periodicActFreq;
+			if(microseconds > 0) {
+				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
+				triggerPtr->attach(undockActivity);
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				// store trigger in class member
+				undockActivityTrigger = triggerPtr;
+			} else {
+				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task UndockActivity" << std::endl;
+			}
+		} else if(connections.undockActivity.trigger == "DataTriggered") {
+			undockActivityTrigger = getInputTaskTriggerFromString(connections.undockActivity.inPortRef);
+			if(undockActivityTrigger != NULL) {
+				undockActivityTrigger->attach(undockActivity, connections.undockActivity.prescale);
+			} else {
+				std::cerr << "ERROR: could not set-up InPort " << connections.undockActivity.inPortRef << " as activation source for Task UndockActivity" << std::endl;
+			}
+		} 
 		
 		
 		// link observers with subjects
@@ -312,20 +454,36 @@ void ComponentRosDock::fini()
 	
 	// destroy all task instances
 	// unlink all UpcallManagers
+	baseStateServiceInUpcallManager->detach(dockActivity);
+	laserServiceInUpcallManager->detach(dockActivity);
 	// unlink the TaskTrigger
 	if(dockActivityTrigger != NULL){
 		dockActivityTrigger->detach(dockActivity);
 		delete dockActivity;
 	}
+	// unlink all UpcallManagers
+	baseStateServiceInUpcallManager->detach(undockActivity);
+	laserServiceInUpcallManager->detach(undockActivity);
+	// unlink the TaskTrigger
+	if(undockActivityTrigger != NULL){
+		undockActivityTrigger->detach(undockActivity);
+		delete undockActivity;
+	}
 
 	// destroy all input-handler
 
 	// destroy InputTaskTriggers and UpcallManagers
+	delete baseStateServiceInInputTaskTrigger;
+	delete baseStateServiceInUpcallManager;
+	delete laserServiceInInputTaskTrigger;
+	delete laserServiceInUpcallManager;
 
 	// destroy client ports
+	delete baseStateServiceIn;
+	delete laserServiceIn;
+	delete navigationVelocityServiceOut;
 
 	// destroy server ports
-	delete baseStateServiceOut;
 	// destroy event-test handlers (if needed)
 	
 	// destroy request-handlers
@@ -428,12 +586,31 @@ void ComponentRosDock::loadParameter(int argc, char *argv[])
 			parameter.getBoolean("component", "useLogger", connections.component.useLogger);
 		}
 		
-		
-		// load parameters for server BaseStateServiceOut
-		parameter.getString("BaseStateServiceOut", "serviceName", connections.baseStateServiceOut.serviceName);
-		if(parameter.checkIfParameterExists("BaseStateServiceOut", "roboticMiddleware")) {
-			parameter.getString("BaseStateServiceOut", "roboticMiddleware", connections.baseStateServiceOut.roboticMiddleware);
+		// load parameters for client BaseStateServiceIn
+		parameter.getString("BaseStateServiceIn", "serviceName", connections.baseStateServiceIn.serviceName);
+		parameter.getString("BaseStateServiceIn", "serverName", connections.baseStateServiceIn.serverName);
+		parameter.getString("BaseStateServiceIn", "wiringName", connections.baseStateServiceIn.wiringName);
+		parameter.getInteger("BaseStateServiceIn", "interval", connections.baseStateServiceIn.interval);
+		if(parameter.checkIfParameterExists("BaseStateServiceIn", "roboticMiddleware")) {
+			parameter.getString("BaseStateServiceIn", "roboticMiddleware", connections.baseStateServiceIn.roboticMiddleware);
 		}
+		// load parameters for client LaserServiceIn
+		parameter.getString("LaserServiceIn", "serviceName", connections.laserServiceIn.serviceName);
+		parameter.getString("LaserServiceIn", "serverName", connections.laserServiceIn.serverName);
+		parameter.getString("LaserServiceIn", "wiringName", connections.laserServiceIn.wiringName);
+		parameter.getInteger("LaserServiceIn", "interval", connections.laserServiceIn.interval);
+		if(parameter.checkIfParameterExists("LaserServiceIn", "roboticMiddleware")) {
+			parameter.getString("LaserServiceIn", "roboticMiddleware", connections.laserServiceIn.roboticMiddleware);
+		}
+		// load parameters for client NavigationVelocityServiceOut
+		parameter.getBoolean("NavigationVelocityServiceOut", "initialConnect", connections.navigationVelocityServiceOut.initialConnect);
+		parameter.getString("NavigationVelocityServiceOut", "serviceName", connections.navigationVelocityServiceOut.serviceName);
+		parameter.getString("NavigationVelocityServiceOut", "serverName", connections.navigationVelocityServiceOut.serverName);
+		parameter.getString("NavigationVelocityServiceOut", "wiringName", connections.navigationVelocityServiceOut.wiringName);
+		if(parameter.checkIfParameterExists("NavigationVelocityServiceOut", "roboticMiddleware")) {
+			parameter.getString("NavigationVelocityServiceOut", "roboticMiddleware", connections.navigationVelocityServiceOut.roboticMiddleware);
+		}
+		
 		
 		// load parameters for task DockActivity
 		parameter.getDouble("DockActivity", "minActFreqHz", connections.dockActivity.minActFreq);
@@ -453,6 +630,25 @@ void ComponentRosDock::loadParameter(int argc, char *argv[])
 		}
 		if(parameter.checkIfParameterExists("DockActivity", "cpuAffinity")) {
 			parameter.getInteger("DockActivity", "cpuAffinity", connections.dockActivity.cpuAffinity);
+		}
+		// load parameters for task UndockActivity
+		parameter.getDouble("UndockActivity", "minActFreqHz", connections.undockActivity.minActFreq);
+		parameter.getDouble("UndockActivity", "maxActFreqHz", connections.undockActivity.maxActFreq);
+		parameter.getString("UndockActivity", "triggerType", connections.undockActivity.trigger);
+		if(connections.undockActivity.trigger == "PeriodicTimer") {
+			parameter.getDouble("UndockActivity", "periodicActFreqHz", connections.undockActivity.periodicActFreq);
+		} else if(connections.undockActivity.trigger == "DataTriggered") {
+			parameter.getString("UndockActivity", "inPortRef", connections.undockActivity.inPortRef);
+			parameter.getInteger("UndockActivity", "prescale", connections.undockActivity.prescale);
+		}
+		if(parameter.checkIfParameterExists("UndockActivity", "scheduler")) {
+			parameter.getString("UndockActivity", "scheduler", connections.undockActivity.scheduler);
+		}
+		if(parameter.checkIfParameterExists("UndockActivity", "priority")) {
+			parameter.getInteger("UndockActivity", "priority", connections.undockActivity.priority);
+		}
+		if(parameter.checkIfParameterExists("UndockActivity", "cpuAffinity")) {
+			parameter.getInteger("UndockActivity", "cpuAffinity", connections.undockActivity.cpuAffinity);
 		}
 		
 		// load parameters for ComponentRosDockROSExtension

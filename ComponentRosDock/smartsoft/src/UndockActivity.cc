@@ -14,29 +14,23 @@
 // If you want the toolchain to re-generate this file, please 
 // delete it before running the code generator.
 //--------------------------------------------------------------------------
-#include "DockActivity.hh"
+#include "UndockActivity.hh"
 #include "ComponentRosDock.hh"
 
 #include <iostream>
 
-DockActivity::DockActivity(SmartACE::SmartComponent *comp) 
-:	DockActivityCore(comp)
+UndockActivity::UndockActivity(SmartACE::SmartComponent *comp) 
+:	UndockActivityCore(comp)
 {
-	std::cout << "constructor DockActivity\n";
+	std::cout << "constructor UndockActivity\n";
 }
-DockActivity::~DockActivity() 
+UndockActivity::~UndockActivity() 
 {
-	std::cout << "destructor DockActivity\n";
-}
-
-void DockActivity::twist_sub_cb(const geometry_msgs::Twist::ConstPtr &msg)
-{
-	std::unique_lock<std::mutex> lck (mtx);
-
-	std::cout << msg->linear << std::endl;
+	std::cout << "destructor UndockActivity\n";
 }
 
-void DockActivity::on_BaseStateServiceIn(const CommBasicObjects::CommBaseState &input)
+
+void UndockActivity::on_BaseStateServiceIn(const CommBasicObjects::CommBaseState &input)
 {
 	// upcall triggered from InputPort BaseStateServiceIn
 	// - use a local mutex here, because this upcal is called asynchroneously from outside of this task
@@ -44,7 +38,7 @@ void DockActivity::on_BaseStateServiceIn(const CommBasicObjects::CommBaseState &
 	// - if you need to implement a long-running procedure, do so within the on_execute() method and in
 	//   there, use the method baseStateServiceInGetUpdate(input) to get a copy of the input object
 }
-void DockActivity::on_LaserServiceIn(const CommBasicObjects::CommMobileLaserScan &input)
+void UndockActivity::on_LaserServiceIn(const CommBasicObjects::CommMobileLaserScan &input)
 {
 	// upcall triggered from InputPort LaserServiceIn
 	// - use a local mutex here, because this upcal is called asynchroneously from outside of this task
@@ -53,13 +47,13 @@ void DockActivity::on_LaserServiceIn(const CommBasicObjects::CommMobileLaserScan
 	//   there, use the method laserServiceInGetUpdate(input) to get a copy of the input object
 }
 
-int DockActivity::on_entry()
+int UndockActivity::on_entry()
 {
 	// do initialization procedures here, which are called once, each time the task is started
 	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
 	return 0;
 }
-int DockActivity::on_execute()
+int UndockActivity::on_execute()
 {
 	// this method is called from an outside loop,
 	// hence, NEVER use an infinite loop (like "while(1)") here inside!!!
@@ -84,19 +78,12 @@ int DockActivity::on_execute()
 		std::cout << "received: " << laserServiceInObject << std::endl;
 	}
 
-
-	geometry_msgs::Twist twist_msg;
-	twist_msg.linear.x = 1.0;
-
-	std::cout << "publishing twist " << std::endl;
-	COMP -> rosPorts -> twist_pub.publish(twist_msg);
-	//twist_pub.publish(twist);
-
+	std::cout << "Hello from UndockActivity " << std::endl;
 
 	// it is possible to return != 0 (e.g. when the task detects errors), then the outer loop breaks and the task stops
 	return 0;
 }
-int DockActivity::on_exit()
+int UndockActivity::on_exit()
 {
 	// use this method to clean-up resources which are initialized in on_entry() and needs to be freed before the on_execute() can be called again
 	return 0;

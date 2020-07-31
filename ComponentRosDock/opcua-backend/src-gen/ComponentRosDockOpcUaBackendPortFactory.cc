@@ -30,6 +30,8 @@
 
 // include referenced CommunicationObject SeRoNetSDK self description implementations
 #include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommMobileLaserScanOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommNavigationVelocityOpcUa.hh"
 
 // create a static instance of the OpcUaBackendPortFactory
 static ComponentRosDockOpcUaBackendPortFactory OpcUaBackendPortFactory;
@@ -57,11 +59,21 @@ int ComponentRosDockOpcUaBackendPortFactory::onStartup()
 	return -1;
 }
 
-
-Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * ComponentRosDockOpcUaBackendPortFactory::createBaseStateServiceOut(const std::string &serviceName)
+Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * ComponentRosDockOpcUaBackendPortFactory::createBaseStateServiceIn()
 {
-	return new SeRoNet::OPCUA::Server::PushServer<CommBasicObjects::CommBaseState>(componentImpl, serviceName);
+	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommBaseState>(componentImpl);
 }
+
+Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * ComponentRosDockOpcUaBackendPortFactory::createLaserServiceIn()
+{
+	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommMobileLaserScan>(componentImpl);
+}
+
+Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> * ComponentRosDockOpcUaBackendPortFactory::createNavigationVelocityServiceOut()
+{
+	return new SeRoNet::OPCUA::Client::SendClient<CommBasicObjects::CommNavigationVelocity>(componentImpl);
+}
+
 
 
 int ComponentRosDockOpcUaBackendPortFactory::task_execution()

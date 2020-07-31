@@ -52,11 +52,21 @@ int ComponentRosDockAcePortFactory::onStartup()
 	return componentImpl->startComponentInfrastructure();
 }
 
-
-Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * ComponentRosDockAcePortFactory::createBaseStateServiceOut(const std::string &serviceName)
+Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * ComponentRosDockAcePortFactory::createBaseStateServiceIn()
 {
-	return new SmartACE::PushServer<CommBasicObjects::CommBaseState>(componentImpl, serviceName);
+	return new SmartACE::PushClient<CommBasicObjects::CommBaseState>(componentImpl);
 }
+
+Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * ComponentRosDockAcePortFactory::createLaserServiceIn()
+{
+	return new SmartACE::PushClient<CommBasicObjects::CommMobileLaserScan>(componentImpl);
+}
+
+Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> * ComponentRosDockAcePortFactory::createNavigationVelocityServiceOut()
+{
+	return new SmartACE::SendClient<CommBasicObjects::CommNavigationVelocity>(componentImpl);
+}
+
 
 
 SmartACE::SmartComponent* ComponentRosDockAcePortFactory::getComponentImpl()

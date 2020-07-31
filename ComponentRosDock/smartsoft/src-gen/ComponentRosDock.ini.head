@@ -49,18 +49,51 @@ periodicActFreqHz 1.0
 # priority 0
 # cpuAffinity 0
 
+[UndockActivity]
+minActFreqHz 0.0
+maxActFreqHz 0.0
+# other trigger-types are:
+#triggerType PeriodicTimer
+#periodicActFreqHz 0.0
+# or alternatively:
+#triggerType DataTriggered
+#inPortRef <InPortName>
+#prescale 1
+# optional scheduling parameters
+# scheduler FIFO
+# priority 0
+# cpuAffinity 0
+
 ##########################
 # InputHandler parameters
 
 ##########################
 # server port parameter
 
-[BaseStateServiceOut]
-serviceName BaseStateServiceOut
-roboticMiddleware ACE_SmartSoft
-
 ##########################
 # client port parameter
+
+[BaseStateServiceIn]
+serverName unknown
+serviceName unknown
+wiringName BaseStateServiceIn
+interval 1
+roboticMiddleware ACE_SmartSoft
+
+[LaserServiceIn]
+serverName unknown
+serviceName unknown
+wiringName LaserServiceIn
+interval 1
+roboticMiddleware ACE_SmartSoft
+
+[NavigationVelocityServiceOut]
+initialConnect false
+serverName unknown
+serviceName unknown
+wiringName NavigationVelocityServiceOut
+interval 1
+roboticMiddleware ACE_SmartSoft
 
 ##########################
 ## parameters of ComponentRosDockROSExtension

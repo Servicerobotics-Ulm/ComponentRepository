@@ -14,26 +14,20 @@
 // If you want the toolchain to re-generate this file, please 
 // delete it before running the code generator.
 //--------------------------------------------------------------------------
-#ifndef _DOCKACTIVITY_HH
-#define _DOCKACTIVITY_HH
+#ifndef _UNDOCKACTIVITY_HH
+#define _UNDOCKACTIVITY_HH
 
-#include "DockActivityCore.hh"
+#include "UndockActivityCore.hh"
 
-#include <geometry_msgs/Twist.h>
-
-class DockActivity  : public DockActivityCore
+class UndockActivity  : public UndockActivityCore
 {
 private:
-	std::mutex mtx;
-
 	virtual void on_BaseStateServiceIn(const CommBasicObjects::CommBaseState &input);
 	virtual void on_LaserServiceIn(const CommBasicObjects::CommMobileLaserScan &input);
 public:
-	DockActivity(SmartACE::SmartComponent *comp);
-	virtual ~DockActivity();
+	UndockActivity(SmartACE::SmartComponent *comp);
+	virtual ~UndockActivity();
 	
-	void twist_sub_cb(const geometry_msgs::Twist::ConstPtr &msg);
-
 	virtual int on_entry();
 	virtual int on_execute();
 	virtual int on_exit();

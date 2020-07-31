@@ -4,10 +4,25 @@ Activity DockActivity
 	{
 		MixedPortROSLink twist_sub
 		MixedPortROSLink twist_pub
+		InputPortLink BaseStateServiceIn { oversamplingOk undersamplingOk }
+		InputPortLink LaserServiceIn { oversamplingOk undersamplingOk }
 		DefaultTrigger PeriodicTimer 1.0 Hz
 	}
-	OutputPort BaseStateServiceOut implements CommBasicObjects.BaseStateService realizedBy DockActivity {
-	}
+
 	MixedPortROS twist_sub
 	MixedPortROS twist_pub
+Activity UndockActivity
+	{
+		InputPortLink BaseStateServiceIn { oversamplingOk undersamplingOk }
+		InputPortLink LaserServiceIn { oversamplingOk undersamplingOk }
+	}
+	InputPort BaseStateServiceIn implements CommBasicObjects.BaseStateService {
+	}
+	InputPort LaserServiceIn implements CommBasicObjects.LaserService {
+	}
+	OutputPort NavigationVelocityServiceOut implements CommNavigationObjects.NavigationVelocityService realizedBy DockActivity {
+	}
+	CoordinationSlavePort CoordinationPort implements CommNavigationObjects.RobotDockingCoordinationService
+	{
+	}
 }

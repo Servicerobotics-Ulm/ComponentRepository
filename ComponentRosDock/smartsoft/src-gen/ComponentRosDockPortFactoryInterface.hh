@@ -20,6 +20,10 @@
 // include communication objects
 #include <CommBasicObjects/CommBaseState.hh>
 #include <CommBasicObjects/CommBaseStateACE.hh>
+#include <CommBasicObjects/CommMobileLaserScan.hh>
+#include <CommBasicObjects/CommMobileLaserScanACE.hh>
+#include <CommBasicObjects/CommNavigationVelocity.hh>
+#include <CommBasicObjects/CommNavigationVelocityACE.hh>
 
 #include <chrono>
 
@@ -37,8 +41,10 @@ public:
 	virtual void initialize(ComponentRosDock *component, int argc, char* argv[]) = 0;
 	virtual int onStartup() = 0;
 
+	virtual Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * createBaseStateServiceIn() = 0;
+	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * createLaserServiceIn() = 0;
+	virtual Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> * createNavigationVelocityServiceOut() = 0;
 	
-	virtual Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * createBaseStateServiceOut(const std::string &serviceName) = 0;
 
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) = 0;
 	virtual void destroy() = 0;

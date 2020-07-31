@@ -42,10 +42,17 @@ class ComponentRosDockExtension;
 // include communication objects
 #include <CommBasicObjects/CommBaseState.hh>
 #include <CommBasicObjects/CommBaseStateACE.hh>
+#include <CommBasicObjects/CommMobileLaserScan.hh>
+#include <CommBasicObjects/CommMobileLaserScanACE.hh>
+#include <CommBasicObjects/CommNavigationVelocity.hh>
+#include <CommBasicObjects/CommNavigationVelocityACE.hh>
 
 // include tasks
 #include "DockActivity.hh"
+#include "UndockActivity.hh"
 // include UpcallManagers
+#include "BaseStateServiceInUpcallManager.hh"
+#include "LaserServiceInUpcallManager.hh"
 
 // include input-handler(s)
 // include request-handler(s)
@@ -91,15 +98,25 @@ public:
 	// define tasks
 	Smart::TaskTriggerSubject* dockActivityTrigger;
 	DockActivity *dockActivity;
+	Smart::TaskTriggerSubject* undockActivityTrigger;
+	UndockActivity *undockActivity;
 	
 	// define input-ports
+	// InputPort BaseStateServiceIn
+	Smart::IPushClientPattern<CommBasicObjects::CommBaseState> *baseStateServiceIn;
+	Smart::InputTaskTrigger<CommBasicObjects::CommBaseState> *baseStateServiceInInputTaskTrigger;
+	BaseStateServiceInUpcallManager *baseStateServiceInUpcallManager;
+	// InputPort LaserServiceIn
+	Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> *laserServiceIn;
+	Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan> *laserServiceInInputTaskTrigger;
+	LaserServiceInUpcallManager *laserServiceInUpcallManager;
 	
 	// define request-ports
 	
 	// define input-handler
 	
 	// define output-ports
-	Smart::IPushServerPattern<CommBasicObjects::CommBaseState> *baseStateServiceOut;
+	Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> *navigationVelocityServiceOut;
 	
 	// define answer-ports
 	
@@ -158,6 +175,9 @@ public:
 	/// start all associated timers
 	void startAllTimers();
 	
+	Smart::StatusCode connectBaseStateServiceIn(const std::string &serverName, const std::string &serviceName);
+	Smart::StatusCode connectLaserServiceIn(const std::string &serverName, const std::string &serviceName);
+	Smart::StatusCode connectNavigationVelocityServiceOut(const std::string &serverName, const std::string &serviceName);
 
 	// return singleton instance
 	static ComponentRosDock* instance()
@@ -204,16 +224,50 @@ public:
 			int priority;
 			int cpuAffinity;
 		} dockActivity;
+		struct UndockActivity_struct {
+			double minActFreq;
+			double maxActFreq;
+			std::string trigger;
+			// only one of the following two params is 
+			// actually used at run-time according 
+			// to the system config model
+			double periodicActFreq;
+			// or
+			std::string inPortRef;
+			int prescale;
+			// scheduling parameters
+			std::string scheduler;
+			int priority;
+			int cpuAffinity;
+		} undockActivity;
 		
 		//--- upcall parameter ---
 		
 		//--- server port parameter ---
-		struct BaseStateServiceOut_struct {
-				std::string serviceName;
-				std::string roboticMiddleware;
-		} baseStateServiceOut;
 	
 		//--- client port parameter ---
+		struct BaseStateServiceIn_struct {
+			std::string serverName;
+			std::string serviceName;
+			std::string wiringName;
+			long interval;
+			std::string roboticMiddleware;
+		} baseStateServiceIn;
+		struct LaserServiceIn_struct {
+			std::string serverName;
+			std::string serviceName;
+			std::string wiringName;
+			long interval;
+			std::string roboticMiddleware;
+		} laserServiceIn;
+		struct NavigationVelocityServiceOut_struct {
+			bool initialConnect;
+			std::string serverName;
+			std::string serviceName;
+			std::string wiringName;
+			long interval;
+			std::string roboticMiddleware;
+		} navigationVelocityServiceOut;
 		
 		// -- parameters for ComponentRosDockROSExtension
 		

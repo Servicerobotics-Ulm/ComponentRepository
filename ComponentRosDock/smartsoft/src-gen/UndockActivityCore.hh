@@ -13,8 +13,8 @@
 // Please do not modify this file. It will be re-generated
 // running the code generator.
 //--------------------------------------------------------------------------
-#ifndef _DOCKACTIVITY_CORE_HH
-#define _DOCKACTIVITY_CORE_HH
+#ifndef _UNDOCKACTIVITY_CORE_HH
+#define _UNDOCKACTIVITY_CORE_HH
 	
 #include "aceSmartSoft.hh"
 
@@ -23,15 +23,12 @@
 #include "LaserServiceInUpcallInterface.hh"
 
 // include communication-objects for output ports
-#include <CommBasicObjects/CommNavigationVelocity.hh>
 
 // include all interaction-observer interfaces
-#include <DockActivityObserverInterface.hh>
+#include <UndockActivityObserverInterface.hh>
 
-#include <geometry_msgs/Twist.h>
-#include <geometry_msgs/Twist.h>
 
-class DockActivityCore
+class UndockActivityCore
 :	public SmartACE::ManagedTask
 ,	public Smart::TaskTriggerSubject
 ,	public BaseStateServiceInUpcallInterface
@@ -84,8 +81,6 @@ protected:
 		return laserServiceInStatus;
 	}
 	
-	// this method is meant to be used in derived classes
-	Smart::StatusCode navigationVelocityServiceOutPut(CommBasicObjects::CommNavigationVelocity &navigationVelocityServiceOutDataObject);
 	
 	
 /**
@@ -93,16 +88,16 @@ protected:
  */
 private:
 	std::mutex interaction_observers_mutex;
-	std::list<DockActivityObserverInterface*> interaction_observers;
+	std::list<UndockActivityObserverInterface*> interaction_observers;
 protected:
 	void notify_all_interaction_observers();
 public:
-	void attach_interaction_observer(DockActivityObserverInterface *observer);
-	void detach_interaction_observer(DockActivityObserverInterface *observer);
+	void attach_interaction_observer(UndockActivityObserverInterface *observer);
+	void detach_interaction_observer(UndockActivityObserverInterface *observer);
 
 public:
-	DockActivityCore(Smart::IComponent *comp, const bool &useDefaultState=true);
-	virtual ~DockActivityCore();
+	UndockActivityCore(Smart::IComponent *comp, const bool &useDefaultState=true);
+	virtual ~UndockActivityCore();
 	
 	inline void setUpLogging(const int &taskNbr, const bool &useLogging=true) {
 		this->taskLoggingId = taskNbr;
@@ -121,6 +116,5 @@ public:
 		return currentUpdateCount;
 	}
 	
-	void twist_sub_cb (const geometry_msgs::Twist::ConstPtr &msg);
 };
 #endif
