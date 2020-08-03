@@ -115,9 +115,13 @@ processorLock.acquire();
 		}
 	}while(status != Smart::SMART_OK && laserscan.is_scan_valid()==false );
 
-	std::cout<<"[GMappingTask::on_entry()] Scan points: "<<laserscan.get_scan_size()<<std::endl;
-	std::cout<<"[GMappingTask::on_entry()] Scan max points : "<<laserscan.get_max_scan_size()<<std::endl;
-	std::cout<<"[GMappingTask::on_entry()] Scan res: "<<laserscan.get_scan_resolution()<<std::endl;
+	std::cout<<"[GMappingTask::initGMappingProcessor()] Scan points: "<<laserscan.get_scan_size()<<std::endl;
+	std::cout<<"[GMappingTask::initGMappingProcessor()] Scan max points : "<<laserscan.get_max_scan_size()<<std::endl;
+	std::cout<<"[GMappingTask::initGMappingProcessor()] Scan res: "<<laserscan.get_scan_resolution()<<std::endl;
+
+	if(COMP->getGlobalState().getSettings().getVerbose()){
+		std::cout<<"[GMappingTask::initGMappingProcessor()] laser commObj:"<<laserscan<<std::endl;
+	}
 
 	m_frontLaser=0;
 	sensorMap.clear();
@@ -230,6 +234,7 @@ processorLock.acquire();
 					initialPose);
 
 processorLock.release();
+std::cout<<"[GMappingTask::initGMappingProcessor()] - DONE"<<std::endl;
 }
 
 void GMappingTask::helperDeleteProcessor(){
