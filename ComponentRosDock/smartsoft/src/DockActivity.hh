@@ -20,6 +20,7 @@
 #include "DockActivityCore.hh"
 
 #include <geometry_msgs/Twist.h>
+#include <std_msgs/String.h>
 
 class DockActivity  : public DockActivityCore
 {
@@ -28,6 +29,8 @@ private:
 
 	virtual void on_BaseStateServiceIn(const CommBasicObjects::CommBaseState &input);
 	virtual void on_LaserServiceIn(const CommBasicObjects::CommMobileLaserScan &input);
+	virtual void dock();
+
 public:
 	DockActivity(SmartACE::SmartComponent *comp);
 	virtual ~DockActivity();

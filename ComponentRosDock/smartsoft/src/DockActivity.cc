@@ -56,6 +56,16 @@ void DockActivity::twist_sub_cb(const geometry_msgs::Twist::ConstPtr &msg)
 	}
 }
 
+void DockActivity::dock()
+{
+	std_msgs::String dock_goal;
+	dock_goal.data = "station_charger";
+
+	std::cout << "publishing dock goal " << std::endl;
+	COMP -> rosPorts -> dock_action_goal.publish(dock_goal);
+//	dock_action_goal.publish(dock_goal);
+}
+
 void DockActivity::on_BaseStateServiceIn(const CommBasicObjects::CommBaseState &input)
 {
 	// upcall triggered from InputPort BaseStateServiceIn

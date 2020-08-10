@@ -7,6 +7,7 @@ Activity DockActivity
 		InputPortLink LaserServiceIn { oversamplingOk undersamplingOk }
 		MixedPortROSLink dock_action_goal
 		MixedPortROSLink dock_action_result
+		OperationModeBinding CoordinationPort.dock;
 	}
 
 	MixedPortROS twist_sub
@@ -17,6 +18,7 @@ Activity UndockActivity
 	MixedPortROSLink undock_action_goal
 		MixedPortROSLink undock_action_result
 		MixedPortROSLink twist_sub
+		OperationModeBinding CoordinationPort.unDock;
 	}
 	InputPort BaseStateServiceIn implements CommBasicObjects.BaseStateService {
 	}
@@ -26,6 +28,11 @@ Activity UndockActivity
 	}
 	CoordinationSlavePort CoordinationPort implements CommNavigationObjects.RobotDockingCoordinationService
 	{
+		PrivateOperationMode dock;
+		PrivateOperationMode unDock;
+		
+		PublicOperationMode CommNavigationObjects.RobotDockingStates.Docking { activates ( dock ) }
+		PublicOperationMode CommNavigationObjects.RobotDockingStates.UnDocking { activates ( unDock ) }
 	}
 MixedPortROS dock_action_goal
 	MixedPortROS dock_action_result
