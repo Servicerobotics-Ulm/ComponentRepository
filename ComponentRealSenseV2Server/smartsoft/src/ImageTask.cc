@@ -49,7 +49,6 @@
 #include "ImageTask.hh"
 #include "ComponentRealSenseV2Server.hh"
 #include "EulerTransformationMatrices.hh"
-#include <opencv2/opencv.hpp>
 
 
 #include <sstream>
