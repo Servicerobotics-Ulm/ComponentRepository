@@ -13,8 +13,8 @@
 // Please do not modify this file. It will be re-generated
 // running the code generator.
 //--------------------------------------------------------------------------
-#include "DockActivityCore.hh"
-#include "DockActivity.hh"
+#include "TwistActivityCore.hh"
+#include "TwistActivity.hh"
 #include "ComponentRosDock.hh"
 
 //FIXME: use logging
@@ -23,57 +23,46 @@
 // include observers
 
 
-DockActivityCore::DockActivityCore(Smart::IComponent *comp, const bool &useDefaultState) 
+TwistActivityCore::TwistActivityCore(Smart::IComponent *comp, const bool &useDefaultState) 
 :	SmartACE::ManagedTask(comp)
 ,	useDefaultState(useDefaultState)
 ,	useLogging(false)
 ,	taskLoggingId(0)
 ,	currentUpdateCount(0)
-,	baseStateServiceInStatus(Smart::SMART_DISCONNECTED)
-,	baseStateServiceInObject()
-,	laserServiceInStatus(Smart::SMART_DISCONNECTED)
-,	laserServiceInObject()
 {
 }
 
-DockActivityCore::~DockActivityCore()
+TwistActivityCore::~TwistActivityCore()
 {
 }
 
-void DockActivityCore::dock_action_result_cb (const std_msgs::String::ConstPtr &msg) {
+void TwistActivityCore::twist_sub_cb (const geometry_msgs::Twist::ConstPtr &msg) {
 	// implement this method
 }
 
-void DockActivityCore::notify_all_interaction_observers() {
+void TwistActivityCore::notify_all_interaction_observers() {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
 	// try dynamically down-casting this class to the derived class 
 	// (we can do it safely here as we exactly know the derived class)
-	if(const DockActivity* dockActivity = dynamic_cast<const DockActivity*>(this)) {
+	if(const TwistActivity* twistActivity = dynamic_cast<const TwistActivity*>(this)) {
 		for(auto it=interaction_observers.begin(); it!=interaction_observers.end(); it++) {
-			(*it)->on_update_from(dockActivity);
+			(*it)->on_update_from(twistActivity);
 		}
 	}
 }
 
-void DockActivityCore::attach_interaction_observer(DockActivityObserverInterface *observer) {
+void TwistActivityCore::attach_interaction_observer(TwistActivityObserverInterface *observer) {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
 	interaction_observers.push_back(observer);
 }
 
-void DockActivityCore::detach_interaction_observer(DockActivityObserverInterface *observer) {
+void TwistActivityCore::detach_interaction_observer(TwistActivityObserverInterface *observer) {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
 	interaction_observers.remove(observer);
 }
 
-int DockActivityCore::execute_protected_region()
+int TwistActivityCore::execute_protected_region()
 {
-	if(useDefaultState) {
-		Smart::StatusCode status = COMP->stateSlave->acquire("dock");
-		if(status != Smart::SMART_OK) {
-			std::cerr << "DockActivityCore: ERROR acquiring state active: " << status << std::endl;
-			return 0;
-		}
-	}
 	
 	// update of comm-objects must be within the protected region to prevent aged comm-object values
 	this->updateAllCommObjects();
@@ -95,23 +84,28 @@ int DockActivityCore::execute_protected_region()
 	// increment current currentUpdateCount for the next iteration
 	currentUpdateCount++;
 	
-	if(useDefaultState) {
-		COMP->stateSlave->release("dock");
-	}
 	return retval;
 }
 
 
-void DockActivityCore::updateAllCommObjects()
+void TwistActivityCore::updateAllCommObjects()
 {
-	baseStateServiceInStatus = COMP->baseStateServiceInInputTaskTrigger->getUpdate(baseStateServiceInObject);
-	laserServiceInStatus = COMP->laserServiceInInputTaskTrigger->getUpdate(laserServiceInObject);
 	
 }
 
 
+// this method is meant to be used in derived classes
+Smart::StatusCode TwistActivityCore::navigationVelocityServiceOutPut(CommBasicObjects::CommNavigationVelocity &navigationVelocityServiceOutDataObject)
+{
+	Smart::StatusCode result = COMP->navigationVelocityServiceOut->send(navigationVelocityServiceOutDataObject);
+	if(useLogging == true) {
+		//FIXME: use logging
+		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
+	}
+	return result;
+}
 
-void DockActivityCore::triggerLogEntry(const int& idOffset)
+void TwistActivityCore::triggerLogEntry(const int& idOffset)
 {
 	if(useLogging == true) {
 		int logId = taskLoggingId + 2*1 + idOffset;
@@ -120,7 +114,7 @@ void DockActivityCore::triggerLogEntry(const int& idOffset)
 	}
 }
 
-int DockActivityCore::getPreviousCommObjId()
+int TwistActivityCore::getPreviousCommObjId()
 {
 	// this method needs to be overloaded and implemented in derived classes
 	return 0;

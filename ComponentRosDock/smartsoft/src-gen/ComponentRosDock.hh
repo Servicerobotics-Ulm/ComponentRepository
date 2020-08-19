@@ -49,6 +49,7 @@ class ComponentRosDockExtension;
 
 // include tasks
 #include "DockActivity.hh"
+#include "TwistActivity.hh"
 #include "UndockActivity.hh"
 // include UpcallManagers
 #include "BaseStateServiceInUpcallManager.hh"
@@ -60,6 +61,8 @@ class ComponentRosDockExtension;
 // include handler
 #include "CompHandler.hh"
 
+#include "ParameterStateStruct.hh"
+#include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
 
@@ -94,10 +97,21 @@ private:
 	std::map<std::string, ComponentRosDockExtension*> componentExtensionRegistry;
 	
 public:
+	ParameterStateStruct getGlobalState() const
+	{
+		return paramHandler.getGlobalState();
+	}
+	
+	ParameterStateStruct getParameters() const
+	{
+		return paramHandler.getGlobalState();
+	}
 	
 	// define tasks
 	Smart::TaskTriggerSubject* dockActivityTrigger;
 	DockActivity *dockActivity;
+	Smart::TaskTriggerSubject* twistActivityTrigger;
+	TwistActivity *twistActivity;
 	Smart::TaskTriggerSubject* undockActivityTrigger;
 	UndockActivity *undockActivity;
 	
@@ -134,6 +148,8 @@ public:
 	SmartACE::StateSlave *stateSlave;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
+	ParamUpdateHandler paramHandler;
+	SmartACE::ParameterSlave *param;
 	
 	
 	/// this method is used to register different PortFactory classes (one for each supported middleware framework)
@@ -224,6 +240,22 @@ public:
 			int priority;
 			int cpuAffinity;
 		} dockActivity;
+		struct TwistActivity_struct {
+			double minActFreq;
+			double maxActFreq;
+			std::string trigger;
+			// only one of the following two params is 
+			// actually used at run-time according 
+			// to the system config model
+			double periodicActFreq;
+			// or
+			std::string inPortRef;
+			int prescale;
+			// scheduling parameters
+			std::string scheduler;
+			int priority;
+			int cpuAffinity;
+		} twistActivity;
 		struct UndockActivity_struct {
 			double minActFreq;
 			double maxActFreq;

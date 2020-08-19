@@ -31,7 +31,10 @@ void CompHandler::onStartup()
 	// Start all services. If you need manual control, use the content of this function to
 	// connect and start each service individually, e.g:
 	// COMP->connectMyPortName("SmartExampleComponent", "examplePort");
-	status = COMP->connectAndStartAllServices();
+//	status = COMP->connectAndStartAllServices();
+	status = COMP->connectBaseStateServiceIn(COMP->connections.baseStateServiceIn.serverName, COMP->connections.baseStateServiceIn.serviceName);
+//	status = connectLaserServiceIn(connections.laserServiceIn.serverName, connections.laserServiceIn.serviceName);
+	status = COMP->connectNavigationVelocityServiceOut(COMP->connections.navigationVelocityServiceOut.serverName, COMP->connections.navigationVelocityServiceOut.serviceName);
 	
 	// Start all tasks. If you need manual control, use the content of this function to
 	// start each task individually.

@@ -29,41 +29,65 @@ DockActivity::~DockActivity()
 	std::cout << "destructor DockActivity\n";
 }
 
-void DockActivity::twist_sub_cb(const geometry_msgs::Twist::ConstPtr &msg)
-{
-	std::unique_lock<std::mutex> lck (mtx);
-
-    CommBasicObjects::CommNavigationVelocity comNavVel;
-
-    comNavVel.set_vX(msg->linear.x);
-    comNavVel.set_vY(msg->linear.y);
-	comNavVel.set_omega(msg->angular.z);
-	std::cout << "Velocity x: " << msg->linear.x	<< std::endl;
-	std::cout << "velocity y: " << msg->linear.y	<< std::endl;
-	std::cout << "turnrate :" << msg->angular.z	<< std::endl;
-
-    Smart::StatusCode status_nav;
-
-    status_nav = this->navigationVelocityServiceOutPut(comNavVel);
-    if(status_nav != Smart::SMART_OK)
-	{
-		std::cerr << status_nav << std::endl;
-		std::cout << "Some Error in the Conection as status is not ok " << std::endl;
-	}
-	else
-	{
-		std::cout << "Updating Velocity " << comNavVel << std::endl;
-	}
-}
+//void DockActivity::twist_sub_cb(const geometry_msgs::Twist::ConstPtr &msg)
+//{
+//	std::unique_lock<std::mutex> lck (mtx);
+//
+//    CommBasicObjects::CommNavigationVelocity comNavVel;
+//
+//    comNavVel.set_vX(msg->linear.x);
+//    comNavVel.set_vY(msg->linear.y);
+//	comNavVel.set_omega(msg->angular.z);
+//	std::cout << "Velocity x: " << msg->linear.x	<< std::endl;
+//	std::cout << "velocity y: " << msg->linear.y	<< std::endl;
+//	std::cout << "turnrate :" << msg->angular.z	<< std::endl;
+//
+//    Smart::StatusCode status_nav;
+//
+//    status_nav = this->navigationVelocityServiceOutPut(comNavVel);
+//    if(status_nav != Smart::SMART_OK)
+//	{
+//		std::cerr << status_nav << std::endl;
+//		std::cout << "Some Error in the Conection as status is not ok " << std::endl;
+//	}
+//	else
+//	{
+//		std::cout << "Updating Velocity " << comNavVel << std::endl;
+//	}
+//}
 
 void DockActivity::dock()
 {
 	std_msgs::String dock_goal;
 	dock_goal.data = "station_charger";
 
-	std::cout << "publishing dock goal " << std::endl;
+	std::cout << "publishing dock goal: " << dock_goal << std::endl;
 	COMP -> rosPorts -> dock_action_goal.publish(dock_goal);
+	docking = true;
 //	dock_action_goal.publish(dock_goal);
+}
+
+void DockActivity::dock_action_result_cb(const std_msgs::String::ConstPtr &msg)
+{
+	std::unique_lock<std::mutex> lck (mtx);
+
+    if (msg->data == "succeeded")
+    {
+    	std::cout << "docking succeeded " << std::endl;
+    }
+    else
+    {
+    	std::cout << "docking did not succeed " << std::endl;
+    }
+// Auskommentiert weil's sonst andauernd dockt
+//	docking = false;
+
+
+//	SmartACE::SmartComponent *component = dynamic_cast<ComponentRosDockAcePortFactory*>(acePortFactory)->getComponentImpl();
+//	stateChangeHandler = new SmartStateChangeHandler();
+//	stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+//	if (COMP->stateSlave->defineStates("Neutral" ,"dock") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion Neutral.dock" << std::endl;
+
 }
 
 void DockActivity::on_BaseStateServiceIn(const CommBasicObjects::CommBaseState &input)
@@ -73,6 +97,8 @@ void DockActivity::on_BaseStateServiceIn(const CommBasicObjects::CommBaseState &
 	// - do not use longer blocking calls here since this upcall blocks the InputPort BaseStateServiceIn
 	// - if you need to implement a long-running procedure, do so within the on_execute() method and in
 	//   there, use the method baseStateServiceInGetUpdate(input) to get a copy of the input object
+	//std::cout << "base state in: " << input << std::endl;
+
 }
 void DockActivity::on_LaserServiceIn(const CommBasicObjects::CommMobileLaserScan &input)
 {
@@ -85,49 +111,52 @@ void DockActivity::on_LaserServiceIn(const CommBasicObjects::CommMobileLaserScan
 
 int DockActivity::on_entry()
 {
+	std::cout << "entry DockActivity\n";
+
 	// do initialization procedures here, which are called once, each time the task is started
 	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
 	return 0;
 }
 int DockActivity::on_execute()
 {
+	std::cout << "execute DockActivity\n";
+
 	// this method is called from an outside loop,
 	// hence, NEVER use an infinite loop (like "while(1)") here inside!!!
 	// also do not use blocking calls which do not result from smartsoft kernel
 	
 	// to get the incoming data, use this methods:
-	Smart::StatusCode status;
-	CommBasicObjects::CommBaseState baseStateServiceInObject;
-	status = this->baseStateServiceInGetUpdate(baseStateServiceInObject);
-	if(status != Smart::SMART_OK) {
-		std::cerr << status << std::endl;
-		// return 0;
-	} else {
-		std::cout << "received: " << baseStateServiceInObject << std::endl;
-	}
-	CommBasicObjects::CommMobileLaserScan laserServiceInObject;
-	status = this->laserServiceInGetUpdate(laserServiceInObject);
-	if(status != Smart::SMART_OK) {
-		std::cerr << status << std::endl;
-		// return 0;
-	} else {
-		std::cout << "received: " << laserServiceInObject << std::endl;
-	}
+//	Smart::StatusCode status;
+//	CommBasicObjects::CommBaseState baseStateServiceInObject;
+//	status = this->baseStateServiceInGetUpdate(baseStateServiceInObject);
+//	if(status != Smart::SMART_OK) {
+//		std::cerr << status << std::endl;
+//		 return 0;
+//	} else {
+//		std::cout << "received: " << baseStateServiceInObject << std::endl;
+//	}
+//	CommBasicObjects::CommMobileLaserScan laserServiceInObject;
+//	status = this->laserServiceInGetUpdate(laserServiceInObject);
+//	if(status != Smart::SMART_OK) {
+//		std::cerr << status << std::endl;
+//		 return 0;
+//	} else {
+//		std::cout << "received: " << laserServiceInObject << std::endl;
+//	}
 
 
-//	geometry_msgs::Twist twist_msg;
-//	twist_msg.linear.x = 1.0;
-//
-//	std::cout << "publishing twist " << std::endl;
-//	COMP -> rosPorts -> twist_pub.publish(twist_msg);
-	//twist_pub.publish(twist);
-
-
+	std::cout << "Dock! " << std::endl;
+	if (!docking)
+		dock();
+	else
+		std::cout << "Waiting for docking" << std::endl;
 	// it is possible to return != 0 (e.g. when the task detects errors), then the outer loop breaks and the task stops
 	return 0;
 }
 int DockActivity::on_exit()
 {
+	std::cout << "exit DockActivity\n";
+
 	// use this method to clean-up resources which are initialized in on_entry() and needs to be freed before the on_execute() can be called again
 	return 0;
 }

@@ -67,6 +67,13 @@ void UndockActivityCore::detach_interaction_observer(UndockActivityObserverInter
 
 int UndockActivityCore::execute_protected_region()
 {
+	if(useDefaultState) {
+		Smart::StatusCode status = COMP->stateSlave->acquire("unDock");
+		if(status != Smart::SMART_OK) {
+			std::cerr << "UndockActivityCore: ERROR acquiring state active: " << status << std::endl;
+			return 0;
+		}
+	}
 	
 	// update of comm-objects must be within the protected region to prevent aged comm-object values
 	this->updateAllCommObjects();
@@ -88,6 +95,9 @@ int UndockActivityCore::execute_protected_region()
 	// increment current currentUpdateCount for the next iteration
 	currentUpdateCount++;
 	
+	if(useDefaultState) {
+		COMP->stateSlave->release("unDock");
+	}
 	return retval;
 }
 

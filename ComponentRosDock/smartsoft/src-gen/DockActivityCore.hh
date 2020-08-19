@@ -23,12 +23,10 @@
 #include "LaserServiceInUpcallInterface.hh"
 
 // include communication-objects for output ports
-#include <CommBasicObjects/CommNavigationVelocity.hh>
 
 // include all interaction-observer interfaces
 #include <DockActivityObserverInterface.hh>
 
-#include <geometry_msgs/Twist.h>
 #include <std_msgs/String.h>
 #include <std_msgs/String.h>
 
@@ -85,8 +83,6 @@ protected:
 		return laserServiceInStatus;
 	}
 	
-	// this method is meant to be used in derived classes
-	Smart::StatusCode navigationVelocityServiceOutPut(CommBasicObjects::CommNavigationVelocity &navigationVelocityServiceOutDataObject);
 	
 	
 /**
@@ -122,7 +118,6 @@ public:
 		return currentUpdateCount;
 	}
 	
-	void twist_sub_cb (const geometry_msgs::Twist::ConstPtr &msg);
 	void dock_action_result_cb (const std_msgs::String::ConstPtr &msg);
 };
 #endif

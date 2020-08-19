@@ -34,6 +34,7 @@ ComponentRosDock::ComponentRosDock()
 	baseStateServiceIn = NULL;
 	baseStateServiceInInputTaskTrigger = NULL;
 	baseStateServiceInUpcallManager = NULL;
+	//componentRosDock = NULL;
 	//coordinationPort = NULL;
 	dockActivity = NULL;
 	dockActivityTrigger = NULL;
@@ -41,6 +42,8 @@ ComponentRosDock::ComponentRosDock()
 	laserServiceInInputTaskTrigger = NULL;
 	laserServiceInUpcallManager = NULL;
 	navigationVelocityServiceOut = NULL;
+	twistActivity = NULL;
+	twistActivityTrigger = NULL;
 	undockActivity = NULL;
 	undockActivityTrigger = NULL;
 	//dock_action_goal = NULL;
@@ -51,6 +54,7 @@ ComponentRosDock::ComponentRosDock()
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
+	param = NULL;
 	
 	// set default ini parameter values
 	connections.component.name = "ComponentRosDock";
@@ -82,8 +86,18 @@ ComponentRosDock::ComponentRosDock()
 	connections.dockActivity.scheduler = "DEFAULT";
 	connections.dockActivity.priority = -1;
 	connections.dockActivity.cpuAffinity = -1;
+	connections.twistActivity.minActFreq = 0.0;
+	connections.twistActivity.maxActFreq = 0.0;
+	connections.twistActivity.trigger = "PeriodicTimer";
+	connections.twistActivity.periodicActFreq = 1.0;
+	// scheduling default parameters
+	connections.twistActivity.scheduler = "DEFAULT";
+	connections.twistActivity.priority = -1;
+	connections.twistActivity.cpuAffinity = -1;
 	connections.undockActivity.minActFreq = 0.0;
 	connections.undockActivity.maxActFreq = 0.0;
+	connections.undockActivity.trigger = "PeriodicTimer";
+	connections.undockActivity.periodicActFreq = 1.0;
 	// scheduling default parameters
 	connections.undockActivity.scheduler = "DEFAULT";
 	connections.undockActivity.priority = -1;
@@ -206,6 +220,20 @@ void ComponentRosDock::startAllTasks() {
 	} else {
 		dockActivity->start();
 	}
+	// start task TwistActivity
+	if(connections.twistActivity.scheduler != "DEFAULT") {
+		ACE_Sched_Params twistActivity_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
+		if(connections.twistActivity.scheduler == "FIFO") {
+			twistActivity_SchedParams.policy(ACE_SCHED_FIFO);
+			twistActivity_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+		} else if(connections.twistActivity.scheduler == "RR") {
+			twistActivity_SchedParams.policy(ACE_SCHED_RR);
+			twistActivity_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+		}
+		twistActivity->start(twistActivity_SchedParams, connections.twistActivity.cpuAffinity);
+	} else {
+		twistActivity->start();
+	}
 	// start task UndockActivity
 	if(connections.undockActivity.scheduler != "DEFAULT") {
 		ACE_Sched_Params undockActivity_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
@@ -246,6 +274,8 @@ void ComponentRosDock::init(int argc, char *argv[])
 		// load initial parameters from ini-file (if found)
 		loadParameter(argc, argv);
 		
+		// print out the actual parameters which are used to initialize the component
+		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
 		// initializations of ComponentRosDockROSExtension
 		
@@ -306,6 +336,8 @@ void ComponentRosDock::init(int argc, char *argv[])
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
 		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		if (stateSlave->defineStates("Docking" ,"dock") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion Docking.dock" << std::endl;
+		if (stateSlave->defineStates("UnDocking" ,"unDock") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion UnDocking.unDock" << std::endl;
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -327,6 +359,8 @@ void ComponentRosDock::init(int argc, char *argv[])
 			dynamic_cast<SmartACE::SendClient<CommBasicObjects::CommNavigationVelocity>*>(navigationVelocityServiceOut)->add(wiringSlave, connections.navigationVelocityServiceOut.wiringName);
 		}
 		
+		// create parameter slave
+		param = new SmartACE::ParameterSlave(component, &paramHandler);
 		
 		
 		// create Task DockActivity
@@ -369,6 +403,44 @@ void ComponentRosDock::init(int argc, char *argv[])
 			}
 		}
 		
+		// create Task TwistActivity
+		twistActivity = new TwistActivity(component);
+		// configure input-links
+		// configure task-trigger (if task is configurable)
+		if(connections.twistActivity.trigger == "PeriodicTimer") {
+			// create PeriodicTimerTrigger
+			int microseconds = 1000*1000 / connections.twistActivity.periodicActFreq;
+			if(microseconds > 0) {
+				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
+				triggerPtr->attach(twistActivity);
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				// store trigger in class member
+				twistActivityTrigger = triggerPtr;
+			} else {
+				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task TwistActivity" << std::endl;
+			}
+		} else if(connections.twistActivity.trigger == "DataTriggered") {
+			twistActivityTrigger = getInputTaskTriggerFromString(connections.twistActivity.inPortRef);
+			if(twistActivityTrigger != NULL) {
+				twistActivityTrigger->attach(twistActivity, connections.twistActivity.prescale);
+			} else {
+				std::cerr << "ERROR: could not set-up InPort " << connections.twistActivity.inPortRef << " as activation source for Task TwistActivity" << std::endl;
+			}
+		} else
+		{
+			// setup default task-trigger as PeriodicTimer
+			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
+			int microseconds = 1000*1000 / 1.0;
+			if(microseconds > 0) {
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				triggerPtr->attach(twistActivity);
+				// store trigger in class member
+				twistActivityTrigger = triggerPtr;
+			} else {
+				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task TwistActivity" << std::endl;
+			}
+		}
+		
 		// create Task UndockActivity
 		undockActivity = new UndockActivity(component);
 		// configure input-links
@@ -394,7 +466,20 @@ void ComponentRosDock::init(int argc, char *argv[])
 			} else {
 				std::cerr << "ERROR: could not set-up InPort " << connections.undockActivity.inPortRef << " as activation source for Task UndockActivity" << std::endl;
 			}
-		} 
+		} else
+		{
+			// setup default task-trigger as PeriodicTimer
+			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
+			int microseconds = 1000*1000 / 1.0;
+			if(microseconds > 0) {
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				triggerPtr->attach(undockActivity);
+				// store trigger in class member
+				undockActivityTrigger = triggerPtr;
+			} else {
+				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task UndockActivity" << std::endl;
+			}
+		}
 		
 		
 		// link observers with subjects
@@ -465,6 +550,12 @@ void ComponentRosDock::fini()
 		delete dockActivity;
 	}
 	// unlink all UpcallManagers
+	// unlink the TaskTrigger
+	if(twistActivityTrigger != NULL){
+		twistActivityTrigger->detach(twistActivity);
+		delete twistActivity;
+	}
+	// unlink all UpcallManagers
 	baseStateServiceInUpcallManager->detach(undockActivity);
 	laserServiceInUpcallManager->detach(undockActivity);
 	// unlink the TaskTrigger
@@ -497,6 +588,7 @@ void ComponentRosDock::fini()
 	
 	// destroy all master/slave ports
 	delete wiringSlave;
+	delete param;
 	
 
 	// destroy all registered component-extensions
@@ -634,6 +726,25 @@ void ComponentRosDock::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("DockActivity", "cpuAffinity")) {
 			parameter.getInteger("DockActivity", "cpuAffinity", connections.dockActivity.cpuAffinity);
 		}
+		// load parameters for task TwistActivity
+		parameter.getDouble("TwistActivity", "minActFreqHz", connections.twistActivity.minActFreq);
+		parameter.getDouble("TwistActivity", "maxActFreqHz", connections.twistActivity.maxActFreq);
+		parameter.getString("TwistActivity", "triggerType", connections.twistActivity.trigger);
+		if(connections.twistActivity.trigger == "PeriodicTimer") {
+			parameter.getDouble("TwistActivity", "periodicActFreqHz", connections.twistActivity.periodicActFreq);
+		} else if(connections.twistActivity.trigger == "DataTriggered") {
+			parameter.getString("TwistActivity", "inPortRef", connections.twistActivity.inPortRef);
+			parameter.getInteger("TwistActivity", "prescale", connections.twistActivity.prescale);
+		}
+		if(parameter.checkIfParameterExists("TwistActivity", "scheduler")) {
+			parameter.getString("TwistActivity", "scheduler", connections.twistActivity.scheduler);
+		}
+		if(parameter.checkIfParameterExists("TwistActivity", "priority")) {
+			parameter.getInteger("TwistActivity", "priority", connections.twistActivity.priority);
+		}
+		if(parameter.checkIfParameterExists("TwistActivity", "cpuAffinity")) {
+			parameter.getInteger("TwistActivity", "cpuAffinity", connections.twistActivity.cpuAffinity);
+		}
 		// load parameters for task UndockActivity
 		parameter.getDouble("UndockActivity", "minActFreqHz", connections.undockActivity.minActFreq);
 		parameter.getDouble("UndockActivity", "maxActFreqHz", connections.undockActivity.maxActFreq);
@@ -667,6 +778,7 @@ void ComponentRosDock::loadParameter(int argc, char *argv[])
 			extension->second->loadParameters(parameter);
 		}
 		
+		paramHandler.loadParameter(parameter);
 	
 	} catch (const SmartACE::IniParameterError & e) {
 		std::cerr << e.what() << std::endl;
