@@ -41,6 +41,8 @@ ComponentDefinition SmartCdlServer
 		SkillRealizationsRef MovementMod2
 	}
 	
+	ComponentParameters SmartCdlServerParams slave CoordinationPort;
+	
 	InputPort LaserClient implements CommBasicObjects.LaserService { }
 	InputPort LaserClient2 implements CommBasicObjects.LaserService { }
 	InputPort PlannerClient implements CommNavigationObjects.PlannerGoalService { }
@@ -78,5 +80,5 @@ ComponentDefinition SmartCdlServer
 	OutputPort GoalEventServer implements CommNavigationObjects.GoalEventService realizedBy CdlTask { }
 	OutputPort RobotBlockedEventServer implements CommNavigationObjects.RobotBlockedEventService realizedBy CdlTask { } 
 	
-	ComponentParameters SmartCdlServerParams slave CoordinationPort;
+
 }
