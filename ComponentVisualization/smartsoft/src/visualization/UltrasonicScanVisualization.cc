@@ -33,6 +33,15 @@
 UltrasonicScanVisualization::UltrasonicScanVisualization(CDisplayWindow3D& window3D, const std::string& identifier) :
 	AbstractVisualization(window3D, identifier)
 {
+#ifdef WITH_MRPT_2_0_VERSION
+	opengl::COpenGLScene::Ptr &ptrScene = window3D.get3DSceneAndLock();
+	{
+		opengl::CPointCloudColoured::Ptr cloud = opengl::CPointCloudColoured::Create();
+		cloud->setName(identifier + "_cloud");
+		cloud->setPointSize(2.0);
+		ptrScene->insert(cloud);
+	}
+#else
 	opengl::COpenGLScenePtr &ptrScene = window3D.get3DSceneAndLock();
 	{
 		opengl::CPointCloudColouredPtr cloud = opengl::CPointCloudColoured::Create();
@@ -40,16 +49,25 @@ UltrasonicScanVisualization::UltrasonicScanVisualization(CDisplayWindow3D& windo
 		cloud->setPointSize(2.0);
 		ptrScene->insert(cloud);
 	}
+#endif
 	window3D.unlockAccess3DScene();
 }
 
 UltrasonicScanVisualization::~UltrasonicScanVisualization()
 {
+#ifdef WITH_MRPT_2_0_VERSION
+	opengl::COpenGLScene::Ptr & ptrScene = window3D.get3DSceneAndLock();
+	{
+		opengl::CPointCloudColoured::Ptr cloud = std::dynamic_pointer_cast<opengl::CPointCloudColoured>(ptrScene->getByName(identifier + "_cloud"));
+		ptrScene->removeObject(cloud);
+	}
+#else
 	opengl::COpenGLScenePtr & ptrScene = window3D.get3DSceneAndLock();
 	{
 		opengl::CPointCloudColouredPtr cloud = (opengl::CPointCloudColouredPtr) ptrScene->getByName(identifier + "_cloud");
 		ptrScene->removeObject(cloud);
 	}
+#endif
 	window3D.unlockAccess3DScene();
 	window3D.forceRepaint();
 }
@@ -74,7 +92,20 @@ void UltrasonicScanVisualization::displayScan(CommBasicObjects::CommMobileUltras
 			points.push_back(ColPoint3d(comm_pose3d.get_x(1), comm_pose3d.get_y(1), comm_pose3d.get_z(1), 255, 0,0));
 			std::cout<<"Point: "<<comm_pose3d.get_x(1)<<" "<< comm_pose3d.get_y(1)<<" "<<comm_pose3d.get_z(1)<<std::endl;
 		}
+#ifdef WITH_MRPT_2_0_VERSION
+		opengl::COpenGLScene::Ptr & ptrScene = window3D.get3DSceneAndLock();
+		//////////////////////////////////////////
+		// show coordinates
+		{
+			opengl::CPointCloudColoured::Ptr cloud = std::dynamic_pointer_cast<opengl::CPointCloudColoured>(ptrScene->getByName(identifier + "_cloud"));
+			cloud->clear();
+			for (uint32_t i = 0; i < points.size(); i++)
+			{
+				cloud->push_back(points[i].x, points[i].y, points[i].z, points[i].r, points[i].g, points[i].b);
+			}
 
+		}
+#else
 		opengl::COpenGLScenePtr & ptrScene = window3D.get3DSceneAndLock();
 		//////////////////////////////////////////
 		// show coordinates
@@ -87,6 +118,7 @@ void UltrasonicScanVisualization::displayScan(CommBasicObjects::CommMobileUltras
 			}
 
 		}
+#endif
 		window3D.unlockAccess3DScene();
 		window3D.forceRepaint();
 
@@ -94,11 +126,19 @@ void UltrasonicScanVisualization::displayScan(CommBasicObjects::CommMobileUltras
 
 void UltrasonicScanVisualization::clear()
 {
+#ifdef WITH_MRPT_2_0_VERSION
+	opengl::COpenGLScene::Ptr & ptrScene = window3D.get3DSceneAndLock();
+	{
+		opengl::CPointCloudColoured::Ptr cloud = std::dynamic_pointer_cast<opengl::CPointCloudColoured>(ptrScene->getByName(identifier + "_cloud"));
+		cloud->clear();
+	}
+#else
 	opengl::COpenGLScenePtr & ptrScene = window3D.get3DSceneAndLock();
 	{
 		opengl::CPointCloudColouredPtr cloud = (opengl::CPointCloudColouredPtr) ptrScene->getByName(identifier + "_cloud");
 		cloud->clear();
 	}
+#endif
 	window3D.unlockAccess3DScene();
 	window3D.forceRepaint();
 }

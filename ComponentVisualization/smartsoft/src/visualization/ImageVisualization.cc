@@ -1,10 +1,13 @@
 #include "ImageVisualization.hh"
 
-#include <cv.h>
-#include "OpenCVHelpers/OpenCVHelpers.hh"
+#ifdef WITH_MRPT_2_0_VERSION
+	#include <opencv4/opencv2/core.hpp>
+#else
+	#include <cv.h>
+	#include "OpenCVHelpers/OpenCVHelpers.hh"
+#endif
 
 #include <cstring>
-
 
 ImageVisualization::ImageVisualization(){
 
@@ -44,7 +47,8 @@ ImageVisualization::~ImageVisualization() {
 
 }
 
-
+#ifdef WITH_MRPT_2_0_VERSION
+#else
 IplImage* convertDataArrayToIplImage(DomainVision::CommVideoImage &query_image, CvSize size)
 {
 	IplImage* ipl_image = NULL;
@@ -81,12 +85,12 @@ IplImage* convertDataArrayToIplImage(DomainVision::CommVideoImage &query_image, 
 	}
 
 	return ipl_image;
-
-
 }
+#endif
 
 void ImageVisualization::displayImage(DomainVision::CommVideoImage& image) {
-
+#ifdef WITH_MRPT_2_0_VERSION
+#else
 	IplImage* currentImage = NULL;
 
 	currentImage = convertDataArrayToIplImage(image, cvSize(image.get_width(), image.get_height()));
@@ -105,11 +109,13 @@ void ImageVisualization::displayImage(DomainVision::CommVideoImage& image) {
 
 	}
 	cvReleaseImage(&currentImage);
+#endif
 
 }
 
 void ImageVisualization::displayDepthImage(DomainVision::CommDepthImage& image) {
-
+#ifdef WITH_MRPT_2_0_VERSION
+#else
 	IplImage* currentImage = NULL;
 	mrpt::utils::CImage depthImage(image.getWidth(), image.getHeight());
 
@@ -167,7 +173,7 @@ void ImageVisualization::displayDepthImage(DomainVision::CommDepthImage& image) 
 	m_image_window->showImage(depthImage);
 	m_image_window->setWindowTitle(str_dimension.str());
 	cvReleaseImage(&currentImage);
-
+#endif
 }
 void ImageVisualization::clear() {
 

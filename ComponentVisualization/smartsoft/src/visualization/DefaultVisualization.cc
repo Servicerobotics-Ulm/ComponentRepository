@@ -37,7 +37,10 @@ using namespace mrpt;
 using namespace mrpt::gui;
 using namespace mrpt::opengl;
 using namespace mrpt::math;
+#ifdef WITH_MRPT_2_0_VERSION
+#else
 using namespace mrpt::utils;
+#endif
 //#include <cmath>
 #include <ctime>
 using namespace std;
@@ -45,6 +48,27 @@ using namespace std;
 DefaultVisualization::DefaultVisualization(CDisplayWindow3D& window3D, const std::string& identifier):
 AbstractVisualization(window3D, identifier)
 {
+#ifdef WITH_MRPT_2_0_VERSION
+	opengl::COpenGLScene::Ptr &ptrScene = window3D.get3DSceneAndLock();
+		{
+			// coordinate axis
+			opengl::CAxis::Ptr gl_axis = opengl::CAxis::Create(-10,-10, 0, 10, 10, 2, 1);
+			gl_axis->setName(identifier + "_axis");
+			ptrScene->insert( gl_axis );
+
+			//2d grid
+			mrpt::opengl::CGridPlaneXY::Ptr gl_grid = mrpt::opengl::CGridPlaneXY::Create();
+			gl_grid->setName(identifier + "_grid");
+			gl_grid->setColor(0.6,0.6,0.6);
+			ptrScene->insert( gl_grid );
+
+			//origin
+			mrpt::opengl::CSetOfObjects::Ptr gl_corner = mrpt::opengl::stock_objects::CornerXYZ();
+			gl_corner->setName(identifier + "_origin");
+			gl_corner->setScale(0.5);
+			ptrScene->insert(gl_corner);
+		}
+#else
 	opengl::COpenGLScenePtr &ptrScene = window3D.get3DSceneAndLock();
 		{
 
@@ -68,6 +92,7 @@ AbstractVisualization(window3D, identifier)
 			ptrScene->insert(gl_corner);
 
 		}
+#endif
 		window3D.unlockAccess3DScene();
 
 
@@ -75,6 +100,23 @@ AbstractVisualization(window3D, identifier)
 }
 
 DefaultVisualization::~DefaultVisualization() {
+#ifdef WITH_MRPT_2_0_VERSION
+	opengl::COpenGLScene::Ptr & ptrScene = window3D.get3DSceneAndLock();
+		{
+			// remove axis
+			opengl::CAxis::Ptr axis = std::dynamic_pointer_cast<opengl::CAxis>(ptrScene->getByName(identifier + "_axis"));
+			ptrScene->removeObject(axis);
+
+			// remove grid
+			mrpt::opengl::CSetOfObjects::Ptr gl_grid = std::dynamic_pointer_cast<opengl::CSetOfObjects>(ptrScene->getByName(identifier + "_grid"));
+			ptrScene->removeObject(gl_grid);
+
+			// remove origin
+			mrpt::opengl::CSetOfObjects::Ptr gl_corner = std::dynamic_pointer_cast<opengl::CSetOfObjects>(ptrScene->getByName(identifier + "_origin"));
+			ptrScene->removeObject(gl_corner);
+
+		}
+#else
 	opengl::COpenGLScenePtr & ptrScene = window3D.get3DSceneAndLock();
 		{
 			// remove axis
@@ -90,6 +132,7 @@ DefaultVisualization::~DefaultVisualization() {
 			ptrScene->removeObject(gl_corner);
 
 		}
+#endif
 		window3D.unlockAccess3DScene();
 		window3D.forceRepaint();
 }

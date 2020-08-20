@@ -37,7 +37,13 @@ using namespace mrpt;
 using namespace mrpt::gui;
 using namespace mrpt::opengl;
 using namespace mrpt::math;
+
+#ifdef WITH_MRPT_2_0_VERSION
+#else
 using namespace mrpt::utils;
+#include <mrpt/utils/adapters.h>
+#endif
+
 //#include <cmath>
 #include <ctime>
 using namespace std;
@@ -45,6 +51,23 @@ using namespace std;
 RGBDVisualization::RGBDVisualization(CDisplayWindow3D& window3D, const std::string& identifier):
 AbstractVisualization(window3D, identifier)
 {
+#ifdef WITH_MRPT_2_0_VERSION
+	opengl::COpenGLScene::Ptr &ptrScene = window3D.get3DSceneAndLock();
+		{
+			// point cloud
+			opengl::CPointCloudColoured::Ptr cloud = opengl::CPointCloudColoured::Create();
+			cloud->setName(identifier + "_cloud");
+			cloud->setPointSize(2.0);
+			ptrScene->insert(cloud);
+
+			//camera origin
+			mrpt::opengl::CSetOfObjects::Ptr gl_corner = mrpt::opengl::stock_objects::CornerXYZSimple(0.25);
+			gl_corner->setName(identifier + "_camera_origin");
+			gl_corner->setScale(0.5);
+			ptrScene->insert(gl_corner);
+
+		}
+#else
 	opengl::COpenGLScenePtr &ptrScene = window3D.get3DSceneAndLock();
 		{
 			// point cloud
@@ -60,6 +83,7 @@ AbstractVisualization(window3D, identifier)
 			ptrScene->insert(gl_corner);
 
 		}
+#endif
 		window3D.unlockAccess3DScene();
 
 		first_image_flag = true;
@@ -67,6 +91,19 @@ AbstractVisualization(window3D, identifier)
 }
 
 RGBDVisualization::~RGBDVisualization() {
+#ifdef WITH_MRPT_2_0_VERSION
+	opengl::COpenGLScene::Ptr & ptrScene = window3D.get3DSceneAndLock();
+		{
+		    // remove pointcloud
+			opengl::CPointCloudColoured::Ptr cloud = std::dynamic_pointer_cast<opengl::CPointCloudColoured>(ptrScene->getByName(identifier + "_cloud"));
+			ptrScene->removeObject(cloud);
+
+			// remove origin
+			mrpt::opengl::CSetOfObjects::Ptr gl_corner = std::dynamic_pointer_cast<opengl::CSetOfObjects>(ptrScene->getByName(identifier + "_camera_origin"));
+			ptrScene->removeObject(gl_corner);
+
+		}
+#else
 	opengl::COpenGLScenePtr & ptrScene = window3D.get3DSceneAndLock();
 		{
 		    // remove pointcloud
@@ -78,6 +115,7 @@ RGBDVisualization::~RGBDVisualization() {
 			ptrScene->removeObject(gl_corner);
 
 		}
+#endif
 		window3D.unlockAccess3DScene();
 		window3D.forceRepaint();
 }
@@ -107,14 +145,29 @@ void RGBDVisualization::displayImage(DomainVision::CommRGBDImage& rgbd_image)
 
 		mrpt::poses::CPose3D mrpt_sensorPose(sensor_x, sensor_y, sensor_z,sensor_yaw, sensor_pitch, sensor_roll);
 		//mrpt::poses::CPose3D mrpt_sensor_pose =
+#ifdef WITH_MRPT_2_0_VERSION
+		opengl::COpenGLScene::Ptr & ptrScene = window3D.get3DSceneAndLock();
+		//////////////////////////////////////////
+		// show pointcloud
+		{
+			opengl::CPointCloudColoured::Ptr cloud = std::dynamic_pointer_cast<opengl::CPointCloudColoured>(ptrScene->getByName(identifier + "_cloud"));
+			cloud->clear();
+
+
+			createColorPointCloud (cloud, &comm_color_image, &comm_depth_image);
+			cloud->setPose(mrpt_sensorPose);
+
+
+			mrpt::opengl::CSetOfObjects::Ptr gl_origin = std::dynamic_pointer_cast<opengl::CSetOfObjects>(ptrScene->getByName(identifier + "_camera_origin"));
+			gl_origin->setPose(mrpt_sensorPose);
+		}
+#else
 		opengl::COpenGLScenePtr & ptrScene = window3D.get3DSceneAndLock();
 		//////////////////////////////////////////
 		// show pointcloud
 		{
 			opengl::CPointCloudColouredPtr cloud = (opengl::CPointCloudColouredPtr) ptrScene->getByName(identifier + "_cloud");
 			cloud->clear();
-
-
 			createColorPointCloud (cloud, &comm_color_image, &comm_depth_image);
 			cloud->setPose(mrpt_sensorPose);
 
@@ -123,6 +176,7 @@ void RGBDVisualization::displayImage(DomainVision::CommRGBDImage& rgbd_image)
 			gl_origin->setPose(mrpt_sensorPose);
 
 		}
+#endif
 
 		// Frustum
 //		{
@@ -145,11 +199,19 @@ void RGBDVisualization::displayImage(DomainVision::CommRGBDImage& rgbd_image)
 
 void RGBDVisualization::clear()
 {
+#ifdef WITH_MRPT_2_0_VERSION
+	opengl::COpenGLScene::Ptr & ptrScene = window3D.get3DSceneAndLock();
+	{
+		opengl::CPointCloudColoured::Ptr cloud = std::dynamic_pointer_cast<opengl::CPointCloudColoured>(ptrScene->getByName(identifier + "_cloud"));
+		cloud->clear();
+	}
+#else
 	opengl::COpenGLScenePtr & ptrScene = window3D.get3DSceneAndLock();
 	{
 		opengl::CPointCloudColouredPtr cloud = (opengl::CPointCloudColouredPtr) ptrScene->getByName(identifier + "_cloud");
 		cloud->clear();
 	}
+#endif
 	window3D.unlockAccess3DScene();
 	window3D.forceRepaint();
 }
@@ -241,9 +303,13 @@ void RGBDVisualization::calcPointXYZ (const uint32_t& r, const uint32_t& c, cons
 
   }
 }
-
+#ifdef WITH_MRPT_2_0_VERSION
+void RGBDVisualization::createColorPointCloud (opengl::CPointCloudColoured::Ptr cloud, DomainVision::CommVideoImage *comm_color_image,
+		                                                                       DomainVision::CommDepthImage *comm_depth_image)
+#else
 void RGBDVisualization::createColorPointCloud (opengl::CPointCloudColouredPtr cloud, DomainVision::CommVideoImage *comm_color_image,
 		                                                                       DomainVision::CommDepthImage *comm_depth_image)
+#endif
 {
 	// get rgb data
 	const uint8_t *color_imageData = comm_color_image->get_data();

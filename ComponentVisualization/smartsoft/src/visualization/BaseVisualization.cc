@@ -33,7 +33,31 @@
 
 BaseVisualization::BaseVisualization(CDisplayWindow3D& window3D, const std::string& identifier) :
 	AbstractVisualization(window3D, identifier) {
+#ifdef WITH_MRPT_2_0_VERSION
+	opengl::COpenGLScene::Ptr &ptrScene = window3D.get3DSceneAndLock();
+	{
+			opengl::CArrow::Ptr arrow = opengl::CArrow::Create(0, 0, 0, 1.0, 0, 0);
+			arrow->setName(identifier + "_robot_orientation");
+			arrow->setColor(0, 0, 1);
+			ptrScene->insert(arrow);
 
+			opengl::CCylinder::Ptr cylinder = opengl::CCylinder::Create(0.2, 0.2, 0.4, 10);
+			cylinder->setName(identifier + "_robot");
+			cylinder->setColor(0, 0, 1);
+			ptrScene->insert(cylinder);
+
+			opengl::CText::Ptr robotText1 = opengl::CText::Create();
+			robotText1->setName(identifier + "_robotLabel1");
+			robotText1->setColor(0, 0, 0);
+			ptrScene->insert(robotText1);
+
+			opengl::CText::Ptr robotText2 = opengl::CText::Create();
+			robotText2->setName(identifier + "_robotLabel2");
+			robotText2->setColor(0, 0, 0);
+			ptrScene->insert(robotText2);
+		}
+		window3D.unlockAccess3DScene();
+#else
 	opengl::COpenGLScenePtr &ptrScene = window3D.get3DSceneAndLock();
 	{
 		opengl::CArrowPtr arrow = opengl::CArrow::Create(0, 0, 0, 1.0, 0, 0);
@@ -57,10 +81,28 @@ BaseVisualization::BaseVisualization(CDisplayWindow3D& window3D, const std::stri
 		ptrScene->insert(robotText2);
 	}
 	window3D.unlockAccess3DScene();
+#endif
 
 }
 
 BaseVisualization::~BaseVisualization() {
+#ifdef WITH_MRPT_2_0_VERSION
+	opengl::COpenGLScene::Ptr &ptrScene = window3D.get3DSceneAndLock();
+		{
+			opengl::CRenderizable::Ptr obj1 = std::dynamic_pointer_cast<opengl::CRenderizable>(ptrScene->getByName(identifier + "_robot"));
+			ptrScene->removeObject(obj1);
+
+			opengl::CRenderizable::Ptr obj2 = std::dynamic_pointer_cast<opengl::CRenderizable>(ptrScene->getByName(identifier + "_robot_orientation"));
+			ptrScene->removeObject(obj2);
+
+			opengl::CText::Ptr label1 = std::dynamic_pointer_cast<opengl::CText>(ptrScene->getByName(identifier + "_robotLabel1"));
+			ptrScene->removeObject(label1);
+
+			opengl::CText::Ptr label2 = std::dynamic_pointer_cast<opengl::CText>(ptrScene->getByName(identifier + "_robotLabel2"));
+			ptrScene->removeObject(label2);
+
+		}
+#else
 	opengl::COpenGLScenePtr &ptrScene = window3D.get3DSceneAndLock();
 		{
 			opengl::CRenderizablePtr obj1 = ptrScene->getByName(identifier + "_robot");
@@ -81,6 +123,7 @@ BaseVisualization::~BaseVisualization() {
 			//label2->setVisibility(false);
 
 		}
+#endif
 		window3D.unlockAccess3DScene();
 		window3D.forceRepaint();
 }
@@ -101,7 +144,25 @@ void BaseVisualization::displayBase(const CommBasicObjects::CommBaseState& pos) 
 	labelString.str("");
 	labelString << "raw pose: x=" << rp.get_x(1.0) << ", y=" << rp.get_y(1.0) << ", a=" << rp.get_azimuth();
 	std::string sLabel2 = labelString.str();
+#ifdef WITH_MRPT_2_0_VERSION
+	opengl::COpenGLScene::Ptr &ptrScene = window3D.get3DSceneAndLock();
+	{
+		opengl::CRenderizable::Ptr obj1 = std::dynamic_pointer_cast<opengl::CRenderizable>(ptrScene->getByName(identifier + "_robot"));
+		obj1->setPose(pose);
 
+		opengl::CRenderizable::Ptr obj2 = std::dynamic_pointer_cast<opengl::CRenderizable>(ptrScene->getByName(identifier + "_robot_orientation"));
+		obj2->setPose(pose);
+
+		opengl::CText::Ptr label1 = std::dynamic_pointer_cast<opengl::CText>(ptrScene->getByName(identifier + "_robotLabel1"));
+		label1->setPose(poseLabel1);
+		label1->setString(sLabel1);
+
+		opengl::CText::Ptr label2 = std::dynamic_pointer_cast<opengl::CText>(ptrScene->getByName(identifier + "_robotLabel2"));
+		label2->setPose(poseLabel2);
+		label2->setString(sLabel2);
+
+	}
+#else
 	opengl::COpenGLScenePtr &ptrScene = window3D.get3DSceneAndLock();
 	{
 		opengl::CRenderizablePtr obj1 = ptrScene->getByName(identifier + "_robot");
@@ -119,6 +180,7 @@ void BaseVisualization::displayBase(const CommBasicObjects::CommBaseState& pos) 
 		label2->setString(sLabel2);
 
 	}
+#endif
 	window3D.unlockAccess3DScene();
 	window3D.forceRepaint();
 }

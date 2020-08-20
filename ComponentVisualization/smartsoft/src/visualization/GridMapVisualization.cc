@@ -37,7 +37,12 @@ using namespace mrpt;
 using namespace mrpt::gui;
 using namespace mrpt::opengl;
 using namespace mrpt::math;
+#ifdef WITH_MRPT_2_0_VERSION
+using namespace mrpt::img;
+#include <mrpt/img/CImage.h>
+#else
 using namespace mrpt::utils;
+#endif
 
 GridMapVisualization::GridMapVisualization(CDisplayWindow3D& window3D, const std::string& identifier, bool showAxis,
 		bool activateTransparency) :
@@ -45,7 +50,37 @@ GridMapVisualization::GridMapVisualization(CDisplayWindow3D& window3D, const std
 
 	this->showAxis = showAxis;
 	this->activateTransparency = activateTransparency;
+#ifdef WITH_MRPT_2_0_VERSION
+	opengl::COpenGLScene::Ptr &ptrScene = window3D.get3DSceneAndLock();
+	{
+		opengl::CTexturedPlane::Ptr objs = opengl::CTexturedPlane::Create();
+		objs->setName(identifier + "_ltm");
+		objs->setPlaneCorners(0, 0, 0, 0);
+		ptrScene->insert(objs);
 
+		//show coordinate frame
+		{
+			mrpt::opengl::CSetOfObjects::Ptr gl_corner = mrpt::opengl::stock_objects::CornerXYZ();
+			gl_corner->setScale(0.4);
+			ptrScene->insert(gl_corner);
+
+		}
+		//show axis
+		{
+			mrpt::opengl::CGridPlaneXY::Ptr gl_grid = mrpt::opengl::CGridPlaneXY::Create();
+			gl_grid->setColor(0.6,0.6,0.6);
+			ptrScene->insert( gl_grid );
+		}
+
+		if (showAxis) {
+			opengl::CAxis::Ptr axis = opengl::CAxis::Create(-10, -10, 0, 10, 10, 2, 1, 1, true);
+			axis->setName(identifier + "_axis");
+			axis->setColor(0, 0, 0);
+			axis->enableTickMarks();
+			ptrScene->insert(axis);
+		}
+	}
+#else
 	opengl::COpenGLScenePtr &ptrScene = window3D.get3DSceneAndLock();
 	{
 		opengl::CTexturedPlanePtr objs = opengl::CTexturedPlane::Create();
@@ -75,11 +110,25 @@ GridMapVisualization::GridMapVisualization(CDisplayWindow3D& window3D, const std
 			ptrScene->insert(axis);
 		}
 	}
+#endif
 	window3D.unlockAccess3DScene();
 
 }
 
 GridMapVisualization::~GridMapVisualization() {
+#ifdef WITH_MRPT_2_0_VERSION
+	opengl::COpenGLScene::Ptr &ptrScene = window3D.get3DSceneAndLock();
+		{
+			opengl::CTexturedPlane::Ptr ptrPlane = std::dynamic_pointer_cast<opengl::CTexturedPlane>(ptrScene->getByName(identifier + "_ltm"));
+			ptrScene->removeObject(ptrPlane);
+
+			if (showAxis) {
+				opengl::CAxis::Ptr ptrAxis = std::dynamic_pointer_cast<opengl::CAxis>(ptrScene->getByName(identifier + "_axis"));
+				ptrScene->removeObject(ptrAxis);
+			}
+
+		}
+#else
 	opengl::COpenGLScenePtr &ptrScene = window3D.get3DSceneAndLock();
 		{
 			opengl::CTexturedPlanePtr ptrPlane = (opengl::CTexturedPlanePtr) ptrScene->getByName(identifier + "_ltm");
@@ -91,6 +140,7 @@ GridMapVisualization::~GridMapVisualization() {
 			}
 
 		}
+#endif
 		window3D.unlockAccess3DScene();
 		window3D.forceRepaint();
 }
@@ -116,8 +166,13 @@ void GridMapVisualization::displayGridMap(const CommNavigationObjects::CommGridM
 	//	growing with 129 and undeletable grids are marked with 130. The cell values
 	//	can be accumulated over time to represent the environment over a longer period.
 
+#ifdef WITH_MRPT_2_0_VERSION
+	mrpt::img::CImage imgColor(xSizeCells, ySizeCells, mrpt::img::TImageChannels::CH_RGB);
+	mrpt::img::CImage imgTrans(xSizeCells, ySizeCells, mrpt::img::TImageChannels::CH_GRAY);
+#else
 	utils::CImage imgColor(xSizeCells, ySizeCells, 3);
 	utils::CImage imgTrans(xSizeCells, ySizeCells, 1);
+#endif
 
 	//std::cout<<"displayGridMap: xSizeCells: "<<xSizeCells<<" ySizeCells: "<<ySizeCells <<std::endl;
 
@@ -127,7 +182,11 @@ void GridMapVisualization::displayGridMap(const CommNavigationObjects::CommGridM
 			uint8_t cell = map.get_cells(i, j);
 			*imgTrans(i, j) = 255;
 
+#ifdef WITH_MRPT_2_0_VERSION
+			imgColor.setPixel(i, j, img::TColor(cell, cell, cell));
+#else
 			imgColor.setPixel(i, j, utils::TColor(cell, cell, cell));
+#endif
 
 
 //			if (cell <= 127) {
@@ -158,7 +217,20 @@ void GridMapVisualization::displayGridMap(const CommNavigationObjects::CommGridM
 
 	//	w1.showImage(imgColor);
 	//	w2.showImage(imgTrans);
+#ifdef WITH_MRPT_2_0_VERSION
+	opengl::COpenGLScene::Ptr &ptrScene = window3D.get3DSceneAndLock();
+	{
+		opengl::CTexturedPlane::Ptr ptrPlane = std::dynamic_pointer_cast<opengl::CTexturedPlane>(ptrScene->getByName(identifier + "_ltm"));
+		ptrPlane->setPlaneCorners(xmin, xmax, ymin, ymax);
+		ptrPlane->assignImage(imgColor, imgTrans);
 
+		if (showAxis) {
+			opengl::CAxis::Ptr ptrAxis = std::dynamic_pointer_cast<opengl::CAxis>(ptrScene->getByName(identifier + "_axis"));
+			ptrAxis->setAxisLimits(xmin, ymin, 0, xmax, ymax, 2);
+		}
+
+	}
+#else
 	opengl::COpenGLScenePtr &ptrScene = window3D.get3DSceneAndLock();
 	{
 		opengl::CTexturedPlanePtr ptrPlane = (opengl::CTexturedPlanePtr) ptrScene->getByName(identifier + "_ltm");
@@ -171,11 +243,23 @@ void GridMapVisualization::displayGridMap(const CommNavigationObjects::CommGridM
 		}
 
 	}
+#endif
 	window3D.unlockAccess3DScene();
 	window3D.forceRepaint();
 }
 
 void GridMapVisualization::clear() {
+#ifdef WITH_MRPT_2_0_VERSION
+	opengl::COpenGLScene::Ptr &ptrScene = window3D.get3DSceneAndLock();
+	{
+		opengl::CTexturedPlane::Ptr ptrPlane = std::dynamic_pointer_cast<opengl::CTexturedPlane>(ptrScene->getByName(identifier + "_ltm"));
+		if(!ptrPlane){
+			ptrPlane->setPlaneCorners(0, 0, 0, 0);
+		} else {
+			//std::cout<<" clear on NULL empty!"<<std::endl;
+		}
+	}
+#else
 	opengl::COpenGLScenePtr &ptrScene = window3D.get3DSceneAndLock();
 	{
 		opengl::CTexturedPlanePtr ptrPlane = (opengl::CTexturedPlanePtr) ptrScene->getByName(identifier + "_ltm");
@@ -185,6 +269,7 @@ void GridMapVisualization::clear() {
 			//std::cout<<" clear on NULL empty!"<<std::endl;
 		}
 	}
+#endif
 	window3D.unlockAccess3DScene();
 	window3D.forceRepaint();
 }

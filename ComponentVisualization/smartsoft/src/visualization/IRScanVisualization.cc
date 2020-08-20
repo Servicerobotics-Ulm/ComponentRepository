@@ -33,6 +33,15 @@
 IRScanVisualization::IRScanVisualization(CDisplayWindow3D& window3D, const std::string& identifier) :
 	AbstractVisualization(window3D, identifier)
 {
+#ifdef WITH_MRPT_2_0_VERSION
+	opengl::COpenGLScene::Ptr &ptrScene = window3D.get3DSceneAndLock();
+	{
+		opengl::CPointCloudColoured::Ptr cloud = opengl::CPointCloudColoured::Create();
+		cloud->setName(identifier + "_cloud");
+		cloud->setPointSize(2.0);
+		ptrScene->insert(cloud);
+	}
+#else
 	opengl::COpenGLScenePtr &ptrScene = window3D.get3DSceneAndLock();
 	{
 		opengl::CPointCloudColouredPtr cloud = opengl::CPointCloudColoured::Create();
@@ -40,17 +49,26 @@ IRScanVisualization::IRScanVisualization(CDisplayWindow3D& window3D, const std::
 		cloud->setPointSize(2.0);
 		ptrScene->insert(cloud);
 	}
+#endif
 	window3D.unlockAccess3DScene();
 }
 
 IRScanVisualization::~IRScanVisualization()
 {
+#ifdef WITH_MRPT_2_0_VERSION
+	opengl::COpenGLScene::Ptr & ptrScene = window3D.get3DSceneAndLock();
+	{
+		opengl::CPointCloudColoured::Ptr cloud = std::dynamic_pointer_cast<opengl::CPointCloudColoured>(ptrScene->getByName(identifier + "_cloud"));
+		ptrScene->removeObject(cloud);
+	}
+#else
 	opengl::COpenGLScenePtr & ptrScene = window3D.get3DSceneAndLock();
 	{
 		opengl::CPointCloudColouredPtr cloud = (opengl::CPointCloudColouredPtr) ptrScene->getByName(identifier + "_cloud");
 		ptrScene->removeObject(cloud);
 
 	}
+#endif
 	window3D.unlockAccess3DScene();
 	window3D.forceRepaint();
 }
@@ -71,6 +89,20 @@ void IRScanVisualization::displayScan(CommBasicObjects::CommMobileIRScan& scan)
 			std::cout<<"Point: "<<x<<" "<< y<<" "<<z<<std::endl;
 		}
 
+#ifdef WITH_MRPT_2_0_VERSION
+		opengl::COpenGLScene::Ptr & ptrScene = window3D.get3DSceneAndLock();
+		//////////////////////////////////////////
+		// show coordinates
+		{
+			opengl::CPointCloudColoured::Ptr cloud = std::dynamic_pointer_cast<opengl::CPointCloudColoured>(ptrScene->getByName(identifier + "_cloud"));
+			cloud->clear();
+			for (uint32_t i = 0; i < points.size(); i++)
+			{
+				cloud->push_back(points[i].x, points[i].y, points[i].z, points[i].r, points[i].g, points[i].b);
+			}
+
+		}
+#else
 		opengl::COpenGLScenePtr & ptrScene = window3D.get3DSceneAndLock();
 		//////////////////////////////////////////
 		// show coordinates
@@ -83,6 +115,7 @@ void IRScanVisualization::displayScan(CommBasicObjects::CommMobileIRScan& scan)
 			}
 
 		}
+#endif
 		window3D.unlockAccess3DScene();
 		window3D.forceRepaint();
 
@@ -90,11 +123,19 @@ void IRScanVisualization::displayScan(CommBasicObjects::CommMobileIRScan& scan)
 
 void IRScanVisualization::clear()
 {
+#ifdef WITH_MRPT_2_0_VERSION
+	opengl::COpenGLScene::Ptr & ptrScene = window3D.get3DSceneAndLock();
+		{
+			opengl::CPointCloudColoured::Ptr cloud = std::dynamic_pointer_cast<opengl::CPointCloudColoured>(ptrScene->getByName(identifier + "_cloud"));
+			cloud->clear();
+		}
+#else
 	opengl::COpenGLScenePtr & ptrScene = window3D.get3DSceneAndLock();
 	{
 		opengl::CPointCloudColouredPtr cloud = (opengl::CPointCloudColouredPtr) ptrScene->getByName(identifier + "_cloud");
 		cloud->clear();
 	}
+#endif
 	window3D.unlockAccess3DScene();
 	window3D.forceRepaint();
 }
