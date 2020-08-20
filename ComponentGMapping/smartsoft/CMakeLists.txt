@@ -40,14 +40,23 @@ SMART_COMPONENT_AUTOBUILD_DEPENDENCIES()
 ## using regular CMake commands (like FIND_PACKAGE, INCLUDE_DIRECTORIES, etc.) ##
 
 # you can add additional external libraries using regular CMake commands, e.g.:
-find_package(OpenCV REQUIRED)
+FIND_PACKAGE(OpenCV REQUIRED)
+IF(OpenCV_VERSION VERSION_LESS 4.2.0)
+  add_definitions(-DWITH_OLD_OPENCV_VERSION)
+ELSE()
+  add_definitions(-DWITH_OPENCV_4_2_VERSION)
+ENDIF()
 
-IF(EXISTS "$ENV{SMART_ROOT_ACE}/src/utilities/gmapping")
-  LIST(APPEND USER_INCLUDES "$ENV{SMART_ROOT_ACE}/src/utilities/gmapping")
+#display versions
+message("OpenCV_VERSION   :${OpenCV_VERSION}")
+
+IF(EXISTS "$ENV{SMART_ROOT_ACE}/repos/Utilityrepository/gmapping")
+  LIST(APPEND USER_INCLUDES "$ENV{SMART_ROOT_ACE}/repos/Utilityrepository/gmapping")
   LINK_DIRECTORIES("$ENV{SMART_ROOT_ACE}/src/utilities/gmapping/lib")
   LIST(APPEND USER_LIBS gridfastslam scanmatcher log sensor_range sensor_odometry sensor_base utils)
+  message("gmapping library found in Utilityrepository")
 ELSEIF(EXISTS "/opt/gmapping/FindGMapping.cmake")
-message("opt gmapping")
+  message("gmapping library found in /opt")
   SET(CMAKE_MODULE_PATH /opt/gmapping)
   FIND_PACKAGE( GMapping REQUIRED )
   LIST(APPEND USER_INCLUDES ${GMAPPING_INCLUDE_DIRS})

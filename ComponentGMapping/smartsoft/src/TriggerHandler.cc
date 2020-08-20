@@ -51,8 +51,17 @@
 
 // includes for map serialization
 #include <fstream>
+
+#ifdef WITH_OPENCV_4_2_VERSION
+#include <opencv4/opencv2/core/core.hpp>
+#include <opencv4/opencv2/core/core_c.h>
+#include <opencv4/opencv2/core/types_c.h>
+#include <opencv4/opencv2/highgui/highgui.hpp>
+#include <opencv4/opencv2/imgcodecs/imgcodecs.hpp>
+#else
 #include <opencv/cxcore.h>
 #include <opencv/highgui.h>
+#endif
 #include <OpenCVHelpers/OpenCVHelpers.hh>
 
 // trigger user methods
@@ -163,12 +172,31 @@ void TriggerHandler::handleCommLocalizationObjects_SlamParameter_SAVEMAP(const s
 		char  mapFileNameWithPath[255];
 		sprintf(mapFileName,"%s.pgm", filename.c_str());
 		sprintf(mapFileNameWithPath,"%s/%s.pgm", dirname.c_str(), filename.c_str());
+
 		// save image to file mapAsPGM.pgm
-		if(!cvSaveImage(mapFileNameWithPath,image)) std::cout << "Could not save: " << mapFileNameWithPath << std::endl;
+
+#ifdef WITH_OPENCV_4_2_VERSION
+		bool saved = cv::imwrite(mapFileNameWithPath,cv::Mat(map_size_y,map_size_x,CV_8UC1,image->imageData));
+#else
+		bool saved = cvSaveImage(mapFileNameWithPath,image);
+#endif
+		if(!saved) std::cout << "Failed to save map file to the disk" << mapFileNameWithPath << std::endl;
 
 		// save context information in yaml format
+
 		char  yamlFileName[255];
 		sprintf(yamlFileName,"%s/%s.yaml", dirname.c_str(), filename.c_str());
+
+#ifdef WITH_OPENCV_4_2_VERSION
+		cv::FileStorage fs( yamlFileName, cv::FileStorage::Mode::WRITE);
+		fs<<"image" <<mapFileName;
+		fs<<"resolution"<<resolution;
+		fs<<"negate", negate;
+		fs<< "occupied_thresh"<<occupied_thresh;
+		fs<< "free_thresh" <<free_thresh;
+		fs.release();
+
+#else
 		CvFileStorage* fs = cvOpenFileStorage( yamlFileName, 0, CV_STORAGE_WRITE);
 		cvWriteString( fs, "image", mapFileName);
 		cvWriteReal( fs, "resolution", resolution);
@@ -182,6 +210,7 @@ void TriggerHandler::handleCommLocalizationObjects_SlamParameter_SAVEMAP(const s
 		myfile.open(yamlFileName, ios::app);
 		myfile << "origin: " << "[" << origin_x << "," << origin_y << "," << origin_z << "]\n";
 		myfile.close();
+#endif
 
 		// clean up image
 		cvReleaseImage(&image);
