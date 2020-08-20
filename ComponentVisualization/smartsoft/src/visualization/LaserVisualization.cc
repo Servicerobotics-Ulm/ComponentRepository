@@ -35,6 +35,7 @@
 #include "LaserVisualization.hh"
 
 #include <mrpt/opengl/CPlanarLaserScan.h>
+#include <mrpt/version.h>
 
 #include "../src-gen/ComponentVisualization.hh"
 
@@ -94,7 +95,7 @@ void LaserVisualization::displayLaserScan(const CommBasicObjects::CommMobileLase
 			std::cout<<"numScan: "<<numScans << " maxScan: "<<max_scan_size<<" res: in deg "<<resolution*180/M_PI<<" startAngle: "<<startAngle*180/M_PI<<" endAngle: "<<endAngle*180/M_PI<<std::endl;
 		}
 
-#ifdef WITH_OLD_MRPT_VERSION
+#if MRPT_VERSION < 0x130
 		CObservation2DRangeScan s;
 #else
 		obs::CObservation2DRangeScan s;
@@ -117,9 +118,12 @@ void LaserVisualization::displayLaserScan(const CommBasicObjects::CommMobileLase
 					sPtr->insertPoint(x, y, z);
 				}
 			} else {
-
+#if MRPT_VERSION < 0x150
 				s.scan.resize(max_scan_size);
 				s.validRange.resize(max_scan_size, 0);
+#else
+				s.resizeScan(max_scan_size);
+#endif
 				s.aperture = fabs(endAngle - startAngle);
 				s.maxRange = scan.get_max_distance(1.0);
 				s.sensorPose = pBase + pSensor;
@@ -127,8 +131,13 @@ void LaserVisualization::displayLaserScan(const CommBasicObjects::CommMobileLase
 				for (size_t i = 0; i < numScans; ++i) {
 					int index = fabs(pi_to_pi(scan.get_scan_angle(i)) - startAngle) / resolution;
 
+#if MRPT_VERSION < 0x150
 					s.scan[index] = scan.get_scan_distance(i, 1.0);// visualization needs distance in meters
 					s.validRange[index] = 1;
+#else
+					s.setScanRange(index, scan.get_scan_distance(i, 1.0));// visualization needs distance in meters
+					s.setScanRangeValidity(index, 1);
+#endif
 				}
 
 				opengl::CPlanarLaserScanPtr sPtr2 = (opengl::CPlanarLaserScanPtr) ptrScene->getByName(identifier);

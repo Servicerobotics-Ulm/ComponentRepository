@@ -59,11 +59,6 @@ FIND_PACKAGE( MRPT REQUIRED gui base maps)
 message("-- MRPT_VERSION: ${MRPT_VERSION}")
 GET_PROPERTY(MRPT_INCLUDE_DIRS DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
 
-IF(MRPT_VERSION VERSION_LESS 1.3.0)
-MESSAGE("OLD MRPT VERSION DETECTED ..")
-add_definitions(-DWITH_OLD_MRPT_VERSION)
-ENDIF()
-
 INCLUDE(${CMAKE_CURRENT_LIST_DIR}/src-gen/MixedPortIncludes.cmake)
 
 # these are the regular includes (add your own includes, if needed)
