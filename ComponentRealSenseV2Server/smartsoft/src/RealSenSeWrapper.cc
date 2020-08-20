@@ -47,7 +47,6 @@
 //
 //--------------------------------------------------------------------------
 #include "RealSenSeWrapper.hh"
-#include <opencv2/opencv.hpp>
 #include <librealsense2/h/rs_pipeline.h>
 #include <librealsense2/rsutil.h>
 #define TEXT_COLOR_RESET   "\033[0m"
