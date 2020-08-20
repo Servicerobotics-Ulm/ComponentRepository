@@ -17,6 +17,26 @@
     (format t "Parsed result ~s~%" parsed-msg)
     parsed-msg))
 
+(defun decode-msg-from-file (filename)
+  "This function takes a file-path in jsonformat and decodes it to a alist"
+  (let ((parsed-msg nil))
+    (format t "Decode file: ~a~%" filename)
+    (format t "Typeof msg: ~a~%" (type-of filename))
+
+    (handler-case
+      (with-open-file (s filename)
+        (let ((cl-json:*json-symbols-package* nil))
+          (setf parsed-msg (cl-json:decode-json s))))
+      (t (c)
+        (format t "[decode-json-msg] ERROR decode file: ~a~%" c)
+        (setf parsed-msg nil)
+        (values nil c)))
+
+    
+    (format t "Parsed result ~s~%" parsed-msg)
+    parsed-msg))
+
+
 (defun keep-lisp-symbol-string (string)
   "Take a symbol name as a string and keep it lowercase"
   (string-downcase string))
