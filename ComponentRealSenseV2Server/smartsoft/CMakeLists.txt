@@ -42,7 +42,9 @@ SMART_COMPONENT_AUTOBUILD_DEPENDENCIES()
 # you can add additional external libraries using regular CMake commands, e.g.:
 #FIND_PACKAGE(<SomePackageName>)
 find_package(realsense2 REQUIRED)
-MESSAGE("Found realsense2 lib: ${realsense2_LIBRARY}")
+find_package(OpenCV REQUIRED)
+MESSAGE("RealSense2 version : ${realsense2_VERSION}")
+MESSAGE("OpenCV     version : ${OpenCV_VERSION}")
 
 INCLUDE(${CMAKE_CURRENT_LIST_DIR}/src-gen/MixedPortIncludes.cmake)
 
@@ -51,6 +53,7 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_LIST_DIR}/src
   ${CMAKE_CURRENT_LIST_DIR}/src-gen
   ${CMAKE_CURRENT_LIST_DIR}/src-gen/params
+  ${OpenCV_INCLUDE_DIRS}
 )
 
 # collect the toolchain-generated source-files
