@@ -74,14 +74,14 @@ void DockActivity::dock_action_result_cb(const std_msgs::String::ConstPtr &msg)
     if (msg->data == "succeeded")
     {
     	std::cout << "docking succeeded " << std::endl;
+    	this->stop();
     }
     else
     {
     	std::cout << "docking did not succeed " << std::endl;
     }
-// Auskommentiert weil's sonst andauernd dockt
-//	docking = false;
-
+	std::cout << "docking false " << std::endl;
+	docking = false;
 
 //	SmartACE::SmartComponent *component = dynamic_cast<ComponentRosDockAcePortFactory*>(acePortFactory)->getComponentImpl();
 //	stateChangeHandler = new SmartStateChangeHandler();
@@ -145,11 +145,13 @@ int DockActivity::on_execute()
 //	}
 
 
-	std::cout << "Dock! " << std::endl;
 	if (!docking)
+	{
+		std::cout << "Dock! " << std::endl;
 		dock();
+	}
 	else
-		std::cout << "Waiting for docking" << std::endl;
+		std::cout << "Waiting for docking finished." << std::endl;
 	// it is possible to return != 0 (e.g. when the task detects errors), then the outer loop breaks and the task stops
 	return 0;
 }

@@ -23,12 +23,20 @@
 void SmartStateChangeHandler::handleEnterState(const std::string & substate) throw()
 {
 	// change this code to your needs !!!
-
+	std::cout << "enter state: " << substate << std::endl;
 }
 
 // Called when a substate is left
 void SmartStateChangeHandler::handleQuitState(const std::string & substate) throw()
 {
 	// change this code to your needs !!!
+	std::cout << "quit state: " << substate << std::endl;
+
+	if (substate == "dock")
+	{
+		std::cout << "start dock " << std::endl;
+		COMP->dockActivity->start();
+
+	}
 
 }
