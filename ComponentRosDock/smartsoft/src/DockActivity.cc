@@ -29,42 +29,16 @@ DockActivity::~DockActivity()
 	std::cout << "destructor DockActivity\n";
 }
 
-//void DockActivity::twist_sub_cb(const geometry_msgs::Twist::ConstPtr &msg)
-//{
-//	std::unique_lock<std::mutex> lck (mtx);
-//
-//    CommBasicObjects::CommNavigationVelocity comNavVel;
-//
-//    comNavVel.set_vX(msg->linear.x);
-//    comNavVel.set_vY(msg->linear.y);
-//	comNavVel.set_omega(msg->angular.z);
-//	std::cout << "Velocity x: " << msg->linear.x	<< std::endl;
-//	std::cout << "velocity y: " << msg->linear.y	<< std::endl;
-//	std::cout << "turnrate :" << msg->angular.z	<< std::endl;
-//
-//    Smart::StatusCode status_nav;
-//
-//    status_nav = this->navigationVelocityServiceOutPut(comNavVel);
-//    if(status_nav != Smart::SMART_OK)
-//	{
-//		std::cerr << status_nav << std::endl;
-//		std::cout << "Some Error in the Conection as status is not ok " << std::endl;
-//	}
-//	else
-//	{
-//		std::cout << "Updating Velocity " << comNavVel << std::endl;
-//	}
-//}
-
 void DockActivity::dock()
 {
+	std::unique_lock<std::mutex> lck (mtx);
+
 	std_msgs::String dock_goal;
 	dock_goal.data = "station_charger";
 
 	std::cout << "publishing dock goal: " << dock_goal << std::endl;
 	COMP -> rosPorts -> dock_action_goal.publish(dock_goal);
 	docking = true;
-//	dock_action_goal.publish(dock_goal);
 }
 
 void DockActivity::dock_action_result_cb(const std_msgs::String::ConstPtr &msg)
@@ -82,11 +56,6 @@ void DockActivity::dock_action_result_cb(const std_msgs::String::ConstPtr &msg)
     }
 	std::cout << "docking false " << std::endl;
 	docking = false;
-
-//	SmartACE::SmartComponent *component = dynamic_cast<ComponentRosDockAcePortFactory*>(acePortFactory)->getComponentImpl();
-//	stateChangeHandler = new SmartStateChangeHandler();
-//	stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
-//	if (COMP->stateSlave->defineStates("Neutral" ,"dock") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion Neutral.dock" << std::endl;
 
 }
 
@@ -143,7 +112,6 @@ int DockActivity::on_execute()
 //	} else {
 //		std::cout << "received: " << laserServiceInObject << std::endl;
 //	}
-
 
 	if (!docking)
 	{

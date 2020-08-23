@@ -32,11 +32,15 @@ void SmartStateChangeHandler::handleQuitState(const std::string & substate) thro
 	// change this code to your needs !!!
 	std::cout << "quit state: " << substate << std::endl;
 
+	// restart Activities, because they're being stopped after successful (un)dock
 	if (substate == "dock")
 	{
-		std::cout << "start dock " << std::endl;
+		std::cout << "restart dock " << std::endl;
 		COMP->dockActivity->start();
-
 	}
-
+	if (substate == "undock")
+	{
+		std::cout << "restart undock " << std::endl;
+		COMP->undockActivity->start();
+	}
 }

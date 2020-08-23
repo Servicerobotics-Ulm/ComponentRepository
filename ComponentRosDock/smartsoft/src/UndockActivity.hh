@@ -19,15 +19,24 @@
 
 #include "UndockActivityCore.hh"
 
+#include <std_msgs/String.h>
+
 class UndockActivity  : public UndockActivityCore
 {
 private:
+	std::mutex mtx;
+	bool undocking;
+
 	virtual void on_BaseStateServiceIn(const CommBasicObjects::CommBaseState &input);
 	virtual void on_LaserServiceIn(const CommBasicObjects::CommMobileLaserScan &input);
+	virtual void undock();
+
 public:
 	UndockActivity(SmartACE::SmartComponent *comp);
 	virtual ~UndockActivity();
 	
+	void undock_action_result_cb(const std_msgs::String::ConstPtr &msg);
+
 	virtual int on_entry();
 	virtual int on_execute();
 	virtual int on_exit();

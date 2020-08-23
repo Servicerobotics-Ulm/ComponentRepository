@@ -29,7 +29,35 @@ UndockActivity::~UndockActivity()
 	std::cout << "destructor UndockActivity\n";
 }
 
+void UndockActivity::undock()
+{
+	std::unique_lock<std::mutex> lck (mtx);
 
+	std_msgs::String undock_goal;
+	undock_goal.data = "station_charger";
+
+	std::cout << "publishing undock goal: " << undock_goal << std::endl;
+	COMP -> rosPorts -> undock_action_goal.publish(undock_goal);
+	undocking = true;
+}
+
+void UndockActivity::undock_action_result_cb(const std_msgs::String::ConstPtr &msg)
+{
+	std::unique_lock<std::mutex> lck (mtx);
+
+    if (msg->data == "succeeded")
+    {
+    	std::cout << "undocking succeeded " << std::endl;
+    	this->stop();
+    }
+    else
+    {
+    	std::cout << "undocking did not succeed " << std::endl;
+    }
+	std::cout << "undocking false " << std::endl;
+	undocking = false;
+
+}
 void UndockActivity::on_BaseStateServiceIn(const CommBasicObjects::CommBaseState &input)
 {
 	// upcall triggered from InputPort BaseStateServiceIn
@@ -78,8 +106,13 @@ int UndockActivity::on_execute()
 		std::cout << "received: " << laserServiceInObject << std::endl;
 	}
 
-	std::cout << "Hello from UndockActivity " << std::endl;
-
+	if (!undocking)
+	{
+		std::cout << "Undock! " << std::endl;
+		undock();
+	}
+	else
+		std::cout << "Waiting for undocking finished." << std::endl;
 	// it is possible to return != 0 (e.g. when the task detects errors), then the outer loop breaks and the task stops
 	return 0;
 }
