@@ -40,9 +40,7 @@ void TwistActivity::twist_sub_cb(const geometry_msgs::Twist::ConstPtr &msg)
 //	std::cout << "velocity y: " << msg->linear.y	<< std::endl;
 //	std::cout << "turnrate :" << msg->angular.z	<< std::endl;
 
-    Smart::StatusCode status_nav;
-
-    status_nav = this->navigationVelocityServiceOutPut(comNavVel);
+    Smart::StatusCode status_nav = this->navigationVelocityServiceOutPut(comNavVel);
     if(status_nav != Smart::SMART_OK)
 	{
 		std::cerr << status_nav << std::endl;

@@ -25,11 +25,12 @@ class DockActivity  : public DockActivityCore
 {
 private:
 	std::mutex mtx;
-	bool docking;
+	bool docking = false;
 
 	virtual void on_BaseStateServiceIn(const CommBasicObjects::CommBaseState &input);
 	virtual void on_LaserServiceIn(const CommBasicObjects::CommMobileLaserScan &input);
-	virtual void dock();
+
+	void dock();
 
 public:
 	DockActivity(SmartACE::SmartComponent *comp);

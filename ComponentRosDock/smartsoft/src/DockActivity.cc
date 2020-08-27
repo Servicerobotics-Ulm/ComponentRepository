@@ -54,7 +54,7 @@ void DockActivity::dock_action_result_cb(const std_msgs::String::ConstPtr &msg)
     {
     	std::cout << "docking did not succeed " << std::endl;
     }
-	std::cout << "docking false " << std::endl;
+	std::cout << "docking false" << std::endl;
 	docking = false;
 
 }
