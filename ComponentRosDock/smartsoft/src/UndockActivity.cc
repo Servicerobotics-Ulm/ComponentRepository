@@ -45,18 +45,20 @@ void UndockActivity::undock_action_result_cb(const std_msgs::String::ConstPtr &m
 {
 	std::unique_lock<std::mutex> lck (mtx);
 
-    if (msg->data == "succeeded")
-    {
-    	std::cout << "undocking succeeded " << std::endl;
-    	this->stop();
-    }
-    else
-    {
-    	std::cout << "undocking did not succeed " << std::endl;
-    }
-	std::cout << "undocking false " << std::endl;
-	undocking = false;
+	std::string::size_type loc = msg->data.find( "successful", 0 );
+	if( loc != std::string::npos )
+	{
+		std::cout << "undocking succeeded: " << msg->data << std::endl;
 
+	}
+	else
+	{
+		std::cout << "undocking did not succeed: " << msg->data << std::endl;
+	}
+
+	this->stop();
+	std::cout << "undocking false" << std::endl;
+	undocking = false;
 }
 void UndockActivity::on_BaseStateServiceIn(const CommBasicObjects::CommBaseState &input)
 {
@@ -77,6 +79,8 @@ void UndockActivity::on_LaserServiceIn(const CommBasicObjects::CommMobileLaserSc
 
 int UndockActivity::on_entry()
 {
+	std::cout << "entry UndockActivity\n";
+
 	// do initialization procedures here, which are called once, each time the task is started
 	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
 	return 0;
@@ -95,7 +99,7 @@ int UndockActivity::on_execute()
 		std::cerr << status << std::endl;
 		// return 0;
 	} else {
-		std::cout << "received: " << baseStateServiceInObject << std::endl;
+		//std::cout << "received: " << baseStateServiceInObject << std::endl;
 	}
 	CommBasicObjects::CommMobileLaserScan laserServiceInObject;
 	status = this->laserServiceInGetUpdate(laserServiceInObject);
@@ -103,7 +107,7 @@ int UndockActivity::on_execute()
 		std::cerr << status << std::endl;
 		// return 0;
 	} else {
-		std::cout << "received: " << laserServiceInObject << std::endl;
+		//std::cout << "received: " << laserServiceInObject << std::endl;
 	}
 
 	if (!undocking)
@@ -118,6 +122,8 @@ int UndockActivity::on_execute()
 }
 int UndockActivity::on_exit()
 {
+	std::cout << "exit UndockActivity\n";
+
 	// use this method to clean-up resources which are initialized in on_entry() and needs to be freed before the on_execute() can be called again
 	return 0;
 }

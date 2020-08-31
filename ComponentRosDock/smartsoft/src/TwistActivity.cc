@@ -48,7 +48,7 @@ void TwistActivity::twist_sub_cb(const geometry_msgs::Twist::ConstPtr &msg)
 	}
 	else
 	{
-		std::cout << "Updating Velocity " << comNavVel << std::endl;
+		//std::cout << "Updating Velocity " << comNavVel << std::endl;
 	}
 }
 

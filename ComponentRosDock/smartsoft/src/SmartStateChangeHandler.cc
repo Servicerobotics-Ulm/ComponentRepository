@@ -38,7 +38,7 @@ void SmartStateChangeHandler::handleQuitState(const std::string & substate) thro
 		std::cout << "restart dock " << std::endl;
 		COMP->dockActivity->start();
 	}
-	if (substate == "undock")
+	if (substate == "unDock")
 	{
 		std::cout << "restart undock " << std::endl;
 		COMP->undockActivity->start();

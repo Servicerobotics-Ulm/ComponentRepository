@@ -43,20 +43,21 @@ void DockActivity::dock()
 
 void DockActivity::dock_action_result_cb(const std_msgs::String::ConstPtr &msg)
 {
-	std::unique_lock<std::mutex> lck (mtx);
+	 std::unique_lock<std::mutex> lck (mtx);
 
-    if (msg->data == "succeeded")
-    {
-    	std::cout << "docking succeeded " << std::endl;
-    	this->stop();
-    }
-    else
-    {
-    	std::cout << "docking did not succeed " << std::endl;
-    }
+	std::string::size_type loc = msg->data.find( "successful", 0 );
+	if( loc != std::string::npos )
+	{
+		std::cout << "docking succeeded: " << msg->data << std::endl;
+	}
+	else
+	{
+		std::cout << "docking did not succeed: " << msg->data << std::endl;
+	}
+
+	this->stop();
 	std::cout << "docking false" << std::endl;
 	docking = false;
-
 }
 
 void DockActivity::on_BaseStateServiceIn(const CommBasicObjects::CommBaseState &input)
@@ -88,8 +89,6 @@ int DockActivity::on_entry()
 }
 int DockActivity::on_execute()
 {
-	std::cout << "execute DockActivity\n";
-
 	// this method is called from an outside loop,
 	// hence, NEVER use an infinite loop (like "while(1)") here inside!!!
 	// also do not use blocking calls which do not result from smartsoft kernel
