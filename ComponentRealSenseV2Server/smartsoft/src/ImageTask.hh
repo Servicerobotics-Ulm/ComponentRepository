@@ -65,8 +65,6 @@ public:
 	virtual int on_execute();
 	virtual int on_exit();
 
-	void startCapturing();
-	void stopCapturing();
 	bool push_newest_rgbd;
 	bool push_newest_rgb;
 	bool push_newest_depth;

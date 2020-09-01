@@ -78,30 +78,6 @@ ImageTask::~ImageTask()
 	_ring_buffer.clear();
 }
 
-void ImageTask::startCapturing() {
-	SmartACE::SmartGuard(COMP->RealSenseMutex);
-	if (COMP->smart_rs_device != NULL) {
-		COMP->smart_rs_device->startVideo();
-
-	}
-	if (COMP->getGlobalState().getSettings().getDebug_info()) {
-		std::cout << "[Image Task] Start capturing\n";
-	}
-}
-
-void ImageTask::stopCapturing() {
-	SmartACE::SmartGuard guard(COMP->RealSenseMutex);
-	if (COMP->smart_rs_device != NULL) {
-			COMP->smart_rs_device->stopVideo();
-	}
-
-	if (COMP->getGlobalState().getSettings().getDebug_info()) {
-		std::cout << "[Image Task] Stop capturing\n";
-	}
-}
-
-
-
 int ImageTask::on_entry()
 {
 	ParameterStateStruct global_state = COMP->getGlobalState();
@@ -146,6 +122,11 @@ int ImageTask::on_entry()
 				                                 device_serial_number, base_line);
 
 	COMP->smart_rs_device->set_is_postprocess_enabled(global_state.getSettings().getPost_processing());
+	COMP->smart_rs_device->startVideo();
+
+	if (COMP->getGlobalState().getSettings().getDebug_info()) {
+		std::cout << "[Image Task] Start capturing\n";
+	}
 
 	return 0;
 }
@@ -310,5 +291,15 @@ int ImageTask::on_execute()
 int ImageTask::on_exit()
 {
 	// use this method to clean-up resources which are initialized in on_entry() and needs to be freed before the on_execute() can be called again
+	SmartACE::SmartGuard guard(COMP->RealSenseMutex);
+	COMP->smart_rs_device->stopVideo();
+
+	if (COMP->getGlobalState().getSettings().getDebug_info()) {
+		std::cout << "[Image Task] Stop capturing\n";
+	}
+
+	delete COMP->smart_rs_device;
+	COMP->smart_rs_device = NULL;
+
 	return 0;
 }
