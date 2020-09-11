@@ -23,6 +23,9 @@
 #include "LaserServiceInUpcallInterface.hh"
 
 // include communication-objects for output ports
+#include <CommNavigationObjects/CommDockingEventParameter.hh>
+#include <CommNavigationObjects/CommDockingEventResult.hh>
+#include <CommNavigationObjects/CommDockingEventState.hh>
 
 // include all interaction-observer interfaces
 #include <DockActivityObserverInterface.hh>
@@ -83,6 +86,8 @@ protected:
 		return laserServiceInStatus;
 	}
 	
+	// this method is meant to be used in derived classes
+	Smart::StatusCode robotDockingEventServiceOutPut(CommNavigationObjects::CommDockingEventState &eventState);
 	
 	
 /**

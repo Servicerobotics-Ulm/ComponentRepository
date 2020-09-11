@@ -49,11 +49,17 @@ void UndockActivity::undock_action_result_cb(const std_msgs::String::ConstPtr &m
 	if( loc != std::string::npos )
 	{
 		std::cout << "undocking succeeded: " << msg->data << std::endl;
+		CommNavigationObjects::CommDockingEventState eventState;
+		eventState.setNewState(CommNavigationObjects::DockingEventType::UN_DOCKING_DONE);
+		COMP->robotDockingEventServiceOut->put(eventState);
 
 	}
 	else
 	{
 		std::cout << "undocking did not succeed: " << msg->data << std::endl;
+		CommNavigationObjects::CommDockingEventState eventState;
+		eventState.setNewState(CommNavigationObjects::DockingEventType::UN_DOCKING_ERROR);
+		COMP->robotDockingEventServiceOut->put(eventState);
 	}
 
 	this->stop();

@@ -1,17 +1,18 @@
 ComponentDefinition ComponentRosDock logo "/ComponentRosDock/model/logo.png"
 {
-Activity DockActivity
+	Activity DockActivity
 	{
 		InputPortLink BaseStateServiceIn { oversamplingOk undersamplingOk }
 		InputPortLink LaserServiceIn { oversamplingOk undersamplingOk }
 		MixedPortROSLink dock_action_goal
 		MixedPortROSLink dock_action_result
 		OperationModeBinding CoordinationPort.dock;
-	DefaultTrigger PeriodicTimer 1.0 Hz
+		DefaultTrigger PeriodicTimer 1.0 Hz
 	}
 
 	MixedPortROS twist_sub
-Activity UndockActivity
+	
+	Activity UndockActivity
 	{
 		InputPortLink BaseStateServiceIn { oversamplingOk undersamplingOk }
 		InputPortLink LaserServiceIn { oversamplingOk undersamplingOk }
@@ -19,7 +20,7 @@ Activity UndockActivity
 		MixedPortROSLink undock_action_result
 
 		OperationModeBinding CoordinationPort.unDock;
-	DefaultTrigger PeriodicTimer 1.0 Hz
+		DefaultTrigger PeriodicTimer 1.0 Hz
 	}
 	InputPort BaseStateServiceIn implements CommBasicObjects.BaseStateService {
 	}
@@ -27,6 +28,10 @@ Activity UndockActivity
 	}
 	OutputPort NavigationVelocityServiceOut implements CommNavigationObjects.NavigationVelocityService realizedBy TwistActivity {
 	}
+	
+	OutputPort RobotDockingEventServiceOut implements CommNavigationObjects.RobotDockingEventService  realizedBy DockActivity {
+	}
+	
 	CoordinationSlavePort CoordinationPort implements CommNavigationObjects.RobotDockingCoordinationService
 	{
 		PrivateOperationMode dock;
@@ -34,15 +39,20 @@ Activity UndockActivity
 		
 		PublicOperationMode CommNavigationObjects.RobotDockingStates.Docking { activates ( dock ) }
 		PublicOperationMode CommNavigationObjects.RobotDockingStates.UnDocking { activates ( unDock ) }
+		
+		with dockingEvent realizedBy RobotDockingEventServiceOut
 	}
+	
 	MixedPortROS dock_action_goal
 	MixedPortROS dock_action_result
 	MixedPortROS undock_action_goal
 	MixedPortROS undock_action_result
-Activity TwistActivity
+	
+	Activity TwistActivity
 	{
 		MixedPortROSLink twist_sub
-	DefaultTrigger PeriodicTimer 1.0 Hz
+		DefaultTrigger PeriodicTimer 1.0 Hz
 	}
+	
 	ComponentParameters ComponentRosDock slave CoordinationPort
 }

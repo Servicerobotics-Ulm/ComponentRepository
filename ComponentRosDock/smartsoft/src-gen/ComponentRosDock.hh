@@ -42,6 +42,12 @@ class ComponentRosDockExtension;
 // include communication objects
 #include <CommBasicObjects/CommBaseState.hh>
 #include <CommBasicObjects/CommBaseStateACE.hh>
+#include <CommNavigationObjects/CommDockingEventParameter.hh>
+#include <CommNavigationObjects/CommDockingEventParameterACE.hh>
+#include <CommNavigationObjects/CommDockingEventResult.hh>
+#include <CommNavigationObjects/CommDockingEventResultACE.hh>
+#include <CommNavigationObjects/CommDockingEventState.hh>
+#include <CommNavigationObjects/CommDockingEventStateACE.hh>
 #include <CommBasicObjects/CommMobileLaserScan.hh>
 #include <CommBasicObjects/CommMobileLaserScanACE.hh>
 #include <CommBasicObjects/CommNavigationVelocity.hh>
@@ -131,6 +137,8 @@ public:
 	
 	// define output-ports
 	Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> *navigationVelocityServiceOut;
+	Smart::IEventServerPattern<CommNavigationObjects::CommDockingEventParameter, CommNavigationObjects::CommDockingEventResult, CommNavigationObjects::CommDockingEventState> *robotDockingEventServiceOut;
+	std::shared_ptr<Smart::IEventTestHandler<CommNavigationObjects::CommDockingEventParameter, CommNavigationObjects::CommDockingEventResult, CommNavigationObjects::CommDockingEventState>> robotDockingEventServiceOutEventTestHandler;
 	
 	// define answer-ports
 	
@@ -276,6 +284,10 @@ public:
 		//--- upcall parameter ---
 		
 		//--- server port parameter ---
+		struct RobotDockingEventServiceOut_struct {
+				std::string serviceName;
+				std::string roboticMiddleware;
+		} robotDockingEventServiceOut;
 	
 		//--- client port parameter ---
 		struct BaseStateServiceIn_struct {

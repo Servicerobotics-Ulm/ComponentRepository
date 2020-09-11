@@ -49,6 +49,7 @@ public:
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * createLaserServiceIn() override;
 	virtual Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> * createNavigationVelocityServiceOut() override;
 	
+	virtual Smart::IEventServerPattern<CommNavigationObjects::CommDockingEventParameter, CommNavigationObjects::CommDockingEventResult, CommNavigationObjects::CommDockingEventState> * createRobotDockingEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommNavigationObjects::CommDockingEventParameter, CommNavigationObjects::CommDockingEventResult, CommNavigationObjects::CommDockingEventState>> robotDockingEventServiceOutEventTestHandler) override;
 	
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) override;
 	virtual void destroy() override;

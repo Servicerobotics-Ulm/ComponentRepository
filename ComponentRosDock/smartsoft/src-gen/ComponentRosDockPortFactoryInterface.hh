@@ -20,6 +20,12 @@
 // include communication objects
 #include <CommBasicObjects/CommBaseState.hh>
 #include <CommBasicObjects/CommBaseStateACE.hh>
+#include <CommNavigationObjects/CommDockingEventParameter.hh>
+#include <CommNavigationObjects/CommDockingEventParameterACE.hh>
+#include <CommNavigationObjects/CommDockingEventResult.hh>
+#include <CommNavigationObjects/CommDockingEventResultACE.hh>
+#include <CommNavigationObjects/CommDockingEventState.hh>
+#include <CommNavigationObjects/CommDockingEventStateACE.hh>
 #include <CommBasicObjects/CommMobileLaserScan.hh>
 #include <CommBasicObjects/CommMobileLaserScanACE.hh>
 #include <CommBasicObjects/CommNavigationVelocity.hh>
@@ -45,6 +51,7 @@ public:
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * createLaserServiceIn() = 0;
 	virtual Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> * createNavigationVelocityServiceOut() = 0;
 	
+	virtual Smart::IEventServerPattern<CommNavigationObjects::CommDockingEventParameter, CommNavigationObjects::CommDockingEventResult, CommNavigationObjects::CommDockingEventState> * createRobotDockingEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommNavigationObjects::CommDockingEventParameter, CommNavigationObjects::CommDockingEventResult, CommNavigationObjects::CommDockingEventState>> robotDockingEventServiceOutEventTestHandler) = 0;
 
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) = 0;
 	virtual void destroy() = 0;

@@ -68,6 +68,11 @@ Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> * ComponentR
 }
 
 
+Smart::IEventServerPattern<CommNavigationObjects::CommDockingEventParameter, CommNavigationObjects::CommDockingEventResult, CommNavigationObjects::CommDockingEventState> * ComponentRosDockAcePortFactory::createRobotDockingEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommNavigationObjects::CommDockingEventParameter, CommNavigationObjects::CommDockingEventResult, CommNavigationObjects::CommDockingEventState>> robotDockingEventServiceOutEventTestHandler)
+{
+	return new SmartACE::EventServer<CommNavigationObjects::CommDockingEventParameter, CommNavigationObjects::CommDockingEventResult, CommNavigationObjects::CommDockingEventState>(componentImpl, serviceName, robotDockingEventServiceOutEventTestHandler);
+}
+
 
 SmartACE::SmartComponent* ComponentRosDockAcePortFactory::getComponentImpl()
 {

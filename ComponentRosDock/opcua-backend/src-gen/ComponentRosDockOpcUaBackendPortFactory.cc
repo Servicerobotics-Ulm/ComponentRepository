@@ -32,6 +32,9 @@
 #include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommMobileLaserScanOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommNavigationVelocityOpcUa.hh"
+#include "CommNavigationObjectsOpcUa/CommDockingEventParameterOpcUa.hh"
+#include "CommNavigationObjectsOpcUa/CommDockingEventResultOpcUa.hh"
+#include "CommNavigationObjectsOpcUa/CommDockingEventStateOpcUa.hh"
 
 // create a static instance of the OpcUaBackendPortFactory
 static ComponentRosDockOpcUaBackendPortFactory OpcUaBackendPortFactory;
@@ -74,6 +77,11 @@ Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> * ComponentR
 	return new SeRoNet::OPCUA::Client::SendClient<CommBasicObjects::CommNavigationVelocity>(componentImpl);
 }
 
+
+Smart::IEventServerPattern<CommNavigationObjects::CommDockingEventParameter, CommNavigationObjects::CommDockingEventResult, CommNavigationObjects::CommDockingEventState> * ComponentRosDockOpcUaBackendPortFactory::createRobotDockingEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommNavigationObjects::CommDockingEventParameter, CommNavigationObjects::CommDockingEventResult, CommNavigationObjects::CommDockingEventState>> robotDockingEventServiceOutEventTestHandler)
+{
+	return new SeRoNet::OPCUA::Server::EventServer<CommNavigationObjects::CommDockingEventParameter, CommNavigationObjects::CommDockingEventResult, CommNavigationObjects::CommDockingEventState>(componentImpl, serviceName, robotDockingEventServiceOutEventTestHandler);
+}
 
 
 int ComponentRosDockOpcUaBackendPortFactory::task_execution()

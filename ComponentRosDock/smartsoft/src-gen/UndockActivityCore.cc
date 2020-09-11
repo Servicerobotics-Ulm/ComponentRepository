@@ -114,7 +114,7 @@ void UndockActivityCore::updateAllCommObjects()
 void UndockActivityCore::triggerLogEntry(const int& idOffset)
 {
 	if(useLogging == true) {
-		int logId = taskLoggingId + 2*1 + idOffset;
+		int logId = taskLoggingId + 2*2 + idOffset;
 		//FIXME: use logging
 		//Smart::LOGGER->log(logId, getCurrentUpdateCount(), getPreviousCommObjId());
 	}

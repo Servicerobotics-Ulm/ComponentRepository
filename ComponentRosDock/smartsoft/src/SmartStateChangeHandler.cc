@@ -36,11 +36,19 @@ void SmartStateChangeHandler::handleQuitState(const std::string & substate) thro
 	if (substate == "dock")
 	{
 		std::cout << "restart dock " << std::endl;
+		CommNavigationObjects::CommDockingEventState eventState;
+		eventState.setNewState(CommNavigationObjects::DockingEventType::DOCKING_NOT_DONE);
+		COMP->robotDockingEventServiceOut->put(eventState);
+
 		COMP->dockActivity->start();
 	}
 	if (substate == "unDock")
 	{
 		std::cout << "restart undock " << std::endl;
+		CommNavigationObjects::CommDockingEventState eventState;
+		eventState.setNewState(CommNavigationObjects::DockingEventType::UN_DOCKING_NOT_DONE);
+		COMP->robotDockingEventServiceOut->put(eventState);
+
 		COMP->undockActivity->start();
 	}
 }

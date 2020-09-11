@@ -16,5 +16,6 @@
 
 # other CommunicationObject-dependencies are added here (if there are any)
 LIST(APPEND ComponentRosDock_DEPENDENCIES CommBasicObjects)
+LIST(APPEND ComponentRosDock_DEPENDENCIES CommNavigationObjects)
 
 LIST(REMOVE_DUPLICATES ComponentRosDock_DEPENDENCIES)

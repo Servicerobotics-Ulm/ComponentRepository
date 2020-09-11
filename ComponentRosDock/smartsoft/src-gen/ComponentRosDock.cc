@@ -21,6 +21,7 @@
 // the ace port-factory is used as a default port-mapping
 #include "ComponentRosDockAcePortFactory.hh"
 
+#include "RobotDockingEventServiceOutEventTestHandler.hh"
 
 // initialize static singleton pointer to zero
 ComponentRosDock* ComponentRosDock::_componentRosDock = 0;
@@ -42,6 +43,8 @@ ComponentRosDock::ComponentRosDock()
 	laserServiceInInputTaskTrigger = NULL;
 	laserServiceInUpcallManager = NULL;
 	navigationVelocityServiceOut = NULL;
+	robotDockingEventServiceOut = NULL;
+	robotDockingEventServiceOutEventTestHandler = nullptr; 
 	twistActivity = NULL;
 	twistActivityTrigger = NULL;
 	undockActivity = NULL;
@@ -62,6 +65,8 @@ ComponentRosDock::ComponentRosDock()
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
+	connections.robotDockingEventServiceOut.serviceName = "RobotDockingEventServiceOut";
+	connections.robotDockingEventServiceOut.roboticMiddleware = "ACE_SmartSoft";
 	connections.baseStateServiceIn.wiringName = "BaseStateServiceIn";
 	connections.baseStateServiceIn.serverName = "unknown";
 	connections.baseStateServiceIn.serviceName = "unknown";
@@ -314,9 +319,12 @@ void ComponentRosDock::init(int argc, char *argv[])
 		}
 
 		// create event-test handlers (if needed)
+		robotDockingEventServiceOutEventTestHandler = std::make_shared<RobotDockingEventServiceOutEventTestHandler>();
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
+		robotDockingEventServiceOutEventTestHandler = std::make_shared<RobotDockingEventServiceOutEventTestHandler>();
+		robotDockingEventServiceOut = portFactoryRegistry[connections.robotDockingEventServiceOut.roboticMiddleware]->createRobotDockingEventServiceOut(connections.robotDockingEventServiceOut.serviceName, robotDockingEventServiceOutEventTestHandler);
 		
 		// create client ports
 		baseStateServiceIn = portFactoryRegistry[connections.baseStateServiceIn.roboticMiddleware]->createBaseStateServiceIn();
@@ -578,7 +586,9 @@ void ComponentRosDock::fini()
 	delete navigationVelocityServiceOut;
 
 	// destroy server ports
+	delete robotDockingEventServiceOut;
 	// destroy event-test handlers (if needed)
+	robotDockingEventServiceOutEventTestHandler;
 	
 	// destroy request-handlers
 	
@@ -706,6 +716,11 @@ void ComponentRosDock::loadParameter(int argc, char *argv[])
 			parameter.getString("NavigationVelocityServiceOut", "roboticMiddleware", connections.navigationVelocityServiceOut.roboticMiddleware);
 		}
 		
+		// load parameters for server RobotDockingEventServiceOut
+		parameter.getString("RobotDockingEventServiceOut", "serviceName", connections.robotDockingEventServiceOut.serviceName);
+		if(parameter.checkIfParameterExists("RobotDockingEventServiceOut", "roboticMiddleware")) {
+			parameter.getString("RobotDockingEventServiceOut", "roboticMiddleware", connections.robotDockingEventServiceOut.roboticMiddleware);
+		}
 		
 		// load parameters for task DockActivity
 		parameter.getDouble("DockActivity", "minActFreqHz", connections.dockActivity.minActFreq);

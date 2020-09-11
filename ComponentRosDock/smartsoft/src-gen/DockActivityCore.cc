@@ -110,11 +110,21 @@ void DockActivityCore::updateAllCommObjects()
 }
 
 
+// this method is meant to be used in derived classes
+Smart::StatusCode DockActivityCore::robotDockingEventServiceOutPut(CommNavigationObjects::CommDockingEventState &eventState)
+{
+	Smart::StatusCode result = COMP->robotDockingEventServiceOut->put(eventState);
+	if(useLogging == true) {
+		//FIXME: use logging
+		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
+	}
+	return result;
+}
 
 void DockActivityCore::triggerLogEntry(const int& idOffset)
 {
 	if(useLogging == true) {
-		int logId = taskLoggingId + 2*1 + idOffset;
+		int logId = taskLoggingId + 2*2 + idOffset;
 		//FIXME: use logging
 		//Smart::LOGGER->log(logId, getCurrentUpdateCount(), getPreviousCommObjId());
 	}

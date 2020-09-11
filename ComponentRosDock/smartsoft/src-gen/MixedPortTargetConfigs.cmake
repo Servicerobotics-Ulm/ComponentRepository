@@ -7,6 +7,7 @@ ENDIF(EXISTS ${ROS_DIR})
 IF(SeRoNetSDK_FOUND)
 #TARGET_LINK_LIBRARIES(${PROJECT_NAME} SeRoNetSDK::SeRoNetSDK)
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} CommBasicObjectsOpcUa)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} CommNavigationObjectsOpcUa)
 ENDIF(SeRoNetSDK_FOUND)
 
 # target configurations for PlainOpcUaComponentRosDockExtension

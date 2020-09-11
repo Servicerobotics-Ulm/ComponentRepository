@@ -49,10 +49,18 @@ void DockActivity::dock_action_result_cb(const std_msgs::String::ConstPtr &msg)
 	if( loc != std::string::npos )
 	{
 		std::cout << "docking succeeded: " << msg->data << std::endl;
+
+		CommNavigationObjects::CommDockingEventState eventState;
+		eventState.setNewState(CommNavigationObjects::DockingEventType::DOCKING_DONE);
+		COMP->robotDockingEventServiceOut->put(eventState);
 	}
 	else
 	{
 		std::cout << "docking did not succeed: " << msg->data << std::endl;
+
+		CommNavigationObjects::CommDockingEventState eventState;
+		eventState.setNewState(CommNavigationObjects::DockingEventType::DOCKING_ERROR);
+		COMP->robotDockingEventServiceOut->put(eventState);
 	}
 
 	this->stop();
