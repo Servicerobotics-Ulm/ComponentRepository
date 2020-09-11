@@ -25,5 +25,22 @@ bool RobotDockingEventServiceOutEventTestHandler::testEvent(
 	// implement your own (specific) event-filtering code using the event-parameter as input
 	// true means that the current event will be fired to the according client
 	// false means that the current event is ignored (it will not be communicated to the according client)
-	return true;
+
+	bool result;
+	CommNavigationObjects::DockingEventType oldState, newState;
+
+	oldState = p.getOldState();
+	newState = s.getNewState();
+	if ((oldState!=newState))
+	{
+		p.setOldState(newState);
+		r.setState(newState);
+		result = true;
+	}
+	else
+	{
+		result = false;
+	}
+
+	return result;
 }
