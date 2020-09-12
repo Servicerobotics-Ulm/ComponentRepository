@@ -39,18 +39,19 @@ ComponentRosDock::ComponentRosDock()
 	//coordinationPort = NULL;
 	dockActivity = NULL;
 	dockActivityTrigger = NULL;
+	forwardActivity = NULL;
+	forwardActivityTrigger = NULL;
 	laserServiceIn = NULL;
 	laserServiceInInputTaskTrigger = NULL;
 	laserServiceInUpcallManager = NULL;
 	navigationVelocityServiceOut = NULL;
 	robotDockingEventServiceOut = NULL;
 	robotDockingEventServiceOutEventTestHandler = nullptr; 
-	twistActivity = NULL;
-	twistActivityTrigger = NULL;
 	undockActivity = NULL;
 	undockActivityTrigger = NULL;
 	//dock_action_goal = NULL;
 	//dock_action_result = NULL;
+	//laser_pub = NULL;
 	//twist_sub = NULL;
 	//undock_action_goal = NULL;
 	//undock_action_result = NULL;
@@ -91,14 +92,14 @@ ComponentRosDock::ComponentRosDock()
 	connections.dockActivity.scheduler = "DEFAULT";
 	connections.dockActivity.priority = -1;
 	connections.dockActivity.cpuAffinity = -1;
-	connections.twistActivity.minActFreq = 0.0;
-	connections.twistActivity.maxActFreq = 0.0;
-	connections.twistActivity.trigger = "PeriodicTimer";
-	connections.twistActivity.periodicActFreq = 1.0;
+	connections.forwardActivity.minActFreq = 0.0;
+	connections.forwardActivity.maxActFreq = 0.0;
+	connections.forwardActivity.trigger = "PeriodicTimer";
+	connections.forwardActivity.periodicActFreq = 1.0;
 	// scheduling default parameters
-	connections.twistActivity.scheduler = "DEFAULT";
-	connections.twistActivity.priority = -1;
-	connections.twistActivity.cpuAffinity = -1;
+	connections.forwardActivity.scheduler = "DEFAULT";
+	connections.forwardActivity.priority = -1;
+	connections.forwardActivity.cpuAffinity = -1;
 	connections.undockActivity.minActFreq = 0.0;
 	connections.undockActivity.maxActFreq = 0.0;
 	connections.undockActivity.trigger = "PeriodicTimer";
@@ -225,19 +226,19 @@ void ComponentRosDock::startAllTasks() {
 	} else {
 		dockActivity->start();
 	}
-	// start task TwistActivity
-	if(connections.twistActivity.scheduler != "DEFAULT") {
-		ACE_Sched_Params twistActivity_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
-		if(connections.twistActivity.scheduler == "FIFO") {
-			twistActivity_SchedParams.policy(ACE_SCHED_FIFO);
-			twistActivity_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
-		} else if(connections.twistActivity.scheduler == "RR") {
-			twistActivity_SchedParams.policy(ACE_SCHED_RR);
-			twistActivity_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+	// start task ForwardActivity
+	if(connections.forwardActivity.scheduler != "DEFAULT") {
+		ACE_Sched_Params forwardActivity_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
+		if(connections.forwardActivity.scheduler == "FIFO") {
+			forwardActivity_SchedParams.policy(ACE_SCHED_FIFO);
+			forwardActivity_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+		} else if(connections.forwardActivity.scheduler == "RR") {
+			forwardActivity_SchedParams.policy(ACE_SCHED_RR);
+			forwardActivity_SchedParams.priority(ACE_THR_PRI_RR_MIN);
 		}
-		twistActivity->start(twistActivity_SchedParams, connections.twistActivity.cpuAffinity);
+		forwardActivity->start(forwardActivity_SchedParams, connections.forwardActivity.cpuAffinity);
 	} else {
-		twistActivity->start();
+		forwardActivity->start();
 	}
 	// start task UndockActivity
 	if(connections.undockActivity.scheduler != "DEFAULT") {
@@ -375,7 +376,6 @@ void ComponentRosDock::init(int argc, char *argv[])
 		dockActivity = new DockActivity(component);
 		// configure input-links
 		baseStateServiceInUpcallManager->attach(dockActivity);
-		laserServiceInUpcallManager->attach(dockActivity);
 		// configure task-trigger (if task is configurable)
 		if(connections.dockActivity.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
@@ -411,28 +411,29 @@ void ComponentRosDock::init(int argc, char *argv[])
 			}
 		}
 		
-		// create Task TwistActivity
-		twistActivity = new TwistActivity(component);
+		// create Task ForwardActivity
+		forwardActivity = new ForwardActivity(component);
 		// configure input-links
+		laserServiceInUpcallManager->attach(forwardActivity);
 		// configure task-trigger (if task is configurable)
-		if(connections.twistActivity.trigger == "PeriodicTimer") {
+		if(connections.forwardActivity.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.twistActivity.periodicActFreq;
+			int microseconds = 1000*1000 / connections.forwardActivity.periodicActFreq;
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-				triggerPtr->attach(twistActivity);
+				triggerPtr->attach(forwardActivity);
 				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				// store trigger in class member
-				twistActivityTrigger = triggerPtr;
+				forwardActivityTrigger = triggerPtr;
 			} else {
-				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task TwistActivity" << std::endl;
+				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task ForwardActivity" << std::endl;
 			}
-		} else if(connections.twistActivity.trigger == "DataTriggered") {
-			twistActivityTrigger = getInputTaskTriggerFromString(connections.twistActivity.inPortRef);
-			if(twistActivityTrigger != NULL) {
-				twistActivityTrigger->attach(twistActivity, connections.twistActivity.prescale);
+		} else if(connections.forwardActivity.trigger == "DataTriggered") {
+			forwardActivityTrigger = getInputTaskTriggerFromString(connections.forwardActivity.inPortRef);
+			if(forwardActivityTrigger != NULL) {
+				forwardActivityTrigger->attach(forwardActivity, connections.forwardActivity.prescale);
 			} else {
-				std::cerr << "ERROR: could not set-up InPort " << connections.twistActivity.inPortRef << " as activation source for Task TwistActivity" << std::endl;
+				std::cerr << "ERROR: could not set-up InPort " << connections.forwardActivity.inPortRef << " as activation source for Task ForwardActivity" << std::endl;
 			}
 		} else
 		{
@@ -441,11 +442,11 @@ void ComponentRosDock::init(int argc, char *argv[])
 			int microseconds = 1000*1000 / 1.0;
 			if(microseconds > 0) {
 				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
-				triggerPtr->attach(twistActivity);
+				triggerPtr->attach(forwardActivity);
 				// store trigger in class member
-				twistActivityTrigger = triggerPtr;
+				forwardActivityTrigger = triggerPtr;
 			} else {
-				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task TwistActivity" << std::endl;
+				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task ForwardActivity" << std::endl;
 			}
 		}
 		
@@ -453,7 +454,6 @@ void ComponentRosDock::init(int argc, char *argv[])
 		undockActivity = new UndockActivity(component);
 		// configure input-links
 		baseStateServiceInUpcallManager->attach(undockActivity);
-		laserServiceInUpcallManager->attach(undockActivity);
 		// configure task-trigger (if task is configurable)
 		if(connections.undockActivity.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
@@ -551,21 +551,20 @@ void ComponentRosDock::fini()
 	// destroy all task instances
 	// unlink all UpcallManagers
 	baseStateServiceInUpcallManager->detach(dockActivity);
-	laserServiceInUpcallManager->detach(dockActivity);
 	// unlink the TaskTrigger
 	if(dockActivityTrigger != NULL){
 		dockActivityTrigger->detach(dockActivity);
 		delete dockActivity;
 	}
 	// unlink all UpcallManagers
+	laserServiceInUpcallManager->detach(forwardActivity);
 	// unlink the TaskTrigger
-	if(twistActivityTrigger != NULL){
-		twistActivityTrigger->detach(twistActivity);
-		delete twistActivity;
+	if(forwardActivityTrigger != NULL){
+		forwardActivityTrigger->detach(forwardActivity);
+		delete forwardActivity;
 	}
 	// unlink all UpcallManagers
 	baseStateServiceInUpcallManager->detach(undockActivity);
-	laserServiceInUpcallManager->detach(undockActivity);
 	// unlink the TaskTrigger
 	if(undockActivityTrigger != NULL){
 		undockActivityTrigger->detach(undockActivity);
@@ -741,24 +740,24 @@ void ComponentRosDock::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("DockActivity", "cpuAffinity")) {
 			parameter.getInteger("DockActivity", "cpuAffinity", connections.dockActivity.cpuAffinity);
 		}
-		// load parameters for task TwistActivity
-		parameter.getDouble("TwistActivity", "minActFreqHz", connections.twistActivity.minActFreq);
-		parameter.getDouble("TwistActivity", "maxActFreqHz", connections.twistActivity.maxActFreq);
-		parameter.getString("TwistActivity", "triggerType", connections.twistActivity.trigger);
-		if(connections.twistActivity.trigger == "PeriodicTimer") {
-			parameter.getDouble("TwistActivity", "periodicActFreqHz", connections.twistActivity.periodicActFreq);
-		} else if(connections.twistActivity.trigger == "DataTriggered") {
-			parameter.getString("TwistActivity", "inPortRef", connections.twistActivity.inPortRef);
-			parameter.getInteger("TwistActivity", "prescale", connections.twistActivity.prescale);
+		// load parameters for task ForwardActivity
+		parameter.getDouble("ForwardActivity", "minActFreqHz", connections.forwardActivity.minActFreq);
+		parameter.getDouble("ForwardActivity", "maxActFreqHz", connections.forwardActivity.maxActFreq);
+		parameter.getString("ForwardActivity", "triggerType", connections.forwardActivity.trigger);
+		if(connections.forwardActivity.trigger == "PeriodicTimer") {
+			parameter.getDouble("ForwardActivity", "periodicActFreqHz", connections.forwardActivity.periodicActFreq);
+		} else if(connections.forwardActivity.trigger == "DataTriggered") {
+			parameter.getString("ForwardActivity", "inPortRef", connections.forwardActivity.inPortRef);
+			parameter.getInteger("ForwardActivity", "prescale", connections.forwardActivity.prescale);
 		}
-		if(parameter.checkIfParameterExists("TwistActivity", "scheduler")) {
-			parameter.getString("TwistActivity", "scheduler", connections.twistActivity.scheduler);
+		if(parameter.checkIfParameterExists("ForwardActivity", "scheduler")) {
+			parameter.getString("ForwardActivity", "scheduler", connections.forwardActivity.scheduler);
 		}
-		if(parameter.checkIfParameterExists("TwistActivity", "priority")) {
-			parameter.getInteger("TwistActivity", "priority", connections.twistActivity.priority);
+		if(parameter.checkIfParameterExists("ForwardActivity", "priority")) {
+			parameter.getInteger("ForwardActivity", "priority", connections.forwardActivity.priority);
 		}
-		if(parameter.checkIfParameterExists("TwistActivity", "cpuAffinity")) {
-			parameter.getInteger("TwistActivity", "cpuAffinity", connections.twistActivity.cpuAffinity);
+		if(parameter.checkIfParameterExists("ForwardActivity", "cpuAffinity")) {
+			parameter.getInteger("ForwardActivity", "cpuAffinity", connections.forwardActivity.cpuAffinity);
 		}
 		// load parameters for task UndockActivity
 		parameter.getDouble("UndockActivity", "minActFreqHz", connections.undockActivity.minActFreq);

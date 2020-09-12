@@ -55,7 +55,7 @@ class ComponentRosDockExtension;
 
 // include tasks
 #include "DockActivity.hh"
-#include "TwistActivity.hh"
+#include "ForwardActivity.hh"
 #include "UndockActivity.hh"
 // include UpcallManagers
 #include "BaseStateServiceInUpcallManager.hh"
@@ -116,8 +116,8 @@ public:
 	// define tasks
 	Smart::TaskTriggerSubject* dockActivityTrigger;
 	DockActivity *dockActivity;
-	Smart::TaskTriggerSubject* twistActivityTrigger;
-	TwistActivity *twistActivity;
+	Smart::TaskTriggerSubject* forwardActivityTrigger;
+	ForwardActivity *forwardActivity;
 	Smart::TaskTriggerSubject* undockActivityTrigger;
 	UndockActivity *undockActivity;
 	
@@ -248,7 +248,7 @@ public:
 			int priority;
 			int cpuAffinity;
 		} dockActivity;
-		struct TwistActivity_struct {
+		struct ForwardActivity_struct {
 			double minActFreq;
 			double maxActFreq;
 			std::string trigger;
@@ -263,7 +263,7 @@ public:
 			std::string scheduler;
 			int priority;
 			int cpuAffinity;
-		} twistActivity;
+		} forwardActivity;
 		struct UndockActivity_struct {
 			double minActFreq;
 			double maxActFreq;

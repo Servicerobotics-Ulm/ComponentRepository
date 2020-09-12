@@ -74,14 +74,6 @@ void UndockActivity::on_BaseStateServiceIn(const CommBasicObjects::CommBaseState
 	// - if you need to implement a long-running procedure, do so within the on_execute() method and in
 	//   there, use the method baseStateServiceInGetUpdate(input) to get a copy of the input object
 }
-void UndockActivity::on_LaserServiceIn(const CommBasicObjects::CommMobileLaserScan &input)
-{
-	// upcall triggered from InputPort LaserServiceIn
-	// - use a local mutex here, because this upcal is called asynchroneously from outside of this task
-	// - do not use longer blocking calls here since this upcall blocks the InputPort LaserServiceIn
-	// - if you need to implement a long-running procedure, do so within the on_execute() method and in
-	//   there, use the method laserServiceInGetUpdate(input) to get a copy of the input object
-}
 
 int UndockActivity::on_entry()
 {
@@ -106,14 +98,6 @@ int UndockActivity::on_execute()
 		// return 0;
 	} else {
 		//std::cout << "received: " << baseStateServiceInObject << std::endl;
-	}
-	CommBasicObjects::CommMobileLaserScan laserServiceInObject;
-	status = this->laserServiceInGetUpdate(laserServiceInObject);
-	if(status != Smart::SMART_OK) {
-		std::cerr << status << std::endl;
-		// return 0;
-	} else {
-		//std::cout << "received: " << laserServiceInObject << std::endl;
 	}
 
 	if (!undocking)

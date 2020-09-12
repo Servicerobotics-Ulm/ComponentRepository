@@ -20,7 +20,6 @@
 
 // include upcall interface
 #include "BaseStateServiceInUpcallInterface.hh"
-#include "LaserServiceInUpcallInterface.hh"
 
 // include communication-objects for output ports
 #include <CommNavigationObjects/CommDockingEventParameter.hh>
@@ -37,7 +36,6 @@ class DockActivityCore
 :	public SmartACE::ManagedTask
 ,	public Smart::TaskTriggerSubject
 ,	public BaseStateServiceInUpcallInterface
-,	public LaserServiceInUpcallInterface
 {
 private:
 	bool useDefaultState; 
@@ -47,8 +45,6 @@ private:
 	
 	Smart::StatusCode baseStateServiceInStatus;
 	CommBasicObjects::CommBaseState baseStateServiceInObject;
-	Smart::StatusCode laserServiceInStatus;
-	CommBasicObjects::CommMobileLaserScan laserServiceInObject;
 	
 	
 protected:
@@ -72,18 +68,6 @@ protected:
 		// copy local object buffer and return the last status code
 		baseStateServiceInObject = this->baseStateServiceInObject;
 		return baseStateServiceInStatus;
-	}
-	// overload and implement this method in derived classes to immediately get all incoming updates from LaserServiceIn (as soon as they arrive)
-	virtual void on_LaserServiceIn(const CommBasicObjects::CommMobileLaserScan &input) {
-		// no-op
-	}
-	
-	// this method can be safely used from the thread in derived classes
-	inline Smart::StatusCode laserServiceInGetUpdate(CommBasicObjects::CommMobileLaserScan &laserServiceInObject) const
-	{
-		// copy local object buffer and return the last status code
-		laserServiceInObject = this->laserServiceInObject;
-		return laserServiceInStatus;
 	}
 	
 	// this method is meant to be used in derived classes

@@ -28,7 +28,6 @@ private:
 	bool docking = false;
 
 	virtual void on_BaseStateServiceIn(const CommBasicObjects::CommBaseState &input);
-	virtual void on_LaserServiceIn(const CommBasicObjects::CommMobileLaserScan &input);
 
 	void dock();
 

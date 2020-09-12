@@ -20,7 +20,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(ros_componentrosdock)
 
-find_package(catkin REQUIRED COMPONENTS roscpp  std_msgs std_msgs geometry_msgs std_msgs std_msgs)
+find_package(catkin REQUIRED COMPONENTS roscpp  std_msgs std_msgs sensor_msgs geometry_msgs std_msgs std_msgs)
 
 catkin_package()
 

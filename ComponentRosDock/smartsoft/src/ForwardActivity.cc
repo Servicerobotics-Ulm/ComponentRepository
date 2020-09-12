@@ -14,22 +14,54 @@
 // If you want the toolchain to re-generate this file, please 
 // delete it before running the code generator.
 //--------------------------------------------------------------------------
-#include "TwistActivity.hh"
+#include <ForwardActivity.hh>
 #include "ComponentRosDock.hh"
 
 #include <iostream>
 
-TwistActivity::TwistActivity(SmartACE::SmartComponent *comp) 
-:	TwistActivityCore(comp)
+ForwardActivity::ForwardActivity(SmartACE::SmartComponent *comp)
+:	ForwardActivityCore(comp)
 {
-	std::cout << "constructor TwistActivity\n";
+	std::cout << "constructor ForwardActivity\n";
 }
-TwistActivity::~TwistActivity() 
+ForwardActivity::~ForwardActivity()
 {
-	std::cout << "destructor TwistActivity\n";
+	std::cout << "destructor ForwardActivity\n";
 }
 
-void TwistActivity::twist_sub_cb(const geometry_msgs::Twist::ConstPtr &msg)
+void ForwardActivity::on_LaserServiceIn(const CommBasicObjects::CommLaserScan &input)
+{
+	// upcall triggered from InputPort LaserServiceIn
+	// - use a local mutex here, because this upcal is called asynchroneously from outside of this task
+	// - do not use longer blocking calls here since this upcall blocks the InputPort LaserServiceIn
+	// - if you need to implement a long-running procedure, do so within the on_execute() method and in
+	//   there, use the method laserServiceInGetUpdate(input) to get a copy of the input object
+
+	unsigned int scan_size = input.get_scan_size();
+
+	sensor_msgs::LaserScan laserscan;
+
+	laserscan.header.frame_id = "base_link";
+
+	laserscan.angle_min = input.get_scan_start_angle();
+	laserscan.angle_max = input.get_scan_start_angle() + input.get_scan_resolution() * scan_size;
+	laserscan.range_min = input.get_min_distance();
+	laserscan.range_max = input.get_max_distance();
+
+	std::vector<float> ranges;
+	std::vector<float> intensities;
+	for (unsigned int i = 0; i <= scan_size; i++) {
+		ranges[i] = input.get_scan_distance(i, 1);
+		intensities[i] = input.get_scan_intensity(i);
+	}
+	laserscan.ranges = ranges;
+	laserscan.intensities = intensities;
+
+	std::cout << "publishing laserscan: " << laserscan << std::endl;
+	COMP -> rosPorts -> laser_pub.publish(laserscan);
+}
+
+void ForwardActivity::twist_sub_cb(const geometry_msgs::Twist::ConstPtr &msg)
 {
     CommBasicObjects::CommNavigationVelocity comNavVel;
 
@@ -52,15 +84,15 @@ void TwistActivity::twist_sub_cb(const geometry_msgs::Twist::ConstPtr &msg)
 	}
 }
 
-int TwistActivity::on_entry()
+int ForwardActivity::on_entry()
 {
-	std::cout << "entry TwistActivity " << std::endl;
+	std::cout << "entry ForwardActivity " << std::endl;
 
 	// do initialization procedures here, which are called once, each time the task is started
 	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
 	return 0;
 }
-int TwistActivity::on_execute()
+int ForwardActivity::on_execute()
 {
 	// this method is called from an outside loop,
 	// hence, NEVER use an infinite loop (like "while(1)") here inside!!!
@@ -69,14 +101,14 @@ int TwistActivity::on_execute()
 	// to get the incoming data, use this methods:
 	Smart::StatusCode status;
 
-	//std::cout << "Hello from TwistActivity " << std::endl;
+	//std::cout << "Hello from ForwardActivity " << std::endl;
 
 	// it is possible to return != 0 (e.g. when the task detects errors), then the outer loop breaks and the task stops
 	return 0;
 }
-int TwistActivity::on_exit()
+int ForwardActivity::on_exit()
 {
-	std::cout << "exit TwistActivity " << std::endl;
+	std::cout << "exit ForwardActivity " << std::endl;
 
 	// use this method to clean-up resources which are initialized in on_entry() and needs to be freed before the on_execute() can be called again
 	return 0;

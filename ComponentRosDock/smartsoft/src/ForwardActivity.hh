@@ -17,18 +17,20 @@
 #ifndef _TWISTACTIVITY_HH
 #define _TWISTACTIVITY_HH
 
-#include "TwistActivityCore.hh"
+#include "ForwardActivityCore.hh"
 
 #include <geometry_msgs/Twist.h>
 
 
-class TwistActivity  : public TwistActivityCore
+class ForwardActivity  : public ForwardActivityCore
 {
 private:
 public:
-	TwistActivity(SmartACE::SmartComponent *comp);
-	virtual ~TwistActivity();
+	ForwardActivity(SmartACE::SmartComponent *comp);
+	virtual ~ForwardActivity();
 	
+	virtual void on_LaserServiceIn(const CommBasicObjects::CommLaserScan &input);
+
 	void twist_sub_cb(const geometry_msgs::Twist::ConstPtr &msg);
 
 	virtual int on_entry();

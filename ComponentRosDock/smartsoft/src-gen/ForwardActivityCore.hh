@@ -13,24 +13,27 @@
 // Please do not modify this file. It will be re-generated
 // running the code generator.
 //--------------------------------------------------------------------------
-#ifndef _TWISTACTIVITY_CORE_HH
-#define _TWISTACTIVITY_CORE_HH
+#ifndef _FORWARDACTIVITY_CORE_HH
+#define _FORWARDACTIVITY_CORE_HH
 	
 #include "aceSmartSoft.hh"
 
 // include upcall interface
+#include "LaserServiceInUpcallInterface.hh"
 
 // include communication-objects for output ports
 #include <CommBasicObjects/CommNavigationVelocity.hh>
 
 // include all interaction-observer interfaces
-#include <TwistActivityObserverInterface.hh>
+#include <ForwardActivityObserverInterface.hh>
 
 #include <geometry_msgs/Twist.h>
+#include <sensor_msgs/LaserScan.h>
 
-class TwistActivityCore
+class ForwardActivityCore
 :	public SmartACE::ManagedTask
 ,	public Smart::TaskTriggerSubject
+,	public LaserServiceInUpcallInterface
 {
 private:
 	bool useDefaultState; 
@@ -38,6 +41,8 @@ private:
 	int taskLoggingId;
 	unsigned int currentUpdateCount;
 	
+	Smart::StatusCode laserServiceInStatus;
+	CommBasicObjects::CommMobileLaserScan laserServiceInObject;
 	
 	
 protected:
@@ -50,6 +55,18 @@ protected:
 	void triggerLogEntry(const int& idOffset);
 	
 	
+	// overload and implement this method in derived classes to immediately get all incoming updates from LaserServiceIn (as soon as they arrive)
+	virtual void on_LaserServiceIn(const CommBasicObjects::CommMobileLaserScan &input) {
+		// no-op
+	}
+	
+	// this method can be safely used from the thread in derived classes
+	inline Smart::StatusCode laserServiceInGetUpdate(CommBasicObjects::CommMobileLaserScan &laserServiceInObject) const
+	{
+		// copy local object buffer and return the last status code
+		laserServiceInObject = this->laserServiceInObject;
+		return laserServiceInStatus;
+	}
 	
 	// this method is meant to be used in derived classes
 	Smart::StatusCode navigationVelocityServiceOutPut(CommBasicObjects::CommNavigationVelocity &navigationVelocityServiceOutDataObject);
@@ -60,16 +77,16 @@ protected:
  */
 private:
 	std::mutex interaction_observers_mutex;
-	std::list<TwistActivityObserverInterface*> interaction_observers;
+	std::list<ForwardActivityObserverInterface*> interaction_observers;
 protected:
 	void notify_all_interaction_observers();
 public:
-	void attach_interaction_observer(TwistActivityObserverInterface *observer);
-	void detach_interaction_observer(TwistActivityObserverInterface *observer);
+	void attach_interaction_observer(ForwardActivityObserverInterface *observer);
+	void detach_interaction_observer(ForwardActivityObserverInterface *observer);
 
 public:
-	TwistActivityCore(Smart::IComponent *comp, const bool &useDefaultState=true);
-	virtual ~TwistActivityCore();
+	ForwardActivityCore(Smart::IComponent *comp, const bool &useDefaultState=true);
+	virtual ~ForwardActivityCore();
 	
 	inline void setUpLogging(const int &taskNbr, const bool &useLogging=true) {
 		this->taskLoggingId = taskNbr;

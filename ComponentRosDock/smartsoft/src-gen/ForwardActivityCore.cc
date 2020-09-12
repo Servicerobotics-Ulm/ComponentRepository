@@ -13,8 +13,8 @@
 // Please do not modify this file. It will be re-generated
 // running the code generator.
 //--------------------------------------------------------------------------
-#include "TwistActivityCore.hh"
-#include "TwistActivity.hh"
+#include "ForwardActivityCore.hh"
+#include "ForwardActivity.hh"
 #include "ComponentRosDock.hh"
 
 //FIXME: use logging
@@ -23,45 +23,47 @@
 // include observers
 
 
-TwistActivityCore::TwistActivityCore(Smart::IComponent *comp, const bool &useDefaultState) 
+ForwardActivityCore::ForwardActivityCore(Smart::IComponent *comp, const bool &useDefaultState) 
 :	SmartACE::ManagedTask(comp)
 ,	useDefaultState(useDefaultState)
 ,	useLogging(false)
 ,	taskLoggingId(0)
 ,	currentUpdateCount(0)
+,	laserServiceInStatus(Smart::SMART_DISCONNECTED)
+,	laserServiceInObject()
 {
 }
 
-TwistActivityCore::~TwistActivityCore()
+ForwardActivityCore::~ForwardActivityCore()
 {
 }
 
-void TwistActivityCore::twist_sub_cb (const geometry_msgs::Twist::ConstPtr &msg) {
+void ForwardActivityCore::twist_sub_cb (const geometry_msgs::Twist::ConstPtr &msg) {
 	// implement this method
 }
 
-void TwistActivityCore::notify_all_interaction_observers() {
+void ForwardActivityCore::notify_all_interaction_observers() {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
 	// try dynamically down-casting this class to the derived class 
 	// (we can do it safely here as we exactly know the derived class)
-	if(const TwistActivity* twistActivity = dynamic_cast<const TwistActivity*>(this)) {
+	if(const ForwardActivity* forwardActivity = dynamic_cast<const ForwardActivity*>(this)) {
 		for(auto it=interaction_observers.begin(); it!=interaction_observers.end(); it++) {
-			(*it)->on_update_from(twistActivity);
+			(*it)->on_update_from(forwardActivity);
 		}
 	}
 }
 
-void TwistActivityCore::attach_interaction_observer(TwistActivityObserverInterface *observer) {
+void ForwardActivityCore::attach_interaction_observer(ForwardActivityObserverInterface *observer) {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
 	interaction_observers.push_back(observer);
 }
 
-void TwistActivityCore::detach_interaction_observer(TwistActivityObserverInterface *observer) {
+void ForwardActivityCore::detach_interaction_observer(ForwardActivityObserverInterface *observer) {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
 	interaction_observers.remove(observer);
 }
 
-int TwistActivityCore::execute_protected_region()
+int ForwardActivityCore::execute_protected_region()
 {
 	
 	// update of comm-objects must be within the protected region to prevent aged comm-object values
@@ -88,14 +90,15 @@ int TwistActivityCore::execute_protected_region()
 }
 
 
-void TwistActivityCore::updateAllCommObjects()
+void ForwardActivityCore::updateAllCommObjects()
 {
+	laserServiceInStatus = COMP->laserServiceInInputTaskTrigger->getUpdate(laserServiceInObject);
 	
 }
 
 
 // this method is meant to be used in derived classes
-Smart::StatusCode TwistActivityCore::navigationVelocityServiceOutPut(CommBasicObjects::CommNavigationVelocity &navigationVelocityServiceOutDataObject)
+Smart::StatusCode ForwardActivityCore::navigationVelocityServiceOutPut(CommBasicObjects::CommNavigationVelocity &navigationVelocityServiceOutDataObject)
 {
 	Smart::StatusCode result = COMP->navigationVelocityServiceOut->send(navigationVelocityServiceOutDataObject);
 	if(useLogging == true) {
@@ -105,7 +108,7 @@ Smart::StatusCode TwistActivityCore::navigationVelocityServiceOutPut(CommBasicOb
 	return result;
 }
 
-void TwistActivityCore::triggerLogEntry(const int& idOffset)
+void ForwardActivityCore::triggerLogEntry(const int& idOffset)
 {
 	if(useLogging == true) {
 		int logId = taskLoggingId + 2*2 + idOffset;
@@ -114,7 +117,7 @@ void TwistActivityCore::triggerLogEntry(const int& idOffset)
 	}
 }
 
-int TwistActivityCore::getPreviousCommObjId()
+int ForwardActivityCore::getPreviousCommObjId()
 {
 	// this method needs to be overloaded and implemented in derived classes
 	return 0;

@@ -31,8 +31,6 @@ UndockActivityCore::UndockActivityCore(Smart::IComponent *comp, const bool &useD
 ,	currentUpdateCount(0)
 ,	baseStateServiceInStatus(Smart::SMART_DISCONNECTED)
 ,	baseStateServiceInObject()
-,	laserServiceInStatus(Smart::SMART_DISCONNECTED)
-,	laserServiceInObject()
 {
 }
 
@@ -105,7 +103,6 @@ int UndockActivityCore::execute_protected_region()
 void UndockActivityCore::updateAllCommObjects()
 {
 	baseStateServiceInStatus = COMP->baseStateServiceInInputTaskTrigger->getUpdate(baseStateServiceInObject);
-	laserServiceInStatus = COMP->laserServiceInInputTaskTrigger->getUpdate(laserServiceInObject);
 	
 }
 

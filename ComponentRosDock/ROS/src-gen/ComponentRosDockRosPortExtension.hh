@@ -50,6 +50,9 @@ public:
 	inline ros::Subscriber* getDock_action_resultPtr() {
 		return &dock_action_result;
 	}
+	inline ros::Publisher* getLaser_pubPtr() {
+		return &laser_pub;
+	}
 	inline ros::Subscriber* getTwist_subPtr() {
 		return &twist_sub;
 	}

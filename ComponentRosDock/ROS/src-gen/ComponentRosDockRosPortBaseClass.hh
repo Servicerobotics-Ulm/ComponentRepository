@@ -29,6 +29,7 @@ public:
 	
 	ros::Publisher dock_action_goal;
 	ros::Subscriber dock_action_result;
+	ros::Publisher laser_pub;
 	ros::Subscriber twist_sub;
 	ros::Publisher undock_action_goal;
 	ros::Subscriber undock_action_result;

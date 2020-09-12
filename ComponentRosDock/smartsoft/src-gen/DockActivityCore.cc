@@ -31,8 +31,6 @@ DockActivityCore::DockActivityCore(Smart::IComponent *comp, const bool &useDefau
 ,	currentUpdateCount(0)
 ,	baseStateServiceInStatus(Smart::SMART_DISCONNECTED)
 ,	baseStateServiceInObject()
-,	laserServiceInStatus(Smart::SMART_DISCONNECTED)
-,	laserServiceInObject()
 {
 }
 
@@ -105,7 +103,6 @@ int DockActivityCore::execute_protected_region()
 void DockActivityCore::updateAllCommObjects()
 {
 	baseStateServiceInStatus = COMP->baseStateServiceInInputTaskTrigger->getUpdate(baseStateServiceInObject);
-	laserServiceInStatus = COMP->laserServiceInInputTaskTrigger->getUpdate(laserServiceInObject);
 	
 }
 

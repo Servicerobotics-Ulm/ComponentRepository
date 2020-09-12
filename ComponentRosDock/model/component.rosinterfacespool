@@ -1,5 +1,6 @@
 RosInterfacesPool { 
  RosSubscriber twist_sub { topicName "/base/twist_controller/command" type "geometry_msgs.Twist" }
+ RosPublisher laser_pub { topicName "/scan_unified_seronet" type "sensor_msgs.LaserScan" }
  RosPublisher dock_action_goal { topicName "/docker_control/dock_seronet/goal" type "std_msgs.String" }
  RosPublisher undock_action_goal { topicName "/docker_control/undock_seronet/goal" type "std_msgs.String" }
  RosSubscriber dock_action_result { topicName "/docker_control/dock_seronet/result" type "std_msgs.String" }

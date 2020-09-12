@@ -13,17 +13,17 @@
 // Please do not modify this file. It will be re-generated
 // running the code generator.
 //--------------------------------------------------------------------------
-#ifndef _TWISTACTIVITY_OBSERVER_INTERFACE_HH
-#define _TWISTACTIVITY_OBSERVER_INTERFACE_HH
+#ifndef _FORWARDACTIVITY_OBSERVER_INTERFACE_HH
+#define _FORWARDACTIVITY_OBSERVER_INTERFACE_HH
 
 // forward declaration
-class TwistActivity;
+class ForwardActivity;
 
-class TwistActivityObserverInterface {
+class ForwardActivityObserverInterface {
 public:
-	virtual ~TwistActivityObserverInterface() {  }
+	virtual ~ForwardActivityObserverInterface() {  }
 
-	virtual void on_update_from(const TwistActivity *subject) = 0;
+	virtual void on_update_from(const ForwardActivity *subject) = 0;
 };
 
 #endif
