@@ -29,7 +29,7 @@ public:
 	ForwardActivity(SmartACE::SmartComponent *comp);
 	virtual ~ForwardActivity();
 	
-	virtual void on_LaserServiceIn(const CommBasicObjects::CommLaserScan &input);
+	virtual void on_LaserServiceIn(const CommBasicObjects::CommMobileLaserScan &input);
 
 	void twist_sub_cb(const geometry_msgs::Twist::ConstPtr &msg);
 

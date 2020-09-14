@@ -29,7 +29,7 @@ ForwardActivity::~ForwardActivity()
 	std::cout << "destructor ForwardActivity\n";
 }
 
-void ForwardActivity::on_LaserServiceIn(const CommBasicObjects::CommLaserScan &input)
+void ForwardActivity::on_LaserServiceIn(const CommBasicObjects::CommMobileLaserScan &input)
 {
 	// upcall triggered from InputPort LaserServiceIn
 	// - use a local mutex here, because this upcal is called asynchroneously from outside of this task
@@ -37,27 +37,33 @@ void ForwardActivity::on_LaserServiceIn(const CommBasicObjects::CommLaserScan &i
 	// - if you need to implement a long-running procedure, do so within the on_execute() method and in
 	//   there, use the method laserServiceInGetUpdate(input) to get a copy of the input object
 
+	//std::cout << "received laserscan: " << input << std::endl;
 	unsigned int scan_size = input.get_scan_size();
 
 	sensor_msgs::LaserScan laserscan;
 
 	laserscan.header.frame_id = "base_link";
-
-	laserscan.angle_min = input.get_scan_start_angle();
-	laserscan.angle_max = input.get_scan_start_angle() + input.get_scan_resolution() * scan_size;
-	laserscan.range_min = input.get_min_distance();
-	laserscan.range_max = input.get_max_distance();
+	laserscan.header.stamp.sec = input.get_scan_time_stamp().get_seconds();
+	laserscan.header.stamp.nsec = input.get_scan_time_stamp().get_microseconds()*1000;
+	//convert vom milidegree (3.14 is 0 deg and -3.14 is 360000 deg)
+	laserscan.angle_min = -(input.get_scan_start_angle()-180000.0) * M_PI/180000.0;
+	laserscan.angle_max = (-(input.get_scan_start_angle()-180000.0) + input.get_scan_resolution() * scan_size) * M_PI/180000.0;
+	laserscan.angle_increment = input.get_scan_resolution() * M_PI/180000.0;
+	// convert from milimeter
+	laserscan.range_min = input.get_min_distance() / 1000.0;
+	laserscan.range_max = input.get_max_distance() / 1000.0;
 
 	std::vector<float> ranges;
 	std::vector<float> intensities;
-	for (unsigned int i = 0; i <= scan_size; i++) {
-		ranges[i] = input.get_scan_distance(i, 1);
-		intensities[i] = input.get_scan_intensity(i);
+	for (unsigned int i = 0; i < scan_size; i++) {
+		// convert from milimeter
+		ranges.push_back(input.get_scan_distance(i, 1) * 1000.0);
+		intensities.push_back(input.get_scan_intensity(i));
 	}
 	laserscan.ranges = ranges;
 	laserscan.intensities = intensities;
 
-	std::cout << "publishing laserscan: " << laserscan << std::endl;
+	//std::cout << "publishing laserscan: " << laserscan << std::endl;
 	COMP -> rosPorts -> laser_pub.publish(laserscan);
 }
 
