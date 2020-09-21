@@ -1,8 +1,13 @@
 ### Docking
 
-needs `ComponentRosBaseFake`
+#### Laserscan Units:
+- start_angle: [rad] (-3.14 .. 3.14)
+- resolution: [rad]
+- distance_min: [m]
+- distance_max: [m]
 
 #### How to use (for testing):
+needs `ComponentRosBaseFake`
 
 - start `roscore`
 - start Naming Service `cd $SMART_ROOT_ACE && ./startSmartSoftNamingService`

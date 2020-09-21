@@ -39,25 +39,24 @@ void ForwardActivity::on_LaserServiceIn(const CommBasicObjects::CommMobileLaserS
 
 	//std::cout << "received laserscan: " << input << std::endl;
 	unsigned int scan_size = input.get_scan_size();
+	unsigned int length_unit = input.get_scan_length_unit();
 
 	sensor_msgs::LaserScan laserscan;
 
 	laserscan.header.frame_id = "base_link";
 	laserscan.header.stamp.sec = input.get_scan_time_stamp().get_seconds();
 	laserscan.header.stamp.nsec = input.get_scan_time_stamp().get_microseconds()*1000;
-	//convert vom milidegree (3.14 is 0 deg and -3.14 is 360000 deg)
-	laserscan.angle_min = -(input.get_scan_start_angle()-180000.0) * M_PI/180000.0;
-	laserscan.angle_max = (-(input.get_scan_start_angle()-180000.0) + input.get_scan_resolution() * scan_size) * M_PI/180000.0;
-	laserscan.angle_increment = input.get_scan_resolution() * M_PI/180000.0;
-	// convert from milimeter
-	laserscan.range_min = input.get_min_distance() / 1000.0;
-	laserscan.range_max = input.get_max_distance() / 1000.0;
+	// angles are supposed to be in rad (-3.14 .. 3.14)
+	laserscan.angle_min = input.get_scan_start_angle()
+	laserscan.angle_max = input.get_scan_start_angle() + input.get_scan_resolution() * scan_size;
+	laserscan.angle_increment = input.get_scan_resolution();
+	laserscan.range_min = input.get_min_distance() * length_unit;
+	laserscan.range_max = input.get_max_distance() * length_unit;
 
 	std::vector<float> ranges;
 	std::vector<float> intensities;
 	for (unsigned int i = 0; i < scan_size; i++) {
-		// convert from milimeter
-		ranges.push_back(input.get_scan_distance(i, 1) * 1000.0);
+		ranges.push_back(input.get_scan_distance(i, 1) * length_unit);
 		intensities.push_back(input.get_scan_intensity(i));
 	}
 	laserscan.ranges = ranges;
