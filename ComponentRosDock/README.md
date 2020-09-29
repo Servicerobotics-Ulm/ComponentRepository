@@ -17,3 +17,7 @@ needs `ComponentRosBaseFake`
 
 - use `State Client` (98) in Robot Console to activate **Docking** (when Docking is succeeded, Docking Activity is stopped)
 - for another Docking process, use `State Client` (98) in Robot Console to activate **Neutral** before **Docking** can be activated again
+
+#### How to use (for running on Robot)
+
+- make sure the catkin workspace including mojin_seronet is sourced (check `$CMAKE_PREFIX_PATH` and `$ROS_PACKAGE_PATH`)

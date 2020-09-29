@@ -9,6 +9,12 @@ case "$1" in
 pre-start)
 	echo "Triggering pre-start hooks FROM COMPONENT ComponentRosDock ..."
 	# Insert commands you want to call prior to starting the components
+
+	# check if mojin_seronet is sourced
+	if [[ $ROS_PACKAGE_PATH != *"mojin_seronet"* ]]; then
+		echo "\nMake sure the catkin workspace including mojin_seronet is sourced! Current package path is: $ROS_PACKAGE_PATH \n"
+	fi
+	roslaunch seronet_dock seronet_dock.launch
 ;;
 
 post-start)
