@@ -44,6 +44,9 @@ public:
 	virtual void initialize(ComponentRosDock *component, int argc, char* argv[]) override;
 	virtual int onStartup() override;
 
+	inline ros::Publisher* getCurrent_pubPtr() {
+		return &charging_pub;
+	}
 	inline ros::Publisher* getDock_action_goalPtr() {
 		return &dock_action_goal;
 	}

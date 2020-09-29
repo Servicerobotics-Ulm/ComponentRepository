@@ -44,6 +44,7 @@ void ComponentRosDockRosPortExtension::initialize(ComponentRosDock *component, i
 	
 	component->rosPorts = this;
 	
+	charging_pub = nh->advertise<std_msgs::Bool>("/charging_seronet", 10);
 	dock_action_goal = nh->advertise<std_msgs::String>("/docker_control/dock_seronet/goal", 10);
 	dock_action_result = nh->subscribe("/docker_control/dock_seronet/result", 10, &ComponentRosDockRosPortCallbacks::dock_action_result_cb, callbacksPtr);
 	laser_pub = nh->advertise<sensor_msgs::LaserScan>("/scan_unified_seronet", 10);

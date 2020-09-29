@@ -52,10 +52,12 @@ ComponentDefinition ComponentRosDock logo "/ComponentRosDock/model/logo.png"
 		MixedPortROSLink twist_sub
 		InputPortLink LaserServiceIn { oversamplingOk undersamplingOk }
 		MixedPortROSLink laser_pub
+		MixedPortROSLink charging_pub
 		DefaultTrigger PeriodicTimer 1.0 Hz
 	}
 	
 	ComponentParameters ComponentRosDock slave CoordinationPort
 MixedPortROS undock_action_result
 	MixedPortROS laser_pub
+MixedPortROS charging_pub
 }

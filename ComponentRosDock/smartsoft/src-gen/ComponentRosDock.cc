@@ -49,6 +49,7 @@ ComponentRosDock::ComponentRosDock()
 	robotDockingEventServiceOutEventTestHandler = nullptr; 
 	undockActivity = NULL;
 	undockActivityTrigger = NULL;
+	//charging_pub = NULL;
 	//dock_action_goal = NULL;
 	//dock_action_result = NULL;
 	//laser_pub = NULL;

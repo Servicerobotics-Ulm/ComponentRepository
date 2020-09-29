@@ -30,6 +30,7 @@ public:
 	virtual ~ForwardActivity();
 	
 	virtual void on_LaserServiceIn(const CommBasicObjects::CommMobileLaserScan &input);
+	virtual void on_BaseStateServiceIn(const CommBasicObjects::CommBaseState &input);
 
 	void twist_sub_cb(const geometry_msgs::Twist::ConstPtr &msg);
 

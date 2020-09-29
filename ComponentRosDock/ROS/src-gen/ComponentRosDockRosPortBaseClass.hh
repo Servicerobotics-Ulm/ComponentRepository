@@ -27,6 +27,7 @@ public:
 	ComponentRosDockRosPortBaseClass() { };
 	virtual ~ComponentRosDockRosPortBaseClass() { }
 	
+	ros::Publisher charging_pub;
 	ros::Publisher dock_action_goal;
 	ros::Subscriber dock_action_result;
 	ros::Publisher laser_pub;

@@ -29,6 +29,21 @@ ForwardActivity::~ForwardActivity()
 	std::cout << "destructor ForwardActivity\n";
 }
 
+void ForwardActivity::on_BaseStateServiceIn(const CommBasicObjects::CommBaseState &input)
+{
+	// upcall triggered from InputPort BaseStateServiceIn
+	// - use a local mutex here, because this upcal is called asynchroneously from outside of this task
+	// - do not use longer blocking calls here since this upcall blocks the InputPort BaseStateServiceIn
+	// - if you need to implement a long-running procedure, do so within the on_execute() method and in
+	//   there, use the method baseStateServiceInGetUpdate(input) to get a copy of the input object
+	// std::cout << "received base state: " << input << std::endl;
+
+	std_msgs::Bool charging;
+	charging.data = (input.get_battery_state().getCurrent() > 0) && (bool)input.get_battery_state().getExternalPower();
+	COMP -> rosPorts -> charging_pub.publish(charging);
+
+}
+
 void ForwardActivity::on_LaserServiceIn(const CommBasicObjects::CommMobileLaserScan &input)
 {
 	// upcall triggered from InputPort LaserServiceIn
@@ -47,16 +62,16 @@ void ForwardActivity::on_LaserServiceIn(const CommBasicObjects::CommMobileLaserS
 	laserscan.header.stamp.sec = input.get_scan_time_stamp().get_seconds();
 	laserscan.header.stamp.nsec = input.get_scan_time_stamp().get_microseconds()*1000;
 	// angles are supposed to be in rad (-3.14 .. 3.14)
-	laserscan.angle_min = input.get_scan_start_angle()
+	laserscan.angle_min = input.get_scan_start_angle();
 	laserscan.angle_max = input.get_scan_start_angle() + input.get_scan_resolution() * scan_size;
 	laserscan.angle_increment = input.get_scan_resolution();
-	laserscan.range_min = input.get_min_distance() * length_unit;
-	laserscan.range_max = input.get_max_distance() * length_unit;
+	laserscan.range_min = input.get_min_distance() / length_unit;
+	laserscan.range_max = input.get_max_distance() / length_unit;
 
 	std::vector<float> ranges;
 	std::vector<float> intensities;
 	for (unsigned int i = 0; i < scan_size; i++) {
-		ranges.push_back(input.get_scan_distance(i, 1) * length_unit);
+		ranges.push_back(input.get_scan_distance(i, 1) / length_unit);
 		intensities.push_back(input.get_scan_intensity(i));
 	}
 	laserscan.ranges = ranges;

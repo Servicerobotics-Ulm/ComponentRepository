@@ -29,6 +29,7 @@
 
 #include <geometry_msgs/Twist.h>
 #include <sensor_msgs/LaserScan.h>
+#include <std_msgs/Bool.h>
 
 class ForwardActivityCore
 :	public SmartACE::ManagedTask
