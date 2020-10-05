@@ -60,6 +60,6 @@ protected:
 public:
 	ImageQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage>* server);
 	virtual ~ImageQueryHandler();
-	virtual void handleQuery(const QueryId &id, const CommBasicObjects::CommVoid& request);
+	virtual void handleQuery(const Smart::QueryIdPtr &id, const CommBasicObjects::CommVoid& request);
 };
 #endif

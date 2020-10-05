@@ -63,7 +63,7 @@ ImageQueryHandler::~ImageQueryHandler()
 }
 
 
-void ImageQueryHandler::handleQuery(const QueryId &id, const CommBasicObjects::CommVoid& request)
+void ImageQueryHandler::handleQuery(const Smart::QueryIdPtr &id, const CommBasicObjects::CommVoid& request)
 {
 	std::cout<<"Query Request received.."<<std::endl;
 

@@ -32,6 +32,7 @@
 #include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommDevicePoseStateOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
+#include "DomainVisionOpcUa/CommDepthImageOpcUa.hh"
 #include "DomainVisionOpcUa/CommRGBDImageOpcUa.hh"
 #include "DomainVisionOpcUa/CommVideoImageOpcUa.hh"
 
@@ -80,6 +81,11 @@ Smart::IPushServerPattern<DomainVision::CommVideoImage> * ComponentKinectV2Serve
 Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> * ComponentKinectV2ServerOpcUaBackendPortFactory::createColorImageQueryServer(const std::string &serviceName)
 {
 	return new SeRoNet::OPCUA::Server::QueryServer<CommBasicObjects::CommVoid, DomainVision::CommVideoImage>(componentImpl, serviceName);
+}
+
+Smart::IPushServerPattern<DomainVision::CommDepthImage> * ComponentKinectV2ServerOpcUaBackendPortFactory::createDepthImagePushServiceOut(const std::string &serviceName)
+{
+	return new SeRoNet::OPCUA::Server::PushServer<DomainVision::CommDepthImage>(componentImpl, serviceName);
 }
 
 Smart::IPushServerPattern<DomainVision::CommRGBDImage> * ComponentKinectV2ServerOpcUaBackendPortFactory::createImagePushNewestServer(const std::string &serviceName)

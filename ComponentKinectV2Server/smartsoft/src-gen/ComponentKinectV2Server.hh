@@ -41,6 +41,8 @@ class ComponentKinectV2ServerExtension;
 // include communication objects
 #include <CommBasicObjects/CommBaseState.hh>
 #include <CommBasicObjects/CommBaseStateACE.hh>
+#include <DomainVision/CommDepthImage.hh>
+#include <DomainVision/CommDepthImageACE.hh>
 #include <CommBasicObjects/CommDevicePoseState.hh>
 #include <CommBasicObjects/CommDevicePoseStateACE.hh>
 #include <DomainVision/CommRGBDImage.hh>
@@ -130,6 +132,7 @@ public:
 	
 	// define output-ports
 	Smart::IPushServerPattern<DomainVision::CommVideoImage> *colorImagePushNewestServer;
+	Smart::IPushServerPattern<DomainVision::CommDepthImage> *depthImagePushServiceOut;
 	Smart::IPushServerPattern<DomainVision::CommRGBDImage> *imagePushNewestServer;
 	
 	// define answer-ports
@@ -256,6 +259,10 @@ public:
 				std::string serviceName;
 				std::string roboticMiddleware;
 		} colorImageQueryServer;
+		struct DepthImagePushServiceOut_struct {
+				std::string serviceName;
+				std::string roboticMiddleware;
+		} depthImagePushServiceOut;
 		struct ImagePushNewestServer_struct {
 				std::string serviceName;
 				std::string roboticMiddleware;

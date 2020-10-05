@@ -49,11 +49,6 @@
 #include "ComponentKinectV2Server.hh"
 
 #include "EulerTransformationMatrices.hh"
-#ifdef WITH_OPENCV_4_2_VERSION
-#include <opencv4/opencv2/highgui.hpp>
-#else
-#include <highgui.h>
-#endif
 #include <iostream>
 #include <armadillo.hh>
 #include "KinectWrapper.hh"
@@ -80,7 +75,6 @@ void ImageTask::startCapturing() {
 	SmartACE::SmartGuard guard(COMP->kinectMutex);
 	if (COMP->device != NULL) {
 		COMP->device->startVideo();
-		COMP->device->startDepth();
 	}
 	if (COMP->getGlobalState().getSettings().getDebug_info()) {
 		std::cout << "[Image Task] Start capturing\n";
@@ -90,10 +84,9 @@ void ImageTask::stopCapturing() {
 	SmartACE::SmartGuard guard(COMP->kinectMutex);
 	if (COMP->device != NULL) {
 		COMP->device->stopVideo();
-		COMP->device->stopDepth();
 	}
 	if (COMP->getGlobalState().getSettings().getDebug_info()) {
-		std::cout << "[Image Task] Stop capturing\n";
+		std::cout << "[Image Task] Stop capturing" <<std::endl;
 	}
 }
 
@@ -103,7 +96,7 @@ int ImageTask::on_entry()
 	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
 
 	// Calculate size of the ring_buffer
-	int size = (int) (COMP->getGlobalState().getSettings().getValid_image_time() + 1);
+	int size = (int) (COMP->getGlobalState().getSettings().getValid_image_time() + 4);
 
 	_ring_buffer.resize(size);
 
@@ -114,6 +107,14 @@ int ImageTask::on_entry()
 	// Fill ring_buffer with empty images
 	for (unsigned int i = 0; i < _ring_buffer.size(); i++) {
 		_ring_buffer[i] = new DomainVision::CommRGBDImage;
+	}
+
+	//Handle user specified resolution
+	if(COMP->getGlobalState().getSettings().getHigh_resolution())
+	{
+		COMP->device->set_resolution(KinectWrapper::Resolution::RES_1920_X_1080);
+	}else{
+		COMP->device->set_resolution(KinectWrapper::Resolution::RES_512_X_424);
 	}
 
 	return 0;
@@ -141,11 +142,10 @@ int ImageTask::on_execute()
 		zero_velocity.set_WZ_base(0);
 
 		DomainVision::CommRGBDImage* image = NULL;
-		std::cout << "[Image Task] Start image capturing ...\n";
 
 		try{
 			Smart::StatusCode statusCode;
-			statusCode = COMP->stateSlave->acquire("PushImage");
+			statusCode = COMP->stateSlave->acquire("pushimage");
 			std::cout<< Smart::StatusCodeConversion(statusCode) << std::endl;
 			if(statusCode == Smart::SMART_OK)
 			{
@@ -209,11 +209,29 @@ int ImageTask::on_execute()
 				COMP->newestImage = image;
 				COMP->NewestImageMutex.release();
 
+
+				if(COMP->device->resolution == COMP->device->Resolution::RES_512_X_424)
+				{
+				DomainVision::CommVideoImage colorImage;
+				colorImage.set_parameters(512, 424, DomainVision::FormatType::RGB24);
+				colorImage.set_data(get_low_res_rgb_image().data);
+				colorImage.setIs_valid(true);
+				colorImage.setSeq_count(image->getSeq_count());
+
+				COMP->colorImagePushNewestServer->put(colorImage);
+
+				}else
+				{
 				DomainVision::CommVideoImage colorImage(image->getColor_image().get_width(),image->getColor_image().get_height(), DomainVision::FormatType::RGB24);
 				colorImage.set_data(image->getColor_image().get_data());
 				colorImage.set_sequence_counter(image->getSeq_count());
-
 				COMP->colorImagePushNewestServer->put(colorImage);
+				}
+
+				DomainVision::CommDepthImage depthImage = image->getDepth_image();
+				COMP->depthImagePushServiceOut->put(depthImage);
+
+
 				COMP->imagePushNewestServer->put(*image);
 
 				if (COMP->getGlobalState().getSettings().getDebug_info()) {
@@ -240,6 +258,11 @@ int ImageTask::on_execute()
 			std::cerr << "[Image Task] Unknown error in ImageTask::svc()\n";
 		}
 
+		std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::nanoseconds> current_time = std::chrono::high_resolution_clock::now();
+		std::chrono::milliseconds diff_ms =  std::chrono::duration_cast<std::chrono::milliseconds>(current_time - previous_time);
+		previous_time = current_time;
+		std::cout <<"-------------------------- Frequency = " << " : Hz =" << 1000.0f/diff_ms.count() <<std::endl;
+
 		// TODO: Check
 		//smart_task_wait_period();
 
@@ -250,4 +273,13 @@ int ImageTask::on_exit()
 {
 	// use this method to clean-up resources which are initialized in on_entry() and needs to be freed before the on_execute() can be called again
 	return 0;
+}
+
+cv::Mat ImageTask::get_low_res_rgb_image()
+{
+	return low_res_rgb_image;
+}
+void ImageTask::set_low_res_rgb_image(const cv::Mat& in_image)
+{
+	low_res_rgb_image = in_image;
 }

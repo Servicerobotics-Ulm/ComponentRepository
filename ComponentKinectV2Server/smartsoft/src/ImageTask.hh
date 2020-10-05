@@ -54,6 +54,15 @@
 #include <CommBasicObjects/CommPose3d.hh>
 #include <CommBasicObjects/CommBaseState.hh>
 
+#ifdef WITH_OPENCV_4_2_VERSION
+#include <opencv4/opencv2/highgui.hpp>
+#else
+#include <highgui.h>
+#endif
+#include <opencv2/opencv.hpp>
+
+#include <chrono>
+
 class ImageTask  : public ImageTaskCore
 {
 public:
@@ -66,12 +75,15 @@ public:
 
 	void startCapturing();
 	void stopCapturing();
+	cv::Mat get_low_res_rgb_image();
+	void set_low_res_rgb_image(const cv::Mat& in_image);
 
 private:
 	void visualization();
 	unsigned int _ring_buffer_index;
 	std::vector<DomainVision::CommRGBDImage*> _ring_buffer;
-
+	std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::nanoseconds> previous_time;
+	cv::Mat low_res_rgb_image;
 };
 
 #endif

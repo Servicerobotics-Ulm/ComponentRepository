@@ -43,6 +43,7 @@ ComponentKinectV2Server::ComponentKinectV2Server()
 	colorImagePushNewestServer = NULL;
 	colorImageQueryServer = NULL;
 	colorImageQueryServerInputTaskTrigger = NULL;
+	depthImagePushServiceOut = NULL;
 	imagePushNewestServer = NULL;
 	imageQueryV2Server = NULL;
 	imageQueryV2ServerInputTaskTrigger = NULL;
@@ -64,6 +65,8 @@ ComponentKinectV2Server::ComponentKinectV2Server()
 	connections.colorImagePushNewestServer.roboticMiddleware = "ACE_SmartSoft";
 	connections.colorImageQueryServer.serviceName = "colorImageQueryServer";
 	connections.colorImageQueryServer.roboticMiddleware = "ACE_SmartSoft";
+	connections.depthImagePushServiceOut.serviceName = "depthImagePushServiceOut";
+	connections.depthImagePushServiceOut.roboticMiddleware = "ACE_SmartSoft";
 	connections.imagePushNewestServer.serviceName = "imagePushNewestServer";
 	connections.imagePushNewestServer.roboticMiddleware = "ACE_SmartSoft";
 	connections.imageQueryV2Server.serviceName = "imageQueryV2Server";
@@ -263,6 +266,7 @@ void ComponentKinectV2Server::init(int argc, char *argv[])
 		colorImagePushNewestServer = portFactoryRegistry[connections.colorImagePushNewestServer.roboticMiddleware]->createColorImagePushNewestServer(connections.colorImagePushNewestServer.serviceName);
 		colorImageQueryServer = portFactoryRegistry[connections.colorImageQueryServer.roboticMiddleware]->createColorImageQueryServer(connections.colorImageQueryServer.serviceName);
 		colorImageQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommVideoImage>(colorImageQueryServer);
+		depthImagePushServiceOut = portFactoryRegistry[connections.depthImagePushServiceOut.roboticMiddleware]->createDepthImagePushServiceOut(connections.depthImagePushServiceOut.serviceName);
 		imagePushNewestServer = portFactoryRegistry[connections.imagePushNewestServer.roboticMiddleware]->createImagePushNewestServer(connections.imagePushNewestServer.serviceName);
 		imageQueryV2Server = portFactoryRegistry[connections.imageQueryV2Server.roboticMiddleware]->createImageQueryV2Server(connections.imageQueryV2Server.serviceName);
 		imageQueryV2ServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage>(imageQueryV2Server);
@@ -286,8 +290,8 @@ void ComponentKinectV2Server::init(int argc, char *argv[])
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
 		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
-		if (stateSlave->defineStates("PushImage" ,"PushImage") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion PushImage.PushImage" << std::endl;
-		if (stateSlave->defineStates("QueryImage" ,"QueryImage") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion QueryImage.QueryImage" << std::endl;
+		if (stateSlave->defineStates("PushImage" ,"pushimage") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion PushImage.pushimage" << std::endl;
+		if (stateSlave->defineStates("QueryImage" ,"queryimage") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion QueryImage.queryimage" << std::endl;
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -417,6 +421,7 @@ void ComponentKinectV2Server::fini()
 	delete colorImagePushNewestServer;
 	delete colorImageQueryServer;
 	delete colorImageQueryServerInputTaskTrigger;
+	delete depthImagePushServiceOut;
 	delete imagePushNewestServer;
 	delete imageQueryV2Server;
 	delete imageQueryV2ServerInputTaskTrigger;
@@ -553,6 +558,11 @@ void ComponentKinectV2Server::loadParameter(int argc, char *argv[])
 		parameter.getString("colorImageQueryServer", "serviceName", connections.colorImageQueryServer.serviceName);
 		if(parameter.checkIfParameterExists("colorImageQueryServer", "roboticMiddleware")) {
 			parameter.getString("colorImageQueryServer", "roboticMiddleware", connections.colorImageQueryServer.roboticMiddleware);
+		}
+		// load parameters for server depthImagePushServiceOut
+		parameter.getString("depthImagePushServiceOut", "serviceName", connections.depthImagePushServiceOut.serviceName);
+		if(parameter.checkIfParameterExists("depthImagePushServiceOut", "roboticMiddleware")) {
+			parameter.getString("depthImagePushServiceOut", "roboticMiddleware", connections.depthImagePushServiceOut.roboticMiddleware);
 		}
 		// load parameters for server imagePushNewestServer
 		parameter.getString("imagePushNewestServer", "serviceName", connections.imagePushNewestServer.serviceName);

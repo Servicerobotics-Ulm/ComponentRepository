@@ -65,6 +65,19 @@ private:
 
 	libfreenect2::Freenect2 freenect2;
 	libfreenect2::Freenect2Device *dev;
+	libfreenect2::Registration* registration;
+	libfreenect2::FrameMap frames;
+	libfreenect2::Freenect2Device::ColorCameraParams colorParams;
+	libfreenect2::Freenect2Device::IrCameraParams irParams;
+	libfreenect2::Frame *undistorted_depth_frame;
+	libfreenect2::Frame *big_depth_frame;
+	libfreenect2::Frame *registered_frame;
+
+	bool read_camera_params;
+	std::vector<double> rgb_intrinsics;
+	std::vector<double> rgb_extrinsics;
+	std::vector<double> depth_intrinsics;
+	std::vector<double> depth_extrinsics;
 
 	void printDebugMsg(std::string msgText);
 
@@ -72,25 +85,22 @@ private:
 
 	int initializeCam();
 
-	void calcPointXYZ (const libfreenect2::Frame *depth_frame, int r, int c, float &x, float &y, float &z);
-
 public:
 	KinectWrapper();
 
 	virtual ~KinectWrapper();
 
 	void startVideo();
-
-	void startDepth() {
-	}
-
 	void stopVideo();
 
-	void stopDepth() {
-
-	}
-
 	void getImage(DomainVision::CommRGBDImage& image);
+	enum class Resolution
+		{
+			RES_1920_X_1080,
+			RES_512_X_424
+		};
+	Resolution resolution;
+	void set_resolution(const Resolution& res);
 
 };
 

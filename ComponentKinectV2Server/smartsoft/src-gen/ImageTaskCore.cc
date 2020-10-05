@@ -102,6 +102,16 @@ Smart::StatusCode ImageTaskCore::colorImagePushNewestServerPut(DomainVision::Com
 	return result;
 }
 // this method is meant to be used in derived classes
+Smart::StatusCode ImageTaskCore::depthImagePushServiceOutPut(DomainVision::CommDepthImage &depthImagePushServiceOutDataObject)
+{
+	Smart::StatusCode result = COMP->depthImagePushServiceOut->put(depthImagePushServiceOutDataObject);
+	if(useLogging == true) {
+		//FIXME: use logging
+		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
+	}
+	return result;
+}
+// this method is meant to be used in derived classes
 Smart::StatusCode ImageTaskCore::imagePushNewestServerPut(DomainVision::CommRGBDImage &imagePushNewestServerDataObject)
 {
 	Smart::StatusCode result = COMP->imagePushNewestServer->put(imagePushNewestServerDataObject);
@@ -115,7 +125,7 @@ Smart::StatusCode ImageTaskCore::imagePushNewestServerPut(DomainVision::CommRGBD
 void ImageTaskCore::triggerLogEntry(const int& idOffset)
 {
 	if(useLogging == true) {
-		int logId = taskLoggingId + 2*2 + idOffset;
+		int logId = taskLoggingId + 2*3 + idOffset;
 		//FIXME: use logging
 		//Smart::LOGGER->log(logId, getCurrentUpdateCount(), getPreviousCommObjId());
 	}

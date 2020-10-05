@@ -24,6 +24,8 @@ INCLUDE(${SMART_MACROS})
 # Create and configure a CMake project for a CommunicationObject
 SMART_COMPONENT_PROJECT()
 
+set(CMAKE_CXX_STANDARD 11)
+
 # find SmartSoft package
 #FIND_SMARTSOFT(3.0)
 #FIXME: generalize this

@@ -20,6 +20,13 @@ Activity ImageTask
 	}
 	RequestHandler ColorImageQueryHandler triggeredFrom colorImageQueryServer {
 	}
-	CoordinationSlavePort CoordinationPort implements DomainVision.VisionCoordinationService { PublicOperationMode DomainVision.ImageProvisionModes.PushImage { activates ( PushImage ) } PublicOperationMode DomainVision.ImageProvisionModes.QueryImage { activates ( QueryImage ) } PrivateOperationMode PushImage PrivateOperationMode QueryImage }
+	CoordinationSlavePort CoordinationPort implements DomainVision.VisionCoordinationService { 
+		PublicOperationMode DomainVision.ImageProvisionModes.PushImage { activates ( pushimage ) } 
+		PublicOperationMode DomainVision.ImageProvisionModes.QueryImage { activates ( queryimage ) } 
+		PrivateOperationMode pushimage PrivateOperationMode queryimage 
+	}
 	ComponentParameters ComponentKinectV2ServerParams slave CoordinationPort
+
+	OutputPort depthImagePushServiceOut implements DomainVision.DepthImagePushService realizedBy ImageTask {
+	}
 }

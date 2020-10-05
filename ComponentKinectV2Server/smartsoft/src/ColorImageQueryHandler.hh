@@ -64,6 +64,6 @@ protected:
 public:
 	ColorImageQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage>* server);
 	virtual ~ColorImageQueryHandler();
-	virtual void handleQuery(const QueryId &id, const CommBasicObjects::CommVoid& request);
+	virtual void handleQuery(const Smart::QueryIdPtr &id, const CommBasicObjects::CommVoid& request);
 };
 #endif

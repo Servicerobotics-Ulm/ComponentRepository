@@ -22,6 +22,7 @@
 
 // include communication-objects for output ports
 #include <DomainVision/CommVideoImage.hh>
+#include <DomainVision/CommDepthImage.hh>
 #include <DomainVision/CommRGBDImage.hh>
 
 // include all interaction-observer interfaces
@@ -53,6 +54,8 @@ protected:
 	
 	// this method is meant to be used in derived classes
 	Smart::StatusCode colorImagePushNewestServerPut(DomainVision::CommVideoImage &colorImagePushNewestServerDataObject);
+	// this method is meant to be used in derived classes
+	Smart::StatusCode depthImagePushServiceOutPut(DomainVision::CommDepthImage &depthImagePushServiceOutDataObject);
 	// this method is meant to be used in derived classes
 	Smart::StatusCode imagePushNewestServerPut(DomainVision::CommRGBDImage &imagePushNewestServerDataObject);
 	

@@ -73,6 +73,11 @@ Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoIm
 	return new SmartACE::QueryServer<CommBasicObjects::CommVoid, DomainVision::CommVideoImage>(componentImpl, serviceName);
 }
 
+Smart::IPushServerPattern<DomainVision::CommDepthImage> * ComponentKinectV2ServerAcePortFactory::createDepthImagePushServiceOut(const std::string &serviceName)
+{
+	return new SmartACE::PushServer<DomainVision::CommDepthImage>(componentImpl, serviceName);
+}
+
 Smart::IPushServerPattern<DomainVision::CommRGBDImage> * ComponentKinectV2ServerAcePortFactory::createImagePushNewestServer(const std::string &serviceName)
 {
 	return new SmartACE::PushServer<DomainVision::CommRGBDImage>(componentImpl, serviceName);

@@ -64,7 +64,7 @@ ColorImageQueryHandler::~ColorImageQueryHandler()
 }
 
 
-void ColorImageQueryHandler::handleQuery(const QueryId &id, const CommBasicObjects::CommVoid& request)
+void ColorImageQueryHandler::handleQuery(const Smart::QueryIdPtr &id, const CommBasicObjects::CommVoid& request)
 {
 	std::cout<<"Query Request ColorImage received.."<<std::endl;
 

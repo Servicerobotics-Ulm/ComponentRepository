@@ -50,6 +50,7 @@ public:
 	
 	virtual Smart::IPushServerPattern<DomainVision::CommVideoImage> * createColorImagePushNewestServer(const std::string &serviceName) override;
 	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> * createColorImageQueryServer(const std::string &serviceName) override;
+	virtual Smart::IPushServerPattern<DomainVision::CommDepthImage> * createDepthImagePushServiceOut(const std::string &serviceName) override;
 	virtual Smart::IPushServerPattern<DomainVision::CommRGBDImage> * createImagePushNewestServer(const std::string &serviceName) override;
 	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> * createImageQueryV2Server(const std::string &serviceName) override;
 	

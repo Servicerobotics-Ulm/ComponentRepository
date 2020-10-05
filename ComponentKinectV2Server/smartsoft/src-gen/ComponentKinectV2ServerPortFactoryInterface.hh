@@ -20,6 +20,8 @@
 // include communication objects
 #include <CommBasicObjects/CommBaseState.hh>
 #include <CommBasicObjects/CommBaseStateACE.hh>
+#include <DomainVision/CommDepthImage.hh>
+#include <DomainVision/CommDepthImageACE.hh>
 #include <CommBasicObjects/CommDevicePoseState.hh>
 #include <CommBasicObjects/CommDevicePoseStateACE.hh>
 #include <DomainVision/CommRGBDImage.hh>
@@ -50,6 +52,7 @@ public:
 	
 	virtual Smart::IPushServerPattern<DomainVision::CommVideoImage> * createColorImagePushNewestServer(const std::string &serviceName) = 0;
 	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> * createColorImageQueryServer(const std::string &serviceName) = 0;
+	virtual Smart::IPushServerPattern<DomainVision::CommDepthImage> * createDepthImagePushServiceOut(const std::string &serviceName) = 0;
 	virtual Smart::IPushServerPattern<DomainVision::CommRGBDImage> * createImagePushNewestServer(const std::string &serviceName) = 0;
 	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> * createImageQueryV2Server(const std::string &serviceName) = 0;
 
