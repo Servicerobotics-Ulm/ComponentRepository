@@ -55,27 +55,10 @@
 void SmartStateChangeHandler::handleEnterState(const std::string & substate) throw()
 {
 	std::cout<<"handleEnterState: "<<substate<<std::endl;
-		if (substate == "nonneutral") {
-			COMP->imageTask->startCapturing();
-		}
-		if (substate == "pushimage"){
-			//COMP->colorImagePushNewestServer->start();
-			//std::cout << "Push Newest started.\n";
-		}
-
 }
 
 // Called when a substate is left
 void SmartStateChangeHandler::handleQuitState(const std::string & substate) throw()
 {
 	std::cout<<"handleQuitState: "<<substate<<std::endl;
-	if (substate == "nonneutral") {
-		COMP->imageTask->stopCapturing();
-	}
-
-	if (substate == "pushimage"){
-		//COMP->colorImagePushNewestServer->stop();
-		//std::cout << "Push Timed stopped.\n";
-	}
-
 }
