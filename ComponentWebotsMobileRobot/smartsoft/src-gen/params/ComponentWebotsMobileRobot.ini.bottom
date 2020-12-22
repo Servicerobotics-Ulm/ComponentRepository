@@ -1,0 +1,75 @@
+#####################
+# internal parameters
+#####################
+##########################
+# InternalParameter Bumper
+[Bumper]
+bumperTimeOutMSec 0
+bumperTimeOutSec 10
+
+##########################
+# InternalParameter General
+[General]
+hasSignalState true
+poseFileName /tmp/lastRobotPose.txt
+useLocalizationEvent true
+verbose false
+writePoseFile false
+
+##########################
+# InternalParameter LaserSafetyField
+[LaserSafetyField]
+generateLaserSafetyFieldEvents false
+laserSafetyfFieldTimeOutMSec 0
+laserSafetyfFieldTimeOutSec 10
+
+##########################
+# InternalParameter OdometryRandomError
+[OdometryRandomError]
+varianceOfDistancePerMeter 0.0025
+varianceOfHeadingPerMeter 0.001218
+varianceOfHeadingPerRadians 0.001212
+
+##########################
+# InternalParameter Robot
+[Robot]
+daemonIP 127.0.0.1
+maxRotVel 4.0
+maxVelX 1.0
+maxVelY 1.0
+
+##########################
+# InternalParameter Webots
+[Webots]
+# distanceToRobotCentre has an array value (defined by assigning each array element in a separate line)
+distanceToRobotCentre -0.1826
+distanceToRobotCentre -0.1826
+distanceToRobotCentre -0.1826
+# heading has an array value (defined by assigning each array element in a separate line)
+heading 90.0
+heading 210.0
+heading 330.0
+# maxAcceleration has an array value (defined by assigning each array element in a separate line)
+maxAcceleration 10.0
+maxAcceleration 6.0
+maxAcceleration 40.0
+# motorName has an array value (defined by assigning each array element in a separate line)
+motorName wheel0_joint
+motorName wheel1_joint
+motorName wheel2_joint
+# radius has an array value (defined by assigning each array element in a separate line)
+radius 0.063
+radius 0.063
+radius 0.063
+robotName Robotino 3
+
+
+#####################
+# extended parameters
+#####################
+
+#####################
+# instance parameters
+#####################
+##########################
+# ParameterSet BaseParams

@@ -1,0 +1,42 @@
+ComponentParameter ComponentWebots2DLidarParams component ComponentWebots2DLidar 
+{
+InternalParameter webots{
+  robotName : String = "Lidar"
+}  
+InternalParameter scanner{
+	verbose: Boolean = false
+	on_turret: Boolean = false
+	x: Int32 = 0
+	y: Int32 = 0
+	z: Int32 = 0
+	azimuth: Double = 0
+	elevation: Double = 0
+	roll: Double = 0
+	ip_address: String = "192.168.0.1"
+	port: UInt32 = 2111
+	//@doc "min_range should not be 0!"
+	min_range: UInt32 = 10 
+	max_range: UInt32 = 20000
+	//@doc "in deg"
+	opening_angle: UInt32 = 270
+	//@doc "in deg"
+	resolution: Double = 0.5
+	length_unit: UInt32 = 1
+	//@doc "in Hz"
+	frequency: UInt32 = 50
+}
+InternalParameter base_manipulator{
+	on_base: Boolean = true
+	x: Int32 = 0
+	y: Int32 = 0
+	z: Int32 = 0
+	base_a: Double = 0
+	steer_a: Double = 0
+	turret_a: Double = 0
+}
+InternalParameter services{
+	activate_push_newest: Boolean = true
+	active_push_timed: Boolean = true
+}
+}
+
