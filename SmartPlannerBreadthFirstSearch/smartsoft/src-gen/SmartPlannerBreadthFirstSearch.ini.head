@@ -67,6 +67,7 @@ roboticMiddleware ACE_SmartSoft
 # client port parameter
 
 [BaseStateClient]
+initialConnect false
 serverName unknown
 serviceName unknown
 wiringName BaseStateClient
@@ -74,6 +75,7 @@ interval 1
 roboticMiddleware ACE_SmartSoft
 
 [CurMapClient]
+initialConnect false
 serverName unknown
 serviceName unknown
 wiringName CurMapClient
@@ -81,13 +83,13 @@ interval 1
 roboticMiddleware ACE_SmartSoft
 
 ##########################
-## parameters of OpcUaBackendComponentGeneratorExtension
-
-##########################
 ## parameters of PlainOpcUaSmartPlannerBreadthFirstSearchExtension
 
 
 ##########################
-## parameters of SmartPlannerBreadthFirstSearchROSExtension
+## parameters of SmartPlannerBreadthFirstSearchROS1InterfacesExtension
+
+##########################
+## parameters of SmartPlannerBreadthFirstSearchRestInterfacesExtension
 
 

@@ -57,8 +57,8 @@ class RobotinoIOValuesQueryServiceAnswHandler : public RobotinoIOValuesQueryServ
 {
 protected:
 public:
-	RobotinoIOValuesQueryServiceAnswHandler(Smart::IQueryServerPattern<CommRobotinoObjects::CommRobotinoIOValues, CommRobotinoObjects::CommRobotinoIOValues>* server);
+	RobotinoIOValuesQueryServiceAnswHandler(Smart::IQueryServerPattern<CommBasicObjects::CommIOValues, CommBasicObjects::CommIOValues>* server);
 	virtual ~RobotinoIOValuesQueryServiceAnswHandler();
-	virtual void handleQuery(const Smart::QueryIdPtr &id, const CommRobotinoObjects::CommRobotinoIOValues& request);
+	virtual void handleQuery(const Smart::QueryIdPtr &id, const CommBasicObjects::CommIOValues& request);
 };
 #endif

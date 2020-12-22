@@ -29,9 +29,9 @@
 class ComponentGMappingPortFactoryInterface;
 class ComponentGMappingExtension;
 
-// includes for ComponentGMappingROSExtension
+// includes for ComponentGMappingROS1InterfacesExtension
 
-// includes for OpcUaBackendComponentGeneratorExtension
+// includes for ComponentGMappingRestInterfacesExtension
 
 // includes for PlainOpcUaComponentGMappingExtension
 // include plain OPC UA device clients
@@ -48,11 +48,15 @@ class ComponentGMappingExtension;
 
 // include tasks
 #include "GMappingTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 #include "LaserClientUpcallManager.hh"
+#include "LaserClientInputCollector.hh"
 
 // include input-handler(s)
 // include request-handler(s)
+// output port wrappers
+#include "BasePositionUpdateClientWrapper.hh"
+#include "NewestMapPushServerWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -112,6 +116,7 @@ public:
 	Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> *laserClient;
 	Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan> *laserClientInputTaskTrigger;
 	LaserClientUpcallManager *laserClientUpcallManager;
+	LaserClientInputCollector *laserClientInputCollector;
 	
 	// define request-ports
 	
@@ -119,15 +124,17 @@ public:
 	
 	// define output-ports
 	Smart::ISendClientPattern<CommBasicObjects::CommBasePositionUpdate> *basePositionUpdateClient;
+	BasePositionUpdateClientWrapper *basePositionUpdateClientWrapper;
 	Smart::IPushServerPattern<CommNavigationObjects::CommGridMap> *newestMapPushServer;
+	NewestMapPushServerWrapper *newestMapPushServerWrapper;
 	
 	// define answer-ports
 	
 	// define request-handlers
 	
-	// definitions of ComponentGMappingROSExtension
+	// definitions of ComponentGMappingROS1InterfacesExtension
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
+	// definitions of ComponentGMappingRestInterfacesExtension
 	
 	// definitions of PlainOpcUaComponentGMappingExtension
 	
@@ -254,9 +261,9 @@ public:
 			std::string roboticMiddleware;
 		} laserClient;
 		
-		// -- parameters for ComponentGMappingROSExtension
+		// -- parameters for ComponentGMappingROS1InterfacesExtension
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
+		// -- parameters for ComponentGMappingRestInterfacesExtension
 		
 		// -- parameters for PlainOpcUaComponentGMappingExtension
 		

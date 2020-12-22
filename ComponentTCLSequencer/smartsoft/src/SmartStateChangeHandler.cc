@@ -24,6 +24,27 @@ void SmartStateChangeHandler::handleEnterState(const std::string & substate) thr
 {
 	// change this code to your needs !!!
 
+	if(substate == "shutdown"){
+		std::cout<<__FUNCTION__<<substate<<std::endl;
+
+
+		std::ostringstream eventResult;
+		eventResult<< "(";
+		eventResult<< "( coordination-interfaces-type . \"COMPONENT\")";
+		eventResult<< "( coordination-interface-instance . \"COMPONENT.COMPONENT\")";
+		eventResult<< "( service-name . \"SHUTDOWNEVENT\")";
+		eventResult<< "( id . 0)";
+		eventResult<< "( data . \"(shutdown)\")";
+		eventResult<< ")";
+
+	//	char eventResult[LISP_STRING];
+	//	sprintf(eventResult,"((component shutdownEvent %d) %s)",0, "(shutdown)");
+		COMP->eventInterface->append(eventResult.str());
+
+		ACE_OS::sleep(ACE_Time_Value(1,0));
+		std::cout<<__FUNCTION__<<" QUIT"<<std::endl;
+	}
+
 }
 
 // Called when a substate is left

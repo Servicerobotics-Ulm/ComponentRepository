@@ -29,13 +29,9 @@
 class SmartJoystickServerPortFactoryInterface;
 class SmartJoystickServerExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaSmartJoystickServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
-
-// includes for SmartJoystickServerROSExtension
 
 
 // include communication objects
@@ -44,10 +40,12 @@ class SmartJoystickServerExtension;
 
 // include tasks
 #include "JoystickTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 
 // include input-handler(s)
 // include request-handler(s)
+// output port wrappers
+#include "JoystickServcieOutWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -110,16 +108,13 @@ public:
 	
 	// define output-ports
 	Smart::IPushServerPattern<CommBasicObjects::CommJoystick> *joystickServcieOut;
+	JoystickServcieOutWrapper *joystickServcieOutWrapper;
 	
 	// define answer-ports
 	
 	// define request-handlers
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
 	// definitions of PlainOpcUaSmartJoystickServerExtension
-	
-	// definitions of SmartJoystickServerROSExtension
 	
 	
 	// define default slave ports
@@ -216,11 +211,7 @@ public:
 	
 		//--- client port parameter ---
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// -- parameters for PlainOpcUaSmartJoystickServerExtension
-		
-		// -- parameters for SmartJoystickServerROSExtension
 		
 	} connections;
 };

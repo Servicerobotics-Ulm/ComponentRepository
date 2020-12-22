@@ -32,10 +32,11 @@ SmartJoystickServer::SmartJoystickServer()
 	
 	// set all pointer members to NULL
 	//coordinationPort = NULL;
+	//coordinationPort = NULL;
 	joystickServcieOut = NULL;
+	joystickServcieOutWrapper = NULL;
 	joystickTask = NULL;
 	joystickTaskTrigger = NULL;
-	//smartJoystickServerParameters = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
@@ -54,11 +55,7 @@ SmartJoystickServer::SmartJoystickServer()
 	connections.joystickTask.priority = -1;
 	connections.joystickTask.cpuAffinity = -1;
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
 	// initialize members of PlainOpcUaSmartJoystickServerExtension
-	
-	// initialize members of SmartJoystickServerROSExtension
 	
 }
 
@@ -147,11 +144,7 @@ void SmartJoystickServer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of PlainOpcUaSmartJoystickServerExtension
-		
-		// initializations of SmartJoystickServerROSExtension
 		
 		
 		// initialize all registered port-factories
@@ -188,6 +181,7 @@ void SmartJoystickServer::init(int argc, char *argv[])
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
 		joystickServcieOut = portFactoryRegistry[connections.joystickServcieOut.roboticMiddleware]->createJoystickServcieOut(connections.joystickServcieOut.serviceName);
+		joystickServcieOutWrapper = new JoystickServcieOutWrapper(joystickServcieOut);
 		
 		// create client ports
 		
@@ -292,6 +286,7 @@ void SmartJoystickServer::fini()
 	// destroy client ports
 
 	// destroy server ports
+	delete joystickServcieOutWrapper;
 	delete joystickServcieOut;
 	// destroy event-test handlers (if needed)
 	
@@ -318,11 +313,7 @@ void SmartJoystickServer::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
 	// destruction of PlainOpcUaSmartJoystickServerExtension
-	
-	// destruction of SmartJoystickServerROSExtension
 	
 }
 
@@ -414,11 +405,7 @@ void SmartJoystickServer::loadParameter(int argc, char *argv[])
 			parameter.getInteger("JoystickTask", "cpuAffinity", connections.joystickTask.cpuAffinity);
 		}
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// load parameters for PlainOpcUaSmartJoystickServerExtension
-		
-		// load parameters for SmartJoystickServerROSExtension
 		
 		
 		// load parameters for all registered component-extensions

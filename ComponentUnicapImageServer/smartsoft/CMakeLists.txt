@@ -27,7 +27,7 @@ SMART_COMPONENT_PROJECT()
 # find SmartSoft package
 #FIND_SMARTSOFT(3.0)
 #FIXME: generalize this
-FIND_PACKAGE(AceSmartSoft PATHS $ENV{SMART_ROOT_ACE}/build)
+FIND_PACKAGE(AceSmartSoft PATHS $ENV{SMART_ROOT_ACE})
 
 # generte doxygen documentation
 SMART_COMPONENT_GENERATE_DOC()
@@ -42,10 +42,13 @@ SMART_COMPONENT_AUTOBUILD_DEPENDENCIES()
 # you can add additional external libraries using regular CMake commands, e.g.:
 find_package(PkgConfig)
 pkg_check_modules(UNICAP libunicap REQUIRED)
-find_package( OpenCV)
 
-
-
+find_package( OpenCV REQUIRED)
+IF(OpenCV_VERSION VERSION_LESS 4.2.0)
+add_definitions(-DWITH_OLD_OPENCV_VERSION)
+ELSE()
+add_definitions(-DWITH_OPENCV_4_2_VERSION)
+ENDIF()
 
 INCLUDE(${CMAKE_CURRENT_LIST_DIR}/src-gen/MixedPortIncludes.cmake)
 

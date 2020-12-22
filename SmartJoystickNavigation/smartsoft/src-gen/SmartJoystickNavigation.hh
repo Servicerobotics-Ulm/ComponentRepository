@@ -29,13 +29,13 @@
 class SmartJoystickNavigationPortFactoryInterface;
 class SmartJoystickNavigationExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaSmartJoystickNavigationExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
 
-// includes for SmartJoystickNavigationROSExtension
+// includes for SmartJoystickNavigationROS1InterfacesExtension
+
+// includes for SmartJoystickNavigationRestInterfacesExtension
 
 
 // include communication objects
@@ -46,11 +46,14 @@ class SmartJoystickNavigationExtension;
 
 // include tasks
 #include "JoystickNavTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 #include "JoystickServiceInUpcallManager.hh"
+#include "JoystickServiceInInputCollector.hh"
 
 // include input-handler(s)
 // include request-handler(s)
+// output port wrappers
+#include "NavVelServiceOutWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -110,6 +113,7 @@ public:
 	Smart::IPushClientPattern<CommBasicObjects::CommJoystick> *joystickServiceIn;
 	Smart::InputTaskTrigger<CommBasicObjects::CommJoystick> *joystickServiceInInputTaskTrigger;
 	JoystickServiceInUpcallManager *joystickServiceInUpcallManager;
+	JoystickServiceInInputCollector *joystickServiceInInputCollector;
 	
 	// define request-ports
 	
@@ -117,16 +121,17 @@ public:
 	
 	// define output-ports
 	Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> *navVelServiceOut;
+	NavVelServiceOutWrapper *navVelServiceOutWrapper;
 	
 	// define answer-ports
 	
 	// define request-handlers
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
 	// definitions of PlainOpcUaSmartJoystickNavigationExtension
 	
-	// definitions of SmartJoystickNavigationROSExtension
+	// definitions of SmartJoystickNavigationROS1InterfacesExtension
+	
+	// definitions of SmartJoystickNavigationRestInterfacesExtension
 	
 	
 	// define default slave ports
@@ -231,6 +236,7 @@ public:
 	
 		//--- client port parameter ---
 		struct JoystickServiceIn_struct {
+			bool initialConnect;
 			std::string serverName;
 			std::string serviceName;
 			std::string wiringName;
@@ -246,11 +252,11 @@ public:
 			std::string roboticMiddleware;
 		} navVelServiceOut;
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// -- parameters for PlainOpcUaSmartJoystickNavigationExtension
 		
-		// -- parameters for SmartJoystickNavigationROSExtension
+		// -- parameters for SmartJoystickNavigationROS1InterfacesExtension
+		
+		// -- parameters for SmartJoystickNavigationRestInterfacesExtension
 		
 	} connections;
 };

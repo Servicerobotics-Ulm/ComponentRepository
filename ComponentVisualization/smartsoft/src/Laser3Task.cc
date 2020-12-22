@@ -94,7 +94,8 @@ int Laser3Task::on_execute()
 	if (status == Smart::SMART_OK) {
 		laser->displayLaserScan(scan);
 	} else {
-		laser->clear();
+		//laser->clear();
+		std::cout << "[Laser3Task] error while getting new scan: " << Smart::StatusCodeConversion(status) << "\n";
 	}
 
 	// it is possible to return != 0 (e.g. when the task detects errors), then the outer loop breaks and the task stops

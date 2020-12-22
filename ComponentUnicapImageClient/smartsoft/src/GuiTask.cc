@@ -47,11 +47,17 @@
 #include "GuiTask.hh"
 #include "ComponentUnicapImageClient.hh"
 
+#ifdef WITH_MRPT_2_0_VERSION
+#include <mrpt/img/CImage.h>
+#else
 #include <mrpt/utils/CImage.h>
+#include <mrpt/math/lightweight_geom_data.h>
+#include <mrpt/math/geometry.h>
+using namespace mrpt::math;
+using namespace mrpt::utils;
+#endif
 
 #include <iostream>
-
-#include <VisualizationHelper.hh>
 
 GuiTask::GuiTask(SmartACE::SmartComponent *comp) 
 :	GuiTaskCore(comp), window("Image Viewer")
@@ -75,7 +81,11 @@ int GuiTask::on_execute()
 {
 	SmartACE::SmartGuard imgGuard(COMP->CurrentImageMutex);
 			{
-				if (COMP->currentImage != NULL)
+#ifdef WITH_MRPT_2_0_VERSION
+		if (COMP->currentImage->isEmpty() != NULL)
+
+#else
+		if (COMP->currentImage != NULL)
 				{
 
 					// get image
@@ -88,8 +98,11 @@ int GuiTask::on_execute()
 						factor = img.getWidth() / maxSize;
 						newWidth = img.getWidth() / factor;
 						newHeight = img.getHeight() / factor;
-
+#ifdef WITH_MRPT_2_0_VERSION
+						img.scaleImage(img, newWidth, newHeight);
+#else
 						img.scaleImage(newWidth, newHeight);
+#endif
 					}
 
 					/*
@@ -105,6 +118,7 @@ int GuiTask::on_execute()
 
 					window.showImage(img);
 				} else
+#endif
 				{
 					std::cout << "[GuiTask] Error no image to show!" << std::endl;
 				}
@@ -120,7 +134,8 @@ int GuiTask::on_exit()
 	// use this method to clean-up resources which are initialized in on_entry() and needs to be freed before the on_execute() can be called again
 	return 0;
 }
-
+#ifdef WITH_MRPT_2_0_VERSION
+#else
 void GuiTask::justifyHorizon(mrpt::utils::CImage &image, CPose3D &imagePose) {
 /*
 // OLD STUFF FROM KATE.
@@ -173,11 +188,11 @@ void GuiTask::justifyHorizon(mrpt::utils::CImage &image, CPose3D &imagePose) {
 	// NEW IMPLEMENTATION ON LARRY -- START
 
 	TPlane robot_xy;
-	createPlaneFromPoseXY(CPose3D(), robot_xy);
+	mrpt::math::createPlaneFromPoseXY(CPose3D(), robot_xy);
 	TLine3D camera_x;
-	createFromPoseX(imagePose, camera_x);
+	mrpt::math::createFromPoseX(imagePose, camera_x);
 	TLine3D camera_y;
-	createFromPoseY(imagePose, camera_y);
+	mrpt::math::createFromPoseY(imagePose, camera_y);
 
 	double angle_x = getAngle(robot_xy, camera_x);
 	double angle_y = getAngle(robot_xy, camera_y);
@@ -236,3 +251,4 @@ void GuiTask::justifyHorizon(mrpt::utils::CImage &image, CPose3D &imagePose) {
 	image.rotateImage(angle, image.getWidth()/2, image.getHeight()/2);
 
 }
+#endif

@@ -142,7 +142,7 @@ private:
 	virtual void on_TrackingClient(const CommTrackingObjects::CommTrackingGoal &input);
 	virtual void on_LaserClient2(const CommBasicObjects::CommMobileLaserScan &input);
 	virtual void on_IRClient(const CommBasicObjects::CommMobileIRScan &input);
-	virtual void on_PathNavigationGoalClient(const CommRobotinoObjects::CommPathNavigationGoal &input);
+	virtual void on_PathNavigationGoalClient(const CommNavigationObjects::CommCorridorNavigationGoal &input);
 	virtual void on_BaseStateClient(const CommBasicObjects::CommBaseState &input);
 
 public:

@@ -113,46 +113,6 @@ public:
 		}; // end class BumperType
 		
 		/**
-		 * Definition of Parameter LaserSafetyField
-		 */
-		class LaserSafetyFieldType 
-		{
-			friend class ParamUpdateHandler;
-		protected:
-			/**
-			 * here are the member definitions
-			 */
-			bool generateLaserSafetyFieldEvents;
-			int laserSafetyfFieldTimeOutMSec;
-			int laserSafetyfFieldTimeOutSec;
-		
-		public:
-			// default constructor
-			LaserSafetyFieldType() {
-				generateLaserSafetyFieldEvents = false;
-				laserSafetyfFieldTimeOutMSec = 0;
-				laserSafetyfFieldTimeOutSec = 10;
-			}
-		
-			/**
-			 * here are the public getters
-			 */
-			inline bool getGenerateLaserSafetyFieldEvents() const { return generateLaserSafetyFieldEvents; }
-			inline int getLaserSafetyfFieldTimeOutMSec() const { return laserSafetyfFieldTimeOutMSec; }
-			inline int getLaserSafetyfFieldTimeOutSec() const { return laserSafetyfFieldTimeOutSec; }
-			
-			void to_ostream(std::ostream &os = std::cout) const
-			{
-				os << "LaserSafetyField(";
-				os << "generateLaserSafetyFieldEvents = " << generateLaserSafetyFieldEvents << ", ";
-				os << "laserSafetyfFieldTimeOutMSec = " << laserSafetyfFieldTimeOutMSec << ", ";
-				os << "laserSafetyfFieldTimeOutSec = " << laserSafetyfFieldTimeOutSec << ", ";
-				os << ")\n";
-			}
-			
-		}; // end class LaserSafetyFieldType
-		
-		/**
 		 * Definition of Parameter General
 		 */
 		class GeneralType 
@@ -264,7 +224,6 @@ protected:
 	// Internal params
 	BumperType Bumper;
 	GeneralType General;
-	LaserSafetyFieldType LaserSafetyField;
 	RobotType Robot;
 	
 	// External params
@@ -292,9 +251,6 @@ public:
 	GeneralType getGeneral() const {
 		return General;
 	}
-	LaserSafetyFieldType getLaserSafetyField() const {
-		return LaserSafetyField;
-	}
 	RobotType getRobot() const {
 		return Robot;
 	}
@@ -312,7 +268,6 @@ public:
 		// Internal params
 		Bumper.to_ostream(os);
 		General.to_ostream(os);
-		LaserSafetyField.to_ostream(os);
 		Robot.to_ostream(os);
 		
 		// External params

@@ -44,7 +44,12 @@
 // --------------------------------------------------------------------------
 #include "ComponentUnicapImageClientCore.hh"
 
-// constructor
+#ifdef WITH_MRPT_2_0_VERSION
+ComponentUnicapImageClientCore::ComponentUnicapImageClientCore()
+{
+	std::cout << "constructor ComponentUnicapImageClientCore\n";
+}
+#else
 ComponentUnicapImageClientCore::ComponentUnicapImageClientCore():
 currentImage(NULL)
 {
@@ -90,3 +95,4 @@ IplImage* ComponentUnicapImageClientCore::convertDataArrayToIplImage(DomainVisio
 	return ipl_image;
 
 }
+#endif

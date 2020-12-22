@@ -29,9 +29,9 @@
 class ComponentKBPortFactoryInterface;
 class ComponentKBExtension;
 
-// includes for ComponentKBROSExtension
+// includes for ComponentKBROS1InterfacesExtension
 
-// includes for OpcUaBackendComponentGeneratorExtension
+// includes for ComponentKBRestInterfacesExtension
 
 // includes for PlainOpcUaComponentKBExtension
 // include plain OPC UA device clients
@@ -52,13 +52,16 @@ class ComponentKBExtension;
 
 // include tasks
 #include "Dummy.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 #include "KbChainedEntriesEventClientUpcallManager.hh"
+#include "KbChainedEntriesEventClientInputCollector.hh"
 
 // include input-handler(s)
 #include "KbChainedEntriesEventClientHandler.hh"
 // include request-handler(s)
 #include "KbQueryHandler.hh"
+// output port wrappers
+#include "KbEventServerWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -118,6 +121,7 @@ public:
 	Smart::IEventClientPattern<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult> *kbChainedEntriesEventClient;
 	Smart::InputTaskTrigger<Smart::EventInputType<CommBasicObjects::CommKBEventResult>> *kbChainedEntriesEventClientInputTaskTrigger;
 	KbChainedEntriesEventClientUpcallManager *kbChainedEntriesEventClientUpcallManager;
+	KbChainedEntriesEventClientInputCollector *kbChainedEntriesEventClientInputCollector;
 	
 	// define request-ports
 	
@@ -126,6 +130,7 @@ public:
 	
 	// define output-ports
 	Smart::IEventServerPattern<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult, CommBasicObjects::CommVoid> *kbEventServer;
+	KbEventServerWrapper *kbEventServerWrapper;
 	std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommKBEventParam, CommBasicObjects::CommKBEventResult, CommBasicObjects::CommVoid>> kbEventServerEventTestHandler;
 	
 	// define answer-ports
@@ -135,9 +140,9 @@ public:
 	// define request-handlers
 	KbQueryHandler *kbQueryHandler;
 	
-	// definitions of ComponentKBROSExtension
+	// definitions of ComponentKBROS1InterfacesExtension
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
+	// definitions of ComponentKBRestInterfacesExtension
 	
 	// definitions of PlainOpcUaComponentKBExtension
 	
@@ -262,9 +267,9 @@ public:
 			std::string roboticMiddleware;
 		} kbChainedEntriesEventClient;
 		
-		// -- parameters for ComponentKBROSExtension
+		// -- parameters for ComponentKBROS1InterfacesExtension
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
+		// -- parameters for ComponentKBRestInterfacesExtension
 		
 		// -- parameters for PlainOpcUaComponentKBExtension
 		

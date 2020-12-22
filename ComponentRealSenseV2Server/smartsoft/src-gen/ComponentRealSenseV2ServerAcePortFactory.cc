@@ -73,7 +73,12 @@ Smart::IPushClientPattern<CommBasicObjects::CommDevicePoseState> * ComponentReal
 }
 
 
-Smart::IPushServerPattern<DomainVision::CommVideoImage> * ComponentRealSenseV2ServerAcePortFactory::createColorImagePushNewestServer(const std::string &serviceName)
+Smart::IPushServerPattern<DomainVision::CommRGBDImage> * ComponentRealSenseV2ServerAcePortFactory::createRGBDImagePushServiceOut(const std::string &serviceName)
+{
+	return new SmartACE::PushServer<DomainVision::CommRGBDImage>(componentImpl, serviceName);
+}
+
+Smart::IPushServerPattern<DomainVision::CommVideoImage> * ComponentRealSenseV2ServerAcePortFactory::createRGBImagePushServiceOut(const std::string &serviceName)
 {
 	return new SmartACE::PushServer<DomainVision::CommVideoImage>(componentImpl, serviceName);
 }
@@ -86,11 +91,6 @@ Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoIm
 Smart::IPushServerPattern<DomainVision::CommDepthImage> * ComponentRealSenseV2ServerAcePortFactory::createDepthPushNewestServer(const std::string &serviceName)
 {
 	return new SmartACE::PushServer<DomainVision::CommDepthImage>(componentImpl, serviceName);
-}
-
-Smart::IPushServerPattern<DomainVision::CommRGBDImage> * ComponentRealSenseV2ServerAcePortFactory::createImagePushNewestServer(const std::string &serviceName)
-{
-	return new SmartACE::PushServer<DomainVision::CommRGBDImage>(componentImpl, serviceName);
 }
 
 Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> * ComponentRealSenseV2ServerAcePortFactory::createImageQueryServer(const std::string &serviceName)

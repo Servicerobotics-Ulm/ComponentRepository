@@ -32,24 +32,29 @@ ComponentKinectV2Server::ComponentKinectV2Server()
 	
 	// set all pointer members to NULL
 	colorImageQueryHandler = NULL;
-	//componentKinectV2ServerParams = NULL;
+	//coordinationPort = NULL;
 	//coordinationPort = NULL;
 	imageQueryHandler = NULL;
 	imageTask = NULL;
 	imageTaskTrigger = NULL;
+	rGBDImageQueryServiceOut = NULL;
+	rGBDImageQueryServiceOutWrapper = NULL;
+	rGBImagePushServiceOut = NULL;
+	rGBImagePushServiceOutWrapper = NULL;
 	basePushTimedClient = NULL;
 	basePushTimedClientInputTaskTrigger = NULL;
 	basePushTimedClientUpcallManager = NULL;
-	colorImagePushNewestServer = NULL;
+	basePushTimedClientInputCollector = NULL;
 	colorImageQueryServer = NULL;
 	colorImageQueryServerInputTaskTrigger = NULL;
 	depthImagePushServiceOut = NULL;
-	imagePushNewestServer = NULL;
+	depthImagePushServiceOutWrapper = NULL;
 	imageQueryV2Server = NULL;
 	imageQueryV2ServerInputTaskTrigger = NULL;
 	ptuPosePushNewestClient = NULL;
 	ptuPosePushNewestClientInputTaskTrigger = NULL;
 	ptuPosePushNewestClientUpcallManager = NULL;
+	ptuPosePushNewestClientInputCollector = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
@@ -61,14 +66,14 @@ ComponentKinectV2Server::ComponentKinectV2Server()
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
-	connections.colorImagePushNewestServer.serviceName = "colorImagePushNewestServer";
-	connections.colorImagePushNewestServer.roboticMiddleware = "ACE_SmartSoft";
+	connections.rGBDImageQueryServiceOut.serviceName = "RGBDImageQueryServiceOut";
+	connections.rGBDImageQueryServiceOut.roboticMiddleware = "ACE_SmartSoft";
+	connections.rGBImagePushServiceOut.serviceName = "RGBImagePushServiceOut";
+	connections.rGBImagePushServiceOut.roboticMiddleware = "ACE_SmartSoft";
 	connections.colorImageQueryServer.serviceName = "colorImageQueryServer";
 	connections.colorImageQueryServer.roboticMiddleware = "ACE_SmartSoft";
 	connections.depthImagePushServiceOut.serviceName = "depthImagePushServiceOut";
 	connections.depthImagePushServiceOut.roboticMiddleware = "ACE_SmartSoft";
-	connections.imagePushNewestServer.serviceName = "imagePushNewestServer";
-	connections.imagePushNewestServer.roboticMiddleware = "ACE_SmartSoft";
 	connections.imageQueryV2Server.serviceName = "imageQueryV2Server";
 	connections.imageQueryV2Server.roboticMiddleware = "ACE_SmartSoft";
 	connections.basePushTimedClient.initialConnect = false;
@@ -90,9 +95,9 @@ ComponentKinectV2Server::ComponentKinectV2Server()
 	connections.imageTask.priority = -1;
 	connections.imageTask.cpuAffinity = -1;
 	
-	// initialize members of ComponentKinectV2ServerROSExtension
+	// initialize members of ComponentKinectV2ServerROS1InterfacesExtension
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
+	// initialize members of ComponentKinectV2ServerRestInterfacesExtension
 	
 	// initialize members of PlainOpcUaComponentKinectV2ServerExtension
 	
@@ -223,9 +228,9 @@ void ComponentKinectV2Server::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of ComponentKinectV2ServerROSExtension
+		// initializations of ComponentKinectV2ServerROS1InterfacesExtension
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
+		// initializations of ComponentKinectV2ServerRestInterfacesExtension
 		
 		// initializations of PlainOpcUaComponentKinectV2ServerExtension
 		
@@ -263,11 +268,14 @@ void ComponentKinectV2Server::init(int argc, char *argv[])
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
-		colorImagePushNewestServer = portFactoryRegistry[connections.colorImagePushNewestServer.roboticMiddleware]->createColorImagePushNewestServer(connections.colorImagePushNewestServer.serviceName);
+		rGBDImageQueryServiceOut = portFactoryRegistry[connections.rGBDImageQueryServiceOut.roboticMiddleware]->createRGBDImageQueryServiceOut(connections.rGBDImageQueryServiceOut.serviceName);
+		rGBDImageQueryServiceOutWrapper = new RGBDImageQueryServiceOutWrapper(rGBDImageQueryServiceOut);
+		rGBImagePushServiceOut = portFactoryRegistry[connections.rGBImagePushServiceOut.roboticMiddleware]->createRGBImagePushServiceOut(connections.rGBImagePushServiceOut.serviceName);
+		rGBImagePushServiceOutWrapper = new RGBImagePushServiceOutWrapper(rGBImagePushServiceOut);
 		colorImageQueryServer = portFactoryRegistry[connections.colorImageQueryServer.roboticMiddleware]->createColorImageQueryServer(connections.colorImageQueryServer.serviceName);
 		colorImageQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommVideoImage>(colorImageQueryServer);
 		depthImagePushServiceOut = portFactoryRegistry[connections.depthImagePushServiceOut.roboticMiddleware]->createDepthImagePushServiceOut(connections.depthImagePushServiceOut.serviceName);
-		imagePushNewestServer = portFactoryRegistry[connections.imagePushNewestServer.roboticMiddleware]->createImagePushNewestServer(connections.imagePushNewestServer.serviceName);
+		depthImagePushServiceOutWrapper = new DepthImagePushServiceOutWrapper(depthImagePushServiceOut);
 		imageQueryV2Server = portFactoryRegistry[connections.imageQueryV2Server.roboticMiddleware]->createImageQueryV2Server(connections.imageQueryV2Server.serviceName);
 		imageQueryV2ServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage>(imageQueryV2Server);
 		
@@ -276,10 +284,12 @@ void ComponentKinectV2Server::init(int argc, char *argv[])
 		ptuPosePushNewestClient = portFactoryRegistry[connections.ptuPosePushNewestClient.roboticMiddleware]->createPtuPosePushNewestClient();
 		
 		// create InputTaskTriggers and UpcallManagers
-		basePushTimedClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(basePushTimedClient);
-		basePushTimedClientUpcallManager = new BasePushTimedClientUpcallManager(basePushTimedClient);
-		ptuPosePushNewestClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommDevicePoseState>(ptuPosePushNewestClient);
-		ptuPosePushNewestClientUpcallManager = new PtuPosePushNewestClientUpcallManager(ptuPosePushNewestClient);
+		basePushTimedClientInputCollector = new BasePushTimedClientInputCollector(basePushTimedClient);
+		basePushTimedClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(basePushTimedClientInputCollector);
+		basePushTimedClientUpcallManager = new BasePushTimedClientUpcallManager(basePushTimedClientInputCollector);
+		ptuPosePushNewestClientInputCollector = new PtuPosePushNewestClientInputCollector(ptuPosePushNewestClient);
+		ptuPosePushNewestClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommDevicePoseState>(ptuPosePushNewestClientInputCollector);
+		ptuPosePushNewestClientUpcallManager = new PtuPosePushNewestClientUpcallManager(ptuPosePushNewestClientInputCollector);
 		
 		// create input-handler
 		
@@ -410,19 +420,24 @@ void ComponentKinectV2Server::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 	delete basePushTimedClientInputTaskTrigger;
 	delete basePushTimedClientUpcallManager;
+	delete basePushTimedClientInputCollector;
 	delete ptuPosePushNewestClientInputTaskTrigger;
 	delete ptuPosePushNewestClientUpcallManager;
+	delete ptuPosePushNewestClientInputCollector;
 
 	// destroy client ports
 	delete basePushTimedClient;
 	delete ptuPosePushNewestClient;
 
 	// destroy server ports
-	delete colorImagePushNewestServer;
+	delete rGBDImageQueryServiceOutWrapper;
+	delete rGBDImageQueryServiceOut;
+	delete rGBImagePushServiceOutWrapper;
+	delete rGBImagePushServiceOut;
 	delete colorImageQueryServer;
 	delete colorImageQueryServerInputTaskTrigger;
+	delete depthImagePushServiceOutWrapper;
 	delete depthImagePushServiceOut;
-	delete imagePushNewestServer;
 	delete imageQueryV2Server;
 	delete imageQueryV2ServerInputTaskTrigger;
 	// destroy event-test handlers (if needed)
@@ -452,9 +467,9 @@ void ComponentKinectV2Server::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentKinectV2ServerROSExtension
+	// destruction of ComponentKinectV2ServerROS1InterfacesExtension
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
+	// destruction of ComponentKinectV2ServerRestInterfacesExtension
 	
 	// destruction of PlainOpcUaComponentKinectV2ServerExtension
 	
@@ -549,10 +564,15 @@ void ComponentKinectV2Server::loadParameter(int argc, char *argv[])
 			parameter.getString("ptuPosePushNewestClient", "roboticMiddleware", connections.ptuPosePushNewestClient.roboticMiddleware);
 		}
 		
-		// load parameters for server colorImagePushNewestServer
-		parameter.getString("colorImagePushNewestServer", "serviceName", connections.colorImagePushNewestServer.serviceName);
-		if(parameter.checkIfParameterExists("colorImagePushNewestServer", "roboticMiddleware")) {
-			parameter.getString("colorImagePushNewestServer", "roboticMiddleware", connections.colorImagePushNewestServer.roboticMiddleware);
+		// load parameters for server RGBDImageQueryServiceOut
+		parameter.getString("RGBDImageQueryServiceOut", "serviceName", connections.rGBDImageQueryServiceOut.serviceName);
+		if(parameter.checkIfParameterExists("RGBDImageQueryServiceOut", "roboticMiddleware")) {
+			parameter.getString("RGBDImageQueryServiceOut", "roboticMiddleware", connections.rGBDImageQueryServiceOut.roboticMiddleware);
+		}
+		// load parameters for server RGBImagePushServiceOut
+		parameter.getString("RGBImagePushServiceOut", "serviceName", connections.rGBImagePushServiceOut.serviceName);
+		if(parameter.checkIfParameterExists("RGBImagePushServiceOut", "roboticMiddleware")) {
+			parameter.getString("RGBImagePushServiceOut", "roboticMiddleware", connections.rGBImagePushServiceOut.roboticMiddleware);
 		}
 		// load parameters for server colorImageQueryServer
 		parameter.getString("colorImageQueryServer", "serviceName", connections.colorImageQueryServer.serviceName);
@@ -563,11 +583,6 @@ void ComponentKinectV2Server::loadParameter(int argc, char *argv[])
 		parameter.getString("depthImagePushServiceOut", "serviceName", connections.depthImagePushServiceOut.serviceName);
 		if(parameter.checkIfParameterExists("depthImagePushServiceOut", "roboticMiddleware")) {
 			parameter.getString("depthImagePushServiceOut", "roboticMiddleware", connections.depthImagePushServiceOut.roboticMiddleware);
-		}
-		// load parameters for server imagePushNewestServer
-		parameter.getString("imagePushNewestServer", "serviceName", connections.imagePushNewestServer.serviceName);
-		if(parameter.checkIfParameterExists("imagePushNewestServer", "roboticMiddleware")) {
-			parameter.getString("imagePushNewestServer", "roboticMiddleware", connections.imagePushNewestServer.roboticMiddleware);
 		}
 		// load parameters for server imageQueryV2Server
 		parameter.getString("imageQueryV2Server", "serviceName", connections.imageQueryV2Server.serviceName);
@@ -595,9 +610,9 @@ void ComponentKinectV2Server::loadParameter(int argc, char *argv[])
 			parameter.getInteger("ImageTask", "cpuAffinity", connections.imageTask.cpuAffinity);
 		}
 		
-		// load parameters for ComponentKinectV2ServerROSExtension
+		// load parameters for ComponentKinectV2ServerROS1InterfacesExtension
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
+		// load parameters for ComponentKinectV2ServerRestInterfacesExtension
 		
 		// load parameters for PlainOpcUaComponentKinectV2ServerExtension
 		

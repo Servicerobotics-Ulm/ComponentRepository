@@ -13,6 +13,14 @@ y 0
 z 0
 
 ##########################
+# InternalParameter safetyEvents
+[safetyEvents]
+laserSafetyBit 0
+laserSafetyFieldTimeOutMSec 0
+laserSafetyFieldTimeOutSec 10
+safetyEventsFromIO false
+
+##########################
 # InternalParameter scanner
 [scanner]
 azimuth 0.0
@@ -38,7 +46,6 @@ z 0
 [services]
 activate_push_newest true
 activate_push_timed true
-activate_safetyEventServer true
 
 
 #####################

@@ -18,6 +18,7 @@
 		
 #include "aceSmartSoft.hh"
 
+
 #include <CommBasicObjects/CommMobileLaserScan.hh>
 #include <CommBasicObjects/CommVoid.hh>
 
@@ -33,9 +34,10 @@ class LaserQueryServiceAnswHandlerCore
 ,	public LaserTaskObserverInterface
 {
 private:
-virtual void handle_input(const std::pair<Smart::QueryIdPtr,CommBasicObjects::CommVoid> &input) override {
-	this->handleQuery(input.first, input.second);
-}
+	// inputs are directly propagated to the implementation (passive handler)
+	virtual void handle_input(const std::pair<Smart::QueryIdPtr,CommBasicObjects::CommVoid> &input) override {
+		this->handleQuery(input.first, input.second);
+	}
 
 
 	virtual void updateAllCommObjects();
@@ -62,7 +64,7 @@ public:
 	using IQueryServer = Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan>;
 	using QueryId = Smart::QueryIdPtr;
 	LaserQueryServiceAnswHandlerCore(IQueryServer *server);
-	virtual ~LaserQueryServiceAnswHandlerCore() = default;
+	virtual ~LaserQueryServiceAnswHandlerCore();
 	
 protected:
 	IQueryServer *server;

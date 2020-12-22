@@ -4,6 +4,7 @@ ComponentDefinition ComponentLaserFromRGBDServer logo "/ComponentLaserFromRGBDSe
 	Activity LaserTask
 	{
 		OperationModeBinding CoordinationPort.GenerateLaser
+	DefaultTrigger PeriodicTimer 5.0 Hz
 	}
 	
 	InputPort rgbdClient implements DomainVision.RGBDImagePushService {
@@ -12,7 +13,7 @@ ComponentDefinition ComponentLaserFromRGBDServer logo "/ComponentLaserFromRGBDSe
 	}
 	RequestHandler LaserQueryHandler triggeredFrom laserQueryServer {
 	}
-	OutputPort laserPushNewestServer implements CommBasicObjects.LaserService realizedBy LaserTask {
+	OutputPort LaserServiceOut implements CommBasicObjects.LaserService realizedBy LaserTask {
 	}
 	CoordinationSlavePort CoordinationPort implements CommBasicObjects.LaserFromRGBDCoordinationService { 
 		PublicOperationMode CommBasicObjects.LaserGenModes.GenerateLaser { activates ( GenerateLaser ) } 
@@ -23,6 +24,5 @@ ComponentDefinition ComponentLaserFromRGBDServer logo "/ComponentLaserFromRGBDSe
 	
 	Activity VisTask
 	{
-		DefaultTrigger PeriodicTimer 10.0 Hz
 	}
 }

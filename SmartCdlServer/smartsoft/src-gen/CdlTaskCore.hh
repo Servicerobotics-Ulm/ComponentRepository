@@ -70,7 +70,7 @@ private:
 	Smart::StatusCode navVelSendServerStatus;
 	CommBasicObjects::CommNavigationVelocity navVelSendServerObject;
 	Smart::StatusCode pathNavigationGoalClientStatus;
-	CommRobotinoObjects::CommPathNavigationGoal pathNavigationGoalClientObject;
+	CommNavigationObjects::CommCorridorNavigationGoal pathNavigationGoalClientObject;
 	Smart::StatusCode plannerClientStatus;
 	CommNavigationObjects::CommPlannerGoal plannerClientObject;
 	Smart::StatusCode trackingClientStatus;
@@ -148,12 +148,12 @@ protected:
 		return navVelSendServerStatus;
 	}
 	// overload and implement this method in derived classes to immediately get all incoming updates from PathNavigationGoalClient (as soon as they arrive)
-	virtual void on_PathNavigationGoalClient(const CommRobotinoObjects::CommPathNavigationGoal &input) {
+	virtual void on_PathNavigationGoalClient(const CommNavigationObjects::CommCorridorNavigationGoal &input) {
 		// no-op
 	}
 	
 	// this method can be safely used from the thread in derived classes
-	inline Smart::StatusCode pathNavigationGoalClientGetUpdate(CommRobotinoObjects::CommPathNavigationGoal &pathNavigationGoalClientObject) const
+	inline Smart::StatusCode pathNavigationGoalClientGetUpdate(CommNavigationObjects::CommCorridorNavigationGoal &pathNavigationGoalClientObject) const
 	{
 		// copy local object buffer and return the last status code
 		pathNavigationGoalClientObject = this->pathNavigationGoalClientObject;

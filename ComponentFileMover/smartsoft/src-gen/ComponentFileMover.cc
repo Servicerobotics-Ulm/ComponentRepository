@@ -33,13 +33,14 @@ ComponentFileMover::ComponentFileMover()
 	
 	// set all pointer members to NULL
 	commFileMoveEventOut = NULL;
+	commFileMoveEventOutWrapper = NULL;
 	commFileMoveEventOutEventTestHandler = nullptr; 
 	commFileReadQueryReq = NULL;
 	commFileWriteQueryReq = NULL;
-	//componentFileMoverParams = NULL;
 	//coordinationPort = NULL;
-	fileMoveEventHandler = NULL;
-	fileMoveEventHandlerTrigger = NULL;
+	//coordinationPort = NULL;
+	dummy = NULL;
+	dummyTrigger = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
@@ -65,16 +66,16 @@ ComponentFileMover::ComponentFileMover()
 	connections.commFileWriteQueryReq.serviceName = "unknown";
 	connections.commFileWriteQueryReq.interval = 1;
 	connections.commFileWriteQueryReq.roboticMiddleware = "ACE_SmartSoft";
-	connections.fileMoveEventHandler.minActFreq = 0.0;
-	connections.fileMoveEventHandler.maxActFreq = 0.0;
+	connections.dummy.minActFreq = 0.0;
+	connections.dummy.maxActFreq = 0.0;
 	// scheduling default parameters
-	connections.fileMoveEventHandler.scheduler = "DEFAULT";
-	connections.fileMoveEventHandler.priority = -1;
-	connections.fileMoveEventHandler.cpuAffinity = -1;
+	connections.dummy.scheduler = "DEFAULT";
+	connections.dummy.priority = -1;
+	connections.dummy.cpuAffinity = -1;
 	
-	// initialize members of ComponentFileMoverROSExtension
+	// initialize members of ComponentFileMoverROS1InterfacesExtension
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
+	// initialize members of ComponentFileMoverRestInterfacesExtension
 	
 	// initialize members of PlainOpcUaComponentFileMoverExtension
 	
@@ -160,19 +161,19 @@ Smart::StatusCode ComponentFileMover::connectAndStartAllServices() {
  * Start all tasks contained in this component.
  */
 void ComponentFileMover::startAllTasks() {
-	// start task FileMoveEventHandler
-	if(connections.fileMoveEventHandler.scheduler != "DEFAULT") {
-		ACE_Sched_Params fileMoveEventHandler_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
-		if(connections.fileMoveEventHandler.scheduler == "FIFO") {
-			fileMoveEventHandler_SchedParams.policy(ACE_SCHED_FIFO);
-			fileMoveEventHandler_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
-		} else if(connections.fileMoveEventHandler.scheduler == "RR") {
-			fileMoveEventHandler_SchedParams.policy(ACE_SCHED_RR);
-			fileMoveEventHandler_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+	// start task Dummy
+	if(connections.dummy.scheduler != "DEFAULT") {
+		ACE_Sched_Params dummy_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
+		if(connections.dummy.scheduler == "FIFO") {
+			dummy_SchedParams.policy(ACE_SCHED_FIFO);
+			dummy_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+		} else if(connections.dummy.scheduler == "RR") {
+			dummy_SchedParams.policy(ACE_SCHED_RR);
+			dummy_SchedParams.priority(ACE_THR_PRI_RR_MIN);
 		}
-		fileMoveEventHandler->start(fileMoveEventHandler_SchedParams, connections.fileMoveEventHandler.cpuAffinity);
+		dummy->start(dummy_SchedParams, connections.dummy.cpuAffinity);
 	} else {
-		fileMoveEventHandler->start();
+		dummy->start();
 	}
 }
 
@@ -201,9 +202,9 @@ void ComponentFileMover::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of ComponentFileMoverROSExtension
+		// initializations of ComponentFileMoverROS1InterfacesExtension
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
+		// initializations of ComponentFileMoverRestInterfacesExtension
 		
 		// initializations of PlainOpcUaComponentFileMoverExtension
 		
@@ -244,6 +245,7 @@ void ComponentFileMover::init(int argc, char *argv[])
 		// TODO: set minCycleTime from Ini-file
 		commFileMoveEventOutEventTestHandler = std::make_shared<CommFileMoveEventOutEventTestHandler>();
 		commFileMoveEventOut = portFactoryRegistry[connections.commFileMoveEventOut.roboticMiddleware]->createCommFileMoveEventOut(connections.commFileMoveEventOut.serviceName, commFileMoveEventOutEventTestHandler);
+		commFileMoveEventOutWrapper = new CommFileMoveEventOutWrapper(commFileMoveEventOut);
 		
 		// create client ports
 		commFileReadQueryReq = portFactoryRegistry[connections.commFileReadQueryReq.roboticMiddleware]->createCommFileReadQueryReq();
@@ -279,28 +281,28 @@ void ComponentFileMover::init(int argc, char *argv[])
 		param = new SmartACE::ParameterSlave(component, &paramHandler);
 		
 		
-		// create Task FileMoveEventHandler
-		fileMoveEventHandler = new FileMoveEventHandler(component);
+		// create Task Dummy
+		dummy = new Dummy(component);
 		// configure input-links
 		// configure task-trigger (if task is configurable)
-		if(connections.fileMoveEventHandler.trigger == "PeriodicTimer") {
+		if(connections.dummy.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.fileMoveEventHandler.periodicActFreq;
+			int microseconds = 1000*1000 / connections.dummy.periodicActFreq;
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-				triggerPtr->attach(fileMoveEventHandler);
+				triggerPtr->attach(dummy);
 				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				// store trigger in class member
-				fileMoveEventHandlerTrigger = triggerPtr;
+				dummyTrigger = triggerPtr;
 			} else {
-				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task FileMoveEventHandler" << std::endl;
+				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task Dummy" << std::endl;
 			}
-		} else if(connections.fileMoveEventHandler.trigger == "DataTriggered") {
-			fileMoveEventHandlerTrigger = getInputTaskTriggerFromString(connections.fileMoveEventHandler.inPortRef);
-			if(fileMoveEventHandlerTrigger != NULL) {
-				fileMoveEventHandlerTrigger->attach(fileMoveEventHandler, connections.fileMoveEventHandler.prescale);
+		} else if(connections.dummy.trigger == "DataTriggered") {
+			dummyTrigger = getInputTaskTriggerFromString(connections.dummy.inPortRef);
+			if(dummyTrigger != NULL) {
+				dummyTrigger->attach(dummy, connections.dummy.prescale);
 			} else {
-				std::cerr << "ERROR: could not set-up InPort " << connections.fileMoveEventHandler.inPortRef << " as activation source for Task FileMoveEventHandler" << std::endl;
+				std::cerr << "ERROR: could not set-up InPort " << connections.dummy.inPortRef << " as activation source for Task Dummy" << std::endl;
 			}
 		} 
 		
@@ -366,9 +368,9 @@ void ComponentFileMover::fini()
 	// destroy all task instances
 	// unlink all UpcallManagers
 	// unlink the TaskTrigger
-	if(fileMoveEventHandlerTrigger != NULL){
-		fileMoveEventHandlerTrigger->detach(fileMoveEventHandler);
-		delete fileMoveEventHandler;
+	if(dummyTrigger != NULL){
+		dummyTrigger->detach(dummy);
+		delete dummy;
 	}
 
 	// destroy all input-handler
@@ -380,6 +382,7 @@ void ComponentFileMover::fini()
 	delete commFileWriteQueryReq;
 
 	// destroy server ports
+	delete commFileMoveEventOutWrapper;
 	delete commFileMoveEventOut;
 	// destroy event-test handlers (if needed)
 	commFileMoveEventOutEventTestHandler;
@@ -407,9 +410,9 @@ void ComponentFileMover::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentFileMoverROSExtension
+	// destruction of ComponentFileMoverROS1InterfacesExtension
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
+	// destruction of ComponentFileMoverRestInterfacesExtension
 	
 	// destruction of PlainOpcUaComponentFileMoverExtension
 	
@@ -508,29 +511,29 @@ void ComponentFileMover::loadParameter(int argc, char *argv[])
 			parameter.getString("CommFileMoveEventOut", "roboticMiddleware", connections.commFileMoveEventOut.roboticMiddleware);
 		}
 		
-		// load parameters for task FileMoveEventHandler
-		parameter.getDouble("FileMoveEventHandler", "minActFreqHz", connections.fileMoveEventHandler.minActFreq);
-		parameter.getDouble("FileMoveEventHandler", "maxActFreqHz", connections.fileMoveEventHandler.maxActFreq);
-		parameter.getString("FileMoveEventHandler", "triggerType", connections.fileMoveEventHandler.trigger);
-		if(connections.fileMoveEventHandler.trigger == "PeriodicTimer") {
-			parameter.getDouble("FileMoveEventHandler", "periodicActFreqHz", connections.fileMoveEventHandler.periodicActFreq);
-		} else if(connections.fileMoveEventHandler.trigger == "DataTriggered") {
-			parameter.getString("FileMoveEventHandler", "inPortRef", connections.fileMoveEventHandler.inPortRef);
-			parameter.getInteger("FileMoveEventHandler", "prescale", connections.fileMoveEventHandler.prescale);
+		// load parameters for task Dummy
+		parameter.getDouble("Dummy", "minActFreqHz", connections.dummy.minActFreq);
+		parameter.getDouble("Dummy", "maxActFreqHz", connections.dummy.maxActFreq);
+		parameter.getString("Dummy", "triggerType", connections.dummy.trigger);
+		if(connections.dummy.trigger == "PeriodicTimer") {
+			parameter.getDouble("Dummy", "periodicActFreqHz", connections.dummy.periodicActFreq);
+		} else if(connections.dummy.trigger == "DataTriggered") {
+			parameter.getString("Dummy", "inPortRef", connections.dummy.inPortRef);
+			parameter.getInteger("Dummy", "prescale", connections.dummy.prescale);
 		}
-		if(parameter.checkIfParameterExists("FileMoveEventHandler", "scheduler")) {
-			parameter.getString("FileMoveEventHandler", "scheduler", connections.fileMoveEventHandler.scheduler);
+		if(parameter.checkIfParameterExists("Dummy", "scheduler")) {
+			parameter.getString("Dummy", "scheduler", connections.dummy.scheduler);
 		}
-		if(parameter.checkIfParameterExists("FileMoveEventHandler", "priority")) {
-			parameter.getInteger("FileMoveEventHandler", "priority", connections.fileMoveEventHandler.priority);
+		if(parameter.checkIfParameterExists("Dummy", "priority")) {
+			parameter.getInteger("Dummy", "priority", connections.dummy.priority);
 		}
-		if(parameter.checkIfParameterExists("FileMoveEventHandler", "cpuAffinity")) {
-			parameter.getInteger("FileMoveEventHandler", "cpuAffinity", connections.fileMoveEventHandler.cpuAffinity);
+		if(parameter.checkIfParameterExists("Dummy", "cpuAffinity")) {
+			parameter.getInteger("Dummy", "cpuAffinity", connections.dummy.cpuAffinity);
 		}
 		
-		// load parameters for ComponentFileMoverROSExtension
+		// load parameters for ComponentFileMoverROS1InterfacesExtension
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
+		// load parameters for ComponentFileMoverRestInterfacesExtension
 		
 		// load parameters for PlainOpcUaComponentFileMoverExtension
 		

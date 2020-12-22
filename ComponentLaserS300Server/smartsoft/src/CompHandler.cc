@@ -66,11 +66,16 @@ void CompHandler::onStartup()
 	// Start all services. If you need manual control, use the content of this function to
 	// connect and start each service individually, e.g:
 	// COMP->connectMyPortName("SmartExampleComponent", "examplePort");
-	//status = COMP->connectAndStartAllServices();
+	status = COMP->connectAndStartAllServices();
 	
-	if(COMP->getGlobalState().getBase_manipulator().getOn_base()) {
+	if(COMP->getParameters().getBase_manipulator().getOn_base()) {
 		status = COMP->connectBaseTimedClient(COMP->connections.baseTimedClient.serverName, COMP->connections.baseTimedClient.serviceName);
 		if(status != Smart::SMART_OK) std::cout << "ERROR CONNECTING BASE STATE" << std::endl;
+	}
+
+	if(COMP->getParameters().getSafetyEvents().getSafetyEventsFromIO() == true){
+		status = COMP->connectCommIOForkingServiceIn(COMP->connections.commIOForkingServiceIn.serverName, COMP->connections.commIOForkingServiceIn.serviceName);
+		if(status != Smart::SMART_OK) std::cout << "ERROR CONNECTING IO CLIENT" << std::endl;
 	}
 
 //	if (COMP->ini.services.activate_push_timed) {
@@ -79,7 +84,12 @@ void CompHandler::onStartup()
 //
 	// Start all tasks. If you need manual control, use the content of this function to
 	// start each task individually.
-	COMP->startAllTasks();
+//	COMP->startAllTasks();
+	COMP->laserTask->start();
+
+	if(COMP->getParameters().getSafetyEvents().getSafetyEventsFromIO() == true){
+			COMP->laserSafetyTask->start();
+	}
 	
 	// Start all timers. If you need manual control, use the content of this function to
 	// start each timer individually.

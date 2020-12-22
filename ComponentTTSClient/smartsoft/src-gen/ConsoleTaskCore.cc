@@ -94,7 +94,7 @@ void ConsoleTaskCore::updateAllCommObjects()
 // this method is meant to be used in derived classes
 Smart::StatusCode ConsoleTaskCore::speechSendServiceOutPut(DomainSpeech::CommSpeechOutputMessage &speechSendServiceOutDataObject)
 {
-	Smart::StatusCode result = COMP->speechSendServiceOut->send(speechSendServiceOutDataObject);
+	Smart::StatusCode result = COMP->speechSendServiceOutWrapper->send(speechSendServiceOutDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());

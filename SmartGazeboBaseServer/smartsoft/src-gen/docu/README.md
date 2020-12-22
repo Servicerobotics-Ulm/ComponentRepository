@@ -55,6 +55,11 @@
 <td style="border:1px solid black; padding: 5px;">Simulation</td>
 <td style="border:1px solid black; padding: 5px;"></td>
 </tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">MarketName</td>
+<td style="border:1px solid black; padding: 5px;">Gazebo Simulation Component</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
 </table>
 
 ## Component Ports
@@ -80,6 +85,16 @@
 
 
 ### BaseStateServiceOut
+
+*Documentation:*
+
+
+### BumperEventServiceOut
+
+*Documentation:*
+
+
+### BatteryEventServiceOut
 
 *Documentation:*
 

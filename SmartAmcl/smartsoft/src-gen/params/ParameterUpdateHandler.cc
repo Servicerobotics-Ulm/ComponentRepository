@@ -20,8 +20,129 @@
 SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartACE::CommParameterRequest& request)
 {
 	SmartACE::CommParameterResponse answer;
+	
+	if(request.getParameterDataMode() == SmartACE::ParameterDataMode::NAME){
+		answer = handleParametersNamed(request);
+	} else {
+		answer = handleParametersSequence(request);
+	}
+	return answer;
+}
 
+
+SmartACE::CommParameterResponse ParamUpdateHandler::handleParametersNamed(const SmartACE::CommParameterRequest& request)
+{
+	SmartACE::CommParameterResponse answer;
+	
 	std::string tag = request.getTag();
+	for (auto & c: tag) c = toupper(c);
+	std::cout<<"PARAMETER: "<<tag<<std::endl;
+	
+	if (tag == "COMMIT")
+	{
+		answer.setResponse(globalState.handleCOMMIT(commitState));
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			globalStateLock.acquire();
+			// change the content of the globalState, however change only the generated content
+			// without affecting potential user member variables (which is more intuitive for the user)
+			globalState.setContent(commitState);
+			globalStateLock.release();
+		} else {
+			// the commit validation check returned != OK
+			// the commit state is rejected and is not copied into the global state
+		}
+	}
+	else if (tag == "COMMLOCALIZATIONOBJECTS.LOCALIZATIONPARAMETER.GLOBALLOCALIZATION")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommLocalizationObjects_LocalizationParameter_GLOBALLOCALIZATIONCore(
+			);
+		}
+	}
+	else if (tag == "COMMLOCALIZATIONOBJECTS.LOCALIZATIONPARAMETER.INITIALPOSE")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		int temp_x = 0;
+		if(request.getInteger("x", temp_x) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: x request: "<<request<<std::endl;
+		}
+		int temp_y = 0;
+		if(request.getInteger("y", temp_y) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: y request: "<<request<<std::endl;
+		}
+		double temp_a = 0.0;
+		if(request.getDouble("a", temp_a) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: a request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommLocalizationObjects_LocalizationParameter_INITIALPOSECore(
+			temp_x, 
+			temp_y, 
+			temp_a
+			);
+		}
+	}
+	else if (tag == "COMMLOCALIZATIONOBJECTS.LOCALIZATIONPARAMETER.LOADMAP")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		std::string temp_filename = "";
+		if(request.getString("filename", temp_filename) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: filename request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommLocalizationObjects_LocalizationParameter_LOADMAPCore(
+			temp_filename
+			);
+		}
+	}
+	else if (tag == "COMMLOCALIZATIONOBJECTS.LOCALIZATIONPARAMETER.SENSORSTOUSE")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		unsigned short temp_sensorsToUse = 0;
+		if(request.getInteger("sensorsToUse", temp_sensorsToUse) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: sensorsToUse request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommLocalizationObjects_LocalizationParameter_SENSORSTOUSECore(
+			temp_sensorsToUse
+			);
+		}
+	}
+	else
+	{
+		/////////////////////////////////////////////////////////////////////
+		// default new
+		std::cout<<"ERROR wrong Parameter!"<<std::endl;
+		answer.setResponse(SmartACE::ParamResponseType::INVALID);
+	}
+	
+
+	std::cout<<"[handleQuery] PARAMETER "<<tag<<" DONE\n\n";
+
+	return answer;
+}
+
+
+SmartACE::CommParameterResponse ParamUpdateHandler::handleParametersSequence(const SmartACE::CommParameterRequest& request)
+{
+	SmartACE::CommParameterResponse answer;
+	
+	std::string tag = request.getTag();
+	for (auto & c: tag) c = toupper(c);
 	std::cout<<"PARAMETER: "<<tag<<std::endl;
 	
 	if (tag == "COMMIT")
@@ -55,14 +176,17 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		int temp_x = 0;
 		if(request.getInteger("1", temp_x) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: x request: "<<request<<std::endl;
 		}
 		int temp_y = 0;
 		if(request.getInteger("2", temp_y) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: y request: "<<request<<std::endl;
 		}
 		double temp_a = 0.0;
 		if(request.getDouble("3", temp_a) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: a request: "<<request<<std::endl;
 		}
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
@@ -80,11 +204,28 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		std::string temp_filename = "";
 		if(request.getString("1", temp_filename) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: filename request: "<<request<<std::endl;
 		}
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
 			triggerHandler.handleCommLocalizationObjects_LocalizationParameter_LOADMAPCore(
 			temp_filename
+			);
+		}
+	}
+	else if (tag == "COMMLOCALIZATIONOBJECTS.LOCALIZATIONPARAMETER.SENSORSTOUSE")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		unsigned short temp_sensorsToUse = 0;
+		if(request.getInteger("1", temp_sensorsToUse) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: sensorsToUse request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommLocalizationObjects_LocalizationParameter_SENSORSTOUSECore(
+			temp_sensorsToUse
 			);
 		}
 	}

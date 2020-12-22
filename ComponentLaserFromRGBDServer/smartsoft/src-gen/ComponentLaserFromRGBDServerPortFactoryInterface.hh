@@ -43,7 +43,7 @@ public:
 
 	virtual Smart::IPushClientPattern<DomainVision::CommRGBDImage> * createRgbdClient() = 0;
 	
-	virtual Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * createLaserPushNewestServer(const std::string &serviceName) = 0;
+	virtual Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * createLaserServiceOut(const std::string &serviceName) = 0;
 	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan> * createLaserQueryServer(const std::string &serviceName) = 0;
 
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) = 0;

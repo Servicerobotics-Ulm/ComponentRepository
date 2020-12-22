@@ -1,0 +1,24 @@
+ComponentDatasheet SmartJoystickNavigation
+{
+	BaseURI "http://www.servicerobotik-ulm.de" 
+	ShortDescription "The SmartJoystickNavigation component takes joystick input commands (CommJoystick) and translates them to v/omega navigation commands (CommNavigationVelocity)."
+	
+	DatasheetProperty MarketName {
+		value "Transform Joystick to Navigation Commands"
+	}
+	DatasheetProperty Supplier {
+		value "Servicerobotik Ulm"
+	}
+	DatasheetProperty Homepage {
+		value "http://servicerobotik-ulm.de/components"
+	}
+	DatasheetProperty Purpose {
+		value "Navigation"
+	}
+	DatasheetProperty HardwareRequirement {
+		value "none"
+	}
+	
+	ComponentPortDatasheet JoystickServiceIn {}
+	ComponentPortDatasheet NavVelServiceOut {}
+}

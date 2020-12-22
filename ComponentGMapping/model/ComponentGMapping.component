@@ -13,7 +13,7 @@ InputPort laserClient implements CommBasicObjects.LaserService {
 	}
 
 	CoordinationSlavePort CoordinationPort implements CommLocalizationObjects.SLAMCoordinationService { 
-		PublicOperationMode CommLocalizationObjects.localizationMode.Active { activates ( active ) } 
+		PublicOperationMode CommLocalizationObjects.slamModes.Mapping { activates ( active ) } 
 		PrivateOperationMode active
 		SkillRealizationsRef slamModule
 	}

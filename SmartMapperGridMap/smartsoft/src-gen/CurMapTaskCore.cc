@@ -65,7 +65,8 @@ int CurMapTaskCore::execute_protected_region()
 	if(useDefaultState) {
 		Smart::StatusCode status = COMP->stateSlave->acquire("currMap");
 		if(status != Smart::SMART_OK) {
-			std::cerr << "CurMapTaskCore: ERROR acquiring state active: " << status << std::endl;
+			std::cerr << "CurMapTaskCore: ERROR acquiring state: " << status << std::endl;
+			usleep(500000);
 			return 0;
 		}
 	}
@@ -107,7 +108,7 @@ void CurMapTaskCore::updateAllCommObjects()
 // this method is meant to be used in derived classes
 Smart::StatusCode CurMapTaskCore::currMapOutPut(CommNavigationObjects::CommGridMap &currMapOutDataObject)
 {
-	Smart::StatusCode result = COMP->currMapOut->put(currMapOutDataObject);
+	Smart::StatusCode result = COMP->currMapOutWrapper->put(currMapOutDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());

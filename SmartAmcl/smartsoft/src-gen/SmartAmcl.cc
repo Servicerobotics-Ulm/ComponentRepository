@@ -34,14 +34,19 @@ SmartAmcl::SmartAmcl()
 	// set all pointer members to NULL
 	amclTask = NULL;
 	amclTaskTrigger = NULL;
+	amclVisualizationInfoOut = NULL;
+	amclVisualizationInfoOutWrapper = NULL;
+	//coordinationPort = NULL;
 	//coordinationPort = NULL;
 	laserServiceIn = NULL;
 	laserServiceInInputTaskTrigger = NULL;
 	laserServiceInUpcallManager = NULL;
+	laserServiceInInputCollector = NULL;
 	localizationEventServiceOut = NULL;
+	localizationEventServiceOutWrapper = NULL;
 	localizationEventServiceOutEventTestHandler = nullptr; 
 	localizationUpdateServiceOut = NULL;
-	//smartAmclParams = NULL;
+	localizationUpdateServiceOutWrapper = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
@@ -53,8 +58,11 @@ SmartAmcl::SmartAmcl()
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
+	connections.amclVisualizationInfoOut.serviceName = "AmclVisualizationInfoOut";
+	connections.amclVisualizationInfoOut.roboticMiddleware = "ACE_SmartSoft";
 	connections.localizationEventServiceOut.serviceName = "LocalizationEventServiceOut";
 	connections.localizationEventServiceOut.roboticMiddleware = "ACE_SmartSoft";
+	connections.laserServiceIn.initialConnect = false;
 	connections.laserServiceIn.wiringName = "LaserServiceIn";
 	connections.laserServiceIn.serverName = "unknown";
 	connections.laserServiceIn.serviceName = "unknown";
@@ -76,11 +84,11 @@ SmartAmcl::SmartAmcl()
 	connections.amclTask.priority = -1;
 	connections.amclTask.cpuAffinity = -1;
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
 	// initialize members of PlainOpcUaSmartAmclExtension
 	
-	// initialize members of SmartAmclROSExtension
+	// initialize members of SmartAmclROS1InterfacesExtension
+	
+	// initialize members of SmartAmclRestInterfacesExtension
 	
 }
 
@@ -115,6 +123,9 @@ void SmartAmcl::setStartupFinished() {
 Smart::StatusCode SmartAmcl::connectLaserServiceIn(const std::string &serverName, const std::string &serviceName) {
 	Smart::StatusCode status;
 	
+	if(connections.laserServiceIn.initialConnect == false) {
+		return Smart::SMART_OK;
+	}
 	std::cout << "connecting to: " << serverName << "; " << serviceName << std::endl;
 	status = laserServiceIn->connect(serverName, serviceName);
 	while(status != Smart::SMART_OK)
@@ -204,11 +215,11 @@ void SmartAmcl::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of PlainOpcUaSmartAmclExtension
 		
-		// initializations of SmartAmclROSExtension
+		// initializations of SmartAmclROS1InterfacesExtension
+		
+		// initializations of SmartAmclRestInterfacesExtension
 		
 		
 		// initialize all registered port-factories
@@ -245,16 +256,21 @@ void SmartAmcl::init(int argc, char *argv[])
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
+		amclVisualizationInfoOut = portFactoryRegistry[connections.amclVisualizationInfoOut.roboticMiddleware]->createAmclVisualizationInfoOut(connections.amclVisualizationInfoOut.serviceName);
+		amclVisualizationInfoOutWrapper = new AmclVisualizationInfoOutWrapper(amclVisualizationInfoOut);
 		localizationEventServiceOutEventTestHandler = std::make_shared<LocalizationEventServiceOutEventTestHandler>();
 		localizationEventServiceOut = portFactoryRegistry[connections.localizationEventServiceOut.roboticMiddleware]->createLocalizationEventServiceOut(connections.localizationEventServiceOut.serviceName, localizationEventServiceOutEventTestHandler);
+		localizationEventServiceOutWrapper = new LocalizationEventServiceOutWrapper(localizationEventServiceOut);
 		
 		// create client ports
 		laserServiceIn = portFactoryRegistry[connections.laserServiceIn.roboticMiddleware]->createLaserServiceIn();
 		localizationUpdateServiceOut = portFactoryRegistry[connections.localizationUpdateServiceOut.roboticMiddleware]->createLocalizationUpdateServiceOut();
+		localizationUpdateServiceOutWrapper = new LocalizationUpdateServiceOutWrapper(localizationUpdateServiceOut);
 		
 		// create InputTaskTriggers and UpcallManagers
-		laserServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan>(laserServiceIn);
-		laserServiceInUpcallManager = new LaserServiceInUpcallManager(laserServiceIn);
+		laserServiceInInputCollector = new LaserServiceInInputCollector(laserServiceIn);
+		laserServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan>(laserServiceInInputCollector);
+		laserServiceInUpcallManager = new LaserServiceInUpcallManager(laserServiceInInputCollector);
 		
 		// create input-handler
 		
@@ -393,12 +409,17 @@ void SmartAmcl::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 	delete laserServiceInInputTaskTrigger;
 	delete laserServiceInUpcallManager;
+	delete laserServiceInInputCollector;
 
 	// destroy client ports
 	delete laserServiceIn;
+	delete localizationUpdateServiceOutWrapper;
 	delete localizationUpdateServiceOut;
 
 	// destroy server ports
+	delete amclVisualizationInfoOutWrapper;
+	delete amclVisualizationInfoOut;
+	delete localizationEventServiceOutWrapper;
 	delete localizationEventServiceOut;
 	// destroy event-test handlers (if needed)
 	localizationEventServiceOutEventTestHandler;
@@ -426,11 +447,11 @@ void SmartAmcl::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
 	// destruction of PlainOpcUaSmartAmclExtension
 	
-	// destruction of SmartAmclROSExtension
+	// destruction of SmartAmclROS1InterfacesExtension
+	
+	// destruction of SmartAmclRestInterfacesExtension
 	
 }
 
@@ -505,6 +526,7 @@ void SmartAmcl::loadParameter(int argc, char *argv[])
 		}
 		
 		// load parameters for client LaserServiceIn
+		parameter.getBoolean("LaserServiceIn", "initialConnect", connections.laserServiceIn.initialConnect);
 		parameter.getString("LaserServiceIn", "serviceName", connections.laserServiceIn.serviceName);
 		parameter.getString("LaserServiceIn", "serverName", connections.laserServiceIn.serverName);
 		parameter.getString("LaserServiceIn", "wiringName", connections.laserServiceIn.wiringName);
@@ -521,6 +543,11 @@ void SmartAmcl::loadParameter(int argc, char *argv[])
 			parameter.getString("LocalizationUpdateServiceOut", "roboticMiddleware", connections.localizationUpdateServiceOut.roboticMiddleware);
 		}
 		
+		// load parameters for server AmclVisualizationInfoOut
+		parameter.getString("AmclVisualizationInfoOut", "serviceName", connections.amclVisualizationInfoOut.serviceName);
+		if(parameter.checkIfParameterExists("AmclVisualizationInfoOut", "roboticMiddleware")) {
+			parameter.getString("AmclVisualizationInfoOut", "roboticMiddleware", connections.amclVisualizationInfoOut.roboticMiddleware);
+		}
 		// load parameters for server LocalizationEventServiceOut
 		parameter.getString("LocalizationEventServiceOut", "serviceName", connections.localizationEventServiceOut.serviceName);
 		if(parameter.checkIfParameterExists("LocalizationEventServiceOut", "roboticMiddleware")) {
@@ -547,11 +574,11 @@ void SmartAmcl::loadParameter(int argc, char *argv[])
 			parameter.getInteger("AmclTask", "cpuAffinity", connections.amclTask.cpuAffinity);
 		}
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// load parameters for PlainOpcUaSmartAmclExtension
 		
-		// load parameters for SmartAmclROSExtension
+		// load parameters for SmartAmclROS1InterfacesExtension
+		
+		// load parameters for SmartAmclRestInterfacesExtension
 		
 		
 		// load parameters for all registered component-extensions

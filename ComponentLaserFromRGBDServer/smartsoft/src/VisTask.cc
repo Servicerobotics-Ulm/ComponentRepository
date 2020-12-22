@@ -172,7 +172,7 @@ int VisTask::on_execute()
 
 	// this method is triggered periodically with period time 100 ms
 	SmartACE::SmartGuard g(lock);
-	viewer->spinOnce (100);
+	viewer->spinOnce(10);
 
 	// it is possible to return != 0 (e.g. when the task detects errors), then the outer loop breaks and the task stops
 	return 0;

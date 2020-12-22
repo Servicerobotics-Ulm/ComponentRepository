@@ -50,7 +50,7 @@
 #include "CompTask.hh"
 #include "ComponentKB.hh"
 
-#include "KbEventServerEventTestHandler.hh"
+
 
 #include <iostream>
 
@@ -67,16 +67,14 @@ CompTask::~CompTask()
 int CompTask::task_execution()
 {
 	// coponent will now start running and will continue (block in the run method) until it is commanded to shutdown (i.e. by a SIGINT signal)
-	COMP->run();
-	COMP->comp_shutdown = true;
+//	COMP->run();
 
-	std::cout<<__FUNCTION__<<" COMPONENT SHUTDOWN = true"<<std::endl;
-	std::dynamic_pointer_cast<KbEventServerEventTestHandler>(COMP->kbEventServerEventTestHandler)->shutdownReleaseSema();
-	COMP->kbQueryHandler->insertCompShutdownQuery();
+	COMP->getComponentImpl()->run();
+
+	std::cout<<__FUNCTION__<<" --> COMPONENT SHUTDOWN"<<std::endl;
+
 
 	ACE_OS::sleep(ACE_Time_Value(0,250000));
-
-	COMP->fini();
 
 	// finally delete the component itself
 	ComponentKB::deleteInstance();

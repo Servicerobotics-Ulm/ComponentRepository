@@ -6,6 +6,7 @@ FIND_PACKAGE(SeRoNetSDK QUIET)
 
 IF(SeRoNetSDK_FOUND)
 	FIND_PACKAGE(CommBasicObjectsOpcUa PATHS $ENV{SMART_ROOT_ACE}/modules)
+	FIND_PACKAGE(CommLocalizationObjectsOpcUa PATHS $ENV{SMART_ROOT_ACE}/modules)
 	FIND_PACKAGE(CommNavigationObjectsOpcUa PATHS $ENV{SMART_ROOT_ACE}/modules)
 	FIND_PACKAGE(CommTrackingObjectsOpcUa PATHS $ENV{SMART_ROOT_ACE}/modules)
 	FIND_PACKAGE(DomainVisionOpcUa PATHS $ENV{SMART_ROOT_ACE}/modules)

@@ -1,0 +1,9 @@
+SkillRealizationModel { 
+	
+	CoordinationModuleRealization ttsModuleMatthias coordModuleDef DomainSpeech.TTSModule uses 
+	{ DomainSpeech.TTSCorrdinationService intsName TTS }
+	{
+		SkillRealization say {	action () }
+		SkillRealization sayWait {	action () }
+	}
+}

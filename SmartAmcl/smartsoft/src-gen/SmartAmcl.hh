@@ -29,16 +29,18 @@
 class SmartAmclPortFactoryInterface;
 class SmartAmclExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaSmartAmclExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
 
-// includes for SmartAmclROSExtension
+// includes for SmartAmclROS1InterfacesExtension
+
+// includes for SmartAmclRestInterfacesExtension
 
 
 // include communication objects
+#include <CommLocalizationObjects/CommAmclVisualizationInfo.hh>
+#include <CommLocalizationObjects/CommAmclVisualizationInfoACE.hh>
 #include <CommBasicObjects/CommBasePositionUpdate.hh>
 #include <CommBasicObjects/CommBasePositionUpdateACE.hh>
 #include <CommLocalizationObjects/CommLocalizationEventParameter.hh>
@@ -52,11 +54,16 @@ class SmartAmclExtension;
 
 // include tasks
 #include "AmclTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 #include "LaserServiceInUpcallManager.hh"
+#include "LaserServiceInInputCollector.hh"
 
 // include input-handler(s)
 // include request-handler(s)
+// output port wrappers
+#include "LocalizationUpdateServiceOutWrapper.hh"
+#include "LocalizationEventServiceOutWrapper.hh"
+#include "AmclVisualizationInfoOutWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -116,25 +123,30 @@ public:
 	Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> *laserServiceIn;
 	Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan> *laserServiceInInputTaskTrigger;
 	LaserServiceInUpcallManager *laserServiceInUpcallManager;
+	LaserServiceInInputCollector *laserServiceInInputCollector;
 	
 	// define request-ports
 	
 	// define input-handler
 	
 	// define output-ports
+	Smart::IPushServerPattern<CommLocalizationObjects::CommAmclVisualizationInfo> *amclVisualizationInfoOut;
+	AmclVisualizationInfoOutWrapper *amclVisualizationInfoOutWrapper;
 	Smart::IEventServerPattern<CommLocalizationObjects::CommLocalizationEventParameter, CommLocalizationObjects::CommLocalizationEventResult, CommLocalizationObjects::LocalizationEventState> *localizationEventServiceOut;
+	LocalizationEventServiceOutWrapper *localizationEventServiceOutWrapper;
 	std::shared_ptr<Smart::IEventTestHandler<CommLocalizationObjects::CommLocalizationEventParameter, CommLocalizationObjects::CommLocalizationEventResult, CommLocalizationObjects::LocalizationEventState>> localizationEventServiceOutEventTestHandler;
 	Smart::ISendClientPattern<CommBasicObjects::CommBasePositionUpdate> *localizationUpdateServiceOut;
+	LocalizationUpdateServiceOutWrapper *localizationUpdateServiceOutWrapper;
 	
 	// define answer-ports
 	
 	// define request-handlers
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
 	// definitions of PlainOpcUaSmartAmclExtension
 	
-	// definitions of SmartAmclROSExtension
+	// definitions of SmartAmclROS1InterfacesExtension
+	
+	// definitions of SmartAmclRestInterfacesExtension
 	
 	
 	// define default slave ports
@@ -236,6 +248,10 @@ public:
 		//--- upcall parameter ---
 		
 		//--- server port parameter ---
+		struct AmclVisualizationInfoOut_struct {
+				std::string serviceName;
+				std::string roboticMiddleware;
+		} amclVisualizationInfoOut;
 		struct LocalizationEventServiceOut_struct {
 				std::string serviceName;
 				std::string roboticMiddleware;
@@ -243,6 +259,7 @@ public:
 	
 		//--- client port parameter ---
 		struct LaserServiceIn_struct {
+			bool initialConnect;
 			std::string serverName;
 			std::string serviceName;
 			std::string wiringName;
@@ -258,11 +275,11 @@ public:
 			std::string roboticMiddleware;
 		} localizationUpdateServiceOut;
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// -- parameters for PlainOpcUaSmartAmclExtension
 		
-		// -- parameters for SmartAmclROSExtension
+		// -- parameters for SmartAmclROS1InterfacesExtension
+		
+		// -- parameters for SmartAmclRestInterfacesExtension
 		
 	} connections;
 };

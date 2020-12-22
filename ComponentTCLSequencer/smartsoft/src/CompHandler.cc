@@ -400,7 +400,9 @@ extern "C" __declspec(dllexport) int initialize(char* param)
 	COMP->init(list.size(), argv);
 
 	// start all tasks
-	COMP_TASK.open();
+//	COMP_TASK.open();
+
+	COMP_TASK.start();
 
 	//set component state to ALIVE!
 	COMP->setStartupFinished();

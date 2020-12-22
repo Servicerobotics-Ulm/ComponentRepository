@@ -8,7 +8,7 @@
             (format t "=========================>>> tcb-start-mapping ~a ~a ~a ~%" '?x '?y '?a)
             (tcl-state :server 'gmapping :state "Neutral")
             (tcl-param :server 'gmapping   :slot 'CommLocalizationObjects.SlamParameter.INITNEWMAP :value '((?x)(?y)(?a)))
-            (tcl-state :server 'gmapping :state "Active")
+            (tcl-state :server 'gmapping :state "Mapping")
             '(SUCCESS (OK)))))
 
 
@@ -31,7 +31,7 @@
             (tcl-state :server 'gmapping :state "Neutral")
             (format t "MAP NAME: ~s" '(?mapDirName ?mapName ))
             (tcl-param :server 'gmapping :slot 'CommLocalizationObjects.SlamParameter.SAVEMAP :value '(?mapDirName ?mapName))
-            (tcl-state :server 'gmapping :state "Active")
+            (tcl-state :server 'gmapping :state "Mapping")
             '(SUCCESS (OK)))))
 
 
@@ -39,6 +39,13 @@
   (module "SlamModule")
   (action (
             (format t "=========================>>> tcb-abort-mapping ~%")
+            (tcl-state :server 'gmapping :state "Neutral")
+            '(SUCCESS (OK)))))
+
+(realize-tcb  (deactivate-slam)
+  (module "SlamModule")
+  (action (
+            (format t "=========================>>> deactivate ~%")
             (tcl-state :server 'gmapping :state "Neutral")
             '(SUCCESS (OK)))))
 

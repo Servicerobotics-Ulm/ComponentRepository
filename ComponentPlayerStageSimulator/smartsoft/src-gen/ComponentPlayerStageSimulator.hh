@@ -29,10 +29,6 @@
 class ComponentPlayerStageSimulatorPortFactoryInterface;
 class ComponentPlayerStageSimulatorExtension;
 
-// includes for ComponentPlayerStageSimulatorROSExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentPlayerStageSimulatorExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -59,15 +55,21 @@ class ComponentPlayerStageSimulatorExtension;
 // include tasks
 #include "BatteryEventTask.hh"
 #include "PlayerTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 #include "LocalizationUpdateServiceInUpcallManager.hh"
+#include "LocalizationUpdateServiceInInputCollector.hh"
 #include "NavigationVelocityServiceInUpcallManager.hh"
+#include "NavigationVelocityServiceInInputCollector.hh"
 
 // include input-handler(s)
 #include "LocalizationUpdateHandler.hh"
 #include "NavigationVelocityHandler.hh"
 // include request-handler(s)
 #include "BaseStateQueryHandler.hh"
+// output port wrappers
+#include "LaserServiceOutWrapper.hh"
+#include "BatteryEventServiceOutWrapper.hh"
+#include "BaseStateServiceOutWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -129,10 +131,12 @@ public:
 	Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> *localizationUpdateServiceIn;
 	Smart::InputTaskTrigger<CommBasicObjects::CommBasePositionUpdate> *localizationUpdateServiceInInputTaskTrigger;
 	LocalizationUpdateServiceInUpcallManager *localizationUpdateServiceInUpcallManager;
+	LocalizationUpdateServiceInInputCollector *localizationUpdateServiceInInputCollector;
 	// InputPort NavigationVelocityServiceIn
 	Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> *navigationVelocityServiceIn;
 	Smart::InputTaskTrigger<CommBasicObjects::CommNavigationVelocity> *navigationVelocityServiceInInputTaskTrigger;
 	NavigationVelocityServiceInUpcallManager *navigationVelocityServiceInUpcallManager;
+	NavigationVelocityServiceInInputCollector *navigationVelocityServiceInInputCollector;
 	
 	// define request-ports
 	
@@ -142,9 +146,12 @@ public:
 	
 	// define output-ports
 	Smart::IPushServerPattern<CommBasicObjects::CommBaseState> *baseStateServiceOut;
+	BaseStateServiceOutWrapper *baseStateServiceOutWrapper;
 	Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> *batteryEventServiceOut;
+	BatteryEventServiceOutWrapper *batteryEventServiceOutWrapper;
 	std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>> batteryEventServiceOutEventTestHandler;
 	Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> *laserServiceOut;
+	LaserServiceOutWrapper *laserServiceOutWrapper;
 	
 	// define answer-ports
 	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState> *baseStateAnswerer;
@@ -152,10 +159,6 @@ public:
 	
 	// define request-handlers
 	BaseStateQueryHandler *baseStateQueryHandler;
-	
-	// definitions of ComponentPlayerStageSimulatorROSExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentPlayerStageSimulatorExtension
 	
@@ -305,10 +308,6 @@ public:
 		} navigationVelocityServiceIn;
 	
 		//--- client port parameter ---
-		
-		// -- parameters for ComponentPlayerStageSimulatorROSExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentPlayerStageSimulatorExtension
 		

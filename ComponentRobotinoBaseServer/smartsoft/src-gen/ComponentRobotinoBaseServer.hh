@@ -29,9 +29,9 @@
 class ComponentRobotinoBaseServerPortFactoryInterface;
 class ComponentRobotinoBaseServerExtension;
 
-// includes for ComponentRobotinoBaseServerROSExtension
+// includes for ComponentRobotinoBaseServerROS1InterfacesExtension
 
-// includes for OpcUaBackendComponentGeneratorExtension
+// includes for ComponentRobotinoBaseServerRestInterfacesExtension
 
 // includes for PlainOpcUaComponentRobotinoBaseServerExtension
 // include plain OPC UA device clients
@@ -55,26 +55,20 @@ class ComponentRobotinoBaseServerExtension;
 #include <CommBasicObjects/CommBumperEventResultACE.hh>
 #include <CommBasicObjects/CommBumperEventState.hh>
 #include <CommBasicObjects/CommBumperEventStateACE.hh>
-#include <CommRobotinoObjects/CommDigitalInputEventParameter.hh>
-#include <CommRobotinoObjects/CommDigitalInputEventParameterACE.hh>
-#include <CommRobotinoObjects/CommDigitalInputEventResult.hh>
-#include <CommRobotinoObjects/CommDigitalInputEventResultACE.hh>
-#include <CommRobotinoObjects/CommDigitalInputEventState.hh>
-#include <CommRobotinoObjects/CommDigitalInputEventStateACE.hh>
-#include <CommBasicObjects/CommLaserSafetyEventParam.hh>
-#include <CommBasicObjects/CommLaserSafetyEventParamACE.hh>
-#include <CommBasicObjects/CommLaserSafetyEventState.hh>
-#include <CommBasicObjects/CommLaserSafetyEventStateACE.hh>
-#include <CommBasicObjects/CommLaserSafetyField.hh>
-#include <CommBasicObjects/CommLaserSafetyFieldACE.hh>
+#include <CommBasicObjects/CommDigitalInputEventParameter.hh>
+#include <CommBasicObjects/CommDigitalInputEventParameterACE.hh>
+#include <CommBasicObjects/CommDigitalInputEventResult.hh>
+#include <CommBasicObjects/CommDigitalInputEventResultACE.hh>
+#include <CommBasicObjects/CommDigitalInputEventState.hh>
+#include <CommBasicObjects/CommDigitalInputEventStateACE.hh>
+#include <CommBasicObjects/CommIOValues.hh>
+#include <CommBasicObjects/CommIOValuesACE.hh>
 #include <CommLocalizationObjects/CommLocalizationEventParameter.hh>
 #include <CommLocalizationObjects/CommLocalizationEventParameterACE.hh>
 #include <CommLocalizationObjects/CommLocalizationEventResult.hh>
 #include <CommLocalizationObjects/CommLocalizationEventResultACE.hh>
 #include <CommBasicObjects/CommNavigationVelocity.hh>
 #include <CommBasicObjects/CommNavigationVelocityACE.hh>
-#include <CommRobotinoObjects/CommRobotinoIOValues.hh>
-#include <CommRobotinoObjects/CommRobotinoIOValuesACE.hh>
 #include <CommRobotinoObjects/CommRobotinoPowerOutputValue.hh>
 #include <CommRobotinoObjects/CommRobotinoPowerOutputValueACE.hh>
 #include <CommBasicObjects/CommVoid.hh>
@@ -86,11 +80,15 @@ class ComponentRobotinoBaseServerExtension;
 #include "OdomTask.hh"
 #include "SignalStateTask.hh"
 #include "RobotinoAPITask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 #include "LocalizationEventServiceInUpcallManager.hh"
+#include "LocalizationEventServiceInInputCollector.hh"
 #include "LocalizationUpdateServiceInUpcallManager.hh"
+#include "LocalizationUpdateServiceInInputCollector.hh"
 #include "NavigationVelocityServiceInUpcallManager.hh"
+#include "NavigationVelocityServiceInInputCollector.hh"
 #include "PowerOutputSendInUpcallManager.hh"
+#include "PowerOutputSendInInputCollector.hh"
 
 // include input-handler(s)
 #include "LocalizationEventServiceInHandler.hh"
@@ -100,6 +98,11 @@ class ComponentRobotinoBaseServerExtension;
 // include request-handler(s)
 #include "BaseStateQueryServiceAnswHandler.hh"
 #include "RobotinoIOValuesQueryServiceAnswHandler.hh"
+// output port wrappers
+#include "BatteryEventServiceOutWrapper.hh"
+#include "BumperEventServiceOutWrapper.hh"
+#include "DigitalInputEventOutWrapper.hh"
+#include "BaseStateServiceOutWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -163,18 +166,22 @@ public:
 	Smart::IEventClientPattern<CommLocalizationObjects::CommLocalizationEventParameter, CommLocalizationObjects::CommLocalizationEventResult> *localizationEventServiceIn;
 	Smart::InputTaskTrigger<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult>> *localizationEventServiceInInputTaskTrigger;
 	LocalizationEventServiceInUpcallManager *localizationEventServiceInUpcallManager;
+	LocalizationEventServiceInInputCollector *localizationEventServiceInInputCollector;
 	// InputPort LocalizationUpdateServiceIn
 	Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> *localizationUpdateServiceIn;
 	Smart::InputTaskTrigger<CommBasicObjects::CommBasePositionUpdate> *localizationUpdateServiceInInputTaskTrigger;
 	LocalizationUpdateServiceInUpcallManager *localizationUpdateServiceInUpcallManager;
+	LocalizationUpdateServiceInInputCollector *localizationUpdateServiceInInputCollector;
 	// InputPort NavigationVelocityServiceIn
 	Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> *navigationVelocityServiceIn;
 	Smart::InputTaskTrigger<CommBasicObjects::CommNavigationVelocity> *navigationVelocityServiceInInputTaskTrigger;
 	NavigationVelocityServiceInUpcallManager *navigationVelocityServiceInUpcallManager;
+	NavigationVelocityServiceInInputCollector *navigationVelocityServiceInInputCollector;
 	// InputPort PowerOutputSendIn
 	Smart::ISendServerPattern<CommRobotinoObjects::CommRobotinoPowerOutputValue> *powerOutputSendIn;
 	Smart::InputTaskTrigger<CommRobotinoObjects::CommRobotinoPowerOutputValue> *powerOutputSendInInputTaskTrigger;
 	PowerOutputSendInUpcallManager *powerOutputSendInUpcallManager;
+	PowerOutputSendInInputCollector *powerOutputSendInInputCollector;
 	
 	// define request-ports
 	
@@ -186,28 +193,30 @@ public:
 	
 	// define output-ports
 	Smart::IPushServerPattern<CommBasicObjects::CommBaseState> *baseStateServiceOut;
+	BaseStateServiceOutWrapper *baseStateServiceOutWrapper;
 	Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> *batteryEventServiceOut;
+	BatteryEventServiceOutWrapper *batteryEventServiceOutWrapper;
 	std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>> batteryEventServiceOutEventTestHandler;
 	Smart::IEventServerPattern<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState> *bumperEventServiceOut;
+	BumperEventServiceOutWrapper *bumperEventServiceOutWrapper;
 	std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState>> bumperEventServiceOutEventTestHandler;
-	Smart::IEventServerPattern<CommRobotinoObjects::CommDigitalInputEventParameter, CommRobotinoObjects::CommDigitalInputEventResult, CommRobotinoObjects::CommDigitalInputEventState> *digitalInputEventOut;
-	std::shared_ptr<Smart::IEventTestHandler<CommRobotinoObjects::CommDigitalInputEventParameter, CommRobotinoObjects::CommDigitalInputEventResult, CommRobotinoObjects::CommDigitalInputEventState>> digitalInputEventOutEventTestHandler;
-	Smart::IEventServerPattern<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState> *laserSafetyEventServiceOut;
-	std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState>> laserSafetyEventServiceOutEventTestHandler;
+	Smart::IEventServerPattern<CommBasicObjects::CommDigitalInputEventParameter, CommBasicObjects::CommDigitalInputEventResult, CommBasicObjects::CommDigitalInputEventState> *digitalInputEventOut;
+	DigitalInputEventOutWrapper *digitalInputEventOutWrapper;
+	std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommDigitalInputEventParameter, CommBasicObjects::CommDigitalInputEventResult, CommBasicObjects::CommDigitalInputEventState>> digitalInputEventOutEventTestHandler;
 	
 	// define answer-ports
 	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState> *baseStateQueryServiceAnsw;
 	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState> *baseStateQueryServiceAnswInputTaskTrigger;
-	Smart::IQueryServerPattern<CommRobotinoObjects::CommRobotinoIOValues, CommRobotinoObjects::CommRobotinoIOValues> *robotinoIOValuesQueryServiceAnsw;
-	Smart::QueryServerTaskTrigger<CommRobotinoObjects::CommRobotinoIOValues, CommRobotinoObjects::CommRobotinoIOValues> *robotinoIOValuesQueryServiceAnswInputTaskTrigger;
+	Smart::IQueryServerPattern<CommBasicObjects::CommIOValues, CommBasicObjects::CommIOValues> *robotinoIOValuesQueryServiceAnsw;
+	Smart::QueryServerTaskTrigger<CommBasicObjects::CommIOValues, CommBasicObjects::CommIOValues> *robotinoIOValuesQueryServiceAnswInputTaskTrigger;
 	
 	// define request-handlers
 	BaseStateQueryServiceAnswHandler *baseStateQueryServiceAnswHandler;
 	RobotinoIOValuesQueryServiceAnswHandler *robotinoIOValuesQueryServiceAnswHandler;
 	
-	// definitions of ComponentRobotinoBaseServerROSExtension
+	// definitions of ComponentRobotinoBaseServerROS1InterfacesExtension
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
+	// definitions of ComponentRobotinoBaseServerRestInterfacesExtension
 	
 	// definitions of PlainOpcUaComponentRobotinoBaseServerExtension
 	
@@ -374,10 +383,6 @@ public:
 				std::string serviceName;
 				std::string roboticMiddleware;
 		} digitalInputEventOut;
-		struct LaserSafetyEventServiceOut_struct {
-				std::string serviceName;
-				std::string roboticMiddleware;
-		} laserSafetyEventServiceOut;
 		struct LocalizationUpdateServiceIn_struct {
 				std::string serviceName;
 				std::string roboticMiddleware;
@@ -405,9 +410,9 @@ public:
 			std::string roboticMiddleware;
 		} localizationEventServiceIn;
 		
-		// -- parameters for ComponentRobotinoBaseServerROSExtension
+		// -- parameters for ComponentRobotinoBaseServerROS1InterfacesExtension
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
+		// -- parameters for ComponentRobotinoBaseServerRestInterfacesExtension
 		
 		// -- parameters for PlainOpcUaComponentRobotinoBaseServerExtension
 		

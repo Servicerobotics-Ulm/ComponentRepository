@@ -128,7 +128,9 @@ void TriggerHandler::handleCommNavigationObjects_MapperParams_CURLOADLTM()
 	// (transparent for the usage here). Thus an active trigger will be called within a separate task scope.
 	// only allowed in deactivated mode
 	COMP->CurLock.acquire();
+	std::cout << "MAPPER_CUR_LOAD_LTM: clearnMap()"<<std::endl;
 	COMP->currentGridMap->clearMap();
+	std::cout << "MAPPER_CUR_LOAD_LTM: setLtmOccupation()"<<std::endl;
 	COMP->currentGridMap->setLtmOccupation(COMP->ltm_threshold,*(COMP->ltmGridMap));
 	COMP->CurLock.release();
 	std::cout << "MAPPER_CUR_LOAD_LTM: cur map built from ltm map -  threshold = " << COMP->ltm_threshold << "\n";

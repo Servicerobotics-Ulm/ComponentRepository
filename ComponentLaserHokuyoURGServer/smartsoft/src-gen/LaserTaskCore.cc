@@ -94,7 +94,7 @@ void LaserTaskCore::updateAllCommObjects()
 // this method is meant to be used in derived classes
 Smart::StatusCode LaserTaskCore::laserPushNewestServerPut(CommBasicObjects::CommMobileLaserScan &laserPushNewestServerDataObject)
 {
-	Smart::StatusCode result = COMP->laserPushNewestServer->put(laserPushNewestServerDataObject);
+	Smart::StatusCode result = COMP->laserPushNewestServerWrapper->put(laserPushNewestServerDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());

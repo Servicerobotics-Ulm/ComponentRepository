@@ -101,9 +101,19 @@ void ImageTaskCore::updateAllCommObjects()
 
 
 // this method is meant to be used in derived classes
-Smart::StatusCode ImageTaskCore::colorImagePushNewestServerPut(DomainVision::CommVideoImage &colorImagePushNewestServerDataObject)
+Smart::StatusCode ImageTaskCore::rGBDImagePushServiceOutPut(DomainVision::CommRGBDImage &rGBDImagePushServiceOutDataObject)
 {
-	Smart::StatusCode result = COMP->colorImagePushNewestServer->put(colorImagePushNewestServerDataObject);
+	Smart::StatusCode result = COMP->rGBDImagePushServiceOutWrapper->put(rGBDImagePushServiceOutDataObject);
+	if(useLogging == true) {
+		//FIXME: use logging
+		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
+	}
+	return result;
+}
+// this method is meant to be used in derived classes
+Smart::StatusCode ImageTaskCore::rGBImagePushServiceOutPut(DomainVision::CommVideoImage &rGBImagePushServiceOutDataObject)
+{
+	Smart::StatusCode result = COMP->rGBImagePushServiceOutWrapper->put(rGBImagePushServiceOutDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
@@ -113,17 +123,7 @@ Smart::StatusCode ImageTaskCore::colorImagePushNewestServerPut(DomainVision::Com
 // this method is meant to be used in derived classes
 Smart::StatusCode ImageTaskCore::depthPushNewestServerPut(DomainVision::CommDepthImage &depthPushNewestServerDataObject)
 {
-	Smart::StatusCode result = COMP->depthPushNewestServer->put(depthPushNewestServerDataObject);
-	if(useLogging == true) {
-		//FIXME: use logging
-		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
-	}
-	return result;
-}
-// this method is meant to be used in derived classes
-Smart::StatusCode ImageTaskCore::imagePushNewestServerPut(DomainVision::CommRGBDImage &imagePushNewestServerDataObject)
-{
-	Smart::StatusCode result = COMP->imagePushNewestServer->put(imagePushNewestServerDataObject);
+	Smart::StatusCode result = COMP->depthPushNewestServerWrapper->put(depthPushNewestServerDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());

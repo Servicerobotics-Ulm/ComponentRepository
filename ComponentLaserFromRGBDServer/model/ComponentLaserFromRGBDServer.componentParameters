@@ -2,7 +2,7 @@ ComponentParameter ComponentLaserFromRGBDServerParams component ComponentLaserFr
 	InternalParameter scanner{
 	verbose: Boolean = true
 	on_turret: Boolean = false
-	x: Int32 = 0
+	x: Int32 = 190
 	y: Int32 = 0
 	z: Int32 = 0
 	azimuth: Double = 0
@@ -37,9 +37,5 @@ InternalParameter base_manipulator{
 	base_a: Double = 0
 	steer_a: Double = 0
 	turret_a: Double = 0
-}
-InternalParameter services{
-	activate_push_newest: Boolean = true
-	active_push_timed: Boolean = false
 }
 }

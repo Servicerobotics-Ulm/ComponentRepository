@@ -10,15 +10,15 @@
 ## Component Documentation
 <p></p>
 <p> SmartAmcl implements the Adaptive Monte-Carlo Localization (AMCL) algorithm.
-	Localization is based on a particle filter and a pre-captured grid map of the environment.
-	AMCL maintains a set of possible robot poses and updates this distribution by comparing laser scans against the pre-captured map.
-	AMCL is adaptive because the amount of particles depends on the pose certainty: large number of particles if uncertainty increases and vice versa.
+ Localization is based on a particle filter and a pre-captured grid map of the environment.
+ AMCL maintains a set of possible robot poses and updates this distribution by comparing laser scans against the pre-captured map.
+ AMCL is adaptive because the amount of particles depends on the pose certainty: large number of particles if uncertainty increases and vice versa.
 </p>
-<p>	Based on its localization, SmartAmcl sends position updates to the base server (e.g. SmartPioneerBaseServer).
+<p> Based on its localization, SmartAmcl sends position updates to the base server (e.g. SmartPioneerBaseServer).
 </p>
-<p>	GPL-License: includes Code from the Player Project.
+<p> GPL-License: includes Code from the Player Project.
 </p>
-<p>	See also: http://playerstage.sourceforge.net/doc/Player-2.0.0/player/group__driver__amcl.html
+<p> See also: http://playerstage.sourceforge.net/doc/Player-2.0.0/player/group__driver__amcl.html
 </p>
 <p></p>
 
@@ -56,6 +56,11 @@
 <td style="border:1px solid black; padding: 5px;">Localization</td>
 <td style="border:1px solid black; padding: 5px;"></td>
 </tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">MarketName</td>
+<td style="border:1px solid black; padding: 5px;">Adaptive Monte-Carlo Localization (AMCL) Component</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
 </table>
 
 ## Component Ports
@@ -71,6 +76,11 @@
 
 
 ### LocalizationEventServiceOut
+
+*Documentation:*
+
+
+### AmclVisualizationInfoOut
 
 *Documentation:*
 

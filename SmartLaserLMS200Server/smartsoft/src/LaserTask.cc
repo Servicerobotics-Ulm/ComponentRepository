@@ -188,7 +188,7 @@ int LaserTask::on_execute()
       }
       scan.set_scan_valid(base_state_valid /* && ... */);
 
-      Smart::StatusCode push_status = this->laserScanOutPut(scan);
+      Smart::StatusCode push_status = this->laserServiceOutPut(scan);
       if(push_status!=Smart::SMART_OK)
       {
         std::cerr << "WARNING: error on push (" << push_status << ")" << std::endl;

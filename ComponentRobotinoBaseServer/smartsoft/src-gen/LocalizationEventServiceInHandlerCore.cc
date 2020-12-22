@@ -20,11 +20,12 @@ LocalizationEventServiceInHandlerCore::LocalizationEventServiceInHandlerCore(
 	Smart::InputSubject<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult>> *subject,
 	const int &prescaleFactor)
 	:	Smart::InputTaskTrigger<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult>>(subject, prescaleFactor)
-{  
-	updateStatus = Smart::SMART_NODATA;
+{
 }
 LocalizationEventServiceInHandlerCore::~LocalizationEventServiceInHandlerCore()
-{  }
+{  
+}
+
 
 void LocalizationEventServiceInHandlerCore::updateAllCommObjects() {
 }

@@ -3,67 +3,298 @@
 
 # SmartURServer Component
 
-![SmartURServer-ComponentImage](model/SmartURServerComponentDefinition.jpg)
+<img src="model/SmartURServerComponentDefinition.jpg" alt="SmartURServer-ComponentImage" width="1000">
 
-NOTE: THIS COMPONENT PROJECT ONLY CONTAINS A COMPONENT HULL. IMPLEMENTATION OF THIS COMPONENT IS WORK IN PROGRESS. YOU CAN USE THIS COMPONENT HULL TO FILL IN YOUR OWN IMPLEMENTATION.
+*Component Short Description:* Device driver component for Universal Robots (UR) manipulators
 
-TODO: ADD description!
+## Component Documentation
+<p></p>
+<p> The SmartURServer component is the device driver component for Universal Robots (UR) manipulators.
+</p>
+<p> The component enables the usage of UR manipulators (UR3(e),UR5(e),UR10(e),UR16(e)) together with other software components.
+ The component provides services for the usage of the manipulators on different abstraction levels.
+ Programs created with UR Polyscope, primitive movements, as well as individual joint control e.g. moving planned trajectories can be used.
+</p>
+<p> The component provides skills for all its provided capabilities, enabling an easy and fast development of robotic behavior task.
+ The component provides skills to enable the usage of sub-programs, which can be created by the end-user on the manipulator using the teach-panel.
+</p>
+<p></p>
+<p></p>
 
-| Metaelement | Documentation |
-|-------------|---------------|
-| License |  |
-| Hardware Requirements |  |
-| Purpose |  |
+## Component-Datasheet Properties
+
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Component-Datasheet Properties</caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Property Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Property Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Property Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Supplier</td>
+<td style="border:1px solid black; padding: 5px;">Toolify Robotics GmbH</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Homepage</td>
+<td style="border:1px solid black; padding: 5px;">TODO</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Purpose</td>
+<td style="border:1px solid black; padding: 5px;">Driver component for universal robot manipulators</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">HardwareRequirement</td>
+<td style="border:1px solid black; padding: 5px;">The component is able to operate all Universal Robots manipulators (UR3(e),UR5(e),UR10(e),UR16(e)) with a controller software version xxx or newer. The component is further able to work with the simulator provided by Universal Robots.</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
+
+## Component Ports
+
+### trajectorySendServer
+
+*Documentation:*
+
+
+### posePushServer
+
+*Documentation:*
+
+
+### poseQueryServer
+
+*Documentation:*
+
+
+### manipulatorEventServiceOut
+
+*Documentation:*
+
+
+### baseStateServiceIn
+
+*Documentation:*
+
+
+### ioQueryServer
+
+*Documentation:*
+
+
+### digitalInputEventServer
+
+*Documentation:*
+
+
+### programQueryServer
+
+*Documentation:*
 
 
 
-## Service Ports
 
+## Component Parameters: SmartURServerParams
 
-## Component Parameters SmartURServerParams
+### ParameterSetInstance: ManipulatorParameter
 
-### InternalParameter laser
+#### Trigger Instance: MOVE_LINEAR
 
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| laser_is_mounted | Boolean |  |
-| x | Int32 |  |
-| y | Int32 |  |
-| z | Int32 |  |
-| azimuth | Double |  |
-| elevation | Double |  |
-| roll | Double |  |
+*Property:* active = **true**
 
-### InternalParameter base
+*Documentation:*
 
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| on_base | Boolean |  |
-| x | Int32 |  |
-| y | Int32 |  |
-| z | Int32 |  |
-| base_a | Double |  |
-| steer_a | Double |  |
-| turret_a | Double |  |
+#### Trigger Instance: MOVE_CIRCULAR
 
-### InternalParameter manipulator
+*Property:* active = **true**
 
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| verbose | Boolean |  |
-| goal_angle_approach | Double |  |
-| goal_position_approach | Double |  |
-| x | Int32 |  |
-| y | Int32 |  |
-| z | Int32 |  |
-| azimuth | Double |  |
-| elevation | Double |  |
-| roll | Double |  |
-| debugSendProgrammDirect | Boolean |  |
+*Documentation:*
 
-### InternalParameter network
+#### Trigger Instance: SET_PCS
 
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| ip_adress | String |  |
+*Property:* active = **true**
+
+*Documentation:*
+
+#### Trigger Instance: CLEAR_PCS
+
+*Property:* active = **true**
+
+*Documentation:*
+
+#### Trigger Instance: SET_TCP
+
+*Property:* active = **true**
+
+*Documentation:*
+
+#### Trigger Instance: MOVE_PATH
+
+*Property:* active = **true**
+
+*Documentation:*
+
+#### Trigger Instance: LOAD_PROGRAM
+
+*Property:* active = **false**
+
+*Documentation:*
+
+#### Trigger Instance: START_PROGRAM
+
+*Property:* active = **false**
+
+*Documentation:*
+
+### Internal Parameter: base
+
+*Documentation:*
+
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Internal Parameter <b>base</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>on_base</b></td>
+<td style="border:1px solid black; padding: 5px;">Boolean</td>
+<td style="border:1px solid black; padding: 5px;">false</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>x</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>y</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>z</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>base_a</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>steer_a</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>turret_a</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
+
+### Internal Parameter: manipulator
+
+*Documentation:*
+
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Internal Parameter <b>manipulator</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>verbose</b></td>
+<td style="border:1px solid black; padding: 5px;">Boolean</td>
+<td style="border:1px solid black; padding: 5px;">true</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>goal_angle_approach</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.1</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>goal_position_approach</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">3</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>x</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>y</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>z</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>azimuth</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>elevation</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>roll</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>debugSendProgrammDirect</b></td>
+<td style="border:1px solid black; padding: 5px;">Boolean</td>
+<td style="border:1px solid black; padding: 5px;">false</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
+
+### Internal Parameter: network
+
+*Documentation:*
+
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Internal Parameter <b>network</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>ip_adress</b></td>
+<td style="border:1px solid black; padding: 5px;">String</td>
+<td style="border:1px solid black; padding: 5px;">"11.0.0.108"</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
 

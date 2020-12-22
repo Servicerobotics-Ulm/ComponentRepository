@@ -65,7 +65,10 @@
 
 #include <mrpt/gui.h>
 #include <mrpt/opengl.h>
+#ifdef WITH_MRPT_2_0_VERSION
+#elif WITH_MRPT_1_5_VERSION
 #include <mrpt/utils.h>
+#endif
 #ifdef WITH_OLD_MRPT_VERSION
 	#include <mrpt/maps.h>
 #else

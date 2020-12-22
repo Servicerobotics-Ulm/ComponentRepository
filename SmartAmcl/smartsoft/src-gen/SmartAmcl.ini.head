@@ -56,6 +56,10 @@ prescale 1
 ##########################
 # server port parameter
 
+[AmclVisualizationInfoOut]
+serviceName AmclVisualizationInfoOut
+roboticMiddleware ACE_SmartSoft
+
 [LocalizationEventServiceOut]
 serviceName LocalizationEventServiceOut
 roboticMiddleware ACE_SmartSoft
@@ -64,6 +68,7 @@ roboticMiddleware ACE_SmartSoft
 # client port parameter
 
 [LaserServiceIn]
+initialConnect false
 serverName unknown
 serviceName unknown
 wiringName LaserServiceIn
@@ -79,13 +84,13 @@ interval 1
 roboticMiddleware ACE_SmartSoft
 
 ##########################
-## parameters of OpcUaBackendComponentGeneratorExtension
-
-##########################
 ## parameters of PlainOpcUaSmartAmclExtension
 
 
 ##########################
-## parameters of SmartAmclROSExtension
+## parameters of SmartAmclROS1InterfacesExtension
+
+##########################
+## parameters of SmartAmclRestInterfacesExtension
 
 

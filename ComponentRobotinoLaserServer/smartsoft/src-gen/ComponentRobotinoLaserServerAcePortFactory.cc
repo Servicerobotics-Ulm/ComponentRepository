@@ -58,7 +58,7 @@ Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * ComponentRobotinoLa
 }
 
 
-Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * ComponentRobotinoLaserServerAcePortFactory::createPushNewestServer(const std::string &serviceName)
+Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * ComponentRobotinoLaserServerAcePortFactory::createLaserServiceOut(const std::string &serviceName)
 {
 	return new SmartACE::PushServer<CommBasicObjects::CommMobileLaserScan>(componentImpl, serviceName);
 }

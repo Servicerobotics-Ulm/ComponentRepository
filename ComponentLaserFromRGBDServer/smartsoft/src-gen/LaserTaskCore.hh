@@ -51,7 +51,7 @@ protected:
 	
 	
 	// this method is meant to be used in derived classes
-	Smart::StatusCode laserPushNewestServerPut(CommBasicObjects::CommMobileLaserScan &laserPushNewestServerDataObject);
+	Smart::StatusCode laserServiceOutPut(CommBasicObjects::CommMobileLaserScan &laserServiceOutDataObject);
 	
 	
 /**

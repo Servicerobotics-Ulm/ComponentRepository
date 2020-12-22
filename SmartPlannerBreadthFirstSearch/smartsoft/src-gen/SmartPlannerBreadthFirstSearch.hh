@@ -29,13 +29,13 @@
 class SmartPlannerBreadthFirstSearchPortFactoryInterface;
 class SmartPlannerBreadthFirstSearchExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaSmartPlannerBreadthFirstSearchExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
 
-// includes for SmartPlannerBreadthFirstSearchROSExtension
+// includes for SmartPlannerBreadthFirstSearchROS1InterfacesExtension
+
+// includes for SmartPlannerBreadthFirstSearchRestInterfacesExtension
 
 
 // include communication objects
@@ -54,12 +54,17 @@ class SmartPlannerBreadthFirstSearchExtension;
 
 // include tasks
 #include "PlannerTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 #include "BaseStateClientUpcallManager.hh"
+#include "BaseStateClientInputCollector.hh"
 #include "CurMapClientUpcallManager.hh"
+#include "CurMapClientInputCollector.hh"
 
 // include input-handler(s)
 // include request-handler(s)
+// output port wrappers
+#include "PlannerGoalServerWrapper.hh"
+#include "PlannerEventServerWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -119,10 +124,12 @@ public:
 	Smart::IPushClientPattern<CommBasicObjects::CommBaseState> *baseStateClient;
 	Smart::InputTaskTrigger<CommBasicObjects::CommBaseState> *baseStateClientInputTaskTrigger;
 	BaseStateClientUpcallManager *baseStateClientUpcallManager;
+	BaseStateClientInputCollector *baseStateClientInputCollector;
 	// InputPort CurMapClient
 	Smart::IPushClientPattern<CommNavigationObjects::CommGridMap> *curMapClient;
 	Smart::InputTaskTrigger<CommNavigationObjects::CommGridMap> *curMapClientInputTaskTrigger;
 	CurMapClientUpcallManager *curMapClientUpcallManager;
+	CurMapClientInputCollector *curMapClientInputCollector;
 	
 	// define request-ports
 	
@@ -130,18 +137,20 @@ public:
 	
 	// define output-ports
 	Smart::IEventServerPattern<CommNavigationObjects::CommPlannerEventParameter, CommNavigationObjects::CommPlannerEventResult, CommNavigationObjects::PlannerEventState> *plannerEventServer;
+	PlannerEventServerWrapper *plannerEventServerWrapper;
 	std::shared_ptr<Smart::IEventTestHandler<CommNavigationObjects::CommPlannerEventParameter, CommNavigationObjects::CommPlannerEventResult, CommNavigationObjects::PlannerEventState>> plannerEventServerEventTestHandler;
 	Smart::IPushServerPattern<CommNavigationObjects::CommPlannerGoal> *plannerGoalServer;
+	PlannerGoalServerWrapper *plannerGoalServerWrapper;
 	
 	// define answer-ports
 	
 	// define request-handlers
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
 	// definitions of PlainOpcUaSmartPlannerBreadthFirstSearchExtension
 	
-	// definitions of SmartPlannerBreadthFirstSearchROSExtension
+	// definitions of SmartPlannerBreadthFirstSearchROS1InterfacesExtension
+	
+	// definitions of SmartPlannerBreadthFirstSearchRestInterfacesExtension
 	
 	
 	// define default slave ports
@@ -254,6 +263,7 @@ public:
 	
 		//--- client port parameter ---
 		struct BaseStateClient_struct {
+			bool initialConnect;
 			std::string serverName;
 			std::string serviceName;
 			std::string wiringName;
@@ -261,6 +271,7 @@ public:
 			std::string roboticMiddleware;
 		} baseStateClient;
 		struct CurMapClient_struct {
+			bool initialConnect;
 			std::string serverName;
 			std::string serviceName;
 			std::string wiringName;
@@ -268,11 +279,11 @@ public:
 			std::string roboticMiddleware;
 		} curMapClient;
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// -- parameters for PlainOpcUaSmartPlannerBreadthFirstSearchExtension
 		
-		// -- parameters for SmartPlannerBreadthFirstSearchROSExtension
+		// -- parameters for SmartPlannerBreadthFirstSearchROS1InterfacesExtension
+		
+		// -- parameters for SmartPlannerBreadthFirstSearchRestInterfacesExtension
 		
 	} connections;
 };

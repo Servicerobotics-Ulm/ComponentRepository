@@ -31,7 +31,7 @@ ComponentLaserHokuyoURGServer::ComponentLaserHokuyoURGServer()
 	std::cout << "constructor of ComponentLaserHokuyoURGServer\n";
 	
 	// set all pointer members to NULL
-	//componentLaserHokuyoURGServer = NULL;
+	//coordinationPort = NULL;
 	//coordinationPort = NULL;
 	laserTask = NULL;
 	laserTaskTrigger = NULL;
@@ -40,13 +40,16 @@ ComponentLaserHokuyoURGServer::ComponentLaserHokuyoURGServer()
 	baseTimedClient = NULL;
 	baseTimedClientInputTaskTrigger = NULL;
 	baseTimedClientUpcallManager = NULL;
+	baseTimedClientInputCollector = NULL;
 	laserPushNewestServer = NULL;
+	laserPushNewestServerWrapper = NULL;
 	laserQueryServer = NULL;
 	laserQueryServerInputTaskTrigger = NULL;
 	laserQueryServerHandler = NULL;
 	manipulatorTimedClient = NULL;
 	manipulatorTimedClientInputTaskTrigger = NULL;
 	manipulatorTimedClientUpcallManager = NULL;
+	manipulatorTimedClientInputCollector = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
@@ -88,10 +91,6 @@ ComponentLaserHokuyoURGServer::ComponentLaserHokuyoURGServer()
 	connections.watchDogTask.scheduler = "DEFAULT";
 	connections.watchDogTask.priority = -1;
 	connections.watchDogTask.cpuAffinity = -1;
-	
-	// initialize members of ComponentLaserHokuyoURGServerROSExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentLaserHokuyoURGServerExtension
 	
@@ -236,10 +235,6 @@ void ComponentLaserHokuyoURGServer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of ComponentLaserHokuyoURGServerROSExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of PlainOpcUaComponentLaserHokuyoURGServerExtension
 		
 		
@@ -277,6 +272,7 @@ void ComponentLaserHokuyoURGServer::init(int argc, char *argv[])
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
 		laserPushNewestServer = portFactoryRegistry[connections.laserPushNewestServer.roboticMiddleware]->createLaserPushNewestServer(connections.laserPushNewestServer.serviceName);
+		laserPushNewestServerWrapper = new LaserPushNewestServerWrapper(laserPushNewestServer);
 		laserQueryServer = portFactoryRegistry[connections.laserQueryServer.roboticMiddleware]->createLaserQueryServer(connections.laserQueryServer.serviceName);
 		laserQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan>(laserQueryServer);
 		
@@ -285,10 +281,12 @@ void ComponentLaserHokuyoURGServer::init(int argc, char *argv[])
 		manipulatorTimedClient = portFactoryRegistry[connections.manipulatorTimedClient.roboticMiddleware]->createManipulatorTimedClient();
 		
 		// create InputTaskTriggers and UpcallManagers
-		baseTimedClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(baseTimedClient);
-		baseTimedClientUpcallManager = new BaseTimedClientUpcallManager(baseTimedClient);
-		manipulatorTimedClientInputTaskTrigger = new Smart::InputTaskTrigger<CommManipulatorObjects::CommMobileManipulatorState>(manipulatorTimedClient);
-		manipulatorTimedClientUpcallManager = new ManipulatorTimedClientUpcallManager(manipulatorTimedClient);
+		baseTimedClientInputCollector = new BaseTimedClientInputCollector(baseTimedClient);
+		baseTimedClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(baseTimedClientInputCollector);
+		baseTimedClientUpcallManager = new BaseTimedClientUpcallManager(baseTimedClientInputCollector);
+		manipulatorTimedClientInputCollector = new ManipulatorTimedClientInputCollector(manipulatorTimedClient);
+		manipulatorTimedClientInputTaskTrigger = new Smart::InputTaskTrigger<CommManipulatorObjects::CommMobileManipulatorState>(manipulatorTimedClientInputCollector);
+		manipulatorTimedClientUpcallManager = new ManipulatorTimedClientUpcallManager(manipulatorTimedClientInputCollector);
 		
 		// create input-handler
 		
@@ -460,14 +458,17 @@ void ComponentLaserHokuyoURGServer::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 	delete baseTimedClientInputTaskTrigger;
 	delete baseTimedClientUpcallManager;
+	delete baseTimedClientInputCollector;
 	delete manipulatorTimedClientInputTaskTrigger;
 	delete manipulatorTimedClientUpcallManager;
+	delete manipulatorTimedClientInputCollector;
 
 	// destroy client ports
 	delete baseTimedClient;
 	delete manipulatorTimedClient;
 
 	// destroy server ports
+	delete laserPushNewestServerWrapper;
 	delete laserPushNewestServer;
 	delete laserQueryServer;
 	delete laserQueryServerInputTaskTrigger;
@@ -496,10 +497,6 @@ void ComponentLaserHokuyoURGServer::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentLaserHokuyoURGServerROSExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentLaserHokuyoURGServerExtension
 	
@@ -643,10 +640,6 @@ void ComponentLaserHokuyoURGServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("WatchDogTask", "cpuAffinity")) {
 			parameter.getInteger("WatchDogTask", "cpuAffinity", connections.watchDogTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentLaserHokuyoURGServerROSExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentLaserHokuyoURGServerExtension
 		

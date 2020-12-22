@@ -29,10 +29,6 @@
 class ComponentTrafficLightPortFactoryInterface;
 class ComponentTrafficLightExtension;
 
-// includes for ComponentTrafficLightROSExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentTrafficLightExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -43,12 +39,14 @@ class ComponentTrafficLightExtension;
 #include <DomainHMI/CommTrafficLightACE.hh>
 
 // include tasks
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 #include "TrafficLightServiceInUpcallManager.hh"
+#include "TrafficLightServiceInInputCollector.hh"
 
 // include input-handler(s)
 #include "TrafficLightServiceInHandler.hh"
 // include request-handler(s)
+// output port wrappers
 
 // include handler
 #include "CompHandler.hh"
@@ -95,6 +93,7 @@ public:
 	Smart::ISendServerPattern<DomainHMI::CommTrafficLight> *trafficLightServiceIn;
 	Smart::InputTaskTrigger<DomainHMI::CommTrafficLight> *trafficLightServiceInInputTaskTrigger;
 	TrafficLightServiceInUpcallManager *trafficLightServiceInUpcallManager;
+	TrafficLightServiceInInputCollector *trafficLightServiceInInputCollector;
 	
 	// define request-ports
 	
@@ -106,10 +105,6 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
-	
-	// definitions of ComponentTrafficLightROSExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentTrafficLightExtension
 	
@@ -202,10 +197,6 @@ public:
 		} trafficLightServiceIn;
 	
 		//--- client port parameter ---
-		
-		// -- parameters for ComponentTrafficLightROSExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentTrafficLightExtension
 		

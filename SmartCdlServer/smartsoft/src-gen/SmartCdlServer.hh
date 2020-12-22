@@ -29,13 +29,13 @@
 class SmartCdlServerPortFactoryInterface;
 class SmartCdlServerExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaSmartCdlServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
 
-// includes for SmartCdlServerROSExtension
+// includes for SmartCdlServerROS1InterfacesExtension
+
+// includes for SmartCdlServerRestInterfacesExtension
 
 
 // include communication objects
@@ -53,14 +53,14 @@ class SmartCdlServerExtension;
 #include <CommNavigationObjects/CommCdlRobotBlockedEventResultACE.hh>
 #include <CommNavigationObjects/CommCdlRobotBlockedState.hh>
 #include <CommNavigationObjects/CommCdlRobotBlockedStateACE.hh>
+#include <CommNavigationObjects/CommCorridorNavigationGoal.hh>
+#include <CommNavigationObjects/CommCorridorNavigationGoalACE.hh>
 #include <CommBasicObjects/CommMobileIRScan.hh>
 #include <CommBasicObjects/CommMobileIRScanACE.hh>
 #include <CommBasicObjects/CommMobileLaserScan.hh>
 #include <CommBasicObjects/CommMobileLaserScanACE.hh>
 #include <CommBasicObjects/CommNavigationVelocity.hh>
 #include <CommBasicObjects/CommNavigationVelocityACE.hh>
-#include <CommRobotinoObjects/CommPathNavigationGoal.hh>
-#include <CommRobotinoObjects/CommPathNavigationGoalACE.hh>
 #include <CommNavigationObjects/CommPlannerGoal.hh>
 #include <CommNavigationObjects/CommPlannerGoalACE.hh>
 #include <CommTrackingObjects/CommTrackingGoal.hh>
@@ -68,18 +68,30 @@ class SmartCdlServerExtension;
 
 // include tasks
 #include "CdlTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 #include "BaseStateClientUpcallManager.hh"
+#include "BaseStateClientInputCollector.hh"
 #include "IRClientUpcallManager.hh"
+#include "IRClientInputCollector.hh"
 #include "LaserClientUpcallManager.hh"
+#include "LaserClientInputCollector.hh"
 #include "LaserClient2UpcallManager.hh"
+#include "LaserClient2InputCollector.hh"
 #include "NavVelSendServerUpcallManager.hh"
+#include "NavVelSendServerInputCollector.hh"
 #include "PathNavigationGoalClientUpcallManager.hh"
+#include "PathNavigationGoalClientInputCollector.hh"
 #include "PlannerClientUpcallManager.hh"
+#include "PlannerClientInputCollector.hh"
 #include "TrackingClientUpcallManager.hh"
+#include "TrackingClientInputCollector.hh"
 
 // include input-handler(s)
 // include request-handler(s)
+// output port wrappers
+#include "NavVelSendClientWrapper.hh"
+#include "GoalEventServerWrapper.hh"
+#include "RobotBlockedEventServerWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -139,34 +151,42 @@ public:
 	Smart::IPushClientPattern<CommBasicObjects::CommBaseState> *baseStateClient;
 	Smart::InputTaskTrigger<CommBasicObjects::CommBaseState> *baseStateClientInputTaskTrigger;
 	BaseStateClientUpcallManager *baseStateClientUpcallManager;
+	BaseStateClientInputCollector *baseStateClientInputCollector;
 	// InputPort IRClient
 	Smart::IPushClientPattern<CommBasicObjects::CommMobileIRScan> *iRClient;
 	Smart::InputTaskTrigger<CommBasicObjects::CommMobileIRScan> *iRClientInputTaskTrigger;
 	IRClientUpcallManager *iRClientUpcallManager;
+	IRClientInputCollector *iRClientInputCollector;
 	// InputPort LaserClient
 	Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> *laserClient;
 	Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan> *laserClientInputTaskTrigger;
 	LaserClientUpcallManager *laserClientUpcallManager;
+	LaserClientInputCollector *laserClientInputCollector;
 	// InputPort LaserClient2
 	Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> *laserClient2;
 	Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan> *laserClient2InputTaskTrigger;
 	LaserClient2UpcallManager *laserClient2UpcallManager;
+	LaserClient2InputCollector *laserClient2InputCollector;
 	// InputPort NavVelSendServer
 	Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> *navVelSendServer;
 	Smart::InputTaskTrigger<CommBasicObjects::CommNavigationVelocity> *navVelSendServerInputTaskTrigger;
 	NavVelSendServerUpcallManager *navVelSendServerUpcallManager;
+	NavVelSendServerInputCollector *navVelSendServerInputCollector;
 	// InputPort PathNavigationGoalClient
-	Smart::IPushClientPattern<CommRobotinoObjects::CommPathNavigationGoal> *pathNavigationGoalClient;
-	Smart::InputTaskTrigger<CommRobotinoObjects::CommPathNavigationGoal> *pathNavigationGoalClientInputTaskTrigger;
+	Smart::IPushClientPattern<CommNavigationObjects::CommCorridorNavigationGoal> *pathNavigationGoalClient;
+	Smart::InputTaskTrigger<CommNavigationObjects::CommCorridorNavigationGoal> *pathNavigationGoalClientInputTaskTrigger;
 	PathNavigationGoalClientUpcallManager *pathNavigationGoalClientUpcallManager;
+	PathNavigationGoalClientInputCollector *pathNavigationGoalClientInputCollector;
 	// InputPort PlannerClient
 	Smart::IPushClientPattern<CommNavigationObjects::CommPlannerGoal> *plannerClient;
 	Smart::InputTaskTrigger<CommNavigationObjects::CommPlannerGoal> *plannerClientInputTaskTrigger;
 	PlannerClientUpcallManager *plannerClientUpcallManager;
+	PlannerClientInputCollector *plannerClientInputCollector;
 	// InputPort TrackingClient
 	Smart::IPushClientPattern<CommTrackingObjects::CommTrackingGoal> *trackingClient;
 	Smart::InputTaskTrigger<CommTrackingObjects::CommTrackingGoal> *trackingClientInputTaskTrigger;
 	TrackingClientUpcallManager *trackingClientUpcallManager;
+	TrackingClientInputCollector *trackingClientInputCollector;
 	
 	// define request-ports
 	
@@ -174,20 +194,23 @@ public:
 	
 	// define output-ports
 	Smart::IEventServerPattern<CommNavigationObjects::CommCdlGoalEventParameter, CommNavigationObjects::CommCdlGoalEventResult, CommNavigationObjects::CdlGoalEventState> *goalEventServer;
+	GoalEventServerWrapper *goalEventServerWrapper;
 	std::shared_ptr<Smart::IEventTestHandler<CommNavigationObjects::CommCdlGoalEventParameter, CommNavigationObjects::CommCdlGoalEventResult, CommNavigationObjects::CdlGoalEventState>> goalEventServerEventTestHandler;
 	Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> *navVelSendClient;
+	NavVelSendClientWrapper *navVelSendClientWrapper;
 	Smart::IEventServerPattern<CommNavigationObjects::CommCdlRobotBlockedEventParameter, CommNavigationObjects::CommCdlRobotBlockedEventResult, CommNavigationObjects::CommCdlRobotBlockedState> *robotBlockedEventServer;
+	RobotBlockedEventServerWrapper *robotBlockedEventServerWrapper;
 	std::shared_ptr<Smart::IEventTestHandler<CommNavigationObjects::CommCdlRobotBlockedEventParameter, CommNavigationObjects::CommCdlRobotBlockedEventResult, CommNavigationObjects::CommCdlRobotBlockedState>> robotBlockedEventServerEventTestHandler;
 	
 	// define answer-ports
 	
 	// define request-handlers
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
 	// definitions of PlainOpcUaSmartCdlServerExtension
 	
-	// definitions of SmartCdlServerROSExtension
+	// definitions of SmartCdlServerROS1InterfacesExtension
+	
+	// definitions of SmartCdlServerRestInterfacesExtension
 	
 	
 	// define default slave ports
@@ -326,6 +349,7 @@ public:
 			std::string roboticMiddleware;
 		} iRClient;
 		struct LaserClient_struct {
+			bool initialConnect;
 			std::string serverName;
 			std::string serviceName;
 			std::string wiringName;
@@ -373,11 +397,11 @@ public:
 			std::string roboticMiddleware;
 		} trackingClient;
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// -- parameters for PlainOpcUaSmartCdlServerExtension
 		
-		// -- parameters for SmartCdlServerROSExtension
+		// -- parameters for SmartCdlServerROS1InterfacesExtension
+		
+		// -- parameters for SmartCdlServerRestInterfacesExtension
 		
 	} connections;
 };

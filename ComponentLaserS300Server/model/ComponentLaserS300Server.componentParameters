@@ -1,5 +1,5 @@
 ComponentParameter ComponentLaserS300ServerParams component ComponentLaserS300Server {
-		InternalParameter scanner {
+	InternalParameter scanner {
 		verbose : Boolean = false
 		on_turret : Boolean = false
 		x : Int32 = 0
@@ -17,6 +17,14 @@ ComponentParameter ComponentLaserS300ServerParams component ComponentLaserS300Se
 		length_unit : UInt32 = 1
 		frequency : UInt32 = 50
 		telgrm_v103 : Boolean = true
+		
+	}
+	
+	InternalParameter safetyEvents {
+		safetyEventsFromIO : Boolean = false
+		laserSafetyFieldTimeOutSec : Int32 = 10
+		laserSafetyFieldTimeOutMSec : Int32 = 0	
+		laserSafetyBit : Int32 = 0;		
 	}
 	
 	InternalParameter base_manipulator { 
@@ -32,7 +40,6 @@ ComponentParameter ComponentLaserS300ServerParams component ComponentLaserS300Se
 	InternalParameter services {
 		activate_push_newest : Boolean = true
 		activate_push_timed : Boolean = true
-		activate_safetyEventServer : Boolean = true
 	}
 
 }

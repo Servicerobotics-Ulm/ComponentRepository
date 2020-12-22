@@ -59,10 +59,14 @@ double t_alpha_sum = 0;
 
 
 #ifdef WITH_OPENCV_CDL_LOOKUP_DEBUG
-	//functions to show some point:
-	#define show_px(x, y) { cvCircle(img, cvPoint((-cdl_c_y_min + -y) * cdl_to_pixel_scale, (cdl_c_x_max + -x) * cdl_to_pixel_scale), dotsize, CV_RGB(0, 255, 0), fill); }
-	#define show_px_color(x, y, color) { cvCircle(img, cvPoint((-cdl_c_y_min + -y) * cdl_to_pixel_scale, (cdl_c_x_max + -x) * cdl_to_pixel_scale), dotsize, color, fill); }
-
+	#ifdef WITH_OPENCV_4_2_VERSION
+		#define show_px(x, y) { cv::circle(img, cv::Point((-cdl_c_y_min + -y) * cdl_to_pixel_scale, (cdl_c_x_max + -x) * cdl_to_pixel_scale), dotsize, cv::Scalar(0, 255, 0), fill); }
+		#define show_px_color(x, y, color) { cv::circle(img, cv::Point((-cdl_c_y_min + -y) * cdl_to_pixel_scale, (cdl_c_x_max + -x) * cdl_to_pixel_scale), dotsize, color, fill); }
+	#else
+		//functions to show some point:
+		#define show_px(x, y) { cvCircle(img, cvPoint((-cdl_c_y_min + -y) * cdl_to_pixel_scale, (cdl_c_x_max + -x) * cdl_to_pixel_scale), dotsize, CV_RGB(0, 255, 0), fill); }
+		#define show_px_color(x, y, color) { cvCircle(img, cvPoint((-cdl_c_y_min + -y) * cdl_to_pixel_scale, (cdl_c_x_max + -x) * cdl_to_pixel_scale), dotsize, color, fill); }
+	#endif
 #endif
 
 
@@ -489,16 +493,26 @@ bool CdlLookupClass::cdl_load_contour_ascii(char *filename)
 
 
 #ifdef WITH_OPENCV_CDL_LOOKUP_DEBUG
-// debug function to visualize CDL contour
-void CdlLookupClass::drawCdlContour(IplImage *img, int cdl_x_max, int cdl_y_min, double cdl_to_pixel_scale, CvScalar color) {
-	for(int i=0; i < polygon.number_of_segments; i++) {
-		cvLine(img, 
-			cvPoint((-cdl_y_min + -polygon.line[i].y1) * cdl_to_pixel_scale, (cdl_x_max + -polygon.line[i].x1) * cdl_to_pixel_scale), 
-			cvPoint((-cdl_y_min + -polygon.line[i].y2) * cdl_to_pixel_scale, (cdl_x_max + -polygon.line[i].x2) * cdl_to_pixel_scale), 
-			color,
-			2);
-	}
-}
+	#ifdef WITH_OPENCV_4_2_VERSION
+		void CdlLookupClass::drawCdlContour(cv::Mat img, int cdl_x_max, int cdl_y_min, double cdl_to_pixel_scale, cv::Scalar color) {
+			for(int i=0; i < polygon.number_of_segments; i++) {
+				cv::line(img,
+					cv::Point((-cdl_y_min + -polygon.line[i].y1) * cdl_to_pixel_scale, (cdl_x_max + -polygon.line[i].x1) * cdl_to_pixel_scale),
+					cv::Point((-cdl_y_min + -polygon.line[i].y2) * cdl_to_pixel_scale, (cdl_x_max + -polygon.line[i].x2) * cdl_to_pixel_scale),
+					color, 2);
+			}
+		}
+	#else
+		// debug function to visualize CDL contour
+		void CdlLookupClass::drawCdlContour(IplImage *img, int cdl_x_max, int cdl_y_min, double cdl_to_pixel_scale, CvScalar color) {
+			for(int i=0; i < polygon.number_of_segments; i++) {
+				cvLine(img,
+						cvPoint((-cdl_y_min + -polygon.line[i].y1) * cdl_to_pixel_scale, (cdl_x_max + -polygon.line[i].x1) * cdl_to_pixel_scale),
+						cvPoint((-cdl_y_min + -polygon.line[i].y2) * cdl_to_pixel_scale, (cdl_x_max + -polygon.line[i].x2) * cdl_to_pixel_scale),
+						color, 2);
+			}
+		}
+	#endif
 #endif
 
 
@@ -1662,6 +1676,35 @@ int CdlLookupClass::calculateSpeedValues(
 
 //////////////////////////////////////////////////////
 #ifdef WITH_OPENCV_CDL_LOOKUP_DEBUG
+	#ifdef WITH_OPENCV_4_2_VERSION
+  	  img = cv::Mat(cv::Size(pixelX, pixelY), CV_8UC3, cv::Scalar(255,255,255));
+  	  //TODO color of image
+  	  img = cv::Scalar::all(255);
+
+  	  if(strategy == CDL_STRATEGY_15){
+  		drawCdlContour(img, cdl_c_x_max, cdl_c_y_min, cdl_to_pixel_scale, cv::Scalar(0, 255, 0));
+  	  } else {
+  		  drawCdlContour(img, cdl_c_x_max, cdl_c_y_min, cdl_to_pixel_scale, cv::Scalar(255, 0, 0));
+  	  }
+
+  	  // show robot 0|0
+  	  cv::circle(img,
+  		cv::Point(
+  			-cdl_c_y_min * cdl_to_pixel_scale,
+  			cdl_c_x_max * cdl_to_pixel_scale // y value
+  		       ),
+  		dotsize,
+		cv::Scalar(255, 0, 0),
+  		fill);
+
+  	  for(int x = 0; x < pixelX; x += gridsize) {
+  		for(int y = 0; y < pixelY; y += gridsize) {
+  			// show grid:
+  			cv::rectangle(img, cv::Point(x, y), cv::Point(x + gridsize, y + gridsize), cv::Scalar(128, 128, 128), 1);
+  			//cvCircle(img, cvPoint(x, y), 1, CV_RGB(0, 255, 0), 1);
+  		}
+  	  }
+	#else
 	img = cvCreateImage( cvSize(pixelX, pixelY), IPL_DEPTH_8U, 3 );
 	//TODO color of image
 	cvSet(img, cvScalar(255, 255, 255));
@@ -1690,6 +1733,7 @@ int CdlLookupClass::calculateSpeedValues(
 			//cvCircle(img, cvPoint(x, y), 1, CV_RGB(0, 255, 0), 1);
 		}
 	}
+	#endif
 #endif
 
 
@@ -4363,6 +4407,187 @@ ss << std::setw(3) << std::setfill('0') << "cdl-out-" << imgCntTMP++ << ".jpg";
 
 
 #ifdef WITH_OPENCV_CDL_LOOKUP_DEBUG
+#ifdef WITH_OPENCV_4_2_VERSION
+  std::cout<<"ciRes: "<< ciResult <<" vResult|desv: ("<<vResult<<"|"<<desiredTranslationalSpeed<<") wResult|desW: ("<<wResult<<"|"<<desiredRotationalSpeed<<")"<<std::endl;
+  std::cout<<"Current Limits: vmin|vmax: ("<<vmin<<"|"<<vmax<<") wmin|wmax: ("<<wmin<<"|"<<wmax<<")"<<std::endl;
+  if( strategy  == CDL_STRATEGY_1){
+     if(desiredRotationalSpeed !=0){
+  	  double r = (desiredTranslationalSpeed/1000.0) / desiredRotationalSpeed;
+  			  r = r*1000.0;
+  	  double icc_x = 0;
+  	  double icc_y = r;
+
+  	if(icc_y<0){
+  	  r = abs00(r);
+  	  cv::ellipse(img, cv::Point((-cdl_c_y_min + -icc_y) * cdl_to_pixel_scale, (cdl_c_x_max + -icc_x) * cdl_to_pixel_scale), cv::Size(r * cdl_to_pixel_scale,r * cdl_to_pixel_scale), 0,  180,  270, cv::Scalar(0, 0, 255), 1);
+
+  	} else {
+      cv::ellipse(img, cv::Point((-cdl_c_y_min + -icc_y) * cdl_to_pixel_scale, (cdl_c_x_max + -icc_x) * cdl_to_pixel_scale), cv::Size(r * cdl_to_pixel_scale,r * cdl_to_pixel_scale), 0,  270, 360 , cv::Scalar(0, 0, 255), 1);
+  	}
+     }
+
+     else {
+
+     	cv::line(img,
+     		cv::Point((-cdl_c_y_min + -0) * cdl_to_pixel_scale, (cdl_c_x_max + -0) * cdl_to_pixel_scale),
+     		cv::Point((-cdl_c_y_min + -0) * cdl_to_pixel_scale, (cdl_c_x_max + -1000) * cdl_to_pixel_scale),
+     		cv::Scalar(0, 0, 255),
+     		2);
+       }
+
+
+     char buffer1[255];
+     char buffer2[255];
+     sprintf(buffer1, "distO|dist: (%f|%f)",dist_lookup, dist );
+     sprintf(buffer2, "angleO|angle: (%f|%f)",angle_lookup, angle );
+     //CvFont font;
+     //cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.75, 0.75);
+     if(dist == 0){
+  	   cv::putText(img, buffer1, cv::Point(-cdl_c_y_min * cdl_to_pixel_scale,
+  				cdl_c_x_max * cdl_to_pixel_scale), cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(255, 0, 0));
+
+     } else {
+    	 cv::putText(img, buffer1, cv::Point(-cdl_c_y_min * cdl_to_pixel_scale,
+  	   				cdl_c_x_max * cdl_to_pixel_scale), cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(0, 0, 0));
+     }
+
+     if(angle == 0){
+    	 cv::putText(img, buffer2, cv::Point(-cdl_c_y_min * cdl_to_pixel_scale,
+  	       			(cdl_c_x_max -200) * cdl_to_pixel_scale), cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(255, 0, 0));
+
+     } else {
+    	 cv::putText(img, buffer2, cv::Point(-cdl_c_y_min * cdl_to_pixel_scale,
+      			(cdl_c_x_max -200) * cdl_to_pixel_scale), cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(0, 0, 0));
+     }
+
+     if(vResult==0 && wResult == 0){
+  	   char buffer[255];
+  	      sprintf(buffer, "STOP ROBOT!");
+  	      //CvFont font;
+  	      //cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 1, 1);
+  	      cv::putText(img, buffer, cv::Point(-cdl_c_y_min * cdl_to_pixel_scale,
+  	    			(cdl_c_x_max + 200) * cdl_to_pixel_scale), cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar((255, 0, 0)));
+     }
+
+
+  }
+
+
+  //for person following
+  if( strategy  == CDL_STRATEGY_7){
+
+  	  show_px_color(goalX, goalY, CV_RGB(255, 0, 255)); // alte transformiert = ungerastert/kontinuierliche werte
+
+  }
+
+
+    if(wResult !=0){
+  	  double r = (vResult/1000.0) / wResult;
+  			  r = r*1000.0;
+  	  double icc_x = 0;
+  	  double icc_y = r;
+
+  	if(icc_y<0){
+  	  r = abs00(r);
+  	  cv::ellipse(img, cv::Point((-cdl_c_y_min + -icc_y) * cdl_to_pixel_scale, (cdl_c_x_max + -icc_x) * cdl_to_pixel_scale), cv::Size(r * cdl_to_pixel_scale,r * cdl_to_pixel_scale), 0,  180,  270, cv::Scalar(255, 0, 0), 1);
+
+  	} else {
+  	  cv::ellipse(img, cv::Point((-cdl_c_y_min + -icc_y) * cdl_to_pixel_scale, (cdl_c_x_max + -icc_x) * cdl_to_pixel_scale), cv::Size(r * cdl_to_pixel_scale,r * cdl_to_pixel_scale), 0,  270, 360 , cv::Scalar(255, 0, 0), 1);
+  	}
+
+
+  	//calculate point on line
+  	double s, alpha, h,ys, r_m;
+  	r_m = r/1000.0;
+  	s = vResult * deltat;
+  	alpha = s/r;
+  	h = sin(alpha) * r_m;
+  	ys = cos(alpha) * r_m;
+
+
+  	double res_x,res_y;
+  	res_x = h*1000;
+  	if(icc_y<0){
+  		res_y = icc_y + (ys*1000.0);
+  	} else {
+  		res_y = icc_y - (ys*1000.0);
+  	}
+
+
+  	show_px_color(res_x, res_y, CV_RGB(128, 128, 128));
+
+    } else {
+
+  	cv::line(img,
+  		cv::Point((-cdl_c_y_min + -0) * cdl_to_pixel_scale, (cdl_c_x_max + -0) * cdl_to_pixel_scale),
+  		cv::Point((-cdl_c_y_min + -0) * cdl_to_pixel_scale, (cdl_c_x_max + -1000) * cdl_to_pixel_scale),
+  		cv::Scalar(255, 0, 0),
+  		1);
+  	double s;
+  	s = vResult * deltat;
+  	show_px_color(s, 0, cv::Scalar(128, 128, 128));
+    }
+
+    // FOR Debuging only Plot current speed!
+    if(fabs(w) > 0.01){
+  	  std::cout << "v/w: " << v << "/" << w << std::endl;
+  	  double r = (v/1000.0) / w;
+  			  r = r*1000.0;
+  	  double icc_x = 0;
+  	  double icc_y = r;
+
+  	if(icc_y<0){
+  	  r = abs00(r);
+  	  cv::ellipse(img, cv::Point((-cdl_c_y_min + -icc_y) * cdl_to_pixel_scale, (cdl_c_x_max + -icc_x) * cdl_to_pixel_scale), cv::Size(r * cdl_to_pixel_scale,r * cdl_to_pixel_scale), 0,  180,  270, cv::Scalar(0, 0, 255), 1);
+
+  	} else {
+  	  cv::ellipse(img, cv::Point((-cdl_c_y_min + -icc_y) * cdl_to_pixel_scale, (cdl_c_x_max + -icc_x) * cdl_to_pixel_scale), cv::Size(r * cdl_to_pixel_scale,r * cdl_to_pixel_scale), 0,  270, 360 , cv::Scalar(0, 0, 255), 1);
+  	}
+
+
+  	//calculate point on line
+  	double s, alpha, h,ys, r_m;
+  	r_m = r/1000.0;
+  	s = v * deltat;
+  	alpha = s/r;
+  	h = sin(alpha) * r_m;
+  	ys = cos(alpha) * r_m;
+
+
+  	double res_x,res_y;
+  	res_x = h*1000;
+  	if(icc_y<0){
+  		res_y = icc_y + (ys*1000.0);
+  	} else {
+  		res_y = icc_y - (ys*1000.0);
+  	}
+
+
+  	show_px_color(res_x, res_y, CV_RGB(0, 0, 255));
+
+    } else {
+
+  	cv::line(img,
+  		cv::Point((-cdl_c_y_min + -0) * cdl_to_pixel_scale, (cdl_c_x_max + -0) * cdl_to_pixel_scale),
+  		cv::Point((-cdl_c_y_min + -0) * cdl_to_pixel_scale, (cdl_c_x_max + -1000) * cdl_to_pixel_scale),
+  		cv::Scalar(0, 0, 255),
+  		1);
+  	double s;
+  	s = v * deltat;
+  	show_px_color(s, 0, CV_RGB(0, 0, 255));
+    }
+
+
+  	   char buffer[255];
+
+  	      sprintf(buffer, "V: %f W: %f A: %f:", v, w, posA*180.0/M_PI);
+
+  	      //CvFont font;
+  	      //cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 1, 1);
+  	      cv::putText(img, buffer, cv::Point(-cdl_c_y_min * cdl_to_pixel_scale,
+  	    			(cdl_c_x_max + 200) * cdl_to_pixel_scale), cv::FONT_HERSHEY_SIMPLEX,  0.75, cv::Scalar(0, 0, 255));
+#else  // not WITH_OPENCV_4_2_VERSION
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 std::cout<<"ciRes: "<< ciResult <<" vResult|desv: ("<<vResult<<"|"<<desiredTranslationalSpeed<<") wResult|desW: ("<<wResult<<"|"<<desiredRotationalSpeed<<")"<<std::endl;
 std::cout<<"Current Limits: vmin|vmax: ("<<vmin<<"|"<<vmax<<") wmin|wmax: ("<<wmin<<"|"<<wmax<<")"<<std::endl;
 if( strategy  == CDL_STRATEGY_1){
@@ -4542,11 +4767,28 @@ if( strategy  == CDL_STRATEGY_7){
 	      cvPutText(img, buffer, cvPoint(-cdl_c_y_min * cdl_to_pixel_scale,
 	    			(cdl_c_x_max + 200) * cdl_to_pixel_scale), &font, CV_RGB(0, 0, 255));
   
-#endif
+#endif // OpenCV 4.2
+#endif //WITH_OPENCV_CDL_LOOKUP_DEBUG
 
 
 #ifdef WITH_OPENCV_CDL_LOOKUP_DEBUG
-  //TODO
+	#ifdef WITH_OPENCV_4_2_VERSION
+	      //TODO
+	      	  	  if( strategy  == CDL_STRATEGY_14){
+	      	  		double lx,ly;
+	      	  		CommBasicObjects::CommBasePose basePosition = scan.get_base_state().get_base_position();
+
+	      	  		transformWorldPointToRobot_LookUP(basePosition.get_x(1),basePosition.get_y(1),basePosition.get_base_azimuth(),goalX/1000.0,goalY/1000.0,lx,ly);
+	    			show_px_color(lx*1000, ly*1000, cv::Scalar(111, 0, 255));
+
+	    			transformWorldPointToRobot_LookUP(basePosition.get_x(1),basePosition.get_y(1),basePosition.get_base_azimuth(),finalGoalX/1000.0,finalGoalY/1000.0,lx,ly);
+	    			show_px_color(lx*1000, ly*1000, cv::Scalar(159, 0, 255));
+
+	      	  	  }
+	      	  	cv::imshow("cdldebug", img);
+	      	  	cv::waitKey(33);
+	#else
+	      //TODO
   	  	  if( strategy  == CDL_STRATEGY_14){
   	  		double lx,ly;
   	  		CommBasicObjects::CommBasePose basePosition = scan.get_base_state().get_base_position();
@@ -4558,16 +4800,11 @@ if( strategy  == CDL_STRATEGY_7){
 			show_px_color(lx*1000, ly*1000, CV_RGB(159, 0, 255));
 
   	  	  }
+  	  	  cvShowImage("cdldebug", img);
+  	  	  cvWaitKey(33);
+  	  	  cvReleaseImage(&img);
 #endif
-
-#ifdef WITH_OPENCV_CDL_LOOKUP_DEBUG
-cvShowImage("cdldebug", img);
-cvWaitKey(33);
-//dbg_pause("cdl wait");
-
-cvReleaseImage(&img);
 #endif
-
 
 #if DEBUG_CDL_LOOKUP_FILE_OUT
 	if(COMP->cdlLookupdebug.is_open()){

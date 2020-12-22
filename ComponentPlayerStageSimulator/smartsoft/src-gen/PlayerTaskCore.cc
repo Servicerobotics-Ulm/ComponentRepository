@@ -94,7 +94,7 @@ void PlayerTaskCore::updateAllCommObjects()
 // this method is meant to be used in derived classes
 Smart::StatusCode PlayerTaskCore::baseStateServiceOutPut(CommBasicObjects::CommBaseState &baseStateServiceOutDataObject)
 {
-	Smart::StatusCode result = COMP->baseStateServiceOut->put(baseStateServiceOutDataObject);
+	Smart::StatusCode result = COMP->baseStateServiceOutWrapper->put(baseStateServiceOutDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
@@ -104,7 +104,7 @@ Smart::StatusCode PlayerTaskCore::baseStateServiceOutPut(CommBasicObjects::CommB
 // this method is meant to be used in derived classes
 Smart::StatusCode PlayerTaskCore::laserServiceOutPut(CommBasicObjects::CommMobileLaserScan &laserServiceOutDataObject)
 {
-	Smart::StatusCode result = COMP->laserServiceOut->put(laserServiceOutDataObject);
+	Smart::StatusCode result = COMP->laserServiceOutWrapper->put(laserServiceOutDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());

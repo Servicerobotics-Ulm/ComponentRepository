@@ -29,9 +29,9 @@
 class ComponentRealSenseV2ServerPortFactoryInterface;
 class ComponentRealSenseV2ServerExtension;
 
-// includes for ComponentRealSenseV2ServerROSExtension
+// includes for ComponentRealSenseV2ServerROS1InterfacesExtension
 
-// includes for OpcUaBackendComponentGeneratorExtension
+// includes for ComponentRealSenseV2ServerRestInterfacesExtension
 
 // includes for PlainOpcUaComponentRealSenseV2ServerExtension
 // include plain OPC UA device clients
@@ -56,15 +56,22 @@ class ComponentRealSenseV2ServerExtension;
 
 // include tasks
 #include "ImageTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 #include "UrPosePushTimedClientUpcallManager.hh"
+#include "UrPosePushTimedClientInputCollector.hh"
 #include "BasePushTimedClientUpcallManager.hh"
+#include "BasePushTimedClientInputCollector.hh"
 #include "PtuPosePushNewestClientUpcallManager.hh"
+#include "PtuPosePushNewestClientInputCollector.hh"
 
 // include input-handler(s)
 // include request-handler(s)
 #include "ColorImageQueryHandler.hh"
 #include "ImageQueryHandler.hh"
+// output port wrappers
+#include "DepthPushNewestServerWrapper.hh"
+#include "RGBDImagePushServiceOutWrapper.hh"
+#include "RGBImagePushServiceOutWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -124,14 +131,17 @@ public:
 	Smart::IPushClientPattern<CommManipulatorObjects::CommMobileManipulatorState> *urPosePushTimedClient;
 	Smart::InputTaskTrigger<CommManipulatorObjects::CommMobileManipulatorState> *urPosePushTimedClientInputTaskTrigger;
 	UrPosePushTimedClientUpcallManager *urPosePushTimedClientUpcallManager;
+	UrPosePushTimedClientInputCollector *urPosePushTimedClientInputCollector;
 	// InputPort basePushTimedClient
 	Smart::IPushClientPattern<CommBasicObjects::CommBaseState> *basePushTimedClient;
 	Smart::InputTaskTrigger<CommBasicObjects::CommBaseState> *basePushTimedClientInputTaskTrigger;
 	BasePushTimedClientUpcallManager *basePushTimedClientUpcallManager;
+	BasePushTimedClientInputCollector *basePushTimedClientInputCollector;
 	// InputPort ptuPosePushNewestClient
 	Smart::IPushClientPattern<CommBasicObjects::CommDevicePoseState> *ptuPosePushNewestClient;
 	Smart::InputTaskTrigger<CommBasicObjects::CommDevicePoseState> *ptuPosePushNewestClientInputTaskTrigger;
 	PtuPosePushNewestClientUpcallManager *ptuPosePushNewestClientUpcallManager;
+	PtuPosePushNewestClientInputCollector *ptuPosePushNewestClientInputCollector;
 	
 	// define request-ports
 	Smart::IQueryClientPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorState> *urPoseQueryClient;
@@ -139,9 +149,12 @@ public:
 	// define input-handler
 	
 	// define output-ports
-	Smart::IPushServerPattern<DomainVision::CommVideoImage> *colorImagePushNewestServer;
+	Smart::IPushServerPattern<DomainVision::CommRGBDImage> *rGBDImagePushServiceOut;
+	RGBDImagePushServiceOutWrapper *rGBDImagePushServiceOutWrapper;
+	Smart::IPushServerPattern<DomainVision::CommVideoImage> *rGBImagePushServiceOut;
+	RGBImagePushServiceOutWrapper *rGBImagePushServiceOutWrapper;
 	Smart::IPushServerPattern<DomainVision::CommDepthImage> *depthPushNewestServer;
-	Smart::IPushServerPattern<DomainVision::CommRGBDImage> *imagePushNewestServer;
+	DepthPushNewestServerWrapper *depthPushNewestServerWrapper;
 	
 	// define answer-ports
 	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> *colorImageQueryServer;
@@ -153,9 +166,9 @@ public:
 	ColorImageQueryHandler *colorImageQueryHandler;
 	ImageQueryHandler *imageQueryHandler;
 	
-	// definitions of ComponentRealSenseV2ServerROSExtension
+	// definitions of ComponentRealSenseV2ServerROS1InterfacesExtension
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
+	// definitions of ComponentRealSenseV2ServerRestInterfacesExtension
 	
 	// definitions of PlainOpcUaComponentRealSenseV2ServerExtension
 	
@@ -261,10 +274,14 @@ public:
 		//--- upcall parameter ---
 		
 		//--- server port parameter ---
-		struct ColorImagePushNewestServer_struct {
+		struct RGBDImagePushServiceOut_struct {
 				std::string serviceName;
 				std::string roboticMiddleware;
-		} colorImagePushNewestServer;
+		} rGBDImagePushServiceOut;
+		struct RGBImagePushServiceOut_struct {
+				std::string serviceName;
+				std::string roboticMiddleware;
+		} rGBImagePushServiceOut;
 		struct ColorImageQueryServer_struct {
 				std::string serviceName;
 				std::string roboticMiddleware;
@@ -273,10 +290,6 @@ public:
 				std::string serviceName;
 				std::string roboticMiddleware;
 		} depthPushNewestServer;
-		struct ImagePushNewestServer_struct {
-				std::string serviceName;
-				std::string roboticMiddleware;
-		} imagePushNewestServer;
 		struct ImageQueryServer_struct {
 				std::string serviceName;
 				std::string roboticMiddleware;
@@ -284,6 +297,7 @@ public:
 	
 		//--- client port parameter ---
 		struct UrPosePushTimedClient_struct {
+			bool initialConnect;
 			std::string serverName;
 			std::string serviceName;
 			std::string wiringName;
@@ -299,6 +313,7 @@ public:
 			std::string roboticMiddleware;
 		} urPoseQueryClient;
 		struct BasePushTimedClient_struct {
+			bool initialConnect;
 			std::string serverName;
 			std::string serviceName;
 			std::string wiringName;
@@ -306,6 +321,7 @@ public:
 			std::string roboticMiddleware;
 		} basePushTimedClient;
 		struct PtuPosePushNewestClient_struct {
+			bool initialConnect;
 			std::string serverName;
 			std::string serviceName;
 			std::string wiringName;
@@ -313,9 +329,9 @@ public:
 			std::string roboticMiddleware;
 		} ptuPosePushNewestClient;
 		
-		// -- parameters for ComponentRealSenseV2ServerROSExtension
+		// -- parameters for ComponentRealSenseV2ServerROS1InterfacesExtension
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
+		// -- parameters for ComponentRealSenseV2ServerRestInterfacesExtension
 		
 		// -- parameters for PlainOpcUaComponentRealSenseV2ServerExtension
 		

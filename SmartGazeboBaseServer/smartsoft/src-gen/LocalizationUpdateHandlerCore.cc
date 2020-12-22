@@ -20,11 +20,12 @@ LocalizationUpdateHandlerCore::LocalizationUpdateHandlerCore(
 	Smart::InputSubject<CommBasicObjects::CommBasePositionUpdate> *subject,
 	const int &prescaleFactor)
 	:	Smart::InputTaskTrigger<CommBasicObjects::CommBasePositionUpdate>(subject, prescaleFactor)
-{  
-	updateStatus = Smart::SMART_NODATA;
+{
 }
 LocalizationUpdateHandlerCore::~LocalizationUpdateHandlerCore()
-{  }
+{  
+}
+
 
 void LocalizationUpdateHandlerCore::updateAllCommObjects() {
 }

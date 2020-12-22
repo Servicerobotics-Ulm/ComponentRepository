@@ -23,8 +23,12 @@ CurrQueryServerHandlerCore::CurrQueryServerHandlerCore(IQueryServer* server)
 :	Smart::IInputHandler<std::pair<Smart::QueryIdPtr,CommNavigationObjects::CommGridMapRequest>>(server)
 ,	server(server)
 {
-	
 }
+
+CurrQueryServerHandlerCore::~CurrQueryServerHandlerCore()
+{
+}
+
 
 void CurrQueryServerHandlerCore::updateAllCommObjects()
 {

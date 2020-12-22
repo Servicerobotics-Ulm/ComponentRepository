@@ -1,0 +1,101 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; FILE OPERATIONS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; copyFile
+
+(realize-tcb  (copyFile ?filesource ?filetarget)
+  (module "FileOperationsCoordinationModule")
+  (action (
+            (format t "=========================>>> copyFile src: ~s target: ~s ~%" ?filesource ?filetarget)
+            (tcl-activate-event :name 'evt-movefile
+                                :handler 'handler-file-event
+                                :server 'filemover 
+                                :service 'fileEvent
+                                :mode 'continuous)
+                                                 
+            (tcl-param :server 'filemover :slot 'COMMBASICOBJECTS.FILEOPERATIONSPARAM.COPYFILE :value `(?filesource ?filetarget)))))
+
+
+(define-event-handler (handler-file-event)
+  (action (
+            (format t "=========================>>> HANDLER FILE EVENT: ~s ~%~%" (tcl-event-message))
+            (cond
+              ;; PushJob
+              ((equal (tcl-event-message) "(success)")
+                (format t "SUCCESS~%")
+                (tcl-abort)
+		'(SUCCESS()))
+              ((equal (tcl-event-message) "(error)")
+                (format t "ERROR~%")
+                (tcl-abort)
+		'(ERROR(COPY FILE)))
+              ;;
+              (T
+                (format t "Error unknown command send to SmartTCL ~%"))))))
+
+
+;; FILE OPERATIONS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;(execute '(tcb-test-file-copy ))
+;(define-tcb (tcb-test-file-copy )
+;(action (
+;(tcl-activate-event :name 'evt-movefile
+;                                :handler 'handler-file-event
+;                                :server 'filemover 
+;                                :service 'fileevent
+;                                :mode 'continuous)
+;(tcl-param :server 'filemover :slot 'BASICPARAMS.FILEOPERATIONSPARAM.COPYFILE :value '("/tmp/testdir/" "/tmp/target/")))))
+;(execute '(tcb-test-file-copy ))
+
+;(tcl-param :server 'filemover :slot 'BASICPARAMS.FILEOPERATIONSPARAM.COPYFILE 
+;                                                  :value '("/home/lutz/SOFTWARE/SmartMDSD-toolchain-2.10.tar.gz" 
+;                                                           "/tmp/SmartSoftCopy.tar.gz")))))
+;                    (tcl-param :server 'filemover :slot 'BASICPARAMS.FILEOPERATIONSPARAM.COPYFILE 
+;                                                  :value '("/opt/smartsoft/data/maps/default/localization-map.yaml" 
+;                                                           "/opt/smartsoft/data/maps/default/localization-map.yaml"))
+;                    (tcl-param :server 'filemover :slot 'BASICPARAMS.FILEOPERATIONSPARAM.COPYFILE 
+;                                                  :value '("/opt/smartsoft/data/maps/default/navigation-map.pgm" 
+;                                                           "/opt/smartsoft/data/maps/default/navigation-map.pgm"))
+;                    (tcl-param :server 'filemover :slot 'BASICPARAMS.FILEOPERATIONSPARAM.COPYFILE 
+;                                                  :value '("/opt/smartsoft/data/maps/default/navigation-map.yaml" 
+;                                                           "/opt/smartsoft/data/maps/default/navigation-map.yaml"))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; T E S T S
+
+; (execute '(tcb-test-file-transfer-error))
+(define-tcb (tcb-test-file-transfer-error)
+  (rules (rule-error-in-file-copy))
+  (action (
+   (tcl-kb-update :key '(is-a name) :value '((is-a counter)(name file-copy-counter)(count 0)))
+            (let* ((counter-class (tcl-kb-query :key '(is-a name) :value '((is-a counter)(name file-copy-counter))))
+                  (counter (get-value counter-class 'count)))
+            (tcl-format "=========================>>> tcb-test-file-transfer-error ~d ~%" counter))))
+  (plan (
+          (tcb-copy-file-from-master "/tmp/testfile" "/tmp/testfile"))))
+
+; (execute '(tcb-copy-file-from-master "/tmp/testfile"))
+
+
+(define-rule (rule-error-in-file-copy)
+  (tcb (tcb-copy-file-from-master ?filesource ?filetarget))
+  (return-value (ERROR(COPY FILE)))
+  (action (
+           (let* ((counter-class (tcl-kb-query :key '(is-a name) :value '((is-a counter)(name file-copy-counter))))
+                   (counter (get-value counter-class 'count)))
+
+           (tcl-kb-update :key '(is-a name) :value `((is-a counter)(name file-copy-counter)(count ,(+ 1 counter))))
+           (format t "ERROR RULE COPY FILE --> retry ~%")
+           (cond
+             ((> 2 counter)
+               (tcl-format "COUNTER: ~s~%" counter)
+               (tcl-push-plan :plan '((tcb-copy-file-from-master "/tmp/testfile"  "/tmp/testfile"))))
+             (T
+               (tcl-format "COUNTER: ~s~%" counter)
+               (tcl-format "EXIT!!~%")))))))

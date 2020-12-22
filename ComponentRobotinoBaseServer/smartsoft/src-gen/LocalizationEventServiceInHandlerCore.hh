@@ -30,9 +30,6 @@ class LocalizationEventServiceInHandlerCore
 ,	public LocalizationEventServiceInUpcallInterface
 {
 private:
-	Smart::StatusCode updateStatus;
-	Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult> lastUpdate;
-	
 	
 	virtual void updateAllCommObjects();
 	

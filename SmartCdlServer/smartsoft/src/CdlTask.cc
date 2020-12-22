@@ -56,8 +56,13 @@
 #include <sys/time.h>
 
 #ifdef WITH_OPENCV_CDL_LOOKUP_DEBUG
-	#include "cv.h"
-	#include "highgui.h"
+	#ifdef WITH_OPENCV_4_2_VERSION
+		#include <opencv4/opencv2/highgui.hpp>
+		#include <opencv4/opencv2/core.hpp>
+	#else
+		#include "cv.h"
+		#include "highgui.h"
+	#endif
 #endif
 
 // -------------------------------------------------------------
@@ -151,7 +156,7 @@ void CdlTask::on_IRClient(const CommBasicObjects::CommMobileIRScan &input)
 	// - if you need to implement a long-running procedure, do so within the on_execute() method and in
 	//   there, use the method iRClientGetUpdate(input) to get a copy of the input object
 }
-void CdlTask::on_PathNavigationGoalClient(const CommRobotinoObjects::CommPathNavigationGoal &input)
+void CdlTask::on_PathNavigationGoalClient(const CommNavigationObjects::CommCorridorNavigationGoal &input)
 {
 	// upcall triggered from InputPort PathNavigationGoalClient
 	// - use a local mutex here, because this upcal is called asynchroneously from outside of this task
@@ -171,7 +176,11 @@ void CdlTask::on_BaseStateClient(const CommBasicObjects::CommBaseState &input)
 int CdlTask::on_entry()
 {
 #ifdef WITH_OPENCV_CDL_LOOKUP_DEBUG
+	#ifdef WITH_OPENCV_4_2_VERSION
+	cv::namedWindow("cdldebug", cv::WINDOW_AUTOSIZE);
+	#else
 	cvNamedWindow("cdldebug", CV_WINDOW_AUTOSIZE);
+	#endif
 	//cvNamedWindow("cdldebug", CV_WINDOW_NORMAL);
 	//cvSetWindowProperty("cdldebug", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);
 #endif
@@ -532,18 +541,18 @@ int CdlTask::on_execute()
 					// is higher than the planner cycle time.
 					//
 
-					CommRobotinoObjects::CommPathNavigationGoal pathNavGoal;
+					CommNavigationObjects::CommCorridorNavigationGoal pathNavGoal;
 					status =  COMP->pathNavigationGoalClient->getUpdate(pathNavGoal);
 					if(status == Smart::SMART_OK){
 
 						std::vector< std::pair<double, double> > pathList;
 						std::vector< double > pathWidth;
 
-						CommRobotinoObjects::CommNavigationPaths paths;
+						CommNavigationObjects::CommNavigationPaths paths;
 						paths = pathNavGoal.getPaths();
 						pathWidth = paths.getPathWidthCopy();
 						for(unsigned int i=0;i<paths.getNodesSize();i++){
-							CommRobotinoObjects::CommPathNode node = paths.getNodesElemAtPos(i);
+							CommNavigationObjects::CommCorridorNode node = paths.getNodesElemAtPos(i);
 							double goalX,goalY;
 							goalX = node.getX();
 							goalY = node.getY();
@@ -556,7 +565,7 @@ int CdlTask::on_execute()
 						}
 
 						if(paths.getNodesSize()>0){
-							CommRobotinoObjects::CommPathNode node = paths.getNodesElemAtPos(paths.getNodesSize()-1);
+							CommNavigationObjects::CommCorridorNode node = paths.getNodesElemAtPos(paths.getNodesSize()-1);
 							pathFinalGoal.first = node.getX()*1000;
 							pathFinalGoal.second = node.getY()*1000;
 						} else {
@@ -1608,9 +1617,18 @@ int CdlTask::on_execute()
 	        _followDistVWControl.push_back(std::make_pair( minimum_rotation_rad*10, local_wmax));
 
 
-		COMP->trackingClient->getUpdate(trackingGoal);
+	        COMP->trackingClient->getUpdate(trackingGoal);
 			trackingGoal.get( trackAngle, trackDistance, trackX, trackY, trackFlag);
 			unsigned long int currentGoalCounter = trackingGoal.getGoalCount();
+
+			{
+			//calc cartesian goal from polar info
+			CommTrackingObjects::TrackingGoalType tackingGoalType = trackingGoal.getTrackingType();
+			if(tackingGoalType == CommTrackingObjects::TrackingGoalType::ANGLE_DIST){
+				trackX = trackDistance * cos( trackAngle );
+				trackY = trackDistance * sin( trackAngle );
+			}
+			}
 
 			std::cout<<"CurrentGoalCounter: "<<currentGoalCounter<<" old: "<< old_counter<<std::endl;
 
@@ -1707,7 +1725,6 @@ int CdlTask::on_execute()
 
 			CommTrackingObjects::TrackingGoalType tackingGoalType = trackingGoal.getTrackingType();
 
-
 			if(tackingGoalType == CommTrackingObjects::TrackingGoalType::XY_MAP_RAW){
 				trackAngle = angle00(atan2( trackY - raw_y,  trackX- raw_x) - raw_a);
 				trackDistance = sqrt( (raw_x-trackX)*(raw_x-trackX) + (raw_y-trackY)*(raw_y-trackY) );
@@ -1718,8 +1735,9 @@ int CdlTask::on_execute()
 				trackAngle = angle00(atan2( trackY,  trackX));
 				trackDistance = sqrt( (trackX)*(trackX) + (trackY)*(trackY) );
 			} else if(tackingGoalType == CommTrackingObjects::TrackingGoalType::ANGLE_DIST){
-				//trackAngle = trackAngle;
-				//trackDistance = trackDistance;
+				//convert Cartesian goal info back to polar, to make use of local goal transformation when person is lost
+				trackAngle = angle00(atan2( trackY,  trackX));
+				trackDistance = sqrt( (trackX)*(trackX) + (trackY)*(trackY) );
 			} else {
 				std::cout<<"ERROR invalid tracking goal type set: "<<tackingGoalType<<std::endl;
 				trackFlag = false;

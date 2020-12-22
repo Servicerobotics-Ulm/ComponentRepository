@@ -24,7 +24,6 @@
 #include "BatteryEventServiceOutEventTestHandler.hh"
 #include "BumperEventServiceOutEventTestHandler.hh"
 #include "DigitalInputEventOutEventTestHandler.hh"
-#include "LaserSafetyEventServiceOutEventTestHandler.hh"
 
 // initialize static singleton pointer to zero
 ComponentRobotinoBaseServer* ComponentRobotinoBaseServer::_componentRobotinoBaseServer = 0;
@@ -39,33 +38,39 @@ ComponentRobotinoBaseServer::ComponentRobotinoBaseServer()
 	baseStateQueryServiceAnswInputTaskTrigger = NULL;
 	baseStateQueryServiceAnswHandler = NULL;
 	baseStateServiceOut = NULL;
+	baseStateServiceOutWrapper = NULL;
 	batteryEventServiceOut = NULL;
+	batteryEventServiceOutWrapper = NULL;
 	batteryEventServiceOutEventTestHandler = nullptr; 
 	bumperEventServiceOut = NULL;
+	bumperEventServiceOutWrapper = NULL;
 	bumperEventServiceOutEventTestHandler = nullptr; 
-	//componentRobotinoBaseServerParams = NULL;
+	//coordinationPort = NULL;
 	//coordinationPort = NULL;
 	digitalInputEventOut = NULL;
+	digitalInputEventOutWrapper = NULL;
 	digitalInputEventOutEventTestHandler = nullptr; 
-	laserSafetyEventServiceOut = NULL;
-	laserSafetyEventServiceOutEventTestHandler = nullptr; 
 	localizationEventServiceIn = NULL;
 	localizationEventServiceInInputTaskTrigger = NULL;
 	localizationEventServiceInUpcallManager = NULL;
+	localizationEventServiceInInputCollector = NULL;
 	localizationEventServiceInHandler = NULL;
 	localizationUpdateServiceIn = NULL;
 	localizationUpdateServiceInInputTaskTrigger = NULL;
 	localizationUpdateServiceInUpcallManager = NULL;
+	localizationUpdateServiceInInputCollector = NULL;
 	localizationUpdateServiceInHandler = NULL;
 	navigationVelocityServiceIn = NULL;
 	navigationVelocityServiceInInputTaskTrigger = NULL;
 	navigationVelocityServiceInUpcallManager = NULL;
+	navigationVelocityServiceInInputCollector = NULL;
 	navigationVelocityServiceInHandler = NULL;
 	odomTask = NULL;
 	odomTaskTrigger = NULL;
 	powerOutputSendIn = NULL;
 	powerOutputSendInInputTaskTrigger = NULL;
 	powerOutputSendInUpcallManager = NULL;
+	powerOutputSendInInputCollector = NULL;
 	powerOutputSendInHandler = NULL;
 	robotinoIOValuesQueryServiceAnsw = NULL;
 	robotinoIOValuesQueryServiceAnswInputTaskTrigger = NULL;
@@ -95,8 +100,6 @@ ComponentRobotinoBaseServer::ComponentRobotinoBaseServer()
 	connections.bumperEventServiceOut.roboticMiddleware = "ACE_SmartSoft";
 	connections.digitalInputEventOut.serviceName = "DigitalInputEventOut";
 	connections.digitalInputEventOut.roboticMiddleware = "ACE_SmartSoft";
-	connections.laserSafetyEventServiceOut.serviceName = "LaserSafetyEventServiceOut";
-	connections.laserSafetyEventServiceOut.roboticMiddleware = "ACE_SmartSoft";
 	connections.localizationUpdateServiceIn.serviceName = "LocalizationUpdateServiceIn";
 	connections.localizationUpdateServiceIn.roboticMiddleware = "ACE_SmartSoft";
 	connections.navigationVelocityServiceIn.serviceName = "NavigationVelocityServiceIn";
@@ -111,8 +114,8 @@ ComponentRobotinoBaseServer::ComponentRobotinoBaseServer()
 	connections.localizationEventServiceIn.serviceName = "unknown";
 	connections.localizationEventServiceIn.interval = 1;
 	connections.localizationEventServiceIn.roboticMiddleware = "ACE_SmartSoft";
-	connections.odomTask.minActFreq = 20.0;
-	connections.odomTask.maxActFreq = 1.0;
+	connections.odomTask.minActFreq = 1.0;
+	connections.odomTask.maxActFreq = 50.0;
 	connections.odomTask.trigger = "PeriodicTimer";
 	connections.odomTask.periodicActFreq = 50.0;
 	// scheduling default parameters
@@ -121,6 +124,8 @@ ComponentRobotinoBaseServer::ComponentRobotinoBaseServer()
 	connections.odomTask.cpuAffinity = -1;
 	connections.signalStateTask.minActFreq = 0.0;
 	connections.signalStateTask.maxActFreq = 0.0;
+	connections.signalStateTask.trigger = "PeriodicTimer";
+	connections.signalStateTask.periodicActFreq = 2.0;
 	// scheduling default parameters
 	connections.signalStateTask.scheduler = "DEFAULT";
 	connections.signalStateTask.priority = -1;
@@ -136,9 +141,9 @@ ComponentRobotinoBaseServer::ComponentRobotinoBaseServer()
 	connections.navigationVelocityServiceInHandler.prescale = 1;
 	connections.powerOutputSendInHandler.prescale = 1;
 	
-	// initialize members of ComponentRobotinoBaseServerROSExtension
+	// initialize members of ComponentRobotinoBaseServerROS1InterfacesExtension
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
+	// initialize members of ComponentRobotinoBaseServerRestInterfacesExtension
 	
 	// initialize members of PlainOpcUaComponentRobotinoBaseServerExtension
 	
@@ -279,9 +284,9 @@ void ComponentRobotinoBaseServer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of ComponentRobotinoBaseServerROSExtension
+		// initializations of ComponentRobotinoBaseServerROS1InterfacesExtension
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
+		// initializations of ComponentRobotinoBaseServerRestInterfacesExtension
 		
 		// initializations of PlainOpcUaComponentRobotinoBaseServerExtension
 		
@@ -319,39 +324,44 @@ void ComponentRobotinoBaseServer::init(int argc, char *argv[])
 		batteryEventServiceOutEventTestHandler = std::make_shared<BatteryEventServiceOutEventTestHandler>();
 		bumperEventServiceOutEventTestHandler = std::make_shared<BumperEventServiceOutEventTestHandler>();
 		digitalInputEventOutEventTestHandler = std::make_shared<DigitalInputEventOutEventTestHandler>();
-		laserSafetyEventServiceOutEventTestHandler = std::make_shared<LaserSafetyEventServiceOutEventTestHandler>();
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
 		baseStateQueryServiceAnsw = portFactoryRegistry[connections.baseStateQueryServiceAnsw.roboticMiddleware]->createBaseStateQueryServiceAnsw(connections.baseStateQueryServiceAnsw.serviceName);
 		baseStateQueryServiceAnswInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>(baseStateQueryServiceAnsw);
 		baseStateServiceOut = portFactoryRegistry[connections.baseStateServiceOut.roboticMiddleware]->createBaseStateServiceOut(connections.baseStateServiceOut.serviceName);
+		baseStateServiceOutWrapper = new BaseStateServiceOutWrapper(baseStateServiceOut);
 		batteryEventServiceOutEventTestHandler = std::make_shared<BatteryEventServiceOutEventTestHandler>();
 		batteryEventServiceOut = portFactoryRegistry[connections.batteryEventServiceOut.roboticMiddleware]->createBatteryEventServiceOut(connections.batteryEventServiceOut.serviceName, batteryEventServiceOutEventTestHandler);
+		batteryEventServiceOutWrapper = new BatteryEventServiceOutWrapper(batteryEventServiceOut);
 		bumperEventServiceOutEventTestHandler = std::make_shared<BumperEventServiceOutEventTestHandler>();
 		bumperEventServiceOut = portFactoryRegistry[connections.bumperEventServiceOut.roboticMiddleware]->createBumperEventServiceOut(connections.bumperEventServiceOut.serviceName, bumperEventServiceOutEventTestHandler);
+		bumperEventServiceOutWrapper = new BumperEventServiceOutWrapper(bumperEventServiceOut);
 		digitalInputEventOutEventTestHandler = std::make_shared<DigitalInputEventOutEventTestHandler>();
 		digitalInputEventOut = portFactoryRegistry[connections.digitalInputEventOut.roboticMiddleware]->createDigitalInputEventOut(connections.digitalInputEventOut.serviceName, digitalInputEventOutEventTestHandler);
-		laserSafetyEventServiceOutEventTestHandler = std::make_shared<LaserSafetyEventServiceOutEventTestHandler>();
-		laserSafetyEventServiceOut = portFactoryRegistry[connections.laserSafetyEventServiceOut.roboticMiddleware]->createLaserSafetyEventServiceOut(connections.laserSafetyEventServiceOut.serviceName, laserSafetyEventServiceOutEventTestHandler);
+		digitalInputEventOutWrapper = new DigitalInputEventOutWrapper(digitalInputEventOut);
 		localizationUpdateServiceIn = portFactoryRegistry[connections.localizationUpdateServiceIn.roboticMiddleware]->createLocalizationUpdateServiceIn(connections.localizationUpdateServiceIn.serviceName);
 		navigationVelocityServiceIn = portFactoryRegistry[connections.navigationVelocityServiceIn.roboticMiddleware]->createNavigationVelocityServiceIn(connections.navigationVelocityServiceIn.serviceName);
 		powerOutputSendIn = portFactoryRegistry[connections.powerOutputSendIn.roboticMiddleware]->createPowerOutputSendIn(connections.powerOutputSendIn.serviceName);
 		robotinoIOValuesQueryServiceAnsw = portFactoryRegistry[connections.robotinoIOValuesQueryServiceAnsw.roboticMiddleware]->createRobotinoIOValuesQueryServiceAnsw(connections.robotinoIOValuesQueryServiceAnsw.serviceName);
-		robotinoIOValuesQueryServiceAnswInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommRobotinoObjects::CommRobotinoIOValues, CommRobotinoObjects::CommRobotinoIOValues>(robotinoIOValuesQueryServiceAnsw);
+		robotinoIOValuesQueryServiceAnswInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommIOValues, CommBasicObjects::CommIOValues>(robotinoIOValuesQueryServiceAnsw);
 		
 		// create client ports
 		localizationEventServiceIn = portFactoryRegistry[connections.localizationEventServiceIn.roboticMiddleware]->createLocalizationEventServiceIn();
 		
 		// create InputTaskTriggers and UpcallManagers
-		localizationEventServiceInInputTaskTrigger = new Smart::InputTaskTrigger<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult>>(localizationEventServiceIn);
-		localizationEventServiceInUpcallManager = new LocalizationEventServiceInUpcallManager(localizationEventServiceIn);
-		localizationUpdateServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBasePositionUpdate>(localizationUpdateServiceIn);
-		localizationUpdateServiceInUpcallManager = new LocalizationUpdateServiceInUpcallManager(localizationUpdateServiceIn);
-		navigationVelocityServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommNavigationVelocity>(navigationVelocityServiceIn);
-		navigationVelocityServiceInUpcallManager = new NavigationVelocityServiceInUpcallManager(navigationVelocityServiceIn);
-		powerOutputSendInInputTaskTrigger = new Smart::InputTaskTrigger<CommRobotinoObjects::CommRobotinoPowerOutputValue>(powerOutputSendIn);
-		powerOutputSendInUpcallManager = new PowerOutputSendInUpcallManager(powerOutputSendIn);
+		localizationEventServiceInInputCollector = new LocalizationEventServiceInInputCollector(localizationEventServiceIn);
+		localizationEventServiceInInputTaskTrigger = new Smart::InputTaskTrigger<Smart::EventInputType<CommLocalizationObjects::CommLocalizationEventResult>>(localizationEventServiceInInputCollector);
+		localizationEventServiceInUpcallManager = new LocalizationEventServiceInUpcallManager(localizationEventServiceInInputCollector);
+		localizationUpdateServiceInInputCollector = new LocalizationUpdateServiceInInputCollector(localizationUpdateServiceIn);
+		localizationUpdateServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBasePositionUpdate>(localizationUpdateServiceInInputCollector);
+		localizationUpdateServiceInUpcallManager = new LocalizationUpdateServiceInUpcallManager(localizationUpdateServiceInInputCollector);
+		navigationVelocityServiceInInputCollector = new NavigationVelocityServiceInInputCollector(navigationVelocityServiceIn);
+		navigationVelocityServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommNavigationVelocity>(navigationVelocityServiceInInputCollector);
+		navigationVelocityServiceInUpcallManager = new NavigationVelocityServiceInUpcallManager(navigationVelocityServiceInInputCollector);
+		powerOutputSendInInputCollector = new PowerOutputSendInInputCollector(powerOutputSendIn);
+		powerOutputSendInInputTaskTrigger = new Smart::InputTaskTrigger<CommRobotinoObjects::CommRobotinoPowerOutputValue>(powerOutputSendInInputCollector);
+		powerOutputSendInUpcallManager = new PowerOutputSendInUpcallManager(powerOutputSendInInputCollector);
 		
 		// create input-handler
 		localizationEventServiceInHandler = new LocalizationEventServiceInHandler(localizationEventServiceIn, connections.localizationEventServiceInHandler.prescale);
@@ -445,7 +455,20 @@ void ComponentRobotinoBaseServer::init(int argc, char *argv[])
 			} else {
 				std::cerr << "ERROR: could not set-up InPort " << connections.signalStateTask.inPortRef << " as activation source for Task SignalStateTask" << std::endl;
 			}
-		} 
+		} else
+		{
+			// setup default task-trigger as PeriodicTimer
+			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
+			int microseconds = 1000*1000 / 2.0;
+			if(microseconds > 0) {
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				triggerPtr->attach(signalStateTask);
+				// store trigger in class member
+				signalStateTaskTrigger = triggerPtr;
+			} else {
+				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task SignalStateTask" << std::endl;
+			}
+		}
 		
 		// create Task robotinoAPITask
 		robotinoAPITask = new RobotinoAPITask(component);
@@ -560,12 +583,16 @@ void ComponentRobotinoBaseServer::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 	delete localizationEventServiceInInputTaskTrigger;
 	delete localizationEventServiceInUpcallManager;
+	delete localizationEventServiceInInputCollector;
 	delete localizationUpdateServiceInInputTaskTrigger;
 	delete localizationUpdateServiceInUpcallManager;
+	delete localizationUpdateServiceInInputCollector;
 	delete navigationVelocityServiceInInputTaskTrigger;
 	delete navigationVelocityServiceInUpcallManager;
+	delete navigationVelocityServiceInInputCollector;
 	delete powerOutputSendInInputTaskTrigger;
 	delete powerOutputSendInUpcallManager;
+	delete powerOutputSendInInputCollector;
 
 	// destroy client ports
 	delete localizationEventServiceIn;
@@ -573,11 +600,14 @@ void ComponentRobotinoBaseServer::fini()
 	// destroy server ports
 	delete baseStateQueryServiceAnsw;
 	delete baseStateQueryServiceAnswInputTaskTrigger;
+	delete baseStateServiceOutWrapper;
 	delete baseStateServiceOut;
+	delete batteryEventServiceOutWrapper;
 	delete batteryEventServiceOut;
+	delete bumperEventServiceOutWrapper;
 	delete bumperEventServiceOut;
+	delete digitalInputEventOutWrapper;
 	delete digitalInputEventOut;
-	delete laserSafetyEventServiceOut;
 	delete localizationUpdateServiceIn;
 	delete navigationVelocityServiceIn;
 	delete powerOutputSendIn;
@@ -587,7 +617,6 @@ void ComponentRobotinoBaseServer::fini()
 	batteryEventServiceOutEventTestHandler;
 	bumperEventServiceOutEventTestHandler;
 	digitalInputEventOutEventTestHandler;
-	laserSafetyEventServiceOutEventTestHandler;
 	
 	// destroy request-handlers
 	delete baseStateQueryServiceAnswHandler;
@@ -614,9 +643,9 @@ void ComponentRobotinoBaseServer::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentRobotinoBaseServerROSExtension
+	// destruction of ComponentRobotinoBaseServerROS1InterfacesExtension
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
+	// destruction of ComponentRobotinoBaseServerRestInterfacesExtension
 	
 	// destruction of PlainOpcUaComponentRobotinoBaseServerExtension
 	
@@ -726,11 +755,6 @@ void ComponentRobotinoBaseServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("DigitalInputEventOut", "roboticMiddleware")) {
 			parameter.getString("DigitalInputEventOut", "roboticMiddleware", connections.digitalInputEventOut.roboticMiddleware);
 		}
-		// load parameters for server LaserSafetyEventServiceOut
-		parameter.getString("LaserSafetyEventServiceOut", "serviceName", connections.laserSafetyEventServiceOut.serviceName);
-		if(parameter.checkIfParameterExists("LaserSafetyEventServiceOut", "roboticMiddleware")) {
-			parameter.getString("LaserSafetyEventServiceOut", "roboticMiddleware", connections.laserSafetyEventServiceOut.roboticMiddleware);
-		}
 		// load parameters for server LocalizationUpdateServiceIn
 		parameter.getString("LocalizationUpdateServiceIn", "serviceName", connections.localizationUpdateServiceIn.serviceName);
 		if(parameter.checkIfParameterExists("LocalizationUpdateServiceIn", "roboticMiddleware")) {
@@ -822,9 +846,9 @@ void ComponentRobotinoBaseServer::loadParameter(int argc, char *argv[])
 			parameter.getInteger("PowerOutputSendInHandler", "prescale", connections.powerOutputSendInHandler.prescale);
 		}
 		
-		// load parameters for ComponentRobotinoBaseServerROSExtension
+		// load parameters for ComponentRobotinoBaseServerROS1InterfacesExtension
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
+		// load parameters for ComponentRobotinoBaseServerRestInterfacesExtension
 		
 		// load parameters for PlainOpcUaComponentRobotinoBaseServerExtension
 		

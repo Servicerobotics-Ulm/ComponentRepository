@@ -30,9 +30,6 @@ class KbChainedEntriesEventClientHandlerCore
 ,	public KbChainedEntriesEventClientUpcallInterface
 {
 private:
-	Smart::StatusCode updateStatus;
-	Smart::EventInputType<CommBasicObjects::CommKBEventResult> lastUpdate;
-	
 	
 	virtual void updateAllCommObjects();
 	

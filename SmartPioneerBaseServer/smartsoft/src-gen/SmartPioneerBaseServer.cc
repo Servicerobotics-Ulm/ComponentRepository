@@ -33,23 +33,27 @@ SmartPioneerBaseServer::SmartPioneerBaseServer()
 	
 	// set all pointer members to NULL
 	basePositionOut = NULL;
+	basePositionOutWrapper = NULL;
 	baseStateQueryHandler = NULL;
 	baseStateQueryServer = NULL;
 	baseStateQueryServerInputTaskTrigger = NULL;
 	batteryEventServer = NULL;
+	batteryEventServerWrapper = NULL;
 	batteryEventServerEventTestHandler = nullptr; 
+	//coordinationPort = NULL;
 	//coordinationPort = NULL;
 	localizationUpdate = NULL;
 	localizationUpdateInputTaskTrigger = NULL;
 	localizationUpdateUpcallManager = NULL;
+	localizationUpdateInputCollector = NULL;
 	navVelIn = NULL;
 	navVelInInputTaskTrigger = NULL;
 	navVelInUpcallManager = NULL;
+	navVelInInputCollector = NULL;
 	poseUpdateTask = NULL;
 	poseUpdateTaskTrigger = NULL;
 	robotTask = NULL;
 	robotTaskTrigger = NULL;
-	//smartPioneerBaseServerParams = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
@@ -84,11 +88,7 @@ SmartPioneerBaseServer::SmartPioneerBaseServer()
 	connections.robotTask.priority = -1;
 	connections.robotTask.cpuAffinity = -1;
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
 	// initialize members of PlainOpcUaSmartPioneerBaseServerExtension
-	
-	// initialize members of SmartPioneerBaseServerROSExtension
 	
 }
 
@@ -193,11 +193,7 @@ void SmartPioneerBaseServer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of PlainOpcUaSmartPioneerBaseServerExtension
-		
-		// initializations of SmartPioneerBaseServerROSExtension
 		
 		
 		// initialize all registered port-factories
@@ -235,20 +231,24 @@ void SmartPioneerBaseServer::init(int argc, char *argv[])
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
 		basePositionOut = portFactoryRegistry[connections.basePositionOut.roboticMiddleware]->createBasePositionOut(connections.basePositionOut.serviceName);
+		basePositionOutWrapper = new BasePositionOutWrapper(basePositionOut);
 		baseStateQueryServer = portFactoryRegistry[connections.baseStateQueryServer.roboticMiddleware]->createBaseStateQueryServer(connections.baseStateQueryServer.serviceName);
 		baseStateQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>(baseStateQueryServer);
 		batteryEventServerEventTestHandler = std::make_shared<BatteryEventServerEventTestHandler>();
 		batteryEventServer = portFactoryRegistry[connections.batteryEventServer.roboticMiddleware]->createBatteryEventServer(connections.batteryEventServer.serviceName, batteryEventServerEventTestHandler);
+		batteryEventServerWrapper = new BatteryEventServerWrapper(batteryEventServer);
 		localizationUpdate = portFactoryRegistry[connections.localizationUpdate.roboticMiddleware]->createLocalizationUpdate(connections.localizationUpdate.serviceName);
 		navVelIn = portFactoryRegistry[connections.navVelIn.roboticMiddleware]->createNavVelIn(connections.navVelIn.serviceName);
 		
 		// create client ports
 		
 		// create InputTaskTriggers and UpcallManagers
-		localizationUpdateInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBasePositionUpdate>(localizationUpdate);
-		localizationUpdateUpcallManager = new LocalizationUpdateUpcallManager(localizationUpdate);
-		navVelInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommNavigationVelocity>(navVelIn);
-		navVelInUpcallManager = new NavVelInUpcallManager(navVelIn);
+		localizationUpdateInputCollector = new LocalizationUpdateInputCollector(localizationUpdate);
+		localizationUpdateInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBasePositionUpdate>(localizationUpdateInputCollector);
+		localizationUpdateUpcallManager = new LocalizationUpdateUpcallManager(localizationUpdateInputCollector);
+		navVelInInputCollector = new NavVelInInputCollector(navVelIn);
+		navVelInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommNavigationVelocity>(navVelInInputCollector);
+		navVelInUpcallManager = new NavVelInUpcallManager(navVelInInputCollector);
 		
 		// create input-handler
 		
@@ -400,15 +400,19 @@ void SmartPioneerBaseServer::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 	delete localizationUpdateInputTaskTrigger;
 	delete localizationUpdateUpcallManager;
+	delete localizationUpdateInputCollector;
 	delete navVelInInputTaskTrigger;
 	delete navVelInUpcallManager;
+	delete navVelInInputCollector;
 
 	// destroy client ports
 
 	// destroy server ports
+	delete basePositionOutWrapper;
 	delete basePositionOut;
 	delete baseStateQueryServer;
 	delete baseStateQueryServerInputTaskTrigger;
+	delete batteryEventServerWrapper;
 	delete batteryEventServer;
 	delete localizationUpdate;
 	delete navVelIn;
@@ -439,11 +443,7 @@ void SmartPioneerBaseServer::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
 	// destruction of PlainOpcUaSmartPioneerBaseServerExtension
-	
-	// destruction of SmartPioneerBaseServerROSExtension
 	
 }
 
@@ -574,11 +574,7 @@ void SmartPioneerBaseServer::loadParameter(int argc, char *argv[])
 			parameter.getInteger("RobotTask", "cpuAffinity", connections.robotTask.cpuAffinity);
 		}
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// load parameters for PlainOpcUaSmartPioneerBaseServerExtension
-		
-		// load parameters for SmartPioneerBaseServerROSExtension
 		
 		
 		// load parameters for all registered component-extensions

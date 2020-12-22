@@ -490,6 +490,8 @@ int GMappingTask::sendMap(){
 	}
 	std::cout<<"[GMappingTask] Publish gridmap with ID: "<<gm.getId()<<std::endl;
 	COMP->newestMapPushServer->put( gm );
+
+	return 0;
 }
 
 int GMappingTask::on_exit()

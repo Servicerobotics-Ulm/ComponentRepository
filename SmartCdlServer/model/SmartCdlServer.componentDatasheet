@@ -1,4 +1,5 @@
-ComponentDatasheet SmartCdlServer {
+ComponentDatasheet SmartCdlServer
+{
 	BaseURI "http://servicerobotik-ulm.de"
 	ShortDescription "The SmartCdlServer is based on the Curvature Distance Lookup (CDL) algorithm for fast local obstacle avoidance."
 	DatasheetProperty SpdxLicense {
@@ -16,5 +17,39 @@ ComponentDatasheet SmartCdlServer {
 	}
 	DatasheetProperty Purpose {
 		value "Navigation"
+	}
+	DatasheetProperty Purpose {
+		value "Obstacle-Avoidance"
+	}
+	DatasheetProperty Purpose {
+		value "Curvature-Distance-Lookup"
+	}
+	DatasheetProperty Purpose {
+		value "CDL"
+	}
+	DatasheetProperty MarketName {
+		value "Obstacle Avoidance Navigation Component"
+	}
+	ComponentPortDatasheet LaserClient {
+	}
+	ComponentPortDatasheet LaserClient2 {
+	}
+	ComponentPortDatasheet PlannerClient {
+	}
+	ComponentPortDatasheet NavVelSendServer {
+	}
+	ComponentPortDatasheet TrackingClient {
+	}
+	ComponentPortDatasheet IRClient {
+	}
+	ComponentPortDatasheet PathNavigationGoalClient {
+	}
+	ComponentPortDatasheet BaseStateClient {
+	}
+	ComponentPortDatasheet NavVelSendClient {
+	}
+	ComponentPortDatasheet GoalEventServer {
+	}
+	ComponentPortDatasheet RobotBlockedEventServer {
 	}
 }

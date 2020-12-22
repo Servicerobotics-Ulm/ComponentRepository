@@ -3,18 +3,43 @@
 
 # SmartRobotConsole Component
 
-![SmartRobotConsole-ComponentImage](model/SmartRobotConsoleComponentDefinition.jpg)
+<img src="model/SmartRobotConsoleComponentDefinition.jpg" alt="SmartRobotConsole-ComponentImage" width="1000">
 
-A simple coordination component using a console menu to configure software component for several simple scenarios.
-
-| Metaelement | Documentation |
-|-------------|---------------|
-| License | LGPL |
-| Hardware Requirements |  |
-| Purpose | Component Coordination |
+*Component Short Description:* TODO: add short description for SmartRobotConsole datasheet
 
 
+## Component-Datasheet Properties
 
-## Service Ports
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Component-Datasheet Properties</caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Property Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Property Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Property Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">MarketName</td>
+<td style="border:1px solid black; padding: 5px;">SmartRobotConsole</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Supplier</td>
+<td style="border:1px solid black; padding: 5px;">Servicerobotics Ulm</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Homepage</td>
+<td style="border:1px solid black; padding: 5px;">http://servicerobotik-ulm.de/components</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Purpose</td>
+<td style="border:1px solid black; padding: 5px;">Coordination</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
+
+## Component Ports
+
 
 

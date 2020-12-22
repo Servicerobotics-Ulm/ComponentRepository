@@ -29,9 +29,9 @@
 class ComponentFileMoverPortFactoryInterface;
 class ComponentFileMoverExtension;
 
-// includes for ComponentFileMoverROSExtension
+// includes for ComponentFileMoverROS1InterfacesExtension
 
-// includes for OpcUaBackendComponentGeneratorExtension
+// includes for ComponentFileMoverRestInterfacesExtension
 
 // includes for PlainOpcUaComponentFileMoverExtension
 // include plain OPC UA device clients
@@ -55,11 +55,13 @@ class ComponentFileMoverExtension;
 #include <CommBasicObjects/CommFileWriteRequestACE.hh>
 
 // include tasks
-#include "FileMoveEventHandler.hh"
-// include UpcallManagers
+#include "Dummy.hh"
+// include UpcallManagers and InputCollectors
 
 // include input-handler(s)
 // include request-handler(s)
+// output port wrappers
+#include "CommFileMoveEventOutWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -111,8 +113,8 @@ public:
 	}
 	
 	// define tasks
-	Smart::TaskTriggerSubject* fileMoveEventHandlerTrigger;
-	FileMoveEventHandler *fileMoveEventHandler;
+	Smart::TaskTriggerSubject* dummyTrigger;
+	Dummy *dummy;
 	
 	// define input-ports
 	
@@ -124,15 +126,16 @@ public:
 	
 	// define output-ports
 	Smart::IEventServerPattern<CommBasicObjects::CommFileMoverEventParameter, CommBasicObjects::CommFileMoverEventResult, CommBasicObjects::CommFileMoverEventState> *commFileMoveEventOut;
+	CommFileMoveEventOutWrapper *commFileMoveEventOutWrapper;
 	std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommFileMoverEventParameter, CommBasicObjects::CommFileMoverEventResult, CommBasicObjects::CommFileMoverEventState>> commFileMoveEventOutEventTestHandler;
 	
 	// define answer-ports
 	
 	// define request-handlers
 	
-	// definitions of ComponentFileMoverROSExtension
+	// definitions of ComponentFileMoverROS1InterfacesExtension
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
+	// definitions of ComponentFileMoverRestInterfacesExtension
 	
 	// definitions of PlainOpcUaComponentFileMoverExtension
 	
@@ -216,7 +219,7 @@ public:
 		} component;
 		
 		//--- task parameter ---
-		struct FileMoveEventHandler_struct {
+		struct Dummy_struct {
 			double minActFreq;
 			double maxActFreq;
 			std::string trigger;
@@ -231,7 +234,7 @@ public:
 			std::string scheduler;
 			int priority;
 			int cpuAffinity;
-		} fileMoveEventHandler;
+		} dummy;
 		
 		//--- upcall parameter ---
 		
@@ -259,9 +262,9 @@ public:
 			std::string roboticMiddleware;
 		} commFileWriteQueryReq;
 		
-		// -- parameters for ComponentFileMoverROSExtension
+		// -- parameters for ComponentFileMoverROS1InterfacesExtension
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
+		// -- parameters for ComponentFileMoverRestInterfacesExtension
 		
 		// -- parameters for PlainOpcUaComponentFileMoverExtension
 		

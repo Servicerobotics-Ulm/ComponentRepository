@@ -52,8 +52,8 @@ maxActFreqHz 0.0
 ##########################
 # server port parameter
 
-[pushNewestServer]
-serviceName pushNewestServer
+[LaserServiceOut]
+serviceName LaserServiceOut
 roboticMiddleware ACE_SmartSoft
 
 [queryServer]
@@ -76,10 +76,10 @@ interval 1
 roboticMiddleware ACE_SmartSoft
 
 ##########################
-## parameters of ComponentRobotinoLaserServerROSExtension
+## parameters of ComponentRobotinoLaserServerROS1InterfacesExtension
 
 ##########################
-## parameters of OpcUaBackendComponentGeneratorExtension
+## parameters of ComponentRobotinoLaserServerRestInterfacesExtension
 
 ##########################
 ## parameters of PlainOpcUaComponentRobotinoLaserServerExtension

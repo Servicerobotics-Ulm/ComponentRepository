@@ -1,3 +1,8 @@
+##check if unicap libunicap2-dev from 18.04/20.04 is working 
+
+
+
+
 Requires Unicap 0.9.8 from source.
 
 git clone https://github.com/unicap/unicap.git

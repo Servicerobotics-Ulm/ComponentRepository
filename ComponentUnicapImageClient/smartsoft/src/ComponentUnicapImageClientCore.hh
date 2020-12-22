@@ -47,13 +47,23 @@
 	
 #include "aceSmartSoft.hh"
 #include <iostream>
-
+#ifdef WITH_OPENCV_4_2_VERSION
+#include <opencv4/opencv2/core.hpp>
+#include <opencv4/opencv2/highgui.hpp>
+#else
 #include <cv.h>
 #include <opencv/highgui.h>
-#include <DomainVision/CommVideoImage.hh>
 #include "OpenCVHelpers/OpenCVHelpers.hh"
+#endif
+
+#ifdef WITH_MRPT_2_0_VERSION
+#include <mrpt/img/CImage.h>
+#include <memory>
+#endif
+
+
+#include <DomainVision/CommVideoImage.hh>
 #include <mrpt/poses/CPose3D.h>
-#include "VisualizationHelper.hh"
 
 using namespace mrpt::poses;
 
@@ -63,16 +73,17 @@ private:
 
 public:
 	ComponentUnicapImageClientCore();
-
+#ifdef WITH_MRPT_2_0_VERSION
+	std::shared_ptr<mrpt::img::CImage> currentImage;
+#else
 	IplImage* convertDataArrayToIplImage(DomainVision::CommVideoImage &query_image, CvSize size);
-
 	IplImage* currentImage;
+#endif
 	CPose3D currentImagePose;
 
 	SmartACE::SmartMutex CurrentImageMutex;
 
 
-	VisualizationHelper vHelper;
 };
 	
 #endif

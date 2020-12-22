@@ -22,8 +22,12 @@ QueryHandlerCore::QueryHandlerCore(IQueryServer* server)
 :	Smart::IInputHandler<std::pair<Smart::QueryIdPtr,CommBasicObjects::CommVoid>>(server)
 ,	server(server)
 {
-	
 }
+
+QueryHandlerCore::~QueryHandlerCore()
+{
+}
+
 
 void QueryHandlerCore::updateAllCommObjects()
 {

@@ -29,10 +29,6 @@
 class ComponentTTSClientPortFactoryInterface;
 class ComponentTTSClientExtension;
 
-// includes for ComponentTTSClientROSExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentTTSClientExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -46,10 +42,12 @@ class ComponentTTSClientExtension;
 
 // include tasks
 #include "ConsoleTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 
 // include input-handler(s)
 // include request-handler(s)
+// output port wrappers
+#include "SpeechSendServiceOutWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -113,14 +111,11 @@ public:
 	
 	// define output-ports
 	Smart::ISendClientPattern<DomainSpeech::CommSpeechOutputMessage> *speechSendServiceOut;
+	SpeechSendServiceOutWrapper *speechSendServiceOutWrapper;
 	
 	// define answer-ports
 	
 	// define request-handlers
-	
-	// definitions of ComponentTTSClientROSExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentTTSClientExtension
 	
@@ -242,10 +237,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} speechSendServiceOut;
-		
-		// -- parameters for ComponentTTSClientROSExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentTTSClientExtension
 		

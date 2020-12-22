@@ -18,11 +18,11 @@
 		
 #include "aceSmartSoft.hh"
 
-#include <CommRobotinoObjects/CommDigitalInputEventParameter.hh>
-#include <CommRobotinoObjects/CommDigitalInputEventResult.hh>
-#include <CommRobotinoObjects/CommDigitalInputEventState.hh>
+#include <CommBasicObjects/CommDigitalInputEventParameter.hh>
+#include <CommBasicObjects/CommDigitalInputEventResult.hh>
+#include <CommBasicObjects/CommDigitalInputEventState.hh>
 
-class DigitalInputEventOutEventTestHandlerCore : public SmartACE::EventTestHandler<CommRobotinoObjects::CommDigitalInputEventParameter, CommRobotinoObjects::CommDigitalInputEventResult, CommRobotinoObjects::CommDigitalInputEventState>
+class DigitalInputEventOutEventTestHandlerCore : public SmartACE::EventTestHandler<CommBasicObjects::CommDigitalInputEventParameter, CommBasicObjects::CommDigitalInputEventResult, CommBasicObjects::CommDigitalInputEventState>
 {
 };
 #endif

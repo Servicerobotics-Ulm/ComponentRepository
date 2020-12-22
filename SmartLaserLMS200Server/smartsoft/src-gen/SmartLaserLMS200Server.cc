@@ -34,14 +34,16 @@ SmartLaserLMS200Server::SmartLaserLMS200Server()
 	baseStateIn = NULL;
 	baseStateInInputTaskTrigger = NULL;
 	baseStateInUpcallManager = NULL;
+	baseStateInInputCollector = NULL;
+	//coordinationPort = NULL;
 	//coordinationPort = NULL;
 	laserQueryServiceAnsw = NULL;
 	laserQueryServiceAnswInputTaskTrigger = NULL;
 	laserQueryServiceAnswHandler = NULL;
-	laserScanOut = NULL;
+	laserServiceOut = NULL;
+	laserServiceOutWrapper = NULL;
 	laserTask = NULL;
 	laserTaskTrigger = NULL;
-	//smartLaserLMS200ServerParams = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
@@ -55,8 +57,8 @@ SmartLaserLMS200Server::SmartLaserLMS200Server()
 	
 	connections.laserQueryServiceAnsw.serviceName = "LaserQueryServiceAnsw";
 	connections.laserQueryServiceAnsw.roboticMiddleware = "ACE_SmartSoft";
-	connections.laserScanOut.serviceName = "LaserScanOut";
-	connections.laserScanOut.roboticMiddleware = "ACE_SmartSoft";
+	connections.laserServiceOut.serviceName = "LaserServiceOut";
+	connections.laserServiceOut.roboticMiddleware = "ACE_SmartSoft";
 	connections.baseStateIn.initialConnect = false;
 	connections.baseStateIn.wiringName = "BaseStateIn";
 	connections.baseStateIn.serverName = "unknown";
@@ -68,11 +70,11 @@ SmartLaserLMS200Server::SmartLaserLMS200Server()
 	connections.laserTask.priority = -1;
 	connections.laserTask.cpuAffinity = -1;
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
 	// initialize members of PlainOpcUaSmartLaserLMS200ServerExtension
 	
-	// initialize members of SmartLaserLMS200ServerROSExtension
+	// initialize members of SmartLaserLMS200ServerROS1InterfacesExtension
+	
+	// initialize members of SmartLaserLMS200ServerRestInterfacesExtension
 	
 }
 
@@ -181,11 +183,11 @@ void SmartLaserLMS200Server::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of PlainOpcUaSmartLaserLMS200ServerExtension
 		
-		// initializations of SmartLaserLMS200ServerROSExtension
+		// initializations of SmartLaserLMS200ServerROS1InterfacesExtension
+		
+		// initializations of SmartLaserLMS200ServerRestInterfacesExtension
 		
 		
 		// initialize all registered port-factories
@@ -223,14 +225,16 @@ void SmartLaserLMS200Server::init(int argc, char *argv[])
 		// TODO: set minCycleTime from Ini-file
 		laserQueryServiceAnsw = portFactoryRegistry[connections.laserQueryServiceAnsw.roboticMiddleware]->createLaserQueryServiceAnsw(connections.laserQueryServiceAnsw.serviceName);
 		laserQueryServiceAnswInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan>(laserQueryServiceAnsw);
-		laserScanOut = portFactoryRegistry[connections.laserScanOut.roboticMiddleware]->createLaserScanOut(connections.laserScanOut.serviceName);
+		laserServiceOut = portFactoryRegistry[connections.laserServiceOut.roboticMiddleware]->createLaserServiceOut(connections.laserServiceOut.serviceName);
+		laserServiceOutWrapper = new LaserServiceOutWrapper(laserServiceOut);
 		
 		// create client ports
 		baseStateIn = portFactoryRegistry[connections.baseStateIn.roboticMiddleware]->createBaseStateIn();
 		
 		// create InputTaskTriggers and UpcallManagers
-		baseStateInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(baseStateIn);
-		baseStateInUpcallManager = new BaseStateInUpcallManager(baseStateIn);
+		baseStateInInputCollector = new BaseStateInInputCollector(baseStateIn);
+		baseStateInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(baseStateInInputCollector);
+		baseStateInUpcallManager = new BaseStateInUpcallManager(baseStateInInputCollector);
 		
 		// create input-handler
 		
@@ -338,6 +342,7 @@ void SmartLaserLMS200Server::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 	delete baseStateInInputTaskTrigger;
 	delete baseStateInUpcallManager;
+	delete baseStateInInputCollector;
 
 	// destroy client ports
 	delete baseStateIn;
@@ -345,7 +350,8 @@ void SmartLaserLMS200Server::fini()
 	// destroy server ports
 	delete laserQueryServiceAnsw;
 	delete laserQueryServiceAnswInputTaskTrigger;
-	delete laserScanOut;
+	delete laserServiceOutWrapper;
+	delete laserServiceOut;
 	// destroy event-test handlers (if needed)
 	
 	// destroy request-handlers
@@ -372,11 +378,11 @@ void SmartLaserLMS200Server::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
 	// destruction of PlainOpcUaSmartLaserLMS200ServerExtension
 	
-	// destruction of SmartLaserLMS200ServerROSExtension
+	// destruction of SmartLaserLMS200ServerROS1InterfacesExtension
+	
+	// destruction of SmartLaserLMS200ServerRestInterfacesExtension
 	
 }
 
@@ -465,10 +471,10 @@ void SmartLaserLMS200Server::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("LaserQueryServiceAnsw", "roboticMiddleware")) {
 			parameter.getString("LaserQueryServiceAnsw", "roboticMiddleware", connections.laserQueryServiceAnsw.roboticMiddleware);
 		}
-		// load parameters for server LaserScanOut
-		parameter.getString("LaserScanOut", "serviceName", connections.laserScanOut.serviceName);
-		if(parameter.checkIfParameterExists("LaserScanOut", "roboticMiddleware")) {
-			parameter.getString("LaserScanOut", "roboticMiddleware", connections.laserScanOut.roboticMiddleware);
+		// load parameters for server LaserServiceOut
+		parameter.getString("LaserServiceOut", "serviceName", connections.laserServiceOut.serviceName);
+		if(parameter.checkIfParameterExists("LaserServiceOut", "roboticMiddleware")) {
+			parameter.getString("LaserServiceOut", "roboticMiddleware", connections.laserServiceOut.roboticMiddleware);
 		}
 		
 		// load parameters for task LaserTask
@@ -482,11 +488,11 @@ void SmartLaserLMS200Server::loadParameter(int argc, char *argv[])
 			parameter.getInteger("LaserTask", "cpuAffinity", connections.laserTask.cpuAffinity);
 		}
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// load parameters for PlainOpcUaSmartLaserLMS200ServerExtension
 		
-		// load parameters for SmartLaserLMS200ServerROSExtension
+		// load parameters for SmartLaserLMS200ServerROS1InterfacesExtension
+		
+		// load parameters for SmartLaserLMS200ServerRestInterfacesExtension
 		
 		
 		// load parameters for all registered component-extensions

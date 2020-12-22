@@ -18,6 +18,12 @@
 		
 #include "aceSmartSoft.hh"
 
+#include <list>
+#include <memory>
+#include <mutex>
+#include <atomic>
+#include <condition_variable>
+
 #include <CommBasicObjects/CommKBRequest.hh>
 #include <CommBasicObjects/CommKBResponse.hh>
 
@@ -29,11 +35,25 @@
 class KbQueryHandlerCore 
 :	public Smart::IInputHandler<std::pair<Smart::QueryIdPtr,CommBasicObjects::CommKBRequest>>
 ,	public Smart::TaskTriggerSubject
+,	public SmartACE::Task
 {
 private:
-virtual void handle_input(const std::pair<Smart::QueryIdPtr,CommBasicObjects::CommKBRequest> &input) override {
-	this->handleQuery(input.first, input.second);
-}
+	// implementing active-queue handler
+	std::atomic<bool> signalled_to_stop;
+	std::mutex handler_mutex;
+	std::condition_variable handler_cond_var;
+	std::list<std::pair<Smart::QueryIdPtr,CommBasicObjects::CommKBRequest>> request_queue;
+	// inputs are pushed to the request_queue
+	virtual void handle_input(const std::pair<Smart::QueryIdPtr,CommBasicObjects::CommKBRequest> &input) override;
+	// inputs are processed from within the thread, thus implementing an active FIFO request-queue
+	virtual int task_execution() override;
+	// override the default stop behavior to also release the active request queue
+	virtual int stop(const bool wait_till_stopped=true) override
+	{
+		signalled_to_stop = true;
+		handler_cond_var.notify_all();
+		return SmartACE::Task::stop();
+	}
 
 
 	virtual void updateAllCommObjects();
@@ -56,7 +76,7 @@ public:
 	using IQueryServer = Smart::IQueryServerPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse>;
 	using QueryId = Smart::QueryIdPtr;
 	KbQueryHandlerCore(IQueryServer *server);
-	virtual ~KbQueryHandlerCore() = default;
+	virtual ~KbQueryHandlerCore();
 	
 protected:
 	IQueryServer *server;

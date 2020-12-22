@@ -66,7 +66,7 @@ std::string switchFetchEvents(const std::string& moduleInst, const std::string& 
 //			}
 //			else
 //			{
-				//std::cout << "switchFetchEvents: " << eventList << std::endl;
+//				std::cout << "switchFetchEvents: " << eventList << std::endl;
 				outString.str("");
 				outString<<"(ok ("<< eventList <<"))";
 //			}

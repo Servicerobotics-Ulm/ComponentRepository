@@ -50,7 +50,6 @@
 #include "ComponentRealSenseV2Server.hh"
 #include "EulerTransformationMatrices.hh"
 
-
 #include <sstream>
 #include <iostream>
 #include <iomanip>
@@ -263,14 +262,14 @@ int ImageTask::on_execute()
 
 				// push newest RGBD image
 				if (push_newest_rgbd) {
-					COMP->imagePushNewestServer->put(*image);
+					COMP->rGBDImagePushServiceOut->put(*image);
 				}
 				// push newest color image
 				if (push_newest_rgb) {
 					DomainVision::CommVideoImage colorImage = image->getColor_image();
 					colorImage.set_sensor_pose(sensorPose);
 					colorImage.set_base_state(base_state);
-					COMP->colorImagePushNewestServer->put(colorImage);
+					COMP->rGBImagePushServiceOut->put(colorImage);
 				}
 				// push newest depth image
 				if (push_newest_depth) {

@@ -20,8 +20,374 @@
 SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartACE::CommParameterRequest& request)
 {
 	SmartACE::CommParameterResponse answer;
+	
+	if(request.getParameterDataMode() == SmartACE::ParameterDataMode::NAME){
+		answer = handleParametersNamed(request);
+	} else {
+		answer = handleParametersSequence(request);
+	}
+	return answer;
+}
 
+
+SmartACE::CommParameterResponse ParamUpdateHandler::handleParametersNamed(const SmartACE::CommParameterRequest& request)
+{
+	SmartACE::CommParameterResponse answer;
+	
 	std::string tag = request.getTag();
+	for (auto & c: tag) c = toupper(c);
+	std::cout<<"PARAMETER: "<<tag<<std::endl;
+	
+	if (tag == "COMMIT")
+	{
+		answer.setResponse(globalState.handleCOMMIT(commitState));
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			globalStateLock.acquire();
+			// change the content of the globalState, however change only the generated content
+			// without affecting potential user member variables (which is more intuitive for the user)
+			globalState.setContent(commitState);
+			globalStateLock.release();
+		} else {
+			// the commit validation check returned != OK
+			// the commit state is rejected and is not copied into the global state
+		}
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.MAPPERPARAMS.CUREMPTY")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK); // TODO: this should be decided according to validation checks defined in the model (not yet implemented)
+		
+		std::string temp_mapmode = "";
+		if(request.getString("mapmode", temp_mapmode) == 0) {
+			commitState.CommNavigationObjects.MapperParams.CUREMPTY.mapmode = temp_mapmode;
+		} else {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: mapmode request: "<<request<<std::endl;
+		}
+		
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.MAPPERPARAMS.CURLOAD")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		std::string temp_filename = "";
+		if(request.getString("filename", temp_filename) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: filename request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommNavigationObjects_MapperParams_CURLOADCore(
+			temp_filename
+			);
+		}
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.MAPPERPARAMS.CURLOADLTM")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommNavigationObjects_MapperParams_CURLOADLTMCore(
+			);
+		}
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.MAPPERPARAMS.CURLTM")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK); // TODO: this should be decided according to validation checks defined in the model (not yet implemented)
+		
+		std::string temp_preoccupation = "";
+		if(request.getString("preoccupation", temp_preoccupation) == 0) {
+			commitState.CommNavigationObjects.MapperParams.CURLTM.preoccupation = temp_preoccupation;
+		} else {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: preoccupation request: "<<request<<std::endl;
+		}
+		int temp_threshold = 0;
+		if(request.getInteger("threshold", temp_threshold) == 0) {
+			commitState.CommNavigationObjects.MapperParams.CURLTM.threshold = temp_threshold;
+		} else {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: threshold request: "<<request<<std::endl;
+		}
+		
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.MAPPERPARAMS.CURPARAMETER")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		int temp_xsize = 0;
+		if(request.getInteger("xsize", temp_xsize) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: xsize request: "<<request<<std::endl;
+		}
+		int temp_ysize = 0;
+		if(request.getInteger("ysize", temp_ysize) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: ysize request: "<<request<<std::endl;
+		}
+		int temp_xpos = 0;
+		if(request.getInteger("xpos", temp_xpos) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: xpos request: "<<request<<std::endl;
+		}
+		int temp_ypos = 0;
+		if(request.getInteger("ypos", temp_ypos) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: ypos request: "<<request<<std::endl;
+		}
+		int temp_id = 0;
+		if(request.getInteger("id", temp_id) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: id request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommNavigationObjects_MapperParams_CURPARAMETERCore(
+			temp_xsize, 
+			temp_ysize, 
+			temp_xpos, 
+			temp_ypos, 
+			temp_id
+			);
+		}
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.MAPPERPARAMS.CURSAVE")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		std::string temp_filename = "";
+		if(request.getString("filename", temp_filename) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: filename request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommNavigationObjects_MapperParams_CURSAVECore(
+			temp_filename
+			);
+		}
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.MAPPERPARAMS.CURSAVEXPM")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		std::string temp_filename = "";
+		if(request.getString("filename", temp_filename) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: filename request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommNavigationObjects_MapperParams_CURSAVEXPMCore(
+			temp_filename
+			);
+		}
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.MAPPERPARAMS.LTMINITIALIZE")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		int temp_value = 0;
+		if(request.getInteger("value", temp_value) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: value request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommNavigationObjects_MapperParams_LTMINITIALIZECore(
+			temp_value
+			);
+		}
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.MAPPERPARAMS.LTMLOAD")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		std::string temp_filename = "";
+		if(request.getString("filename", temp_filename) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: filename request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommNavigationObjects_MapperParams_LTMLOADCore(
+			temp_filename
+			);
+		}
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.MAPPERPARAMS.LTMLOADIEEESTD")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		std::string temp_filename = "";
+		if(request.getString("filename", temp_filename) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: filename request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommNavigationObjects_MapperParams_LTMLOADIEEESTDCore(
+			temp_filename
+			);
+		}
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.MAPPERPARAMS.LTMLOADYAML")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		std::string temp_filename = "";
+		if(request.getString("filename", temp_filename) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: filename request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommNavigationObjects_MapperParams_LTMLOADYAMLCore(
+			temp_filename
+			);
+		}
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.MAPPERPARAMS.LTMPARAMETER")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		int temp_xsize = 0;
+		if(request.getInteger("xsize", temp_xsize) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: xsize request: "<<request<<std::endl;
+		}
+		int temp_ysize = 0;
+		if(request.getInteger("ysize", temp_ysize) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: ysize request: "<<request<<std::endl;
+		}
+		int temp_xpos = 0;
+		if(request.getInteger("xpos", temp_xpos) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: xpos request: "<<request<<std::endl;
+		}
+		int temp_ypos = 0;
+		if(request.getInteger("ypos", temp_ypos) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: ypos request: "<<request<<std::endl;
+		}
+		int temp_id = 0;
+		if(request.getInteger("id", temp_id) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: id request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommNavigationObjects_MapperParams_LTMPARAMETERCore(
+			temp_xsize, 
+			temp_ysize, 
+			temp_xpos, 
+			temp_ypos, 
+			temp_id
+			);
+		}
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.MAPPERPARAMS.LTMSAVE")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		std::string temp_filename = "";
+		if(request.getString("filename", temp_filename) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: filename request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommNavigationObjects_MapperParams_LTMSAVECore(
+			temp_filename
+			);
+		}
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.MAPPERPARAMS.LTMSAVEIEEESTD")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		std::string temp_filename = "";
+		if(request.getString("filename", temp_filename) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: filename request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommNavigationObjects_MapperParams_LTMSAVEIEEESTDCore(
+			temp_filename
+			);
+		}
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.MAPPERPARAMS.LTMSAVEXPM")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		std::string temp_filename = "";
+		if(request.getString("filename", temp_filename) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: filename request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommNavigationObjects_MapperParams_LTMSAVEXPMCore(
+			temp_filename
+			);
+		}
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.MAPPERPARAMS.LTMSAVEYAMLPGM")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		std::string temp_filename = "";
+		if(request.getString("filename", temp_filename) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: filename request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommNavigationObjects_MapperParams_LTMSAVEYAMLPGMCore(
+			temp_filename
+			);
+		}
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.MAPPERPARAMS.LTMSAVEYAMLPPM")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		std::string temp_filename = "";
+		if(request.getString("filename", temp_filename) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: filename request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommNavigationObjects_MapperParams_LTMSAVEYAMLPPMCore(
+			temp_filename
+			);
+		}
+	}
+	else
+	{
+		/////////////////////////////////////////////////////////////////////
+		// default new
+		std::cout<<"ERROR wrong Parameter!"<<std::endl;
+		answer.setResponse(SmartACE::ParamResponseType::INVALID);
+	}
+	
+
+	std::cout<<"[handleQuery] PARAMETER "<<tag<<" DONE\n\n";
+
+	return answer;
+}
+
+
+SmartACE::CommParameterResponse ParamUpdateHandler::handleParametersSequence(const SmartACE::CommParameterRequest& request)
+{
+	SmartACE::CommParameterResponse answer;
+	
+	std::string tag = request.getTag();
+	for (auto & c: tag) c = toupper(c);
 	std::cout<<"PARAMETER: "<<tag<<std::endl;
 	
 	if (tag == "COMMIT")
@@ -47,6 +413,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 			commitState.CommNavigationObjects.MapperParams.CUREMPTY.mapmode = temp_mapmode;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: mapmode request: "<<request<<std::endl;
 		}
 		
 	}
@@ -57,6 +424,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		std::string temp_filename = "";
 		if(request.getString("1", temp_filename) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: filename request: "<<request<<std::endl;
 		}
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
@@ -84,12 +452,14 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 			commitState.CommNavigationObjects.MapperParams.CURLTM.preoccupation = temp_preoccupation;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: preoccupation request: "<<request<<std::endl;
 		}
 		int temp_threshold = 0;
 		if(request.getInteger("2", temp_threshold) == 0) {
 			commitState.CommNavigationObjects.MapperParams.CURLTM.threshold = temp_threshold;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: threshold request: "<<request<<std::endl;
 		}
 		
 	}
@@ -100,22 +470,27 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		int temp_xsize = 0;
 		if(request.getInteger("1", temp_xsize) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: xsize request: "<<request<<std::endl;
 		}
 		int temp_ysize = 0;
 		if(request.getInteger("2", temp_ysize) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: ysize request: "<<request<<std::endl;
 		}
 		int temp_xpos = 0;
 		if(request.getInteger("3", temp_xpos) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: xpos request: "<<request<<std::endl;
 		}
 		int temp_ypos = 0;
 		if(request.getInteger("4", temp_ypos) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: ypos request: "<<request<<std::endl;
 		}
 		int temp_id = 0;
 		if(request.getInteger("5", temp_id) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: id request: "<<request<<std::endl;
 		}
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
@@ -135,6 +510,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		std::string temp_filename = "";
 		if(request.getString("1", temp_filename) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: filename request: "<<request<<std::endl;
 		}
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
@@ -150,6 +526,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		std::string temp_filename = "";
 		if(request.getString("1", temp_filename) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: filename request: "<<request<<std::endl;
 		}
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
@@ -165,6 +542,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		int temp_value = 0;
 		if(request.getInteger("1", temp_value) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: value request: "<<request<<std::endl;
 		}
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
@@ -180,6 +558,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		std::string temp_filename = "";
 		if(request.getString("1", temp_filename) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: filename request: "<<request<<std::endl;
 		}
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
@@ -195,6 +574,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		std::string temp_filename = "";
 		if(request.getString("1", temp_filename) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: filename request: "<<request<<std::endl;
 		}
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
@@ -210,6 +590,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		std::string temp_filename = "";
 		if(request.getString("1", temp_filename) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: filename request: "<<request<<std::endl;
 		}
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
@@ -225,22 +606,27 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		int temp_xsize = 0;
 		if(request.getInteger("1", temp_xsize) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: xsize request: "<<request<<std::endl;
 		}
 		int temp_ysize = 0;
 		if(request.getInteger("2", temp_ysize) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: ysize request: "<<request<<std::endl;
 		}
 		int temp_xpos = 0;
 		if(request.getInteger("3", temp_xpos) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: xpos request: "<<request<<std::endl;
 		}
 		int temp_ypos = 0;
 		if(request.getInteger("4", temp_ypos) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: ypos request: "<<request<<std::endl;
 		}
 		int temp_id = 0;
 		if(request.getInteger("5", temp_id) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: id request: "<<request<<std::endl;
 		}
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
@@ -260,6 +646,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		std::string temp_filename = "";
 		if(request.getString("1", temp_filename) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: filename request: "<<request<<std::endl;
 		}
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
@@ -275,6 +662,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		std::string temp_filename = "";
 		if(request.getString("1", temp_filename) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: filename request: "<<request<<std::endl;
 		}
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
@@ -290,6 +678,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		std::string temp_filename = "";
 		if(request.getString("1", temp_filename) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: filename request: "<<request<<std::endl;
 		}
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
@@ -305,6 +694,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		std::string temp_filename = "";
 		if(request.getString("1", temp_filename) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: filename request: "<<request<<std::endl;
 		}
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
@@ -320,6 +710,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		std::string temp_filename = "";
 		if(request.getString("1", temp_filename) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: filename request: "<<request<<std::endl;
 		}
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {

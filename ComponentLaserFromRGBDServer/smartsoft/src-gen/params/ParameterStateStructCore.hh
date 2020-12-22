@@ -59,7 +59,7 @@ public:
 				on_turret = false;
 				roll = 0;
 				verbose = true;
-				x = 0;
+				x = 190;
 				y = 0;
 				z = 0;
 			}
@@ -208,42 +208,6 @@ public:
 			
 		}; // end class base_manipulatorType
 		
-		/**
-		 * Definition of Parameter services
-		 */
-		class servicesType 
-		{
-			friend class ParamUpdateHandler;
-		protected:
-			/**
-			 * here are the member definitions
-			 */
-			bool activate_push_newest;
-			bool active_push_timed;
-		
-		public:
-			// default constructor
-			servicesType() {
-				activate_push_newest = true;
-				active_push_timed = false;
-			}
-		
-			/**
-			 * here are the public getters
-			 */
-			inline bool getActivate_push_newest() const { return activate_push_newest; }
-			inline bool getActive_push_timed() const { return active_push_timed; }
-			
-			void to_ostream(std::ostream &os = std::cout) const
-			{
-				os << "services(";
-				os << "activate_push_newest = " << activate_push_newest << ", ";
-				os << "active_push_timed = " << active_push_timed << ", ";
-				os << ")\n";
-			}
-			
-		}; // end class servicesType
-		
 	
 		///////////////////////////////////////////
 		// External params
@@ -261,7 +225,6 @@ protected:
 	base_manipulatorType base_manipulator;
 	laser_generatorType laser_generator;
 	scannerType scanner;
-	servicesType services;
 	
 	// External params
 	
@@ -289,9 +252,6 @@ public:
 	scannerType getScanner() const {
 		return scanner;
 	}
-	servicesType getServices() const {
-		return services;
-	}
 	
 	// external param getters
 	
@@ -304,7 +264,6 @@ public:
 		base_manipulator.to_ostream(os);
 		laser_generator.to_ostream(os);
 		scanner.to_ostream(os);
-		services.to_ostream(os);
 		
 		// External params
 		

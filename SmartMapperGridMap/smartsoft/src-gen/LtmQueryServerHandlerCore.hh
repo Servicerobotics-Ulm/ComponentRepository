@@ -18,6 +18,7 @@
 		
 #include "aceSmartSoft.hh"
 
+
 #include <CommNavigationObjects/CommGridMap.hh>
 #include <CommNavigationObjects/CommGridMapRequest.hh>
 
@@ -33,9 +34,10 @@ class LtmQueryServerHandlerCore
 ,	public LtmMapTaskObserverInterface
 {
 private:
-virtual void handle_input(const std::pair<Smart::QueryIdPtr,CommNavigationObjects::CommGridMapRequest> &input) override {
-	this->handleQuery(input.first, input.second);
-}
+	// inputs are directly propagated to the implementation (passive handler)
+	virtual void handle_input(const std::pair<Smart::QueryIdPtr,CommNavigationObjects::CommGridMapRequest> &input) override {
+		this->handleQuery(input.first, input.second);
+	}
 
 
 	virtual void updateAllCommObjects();
@@ -62,7 +64,7 @@ public:
 	using IQueryServer = Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap>;
 	using QueryId = Smart::QueryIdPtr;
 	LtmQueryServerHandlerCore(IQueryServer *server);
-	virtual ~LtmQueryServerHandlerCore() = default;
+	virtual ~LtmQueryServerHandlerCore();
 	
 protected:
 	IQueryServer *server;

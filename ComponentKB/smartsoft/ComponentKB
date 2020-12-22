@@ -15,6 +15,8 @@ fi
 
 if [ ! "$SMART_ROOT_DEPLOYMENT" = "" ]; then
 	echo "Using SMART DEPLOYMENT ENV..."
+	echo "Copy libComponentKB.so to SMART DEPLOYMENT ENV"
+    cp libComponentKB.so $SMART_ROOT_DEPLOYMENT
 	LISPFILES_PATH="."
 else
 	echo "Using System SMART_ROOT files.."

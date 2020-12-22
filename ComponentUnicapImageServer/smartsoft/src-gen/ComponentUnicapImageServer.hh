@@ -29,10 +29,6 @@
 class ComponentUnicapImageServerPortFactoryInterface;
 class ComponentUnicapImageServerExtension;
 
-// includes for ComponentUnicapImageServerROSExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentUnicapImageServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -50,13 +46,17 @@ class ComponentUnicapImageServerExtension;
 
 // include tasks
 #include "ImageTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 #include "BasePushTimedClientUpcallManager.hh"
+#include "BasePushTimedClientInputCollector.hh"
 #include "PtuPushTimedClientUpcallManager.hh"
+#include "PtuPushTimedClientInputCollector.hh"
 
 // include input-handler(s)
 // include request-handler(s)
 #include "ImageQueryHandler.hh"
+// output port wrappers
+#include "ImagePushNewestServerWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -116,10 +116,12 @@ public:
 	Smart::IPushClientPattern<CommBasicObjects::CommBaseState> *basePushTimedClient;
 	Smart::InputTaskTrigger<CommBasicObjects::CommBaseState> *basePushTimedClientInputTaskTrigger;
 	BasePushTimedClientUpcallManager *basePushTimedClientUpcallManager;
+	BasePushTimedClientInputCollector *basePushTimedClientInputCollector;
 	// InputPort ptuPushTimedClient
 	Smart::IPushClientPattern<CommBasicObjects::CommDevicePoseState> *ptuPushTimedClient;
 	Smart::InputTaskTrigger<CommBasicObjects::CommDevicePoseState> *ptuPushTimedClientInputTaskTrigger;
 	PtuPushTimedClientUpcallManager *ptuPushTimedClientUpcallManager;
+	PtuPushTimedClientInputCollector *ptuPushTimedClientInputCollector;
 	
 	// define request-ports
 	
@@ -127,6 +129,7 @@ public:
 	
 	// define output-ports
 	Smart::IPushServerPattern<DomainVision::CommVideoImage> *imagePushNewestServer;
+	ImagePushNewestServerWrapper *imagePushNewestServerWrapper;
 	
 	// define answer-ports
 	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> *imageQueryServer;
@@ -134,10 +137,6 @@ public:
 	
 	// define request-handlers
 	ImageQueryHandler *imageQueryHandler;
-	
-	// definitions of ComponentUnicapImageServerROSExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentUnicapImageServerExtension
 	
@@ -267,10 +266,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} ptuPushTimedClient;
-		
-		// -- parameters for ComponentUnicapImageServerROSExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentUnicapImageServerExtension
 		

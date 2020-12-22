@@ -20,6 +20,8 @@
 // include communication objects
 #include <CommBasicObjects/CommBaseState.hh>
 #include <CommBasicObjects/CommBaseStateACE.hh>
+#include <CommBasicObjects/CommIOValues.hh>
+#include <CommBasicObjects/CommIOValuesACE.hh>
 #include <CommBasicObjects/CommLaserSafetyEventParam.hh>
 #include <CommBasicObjects/CommLaserSafetyEventParamACE.hh>
 #include <CommBasicObjects/CommLaserSafetyEventState.hh>
@@ -47,9 +49,10 @@ public:
 	virtual void initialize(ComponentLaserS300Server *component, int argc, char* argv[]) = 0;
 	virtual int onStartup() = 0;
 
+	virtual Smart::IPushClientPattern<CommBasicObjects::CommIOValues> * createCommIOForkingServiceIn() = 0;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * createBaseTimedClient() = 0;
 	
-	virtual Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * createLaserPushNewestServer(const std::string &serviceName) = 0;
+	virtual Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * createLaserServiceOut(const std::string &serviceName) = 0;
 	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan> * createLaserQueryServer(const std::string &serviceName) = 0;
 	virtual Smart::IEventServerPattern<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState> * createSafetyfieldEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState>> safetyfieldEventServerEventTestHandler) = 0;
 

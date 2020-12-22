@@ -3,7 +3,7 @@ ComponentDefinition ComponentRobotinoLaserServer logo "/ComponentRobotinoLaserSe
 Activity ReadLaserTask
 	{
 	}
-	OutputPort pushNewestServer implements CommBasicObjects.LaserService realizedBy ReadLaserTask {
+	OutputPort LaserServiceOut implements CommBasicObjects.LaserService realizedBy ReadLaserTask {
 	}
 	AnswerPort queryServer implements CommBasicObjects.LaserQueryService {
 	}

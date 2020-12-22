@@ -18,6 +18,8 @@ Activity LaserTask
 	RequestHandler LaserQueryServiceAnswHandler triggeredFrom LaserQueryServiceAnsw {
 		Observe LaserTask
 	}
-	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService { }
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService {
+		SkillRealizationsRef laser
+	}
 	ComponentParameters ComponentLaserLMS1xxParams slave CoordinationPort
 }

@@ -32,14 +32,14 @@ initialComponentMode Neutral
 # Task parameters
 
 [OdomTask]
-minActFreqHz 20.0
-maxActFreqHz 1.0
+minActFreqHz 1.0
+maxActFreqHz 50.0
 # setup default trigger as PeriodicTimer
 triggerType PeriodicTimer
 periodicActFreqHz 50.0
 # other trigger-types are:
 #triggerType PeriodicTimer
-#periodicActFreqHz 20.0
+#periodicActFreqHz 1.0
 # or alternatively:
 #triggerType DataTriggered
 #inPortRef <InPortName>
@@ -52,6 +52,9 @@ periodicActFreqHz 50.0
 [SignalStateTask]
 minActFreqHz 0.0
 maxActFreqHz 0.0
+# setup default trigger as PeriodicTimer
+triggerType PeriodicTimer
+periodicActFreqHz 2.0
 # other trigger-types are:
 #triggerType PeriodicTimer
 #periodicActFreqHz 0.0
@@ -117,10 +120,6 @@ roboticMiddleware ACE_SmartSoft
 serviceName DigitalInputEventOut
 roboticMiddleware ACE_SmartSoft
 
-[LaserSafetyEventServiceOut]
-serviceName LaserSafetyEventServiceOut
-roboticMiddleware ACE_SmartSoft
-
 [LocalizationUpdateServiceIn]
 serviceName LocalizationUpdateServiceIn
 roboticMiddleware ACE_SmartSoft
@@ -149,10 +148,10 @@ interval 1
 roboticMiddleware ACE_SmartSoft
 
 ##########################
-## parameters of ComponentRobotinoBaseServerROSExtension
+## parameters of ComponentRobotinoBaseServerROS1InterfacesExtension
 
 ##########################
-## parameters of OpcUaBackendComponentGeneratorExtension
+## parameters of ComponentRobotinoBaseServerRestInterfacesExtension
 
 ##########################
 ## parameters of PlainOpcUaComponentRobotinoBaseServerExtension
@@ -176,13 +175,6 @@ poseFileName /tmp/lastRobotPose.txt
 useLocalizationEvent true
 verbose false
 writePoseFile false
-
-##########################
-# InternalParameter LaserSafetyField
-[LaserSafetyField]
-generateLaserSafetyFieldEvents false
-laserSafetyfFieldTimeOutMSec 0
-laserSafetyfFieldTimeOutSec 10
 
 ##########################
 # InternalParameter Robot

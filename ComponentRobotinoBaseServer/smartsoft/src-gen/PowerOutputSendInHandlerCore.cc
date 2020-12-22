@@ -20,11 +20,12 @@ PowerOutputSendInHandlerCore::PowerOutputSendInHandlerCore(
 	Smart::InputSubject<CommRobotinoObjects::CommRobotinoPowerOutputValue> *subject,
 	const int &prescaleFactor)
 	:	Smart::InputTaskTrigger<CommRobotinoObjects::CommRobotinoPowerOutputValue>(subject, prescaleFactor)
-{  
-	updateStatus = Smart::SMART_NODATA;
+{
 }
 PowerOutputSendInHandlerCore::~PowerOutputSendInHandlerCore()
-{  }
+{  
+}
+
 
 void PowerOutputSendInHandlerCore::updateAllCommObjects() {
 }

@@ -99,6 +99,9 @@ public:
 	std::string queryParam(SmartACE::ParameterMaster *parameterMaster, const std::string& server, const std::string& param);
 	std::string setState(SmartACE::StateMaster *stateMaster, const std::string& server, const std::string& state);
 
+	std::string getState(SmartACE::StateMaster *stateMaster, const std::string& server);
+	std::string waitForLifeCycleState(SmartACE::StateMaster *stateMaster, const std::string& server, const std::string& lifeCycleState);
+
 };
 	
 #endif

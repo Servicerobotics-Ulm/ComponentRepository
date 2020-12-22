@@ -92,9 +92,9 @@ void ReadLaserTaskCore::updateAllCommObjects()
 
 
 // this method is meant to be used in derived classes
-Smart::StatusCode ReadLaserTaskCore::pushNewestServerPut(CommBasicObjects::CommMobileLaserScan &pushNewestServerDataObject)
+Smart::StatusCode ReadLaserTaskCore::laserServiceOutPut(CommBasicObjects::CommMobileLaserScan &laserServiceOutDataObject)
 {
-	Smart::StatusCode result = COMP->pushNewestServer->put(pushNewestServerDataObject);
+	Smart::StatusCode result = COMP->laserServiceOutWrapper->put(laserServiceOutDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
@@ -104,7 +104,7 @@ Smart::StatusCode ReadLaserTaskCore::pushNewestServerPut(CommBasicObjects::CommM
 // this method is meant to be used in derived classes
 Smart::StatusCode ReadLaserTaskCore::safetyfieldEventServerPut(CommBasicObjects::CommLaserSafetyEventState &eventState)
 {
-	Smart::StatusCode result = COMP->safetyfieldEventServer->put(eventState);
+	Smart::StatusCode result = COMP->safetyfieldEventServerWrapper->put(eventState);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());

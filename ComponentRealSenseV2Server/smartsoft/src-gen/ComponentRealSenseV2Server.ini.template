@@ -55,8 +55,12 @@ periodicActFreqHz 30.0
 ##########################
 # server port parameter
 
-[colorImagePushNewestServer]
-serviceName colorImagePushNewestServer
+[RGBDImagePushServiceOut]
+serviceName RGBDImagePushServiceOut
+roboticMiddleware ACE_SmartSoft
+
+[RGBImagePushServiceOut]
+serviceName RGBImagePushServiceOut
 roboticMiddleware ACE_SmartSoft
 
 [colorImageQueryServer]
@@ -67,10 +71,6 @@ roboticMiddleware ACE_SmartSoft
 serviceName depthPushNewestServer
 roboticMiddleware ACE_SmartSoft
 
-[imagePushNewestServer]
-serviceName imagePushNewestServer
-roboticMiddleware ACE_SmartSoft
-
 [imageQueryServer]
 serviceName imageQueryServer
 roboticMiddleware ACE_SmartSoft
@@ -79,6 +79,7 @@ roboticMiddleware ACE_SmartSoft
 # client port parameter
 
 [UrPosePushTimedClient]
+initialConnect false
 serverName unknown
 serviceName unknown
 wiringName UrPosePushTimedClient
@@ -94,6 +95,7 @@ interval 1
 roboticMiddleware ACE_SmartSoft
 
 [basePushTimedClient]
+initialConnect false
 serverName unknown
 serviceName unknown
 wiringName basePushTimedClient
@@ -101,6 +103,7 @@ interval 1
 roboticMiddleware ACE_SmartSoft
 
 [ptuPosePushNewestClient]
+initialConnect false
 serverName unknown
 serviceName unknown
 wiringName ptuPosePushNewestClient
@@ -108,10 +111,10 @@ interval 1
 roboticMiddleware ACE_SmartSoft
 
 ##########################
-## parameters of ComponentRealSenseV2ServerROSExtension
+## parameters of ComponentRealSenseV2ServerROS1InterfacesExtension
 
 ##########################
-## parameters of OpcUaBackendComponentGeneratorExtension
+## parameters of ComponentRealSenseV2ServerRestInterfacesExtension
 
 ##########################
 ## parameters of PlainOpcUaComponentRealSenseV2ServerExtension

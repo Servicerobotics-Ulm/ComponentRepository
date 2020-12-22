@@ -18,6 +18,8 @@
 #define COMPONENTVISUALIZATION_PORTFACTORYINTERFACE_HH_
 
 // include communication objects
+#include <CommLocalizationObjects/CommAmclVisualizationInfo.hh>
+#include <CommLocalizationObjects/CommAmclVisualizationInfoACE.hh>
 #include <CommBasicObjects/CommBaseState.hh>
 #include <CommBasicObjects/CommBaseStateACE.hh>
 #include <DomainVision/CommDepthImage.hh>
@@ -67,6 +69,7 @@ public:
 	virtual void initialize(ComponentVisualization *component, int argc, char* argv[]) = 0;
 	virtual int onStartup() = 0;
 
+	virtual Smart::IPushClientPattern<CommLocalizationObjects::CommAmclVisualizationInfo> * createAmclVisualizationInfoIn() = 0;
 	virtual Smart::IPushClientPattern<CommTrackingObjects::CommDetectedMarkerList> * createMarkerListDetectionServiceIn() = 0;
 	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> * createRGBDImageQueryServiceReq() = 0;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * createBaseClient() = 0;

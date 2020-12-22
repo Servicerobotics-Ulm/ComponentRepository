@@ -34,6 +34,7 @@ public:
 	virtual void initialize(ComponentVisualization *component, int argc, char* argv[]) override;
 	virtual int onStartup() override;
 
+	virtual Smart::IPushClientPattern<CommLocalizationObjects::CommAmclVisualizationInfo> * createAmclVisualizationInfoIn() override;
 	virtual Smart::IPushClientPattern<CommTrackingObjects::CommDetectedMarkerList> * createMarkerListDetectionServiceIn() override;
 	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> * createRGBDImageQueryServiceReq() override;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * createBaseClient() override;

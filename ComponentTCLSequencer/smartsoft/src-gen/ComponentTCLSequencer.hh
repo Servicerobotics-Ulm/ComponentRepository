@@ -29,9 +29,9 @@
 class ComponentTCLSequencerPortFactoryInterface;
 class ComponentTCLSequencerExtension;
 
-// includes for ComponentTCLSequencerROSExtension
+// includes for ComponentTCLSequencerROS1InterfacesExtension
 
-// includes for OpcUaBackendComponentGeneratorExtension
+// includes for ComponentTCLSequencerRestInterfacesExtension
 
 // includes for PlainOpcUaComponentTCLSequencerExtension
 // include plain OPC UA device clients
@@ -41,10 +41,11 @@ class ComponentTCLSequencerExtension;
 // include communication objects
 
 // include tasks
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 
 // include input-handler(s)
 // include request-handler(s)
+// output port wrappers
 
 // include handler
 #include "CompHandler.hh"
@@ -109,9 +110,9 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of ComponentTCLSequencerROSExtension
+	// definitions of ComponentTCLSequencerROS1InterfacesExtension
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
+	// definitions of ComponentTCLSequencerRestInterfacesExtension
 	
 	// definitions of PlainOpcUaComponentTCLSequencerExtension
 	
@@ -204,9 +205,9 @@ public:
 	
 		//--- client port parameter ---
 		
-		// -- parameters for ComponentTCLSequencerROSExtension
+		// -- parameters for ComponentTCLSequencerROS1InterfacesExtension
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
+		// -- parameters for ComponentTCLSequencerRestInterfacesExtension
 		
 		// -- parameters for PlainOpcUaComponentTCLSequencerExtension
 		

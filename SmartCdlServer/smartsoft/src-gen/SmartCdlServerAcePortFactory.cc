@@ -77,9 +77,9 @@ Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> * SmartCdlSe
 	return new SmartACE::SendClient<CommBasicObjects::CommNavigationVelocity>(componentImpl);
 }
 
-Smart::IPushClientPattern<CommRobotinoObjects::CommPathNavigationGoal> * SmartCdlServerAcePortFactory::createPathNavigationGoalClient()
+Smart::IPushClientPattern<CommNavigationObjects::CommCorridorNavigationGoal> * SmartCdlServerAcePortFactory::createPathNavigationGoalClient()
 {
-	return new SmartACE::PushClient<CommRobotinoObjects::CommPathNavigationGoal>(componentImpl);
+	return new SmartACE::PushClient<CommNavigationObjects::CommCorridorNavigationGoal>(componentImpl);
 }
 
 Smart::IPushClientPattern<CommNavigationObjects::CommPlannerGoal> * SmartCdlServerAcePortFactory::createPlannerClient()

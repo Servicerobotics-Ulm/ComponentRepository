@@ -65,7 +65,8 @@ int LtmMapTaskCore::execute_protected_region()
 	if(useDefaultState) {
 		Smart::StatusCode status = COMP->stateSlave->acquire("ltmMap");
 		if(status != Smart::SMART_OK) {
-			std::cerr << "LtmMapTaskCore: ERROR acquiring state active: " << status << std::endl;
+			std::cerr << "LtmMapTaskCore: ERROR acquiring state: " << status << std::endl;
+			usleep(500000);
 			return 0;
 		}
 	}

@@ -52,6 +52,11 @@ int ComponentVisualizationAcePortFactory::onStartup()
 	return componentImpl->startComponentInfrastructure();
 }
 
+Smart::IPushClientPattern<CommLocalizationObjects::CommAmclVisualizationInfo> * ComponentVisualizationAcePortFactory::createAmclVisualizationInfoIn()
+{
+	return new SmartACE::PushClient<CommLocalizationObjects::CommAmclVisualizationInfo>(componentImpl);
+}
+
 Smart::IPushClientPattern<CommTrackingObjects::CommDetectedMarkerList> * ComponentVisualizationAcePortFactory::createMarkerListDetectionServiceIn()
 {
 	return new SmartACE::PushClient<CommTrackingObjects::CommDetectedMarkerList>(componentImpl);

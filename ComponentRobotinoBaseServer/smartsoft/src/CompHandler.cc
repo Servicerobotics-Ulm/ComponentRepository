@@ -49,23 +49,6 @@
 #include "aceSmartSoft.hh"
 
 // include communication objects
-#include <CommBasicObjects/CommBasePositionUpdate.hh>
-#include <CommBasicObjects/CommBaseState.hh>
-#include <CommBasicObjects/CommBatteryEvent.hh>
-#include <CommBasicObjects/CommBatteryParameter.hh>
-#include <CommBasicObjects/CommBatteryState.hh>
-#include <CommBasicObjects/CommBumperEventParameter.hh>
-#include <CommBasicObjects/CommBumperEventResult.hh>
-#include <CommBasicObjects/CommBumperEventState.hh>
-#include <CommRobotinoObjects/CommDigitalInputEventParameter.hh>
-#include <CommRobotinoObjects/CommDigitalInputEventResult.hh>
-#include <CommRobotinoObjects/CommDigitalInputEventState.hh>
-#include <CommLocalizationObjects/CommLocalizationEventParameter.hh>
-#include <CommLocalizationObjects/CommLocalizationEventResult.hh>
-#include <CommBasicObjects/CommNavigationVelocity.hh>
-#include <CommRobotinoObjects/CommRobotinoIOValues.hh>
-#include <CommBasicObjects/CommVoid.hh>
-#include <CommLocalizationObjects/LocalizationEventState.hh>
 #include "ComponentRobotinoBaseServer.hh"
 
 void CompHandler::onStartup() 
@@ -101,7 +84,7 @@ void CompHandler::onStartup()
 		//status = COMP->connectLocalizationEventClient(COMP->connections.localizationEventClient.serverName, COMP->connections.localizationEventClient.serviceName);
 		std::cout<<"if(COMP->getGlobalState().getGeneral().getUseLocalizationEvent())..."<<std::endl;
 
-		COMP->connectLocalizationEventServiceIn(COMP->connections.localizationEventServiceIn.serverName,COMP->connections.localizationEventServiceIn.serverName);
+		COMP->connectLocalizationEventServiceIn(COMP->connections.localizationEventServiceIn.serverName,COMP->connections.localizationEventServiceIn.serviceName);
 
 		//status = COMP->localizationEventServiceIn(COMP->connections.localizationEventServiceIn.serverName, COMP->connections.localizationEventServiceIn.serviceName);
 

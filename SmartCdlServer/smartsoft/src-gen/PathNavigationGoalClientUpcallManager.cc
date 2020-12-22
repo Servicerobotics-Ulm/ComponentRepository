@@ -16,14 +16,14 @@
 #include "PathNavigationGoalClientUpcallManager.hh"
 
 PathNavigationGoalClientUpcallManager::PathNavigationGoalClientUpcallManager(
-	Smart::InputSubject<CommRobotinoObjects::CommPathNavigationGoal> *subject,
+	Smart::InputSubject<CommNavigationObjects::CommCorridorNavigationGoal> *subject,
 	const int &prescaleFactor)
-	:	Smart::IInputHandler<CommRobotinoObjects::CommPathNavigationGoal>(subject, prescaleFactor)
+	:	Smart::IInputHandler<CommNavigationObjects::CommCorridorNavigationGoal>(subject, prescaleFactor)
 {  }
 PathNavigationGoalClientUpcallManager::~PathNavigationGoalClientUpcallManager()
 {  }
 
-void PathNavigationGoalClientUpcallManager::notify_upcalls(const CommRobotinoObjects::CommPathNavigationGoal &input)
+void PathNavigationGoalClientUpcallManager::notify_upcalls(const CommNavigationObjects::CommCorridorNavigationGoal &input)
 {
 	for(auto it=upcalls.begin(); it!=upcalls.end(); it++) {
 		(*it)->on_PathNavigationGoalClient(input);

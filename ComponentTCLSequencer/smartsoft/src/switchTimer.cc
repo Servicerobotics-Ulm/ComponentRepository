@@ -41,8 +41,10 @@ std::string switchTimer(const std::string& moduleInst, const std::string& compna
 	std::ostringstream outString;
 	outString << "(error (unknown error))";
 
+	std::cout<<"switchTimer - service: "<<service<<std::endl;
+
 	// relative timer event activate
-	if(service == "relative-activate")
+	if(service == "RELATIVE-activate")
 	{
 		int id;
 		char *running;
@@ -81,7 +83,7 @@ std::string switchTimer(const std::string& moduleInst, const std::string& compna
 	} // case 1: relative timer event activate
 
 	// absolute timer event activate
-	else if(service == "absolute-activate")
+	else if(service == "ABSOLUTE-activate")
 	{
 		int id;
 		char *running;
@@ -163,7 +165,7 @@ std::string switchTimer(const std::string& moduleInst, const std::string& compna
 	} // case 2: absolute timer event activate
 
 	// timer event deactivate
-	else if(service == "relative-deactivate" || service == "absolute-deactivate")
+	else if(service == "RELATIVE-deactivate" || service == "ABSOLUTE-deactivate")
 	{
 		char *input  = (char *)NULL;
 		char *pointer = (char *)NULL;

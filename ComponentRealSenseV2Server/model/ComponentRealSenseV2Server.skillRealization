@@ -1,10 +1,10 @@
 SkillRealizationModel { 
-	CoordinationModuleRealization RealsenseCameraModule coordModuleDef DomainVision.CameraModule uses {
-		DomainVision.VisionCoordinationService intsName realsense
+	CoordinationModuleRealization CameraModule coordModuleDef DomainVision.CameraModule uses {
+		DomainVision.VisionCoordinationService intsName camera
 	}
 	{
-		SkillRealization activateCameraPush {action ( tcl-state :server realsense :state PushImage ) }
-		SkillRealization activateCameraRequestResponse { action ( tcl-state :server realsense :state QueryImage)}
+		SkillRealization activateCameraPush {action ( tcl-state :server camera :state PushImage ) }
+		SkillRealization activateCameraRequestResponse { action ( tcl-state :server camera :state QueryImage)}
 		SkillRealization deactivateCamera { action ()}
 	}
 }

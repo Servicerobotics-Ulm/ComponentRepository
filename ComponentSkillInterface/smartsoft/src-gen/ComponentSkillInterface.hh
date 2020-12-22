@@ -29,10 +29,6 @@
 class ComponentSkillInterfacePortFactoryInterface;
 class ComponentSkillInterfaceExtension;
 
-// includes for ComponentSkillInterfaceROSExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentSkillInterfaceExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -47,10 +43,11 @@ class ComponentSkillInterfaceExtension;
 // include tasks
 #include "SkillExecutionTask.hh"
 #include "CommunicationTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 
 // include input-handler(s)
 // include request-handler(s)
+// output port wrappers
 
 // include handler
 #include "CompHandler.hh"
@@ -119,10 +116,6 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
-	
-	// definitions of ComponentSkillInterfaceROSExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentSkillInterfaceExtension
 	
@@ -251,10 +244,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} kBQueryClient;
-		
-		// -- parameters for ComponentSkillInterfaceROSExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentSkillInterfaceExtension
 		

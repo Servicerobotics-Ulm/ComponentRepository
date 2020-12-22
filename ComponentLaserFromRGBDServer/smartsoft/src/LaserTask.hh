@@ -67,8 +67,6 @@
 #define _LASERTASK_HH
 
 #include "LaserTaskCore.hh"
-#include "LaserTaskTimerUSER.hh"
-
 #include "CommBasicObjects/CommMobileLaserScan.hh"
 #include "DomainVision/CommRGBDImage.hh"
 
@@ -83,9 +81,7 @@ class LaserTask  : public LaserTaskCore
 {
 
 private:
-
-	LaserTaskTimerUser timer;
-
+	Smart::TimePoint last;
 	CommBasicObjects::CommMobileLaserScan laser_scan;
 	DomainVision::CommRGBDImage rgbd_scan;
 	CommBasicObjects::CommBaseState base_state;
@@ -125,6 +121,13 @@ private:
 	}depth_to_color_extrinsics;
 
 	std::deque<float> laser_ray_distances;
+
+	double sensor_pose_x;
+	double sensor_pose_y;
+	double sensor_pose_z;
+	double sensor_pose_azimuth;
+	double sensor_pose_elevation;
+	double sensor_pose_roll;
 public:
 	LaserTask(SmartACE::SmartComponent *comp);
 	virtual ~LaserTask();

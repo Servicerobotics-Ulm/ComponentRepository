@@ -11,12 +11,13 @@ ComponentDefinition ComponentRobotinoBaseServer {
 		DefaultTrigger PeriodicTimer 50.0 Hz
 		ActivationConstraints {
 			configurable = true
-			minActFreq = 20.0 Hz
-			maxActFreq = 1.0 Hz
+			minActFreq = 1.0 Hz
+			maxActFreq = 50.0 Hz
 		}
 	}
 	Activity SignalStateTask
 	{
+	DefaultTrigger PeriodicTimer 2.0 Hz
 	}
 
 	OutputPort BatteryEventServiceOut implements CommNavigationObjects.BatteryEventService realizedBy OdomTask {
@@ -25,14 +26,14 @@ ComponentDefinition ComponentRobotinoBaseServer {
 	}
 	RequestHandler BaseStateQueryServiceAnswHandler triggeredFrom BaseStateQueryServiceAnsw {
 	}
-	AnswerPort RobotinoIOValuesQueryServiceAnsw implements CommRobotinoObjects.CommRobotinoIOValuesQueryService {
+	AnswerPort RobotinoIOValuesQueryServiceAnsw implements CommBasicObjects.CommIOValuesQueryService {
 	}
 	RequestHandler RobotinoIOValuesQueryServiceAnswHandler triggeredFrom RobotinoIOValuesQueryServiceAnsw {
 	}
 
 	OutputPort BumperEventServiceOut implements CommBasicObjects.BumperEventService realizedBy OdomTask {
 	}
-	OutputPort DigitalInputEventOut implements CommRobotinoObjects.CommRobotinoDigitalInputEvent realizedBy robotinoAPITask {
+	OutputPort DigitalInputEventOut implements CommBasicObjects.CommDigitalInputEvent realizedBy robotinoAPITask {
 	}
 	CoordinationSlavePort CoordinationPort implements CommNavigationObjects.BaseCoordinationService {
 		with baseState realizedBy BaseStateQueryServiceAnsw
@@ -53,8 +54,6 @@ ComponentDefinition ComponentRobotinoBaseServer {
 	InputHandler LocalizationUpdateServiceInHandler triggeredFrom LocalizationUpdateServiceIn { }
 	Activity robotinoAPITask
 	{
-	}
-	OutputPort LaserSafetyEventServiceOut implements CommBasicObjects.LaserSafetyEventService realizedBy robotinoAPITask {
 	}
 	InputPort PowerOutputSendIn implements CommRobotinoObjects.CommPowerOutputSend {
 	}

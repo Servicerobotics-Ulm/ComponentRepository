@@ -29,13 +29,13 @@
 class SmartMapperGridMapPortFactoryInterface;
 class SmartMapperGridMapExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaSmartMapperGridMapExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
 
-// includes for SmartMapperGridMapROSExtension
+// includes for SmartMapperGridMapROS1InterfacesExtension
+
+// includes for SmartMapperGridMapRestInterfacesExtension
 
 
 // include communication objects
@@ -49,13 +49,16 @@ class SmartMapperGridMapExtension;
 // include tasks
 #include "CurMapTask.hh"
 #include "LtmMapTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 #include "LaserServiceInUpcallManager.hh"
+#include "LaserServiceInInputCollector.hh"
 
 // include input-handler(s)
 // include request-handler(s)
 #include "CurrQueryServerHandler.hh"
 #include "LtmQueryServerHandler.hh"
+// output port wrappers
+#include "CurrMapOutWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -117,6 +120,7 @@ public:
 	Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> *laserServiceIn;
 	Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan> *laserServiceInInputTaskTrigger;
 	LaserServiceInUpcallManager *laserServiceInUpcallManager;
+	LaserServiceInInputCollector *laserServiceInInputCollector;
 	
 	// define request-ports
 	
@@ -124,6 +128,7 @@ public:
 	
 	// define output-ports
 	Smart::IPushServerPattern<CommNavigationObjects::CommGridMap> *currMapOut;
+	CurrMapOutWrapper *currMapOutWrapper;
 	
 	// define answer-ports
 	Smart::IQueryServerPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap> *currQueryServer;
@@ -135,11 +140,11 @@ public:
 	CurrQueryServerHandler *currQueryServerHandler;
 	LtmQueryServerHandler *ltmQueryServerHandler;
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
 	// definitions of PlainOpcUaSmartMapperGridMapExtension
 	
-	// definitions of SmartMapperGridMapROSExtension
+	// definitions of SmartMapperGridMapROS1InterfacesExtension
+	
+	// definitions of SmartMapperGridMapRestInterfacesExtension
 	
 	
 	// define default slave ports
@@ -271,6 +276,7 @@ public:
 	
 		//--- client port parameter ---
 		struct LaserServiceIn_struct {
+			bool initialConnect;
 			std::string serverName;
 			std::string serviceName;
 			std::string wiringName;
@@ -278,11 +284,11 @@ public:
 			std::string roboticMiddleware;
 		} laserServiceIn;
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// -- parameters for PlainOpcUaSmartMapperGridMapExtension
 		
-		// -- parameters for SmartMapperGridMapROSExtension
+		// -- parameters for SmartMapperGridMapROS1InterfacesExtension
+		
+		// -- parameters for SmartMapperGridMapRestInterfacesExtension
 		
 	} connections;
 };

@@ -31,12 +31,13 @@ ComponentTTSClient::ComponentTTSClient()
 	std::cout << "constructor of ComponentTTSClient\n";
 	
 	// set all pointer members to NULL
-	//componentTTSClientParams = NULL;
 	consoleTask = NULL;
 	consoleTaskTrigger = NULL;
 	//coordinationPort = NULL;
+	//coordinationPort = NULL;
 	speechQueryServiceReq = NULL;
 	speechSendServiceOut = NULL;
+	speechSendServiceOutWrapper = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
@@ -66,10 +67,6 @@ ComponentTTSClient::ComponentTTSClient()
 	connections.consoleTask.scheduler = "DEFAULT";
 	connections.consoleTask.priority = -1;
 	connections.consoleTask.cpuAffinity = -1;
-	
-	// initialize members of ComponentTTSClientROSExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentTTSClientExtension
 	
@@ -196,10 +193,6 @@ void ComponentTTSClient::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of ComponentTTSClientROSExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of PlainOpcUaComponentTTSClientExtension
 		
 		
@@ -240,6 +233,7 @@ void ComponentTTSClient::init(int argc, char *argv[])
 		// create client ports
 		speechQueryServiceReq = portFactoryRegistry[connections.speechQueryServiceReq.roboticMiddleware]->createSpeechQueryServiceReq();
 		speechSendServiceOut = portFactoryRegistry[connections.speechSendServiceOut.roboticMiddleware]->createSpeechSendServiceOut();
+		speechSendServiceOutWrapper = new SpeechSendServiceOutWrapper(speechSendServiceOut);
 		
 		// create InputTaskTriggers and UpcallManagers
 		
@@ -369,6 +363,7 @@ void ComponentTTSClient::fini()
 
 	// destroy client ports
 	delete speechQueryServiceReq;
+	delete speechSendServiceOutWrapper;
 	delete speechSendServiceOut;
 
 	// destroy server ports
@@ -396,10 +391,6 @@ void ComponentTTSClient::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentTTSClientROSExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentTTSClientExtension
 	
@@ -512,10 +503,6 @@ void ComponentTTSClient::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("ConsoleTask", "cpuAffinity")) {
 			parameter.getInteger("ConsoleTask", "cpuAffinity", connections.consoleTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentTTSClientROSExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentTTSClientExtension
 		

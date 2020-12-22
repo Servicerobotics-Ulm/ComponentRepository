@@ -218,21 +218,21 @@ int ImageTask::on_execute()
 				colorImage.setIs_valid(true);
 				colorImage.setSeq_count(image->getSeq_count());
 
-				COMP->colorImagePushNewestServer->put(colorImage);
+				COMP->rGBImagePushServiceOut->put(colorImage);
 
 				}else
 				{
 				DomainVision::CommVideoImage colorImage(image->getColor_image().get_width(),image->getColor_image().get_height(), DomainVision::FormatType::RGB24);
 				colorImage.set_data(image->getColor_image().get_data());
 				colorImage.set_sequence_counter(image->getSeq_count());
-				COMP->colorImagePushNewestServer->put(colorImage);
+				COMP->rGBImagePushServiceOut->put(colorImage);
 				}
 
 				DomainVision::CommDepthImage depthImage = image->getDepth_image();
 				COMP->depthImagePushServiceOut->put(depthImage);
 
 
-				COMP->imagePushNewestServer->put(*image);
+				COMP->rGBDImageQueryServiceOut->put(*image);
 
 				if (COMP->getGlobalState().getSettings().getDebug_info()) {
 					std::cout << "[Image Task] Newest: Image sent!\n";

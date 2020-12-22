@@ -29,9 +29,9 @@
 class ComponentKeyboardNavigationPortFactoryInterface;
 class ComponentKeyboardNavigationExtension;
 
-// includes for ComponentKeyboardNavigationROSExtension
+// includes for ComponentKeyboardNavigationROS1InterfacesExtension
 
-// includes for OpcUaBackendComponentGeneratorExtension
+// includes for ComponentKeyboardNavigationRestInterfacesExtension
 
 // includes for PlainOpcUaComponentKeyboardNavigationExtension
 // include plain OPC UA device clients
@@ -44,10 +44,12 @@ class ComponentKeyboardNavigationExtension;
 
 // include tasks
 #include "KeyboardInputTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 
 // include input-handler(s)
 // include request-handler(s)
+// output port wrappers
+#include "NavVelSendClientWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -110,14 +112,15 @@ public:
 	
 	// define output-ports
 	Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> *navVelSendClient;
+	NavVelSendClientWrapper *navVelSendClientWrapper;
 	
 	// define answer-ports
 	
 	// define request-handlers
 	
-	// definitions of ComponentKeyboardNavigationROSExtension
+	// definitions of ComponentKeyboardNavigationROS1InterfacesExtension
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
+	// definitions of ComponentKeyboardNavigationRestInterfacesExtension
 	
 	// definitions of PlainOpcUaComponentKeyboardNavigationExtension
 	
@@ -231,9 +234,9 @@ public:
 			std::string roboticMiddleware;
 		} navVelSendClient;
 		
-		// -- parameters for ComponentKeyboardNavigationROSExtension
+		// -- parameters for ComponentKeyboardNavigationROS1InterfacesExtension
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
+		// -- parameters for ComponentKeyboardNavigationRestInterfacesExtension
 		
 		// -- parameters for PlainOpcUaComponentKeyboardNavigationExtension
 		

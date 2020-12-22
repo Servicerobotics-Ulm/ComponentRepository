@@ -92,9 +92,19 @@ void ImageTaskCore::updateAllCommObjects()
 
 
 // this method is meant to be used in derived classes
-Smart::StatusCode ImageTaskCore::colorImagePushNewestServerPut(DomainVision::CommVideoImage &colorImagePushNewestServerDataObject)
+Smart::StatusCode ImageTaskCore::rGBDImageQueryServiceOutPut(DomainVision::CommRGBDImage &rGBDImageQueryServiceOutDataObject)
 {
-	Smart::StatusCode result = COMP->colorImagePushNewestServer->put(colorImagePushNewestServerDataObject);
+	Smart::StatusCode result = COMP->rGBDImageQueryServiceOutWrapper->put(rGBDImageQueryServiceOutDataObject);
+	if(useLogging == true) {
+		//FIXME: use logging
+		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
+	}
+	return result;
+}
+// this method is meant to be used in derived classes
+Smart::StatusCode ImageTaskCore::rGBImagePushServiceOutPut(DomainVision::CommVideoImage &rGBImagePushServiceOutDataObject)
+{
+	Smart::StatusCode result = COMP->rGBImagePushServiceOutWrapper->put(rGBImagePushServiceOutDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
@@ -104,17 +114,7 @@ Smart::StatusCode ImageTaskCore::colorImagePushNewestServerPut(DomainVision::Com
 // this method is meant to be used in derived classes
 Smart::StatusCode ImageTaskCore::depthImagePushServiceOutPut(DomainVision::CommDepthImage &depthImagePushServiceOutDataObject)
 {
-	Smart::StatusCode result = COMP->depthImagePushServiceOut->put(depthImagePushServiceOutDataObject);
-	if(useLogging == true) {
-		//FIXME: use logging
-		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
-	}
-	return result;
-}
-// this method is meant to be used in derived classes
-Smart::StatusCode ImageTaskCore::imagePushNewestServerPut(DomainVision::CommRGBDImage &imagePushNewestServerDataObject)
-{
-	Smart::StatusCode result = COMP->imagePushNewestServer->put(imagePushNewestServerDataObject);
+	Smart::StatusCode result = COMP->depthImagePushServiceOutWrapper->put(depthImagePushServiceOutDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());

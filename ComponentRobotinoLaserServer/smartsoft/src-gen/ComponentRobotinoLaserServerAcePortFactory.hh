@@ -36,7 +36,7 @@ public:
 
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * createBaseTimedClient() override;
 	
-	virtual Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * createPushNewestServer(const std::string &serviceName) override;
+	virtual Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * createLaserServiceOut(const std::string &serviceName) override;
 	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan> * createQueryServer(const std::string &serviceName) override;
 	virtual Smart::IEventServerPattern<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState> * createSafetyfieldEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState>> safetyfieldEventServerEventTestHandler) override;
 	

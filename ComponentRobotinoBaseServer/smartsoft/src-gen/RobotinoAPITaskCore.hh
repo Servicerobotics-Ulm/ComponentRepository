@@ -21,12 +21,9 @@
 // include upcall interface
 
 // include communication-objects for output ports
-#include <CommRobotinoObjects/CommDigitalInputEventParameter.hh>
-#include <CommRobotinoObjects/CommDigitalInputEventResult.hh>
-#include <CommRobotinoObjects/CommDigitalInputEventState.hh>
-#include <CommBasicObjects/CommLaserSafetyEventParam.hh>
-#include <CommBasicObjects/CommLaserSafetyEventState.hh>
-#include <CommBasicObjects/CommLaserSafetyField.hh>
+#include <CommBasicObjects/CommDigitalInputEventParameter.hh>
+#include <CommBasicObjects/CommDigitalInputEventResult.hh>
+#include <CommBasicObjects/CommDigitalInputEventState.hh>
 
 // include all interaction-observer interfaces
 #include <RobotinoAPITaskObserverInterface.hh>
@@ -56,9 +53,7 @@ protected:
 	
 	
 	// this method is meant to be used in derived classes
-	Smart::StatusCode digitalInputEventOutPut(CommRobotinoObjects::CommDigitalInputEventState &eventState);
-	// this method is meant to be used in derived classes
-	Smart::StatusCode laserSafetyEventServiceOutPut(CommBasicObjects::CommLaserSafetyEventState &eventState);
+	Smart::StatusCode digitalInputEventOutPut(CommBasicObjects::CommDigitalInputEventState &eventState);
 	
 	
 /**

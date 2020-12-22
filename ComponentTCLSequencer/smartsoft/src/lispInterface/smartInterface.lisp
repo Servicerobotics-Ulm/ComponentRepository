@@ -102,16 +102,22 @@ ZAFH Servicerobotik Ulm, Germany
         (cond
           ((null ci-inst)
             (format t "ERROR - No matching ci-inst found!~%")
+            (format t "mod-type: ~s~%" mod-type)
+            (format t "mod-inst: ~s~%" mod-inst)
+            (format t "ci-inst-name: ~s~%" ci-inst-name)
+            (format t "svc: ~s~%" svc)
+            (format t "service: ~s~%" service)
+            (format t "prm: ~s~%" prm)
             "(error no ci-inst)")
           (T
             (setf ci-type  (cdr (assoc 'type  ci-inst)))
             (setf ci-services (cdr (assoc 'services ci-inst)))
             (setf ci-comp-inst (cdr (assoc 'component-inst ci-inst)))
 
-            (if *DEBUG-LI* (format t "type             : ~a ~%" ci-type))
-            (if *DEBUG-LI* (format t "inst-name        : ~a ~%" ci-inst-name))
-            (if *DEBUG-LI* (format t "services         : ~a ~%" ci-services))
-            (if *DEBUG-LI* (format t "cm-inst          : ~a ~%" ci-comp-inst))
+            (if *DEBUG-LI* (format t "type             : ~s ~%" ci-type))
+            (if *DEBUG-LI* (format t "inst-name        : ~s ~%" ci-inst-name))
+            (if *DEBUG-LI* (format t "services         : ~s ~%" ci-services))
+            (if *DEBUG-LI* (format t "cm-inst          : ~s ~%" ci-comp-inst))
 
             (cffi:with-foreign-strings ((ciType_str (format nil "~a" ci-type))
                                         (ciInstance_str (format nil "~a.~a" mod-inst ci-inst-name))
@@ -356,8 +362,11 @@ ZAFH Servicerobotik Ulm, Germany
                (let ( (event-inst (first prm))
                       (event-prm  (rest  prm)))
                     ;; activate event
+                    (if *DEBUG-LI* (format t "Event mode: ~a ~%" (event-mode event-inst)))
+                    (if *DEBUG-LI* (format t "Event prm: ~a ~%" event-prm))
                     (setq result (activate event-inst (list (event-mode event-inst) event-prm)))
                     (if *DEBUG-LI* (format t "Event past activate: ~%"))
+                    (if *DEBUG-LI* (format t "=================================~%"))
                     (if *DEBUG-LI* (show event-inst))
                     ;; result ok
                     (cond ( (equal (first result) 'ok)
@@ -454,13 +463,33 @@ ZAFH Servicerobotik Ulm, Germany
 
                       (if *DEBUG-LI* (show-modules));;DEBUG
                       
-                      ;;find the client componet in case of wiring
+                      (if *DEBUG-LI* (format t "wiring-client-module: ~s~%" wiring-client-module ));;DEBUG
+                      
+                      ;;find the client component in case of wiring
                       (setf wiring-client-ci-inst (find (first prm) (get-value wiring-client-module 'comp-interfaces) :test #'matching-ci-inst))
 
                       (cond
                         ((null wiring-client-ci-inst)
-                          (format t "ERROR - No matching ci-inst found!~%")
-                          "(error no ci-inst)")
+;TODO figure wiring out later V3 PORT this change is using an overwrite!
+;                          (format t "ERROR - No matching ci-inst found!~%")
+;                          "(error no ci-inst)")
+
+                          (format t "WIRING WARNING - No matching ci-inst found --> using old style wiring!~%")
+
+                          (setq result (interface *WIRING-MODULE-NAME* wiring-module-inst wiring-ci-inst svc mth prm))
+
+                          (cond ( (equal (first result) 'ok)
+                                    (setf (smartsoft-result instance) (second result))
+                                  T)
+                                ( (equal (first result) 'error)
+                                    (setf (smartsoft-result instance) (second result))
+                                    (format t "~% communication interface: an error occured: ~s -- result: ~s ~%" activity result)
+                                  NIL)
+                                ( T 
+                                  (setf (smartsoft-result instance) (second result))
+                                  (format t "~% communication interface: unknown error: ~s~%" activity)
+                                  NIL)))
+                          
                         (T
                           (setf wiring-client-ci-comp-inst (cdr (assoc 'component-inst wiring-client-ci-inst)))
                           (format t "wiring-client-inst-name : ~a ~%" wiring-client-ci-comp-inst)
@@ -656,7 +685,7 @@ which dynamically loads the lib (so/dll) and thereby the symbols."
        NIL))))
 
 
-(defun read-coordination-module-system-file (file-name)
+(defun read-coordination-module-system-file (file-name &optional (robotid nil))
 "This function reads the system model generated json formated module configuration 
 and adds the configuration to the kb"
 
@@ -673,13 +702,21 @@ and adds the configuration to the kb"
 
       (let* ((module-inst     (cdr (assoc 'COORDINATION-MODULE-INST module-inst-obj)))
              (type            (cdr (assoc 'type  module-inst)))
+             (auto-inst         (cdr (assoc 'auto-inst  module-inst)))
              (ints-name       (intern (string-upcase (cdr (assoc 'inst-name module-inst)))))
              (comp-interfaces-list (cdr (assoc 'COORDINATION-INTERFACES-INSTANCES module-inst))))
+
+        (cond
+          ((not (null robotid))
+            (format t "add robot id to ci component instance names~%")
+            (dolist (i comp-interfaces-list)
+              (setf (cdr (assoc 'COMPONENT-INST  i)) (concatenate 'string robotid "." (cdr (assoc 'COMPONENT-INST  i)))))))
+          
         (format t "type:      ~a~%" type)
         (format t "ints-name: ~a~%" ints-name)
         (format t "comp-i:    ~a~%" comp-interfaces-list)
         (update-kb *MEMORY* '(is-a type inst-name) `( (is-a coordination-module) 
-          (type ,type) (inst-name ,ints-name) (comp-interfaces ,comp-interfaces-list)))))))
+          (type ,type) (inst-name ,ints-name) (auto-inst ,auto-inst) (comp-interfaces ,comp-interfaces-list)))))))
 
 
 (defun instanciate-all-modules-and-cis (module-path)
@@ -696,6 +733,9 @@ and adds the configuration to the kb"
    (setq ci-list (remove-duplicates ci-list))
    (setq ci-list (remove (intern (string-upcase *FETCHEVENT-MODULE-NAME*)) ci-list))
    (setq ci-list (remove (intern (string-upcase *WIRING-MODULE-NAME*)) ci-list))
+   (setq ci-list (remove (intern (string-upcase *COMPONENT-MODULE-NAME*)) ci-list))
+   (setq ci-list (remove (intern (string-upcase  *TIMER-MODULE-NAME*)) ci-list))
+
 
    ;; load all cis
    (format t "ci-list: ~a~%" ci-list)
@@ -711,6 +751,16 @@ and adds the configuration to the kb"
        ((equal-symbol-string (get-value module 'type) *WIRING-MODULE-NAME*)
          ;;skip
          (format t "Skip wiring~%"))
+      ((equal-symbol-string (get-value module 'type) *COMPONENT-MODULE-NAME*)
+         ;;skip
+         (format t "Skip component~%"))
+      ((equal-symbol-string (get-value module 'type) *TIMER-MODULE-NAME*)
+         ;;skip
+         (format t "Skip timer~%"))
+
+      ((equal (get-value module 'auto-inst) "false")
+        ;;skip
+         (format t "Module ~a - ~a no autoinst --> skip~%" (get-value module 'type) (get-value module 'inst-name)))
        (T
          (format t "Inst Module: ~a - ~a~%" (get-value module 'type) (get-value module 'inst-name))
          (instantiate-coordination-module (get-value module 'type) (get-value module 'inst-name))))))
@@ -754,9 +804,10 @@ and adds the configuration to the kb"
   (let ((modules-list     (query-kb-all *MEMORY* '(is-a) '((is-a coordination-module)))))
     (dolist (module modules-list)
       (format t "~%--------------------------------~%")
-      (format t "type             : ~a ~%" (get-value module 'type))
-      (format t "inst-name        : ~a ~%" (get-value module 'inst-name))
-      (format t "comp-interfaces  : ~a ~%" (get-value module 'comp-interfaces)))))
+      (format t "type             : ~s ~%" (get-value module 'type))
+      (format t "inst-name        : ~s ~%" (get-value module 'inst-name))
+      (format t "auto-inst         : ~s ~%" (get-value module 'auto-inst))
+      (format t "comp-interfaces  : ~s ~%" (get-value module 'comp-interfaces)))))
 
 
 
@@ -787,6 +838,23 @@ and adds the configuration to the kb"
   (type ,*WIRING-MODULE-NAME*) 
   (inst-name ,(intern (string-upcase *WIRING-MODULE-NAME*)))
   (comp-interfaces (((TYPE .  ,(intern (string-upcase *WIRING-MODULE-NAME*))) (INST-NAME . ,*WIRING-MODULE-NAME*))))))
+  
+(defvar *COMPONENT-MODULE-NAME* "COMPONENT")
+(update-kb *MEMORY* '(is-a type inst-name) `( 
+  (is-a coordination-module) 
+  (type ,*COMPONENT-MODULE-NAME*) 
+  (inst-name ,(intern (string-upcase *COMPONENT-MODULE-NAME*)))
+  (comp-interfaces (((TYPE .  ,(intern (string-upcase *COMPONENT-MODULE-NAME*))) (INST-NAME . ,*COMPONENT-MODULE-NAME*))))))
+  
+(defvar *TIMER-MODULE-NAME* "TIMER")
+(update-kb *MEMORY* '(is-a type inst-name) `( 
+  (is-a coordination-module) 
+  (type ,*TIMER-MODULE-NAME*) 
+  (inst-name ,(intern (string-upcase *TIMER-MODULE-NAME*)))
+  (comp-interfaces (((TYPE .  ,(intern (string-upcase *TIMER-MODULE-NAME*))) (INST-NAME . ,*TIMER-MODULE-NAME*) 
+                               (SERVICES ((COORDSERVICE . "relative")(COMPSERVICE . "relative")) ((COORDSERVICE . "absolute")(COMPSERVICE . "absolute")) ))))))
+
+  
 
 ;(defvar wiring-map-l '( (wiring   ( (connect "connect")
 ;                                    (disconnect "disconnect")))))
@@ -854,5 +922,5 @@ and adds the configuration to the kb"
 ;;(load-module "~/SOFTWARE/smartsoft/src/master/smartLispServerV2/lispInterface/skills/skill*.lisp")
 
 
-(cffi:with-foreign-strings ((args_str (format nil "~{~A~^ ~}" sb-ext:*posix-argv*)))
-  (initialize args_str))
+;(cffi:with-foreign-strings ((args_str (format nil "~{~A~^ ~}" sb-ext:*posix-argv*)))
+;  (initialize args_str))

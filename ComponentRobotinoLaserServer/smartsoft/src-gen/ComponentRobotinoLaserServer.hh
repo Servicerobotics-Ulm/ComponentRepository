@@ -29,9 +29,9 @@
 class ComponentRobotinoLaserServerPortFactoryInterface;
 class ComponentRobotinoLaserServerExtension;
 
-// includes for ComponentRobotinoLaserServerROSExtension
+// includes for ComponentRobotinoLaserServerROS1InterfacesExtension
 
-// includes for OpcUaBackendComponentGeneratorExtension
+// includes for ComponentRobotinoLaserServerRestInterfacesExtension
 
 // includes for PlainOpcUaComponentRobotinoLaserServerExtension
 // include plain OPC UA device clients
@@ -54,12 +54,16 @@ class ComponentRobotinoLaserServerExtension;
 
 // include tasks
 #include "ReadLaserTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 #include "BaseTimedClientUpcallManager.hh"
+#include "BaseTimedClientInputCollector.hh"
 
 // include input-handler(s)
 // include request-handler(s)
 #include "QueryHandler.hh"
+// output port wrappers
+#include "LaserServiceOutWrapper.hh"
+#include "SafetyfieldEventServerWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -119,14 +123,17 @@ public:
 	Smart::IPushClientPattern<CommBasicObjects::CommBaseState> *baseTimedClient;
 	Smart::InputTaskTrigger<CommBasicObjects::CommBaseState> *baseTimedClientInputTaskTrigger;
 	BaseTimedClientUpcallManager *baseTimedClientUpcallManager;
+	BaseTimedClientInputCollector *baseTimedClientInputCollector;
 	
 	// define request-ports
 	
 	// define input-handler
 	
 	// define output-ports
-	Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> *pushNewestServer;
+	Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> *laserServiceOut;
+	LaserServiceOutWrapper *laserServiceOutWrapper;
 	Smart::IEventServerPattern<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState> *safetyfieldEventServer;
+	SafetyfieldEventServerWrapper *safetyfieldEventServerWrapper;
 	std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState>> safetyfieldEventServerEventTestHandler;
 	
 	// define answer-ports
@@ -136,9 +143,9 @@ public:
 	// define request-handlers
 	QueryHandler *queryHandler;
 	
-	// definitions of ComponentRobotinoLaserServerROSExtension
+	// definitions of ComponentRobotinoLaserServerROS1InterfacesExtension
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
+	// definitions of ComponentRobotinoLaserServerRestInterfacesExtension
 	
 	// definitions of PlainOpcUaComponentRobotinoLaserServerExtension
 	
@@ -241,10 +248,10 @@ public:
 		//--- upcall parameter ---
 		
 		//--- server port parameter ---
-		struct PushNewestServer_struct {
+		struct LaserServiceOut_struct {
 				std::string serviceName;
 				std::string roboticMiddleware;
-		} pushNewestServer;
+		} laserServiceOut;
 		struct QueryServer_struct {
 				std::string serviceName;
 				std::string roboticMiddleware;
@@ -264,9 +271,9 @@ public:
 			std::string roboticMiddleware;
 		} baseTimedClient;
 		
-		// -- parameters for ComponentRobotinoLaserServerROSExtension
+		// -- parameters for ComponentRobotinoLaserServerROS1InterfacesExtension
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
+		// -- parameters for ComponentRobotinoLaserServerRestInterfacesExtension
 		
 		// -- parameters for PlainOpcUaComponentRobotinoLaserServerExtension
 		

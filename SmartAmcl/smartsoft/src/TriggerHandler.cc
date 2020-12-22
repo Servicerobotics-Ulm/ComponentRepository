@@ -163,3 +163,8 @@ void TriggerHandler::handleCommLocalizationObjects_LocalizationParameter_LOADMAP
 	}
 	std::cout<<"[TriggerHandler] LOADMAP DONE"<<std::endl;
 }
+
+void TriggerHandler::handleCommLocalizationObjects_LocalizationParameter_SENSORSTOUSE(const unsigned short &sensorsToUse){
+	std::cout <<"[TriggerHandler]SENSORSTOUSE: sensorsToUse:"<<sensorsToUse<<std::endl;
+	std::cout<<"[TriggerHandler] SENSORSTOUSE DONE -- ToDo: feature not yet implemented!"<<std::endl;
+}

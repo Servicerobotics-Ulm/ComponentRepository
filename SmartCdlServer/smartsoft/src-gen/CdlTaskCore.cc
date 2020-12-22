@@ -128,7 +128,7 @@ void CdlTaskCore::updateAllCommObjects()
 // this method is meant to be used in derived classes
 Smart::StatusCode CdlTaskCore::goalEventServerPut(CommNavigationObjects::CdlGoalEventState &eventState)
 {
-	Smart::StatusCode result = COMP->goalEventServer->put(eventState);
+	Smart::StatusCode result = COMP->goalEventServerWrapper->put(eventState);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
@@ -138,7 +138,7 @@ Smart::StatusCode CdlTaskCore::goalEventServerPut(CommNavigationObjects::CdlGoal
 // this method is meant to be used in derived classes
 Smart::StatusCode CdlTaskCore::navVelSendClientPut(CommBasicObjects::CommNavigationVelocity &navVelSendClientDataObject)
 {
-	Smart::StatusCode result = COMP->navVelSendClient->send(navVelSendClientDataObject);
+	Smart::StatusCode result = COMP->navVelSendClientWrapper->send(navVelSendClientDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
@@ -148,7 +148,7 @@ Smart::StatusCode CdlTaskCore::navVelSendClientPut(CommBasicObjects::CommNavigat
 // this method is meant to be used in derived classes
 Smart::StatusCode CdlTaskCore::robotBlockedEventServerPut(CommNavigationObjects::CommCdlRobotBlockedState &eventState)
 {
-	Smart::StatusCode result = COMP->robotBlockedEventServer->put(eventState);
+	Smart::StatusCode result = COMP->robotBlockedEventServerWrapper->put(eventState);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());

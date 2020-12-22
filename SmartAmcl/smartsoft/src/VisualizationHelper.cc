@@ -65,8 +65,18 @@
 #include <sstream>
 
 #ifdef WITH_OLD_MRPT_VERSION
+#elif WITH_MRPT_2_0_VERSION
+#include <mrpt/img/CImage.h>
+#include <mrpt/obs/CObservation2DRangeScan.h>
+#include <mrpt/opengl/CPlanarLaserScan.h>
+#include <mrpt/opengl/CCylinder.h>
 #else
-	#include <mrpt/opengl/CPlanarLaserScan.h>
+#include <mrpt/opengl/CPlanarLaserScan.h>
+#endif
+
+#ifdef WITH_OPENCV_4_2_VERSION
+#include <Eigen/Dense>
+#else
 #endif
 
 VisualizationHelper::VisualizationHelper() {
@@ -77,7 +87,57 @@ void VisualizationHelper::initializeVisualization(){
 	grid3D->setWindowTitle("SmartAMCL");
 	grid3D->resize(800, 600);
 }
+#ifdef WITH_MRPT_2_0_VERSION
+void VisualizationHelper::initObjects() {
 
+	mrpt::opengl::COpenGLScene::Ptr ptrScene = grid3D->get3DSceneAndLock();
+	{
+		opengl::CAxis::Ptr axis = opengl::CAxis::Create(-10, -10, 0, 10, 10, 1,
+				1, 1, true);
+		axis->setName("axis");
+		axis->setColor(0, 0, 0);
+		ptrScene->insert(axis);
+
+		opengl::CCylinder::Ptr cylinder = std::make_shared<opengl::CCylinder>(0.2f, 0.2f, 0.4f, 10);
+		cylinder->setName("robot");
+		cylinder->setColor(0, 0, 1);
+		ptrScene->insert(cylinder);
+
+		//		opengl::CArrowPtr robotArrow = opengl::CArrow::Create(0, 0, 0, 0.2, 0, 0);
+		//		robotArrow->setColor(0, 0, 1);
+		//		robotArrow->setName("robotOrientation");
+		//		ptrScene->insert(robotArrow);
+
+		opengl::CPlanarLaserScan::Ptr scan = opengl::CPlanarLaserScan::Create();
+		scan->setName("scan");
+		ptrScene->insert(scan);
+
+		opengl::CPointCloudColoured::Ptr particles =
+				opengl::CPointCloudColoured::Create();
+		particles->setName("particles");
+		particles->setPointSize(3);
+		ptrScene->insert(particles);
+
+		opengl::CSetOfLines::Ptr particleLines = opengl::CSetOfLines::Create();
+		particleLines->setName("particleLines");
+		ptrScene->insert(particleLines);
+
+		opengl::CPointCloudColoured::Ptr hypotheses =
+				opengl::CPointCloudColoured::Create();
+		hypotheses->setName("hypotheses");
+		hypotheses->setPointSize(10);
+		ptrScene->insert(hypotheses);
+
+		opengl::CText::Ptr robotText = opengl::CText::Create();
+		robotText->setName("robotLabel");
+		robotText->setColor(0, 0, 0);
+		ptrScene->insert(robotText);
+
+	}
+	grid3D->unlockAccess3DScene();
+	grid3D->forceRepaint();
+}
+#else
 void VisualizationHelper::initObjects() {
 
 	opengl::COpenGLScenePtr &ptrScene = grid3D->get3DSceneAndLock();
@@ -127,6 +187,7 @@ void VisualizationHelper::initObjects() {
 	grid3D->unlockAccess3DScene();
 	grid3D->forceRepaint();
 }
+#endif
 
 VisualizationHelper::~VisualizationHelper() {
 	std::cout<<"Destructor VisualizationHelper..."<<std::endl;
@@ -148,7 +209,11 @@ VisualizationHelper::~VisualizationHelper() {
 }
 
 void VisualizationHelper::clear() {
+#ifdef WITH_MRPT_2_0_VERSION
+	opengl::COpenGLScene::Ptr &ptrScene = grid3D->get3DSceneAndLock();
+#else
 	opengl::COpenGLScenePtr &ptrScene = grid3D->get3DSceneAndLock();
+#endif
 	{
 		ptrScene->clear();
 	}
@@ -186,10 +251,25 @@ void VisualizationHelper::displayMap(map_t* map) {
 		}
 	}
 
-        //WORKAROUND: do not use construtor from matix, since mrpt bug:
-        //https://github.com/MRPT/mrpt/commit/d4e5adf3eccbb655a9340254b88985bb808c1bda
-        utils::CImage image;
-        image.setFromMatrix(m, true);
+#ifdef WITH_MRPT_2_0_VERSION
+	mrpt::img::CImage image;
+    image.setFromMatrix(m, true);
+    //image.flipVertical();
+    gridMap.loadFromBitmap(image, scale, mrpt::math::TPoint2D(x, y));
+	opengl::COpenGLScene::Ptr &ptrScene = grid3D->get3DSceneAndLock();
+	{
+		opengl::CSetOfObjects::Ptr ptrObjs = opengl::CSetOfObjects::Create();
+		gridMap.getAs3DObject(ptrObjs);
+
+		ptrScene->insert(ptrObjs);
+	}
+	grid3D->unlockAccess3DScene();
+	grid3D->forceRepaint();
+#else
+	//WORKAROUND: do not use construtor from matix, since mrpt bug:
+    //https://github.com/MRPT/mrpt/commit/d4e5adf3eccbb655a9340254b88985bb808c1bda
+    utils::CImage image;
+    image.setFromMatrix(m, true);
 	//image.flipVertical();
 	gridMap.loadFromBitmap(image, scale, x, y);
 
@@ -202,6 +282,7 @@ void VisualizationHelper::displayMap(map_t* map) {
 	}
 	grid3D->unlockAccess3DScene();
 	grid3D->forceRepaint();
+#endif
 }
 
 void VisualizationHelper::displayLaserScan(
@@ -233,7 +314,7 @@ void VisualizationHelper::displayLaserScan(
 	int max_scan_size = scan.get_max_scan_size();
 	double endAngle = pi_to_pi(startAngle+(max_scan_size*resolution));
 
-#ifdef WITH_MRPT_1_5_VERSION
+#if defined (WITH_MRPT_1_5_VERSION) || (WITH_MRPT_2_0_VERSION)
 	s.resizeScan(max_scan_size);
 #else
 	s.scan.resize(max_scan_size);
@@ -247,7 +328,7 @@ void VisualizationHelper::displayLaserScan(
 	for (size_t i = 0; i < numScans; ++i) {
 		int index = fabs(pi_to_pi(scan.get_scan_angle(i)) - startAngle) / resolution;
 
-#ifdef WITH_MRPT_1_5_VERSION
+#if defined (WITH_MRPT_1_5_VERSION) || (WITH_MRPT_2_0_VERSION)
 			s.setScanRange(index, scan.get_scan_distance(i, 1));
 			s.setScanRangeValidity(index, true);
 #else
@@ -256,13 +337,20 @@ void VisualizationHelper::displayLaserScan(
 #endif
 
 	}
-
+#ifdef WITH_MRPT_2_0_VERSION
+	opengl::COpenGLScene::Ptr ptrScene = grid3D->get3DSceneAndLock();
+	{
+		opengl::CPlanarLaserScan::Ptr sPtr = std::dynamic_pointer_cast<opengl::CPlanarLaserScan>(ptrScene->getByName("scan"));
+		sPtr->setScan(s);
+	}
+#else
 	opengl::COpenGLScenePtr &ptrScene = grid3D->get3DSceneAndLock();
 	{
 		opengl::CPlanarLaserScanPtr sPtr =
 				(opengl::CPlanarLaserScanPtr) ptrScene->getByName("scan");
 		sPtr->setScan(s);
 	}
+#endif
 	grid3D->unlockAccess3DScene();
 	grid3D->forceRepaint();
 }
@@ -270,15 +358,21 @@ void VisualizationHelper::displayLaserScan(
 
 
 void VisualizationHelper::displayCoordinateSystem( poses::CPose3D& pose, double size){
-
+#ifdef WITH_MRPT_2_0_VERSION
+	opengl::COpenGLScene::Ptr theScene = grid3D->get3DSceneAndLock();
+	opengl::CSetOfObjects::Ptr corner = opengl::stock_objects::CornerXYZSimple(size,2.0);
+	{
+		corner->setPose(pose);
+		theScene->insert(corner);
+	}
+#else
 		opengl::COpenGLScenePtr &theScene = grid3D->get3DSceneAndLock();
-
-
 		opengl::CSetOfObjectsPtr corner = opengl::stock_objects::CornerXYZSimple(size,2.0);
 		{
 		corner->setPose(pose);
 		theScene->insert(corner);
 		}
+#endif
 		grid3D->unlockAccess3DScene();
 		grid3D->forceRepaint();
 
@@ -294,7 +388,21 @@ void VisualizationHelper::displayBase(const CommBasicObjects::CommBasePose& pos)
 	std::stringstream labelString;
 	labelString << "Pose: x=" << p.get_x(1.0) << ", y=" << p.get_y(1.0)
 			<< ", a=" << p.get_azimuth();
+#ifdef WITH_MRPT_2_0_VERSION
+	opengl::COpenGLScene::Ptr &ptrScene = grid3D->get3DSceneAndLock();
+	{
+		opengl::CRenderizable::Ptr obj1 = ptrScene->getByName("robot");
+		obj1->setPose(pose);
 
+		opengl::CText::Ptr label = std::dynamic_pointer_cast<opengl::CText>(ptrScene->getByName(
+				"robotLabel"));
+		label->setPose(poseLabel);
+		label->setString(labelString.str());
+
+		//		opengl::CRenderizablePtr obj2 = ptrScene->getByName("robotOrientation");
+		//		obj2->setPose(pose);
+	}
+#else
 	opengl::COpenGLScenePtr &ptrScene = grid3D->get3DSceneAndLock();
 	{
 		opengl::CRenderizablePtr obj1 = ptrScene->getByName("robot");
@@ -308,6 +416,7 @@ void VisualizationHelper::displayBase(const CommBasicObjects::CommBasePose& pos)
 		//		opengl::CRenderizablePtr obj2 = ptrScene->getByName("robotOrientation");
 		//		obj2->setPose(pose);
 	}
+#endif
 	grid3D->unlockAccess3DScene();
 	grid3D->forceRepaint();
 }
@@ -315,7 +424,33 @@ void VisualizationHelper::displayBase(const CommBasicObjects::CommBasePose& pos)
 void VisualizationHelper::displayParticles(const pf_sample_set_t* set) {
 
 	std::cout << "Num samples: " << set->sample_count << "\n";
+#ifdef WITH_MRPT_2_0_VERSION
+	opengl::COpenGLScene::Ptr &ptrScene = grid3D->get3DSceneAndLock();
+	{
+		opengl::CPointCloudColoured::Ptr obj =
+				std::dynamic_pointer_cast<opengl::CPointCloudColoured>(ptrScene->getByName("particles"));
+		obj->clear();
 
+		opengl::CSetOfLines::Ptr particleLines =
+				std::dynamic_pointer_cast<opengl::CSetOfLines>(ptrScene->getByName("particleLines"));
+		particleLines->clear();
+		particleLines->setColor(0, 1, 0);
+
+		for (int i = 0; i < set->sample_count; i++) {
+
+			obj->push_back(set->samples[i].pose.v[0],
+					set->samples[i].pose.v[1], 0, 0, 1, 0);
+
+			particleLines->appendLine(set->samples[i].pose.v[0],
+					set->samples[i].pose.v[1], 0, set->samples[i].pose.v[0]
+							+ cos(set->samples[i].pose.v[2]) * 0.2,
+					set->samples[i].pose.v[1] + sin(set->samples[i].pose.v[2])
+							* 0.2, 0);
+
+		}
+
+	}
+#else
 	opengl::COpenGLScenePtr &ptrScene = grid3D->get3DSceneAndLock();
 	{
 		opengl::CPointCloudColouredPtr obj =
@@ -341,6 +476,7 @@ void VisualizationHelper::displayParticles(const pf_sample_set_t* set) {
 		}
 
 	}
+#endif
 	grid3D->unlockAccess3DScene();
 	grid3D->forceRepaint();
 }
@@ -348,7 +484,19 @@ void VisualizationHelper::displayParticles(const pf_sample_set_t* set) {
 void VisualizationHelper::displayHypotheses(const std::vector<amcl_hyp_t>& hyps) {
 
 	std::cout << "num hypotheses: " << hyps.size() << "\n";
+#ifdef WITH_MRPT_2_0_VERSION
+	opengl::COpenGLScene::Ptr &ptrScene = grid3D->get3DSceneAndLock();
+	{
+		opengl::CPointCloudColoured::Ptr obj =
+				std::dynamic_pointer_cast<opengl::CPointCloudColoured>(ptrScene->getByName("hypotheses"));
+		obj->clear();
 
+		for (size_t i = 0; i < hyps.size(); i++) {
+			obj->push_back(hyps[i].pf_pose_mean.v[0],
+					hyps[i].pf_pose_mean.v[1], 0, 1, 0, 0);
+		}
+	}
+#else
 	opengl::COpenGLScenePtr &ptrScene = grid3D->get3DSceneAndLock();
 	{
 		opengl::CPointCloudColouredPtr obj =
@@ -360,6 +508,7 @@ void VisualizationHelper::displayHypotheses(const std::vector<amcl_hyp_t>& hyps)
 					hyps[i].pf_pose_mean.v[1], 0, 1, 0, 0);
 		}
 	}
+#endif
 	grid3D->unlockAccess3DScene();
 	grid3D->forceRepaint();
 }

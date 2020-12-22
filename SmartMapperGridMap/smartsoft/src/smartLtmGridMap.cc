@@ -37,10 +37,17 @@
 
 
 #include <yaml.h>
+
 #ifdef WITH_OPENCV_YAML
-#include <cxcore.h>
-#include <highgui.h>
-#endif
+	#ifdef WITH_OPENCV_4_2_VERSION
+		#include <opencv4/opencv2/core.hpp>
+		#include <opencv4/opencv2/highgui.hpp>
+	#else
+		#include <cxcore.h>
+		#include <highgui.h>
+	#endif // WITH_OPENCV_4_2_VERSION
+#endif // WITH_OPENCV_YAML
+
 #include <iostream>
 #if defined (__GNUC__) && defined(__unix__)
 #include <libgen.h>
@@ -51,6 +58,8 @@
 using namespace std;
 
 using namespace Smart;
+
+using namespace cv;
 
 
 SmartLtmGridMap::SmartLtmGridMap() : CommGridMap()
@@ -305,7 +314,64 @@ int SmartLtmGridMap::getPartialMap( int partXoffset,int partYoffset,
 }
 
 
+#ifdef WITH_OPENCV_4_2_VERSION
+void SmartLtmGridMap::save_yaml_pgm(std::ostream &os_yaml, std::string pgmFileName)
+{
+#ifdef WITH_OPENCV_YAML
+	// 1. write map context information to yaml file
+	write_yaml(os_yaml, pgmFileName);
 
+	// 2. write map data to pgm file
+	const unsigned int map_size_x = idl_CommGridMap.xSizeCells;
+	const unsigned int map_size_y = idl_CommGridMap.ySizeCells;
+
+	// create a single channel image with the same size and double depth as the map
+	cv::Mat image(map_size_y, map_size_x, CV_8UC1);
+
+	// copy map into a image
+	// We consider and whiter pixels free and blacker pixles as occupied. Therefore we set:
+	const char maxPixelValue = 255;
+	const char occupied = 0;
+	const char freeSpace = maxPixelValue;
+	int scaleFactor = 2; // in smartsoft we use occupancy values from 0 to 127. for storing the values in a image we have to scale them from 0 to 255 --> scaleFactor 2
+
+	int value = 0;
+
+	for (unsigned int y = 0; y < map_size_y; y++)
+	{
+		for (unsigned int x = 0; x < map_size_x; x++)
+		{
+			unsigned char* ptr = image.data + (y * image.cols) + x;
+			value = this->get_cells(x, y);
+
+			if(value >= MAPPER_FREE && value <= 127) // TODO: we should define the maximum value for occupancy by a #define
+			{
+				*ptr = (char)(maxPixelValue - (value * scaleFactor));
+			}
+			else if(value == MAPPER_UNDELETABLE) // special map value MAPPER_UNDELETABLE
+			{
+				*ptr = occupied;
+			}
+			else // we export all other special map values as free space
+			{
+				*ptr = freeSpace;
+			}
+
+		}
+	}
+	cv::Mat flippedImage;
+	cv::flip(image, flippedImage, 0); // 0 == horizontal flip
+
+	// save image to file pgmFileName
+	if(!cv::imwrite(pgmFileName.c_str(), flippedImage))
+	{
+		cout << "Could not save: " << pgmFileName << endl;
+	}
+#else
+	std::cout << "!!! For use with Robotino the parts (save_yaml_pgm) using OpenCV are deactivated! In order to use them define WITH_OPENCV_YAML in the makefile. !!!" << std::endl;
+#endif
+}
+#else //WITH_OPENCV_4_2_VERSION
 void SmartLtmGridMap::save_yaml_pgm(std::ostream &os_yaml, std::string pgmFileName)
 {
 #ifdef WITH_OPENCV_YAML
@@ -365,8 +431,93 @@ void SmartLtmGridMap::save_yaml_pgm(std::ostream &os_yaml, std::string pgmFileNa
 	std::cout << "!!! For use with Robotino the parts (save_yaml_pgm) using OpenCV are deactivated! In order to use them define WITH_OPENCV_YAML in the makefile. !!!" << std::endl;
 #endif
 }
+#endif //WITH_OPENCV_4_2_VERSION
 
+#ifdef WITH_OPENCV_4_2_VERSION
+void SmartLtmGridMap::save_yaml_ppm(std::ostream &os_yaml, std::string ppmFileName)
+{
+#ifdef WITH_OPENCV_YAML
+	// 1. write map context information to yaml file
+	write_yaml(os_yaml, ppmFileName);
 
+	// 2. write map data to ppm file
+	const unsigned int map_size_x = idl_CommGridMap.xSizeCells;
+	const unsigned int map_size_y = idl_CommGridMap.ySizeCells;
+
+	// create a three channel image with the same size and double depth as the map
+	cv::Mat image(map_size_y, map_size_x, CV_8UC3);
+
+	// copy map into a image
+	// We consider and whiter pixels free and blacker pixles as occupied. Therefore we set:
+	const char maxPixelValue = 255;
+	int scaleFactor = 2; // in smartsoft we use occupancy values from 0 to 127. for storing the values in a image we have to scale them from 0 to 255 --> scaleFactor 2
+
+	unsigned char* pixels = NULL;
+	unsigned char* p = NULL;
+	int rowstride, n_channels = 0;
+
+	// Get values that we'll need to iterate through the pixels
+	rowstride = image.cols*3;
+	n_channels = image.channels();
+	pixels = (unsigned char*) (image.data);
+
+	// define colors for special values. Warning the channel order is BGR and not RGB
+	int red[3];
+	red[0] = 0;
+	red[1] = 0;
+	red[2] = 255;
+
+	int freeSpace[3];
+	freeSpace[0] = 0;
+	freeSpace[1] = 0;
+	freeSpace[2] = 0;
+
+	int value = 0;
+	char channelValue = 0;
+	for (unsigned int y = 0; y < map_size_y; y++)
+	{
+		for (unsigned int x = 0; x < map_size_x; x++)
+		{
+			// get cell value
+			value = this->get_cells(x, y);
+			// get pixel
+			p = pixels + y * rowstride + x * n_channels;
+
+			if(value >= MAPPER_FREE && value <= 127) // TODO: we should define the maximum value for occupancy by a #define
+			{
+				channelValue = (char)(maxPixelValue - (value * scaleFactor));
+				p[0] = channelValue;
+				p[1] = channelValue;
+				p[2] = channelValue;
+			}
+			else if(value == MAPPER_UNDELETABLE) // special map value MAPPER_UNDELETABLE
+			{
+				p[0] = red[0];
+				p[1] = red[1];
+				p[2] = red[2];
+			}
+			else // we export all other special map values as free space
+			{
+				p[0] = freeSpace[0];
+				p[1] = freeSpace[1];
+				p[2] = freeSpace[2];
+			}
+		}
+	}
+	cv::Mat imageFlipped;
+	cv::flip(image, imageFlipped, 0); // 0 == horizontal flip
+
+	// save image to file pgmFileName
+	if(!cv::imwrite(ppmFileName.c_str(), imageFlipped))
+	{
+		cout << "Could not save: " << ppmFileName << endl;
+	}
+
+#else
+	std::cout << "!!! For use with Robotino the parts (save_yaml_ppm) using OpenCV are deactivated! In order to use them define WITH_OPENCV_YAML in the makefile. !!!" << std::endl;
+#endif
+}
+#else //WITH_OPENCV_4_2_VERSION
 void SmartLtmGridMap::save_yaml_ppm(std::ostream &os_yaml, std::string ppmFileName)
 {
 #ifdef WITH_OPENCV_YAML
@@ -452,6 +603,7 @@ void SmartLtmGridMap::save_yaml_ppm(std::ostream &os_yaml, std::string ppmFileNa
 	std::cout << "!!! For use with Robotino the parts (save_yaml_ppm) using OpenCV are deactivated! In order to use them define WITH_OPENCV_YAML in the makefile. !!!" << std::endl;
 #endif
 }
+#endif //WITH_OPENCV_4_2_VERSION
 
 int SmartLtmGridMap::load_yaml( std::string fname)
 {
@@ -542,25 +694,38 @@ int SmartLtmGridMap::load_yaml( std::string fname)
 	int cellValue;
 	double color_avg;
 
+#ifdef WITH_OPENCV_4_2_VERSION
+	cv::Mat img;
+#else
 	IplImage* img = NULL;
-
+#endif
         std::ifstream isMap_tmp(mapfname.c_str());
         if (isMap_tmp.fail()) {
                 std::cerr << "[MAPPER] Could not open " << mapfname << "\n";
                 return -1;
         } else {
-		isMap_tmp.close();
-	}
+        	isMap_tmp.close();
+        }
 
 	// Load the image using OpenCV.  If we get NULL back, the image load failed.
-	if (!(img = cvLoadImage(mapfname.c_str(), CV_LOAD_IMAGE_UNCHANGED)))
-	{
-		std::string errmsg = std::string("failed to open image file \"") + mapfname + std::string("\"");
-		throw std::runtime_error(errmsg);
-	}
+#ifdef WITH_OPENCV_4_2_VERSION
+        img = cv::imread(mapfname.c_str(), cv::IMREAD_UNCHANGED);
+        if(img.empty()){
+        	std::string errmsg = std::string("failed to open image file \"") + fname + std::string("\"");
+        	throw std::runtime_error(errmsg);
+        }
+        long x = img.cols;
+        long y = img.rows;
+#else
+        if (!(img = cvLoadImage(mapfname.c_str(), CV_LOAD_IMAGE_UNCHANGED)))
+        {
+        	std::string errmsg = std::string("failed to open image file \"") + mapfname + std::string("\"");
+        	throw std::runtime_error(errmsg);
+        }
+        long x = img->width;
+        long y = img->height;
+#endif
 
-	long x = img->width;
-	long y = img->height;
 	const double scaleFactorMMtoM = 1000; // scale factor for converting from mm to m
 
 	// store context information
@@ -582,20 +747,35 @@ int SmartLtmGridMap::load_yaml( std::string fname)
 	idl_CommGridMap.cell.resize(idl_CommGridMap.size);
 
 	// Get values that we'll need to iterate through the pixels
+#ifdef WITH_OPENCV_4_2_VERSION
+	rowstride = img.step;
+	n_channels = img.channels();
+	// Copy pixel data into the map structure
+	pixels = (unsigned char*) (img.data);
+	int image_height = img.rows;
+	int image_width = img.cols;
+#else
 	rowstride = img->widthStep;
 	n_channels = img->nChannels;
 
 	// Copy pixel data into the map structure
 	pixels = (unsigned char*) (img->imageData);
+	int image_height = img->height;
+	int image_width = img->width;
+#endif
+
 
 	int r = 0;
 	int g = 0;
 	int b = 0;
+	std::cout<<"image_height:" << image_height<<" image_width: "<<image_width<< std::endl;
+	std::cout<<"rowstride:" << rowstride<<" n_channels: "<<n_channels<< std::endl;
+
 
 	if(n_channels == 3) // is it a RGB image?
 	{
-		for (j = 0; j < img->height; j++) {
-			for (i = 0; i < img->width; i++) {
+		for (j = 0; j < image_height; j++) {
+			for (i = 0; i < image_width; i++) {
 
 				// get pixel
 				p = pixels + j * rowstride + i * n_channels;
@@ -644,14 +824,14 @@ int SmartLtmGridMap::load_yaml( std::string fname)
 				}
 				// store the cell value in the map. The y-axis point in image coordinates into the opposite direction.
 				// Therfore we have to count j down from img->height-1 to 0.
-				idl_CommGridMap.cell[i + ((img->height-1) - j)* idl_CommGridMap.xSizeCells] = cellValue;
+				idl_CommGridMap.cell[i + ((image_height-1) - j)* idl_CommGridMap.xSizeCells] = cellValue;
 			}
 		}
 	}
 	else if(n_channels == 1) // is it a greyscale image?
 	{
-		for (j = 0; j < img->height; j++) {
-			for (i = 0; i < img->width; i++) {
+		for (j = 0; j < image_height; j++) {
+			for (i = 0; i < image_width; i++) {
 
 				// get pixel
 				p = pixels + j * rowstride + i * n_channels;
@@ -678,13 +858,16 @@ int SmartLtmGridMap::load_yaml( std::string fname)
 
 				// store the cell value in the map. The y-axis point in image coordinates into the opposite direction.
 				// Therfore we have to count j down from img->height-1 to 0.
-				idl_CommGridMap.cell[i + ((img->height-1) - j) * idl_CommGridMap.xSizeCells] = cellValue;
+				idl_CommGridMap.cell[i + ((image_height-1) - j) * idl_CommGridMap.xSizeCells] = cellValue;
 			}
 		}
 	}
-
+#ifdef WITH_OPENCV_4_2_VERSION
+	//do nothing
+#else
 	// clean up the temporary image
 	cvReleaseImage(&img);
+#endif
 	return 0;
 #else
 	std::cout << "!!! For use without OpenCV the yaml based functions are deactivated! In order to use them define WITH_OPENCV_YAML in the makefile. !!!" << std::endl;

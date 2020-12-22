@@ -12,7 +12,7 @@ ComponentDefinition SmartLaserLMS200Server {
 		}
 	}
 	
-	OutputPort LaserScanOut implements CommBasicObjects.LaserService realizedBy LaserTask { } 
+	OutputPort LaserServiceOut implements CommBasicObjects.LaserService realizedBy LaserTask { } 
 	AnswerPort LaserQueryServiceAnsw implements CommBasicObjects.LaserQueryService { } 
 	RequestHandler LaserQueryServiceAnswHandler triggeredFrom LaserQueryServiceAnsw { Observe LaserTask }
 	

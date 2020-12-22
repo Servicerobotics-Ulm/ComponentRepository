@@ -1,15 +1,22 @@
 ComponentDefinition ComponentFileMover logo "/ComponentFileMover/model/logo.png"
 {
 
-RequestPort CommFileReadQueryReq implements CommBasicObjects.CommFileReadQuery {
+	RequestPort CommFileReadQueryReq implements CommBasicObjects.FileReadQueryService {
 	}
-	RequestPort CommFileWriteQueryReq implements CommBasicObjects.CommFileWriteQuery {
+	
+	RequestPort CommFileWriteQueryReq implements CommBasicObjects.FileWriteQueryService {
 	}
-	Activity FileMoveEventHandler
+	
+	Activity Dummy
 	{
 	}
-	OutputPort CommFileMoveEventOut implements CommBasicObjects.CommFileMoveEvent realizedBy FileMoveEventHandler {
+	
+	OutputPort CommFileMoveEventOut implements CommBasicObjects.FileMoveEventService realizedBy Dummy {
 	}
-	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService { }
+	
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.FileOperationsCoordinationService {
+		with fileEvent realizedBy CommFileMoveEventOut
+		SkillRealizationsRef FileOperationsModule
+	}
 	ComponentParameters ComponentFileMoverParams slave CoordinationPort
 }

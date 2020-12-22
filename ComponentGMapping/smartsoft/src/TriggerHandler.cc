@@ -176,7 +176,9 @@ void TriggerHandler::handleCommLocalizationObjects_SlamParameter_SAVEMAP(const s
 		// save image to file mapAsPGM.pgm
 
 #ifdef WITH_OPENCV_4_2_VERSION
-		bool saved = cv::imwrite(mapFileNameWithPath,cv::Mat(map_size_y,map_size_x,CV_8UC1,image->imageData));
+		cv::Mat mat = cv::cvarrToMat(image);
+//		bool saved = cv::imwrite(mapFileNameWithPath,cv::Mat(map_size_y,map_size_x,CV_8UC1,image->imageData));
+		bool saved = cv::imwrite(mapFileNameWithPath,mat);
 #else
 		bool saved = cvSaveImage(mapFileNameWithPath,image);
 #endif
@@ -191,11 +193,15 @@ void TriggerHandler::handleCommLocalizationObjects_SlamParameter_SAVEMAP(const s
 		cv::FileStorage fs( yamlFileName, cv::FileStorage::Mode::WRITE);
 		fs<<"image" <<mapFileName;
 		fs<<"resolution"<<resolution;
-		fs<<"negate", negate;
+		fs<<"negate"<< negate;
 		fs<< "occupied_thresh"<<occupied_thresh;
 		fs<< "free_thresh" <<free_thresh;
 		fs.release();
 
+		ofstream myfile;
+		myfile.open(yamlFileName, ios::app);
+		myfile << "origin: " << "[" << origin_x << "," << origin_y << "," << origin_z << "]\n";
+		myfile.close();
 #else
 		CvFileStorage* fs = cvOpenFileStorage( yamlFileName, 0, CV_STORAGE_WRITE);
 		cvWriteString( fs, "image", mapFileName);

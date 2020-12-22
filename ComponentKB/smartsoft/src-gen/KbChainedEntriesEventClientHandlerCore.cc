@@ -20,11 +20,12 @@ KbChainedEntriesEventClientHandlerCore::KbChainedEntriesEventClientHandlerCore(
 	Smart::InputSubject<Smart::EventInputType<CommBasicObjects::CommKBEventResult>> *subject,
 	const int &prescaleFactor)
 	:	Smart::InputTaskTrigger<Smart::EventInputType<CommBasicObjects::CommKBEventResult>>(subject, prescaleFactor)
-{  
-	updateStatus = Smart::SMART_NODATA;
+{
 }
 KbChainedEntriesEventClientHandlerCore::~KbChainedEntriesEventClientHandlerCore()
-{  }
+{  
+}
+
 
 void KbChainedEntriesEventClientHandlerCore::updateAllCommObjects() {
 }

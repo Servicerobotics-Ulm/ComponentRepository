@@ -22,8 +22,12 @@ BaseStateQueryServiceAnswHandlerCore::BaseStateQueryServiceAnswHandlerCore(IQuer
 :	Smart::IInputHandler<std::pair<Smart::QueryIdPtr,CommBasicObjects::CommVoid>>(server)
 ,	server(server)
 {
-	
 }
+
+BaseStateQueryServiceAnswHandlerCore::~BaseStateQueryServiceAnswHandlerCore()
+{
+}
+
 
 void BaseStateQueryServiceAnswHandlerCore::updateAllCommObjects()
 {

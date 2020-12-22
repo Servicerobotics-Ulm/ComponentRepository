@@ -49,8 +49,13 @@
 #include <CommBasicObjects/CommBaseState.hh>
 #include <DomainVision/CommVideoImage.hh>
 
-#include <cv.h>
-#include <highgui.h>
+#ifdef WITH_OPENCV_4_2_VERSION
+	#include <opencv4/opencv2/core.hpp>
+	#include <opencv4/opencv2/highgui.hpp>
+#else
+	#include <cv.h>
+	#include <highgui.h>
+#endif
 
 class ImageTask  : public ImageTaskCore
 {
@@ -62,7 +67,10 @@ public:
 	virtual int on_entry();
 	virtual int on_execute();
 	virtual int on_exit();
+#ifdef WITH_OPENCV_4_2_VERSION
+#else
 	IplImage* convertDataArrayToIplImage(DomainVision::CommVideoImage &query_image, CvSize size);
+#endif
 private:
 	unsigned int _image_buffer_index;
 	std::vector<DomainVision::CommVideoImage*> _image_buffer;

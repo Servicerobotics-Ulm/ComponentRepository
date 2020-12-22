@@ -29,23 +29,24 @@
 class SmartRobotConsolePortFactoryInterface;
 class SmartRobotConsoleExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaSmartRobotConsoleExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
 
-// includes for SmartRobotConsoleROSExtension
+// includes for SmartRobotConsoleROS1InterfacesExtension
+
+// includes for SmartRobotConsoleRestInterfacesExtension
 
 
 // include communication objects
 
 // include tasks
 #include "ConsoleTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 
 // include input-handler(s)
 // include request-handler(s)
+// output port wrappers
 
 // include handler
 #include "CompHandler.hh"
@@ -101,11 +102,11 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
 	// definitions of PlainOpcUaSmartRobotConsoleExtension
 	
-	// definitions of SmartRobotConsoleROSExtension
+	// definitions of SmartRobotConsoleROS1InterfacesExtension
+	
+	// definitions of SmartRobotConsoleRestInterfacesExtension
 	
 	
 	// define default slave ports
@@ -210,11 +211,11 @@ public:
 	
 		//--- client port parameter ---
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// -- parameters for PlainOpcUaSmartRobotConsoleExtension
 		
-		// -- parameters for SmartRobotConsoleROSExtension
+		// -- parameters for SmartRobotConsoleROS1InterfacesExtension
+		
+		// -- parameters for SmartRobotConsoleRestInterfacesExtension
 		
 	} connections;
 };

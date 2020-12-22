@@ -1,0 +1,28 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; monitorBaseBumper
+
+(realize-tcb (monitorLaserSafetyFields)
+	(module "LaserSafetyModule")
+	(action (	
+                  (format t "===== monitorLaserSafetyFields~%")
+                  (tcl-activate-event :name 'evt-monitorLaserSafetyFields
+                                      :handler 'handler-laser-safety-fields
+                                      :server 'laser
+                                      :service 'safetyFieldEvent
+                                      :mode 'continuous))))
+
+(define-event-handler (handler-laser-safety-fields)
+  (action (
+            (format t "=========================>>> HANDLER LASER SAFETY FIELDS EVENT ~s ~%~%" (tcl-event-message))
+            (cond
+              ;; blocked
+              ((equal (tcl-event-message) "(blocked)")
+                (format t "Laser safety fields blocked ~%")
+                (tcl-abort)
+                '(SUCCESS (FIELDS BLOCKED)))
+              ;; free
+              ((equal (tcl-event-message) "(free)")
+                (format t "Laser safety fields free ~%"))))))
+
+
+

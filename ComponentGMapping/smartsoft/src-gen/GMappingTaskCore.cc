@@ -63,7 +63,8 @@ int GMappingTaskCore::execute_protected_region()
 	if(useDefaultState) {
 		Smart::StatusCode status = COMP->stateSlave->acquire("active");
 		if(status != Smart::SMART_OK) {
-			std::cerr << "GMappingTaskCore: ERROR acquiring state active: " << status << std::endl;
+			std::cerr << "GMappingTaskCore: ERROR acquiring state: " << status << std::endl;
+			usleep(500000);
 			return 0;
 		}
 	}
@@ -104,7 +105,7 @@ void GMappingTaskCore::updateAllCommObjects()
 // this method is meant to be used in derived classes
 Smart::StatusCode GMappingTaskCore::basePositionUpdateClientPut(CommBasicObjects::CommBasePositionUpdate &basePositionUpdateClientDataObject)
 {
-	Smart::StatusCode result = COMP->basePositionUpdateClient->send(basePositionUpdateClientDataObject);
+	Smart::StatusCode result = COMP->basePositionUpdateClientWrapper->send(basePositionUpdateClientDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
@@ -114,7 +115,7 @@ Smart::StatusCode GMappingTaskCore::basePositionUpdateClientPut(CommBasicObjects
 // this method is meant to be used in derived classes
 Smart::StatusCode GMappingTaskCore::newestMapPushServerPut(CommNavigationObjects::CommGridMap &newestMapPushServerDataObject)
 {
-	Smart::StatusCode result = COMP->newestMapPushServer->put(newestMapPushServerDataObject);
+	Smart::StatusCode result = COMP->newestMapPushServerWrapper->put(newestMapPushServerDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());

@@ -3,39 +3,75 @@
 
 # ComponentTTS Component
 
-![ComponentTTS-ComponentImage](model/ComponentTTSComponentDefinition.jpg)
+<img src="model/ComponentTTSComponentDefinition.jpg" alt="ComponentTTS-ComponentImage" width="1000">
 
-SmartTTS is a component for text to speech (tts) synthesis. SmartTTS pipes speech output messages to stdin of an arbitrary executable. 
-It is thus a simple wrapper for all tts applications that accept text via stdin, e.g. mbrola, festival or /bin/cat for debugging. 
-It provides send and query services. Speech messages will be appended to a message queue. The queue is processed first in first out. 
-Messages of which the discard time is in the past (at the time of processing) are discarded.
-On Ubuntu 16.04, the speech-dispatcher package can be used. Configure
-the component to use spd-say: set parameter 'player' to '/usr/bin/spd-say -e'.
-
-| Metaelement | Documentation |
-|-------------|---------------|
-| License | LGPL |
-| Hardware Requirements | none |
-| Purpose | HMI |
+*Component Short Description:* TODO: add short description for ComponentTTS datasheet
 
 
+## Component-Datasheet Properties
 
-## Service Ports
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Component-Datasheet Properties</caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Property Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Property Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Property Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">MarketName</td>
+<td style="border:1px solid black; padding: 5px;">ComponentTTS</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Supplier</td>
+<td style="border:1px solid black; padding: 5px;">Servicerobotics Ulm</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Homepage</td>
+<td style="border:1px solid black; padding: 5px;">http://servicerobotik-ulm.de/components</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Purpose</td>
+<td style="border:1px solid black; padding: 5px;">Example</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
 
-### SpeechQueryServiceAnsw
-
-Speech messages sent via this port will be queued for processing. Use this service port if you need to know whether the message was spoken or discarded for some reason. The answer includes boolean values: success, discarded, error.
+## Component Ports
 
 ### SpeechSendServiceIn
 
-Speech messages sent via this port will be queued for processing.
+*Documentation:*
 
 
-## Component Parameters ComponentTTSParams
+### SpeechQueryServiceAnsw
 
-### InternalParameter Settings
+*Documentation:*
 
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| player | String |  |
+
+
+
+## Component Parameters: ComponentTTSParams
+
+### Internal Parameter: Settings
+
+*Documentation:*
+
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Internal Parameter <b>Settings</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>player</b></td>
+<td style="border:1px solid black; padding: 5px;">String</td>
+<td style="border:1px solid black; padding: 5px;">"/usr/bin/spd-say -e"</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
 

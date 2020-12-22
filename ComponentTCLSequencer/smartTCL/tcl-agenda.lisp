@@ -481,7 +481,34 @@
       ((equal server 'TIMER)
        (setf event (communication *SMARTSOFT* (list 'special 'special server 'event 'generate (list 'TIMER 'TIMER server service (append (list mode) param))))))
       (T ;;all other stuff uses the regular event generation methods
-       (setf event (communication *SMARTSOFT* (list 'special 'special server 'event 'generate (list module module-inst server service (append (list mode) param)))))))
+       (setf event (communication *SMARTSOFT* (list 'special 'special server 'event 'generate (list module module-inst server service 
+         (append (list mode) (if (atom param )
+                               (list param) 
+                               param))))))))
+    (cond
+      ((null (communication *SMARTSOFT* (list 'special 'special server 'event 'activate (list event))))
+       (format t "Error activating Event -->destroy it~%")
+       (communication *SMARTSOFT* (list 'special 'special nil 'event 'destroy (list event)))
+       '(ERROR (COMMUNICATION)))
+      (T
+      ;;(push (cons (eval evt-name) event) (tcb-events instance))
+        (push event *ACTIVATED-EVENT-LIST*)
+        (update-slot instance 'events evt-name event)
+        (update-slot instance 'event-handler evt-name evt-hndlr)
+        '(SUCCESS)))))
+
+(defmethod activate-event-direct ((instance tcb-execution-class) evt-name evt-hndlr server service mode param module module-inst)
+  (let ((event nil))
+    ;(format t " DEBUG evt-name: ~s evnt-hndlr: ~s server:  ~s service: ~s mode ~s param: ~s ~%" evt-name evt-hndlr server service mode param)
+    ;;filter all special events not belonging to external stuff!
+    (cond
+      ((equal server 'TIMER)
+       (setf event (communication *SMARTSOFT* (list 'special 'special server 'event 'generate (list 'TIMER 'TIMER server service (append (list mode) param))))))
+      (T ;;all other stuff uses the regular event generation methods
+       (setf event (communication *SMARTSOFT* (list 'special 'special server 'event 'generate (list module module-inst server service 
+         (append (list mode) (if (atom param )
+                               (list param) 
+                               param))))))))
     (cond
       ((null (communication *SMARTSOFT* (list 'special 'special server 'event 'activate (list event))))
        (format t "Error activating Event -->destroy it~%")
@@ -500,8 +527,8 @@
 ;;;    returns     : '(SUCCESS)
 (defmethod activate-component-life-cycle-event (evt-name evt-hndlr server service)
   (let ((event nil))
-    ;;(format t " DEBUG evt-name: ~s evnt-hndlr: ~s server:  ~s service: ~s ~%" evt-name evt-hndlr server service)
-    (setf event (communication *SMARTSOFT* (list 'special 'special server 'event 'generate (list 'COMPONENT 'COMPONENT server service (append (list 'continuous) nil)))))
+    (format t " DEBUG evt-name: ~s evnt-hndlr: ~s server:  ~s service: ~s ~%" evt-name evt-hndlr server service)
+    (setf event (communication *SMARTSOFT* (list 'special 'special server 'event 'generate (list *COMPONENT-MODULE-NAME* (intern *COMPONENT-MODULE-NAME*) server service (append (list 'continuous) nil)))))
     (communication *SMARTSOFT* (list 'special 'special server 'event 'activate (list event)))
     (push event *COMPONENT-LIFECYCLE-EVENT-LIST*)
     ;; this handler is not assigned to a specific TCB
@@ -784,7 +811,7 @@
   (let ( (result '(OK (NOTHING TO DO))))
     (cond
       ((and (null (tcb-current instance)) (null (tcb-stack instance)) (null (tcb-events instance)))
-        (format t "~%~%~%THIS SHOULD NOT BE EXECUTED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ~%~%~%~%")
+        (format t "~%~%~%ERROR - THIS SHOULD NOT BE EXECUTED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ~%~%~%~%")
         (setf result '(TCB-FINISHED ())))
       
       (T
@@ -795,10 +822,9 @@
           ((not (null *PENDING-EVENT-LIST*))
 	    (dolist (evt *PENDING-EVENT-LIST*)
               (cond 
-                ((equal (event-module evt) 'COMPONENT)
+                ((equal (event-module evt) "COMPONENT")
                   ;(format t "Matched Component Event: ~s~%" evt)
                   (cond
-                    ;;((not (null msg))
                     ((not (null (check evt))) ;;this should never fail!
                       ;;(format t "execute event handler: ~s~%" msg)
                       (let ((evt-handler  (query-kb *MEMORY* '(is-a is-lifecycle-event) '((is-a event-handler)(is-lifecycle-event T)))))
@@ -971,7 +997,8 @@
 ;;;    example     :
 ;;;    returns     : 
 (defmethod abort-tcb ((instance tcb-execution-class))
-  (let ((result nil))
+  (let ((result nil)
+        (calling-tcb-instance *CURRENT-INSTANCE*)) ;; save the calling context TCB
     ;; abort child tcb if min one exists
     (cond
       ((not (null (tcb-current instance)))
@@ -987,10 +1014,14 @@
     ;; delete stack
     (setf (tcb-stack instance) nil)
     ;; execute abort-action
+    ;; set the context for the actions to be performed in
+    (setf *CURRENT-INSTANCE* instance)
     (setf result (execute-action instance (tcb-abort-action instance)))
     ;; maybe do something with result !!!!!!!!!!!!!! TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     ;; set-result
     (setf (tcb-current-result instance) '(ABORTED))
+    ;; reset the context TCB
+    (setf *CURRENT-INSTANCE* calling-tcb-instance)
     '(SUCCESS)))
 
 

@@ -1,0 +1,42 @@
+{
+	"name": "SmartAmcl",
+	"shortDescription": "The SmartAmcl implements the Adaptive Monte-Carlo Localization (AMCL) algorithm.",
+	"type": "Toolify",
+	"description": "<p></p><p> SmartAmcl implements the Adaptive Monte-Carlo Localization (AMCL) algorithm. Localization is based on a particle filter and a pre-captured grid map of the environment. AMCL maintains a set of possible robot poses and updates this distribution by comparing laser scans against the pre-captured map. AMCL is adaptive because the amount of particles depends on the pose certainty: large number of particles if uncertainty increases and vice versa.</p><p> Based on its localization, SmartAmcl sends position updates to the base server (e.g. SmartPioneerBaseServer).</p><p> GPL-License: includes Code from the Player Project.</p><p> See also: http://playerstage.sourceforge.net/doc/Player-2.0.0/player/group__driver__amcl.html</p><p></p>",
+	"purposes": ["Localization"],
+	"spdxLicense": "LGPL-2.0-or-later",
+	"technologyReadinessLevel": "TRL5",
+	"homepage": "http://servicerobotik-ulm.de/components",
+	"supplier": "Servicerobotics Ulm",
+	"marketName": "Adaptive Monte-Carlo Localization (AMCL) Component",
+	"services": [
+		{
+			"name": "LaserServiceIn",
+			"type": "InputPort",
+			"serviceDefinition": "CommBasicObjects::LaserService",
+			"commObjects": "CommBasicObjects::CommMobileLaserScan",
+			"description": ""
+		},
+		{
+			"name": "LocalizationUpdateServiceOut",
+			"type": "OutputPort",
+			"serviceDefinition": "CommNavigationObjects::LocalizationUpdateService",
+			"commObjects": "CommBasicObjects::CommBasePositionUpdate",
+			"description": ""
+		},
+		{
+			"name": "LocalizationEventServiceOut",
+			"type": "OutputPort",
+			"serviceDefinition": "CommLocalizationObjects::LocalizationEventService",
+			"commObjects": "CommLocalizationObjects::CommLocalizationEventParameter, CommLocalizationObjects::CommLocalizationEventResult, CommLocalizationObjects::LocalizationEventState",
+			"description": ""
+		},
+		{
+			"name": "AmclVisualizationInfoOut",
+			"type": "OutputPort",
+			"serviceDefinition": "CommLocalizationObjects::AmclVisualizationInfo",
+			"commObjects": "CommLocalizationObjects::CommAmclVisualizationInfo",
+			"description": ""
+		}
+	]
+}

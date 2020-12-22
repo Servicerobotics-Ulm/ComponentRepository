@@ -95,7 +95,7 @@ void PoseUpdateTaskCore::updateAllCommObjects()
 // this method is meant to be used in derived classes
 Smart::StatusCode PoseUpdateTaskCore::basePositionOutPut(CommBasicObjects::CommBaseState &basePositionOutDataObject)
 {
-	Smart::StatusCode result = COMP->basePositionOut->put(basePositionOutDataObject);
+	Smart::StatusCode result = COMP->basePositionOutWrapper->put(basePositionOutDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
@@ -105,7 +105,7 @@ Smart::StatusCode PoseUpdateTaskCore::basePositionOutPut(CommBasicObjects::CommB
 // this method is meant to be used in derived classes
 Smart::StatusCode PoseUpdateTaskCore::batteryEventServerPut(CommBasicObjects::CommBatteryState &eventState)
 {
-	Smart::StatusCode result = COMP->batteryEventServer->put(eventState);
+	Smart::StatusCode result = COMP->batteryEventServerWrapper->put(eventState);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());

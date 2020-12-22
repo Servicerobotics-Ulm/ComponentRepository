@@ -62,8 +62,11 @@ private:
 public:
 	GuiTask(SmartACE::SmartComponent *comp);
 	virtual ~GuiTask();
-	
+#ifdef WITH_MRPT_2_0_VERSION
+	//do nothing
+#else
 	void justifyHorizon(mrpt::utils::CImage &image, mrpt::poses::CPose3D &imagePose);
+#endif
 
 	virtual int on_entry();
 	virtual int on_execute();

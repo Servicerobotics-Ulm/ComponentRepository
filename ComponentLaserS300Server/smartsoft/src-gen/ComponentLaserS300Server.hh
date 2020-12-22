@@ -29,9 +29,9 @@
 class ComponentLaserS300ServerPortFactoryInterface;
 class ComponentLaserS300ServerExtension;
 
-// includes for ComponentLaserS300ServerROSExtension
+// includes for ComponentLaserS300ServerROS1InterfacesExtension
 
-// includes for OpcUaBackendComponentGeneratorExtension
+// includes for ComponentLaserS300ServerRestInterfacesExtension
 
 // includes for PlainOpcUaComponentLaserS300ServerExtension
 // include plain OPC UA device clients
@@ -41,6 +41,8 @@ class ComponentLaserS300ServerExtension;
 // include communication objects
 #include <CommBasicObjects/CommBaseState.hh>
 #include <CommBasicObjects/CommBaseStateACE.hh>
+#include <CommBasicObjects/CommIOValues.hh>
+#include <CommBasicObjects/CommIOValuesACE.hh>
 #include <CommBasicObjects/CommLaserSafetyEventParam.hh>
 #include <CommBasicObjects/CommLaserSafetyEventParamACE.hh>
 #include <CommBasicObjects/CommLaserSafetyEventState.hh>
@@ -53,13 +55,20 @@ class ComponentLaserS300ServerExtension;
 #include <CommBasicObjects/CommVoidACE.hh>
 
 // include tasks
+#include "LaserSafetyTask.hh"
 #include "LaserTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
+#include "CommIOForkingServiceInUpcallManager.hh"
+#include "CommIOForkingServiceInInputCollector.hh"
 #include "BaseTimedClientUpcallManager.hh"
+#include "BaseTimedClientInputCollector.hh"
 
 // include input-handler(s)
 // include request-handler(s)
 #include "LaserQueryServiceAnswHandler.hh"
+// output port wrappers
+#include "LaserServiceOutWrapper.hh"
+#include "SafetyfieldEventServerWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -111,22 +120,32 @@ public:
 	}
 	
 	// define tasks
+	Smart::TaskTriggerSubject* laserSafetyTaskTrigger;
+	LaserSafetyTask *laserSafetyTask;
 	Smart::TaskTriggerSubject* laserTaskTrigger;
 	LaserTask *laserTask;
 	
 	// define input-ports
+	// InputPort CommIOForkingServiceIn
+	Smart::IPushClientPattern<CommBasicObjects::CommIOValues> *commIOForkingServiceIn;
+	Smart::InputTaskTrigger<CommBasicObjects::CommIOValues> *commIOForkingServiceInInputTaskTrigger;
+	CommIOForkingServiceInUpcallManager *commIOForkingServiceInUpcallManager;
+	CommIOForkingServiceInInputCollector *commIOForkingServiceInInputCollector;
 	// InputPort baseTimedClient
 	Smart::IPushClientPattern<CommBasicObjects::CommBaseState> *baseTimedClient;
 	Smart::InputTaskTrigger<CommBasicObjects::CommBaseState> *baseTimedClientInputTaskTrigger;
 	BaseTimedClientUpcallManager *baseTimedClientUpcallManager;
+	BaseTimedClientInputCollector *baseTimedClientInputCollector;
 	
 	// define request-ports
 	
 	// define input-handler
 	
 	// define output-ports
-	Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> *laserPushNewestServer;
+	Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> *laserServiceOut;
+	LaserServiceOutWrapper *laserServiceOutWrapper;
 	Smart::IEventServerPattern<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState> *safetyfieldEventServer;
+	SafetyfieldEventServerWrapper *safetyfieldEventServerWrapper;
 	std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState>> safetyfieldEventServerEventTestHandler;
 	
 	// define answer-ports
@@ -136,9 +155,9 @@ public:
 	// define request-handlers
 	LaserQueryServiceAnswHandler *laserQueryServiceAnswHandler;
 	
-	// definitions of ComponentLaserS300ServerROSExtension
+	// definitions of ComponentLaserS300ServerROS1InterfacesExtension
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
+	// definitions of ComponentLaserS300ServerRestInterfacesExtension
 	
 	// definitions of PlainOpcUaComponentLaserS300ServerExtension
 	
@@ -190,6 +209,7 @@ public:
 	/// start all associated timers
 	void startAllTimers();
 	
+	Smart::StatusCode connectCommIOForkingServiceIn(const std::string &serverName, const std::string &serviceName);
 	Smart::StatusCode connectBaseTimedClient(const std::string &serverName, const std::string &serviceName);
 
 	// return singleton instance
@@ -221,6 +241,22 @@ public:
 		} component;
 		
 		//--- task parameter ---
+		struct LaserSafetyTask_struct {
+			double minActFreq;
+			double maxActFreq;
+			std::string trigger;
+			// only one of the following two params is 
+			// actually used at run-time according 
+			// to the system config model
+			double periodicActFreq;
+			// or
+			std::string inPortRef;
+			int prescale;
+			// scheduling parameters
+			std::string scheduler;
+			int priority;
+			int cpuAffinity;
+		} laserSafetyTask;
 		struct LaserTask_struct {
 			double minActFreq;
 			double maxActFreq;
@@ -241,10 +277,10 @@ public:
 		//--- upcall parameter ---
 		
 		//--- server port parameter ---
-		struct LaserPushNewestServer_struct {
+		struct LaserServiceOut_struct {
 				std::string serviceName;
 				std::string roboticMiddleware;
-		} laserPushNewestServer;
+		} laserServiceOut;
 		struct LaserQueryServer_struct {
 				std::string serviceName;
 				std::string roboticMiddleware;
@@ -255,6 +291,14 @@ public:
 		} safetyfieldEventServer;
 	
 		//--- client port parameter ---
+		struct CommIOForkingServiceIn_struct {
+			bool initialConnect;
+			std::string serverName;
+			std::string serviceName;
+			std::string wiringName;
+			long interval;
+			std::string roboticMiddleware;
+		} commIOForkingServiceIn;
 		struct BaseTimedClient_struct {
 			bool initialConnect;
 			std::string serverName;
@@ -264,9 +308,9 @@ public:
 			std::string roboticMiddleware;
 		} baseTimedClient;
 		
-		// -- parameters for ComponentLaserS300ServerROSExtension
+		// -- parameters for ComponentLaserS300ServerROS1InterfacesExtension
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
+		// -- parameters for ComponentLaserS300ServerRestInterfacesExtension
 		
 		// -- parameters for PlainOpcUaComponentLaserS300ServerExtension
 		

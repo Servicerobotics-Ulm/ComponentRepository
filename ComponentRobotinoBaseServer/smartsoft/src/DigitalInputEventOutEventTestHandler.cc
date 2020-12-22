@@ -17,9 +17,9 @@
 #include "DigitalInputEventOutEventTestHandler.hh"
 
 bool DigitalInputEventOutEventTestHandler::testEvent(
-	CommRobotinoObjects::CommDigitalInputEventParameter &p,
-	CommRobotinoObjects::CommDigitalInputEventResult &r,
-	const CommRobotinoObjects::CommDigitalInputEventState &s
+		CommBasicObjects::CommDigitalInputEventParameter &p,
+		CommBasicObjects::CommDigitalInputEventResult &r,
+	const CommBasicObjects::CommDigitalInputEventState &s
 ) throw() {
 
 

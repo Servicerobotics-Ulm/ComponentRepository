@@ -32,14 +32,14 @@
 #include <CommNavigationObjects/CommCdlRobotBlockedEventResultACE.hh>
 #include <CommNavigationObjects/CommCdlRobotBlockedState.hh>
 #include <CommNavigationObjects/CommCdlRobotBlockedStateACE.hh>
+#include <CommNavigationObjects/CommCorridorNavigationGoal.hh>
+#include <CommNavigationObjects/CommCorridorNavigationGoalACE.hh>
 #include <CommBasicObjects/CommMobileIRScan.hh>
 #include <CommBasicObjects/CommMobileIRScanACE.hh>
 #include <CommBasicObjects/CommMobileLaserScan.hh>
 #include <CommBasicObjects/CommMobileLaserScanACE.hh>
 #include <CommBasicObjects/CommNavigationVelocity.hh>
 #include <CommBasicObjects/CommNavigationVelocityACE.hh>
-#include <CommRobotinoObjects/CommPathNavigationGoal.hh>
-#include <CommRobotinoObjects/CommPathNavigationGoalACE.hh>
 #include <CommNavigationObjects/CommPlannerGoal.hh>
 #include <CommNavigationObjects/CommPlannerGoalACE.hh>
 #include <CommTrackingObjects/CommTrackingGoal.hh>
@@ -66,7 +66,7 @@ public:
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * createLaserClient() = 0;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * createLaserClient2() = 0;
 	virtual Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> * createNavVelSendClient() = 0;
-	virtual Smart::IPushClientPattern<CommRobotinoObjects::CommPathNavigationGoal> * createPathNavigationGoalClient() = 0;
+	virtual Smart::IPushClientPattern<CommNavigationObjects::CommCorridorNavigationGoal> * createPathNavigationGoalClient() = 0;
 	virtual Smart::IPushClientPattern<CommNavigationObjects::CommPlannerGoal> * createPlannerClient() = 0;
 	virtual Smart::IPushClientPattern<CommTrackingObjects::CommTrackingGoal> * createTrackingClient() = 0;
 	

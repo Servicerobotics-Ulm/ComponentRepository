@@ -19,11 +19,15 @@
 // include observers
 
 RobotinoIOValuesQueryServiceAnswHandlerCore::RobotinoIOValuesQueryServiceAnswHandlerCore(IQueryServer* server)
-:	Smart::IInputHandler<std::pair<Smart::QueryIdPtr,CommRobotinoObjects::CommRobotinoIOValues>>(server)
+:	Smart::IInputHandler<std::pair<Smart::QueryIdPtr,CommBasicObjects::CommIOValues>>(server)
 ,	server(server)
 {
-	
 }
+
+RobotinoIOValuesQueryServiceAnswHandlerCore::~RobotinoIOValuesQueryServiceAnswHandlerCore()
+{
+}
+
 
 void RobotinoIOValuesQueryServiceAnswHandlerCore::updateAllCommObjects()
 {

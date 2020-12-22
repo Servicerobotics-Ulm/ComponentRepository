@@ -104,7 +104,7 @@ void ImageTaskCore::updateAllCommObjects()
 // this method is meant to be used in derived classes
 Smart::StatusCode ImageTaskCore::imagePushNewestServerPut(DomainVision::CommVideoImage &imagePushNewestServerDataObject)
 {
-	Smart::StatusCode result = COMP->imagePushNewestServer->put(imagePushNewestServerDataObject);
+	Smart::StatusCode result = COMP->imagePushNewestServerWrapper->put(imagePushNewestServerDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());

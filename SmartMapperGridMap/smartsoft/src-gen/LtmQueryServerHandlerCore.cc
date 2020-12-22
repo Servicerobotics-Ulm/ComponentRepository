@@ -23,8 +23,12 @@ LtmQueryServerHandlerCore::LtmQueryServerHandlerCore(IQueryServer* server)
 :	Smart::IInputHandler<std::pair<Smart::QueryIdPtr,CommNavigationObjects::CommGridMapRequest>>(server)
 ,	server(server)
 {
-	
 }
+
+LtmQueryServerHandlerCore::~LtmQueryServerHandlerCore()
+{
+}
+
 
 void LtmQueryServerHandlerCore::updateAllCommObjects()
 {

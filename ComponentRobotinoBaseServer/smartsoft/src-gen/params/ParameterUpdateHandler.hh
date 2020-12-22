@@ -23,7 +23,12 @@
 class ParamUpdateHandler: public SmartACE::ParameterUpdateHandler {
 public:
 	SmartACE::CommParameterResponse handleParameter(const SmartACE::CommParameterRequest& request);
-
+		
+private:
+	SmartACE::CommParameterResponse handleParametersNamed(const SmartACE::CommParameterRequest& request);
+	SmartACE::CommParameterResponse handleParametersSequence(const SmartACE::CommParameterRequest& request);
+public:
+	
 	ParameterStateStruct getGlobalState() const;
 	
 	void loadParameter(SmartACE::SmartIniParameter &parameter);

@@ -31,7 +31,7 @@ ComponentUnicapImageServer::ComponentUnicapImageServer()
 	std::cout << "constructor of ComponentUnicapImageServer\n";
 	
 	// set all pointer members to NULL
-	//componentUnicapImageServerParams = NULL;
+	//coordinationPort = NULL;
 	//coordinationPort = NULL;
 	imageQueryHandler = NULL;
 	imageTask = NULL;
@@ -39,12 +39,15 @@ ComponentUnicapImageServer::ComponentUnicapImageServer()
 	basePushTimedClient = NULL;
 	basePushTimedClientInputTaskTrigger = NULL;
 	basePushTimedClientUpcallManager = NULL;
+	basePushTimedClientInputCollector = NULL;
 	imagePushNewestServer = NULL;
+	imagePushNewestServerWrapper = NULL;
 	imageQueryServer = NULL;
 	imageQueryServerInputTaskTrigger = NULL;
 	ptuPushTimedClient = NULL;
 	ptuPushTimedClientInputTaskTrigger = NULL;
 	ptuPushTimedClientUpcallManager = NULL;
+	ptuPushTimedClientInputCollector = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
@@ -78,10 +81,6 @@ ComponentUnicapImageServer::ComponentUnicapImageServer()
 	connections.imageTask.scheduler = "DEFAULT";
 	connections.imageTask.priority = -1;
 	connections.imageTask.cpuAffinity = -1;
-	
-	// initialize members of ComponentUnicapImageServerROSExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentUnicapImageServerExtension
 	
@@ -212,10 +211,6 @@ void ComponentUnicapImageServer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of ComponentUnicapImageServerROSExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of PlainOpcUaComponentUnicapImageServerExtension
 		
 		
@@ -253,6 +248,7 @@ void ComponentUnicapImageServer::init(int argc, char *argv[])
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
 		imagePushNewestServer = portFactoryRegistry[connections.imagePushNewestServer.roboticMiddleware]->createImagePushNewestServer(connections.imagePushNewestServer.serviceName);
+		imagePushNewestServerWrapper = new ImagePushNewestServerWrapper(imagePushNewestServer);
 		imageQueryServer = portFactoryRegistry[connections.imageQueryServer.roboticMiddleware]->createImageQueryServer(connections.imageQueryServer.serviceName);
 		imageQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommVideoImage>(imageQueryServer);
 		
@@ -261,10 +257,12 @@ void ComponentUnicapImageServer::init(int argc, char *argv[])
 		ptuPushTimedClient = portFactoryRegistry[connections.ptuPushTimedClient.roboticMiddleware]->createPtuPushTimedClient();
 		
 		// create InputTaskTriggers and UpcallManagers
-		basePushTimedClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(basePushTimedClient);
-		basePushTimedClientUpcallManager = new BasePushTimedClientUpcallManager(basePushTimedClient);
-		ptuPushTimedClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommDevicePoseState>(ptuPushTimedClient);
-		ptuPushTimedClientUpcallManager = new PtuPushTimedClientUpcallManager(ptuPushTimedClient);
+		basePushTimedClientInputCollector = new BasePushTimedClientInputCollector(basePushTimedClient);
+		basePushTimedClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(basePushTimedClientInputCollector);
+		basePushTimedClientUpcallManager = new BasePushTimedClientUpcallManager(basePushTimedClientInputCollector);
+		ptuPushTimedClientInputCollector = new PtuPushTimedClientInputCollector(ptuPushTimedClient);
+		ptuPushTimedClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommDevicePoseState>(ptuPushTimedClientInputCollector);
+		ptuPushTimedClientUpcallManager = new PtuPushTimedClientUpcallManager(ptuPushTimedClientInputCollector);
 		
 		// create input-handler
 		
@@ -394,14 +392,17 @@ void ComponentUnicapImageServer::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 	delete basePushTimedClientInputTaskTrigger;
 	delete basePushTimedClientUpcallManager;
+	delete basePushTimedClientInputCollector;
 	delete ptuPushTimedClientInputTaskTrigger;
 	delete ptuPushTimedClientUpcallManager;
+	delete ptuPushTimedClientInputCollector;
 
 	// destroy client ports
 	delete basePushTimedClient;
 	delete ptuPushTimedClient;
 
 	// destroy server ports
+	delete imagePushNewestServerWrapper;
 	delete imagePushNewestServer;
 	delete imageQueryServer;
 	delete imageQueryServerInputTaskTrigger;
@@ -430,10 +431,6 @@ void ComponentUnicapImageServer::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentUnicapImageServerROSExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentUnicapImageServerExtension
 	
@@ -558,10 +555,6 @@ void ComponentUnicapImageServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("ImageTask", "cpuAffinity")) {
 			parameter.getInteger("ImageTask", "cpuAffinity", connections.imageTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentUnicapImageServerROSExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentUnicapImageServerExtension
 		

@@ -118,18 +118,38 @@ int ImageTask::on_execute()
 
 		SmartACE::SmartGuard imgGuard(COMP->CurrentImageMutex);
 		{
+#ifdef WITH_MRPT_2_0_VERSION
+
+			cv::Mat image_mat(cv::Size(image.get_width(), image.get_height()), CV_8UC3, (void *)image.get_data());
+
+			COMP->currentImage.reset(new mrpt::img::CImage(image_mat, mrpt::img::SHALLOW_COPY));
+
+			if(localState.getSettings().getVerbose() == true){
+				if (COMP->currentImage->isEmpty())
+					std::cout << "[ImageTask] Current Image NOT set!" << std::endl;
+				else {
+					std::cout << "[ImageTask] Current Image set!" << std::endl;
+				}
+				COMP->currentImagePose = CPose3D(
+						image.get_sensor_pose().get_x(1),
+						image.get_sensor_pose().get_y(1),
+						image.get_sensor_pose().get_z(1),
+						image.get_sensor_pose().get_azimuth(),
+						image.get_sensor_pose().get_elevation(),
+						image.get_sensor_pose().get_roll()
+				);
+			}
+
+#else
 			cvReleaseImage(&COMP->currentImage);
 			COMP->currentImage = NULL;
 			COMP->currentImage = COMP->convertDataArrayToIplImage(image, cvSize(image.get_width(), image.get_height()));
-
 			if(localState.getSettings().getVerbose() == true){
 				if (COMP->currentImage == NULL)
 					std::cout << "[ImageTask] Current Image NOT set!" << std::endl;
 				else {
 					std::cout << "[ImageTask] Current Image set!" << std::endl;
-			}
-
-
+				}
 				//std::cout << "Sensor Pose: " << image.get_sensor_pose() << std::endl;
 
 				COMP->currentImagePose = CPose3D(
@@ -139,12 +159,15 @@ int ImageTask::on_execute()
 						image.get_sensor_pose().get_azimuth(),
 						image.get_sensor_pose().get_elevation(),
 						image.get_sensor_pose().get_roll()
-					);
+				);
 			}
-
-
+#endif
 			if(localState.getSettings().getSaveImageToTask() == true){
+#ifdef WITH_MRPT_2_0_VERSION
+				cv::imwrite("arm-img.jpg",image_mat);
+#else
 				cvSaveImage("arm-img.jpg",COMP->currentImage);
+#endif
 			}
 			/*
 			{

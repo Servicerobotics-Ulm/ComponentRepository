@@ -34,26 +34,20 @@
 #include <CommBasicObjects/CommBumperEventResultACE.hh>
 #include <CommBasicObjects/CommBumperEventState.hh>
 #include <CommBasicObjects/CommBumperEventStateACE.hh>
-#include <CommRobotinoObjects/CommDigitalInputEventParameter.hh>
-#include <CommRobotinoObjects/CommDigitalInputEventParameterACE.hh>
-#include <CommRobotinoObjects/CommDigitalInputEventResult.hh>
-#include <CommRobotinoObjects/CommDigitalInputEventResultACE.hh>
-#include <CommRobotinoObjects/CommDigitalInputEventState.hh>
-#include <CommRobotinoObjects/CommDigitalInputEventStateACE.hh>
-#include <CommBasicObjects/CommLaserSafetyEventParam.hh>
-#include <CommBasicObjects/CommLaserSafetyEventParamACE.hh>
-#include <CommBasicObjects/CommLaserSafetyEventState.hh>
-#include <CommBasicObjects/CommLaserSafetyEventStateACE.hh>
-#include <CommBasicObjects/CommLaserSafetyField.hh>
-#include <CommBasicObjects/CommLaserSafetyFieldACE.hh>
+#include <CommBasicObjects/CommDigitalInputEventParameter.hh>
+#include <CommBasicObjects/CommDigitalInputEventParameterACE.hh>
+#include <CommBasicObjects/CommDigitalInputEventResult.hh>
+#include <CommBasicObjects/CommDigitalInputEventResultACE.hh>
+#include <CommBasicObjects/CommDigitalInputEventState.hh>
+#include <CommBasicObjects/CommDigitalInputEventStateACE.hh>
+#include <CommBasicObjects/CommIOValues.hh>
+#include <CommBasicObjects/CommIOValuesACE.hh>
 #include <CommLocalizationObjects/CommLocalizationEventParameter.hh>
 #include <CommLocalizationObjects/CommLocalizationEventParameterACE.hh>
 #include <CommLocalizationObjects/CommLocalizationEventResult.hh>
 #include <CommLocalizationObjects/CommLocalizationEventResultACE.hh>
 #include <CommBasicObjects/CommNavigationVelocity.hh>
 #include <CommBasicObjects/CommNavigationVelocityACE.hh>
-#include <CommRobotinoObjects/CommRobotinoIOValues.hh>
-#include <CommRobotinoObjects/CommRobotinoIOValuesACE.hh>
 #include <CommRobotinoObjects/CommRobotinoPowerOutputValue.hh>
 #include <CommRobotinoObjects/CommRobotinoPowerOutputValueACE.hh>
 #include <CommBasicObjects/CommVoid.hh>
@@ -83,12 +77,11 @@ public:
 	virtual Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * createBaseStateServiceOut(const std::string &serviceName) = 0;
 	virtual Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> * createBatteryEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>> batteryEventServiceOutEventTestHandler) = 0;
 	virtual Smart::IEventServerPattern<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState> * createBumperEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState>> bumperEventServiceOutEventTestHandler) = 0;
-	virtual Smart::IEventServerPattern<CommRobotinoObjects::CommDigitalInputEventParameter, CommRobotinoObjects::CommDigitalInputEventResult, CommRobotinoObjects::CommDigitalInputEventState> * createDigitalInputEventOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommRobotinoObjects::CommDigitalInputEventParameter, CommRobotinoObjects::CommDigitalInputEventResult, CommRobotinoObjects::CommDigitalInputEventState>> digitalInputEventOutEventTestHandler) = 0;
-	virtual Smart::IEventServerPattern<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState> * createLaserSafetyEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState>> laserSafetyEventServiceOutEventTestHandler) = 0;
+	virtual Smart::IEventServerPattern<CommBasicObjects::CommDigitalInputEventParameter, CommBasicObjects::CommDigitalInputEventResult, CommBasicObjects::CommDigitalInputEventState> * createDigitalInputEventOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommDigitalInputEventParameter, CommBasicObjects::CommDigitalInputEventResult, CommBasicObjects::CommDigitalInputEventState>> digitalInputEventOutEventTestHandler) = 0;
 	virtual Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * createLocalizationUpdateServiceIn(const std::string &serviceName) = 0;
 	virtual Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * createNavigationVelocityServiceIn(const std::string &serviceName) = 0;
 	virtual Smart::ISendServerPattern<CommRobotinoObjects::CommRobotinoPowerOutputValue> * createPowerOutputSendIn(const std::string &serviceName) = 0;
-	virtual Smart::IQueryServerPattern<CommRobotinoObjects::CommRobotinoIOValues, CommRobotinoObjects::CommRobotinoIOValues> * createRobotinoIOValuesQueryServiceAnsw(const std::string &serviceName) = 0;
+	virtual Smart::IQueryServerPattern<CommBasicObjects::CommIOValues, CommBasicObjects::CommIOValues> * createRobotinoIOValuesQueryServiceAnsw(const std::string &serviceName) = 0;
 
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) = 0;
 	virtual void destroy() = 0;

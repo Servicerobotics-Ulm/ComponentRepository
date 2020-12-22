@@ -94,7 +94,7 @@ void DummyCore::updateAllCommObjects()
 // this method is meant to be used in derived classes
 Smart::StatusCode DummyCore::kbEventServerPut(CommBasicObjects::CommVoid &eventState)
 {
-	Smart::StatusCode result = COMP->kbEventServer->put(eventState);
+	Smart::StatusCode result = COMP->kbEventServerWrapper->put(eventState);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());

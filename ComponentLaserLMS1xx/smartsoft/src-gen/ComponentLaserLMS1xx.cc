@@ -34,12 +34,14 @@ ComponentLaserLMS1xx::ComponentLaserLMS1xx()
 	baseStateServiceIn = NULL;
 	baseStateServiceInInputTaskTrigger = NULL;
 	baseStateServiceInUpcallManager = NULL;
-	//componentLaserLMS1xxParams = NULL;
+	baseStateServiceInInputCollector = NULL;
+	//coordinationPort = NULL;
 	//coordinationPort = NULL;
 	laserQueryServiceAnsw = NULL;
 	laserQueryServiceAnswInputTaskTrigger = NULL;
 	laserQueryServiceAnswHandler = NULL;
 	laserServiceOut = NULL;
+	laserServiceOutWrapper = NULL;
 	laserTask = NULL;
 	laserTaskTrigger = NULL;
 	stateChangeHandler = NULL;
@@ -69,10 +71,6 @@ ComponentLaserLMS1xx::ComponentLaserLMS1xx()
 	connections.laserTask.scheduler = "DEFAULT";
 	connections.laserTask.priority = -1;
 	connections.laserTask.cpuAffinity = -1;
-	
-	// initialize members of ComponentLaserLMS1xxROSExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentLaserLMS1xxExtension
 	
@@ -183,10 +181,6 @@ void ComponentLaserLMS1xx::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of ComponentLaserLMS1xxROSExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of PlainOpcUaComponentLaserLMS1xxExtension
 		
 		
@@ -226,13 +220,15 @@ void ComponentLaserLMS1xx::init(int argc, char *argv[])
 		laserQueryServiceAnsw = portFactoryRegistry[connections.laserQueryServiceAnsw.roboticMiddleware]->createLaserQueryServiceAnsw(connections.laserQueryServiceAnsw.serviceName);
 		laserQueryServiceAnswInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan>(laserQueryServiceAnsw);
 		laserServiceOut = portFactoryRegistry[connections.laserServiceOut.roboticMiddleware]->createLaserServiceOut(connections.laserServiceOut.serviceName);
+		laserServiceOutWrapper = new LaserServiceOutWrapper(laserServiceOut);
 		
 		// create client ports
 		baseStateServiceIn = portFactoryRegistry[connections.baseStateServiceIn.roboticMiddleware]->createBaseStateServiceIn();
 		
 		// create InputTaskTriggers and UpcallManagers
-		baseStateServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(baseStateServiceIn);
-		baseStateServiceInUpcallManager = new BaseStateServiceInUpcallManager(baseStateServiceIn);
+		baseStateServiceInInputCollector = new BaseStateServiceInInputCollector(baseStateServiceIn);
+		baseStateServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(baseStateServiceInInputCollector);
+		baseStateServiceInUpcallManager = new BaseStateServiceInUpcallManager(baseStateServiceInInputCollector);
 		
 		// create input-handler
 		
@@ -360,6 +356,7 @@ void ComponentLaserLMS1xx::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 	delete baseStateServiceInInputTaskTrigger;
 	delete baseStateServiceInUpcallManager;
+	delete baseStateServiceInInputCollector;
 
 	// destroy client ports
 	delete baseStateServiceIn;
@@ -367,6 +364,7 @@ void ComponentLaserLMS1xx::fini()
 	// destroy server ports
 	delete laserQueryServiceAnsw;
 	delete laserQueryServiceAnswInputTaskTrigger;
+	delete laserServiceOutWrapper;
 	delete laserServiceOut;
 	// destroy event-test handlers (if needed)
 	
@@ -393,10 +391,6 @@ void ComponentLaserLMS1xx::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentLaserLMS1xxROSExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentLaserLMS1xxExtension
 	
@@ -512,10 +506,6 @@ void ComponentLaserLMS1xx::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("LaserTask", "cpuAffinity")) {
 			parameter.getInteger("LaserTask", "cpuAffinity", connections.laserTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentLaserLMS1xxROSExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentLaserLMS1xxExtension
 		

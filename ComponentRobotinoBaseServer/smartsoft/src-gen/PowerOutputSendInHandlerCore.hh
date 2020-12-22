@@ -30,9 +30,6 @@ class PowerOutputSendInHandlerCore
 ,	public PowerOutputSendInUpcallInterface
 {
 private:
-	Smart::StatusCode updateStatus;
-	CommRobotinoObjects::CommRobotinoPowerOutputValue lastUpdate;
-	
 	
 	virtual void updateAllCommObjects();
 	

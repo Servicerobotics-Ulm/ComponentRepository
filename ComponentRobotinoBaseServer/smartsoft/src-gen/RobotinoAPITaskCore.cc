@@ -92,19 +92,9 @@ void RobotinoAPITaskCore::updateAllCommObjects()
 
 
 // this method is meant to be used in derived classes
-Smart::StatusCode RobotinoAPITaskCore::digitalInputEventOutPut(CommRobotinoObjects::CommDigitalInputEventState &eventState)
+Smart::StatusCode RobotinoAPITaskCore::digitalInputEventOutPut(CommBasicObjects::CommDigitalInputEventState &eventState)
 {
-	Smart::StatusCode result = COMP->digitalInputEventOut->put(eventState);
-	if(useLogging == true) {
-		//FIXME: use logging
-		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
-	}
-	return result;
-}
-// this method is meant to be used in derived classes
-Smart::StatusCode RobotinoAPITaskCore::laserSafetyEventServiceOutPut(CommBasicObjects::CommLaserSafetyEventState &eventState)
-{
-	Smart::StatusCode result = COMP->laserSafetyEventServiceOut->put(eventState);
+	Smart::StatusCode result = COMP->digitalInputEventOutWrapper->put(eventState);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
@@ -115,7 +105,7 @@ Smart::StatusCode RobotinoAPITaskCore::laserSafetyEventServiceOutPut(CommBasicOb
 void RobotinoAPITaskCore::triggerLogEntry(const int& idOffset)
 {
 	if(useLogging == true) {
-		int logId = taskLoggingId + 2*5 + idOffset;
+		int logId = taskLoggingId + 2*4 + idOffset;
 		//FIXME: use logging
 		//Smart::LOGGER->log(logId, getCurrentUpdateCount(), getPreviousCommObjId());
 	}

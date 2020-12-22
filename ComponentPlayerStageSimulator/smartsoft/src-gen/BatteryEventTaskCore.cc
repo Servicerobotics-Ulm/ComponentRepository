@@ -94,7 +94,7 @@ void BatteryEventTaskCore::updateAllCommObjects()
 // this method is meant to be used in derived classes
 Smart::StatusCode BatteryEventTaskCore::batteryEventServiceOutPut(CommBasicObjects::CommBatteryState &eventState)
 {
-	Smart::StatusCode result = COMP->batteryEventServiceOut->put(eventState);
+	Smart::StatusCode result = COMP->batteryEventServiceOutWrapper->put(eventState);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());

@@ -32,21 +32,23 @@ SmartMapperGridMap::SmartMapperGridMap()
 	
 	// set all pointer members to NULL
 	//coordinationPort = NULL;
+	//coordinationPort = NULL;
 	curMapTask = NULL;
 	curMapTaskTrigger = NULL;
 	currMapOut = NULL;
+	currMapOutWrapper = NULL;
 	currQueryServer = NULL;
 	currQueryServerInputTaskTrigger = NULL;
 	currQueryServerHandler = NULL;
 	laserServiceIn = NULL;
 	laserServiceInInputTaskTrigger = NULL;
 	laserServiceInUpcallManager = NULL;
+	laserServiceInInputCollector = NULL;
 	ltmMapTask = NULL;
 	ltmMapTaskTrigger = NULL;
 	ltmQueryServer = NULL;
 	ltmQueryServerInputTaskTrigger = NULL;
 	ltmQueryServerHandler = NULL;
-	//smartMapperGridMapParams = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
@@ -64,6 +66,7 @@ SmartMapperGridMap::SmartMapperGridMap()
 	connections.currQueryServer.roboticMiddleware = "ACE_SmartSoft";
 	connections.ltmQueryServer.serviceName = "LtmQueryServer";
 	connections.ltmQueryServer.roboticMiddleware = "ACE_SmartSoft";
+	connections.laserServiceIn.initialConnect = false;
 	connections.laserServiceIn.wiringName = "LaserServiceIn";
 	connections.laserServiceIn.serverName = "unknown";
 	connections.laserServiceIn.serviceName = "unknown";
@@ -84,11 +87,11 @@ SmartMapperGridMap::SmartMapperGridMap()
 	connections.ltmMapTask.priority = -1;
 	connections.ltmMapTask.cpuAffinity = -1;
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
 	// initialize members of PlainOpcUaSmartMapperGridMapExtension
 	
-	// initialize members of SmartMapperGridMapROSExtension
+	// initialize members of SmartMapperGridMapROS1InterfacesExtension
+	
+	// initialize members of SmartMapperGridMapRestInterfacesExtension
 	
 }
 
@@ -123,6 +126,9 @@ void SmartMapperGridMap::setStartupFinished() {
 Smart::StatusCode SmartMapperGridMap::connectLaserServiceIn(const std::string &serverName, const std::string &serviceName) {
 	Smart::StatusCode status;
 	
+	if(connections.laserServiceIn.initialConnect == false) {
+		return Smart::SMART_OK;
+	}
 	std::cout << "connecting to: " << serverName << "; " << serviceName << std::endl;
 	status = laserServiceIn->connect(serverName, serviceName);
 	while(status != Smart::SMART_OK)
@@ -208,11 +214,11 @@ void SmartMapperGridMap::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of PlainOpcUaSmartMapperGridMapExtension
 		
-		// initializations of SmartMapperGridMapROSExtension
+		// initializations of SmartMapperGridMapROS1InterfacesExtension
+		
+		// initializations of SmartMapperGridMapRestInterfacesExtension
 		
 		
 		// initialize all registered port-factories
@@ -249,6 +255,7 @@ void SmartMapperGridMap::init(int argc, char *argv[])
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
 		currMapOut = portFactoryRegistry[connections.currMapOut.roboticMiddleware]->createCurrMapOut(connections.currMapOut.serviceName);
+		currMapOutWrapper = new CurrMapOutWrapper(currMapOut);
 		currQueryServer = portFactoryRegistry[connections.currQueryServer.roboticMiddleware]->createCurrQueryServer(connections.currQueryServer.serviceName);
 		currQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap>(currQueryServer);
 		ltmQueryServer = portFactoryRegistry[connections.ltmQueryServer.roboticMiddleware]->createLtmQueryServer(connections.ltmQueryServer.serviceName);
@@ -258,8 +265,9 @@ void SmartMapperGridMap::init(int argc, char *argv[])
 		laserServiceIn = portFactoryRegistry[connections.laserServiceIn.roboticMiddleware]->createLaserServiceIn();
 		
 		// create InputTaskTriggers and UpcallManagers
-		laserServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan>(laserServiceIn);
-		laserServiceInUpcallManager = new LaserServiceInUpcallManager(laserServiceIn);
+		laserServiceInInputCollector = new LaserServiceInInputCollector(laserServiceIn);
+		laserServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan>(laserServiceInInputCollector);
+		laserServiceInUpcallManager = new LaserServiceInUpcallManager(laserServiceInInputCollector);
 		
 		// create input-handler
 		
@@ -440,11 +448,13 @@ void SmartMapperGridMap::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 	delete laserServiceInInputTaskTrigger;
 	delete laserServiceInUpcallManager;
+	delete laserServiceInInputCollector;
 
 	// destroy client ports
 	delete laserServiceIn;
 
 	// destroy server ports
+	delete currMapOutWrapper;
 	delete currMapOut;
 	delete currQueryServer;
 	delete currQueryServerInputTaskTrigger;
@@ -477,11 +487,11 @@ void SmartMapperGridMap::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
 	// destruction of PlainOpcUaSmartMapperGridMapExtension
 	
-	// destruction of SmartMapperGridMapROSExtension
+	// destruction of SmartMapperGridMapROS1InterfacesExtension
+	
+	// destruction of SmartMapperGridMapRestInterfacesExtension
 	
 }
 
@@ -556,6 +566,7 @@ void SmartMapperGridMap::loadParameter(int argc, char *argv[])
 		}
 		
 		// load parameters for client LaserServiceIn
+		parameter.getBoolean("LaserServiceIn", "initialConnect", connections.laserServiceIn.initialConnect);
 		parameter.getString("LaserServiceIn", "serviceName", connections.laserServiceIn.serviceName);
 		parameter.getString("LaserServiceIn", "serverName", connections.laserServiceIn.serverName);
 		parameter.getString("LaserServiceIn", "wiringName", connections.laserServiceIn.wiringName);
@@ -619,11 +630,11 @@ void SmartMapperGridMap::loadParameter(int argc, char *argv[])
 			parameter.getInteger("LtmMapTask", "cpuAffinity", connections.ltmMapTask.cpuAffinity);
 		}
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// load parameters for PlainOpcUaSmartMapperGridMapExtension
 		
-		// load parameters for SmartMapperGridMapROSExtension
+		// load parameters for SmartMapperGridMapROS1InterfacesExtension
+		
+		// load parameters for SmartMapperGridMapRestInterfacesExtension
 		
 		
 		// load parameters for all registered component-extensions

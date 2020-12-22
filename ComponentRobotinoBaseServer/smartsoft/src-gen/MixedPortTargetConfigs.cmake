@@ -1,15 +1,6 @@
-# target configurations for ComponentRobotinoBaseServerROSExtension
-IF(EXISTS ${ROS_DIR})
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${ROS_LIBS})
-ENDIF(EXISTS ${ROS_DIR})
+# target configurations for ComponentRobotinoBaseServerROS1InterfacesExtension
 
-# target configurations for OpcUaBackendComponentGeneratorExtension
-IF(SeRoNetSDK_FOUND)
-#TARGET_LINK_LIBRARIES(${PROJECT_NAME} SeRoNetSDK::SeRoNetSDK)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} CommBasicObjectsOpcUa)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} CommLocalizationObjectsOpcUa)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} CommRobotinoObjectsOpcUa)
-ENDIF(SeRoNetSDK_FOUND)
+# target configurations for ComponentRobotinoBaseServerRestInterfacesExtension
 
 # target configurations for PlainOpcUaComponentRobotinoBaseServerExtension
 IF(Open62541CppWrapper_FOUND)

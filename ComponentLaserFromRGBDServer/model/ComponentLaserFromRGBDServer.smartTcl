@@ -1,17 +1,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; LaserFromRGBD
 
-(realize-tcb  (activateLaserGenaration)
-  (module "LaserGenarationModule")
+(realize-tcb  (activateLaserGeneration)
+  (module "LaserGenerationModule")
   (action (
-            (format t "=========================>>> activateLaserGenaration ~%")
+            (format t "=========================>>> activateLaserGeneration ~%")
             (tcl-state :server 'laserfromrgbd :state "GenerateLaser")
             '(SUCCESS ()))))
 
-(realize-tcb  (dectivateLaserGenaration)
-  (module "LaserGenarationModule")
+(realize-tcb  (dectivateLaserGeneration)
+  (module "LaserGenerationModule")
   (action (
-            (format t "=========================>>> dectivateLaserGenaration ~%")
+            (format t "=========================>>> dectivateLaserGeneration ~%")
             (tcl-state :server 'laserfromrgbd :state "Neutral")
             '(SUCCESS ()))))
 ;; LaserFromRGBD

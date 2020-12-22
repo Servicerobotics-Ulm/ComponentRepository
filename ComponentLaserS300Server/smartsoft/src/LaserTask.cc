@@ -258,14 +258,14 @@ if (accquireNewScan(scan, laserSafetyEvent)) {
 				std::cout << "[LaserTask] send scan to clients\n";
 
 			if (COMP->getGlobalState().getServices().getActivate_push_newest()) {
-				Smart::StatusCode push_status = COMP->laserPushNewestServer->put(scan);
+				Smart::StatusCode push_status = COMP->laserServiceOut->put(scan);
 				if (push_status != Smart::SMART_OK) {
 					std::cerr << "[LaserTask] WARNING: error on push (" << Smart::StatusCodeConversion(push_status)
 							<< ")" << std::endl;
 				}
 			}
 
-			if (COMP->getGlobalState().getServices().getActivate_safetyEventServer()) {
+			if (COMP->getParameters().getSafetyEvents().getSafetyEventsFromIO()==false) {
 				//std::cout<<"Protective state: "<<laserSafetyEvent.getProtectiveState()<<" | "<<"Warning state:"<<laserSafetyEvent.getWarningState()<<std::endl;
 				Smart::StatusCode status = COMP->safetyfieldEventServer->put(laserSafetyEvent);
 				if (status != Smart::SMART_OK) {

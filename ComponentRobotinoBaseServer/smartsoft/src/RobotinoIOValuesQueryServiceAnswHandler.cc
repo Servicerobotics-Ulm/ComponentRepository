@@ -17,7 +17,7 @@
 #include "RobotinoIOValuesQueryServiceAnswHandler.hh"
 #include "ComponentRobotinoBaseServer.hh"
 
-RobotinoIOValuesQueryServiceAnswHandler::RobotinoIOValuesQueryServiceAnswHandler(Smart::IQueryServerPattern<CommRobotinoObjects::CommRobotinoIOValues, CommRobotinoObjects::CommRobotinoIOValues>* server)
+RobotinoIOValuesQueryServiceAnswHandler::RobotinoIOValuesQueryServiceAnswHandler(Smart::IQueryServerPattern<CommBasicObjects::CommIOValues, CommBasicObjects::CommIOValues>* server)
 :	RobotinoIOValuesQueryServiceAnswHandlerCore(server)
 {
 	
@@ -29,9 +29,9 @@ RobotinoIOValuesQueryServiceAnswHandler::~RobotinoIOValuesQueryServiceAnswHandle
 }
 
 
-void RobotinoIOValuesQueryServiceAnswHandler::handleQuery(const Smart::QueryIdPtr &id, const CommRobotinoObjects::CommRobotinoIOValues& request)
+void RobotinoIOValuesQueryServiceAnswHandler::handleQuery(const Smart::QueryIdPtr &id, const CommBasicObjects::CommIOValues& request)
 {
-	CommRobotinoObjects::CommRobotinoIOValues answer;
+	CommBasicObjects::CommIOValues answer;
 	
 	// implement your query handling logic here and fill in the answer object
 	
@@ -39,7 +39,7 @@ void RobotinoIOValuesQueryServiceAnswHandler::handleQuery(const Smart::QueryIdPt
 
 	if(request.getDigitalOutputValuesSize()>0){
 		for(unsigned int i=0;i<request.getDigitalOutputValuesSize();i++){
-			CommRobotinoObjects::CommDigitalOutputRequest value = request.getDigitalOutputValuesElemAtPos(i);
+			CommBasicObjects::CommDigitalOutputRequest value = request.getDigitalOutputValuesElemAtPos(i);
 			std::cout<<__FUNCTION__<<": Digital Output number: "<<value.getOutputNumber()<<" value: "<<value.getOutputValue()<<std::endl;
 			COMP->robot->setDigitalOutput(value.getOutputNumber(), (bool)value.getOutputValue());
 		}
@@ -48,7 +48,7 @@ void RobotinoIOValuesQueryServiceAnswHandler::handleQuery(const Smart::QueryIdPt
 
 	if(request.getAnalogOutputValuesSize()>0){
 		for(unsigned int i=0;i<request.getAnalogOutputValuesSize();i++){
-					CommRobotinoObjects::CommAnalogOutputRequest value = request.getAnalogOutputValuesElemAtPos(i);
+			CommBasicObjects::CommAnalogOutputRequest value = request.getAnalogOutputValuesElemAtPos(i);
 					COMP->robot->setAnalogOutput(value.getOutputNumber(), value.getOutputValue());
 				}
 	}

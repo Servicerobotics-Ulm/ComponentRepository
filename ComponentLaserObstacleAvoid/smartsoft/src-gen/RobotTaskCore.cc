@@ -97,7 +97,7 @@ void RobotTaskCore::updateAllCommObjects()
 // this method is meant to be used in derived classes
 Smart::StatusCode RobotTaskCore::navigationVelocityServiceOutPut(CommBasicObjects::CommNavigationVelocity &navigationVelocityServiceOutDataObject)
 {
-	Smart::StatusCode result = COMP->navigationVelocityServiceOut->send(navigationVelocityServiceOutDataObject);
+	Smart::StatusCode result = COMP->navigationVelocityServiceOutWrapper->send(navigationVelocityServiceOutDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());

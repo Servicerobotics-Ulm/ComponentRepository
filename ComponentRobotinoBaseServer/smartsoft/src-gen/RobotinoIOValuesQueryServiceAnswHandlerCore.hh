@@ -18,7 +18,8 @@
 		
 #include "aceSmartSoft.hh"
 
-#include <CommRobotinoObjects/CommRobotinoIOValues.hh>
+
+#include <CommBasicObjects/CommIOValues.hh>
 
 // include the input interfaces (if any)
 
@@ -26,13 +27,14 @@
 #include <RobotinoIOValuesQueryServiceAnswHandlerObserverInterface.hh>
 
 class RobotinoIOValuesQueryServiceAnswHandlerCore 
-:	public Smart::IInputHandler<std::pair<Smart::QueryIdPtr,CommRobotinoObjects::CommRobotinoIOValues>>
+:	public Smart::IInputHandler<std::pair<Smart::QueryIdPtr,CommBasicObjects::CommIOValues>>
 ,	public Smart::TaskTriggerSubject
 {
 private:
-virtual void handle_input(const std::pair<Smart::QueryIdPtr,CommRobotinoObjects::CommRobotinoIOValues> &input) override {
-	this->handleQuery(input.first, input.second);
-}
+	// inputs are directly propagated to the implementation (passive handler)
+	virtual void handle_input(const std::pair<Smart::QueryIdPtr,CommBasicObjects::CommIOValues> &input) override {
+		this->handleQuery(input.first, input.second);
+	}
 
 
 	virtual void updateAllCommObjects();
@@ -52,14 +54,14 @@ public:
 protected:
 	
 public:
-	using IQueryServer = Smart::IQueryServerPattern<CommRobotinoObjects::CommRobotinoIOValues, CommRobotinoObjects::CommRobotinoIOValues>;
+	using IQueryServer = Smart::IQueryServerPattern<CommBasicObjects::CommIOValues, CommBasicObjects::CommIOValues>;
 	using QueryId = Smart::QueryIdPtr;
 	RobotinoIOValuesQueryServiceAnswHandlerCore(IQueryServer *server);
-	virtual ~RobotinoIOValuesQueryServiceAnswHandlerCore() = default;
+	virtual ~RobotinoIOValuesQueryServiceAnswHandlerCore();
 	
 protected:
 	IQueryServer *server;
 	//this user-method has to be implemented in derived classes
-	virtual void handleQuery(const QueryId &id, const CommRobotinoObjects::CommRobotinoIOValues& request) = 0;
+	virtual void handleQuery(const QueryId &id, const CommBasicObjects::CommIOValues& request) = 0;
 };
 #endif

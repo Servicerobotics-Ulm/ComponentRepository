@@ -59,6 +59,11 @@
 <td style="border:1px solid black; padding: 5px;">Mapping</td>
 <td style="border:1px solid black; padding: 5px;"></td>
 </tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">MarketName</td>
+<td style="border:1px solid black; padding: 5px;">Grid-Map Provider Component</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
 </table>
 
 ## Component Ports

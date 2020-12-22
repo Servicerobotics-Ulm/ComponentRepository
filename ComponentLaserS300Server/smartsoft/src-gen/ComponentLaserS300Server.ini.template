@@ -31,6 +31,25 @@ initialComponentMode Neutral
 ##########################
 # Task parameters
 
+[LaserSafetyTask]
+minActFreqHz 0.0
+maxActFreqHz 0.0
+# setup default trigger as DataTriggered
+triggerType DataTriggered
+inPortRef CommIOForkingServiceIn
+prescale 1
+# other trigger-types are:
+#triggerType PeriodicTimer
+#periodicActFreqHz 0.0
+# or alternatively:
+#triggerType DataTriggered
+#inPortRef <InPortName>
+#prescale 1
+# optional scheduling parameters
+# scheduler FIFO
+# priority 0
+# cpuAffinity 0
+
 [LaserTask]
 minActFreqHz 0.0
 maxActFreqHz 0.0
@@ -52,8 +71,8 @@ maxActFreqHz 0.0
 ##########################
 # server port parameter
 
-[laserPushNewestServer]
-serviceName laserPushNewestServer
+[LaserServiceOut]
+serviceName LaserServiceOut
 roboticMiddleware ACE_SmartSoft
 
 [laserQueryServer]
@@ -67,6 +86,14 @@ roboticMiddleware ACE_SmartSoft
 ##########################
 # client port parameter
 
+[CommIOForkingServiceIn]
+initialConnect false
+serverName unknown
+serviceName unknown
+wiringName CommIOForkingServiceIn
+interval 1
+roboticMiddleware ACE_SmartSoft
+
 [baseTimedClient]
 initialConnect false
 serverName unknown
@@ -76,10 +103,10 @@ interval 1
 roboticMiddleware ACE_SmartSoft
 
 ##########################
-## parameters of ComponentLaserS300ServerROSExtension
+## parameters of ComponentLaserS300ServerROS1InterfacesExtension
 
 ##########################
-## parameters of OpcUaBackendComponentGeneratorExtension
+## parameters of ComponentLaserS300ServerRestInterfacesExtension
 
 ##########################
 ## parameters of PlainOpcUaComponentLaserS300ServerExtension
@@ -99,6 +126,14 @@ turret_a 0.0
 x 0
 y 0
 z 0
+
+##########################
+# InternalParameter safetyEvents
+[safetyEvents]
+laserSafetyBit 0
+laserSafetyFieldTimeOutMSec 0
+laserSafetyFieldTimeOutSec 10
+safetyEventsFromIO false
 
 ##########################
 # InternalParameter scanner
@@ -126,7 +161,6 @@ z 0
 [services]
 activate_push_newest true
 activate_push_timed true
-activate_safetyEventServer true
 
 
 #####################

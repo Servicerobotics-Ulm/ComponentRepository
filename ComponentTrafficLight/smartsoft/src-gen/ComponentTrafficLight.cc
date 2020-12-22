@@ -34,6 +34,7 @@ ComponentTrafficLight::ComponentTrafficLight()
 	trafficLightServiceIn = NULL;
 	trafficLightServiceInInputTaskTrigger = NULL;
 	trafficLightServiceInUpcallManager = NULL;
+	trafficLightServiceInInputCollector = NULL;
 	trafficLightServiceInHandler = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
@@ -48,10 +49,6 @@ ComponentTrafficLight::ComponentTrafficLight()
 	connections.trafficLightServiceIn.serviceName = "TrafficLightServiceIn";
 	connections.trafficLightServiceIn.roboticMiddleware = "ACE_SmartSoft";
 	connections.trafficLightServiceInHandler.prescale = 1;
-	
-	// initialize members of ComponentTrafficLightROSExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentTrafficLightExtension
 	
@@ -127,10 +124,6 @@ void ComponentTrafficLight::init(int argc, char *argv[])
 		loadParameter(argc, argv);
 		
 		
-		// initializations of ComponentTrafficLightROSExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of PlainOpcUaComponentTrafficLightExtension
 		
 		
@@ -172,8 +165,9 @@ void ComponentTrafficLight::init(int argc, char *argv[])
 		// create client ports
 		
 		// create InputTaskTriggers and UpcallManagers
-		trafficLightServiceInInputTaskTrigger = new Smart::InputTaskTrigger<DomainHMI::CommTrafficLight>(trafficLightServiceIn);
-		trafficLightServiceInUpcallManager = new TrafficLightServiceInUpcallManager(trafficLightServiceIn);
+		trafficLightServiceInInputCollector = new TrafficLightServiceInInputCollector(trafficLightServiceIn);
+		trafficLightServiceInInputTaskTrigger = new Smart::InputTaskTrigger<DomainHMI::CommTrafficLight>(trafficLightServiceInInputCollector);
+		trafficLightServiceInUpcallManager = new TrafficLightServiceInUpcallManager(trafficLightServiceInInputCollector);
 		
 		// create input-handler
 		trafficLightServiceInHandler = new TrafficLightServiceInHandler(trafficLightServiceIn, connections.trafficLightServiceInHandler.prescale);
@@ -261,6 +255,7 @@ void ComponentTrafficLight::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 	delete trafficLightServiceInInputTaskTrigger;
 	delete trafficLightServiceInUpcallManager;
+	delete trafficLightServiceInInputCollector;
 
 	// destroy client ports
 
@@ -289,10 +284,6 @@ void ComponentTrafficLight::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentTrafficLightROSExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentTrafficLightExtension
 	
@@ -378,10 +369,6 @@ void ComponentTrafficLight::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("TrafficLightServiceInHandler", "prescale")) {
 			parameter.getInteger("TrafficLightServiceInHandler", "prescale", connections.trafficLightServiceInHandler.prescale);
 		}
-		
-		// load parameters for ComponentTrafficLightROSExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentTrafficLightExtension
 		

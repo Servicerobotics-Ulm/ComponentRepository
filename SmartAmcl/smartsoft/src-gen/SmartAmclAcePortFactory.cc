@@ -63,6 +63,11 @@ Smart::ISendClientPattern<CommBasicObjects::CommBasePositionUpdate> * SmartAmclA
 }
 
 
+Smart::IPushServerPattern<CommLocalizationObjects::CommAmclVisualizationInfo> * SmartAmclAcePortFactory::createAmclVisualizationInfoOut(const std::string &serviceName)
+{
+	return new SmartACE::PushServer<CommLocalizationObjects::CommAmclVisualizationInfo>(componentImpl, serviceName);
+}
+
 Smart::IEventServerPattern<CommLocalizationObjects::CommLocalizationEventParameter, CommLocalizationObjects::CommLocalizationEventResult, CommLocalizationObjects::LocalizationEventState> * SmartAmclAcePortFactory::createLocalizationEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommLocalizationObjects::CommLocalizationEventParameter, CommLocalizationObjects::CommLocalizationEventResult, CommLocalizationObjects::LocalizationEventState>> localizationEventServiceOutEventTestHandler)
 {
 	return new SmartACE::EventServer<CommLocalizationObjects::CommLocalizationEventParameter, CommLocalizationObjects::CommLocalizationEventResult, CommLocalizationObjects::LocalizationEventState>(componentImpl, serviceName, localizationEventServiceOutEventTestHandler);
