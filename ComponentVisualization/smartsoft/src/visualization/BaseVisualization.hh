@@ -34,12 +34,28 @@
 #include "CommBasicObjects/CommBaseState.hh"
 
 class BaseVisualization : public AbstractVisualization {
+private:
+	static const std::string id_robot_pose_obj;
+	static const std::string id_robot_orientation_obj;
+	static const std::string id_robot_odom_pose_obj;
+	static const std::string id_robot_odom_orientation_obj;
+	static const std::string id_robot_label1_obj;
+	static const std::string id_robot_label2_obj;
+	static const std::string id_robot_trajectory_pose;
+	static const std::string id_robot_trajectory_orient;
+	static const std::string id_robot_trajectory_odom_pose;
+	static const std::string id_robot_trajectory_odom_orient;
+
 public:
 	BaseVisualization(CDisplayWindow3D& window3D, const std::string& identifier);
 	virtual ~BaseVisualization();
 
 	void displayBase(const CommBasicObjects::CommBaseState& pos);
 	void clear();
+#ifdef WITH_MRPT_2_0_VERSION
+	bool show_trajectory;
+	void set_show_trajectory(bool in_flag);
+#endif
 };
 
 #endif /* BASEVISUALIZATION_H_ */

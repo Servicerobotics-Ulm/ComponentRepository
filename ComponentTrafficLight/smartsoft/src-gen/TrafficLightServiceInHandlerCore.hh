@@ -30,9 +30,6 @@ class TrafficLightServiceInHandlerCore
 ,	public TrafficLightServiceInUpcallInterface
 {
 private:
-	Smart::StatusCode updateStatus;
-	DomainHMI::CommTrafficLight lastUpdate;
-	
 	
 	virtual void updateAllCommObjects();
 	

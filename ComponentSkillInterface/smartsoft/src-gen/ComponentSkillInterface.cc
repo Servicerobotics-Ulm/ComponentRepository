@@ -68,6 +68,14 @@ ComponentSkillInterface::ComponentSkillInterface()
 	connections.communicationTask.priority = -1;
 	connections.communicationTask.cpuAffinity = -1;
 	
+	// initialize members of ComponentSkillInterfaceROS1InterfacesExtension
+	
+	// initialize members of ComponentSkillInterfaceROSExtension
+	
+	// initialize members of ComponentSkillInterfaceRestInterfacesExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of PlainOpcUaComponentSkillInterfaceExtension
 	
 }
@@ -188,6 +196,14 @@ void ComponentSkillInterface::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
+		
+		// initializations of ComponentSkillInterfaceROS1InterfacesExtension
+		
+		// initializations of ComponentSkillInterfaceROSExtension
+		
+		// initializations of ComponentSkillInterfaceRestInterfacesExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentSkillInterfaceExtension
 		
@@ -411,6 +427,14 @@ void ComponentSkillInterface::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of ComponentSkillInterfaceROS1InterfacesExtension
+	
+	// destruction of ComponentSkillInterfaceROSExtension
+	
+	// destruction of ComponentSkillInterfaceRestInterfacesExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of PlainOpcUaComponentSkillInterfaceExtension
 	
 }
@@ -533,6 +557,14 @@ void ComponentSkillInterface::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("communicationTask", "cpuAffinity")) {
 			parameter.getInteger("communicationTask", "cpuAffinity", connections.communicationTask.cpuAffinity);
 		}
+		
+		// load parameters for ComponentSkillInterfaceROS1InterfacesExtension
+		
+		// load parameters for ComponentSkillInterfaceROSExtension
+		
+		// load parameters for ComponentSkillInterfaceRestInterfacesExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentSkillInterfaceExtension
 		

@@ -33,6 +33,11 @@
 #include <gazebo/sensors/sensors.hh>
 #include <gazebo/msgs/msgs.hh>
 
+#include <functional>
+#include <gazebo/common/common.hh>
+#include <ignition/math/Vector3.hh>
+
+
 namespace gazebo
 {
   class PubBasePosePlugin : public ModelPlugin

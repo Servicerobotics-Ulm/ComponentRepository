@@ -29,6 +29,14 @@
 class ComponentVisualizationPortFactoryInterface;
 class ComponentVisualizationExtension;
 
+// includes for ComponentVisualizationROS1InterfacesExtension
+
+// includes for ComponentVisualizationROSExtension
+
+// includes for ComponentVisualizationRestInterfacesExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for PlainOpcUaComponentVisualizationExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -61,6 +69,8 @@ class ComponentVisualizationExtension;
 #include <CommTrackingObjects/CommPersonIdACE.hh>
 #include <CommTrackingObjects/CommPersonLostEventParameter.hh>
 #include <CommTrackingObjects/CommPersonLostEventParameterACE.hh>
+#include <CommNavigationObjects/CommPlannerGoal.hh>
+#include <CommNavigationObjects/CommPlannerGoalACE.hh>
 #include <DomainVision/CommRGBDImage.hh>
 #include <DomainVision/CommRGBDImageACE.hh>
 #include <DomainVision/CommVideoImage.hh>
@@ -80,9 +90,11 @@ class ComponentVisualizationExtension;
 #include "Laser1Task.hh"
 #include "Laser2Task.hh"
 #include "Laser3Task.hh"
+#include "LtmMapTask.hh"
 #include "ManagementTask.hh"
 #include "MarkerListTask.hh"
 #include "PersonDetectionTask.hh"
+#include "PlannerGoalTask.hh"
 #include "RGBDTask.hh"
 #include "USArTask.hh"
 // include UpcallManagers and InputCollectors
@@ -108,6 +120,8 @@ class ComponentVisualizationExtension;
 #include "LaserClient3InputCollector.hh"
 #include "PersonDetectionEventClientUpcallManager.hh"
 #include "PersonDetectionEventClientInputCollector.hh"
+#include "PlannerGoalPushClientUpcallManager.hh"
+#include "PlannerGoalPushClientInputCollector.hh"
 #include "RgbdPushNewestClientUpcallManager.hh"
 #include "RgbdPushNewestClientInputCollector.hh"
 #include "RgbdQueryClientUpcallManager.hh"
@@ -187,12 +201,16 @@ public:
 	Laser2Task *laser2Task;
 	Smart::TaskTriggerSubject* laser3TaskTrigger;
 	Laser3Task *laser3Task;
+	Smart::TaskTriggerSubject* ltmMapTaskTrigger;
+	LtmMapTask *ltmMapTask;
 	Smart::TaskTriggerSubject* managementTaskTrigger;
 	ManagementTask *managementTask;
 	Smart::TaskTriggerSubject* markerListTaskTrigger;
 	MarkerListTask *markerListTask;
 	Smart::TaskTriggerSubject* personDetectionTaskTrigger;
 	PersonDetectionTask *personDetectionTask;
+	Smart::TaskTriggerSubject* plannerGoalTaskTrigger;
+	PlannerGoalTask *plannerGoalTask;
 	Smart::TaskTriggerSubject* rGBDTaskTrigger;
 	RGBDTask *rGBDTask;
 	Smart::TaskTriggerSubject* uSArTaskTrigger;
@@ -254,6 +272,11 @@ public:
 	Smart::InputTaskTrigger<Smart::EventInputType<CommTrackingObjects::CommPersonDetectionEventResult>> *personDetectionEventClientInputTaskTrigger;
 	PersonDetectionEventClientUpcallManager *personDetectionEventClientUpcallManager;
 	PersonDetectionEventClientInputCollector *personDetectionEventClientInputCollector;
+	// InputPort plannerGoalPushClient
+	Smart::IPushClientPattern<CommNavigationObjects::CommPlannerGoal> *plannerGoalPushClient;
+	Smart::InputTaskTrigger<CommNavigationObjects::CommPlannerGoal> *plannerGoalPushClientInputTaskTrigger;
+	PlannerGoalPushClientUpcallManager *plannerGoalPushClientUpcallManager;
+	PlannerGoalPushClientInputCollector *plannerGoalPushClientInputCollector;
 	// InputPort rgbdPushNewestClient
 	Smart::IPushClientPattern<DomainVision::CommRGBDImage> *rgbdPushNewestClient;
 	Smart::InputTaskTrigger<DomainVision::CommRGBDImage> *rgbdPushNewestClientInputTaskTrigger;
@@ -282,6 +305,14 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
+	
+	// definitions of ComponentVisualizationROS1InterfacesExtension
+	
+	// definitions of ComponentVisualizationROSExtension
+	
+	// definitions of ComponentVisualizationRestInterfacesExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentVisualizationExtension
 	
@@ -347,6 +378,7 @@ public:
 	Smart::StatusCode connectLtmQueryClient(const std::string &serverName, const std::string &serviceName);
 	Smart::StatusCode connectPersonDetectionEventClient(const std::string &serverName, const std::string &serviceName);
 	Smart::StatusCode connectPersonDetectionQueryClient(const std::string &serverName, const std::string &serviceName);
+	Smart::StatusCode connectPlannerGoalPushClient(const std::string &serverName, const std::string &serviceName);
 	Smart::StatusCode connectRgbdPushNewestClient(const std::string &serverName, const std::string &serviceName);
 	Smart::StatusCode connectRgbdQueryClient(const std::string &serverName, const std::string &serviceName);
 	Smart::StatusCode connectUltrasonicPushNewestClient(const std::string &serverName, const std::string &serviceName);
@@ -524,6 +556,22 @@ public:
 			int priority;
 			int cpuAffinity;
 		} laser3Task;
+		struct LtmMapTask_struct {
+			double minActFreq;
+			double maxActFreq;
+			std::string trigger;
+			// only one of the following two params is 
+			// actually used at run-time according 
+			// to the system config model
+			double periodicActFreq;
+			// or
+			std::string inPortRef;
+			int prescale;
+			// scheduling parameters
+			std::string scheduler;
+			int priority;
+			int cpuAffinity;
+		} ltmMapTask;
 		struct ManagementTask_struct {
 			double minActFreq;
 			double maxActFreq;
@@ -572,6 +620,22 @@ public:
 			int priority;
 			int cpuAffinity;
 		} personDetectionTask;
+		struct PlannerGoalTask_struct {
+			double minActFreq;
+			double maxActFreq;
+			std::string trigger;
+			// only one of the following two params is 
+			// actually used at run-time according 
+			// to the system config model
+			double periodicActFreq;
+			// or
+			std::string inPortRef;
+			int prescale;
+			// scheduling parameters
+			std::string scheduler;
+			int priority;
+			int cpuAffinity;
+		} plannerGoalTask;
 		struct RGBDTask_struct {
 			double minActFreq;
 			double maxActFreq;
@@ -722,6 +786,14 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} personDetectionQueryClient;
+		struct PlannerGoalPushClient_struct {
+			bool initialConnect;
+			std::string serverName;
+			std::string serviceName;
+			std::string wiringName;
+			long interval;
+			std::string roboticMiddleware;
+		} plannerGoalPushClient;
 		struct RgbdPushNewestClient_struct {
 			bool initialConnect;
 			std::string serverName;
@@ -746,6 +818,14 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} ultrasonicPushNewestClient;
+		
+		// -- parameters for ComponentVisualizationROS1InterfacesExtension
+		
+		// -- parameters for ComponentVisualizationROSExtension
+		
+		// -- parameters for ComponentVisualizationRestInterfacesExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentVisualizationExtension
 		

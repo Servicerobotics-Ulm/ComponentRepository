@@ -1,0 +1,35 @@
+{
+	"name": "ComponentRobotinoConveyerBeltServerOpcuaCPXECECC1PN",
+	"shortDescription": "Datasheet for ComponentRobotinoConveyerBeltServerOpcuaCPXECECC1PN",
+	"type": "Toolify",
+	"description": "",
+	"purposes": [],
+	"services": [
+	],
+	"mainstates": [
+		"load",
+		"unload",
+		"manualload",
+		"manualunload",
+		"signalerror",
+		"Neutral"
+	],
+	"parameters": [
+		{
+			"name": "SetStationID",
+			"nameFQN": "SetStationID",
+			"type": "parameter",
+			"description": "",
+			"attributes": [
+				{
+					"name": "id",
+					"type": "string",
+					"default": "2",
+					"description": ""
+				}
+			]
+		}
+	],
+	"triggers": [
+	]
+}

@@ -35,6 +35,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParametersNamed(const 
 	SmartACE::CommParameterResponse answer;
 	
 	std::string tag = request.getTag();
+	for (auto & c: tag) c = toupper(c);
 	std::cout<<"PARAMETER: "<<tag<<std::endl;
 	
 	if (tag == "COMMIT")
@@ -93,6 +94,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParametersSequence(con
 	SmartACE::CommParameterResponse answer;
 	
 	std::string tag = request.getTag();
+	for (auto & c: tag) c = toupper(c);
 	std::cout<<"PARAMETER: "<<tag<<std::endl;
 	
 	if (tag == "COMMIT")

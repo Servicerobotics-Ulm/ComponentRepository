@@ -1,0 +1,63 @@
+{
+	"name": "ComponentCartographer",
+	"shortDescription": "Datasheet for ComponentCartographer",
+	"type": "Toolify",
+	"description": "",
+	"purposes": [],
+	"services": [
+	],
+	"mainstates": [
+		"Active",
+		"Neutral"
+	],
+	"parameters": [
+	],
+	"triggers": [
+		{
+			"name": "INITNEWMAP",
+			"nameFQN": "CommLocalizationObjects.SlamParameter.INITNEWMAP",
+			"type": "trigger",
+			"description": "",
+			"attributes": [
+				{
+					"name": "x",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "y",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "a",
+					"type": "string",
+					"default": "",
+					"description": ""
+				}
+			]
+		},
+		{
+			"name": "SAVEMAP",
+			"nameFQN": "CommLocalizationObjects.SlamParameter.SAVEMAP",
+			"type": "trigger",
+			"description": " Stores the current grid map to <?dirname>/<?mapname>.pgm and meta information to data/<?mapname>.yaml.",
+			"attributes": [
+				{
+					"name": "dirname",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "filename",
+					"type": "string",
+					"default": "",
+					"description": ""
+				}
+			]
+		}
+	]
+}

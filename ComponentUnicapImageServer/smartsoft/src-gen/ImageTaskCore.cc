@@ -63,7 +63,8 @@ int ImageTaskCore::execute_protected_region()
 	if(useDefaultState) {
 		Smart::StatusCode status = COMP->stateSlave->acquire("PushImage");
 		if(status != Smart::SMART_OK) {
-			std::cerr << "ImageTaskCore: ERROR acquiring state active: " << status << std::endl;
+			std::cerr << "ImageTaskCore: ERROR acquiring state: " << status << std::endl;
+			usleep(500000);
 			return 0;
 		}
 	}

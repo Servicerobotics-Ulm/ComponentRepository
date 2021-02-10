@@ -18,6 +18,8 @@
 
 #include "aceSmartSoft.hh"
 
+#include "nlohmann/json.hpp"
+
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -268,6 +270,43 @@ public:
 		// External params
 		
 		// Instance params (encapsulated in a wrapper class for each instantiated parameter repository)
+	}
+	
+	std::string getAsJSONString() {
+		nlohmann::json param;
+	
+		param["base_manipulator"] = nlohmann::json {
+			{"base_a" , getBase_manipulator().getBase_a()},
+			{"on_base" , getBase_manipulator().getOn_base()},
+			{"steer_a" , getBase_manipulator().getSteer_a()},
+			{"turret_a" , getBase_manipulator().getTurret_a()},
+			{"x" , getBase_manipulator().getX()},
+			{"y" , getBase_manipulator().getY()},
+			{"z" , getBase_manipulator().getZ()}
+		};
+		param["laser_generator"] = nlohmann::json {
+			{"angle_resolution" , getLaser_generator().getAngle_resolution()},
+			{"floor_threshold_distance" , getLaser_generator().getFloor_threshold_distance()},
+			{"generationPeriodMilliSec" , getLaser_generator().getGenerationPeriodMilliSec()},
+			{"generationPeriodSec" , getLaser_generator().getGenerationPeriodSec()},
+			{"max_range" , getLaser_generator().getMax_range()},
+			{"min_range" , getLaser_generator().getMin_range()},
+			{"rgbd_source" , getLaser_generator().getRgbd_source()},
+			{"vertical_fov" , getLaser_generator().getVertical_fov()}
+		};
+		param["scanner"] = nlohmann::json {
+			{"azimuth" , getScanner().getAzimuth()},
+			{"elevation" , getScanner().getElevation()},
+			{"on_turret" , getScanner().getOn_turret()},
+			{"roll" , getScanner().getRoll()},
+			{"verbose" , getScanner().getVerbose()},
+			{"x" , getScanner().getX()},
+			{"y" , getScanner().getY()},
+			{"z" , getScanner().getZ()}
+		};
+	
+		
+		return param.dump();
 	}
 };
 

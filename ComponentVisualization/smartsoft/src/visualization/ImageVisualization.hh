@@ -33,11 +33,11 @@ public:
 	void displayImage(DomainVision::CommVideoImage& image);
 	void displayDepthImage(DomainVision::CommDepthImage& image);
 	void clear();
-//#ifdef 0 //WITH_MRPT_2_0_VERSION
-//	void convert_depth_to_rgb(DomainVision::CommDepthImage& in_image, cv::Nat rgb_image);
-//#else
 	void convert_depth_to_rgb(DomainVision::CommDepthImage& in_image, IplImage* rgb_image);
-//#endif
+
+	#ifdef WITH_MRPT_2_0_VERSION
+	void commVideoImage2cvMat(const DomainVision::CommVideoImage& image, cv::Mat& mat);
+    #endif
 };
 
 #endif /* IMAGEVISUALIZATION_H_*/

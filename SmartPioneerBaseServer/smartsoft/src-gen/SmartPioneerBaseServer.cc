@@ -88,7 +88,15 @@ SmartPioneerBaseServer::SmartPioneerBaseServer()
 	connections.robotTask.priority = -1;
 	connections.robotTask.cpuAffinity = -1;
 	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of PlainOpcUaSmartPioneerBaseServerExtension
+	
+	// initialize members of SmartPioneerBaseServerROS1InterfacesExtension
+	
+	// initialize members of SmartPioneerBaseServerROSExtension
+	
+	// initialize members of SmartPioneerBaseServerRestInterfacesExtension
 	
 }
 
@@ -193,7 +201,15 @@ void SmartPioneerBaseServer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		// initializations of PlainOpcUaSmartPioneerBaseServerExtension
+		
+		// initializations of SmartPioneerBaseServerROS1InterfacesExtension
+		
+		// initializations of SmartPioneerBaseServerROSExtension
+		
+		// initializations of SmartPioneerBaseServerRestInterfacesExtension
 		
 		
 		// initialize all registered port-factories
@@ -443,7 +459,15 @@ void SmartPioneerBaseServer::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of PlainOpcUaSmartPioneerBaseServerExtension
+	
+	// destruction of SmartPioneerBaseServerROS1InterfacesExtension
+	
+	// destruction of SmartPioneerBaseServerROSExtension
+	
+	// destruction of SmartPioneerBaseServerRestInterfacesExtension
 	
 }
 
@@ -574,7 +598,15 @@ void SmartPioneerBaseServer::loadParameter(int argc, char *argv[])
 			parameter.getInteger("RobotTask", "cpuAffinity", connections.robotTask.cpuAffinity);
 		}
 		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
+		
 		// load parameters for PlainOpcUaSmartPioneerBaseServerExtension
+		
+		// load parameters for SmartPioneerBaseServerROS1InterfacesExtension
+		
+		// load parameters for SmartPioneerBaseServerROSExtension
+		
+		// load parameters for SmartPioneerBaseServerRestInterfacesExtension
 		
 		
 		// load parameters for all registered component-extensions

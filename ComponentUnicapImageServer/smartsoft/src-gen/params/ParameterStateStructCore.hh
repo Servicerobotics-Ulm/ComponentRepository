@@ -18,6 +18,8 @@
 
 #include "aceSmartSoft.hh"
 
+#include "nlohmann/json.hpp"
+
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -586,6 +588,82 @@ public:
 		// External params
 		
 		// Instance params (encapsulated in a wrapper class for each instantiated parameter repository)
+	}
+	
+	std::string getAsJSONString() {
+		nlohmann::json param;
+	
+		param["Image"] = nlohmann::json {
+			{"debug_info" , getImage().getDebug_info()},
+			{"smart_format" , getImage().getSmart_format()},
+			{"valid_time_in_sec" , getImage().getValid_time_in_sec()}
+		};
+		param["IntrinsicParams"] = nlohmann::json {
+			{"calib_height" , getIntrinsicParams().getCalib_height()},
+			{"calib_width" , getIntrinsicParams().getCalib_width()},
+			{"cx" , getIntrinsicParams().getCx()},
+			{"cy" , getIntrinsicParams().getCy()},
+			{"distortion_coeffs" , getIntrinsicParams().getDistortion_coeffs()},
+			{"fx" , getIntrinsicParams().getFx()},
+			{"fy" , getIntrinsicParams().getFy()}
+		};
+		param["base"] = nlohmann::json {
+			{"azimuth" , getBase().getAzimuth()},
+			{"elevation" , getBase().getElevation()},
+			{"on_base" , getBase().getOn_base()},
+			{"on_ptu" , getBase().getOn_ptu()},
+			{"roll" , getBase().getRoll()},
+			{"x" , getBase().getX()},
+			{"y" , getBase().getY()},
+			{"z" , getBase().getZ()}
+		};
+		param["hardware"] = nlohmann::json {
+			{"camera_type" , getHardware().getCamera_type()},
+			{"debug_info" , getHardware().getDebug_info()},
+			{"device" , getHardware().getDevice()},
+			{"identifier" , getHardware().getIdentifier()}
+		};
+		param["hardware_properties"] = nlohmann::json {
+			{"auto_exposure" , getHardware_properties().getAuto_exposure()},
+			{"autoflag_shutter" , getHardware_properties().getAutoflag_shutter()},
+			{"autoflag_white_balance_mode" , getHardware_properties().getAutoflag_white_balance_mode()},
+			{"brightness" , getHardware_properties().getBrightness()},
+			{"format" , getHardware_properties().getFormat()},
+			{"framerate" , getHardware_properties().getFramerate()},
+			{"gain" , getHardware_properties().getGain()},
+			{"gamma" , getHardware_properties().getGamma()},
+			{"height" , getHardware_properties().getHeight()},
+			{"hue" , getHardware_properties().getHue()},
+			{"saturation" , getHardware_properties().getSaturation()},
+			{"sharpness" , getHardware_properties().getSharpness()},
+			{"shutter" , getHardware_properties().getShutter()},
+			{"trigger_mode" , getHardware_properties().getTrigger_mode()},
+			{"trigger_polarity" , getHardware_properties().getTrigger_polarity()},
+			{"white_balance_mode" , getHardware_properties().getWhite_balance_mode()},
+			{"white_balance_u" , getHardware_properties().getWhite_balance_u()},
+			{"white_balance_v" , getHardware_properties().getWhite_balance_v()},
+			{"width" , getHardware_properties().getWidth()}
+		};
+		param["push_newest"] = nlohmann::json {
+			{"debug_info" , getPush_newest().getDebug_info()}
+		};
+		param["push_timed"] = nlohmann::json {
+			{"debug_info" , getPush_timed().getDebug_info()}
+		};
+		param["sensor_pose"] = nlohmann::json {
+			{"azimuth" , getSensor_pose().getAzimuth()},
+			{"elevation" , getSensor_pose().getElevation()},
+			{"roll" , getSensor_pose().getRoll()},
+			{"x" , getSensor_pose().getX()},
+			{"y" , getSensor_pose().getY()},
+			{"z" , getSensor_pose().getZ()}
+		};
+		param["settings"] = nlohmann::json {
+			{"debug_info" , getSettings().getDebug_info()}
+		};
+	
+		
+		return param.dump();
 	}
 };
 

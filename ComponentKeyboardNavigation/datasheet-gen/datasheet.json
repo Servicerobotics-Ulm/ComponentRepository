@@ -1,13 +1,8 @@
 {
 	"name": "ComponentKeyboardNavigation",
 	"shortDescription": "Component Generating Navigation Commands from a Keyboard (using WASD and arrow keys)",
-	"description": "",
-	"class": "component",
 	"type": "Toolify",
-	"assetDependencies": [
-		{ "id": "50f0d34b-063a-4c51-ab94-0b3b6a8c2d68", "type": "domainmodel", "version": "--" },
-		{ "id": "8635cbdb-ef39-4a2b-888e-b1731e25988b", "type": "domainmodel", "version": "--" }
-	],
+	"description": "",
 	"purposes": ["HMI"],
 	"marketName": "Keyboard Navigation Component",
 	"supplier": "Servicerobotics Ulm",
@@ -20,5 +15,12 @@
 			"commObjects": "CommBasicObjects::CommNavigationVelocity",
 			"description": ""
 		}
+	],
+	"mainstates": [
+		"Neutral"
+	],
+	"parameters": [
+	],
+	"triggers": [
 	]
 }

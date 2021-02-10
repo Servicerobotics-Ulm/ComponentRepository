@@ -18,6 +18,8 @@
 
 #include "aceSmartSoft.hh"
 
+#include "nlohmann/json.hpp"
+
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -538,6 +540,46 @@ public:
 		
 		// Instance params (encapsulated in a wrapper class for each instantiated parameter repository)
 		CommNavigationObjects.to_ostream(os);
+	}
+	
+	std::string getAsJSONString() {
+		nlohmann::json param;
+	
+		param["CurrentMap"] = nlohmann::json {
+			{"growing" , getCurrentMap().getGrowing()},
+			{"id" , getCurrentMap().getId()},
+			{"interval" , getCurrentMap().getInterval()},
+			{"xpos" , getCurrentMap().getXpos()},
+			{"xsize" , getCurrentMap().getXsize()},
+			{"ypos" , getCurrentMap().getYpos()},
+			{"ysize" , getCurrentMap().getYsize()}
+		};
+		param["General"] = nlohmann::json {
+			{"cellsize" , getGeneral().getCellsize()},
+			{"connectLaser" , getGeneral().getConnectLaser()},
+			{"mapDataDir" , getGeneral().getMapDataDir()},
+			{"verbose" , getGeneral().getVerbose()}
+		};
+		param["LtmMap"] = nlohmann::json {
+			{"id" , getLtmMap().getId()},
+			{"kalman" , getLtmMap().getKalman()},
+			{"xpos" , getLtmMap().getXpos()},
+			{"xsize" , getLtmMap().getXsize()},
+			{"ypos" , getLtmMap().getYpos()},
+			{"ysize" , getLtmMap().getYsize()}
+		};
+	
+		param["MapperParams"] = nlohmann::json {
+			{ "CUREMPTY", {
+				{"mapmode" , getCommNavigationObjects().getMapperParams().getCUREMPTY().getMapmode()}
+			}},
+			{ "CURLTM", {
+				{"preoccupation" , getCommNavigationObjects().getMapperParams().getCURLTM().getPreoccupation()},
+				{"threshold" , getCommNavigationObjects().getMapperParams().getCURLTM().getThreshold()}
+			}}
+		};
+		
+		return param.dump();
 	}
 };
 

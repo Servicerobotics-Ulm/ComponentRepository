@@ -29,6 +29,14 @@
 class ComponentSymbolicPlannerPortFactoryInterface;
 class ComponentSymbolicPlannerExtension;
 
+// includes for ComponentSymbolicPlannerROS1InterfacesExtension
+
+// includes for ComponentSymbolicPlannerROSExtension
+
+// includes for ComponentSymbolicPlannerRestInterfacesExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for PlainOpcUaComponentSymbolicPlannerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -102,6 +110,14 @@ public:
 	
 	// define request-handlers
 	SymbolicPannerQueryHandler *symbolicPannerQueryHandler;
+	
+	// definitions of ComponentSymbolicPlannerROS1InterfacesExtension
+	
+	// definitions of ComponentSymbolicPlannerROSExtension
+	
+	// definitions of ComponentSymbolicPlannerRestInterfacesExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentSymbolicPlannerExtension
 	
@@ -191,6 +207,14 @@ public:
 		} symbolicPlannerQueryServer;
 	
 		//--- client port parameter ---
+		
+		// -- parameters for ComponentSymbolicPlannerROS1InterfacesExtension
+		
+		// -- parameters for ComponentSymbolicPlannerROSExtension
+		
+		// -- parameters for ComponentSymbolicPlannerRestInterfacesExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentSymbolicPlannerExtension
 		

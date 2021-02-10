@@ -23,8 +23,12 @@ LaserQueryServiceAnswHandlerCore::LaserQueryServiceAnswHandlerCore(IQueryServer*
 :	Smart::IInputHandler<std::pair<Smart::QueryIdPtr,CommBasicObjects::CommVoid>>(server)
 ,	server(server)
 {
-	
 }
+
+LaserQueryServiceAnswHandlerCore::~LaserQueryServiceAnswHandlerCore()
+{
+}
+
 
 void LaserQueryServiceAnswHandlerCore::updateAllCommObjects()
 {

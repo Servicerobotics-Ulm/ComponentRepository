@@ -29,6 +29,14 @@
 class ComponentLaserLMS1xxPortFactoryInterface;
 class ComponentLaserLMS1xxExtension;
 
+// includes for ComponentLaserLMS1xxROS1InterfacesExtension
+
+// includes for ComponentLaserLMS1xxROSExtension
+
+// includes for ComponentLaserLMS1xxRestInterfacesExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for PlainOpcUaComponentLaserLMS1xxExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -128,6 +136,14 @@ public:
 	
 	// define request-handlers
 	LaserQueryServiceAnswHandler *laserQueryServiceAnswHandler;
+	
+	// definitions of ComponentLaserLMS1xxROS1InterfacesExtension
+	
+	// definitions of ComponentLaserLMS1xxROSExtension
+	
+	// definitions of ComponentLaserLMS1xxRestInterfacesExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentLaserLMS1xxExtension
 	
@@ -248,6 +264,14 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} baseStateServiceIn;
+		
+		// -- parameters for ComponentLaserLMS1xxROS1InterfacesExtension
+		
+		// -- parameters for ComponentLaserLMS1xxROSExtension
+		
+		// -- parameters for ComponentLaserLMS1xxRestInterfacesExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentLaserLMS1xxExtension
 		

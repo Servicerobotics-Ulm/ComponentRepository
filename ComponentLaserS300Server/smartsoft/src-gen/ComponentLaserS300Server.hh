@@ -31,7 +31,11 @@ class ComponentLaserS300ServerExtension;
 
 // includes for ComponentLaserS300ServerROS1InterfacesExtension
 
+// includes for ComponentLaserS300ServerROSExtension
+
 // includes for ComponentLaserS300ServerRestInterfacesExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
 
 // includes for PlainOpcUaComponentLaserS300ServerExtension
 // include plain OPC UA device clients
@@ -157,7 +161,11 @@ public:
 	
 	// definitions of ComponentLaserS300ServerROS1InterfacesExtension
 	
+	// definitions of ComponentLaserS300ServerROSExtension
+	
 	// definitions of ComponentLaserS300ServerRestInterfacesExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentLaserS300ServerExtension
 	
@@ -310,7 +318,11 @@ public:
 		
 		// -- parameters for ComponentLaserS300ServerROS1InterfacesExtension
 		
+		// -- parameters for ComponentLaserS300ServerROSExtension
+		
 		// -- parameters for ComponentLaserS300ServerRestInterfacesExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentLaserS300ServerExtension
 		

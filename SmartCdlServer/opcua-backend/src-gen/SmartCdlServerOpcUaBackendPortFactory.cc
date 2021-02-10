@@ -39,8 +39,8 @@
 #include "CommNavigationObjectsOpcUa/CommCdlRobotBlockedEventParameterOpcUa.hh"
 #include "CommNavigationObjectsOpcUa/CommCdlRobotBlockedEventResultOpcUa.hh"
 #include "CommNavigationObjectsOpcUa/CommCdlRobotBlockedStateOpcUa.hh"
+#include "CommNavigationObjectsOpcUa/CommCorridorNavigationGoalOpcUa.hh"
 #include "CommNavigationObjectsOpcUa/CommPlannerGoalOpcUa.hh"
-#include "CommRobotinoObjectsOpcUa/CommPathNavigationGoalOpcUa.hh"
 #include "CommTrackingObjectsOpcUa/CommTrackingGoalOpcUa.hh"
 
 // create a static instance of the OpcUaBackendPortFactory
@@ -94,9 +94,9 @@ Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> * SmartCdlSe
 	return new SeRoNet::OPCUA::Client::SendClient<CommBasicObjects::CommNavigationVelocity>(componentImpl);
 }
 
-Smart::IPushClientPattern<CommRobotinoObjects::CommPathNavigationGoal> * SmartCdlServerOpcUaBackendPortFactory::createPathNavigationGoalClient()
+Smart::IPushClientPattern<CommNavigationObjects::CommCorridorNavigationGoal> * SmartCdlServerOpcUaBackendPortFactory::createPathNavigationGoalClient()
 {
-	return new SeRoNet::OPCUA::Client::PushClient<CommRobotinoObjects::CommPathNavigationGoal>(componentImpl);
+	return new SeRoNet::OPCUA::Client::PushClient<CommNavigationObjects::CommCorridorNavigationGoal>(componentImpl);
 }
 
 Smart::IPushClientPattern<CommNavigationObjects::CommPlannerGoal> * SmartCdlServerOpcUaBackendPortFactory::createPlannerClient()

@@ -18,6 +18,8 @@
 
 #include "aceSmartSoft.hh"
 
+#include "nlohmann/json.hpp"
+
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -395,6 +397,56 @@ public:
 		// External params
 		
 		// Instance params (encapsulated in a wrapper class for each instantiated parameter repository)
+	}
+	
+	std::string getAsJSONString() {
+		nlohmann::json param;
+	
+		param["Depth_config"] = nlohmann::json {
+			{"framerate" , getDepth_config().getFramerate()},
+			{"height" , getDepth_config().getHeight()},
+			{"width" , getDepth_config().getWidth()}
+		};
+		param["RGB_config"] = nlohmann::json {
+			{"framerate" , getRGB_config().getFramerate()},
+			{"height" , getRGB_config().getHeight()},
+			{"width" , getRGB_config().getWidth()}
+		};
+		param["base"] = nlohmann::json {
+			{"base_a" , getBase().getBase_a()},
+			{"on_base" , getBase().getOn_base()},
+			{"on_manipulator" , getBase().getOn_manipulator()},
+			{"on_ptu" , getBase().getOn_ptu()},
+			{"on_ur" , getBase().getOn_ur()},
+			{"steer_a" , getBase().getSteer_a()},
+			{"x" , getBase().getX()},
+			{"y" , getBase().getY()},
+			{"z" , getBase().getZ()}
+		};
+		param["sensor_pose"] = nlohmann::json {
+			{"azimuth" , getSensor_pose().getAzimuth()},
+			{"elevation" , getSensor_pose().getElevation()},
+			{"roll" , getSensor_pose().getRoll()},
+			{"x" , getSensor_pose().getX()},
+			{"y" , getSensor_pose().getY()},
+			{"z" , getSensor_pose().getZ()}
+		};
+		param["settings"] = nlohmann::json {
+			{"debug_info" , getSettings().getDebug_info()},
+			{"device_serial_number" , getSettings().getDevice_serial_number()},
+			{"post_processing" , getSettings().getPost_processing()},
+			{"pushnewest_color_image" , getSettings().getPushnewest_color_image()},
+			{"pushnewest_depth_image" , getSettings().getPushnewest_depth_image()},
+			{"pushnewest_rgbd_image" , getSettings().getPushnewest_rgbd_image()},
+			{"undistort_image" , getSettings().getUndistort_image()},
+			{"valid_image_time" , getSettings().getValid_image_time()}
+		};
+		param["stereo"] = nlohmann::json {
+			{"baseline" , getStereo().getBaseline()}
+		};
+	
+		
+		return param.dump();
 	}
 };
 

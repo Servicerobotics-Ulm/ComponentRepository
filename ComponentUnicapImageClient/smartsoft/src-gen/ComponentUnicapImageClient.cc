@@ -31,7 +31,7 @@ ComponentUnicapImageClient::ComponentUnicapImageClient()
 	std::cout << "constructor of ComponentUnicapImageClient\n";
 	
 	// set all pointer members to NULL
-	//componentUnicapImageClientParams = NULL;
+	//coordinationPort = NULL;
 	//coordinationPort = NULL;
 	guiTask = NULL;
 	guiTaskTrigger = NULL;
@@ -40,6 +40,7 @@ ComponentUnicapImageClient::ComponentUnicapImageClient()
 	pushNewestClient = NULL;
 	pushNewestClientInputTaskTrigger = NULL;
 	pushNewestClientUpcallManager = NULL;
+	pushNewestClientInputCollector = NULL;
 	queryClient = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
@@ -81,7 +82,11 @@ ComponentUnicapImageClient::ComponentUnicapImageClient()
 	connections.imageTask.priority = -1;
 	connections.imageTask.cpuAffinity = -1;
 	
+	// initialize members of ComponentUnicapImageClientROS1InterfacesExtension
+	
 	// initialize members of ComponentUnicapImageClientROSExtension
+	
+	// initialize members of ComponentUnicapImageClientRestInterfacesExtension
 	
 	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
@@ -226,7 +231,11 @@ void ComponentUnicapImageClient::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
+		// initializations of ComponentUnicapImageClientROS1InterfacesExtension
+		
 		// initializations of ComponentUnicapImageClientROSExtension
+		
+		// initializations of ComponentUnicapImageClientRestInterfacesExtension
 		
 		// initializations of OpcUaBackendComponentGeneratorExtension
 		
@@ -272,8 +281,9 @@ void ComponentUnicapImageClient::init(int argc, char *argv[])
 		queryClient = portFactoryRegistry[connections.queryClient.roboticMiddleware]->createQueryClient();
 		
 		// create InputTaskTriggers and UpcallManagers
-		pushNewestClientInputTaskTrigger = new Smart::InputTaskTrigger<DomainVision::CommVideoImage>(pushNewestClient);
-		pushNewestClientUpcallManager = new PushNewestClientUpcallManager(pushNewestClient);
+		pushNewestClientInputCollector = new PushNewestClientInputCollector(pushNewestClient);
+		pushNewestClientInputTaskTrigger = new Smart::InputTaskTrigger<DomainVision::CommVideoImage>(pushNewestClientInputCollector);
+		pushNewestClientUpcallManager = new PushNewestClientUpcallManager(pushNewestClientInputCollector);
 		
 		// create input-handler
 		
@@ -457,6 +467,7 @@ void ComponentUnicapImageClient::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 	delete pushNewestClientInputTaskTrigger;
 	delete pushNewestClientUpcallManager;
+	delete pushNewestClientInputCollector;
 
 	// destroy client ports
 	delete pushNewestClient;
@@ -488,7 +499,11 @@ void ComponentUnicapImageClient::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of ComponentUnicapImageClientROS1InterfacesExtension
+	
 	// destruction of ComponentUnicapImageClientROSExtension
+	
+	// destruction of ComponentUnicapImageClientRestInterfacesExtension
 	
 	// destruction of OpcUaBackendComponentGeneratorExtension
 	
@@ -624,7 +639,11 @@ void ComponentUnicapImageClient::loadParameter(int argc, char *argv[])
 			parameter.getInteger("ImageTask", "cpuAffinity", connections.imageTask.cpuAffinity);
 		}
 		
+		// load parameters for ComponentUnicapImageClientROS1InterfacesExtension
+		
 		// load parameters for ComponentUnicapImageClientROSExtension
+		
+		// load parameters for ComponentUnicapImageClientRestInterfacesExtension
 		
 		// load parameters for OpcUaBackendComponentGeneratorExtension
 		

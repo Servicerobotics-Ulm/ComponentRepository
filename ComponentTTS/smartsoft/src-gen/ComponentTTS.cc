@@ -68,7 +68,11 @@ ComponentTTS::ComponentTTS()
 	
 	// initialize members of ComponentTTSROS1InterfacesExtension
 	
+	// initialize members of ComponentTTSROSExtension
+	
 	// initialize members of ComponentTTSRestInterfacesExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentTTSExtension
 	
@@ -162,7 +166,11 @@ void ComponentTTS::init(int argc, char *argv[])
 		
 		// initializations of ComponentTTSROS1InterfacesExtension
 		
+		// initializations of ComponentTTSROSExtension
+		
 		// initializations of ComponentTTSRestInterfacesExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentTTSExtension
 		
@@ -367,7 +375,11 @@ void ComponentTTS::fini()
 	
 	// destruction of ComponentTTSROS1InterfacesExtension
 	
+	// destruction of ComponentTTSROSExtension
+	
 	// destruction of ComponentTTSRestInterfacesExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentTTSExtension
 	
@@ -480,7 +492,11 @@ void ComponentTTS::loadParameter(int argc, char *argv[])
 		
 		// load parameters for ComponentTTSROS1InterfacesExtension
 		
+		// load parameters for ComponentTTSROSExtension
+		
 		// load parameters for ComponentTTSRestInterfacesExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentTTSExtension
 		

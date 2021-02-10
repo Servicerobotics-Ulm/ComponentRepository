@@ -101,7 +101,11 @@ ComponentLaserS300Server::ComponentLaserS300Server()
 	
 	// initialize members of ComponentLaserS300ServerROS1InterfacesExtension
 	
+	// initialize members of ComponentLaserS300ServerROSExtension
+	
 	// initialize members of ComponentLaserS300ServerRestInterfacesExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentLaserS300ServerExtension
 	
@@ -248,7 +252,11 @@ void ComponentLaserS300Server::init(int argc, char *argv[])
 		
 		// initializations of ComponentLaserS300ServerROS1InterfacesExtension
 		
+		// initializations of ComponentLaserS300ServerROSExtension
+		
 		// initializations of ComponentLaserS300ServerRestInterfacesExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentLaserS300ServerExtension
 		
@@ -520,7 +528,11 @@ void ComponentLaserS300Server::fini()
 	
 	// destruction of ComponentLaserS300ServerROS1InterfacesExtension
 	
+	// destruction of ComponentLaserS300ServerROSExtension
+	
 	// destruction of ComponentLaserS300ServerRestInterfacesExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentLaserS300ServerExtension
 	
@@ -672,7 +684,11 @@ void ComponentLaserS300Server::loadParameter(int argc, char *argv[])
 		
 		// load parameters for ComponentLaserS300ServerROS1InterfacesExtension
 		
+		// load parameters for ComponentLaserS300ServerROSExtension
+		
 		// load parameters for ComponentLaserS300ServerRestInterfacesExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentLaserS300ServerExtension
 		

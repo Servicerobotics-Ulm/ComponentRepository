@@ -18,6 +18,7 @@
 		
 #include "aceSmartSoft.hh"
 
+
 #include <DomainSymbolicPlanner/CommSymbolicPlannerPlan.hh>
 #include <DomainSymbolicPlanner/CommSymbolicPlannerRequest.hh>
 
@@ -31,9 +32,10 @@ class SymbolicPannerQueryHandlerCore
 ,	public Smart::TaskTriggerSubject
 {
 private:
-virtual void handle_input(const std::pair<Smart::QueryIdPtr,DomainSymbolicPlanner::CommSymbolicPlannerRequest> &input) override {
-	this->handleQuery(input.first, input.second);
-}
+	// inputs are directly propagated to the implementation (passive handler)
+	virtual void handle_input(const std::pair<Smart::QueryIdPtr,DomainSymbolicPlanner::CommSymbolicPlannerRequest> &input) override {
+		this->handleQuery(input.first, input.second);
+	}
 
 
 	virtual void updateAllCommObjects();
@@ -56,7 +58,7 @@ public:
 	using IQueryServer = Smart::IQueryServerPattern<DomainSymbolicPlanner::CommSymbolicPlannerRequest, DomainSymbolicPlanner::CommSymbolicPlannerPlan>;
 	using QueryId = Smart::QueryIdPtr;
 	SymbolicPannerQueryHandlerCore(IQueryServer *server);
-	virtual ~SymbolicPannerQueryHandlerCore() = default;
+	virtual ~SymbolicPannerQueryHandlerCore();
 	
 protected:
 	IQueryServer *server;

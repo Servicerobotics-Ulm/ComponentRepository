@@ -51,7 +51,11 @@ ComponentTCLSequencer::ComponentTCLSequencer()
 	
 	// initialize members of ComponentTCLSequencerROS1InterfacesExtension
 	
+	// initialize members of ComponentTCLSequencerROSExtension
+	
 	// initialize members of ComponentTCLSequencerRestInterfacesExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentTCLSequencerExtension
 	
@@ -130,7 +134,11 @@ void ComponentTCLSequencer::init(int argc, char *argv[])
 		
 		// initializations of ComponentTCLSequencerROS1InterfacesExtension
 		
+		// initializations of ComponentTCLSequencerROSExtension
+		
 		// initializations of ComponentTCLSequencerRestInterfacesExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentTCLSequencerExtension
 		
@@ -296,7 +304,11 @@ void ComponentTCLSequencer::fini()
 	
 	// destruction of ComponentTCLSequencerROS1InterfacesExtension
 	
+	// destruction of ComponentTCLSequencerROSExtension
+	
 	// destruction of ComponentTCLSequencerRestInterfacesExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentTCLSequencerExtension
 	
@@ -377,7 +389,11 @@ void ComponentTCLSequencer::loadParameter(int argc, char *argv[])
 		
 		// load parameters for ComponentTCLSequencerROS1InterfacesExtension
 		
+		// load parameters for ComponentTCLSequencerROSExtension
+		
 		// load parameters for ComponentTCLSequencerRestInterfacesExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentTCLSequencerExtension
 		

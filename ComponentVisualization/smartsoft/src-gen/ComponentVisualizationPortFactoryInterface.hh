@@ -44,6 +44,8 @@
 #include <CommTrackingObjects/CommPersonIdACE.hh>
 #include <CommTrackingObjects/CommPersonLostEventParameter.hh>
 #include <CommTrackingObjects/CommPersonLostEventParameterACE.hh>
+#include <CommNavigationObjects/CommPlannerGoal.hh>
+#include <CommNavigationObjects/CommPlannerGoalACE.hh>
 #include <DomainVision/CommRGBDImage.hh>
 #include <DomainVision/CommRGBDImageACE.hh>
 #include <DomainVision/CommVideoImage.hh>
@@ -83,6 +85,7 @@ public:
 	virtual Smart::IQueryClientPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap> * createLtmQueryClient() = 0;
 	virtual Smart::IEventClientPattern<CommTrackingObjects::CommPersonLostEventParameter, CommTrackingObjects::CommPersonDetectionEventResult> * createPersonDetectionEventClient() = 0;
 	virtual Smart::IQueryClientPattern<CommTrackingObjects::CommPersonId, CommTrackingObjects::CommDetectedPerson> * createPersonDetectionQueryClient() = 0;
+	virtual Smart::IPushClientPattern<CommNavigationObjects::CommPlannerGoal> * createPlannerGoalPushClient() = 0;
 	virtual Smart::IPushClientPattern<DomainVision::CommRGBDImage> * createRgbdPushNewestClient() = 0;
 	virtual Smart::IPushClientPattern<DomainVision::CommDepthImage> * createRgbdQueryClient() = 0;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileUltrasonicScan> * createUltrasonicPushNewestClient() = 0;

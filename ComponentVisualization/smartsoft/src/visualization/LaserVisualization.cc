@@ -47,6 +47,10 @@ LaserVisualization::LaserVisualization(CDisplayWindow3D& window3D, const std::st
 		if(COMP->getGlobalState().getServices().getSimple_laser_visualization() == true) {
 			opengl::CPointCloud::Ptr scan = opengl::CPointCloud::Create();
 			scan->setName(identifier);
+			scan->setPointSize(3.0);
+			scan->setColorR(0);
+			scan->setColorG(1);
+			scan->setColorB(0);
 			ptrScene->insert(scan);
 		} else {
 			opengl::CPlanarLaserScan::Ptr scan2 = opengl::CPlanarLaserScan::Create();
@@ -142,20 +146,25 @@ void LaserVisualization::displayLaserScan(const CommBasicObjects::CommMobileLase
 
 
 #ifdef WITH_MRPT_2_0_VERSION
-		opengl::COpenGLScene::Ptr &ptrScene = window3D.get3DSceneAndLock();
 		{
 			if(COMP->getGlobalState().getServices().getSimple_laser_visualization() == true) {
+				opengl::COpenGLScene::Ptr &ptrScene = window3D.get3DSceneAndLock();
 				opengl::CPointCloud::Ptr sPtr = std::dynamic_pointer_cast<opengl::CPointCloud>(ptrScene->getByName(identifier));
 				sPtr->clear();
-				sPtr->setPointSize(3.0);
-				sPtr->setColorR(0);
-				sPtr->setColorG(1);
-				sPtr->setColorB(0);
 				for (size_t i = 0; i < numScans; ++i) {
 					double x, y, z;
 					scan.get_scan_cartesian_3dpoint_world(i, x, y, z, 1);
 					sPtr->insertPoint(x, y, z);
 				}
+
+				//show laser sensor coordinate frame in world frame
+				{
+					opengl::CSetOfObjects::Ptr laser_frame_obj = std::dynamic_pointer_cast<opengl::CSetOfObjects>(ptrScene->getByName(identifier + "_laser_frame_"));
+					laser_frame_obj->setPose(pBase + pSensor);
+				}
+
+				window3D.unlockAccess3DScene();
+				window3D.forceRepaint();
 			} else {
 
 				s.resizeScan(max_scan_size);
@@ -163,6 +172,7 @@ void LaserVisualization::displayLaserScan(const CommBasicObjects::CommMobileLase
 				s.aperture = fabs(endAngle - startAngle);
 				s.maxRange = scan.get_max_distance(1.0);
 				s.sensorPose = pBase + pSensor;
+				s.beamAperture = std::ceil((endAngle - startAngle)/numScans);
 
 				for (size_t i = 0; i < numScans; ++i) {
 					int index = fabs(pi_to_pi(scan.get_scan_angle(i)) - startAngle) / resolution;
@@ -171,17 +181,22 @@ void LaserVisualization::displayLaserScan(const CommBasicObjects::CommMobileLase
 					s.setScanRangeValidity(index, true);
 				}
 
+				opengl::COpenGLScene::Ptr &ptrScene = window3D.get3DSceneAndLock();
 				opengl::CPlanarLaserScan::Ptr sPtr2 = std::dynamic_pointer_cast<opengl::CPlanarLaserScan>(ptrScene->getByName(identifier));
+				sPtr2->clear();
 				sPtr2->setScan(s);
+
+				//show laser sensor coordinate frame in world frame
+				{
+					opengl::CSetOfObjects::Ptr laser_frame_obj = std::dynamic_pointer_cast<opengl::CSetOfObjects>(ptrScene->getByName(identifier + "_laser_frame_"));
+					laser_frame_obj->setPose(pBase + pSensor);
+				}
+
+
+				window3D.unlockAccess3DScene();
+				window3D.forceRepaint();
 			}
-
-
 		}
-			//show laser sensor coordinate frame
-			{
-				opengl::CSetOfObjects::Ptr laser_frame_obj = std::dynamic_pointer_cast<opengl::CSetOfObjects>(ptrScene->getByName(identifier + "_laser_frame_"));
-				laser_frame_obj->setPose(pBase + pSensor);
-			}
 #else
 		opengl::COpenGLScenePtr &ptrScene = window3D.get3DSceneAndLock();
 		{
@@ -233,26 +248,35 @@ void LaserVisualization::displayLaserScan(const CommBasicObjects::CommMobileLase
 				laser_frame_obj->setPose(pBase + pSensor);
 			}
 		}
-#endif
 		window3D.unlockAccess3DScene();
 		window3D.forceRepaint();
+#endif
 	} else {
 		clear();
 	}
 }
 
 void LaserVisualization::clear() {
-#ifdef WITH_MRPT_2_0_VERSION
 	opengl::COpenGLScene::Ptr &ptrScene = window3D.get3DSceneAndLock();
+#ifdef WITH_MRPT_2_0_VERSION
 	{
-		opengl::CPlanarLaserScan::Ptr sPtr = std::dynamic_pointer_cast<opengl::CPlanarLaserScan>(ptrScene->getByName(identifier));
-		sPtr->clear();
+		if(COMP->getGlobalState().getServices().getSimple_laser_visualization() == true) {
+			opengl::CPointCloud::Ptr sPtr = std::dynamic_pointer_cast<opengl::CPointCloud>(ptrScene->getByName(identifier));
+			sPtr->clear();
+		}else{
+			opengl::CPlanarLaserScan::Ptr sPtr = std::dynamic_pointer_cast<opengl::CPlanarLaserScan>(ptrScene->getByName(identifier));
+			sPtr->clear();
+		}
 	}
 #else
-	opengl::COpenGLScenePtr &ptrScene = window3D.get3DSceneAndLock();
 	{
-		opengl::CPlanarLaserScanPtr sPtr = (opengl::CPlanarLaserScanPtr) ptrScene->getByName(identifier);
-		sPtr->clear();
+		if(COMP->getGlobalState().getServices().getSimple_laser_visualization() == true) {
+			opengl::CPointCloudPtr sPtr = (opengl::CPointCloudPtr) ptrScene->getByName(identifier);
+			sPtr->clear();}
+		else{
+			opengl::CPlanarLaserScanPtr sPtr = (opengl::CPlanarLaserScanPtr) ptrScene->getByName(identifier);
+			sPtr->clear();
+		}
 	}
 #endif
 	window3D.unlockAccess3DScene();

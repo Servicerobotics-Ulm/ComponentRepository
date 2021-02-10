@@ -18,6 +18,8 @@
 
 #include "aceSmartSoft.hh"
 
+#include "nlohmann/json.hpp"
+
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -1169,6 +1171,101 @@ public:
 		
 		// Instance params (encapsulated in a wrapper class for each instantiated parameter repository)
 		CommNavigationObjects.to_ostream(os);
+	}
+	
+	std::string getAsJSONString() {
+		nlohmann::json param;
+	
+		param["Cdl"] = nlohmann::json {
+			{"accel_default_file" , getCdl().getAccel_default_file()},
+			{"accel_second_file" , getCdl().getAccel_second_file()},
+			{"contour_default_file" , getCdl().getContour_default_file()},
+			{"contour_second_file" , getCdl().getContour_second_file()},
+			{"curvature_default_file" , getCdl().getCurvature_default_file()},
+			{"curvature_second_file" , getCdl().getCurvature_second_file()},
+			{"dataDir" , getCdl().getDataDir()},
+			{"delta_t_calc" , getCdl().getDelta_t_calc()},
+			{"delta_t_trigger" , getCdl().getDelta_t_trigger()},
+			{"followHysteresis" , getCdl().getFollowHysteresis()},
+			{"freeBehaviorDist" , getCdl().getFreeBehaviorDist()},
+			{"freeBehaviorDist_second" , getCdl().getFreeBehaviorDist_second()},
+			{"lookup_default_file" , getCdl().getLookup_default_file()},
+			{"lookup_default_file_compressed" , getCdl().getLookup_default_file_compressed()},
+			{"lookup_second_file" , getCdl().getLookup_second_file()},
+			{"lookup_second_file_compressed" , getCdl().getLookup_second_file_compressed()},
+			{"rotation_acc" , getCdl().getRotation_acc()},
+			{"translation_acc" , getCdl().getTranslation_acc()},
+			{"use_obstacle_history" , getCdl().getUse_obstacle_history()}
+		};
+		param["CdlRotate"] = nlohmann::json {
+			{"error" , getCdlRotate().getError()},
+			{"rotDev1" , getCdlRotate().getRotDev1()},
+			{"rotDev2" , getCdlRotate().getRotDev2()},
+			{"rotDev3" , getCdlRotate().getRotDev3()},
+			{"rotDev4" , getCdlRotate().getRotDev4()},
+			{"rotSpeed1" , getCdlRotate().getRotSpeed1()},
+			{"rotSpeed2" , getCdlRotate().getRotSpeed2()},
+			{"rotSpeed3" , getCdlRotate().getRotSpeed3()},
+			{"rotSpeed4" , getCdlRotate().getRotSpeed4()}
+		};
+		param["PathNav"] = nlohmann::json {
+			{"pathNavPredictedGoalPose_controll1_dist" , getPathNav().getPathNavPredictedGoalPose_controll1_dist()},
+			{"pathNavPredictedGoalPose_controll1_speed" , getPathNav().getPathNavPredictedGoalPose_controll1_speed()},
+			{"pathNavPredictedGoalPose_controll2_dist" , getPathNav().getPathNavPredictedGoalPose_controll2_dist()},
+			{"pathNavPredictedGoalPose_controll2_speed" , getPathNav().getPathNavPredictedGoalPose_controll2_speed()},
+			{"pathNavPredictedGoalPose_controll3_dist" , getPathNav().getPathNavPredictedGoalPose_controll3_dist()},
+			{"pathNavPredictedGoalPose_controll3_speed" , getPathNav().getPathNavPredictedGoalPose_controll3_speed()},
+			{"pathNavPredictedGoalPose_minDist" , getPathNav().getPathNavPredictedGoalPose_minDist()},
+			{"pathNavRecover_max_dist" , getPathNav().getPathNavRecover_max_dist()},
+			{"robotBlocked_event_timeout" , getPathNav().getRobotBlocked_event_timeout()}
+		};
+		param["Server"] = nlohmann::json {
+			{"baseClientInit" , getServer().getBaseClientInit()},
+			{"irClientInit" , getServer().getIrClientInit()},
+			{"laserClient2Init" , getServer().getLaserClient2Init()},
+			{"pathNavInit" , getServer().getPathNavInit()},
+			{"plannerInit" , getServer().getPlannerInit()},
+			{"trackerInit" , getServer().getTrackerInit()}
+		};
+	
+		param["CdlParameter"] = nlohmann::json {
+			{ "APPROACHDIST", {
+				{"approachDistance" , getCommNavigationObjects().getCdlParameter().getAPPROACHDIST().getApproachDistance()}
+			}},
+			{ "FREEBEHAVIOR", {
+				{"free" , getCommNavigationObjects().getCdlParameter().getFREEBEHAVIOR().getFree()}
+			}},
+			{ "GOALMODE", {
+				{"gm" , getCommNavigationObjects().getCdlParameter().getGOALMODE().getGm()}
+			}},
+			{ "GOALREGION", {
+				{"goalA" , getCommNavigationObjects().getCdlParameter().getGOALREGION().getGoalA()},
+				{"goalX" , getCommNavigationObjects().getCdlParameter().getGOALREGION().getGoalX()},
+				{"goalY" , getCommNavigationObjects().getCdlParameter().getGOALREGION().getGoalY()}
+			}},
+			{ "ID", {
+				{"id" , getCommNavigationObjects().getCdlParameter().getID().getId()}
+			}},
+			{ "LOOKUPTABLE", {
+				{"lt" , getCommNavigationObjects().getCdlParameter().getLOOKUPTABLE().getLt()}
+			}},
+			{ "PATHNAVFREEBEHAVIOR", {
+				{"free" , getCommNavigationObjects().getCdlParameter().getPATHNAVFREEBEHAVIOR().getFree()}
+			}},
+			{ "ROTVEL", {
+				{"wmax" , getCommNavigationObjects().getCdlParameter().getROTVEL().getWmax()},
+				{"wmin" , getCommNavigationObjects().getCdlParameter().getROTVEL().getWmin()}
+			}},
+			{ "SAFETYCL", {
+				{"safetyClearance" , getCommNavigationObjects().getCdlParameter().getSAFETYCL().getSafetyClearance()}
+			}},
+			{ "TRANSVEL", {
+				{"vmax" , getCommNavigationObjects().getCdlParameter().getTRANSVEL().getVmax()},
+				{"vmin" , getCommNavigationObjects().getCdlParameter().getTRANSVEL().getVmin()}
+			}}
+		};
+		
+		return param.dump();
 	}
 };
 

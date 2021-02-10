@@ -143,7 +143,11 @@ ComponentRobotinoBaseServer::ComponentRobotinoBaseServer()
 	
 	// initialize members of ComponentRobotinoBaseServerROS1InterfacesExtension
 	
+	// initialize members of ComponentRobotinoBaseServerROSExtension
+	
 	// initialize members of ComponentRobotinoBaseServerRestInterfacesExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentRobotinoBaseServerExtension
 	
@@ -286,7 +290,11 @@ void ComponentRobotinoBaseServer::init(int argc, char *argv[])
 		
 		// initializations of ComponentRobotinoBaseServerROS1InterfacesExtension
 		
+		// initializations of ComponentRobotinoBaseServerROSExtension
+		
 		// initializations of ComponentRobotinoBaseServerRestInterfacesExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentRobotinoBaseServerExtension
 		
@@ -645,7 +653,11 @@ void ComponentRobotinoBaseServer::fini()
 	
 	// destruction of ComponentRobotinoBaseServerROS1InterfacesExtension
 	
+	// destruction of ComponentRobotinoBaseServerROSExtension
+	
 	// destruction of ComponentRobotinoBaseServerRestInterfacesExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentRobotinoBaseServerExtension
 	
@@ -848,7 +860,11 @@ void ComponentRobotinoBaseServer::loadParameter(int argc, char *argv[])
 		
 		// load parameters for ComponentRobotinoBaseServerROS1InterfacesExtension
 		
+		// load parameters for ComponentRobotinoBaseServerROSExtension
+		
 		// load parameters for ComponentRobotinoBaseServerRestInterfacesExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentRobotinoBaseServerExtension
 		

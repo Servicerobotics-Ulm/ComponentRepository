@@ -87,9 +87,13 @@ SmartMapperGridMap::SmartMapperGridMap()
 	connections.ltmMapTask.priority = -1;
 	connections.ltmMapTask.cpuAffinity = -1;
 	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of PlainOpcUaSmartMapperGridMapExtension
 	
 	// initialize members of SmartMapperGridMapROS1InterfacesExtension
+	
+	// initialize members of SmartMapperGridMapROSExtension
 	
 	// initialize members of SmartMapperGridMapRestInterfacesExtension
 	
@@ -214,9 +218,13 @@ void SmartMapperGridMap::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		// initializations of PlainOpcUaSmartMapperGridMapExtension
 		
 		// initializations of SmartMapperGridMapROS1InterfacesExtension
+		
+		// initializations of SmartMapperGridMapROSExtension
 		
 		// initializations of SmartMapperGridMapRestInterfacesExtension
 		
@@ -487,9 +495,13 @@ void SmartMapperGridMap::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of PlainOpcUaSmartMapperGridMapExtension
 	
 	// destruction of SmartMapperGridMapROS1InterfacesExtension
+	
+	// destruction of SmartMapperGridMapROSExtension
 	
 	// destruction of SmartMapperGridMapRestInterfacesExtension
 	
@@ -630,9 +642,13 @@ void SmartMapperGridMap::loadParameter(int argc, char *argv[])
 			parameter.getInteger("LtmMapTask", "cpuAffinity", connections.ltmMapTask.cpuAffinity);
 		}
 		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
+		
 		// load parameters for PlainOpcUaSmartMapperGridMapExtension
 		
 		// load parameters for SmartMapperGridMapROS1InterfacesExtension
+		
+		// load parameters for SmartMapperGridMapROSExtension
 		
 		// load parameters for SmartMapperGridMapRestInterfacesExtension
 		

@@ -31,7 +31,11 @@ class ComponentRealSenseV2ServerExtension;
 
 // includes for ComponentRealSenseV2ServerROS1InterfacesExtension
 
+// includes for ComponentRealSenseV2ServerROSExtension
+
 // includes for ComponentRealSenseV2ServerRestInterfacesExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
 
 // includes for PlainOpcUaComponentRealSenseV2ServerExtension
 // include plain OPC UA device clients
@@ -168,7 +172,11 @@ public:
 	
 	// definitions of ComponentRealSenseV2ServerROS1InterfacesExtension
 	
+	// definitions of ComponentRealSenseV2ServerROSExtension
+	
 	// definitions of ComponentRealSenseV2ServerRestInterfacesExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentRealSenseV2ServerExtension
 	
@@ -331,7 +339,11 @@ public:
 		
 		// -- parameters for ComponentRealSenseV2ServerROS1InterfacesExtension
 		
+		// -- parameters for ComponentRealSenseV2ServerROSExtension
+		
 		// -- parameters for ComponentRealSenseV2ServerRestInterfacesExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentRealSenseV2ServerExtension
 		

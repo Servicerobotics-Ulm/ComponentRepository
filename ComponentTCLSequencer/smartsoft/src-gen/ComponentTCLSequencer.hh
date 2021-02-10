@@ -31,7 +31,11 @@ class ComponentTCLSequencerExtension;
 
 // includes for ComponentTCLSequencerROS1InterfacesExtension
 
+// includes for ComponentTCLSequencerROSExtension
+
 // includes for ComponentTCLSequencerRestInterfacesExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
 
 // includes for PlainOpcUaComponentTCLSequencerExtension
 // include plain OPC UA device clients
@@ -112,7 +116,11 @@ public:
 	
 	// definitions of ComponentTCLSequencerROS1InterfacesExtension
 	
+	// definitions of ComponentTCLSequencerROSExtension
+	
 	// definitions of ComponentTCLSequencerRestInterfacesExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentTCLSequencerExtension
 	
@@ -207,7 +215,11 @@ public:
 		
 		// -- parameters for ComponentTCLSequencerROS1InterfacesExtension
 		
+		// -- parameters for ComponentTCLSequencerROSExtension
+		
 		// -- parameters for ComponentTCLSequencerRestInterfacesExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentTCLSequencerExtension
 		

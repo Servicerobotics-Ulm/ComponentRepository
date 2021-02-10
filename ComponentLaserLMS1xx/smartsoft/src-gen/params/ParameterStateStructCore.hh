@@ -18,6 +18,8 @@
 
 #include "aceSmartSoft.hh"
 
+#include "nlohmann/json.hpp"
+
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -276,6 +278,45 @@ public:
 		// External params
 		
 		// Instance params (encapsulated in a wrapper class for each instantiated parameter repository)
+	}
+	
+	std::string getAsJSONString() {
+		nlohmann::json param;
+	
+		param["base_manipulator"] = nlohmann::json {
+			{"base_a" , getBase_manipulator().getBase_a()},
+			{"on_base" , getBase_manipulator().getOn_base()},
+			{"steer_a" , getBase_manipulator().getSteer_a()},
+			{"turret_a" , getBase_manipulator().getTurret_a()},
+			{"x" , getBase_manipulator().getX()},
+			{"y" , getBase_manipulator().getY()},
+			{"z" , getBase_manipulator().getZ()}
+		};
+		param["scanner"] = nlohmann::json {
+			{"azimuth" , getScanner().getAzimuth()},
+			{"elevation" , getScanner().getElevation()},
+			{"frequency" , getScanner().getFrequency()},
+			{"ip_address" , getScanner().getIp_address()},
+			{"length_unit" , getScanner().getLength_unit()},
+			{"max_range" , getScanner().getMax_range()},
+			{"min_range" , getScanner().getMin_range()},
+			{"on_turret" , getScanner().getOn_turret()},
+			{"opening_angle" , getScanner().getOpening_angle()},
+			{"port" , getScanner().getPort()},
+			{"resolution" , getScanner().getResolution()},
+			{"roll" , getScanner().getRoll()},
+			{"verbose" , getScanner().getVerbose()},
+			{"x" , getScanner().getX()},
+			{"y" , getScanner().getY()},
+			{"z" , getScanner().getZ()}
+		};
+		param["services"] = nlohmann::json {
+			{"activate_push_newest" , getServices().getActivate_push_newest()},
+			{"active_push_timed" , getServices().getActive_push_timed()}
+		};
+	
+		
+		return param.dump();
 	}
 };
 

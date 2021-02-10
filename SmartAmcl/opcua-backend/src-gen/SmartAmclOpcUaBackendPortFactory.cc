@@ -31,6 +31,7 @@
 // include referenced CommunicationObject SeRoNetSDK self description implementations
 #include "CommBasicObjectsOpcUa/CommBasePositionUpdateOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommMobileLaserScanOpcUa.hh"
+#include "CommLocalizationObjectsOpcUa/CommAmclVisualizationInfoOpcUa.hh"
 #include "CommLocalizationObjectsOpcUa/CommLocalizationEventParameterOpcUa.hh"
 #include "CommLocalizationObjectsOpcUa/CommLocalizationEventResultOpcUa.hh"
 #include "CommLocalizationObjectsOpcUa/LocalizationEventStateOpcUa.hh"
@@ -71,6 +72,11 @@ Smart::ISendClientPattern<CommBasicObjects::CommBasePositionUpdate> * SmartAmclO
 	return new SeRoNet::OPCUA::Client::SendClient<CommBasicObjects::CommBasePositionUpdate>(componentImpl);
 }
 
+
+Smart::IPushServerPattern<CommLocalizationObjects::CommAmclVisualizationInfo> * SmartAmclOpcUaBackendPortFactory::createAmclVisualizationInfoOut(const std::string &serviceName)
+{
+	return new SeRoNet::OPCUA::Server::PushServer<CommLocalizationObjects::CommAmclVisualizationInfo>(componentImpl, serviceName);
+}
 
 Smart::IEventServerPattern<CommLocalizationObjects::CommLocalizationEventParameter, CommLocalizationObjects::CommLocalizationEventResult, CommLocalizationObjects::LocalizationEventState> * SmartAmclOpcUaBackendPortFactory::createLocalizationEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommLocalizationObjects::CommLocalizationEventParameter, CommLocalizationObjects::CommLocalizationEventResult, CommLocalizationObjects::LocalizationEventState>> localizationEventServiceOutEventTestHandler)
 {

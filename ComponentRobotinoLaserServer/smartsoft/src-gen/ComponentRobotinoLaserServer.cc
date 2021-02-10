@@ -80,7 +80,11 @@ ComponentRobotinoLaserServer::ComponentRobotinoLaserServer()
 	
 	// initialize members of ComponentRobotinoLaserServerROS1InterfacesExtension
 	
+	// initialize members of ComponentRobotinoLaserServerROSExtension
+	
 	// initialize members of ComponentRobotinoLaserServerRestInterfacesExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentRobotinoLaserServerExtension
 	
@@ -193,7 +197,11 @@ void ComponentRobotinoLaserServer::init(int argc, char *argv[])
 		
 		// initializations of ComponentRobotinoLaserServerROS1InterfacesExtension
 		
+		// initializations of ComponentRobotinoLaserServerROSExtension
+		
 		// initializations of ComponentRobotinoLaserServerRestInterfacesExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentRobotinoLaserServerExtension
 		
@@ -411,7 +419,11 @@ void ComponentRobotinoLaserServer::fini()
 	
 	// destruction of ComponentRobotinoLaserServerROS1InterfacesExtension
 	
+	// destruction of ComponentRobotinoLaserServerROSExtension
+	
 	// destruction of ComponentRobotinoLaserServerRestInterfacesExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentRobotinoLaserServerExtension
 	
@@ -535,7 +547,11 @@ void ComponentRobotinoLaserServer::loadParameter(int argc, char *argv[])
 		
 		// load parameters for ComponentRobotinoLaserServerROS1InterfacesExtension
 		
+		// load parameters for ComponentRobotinoLaserServerROSExtension
+		
 		// load parameters for ComponentRobotinoLaserServerRestInterfacesExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentRobotinoLaserServerExtension
 		

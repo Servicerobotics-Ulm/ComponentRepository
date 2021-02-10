@@ -31,7 +31,11 @@ class ComponentLaserFromRGBDServerExtension;
 
 // includes for ComponentLaserFromRGBDServerROS1InterfacesExtension
 
+// includes for ComponentLaserFromRGBDServerROSExtension
+
 // includes for ComponentLaserFromRGBDServerRestInterfacesExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
 
 // includes for PlainOpcUaComponentLaserFromRGBDServerExtension
 // include plain OPC UA device clients
@@ -138,7 +142,11 @@ public:
 	
 	// definitions of ComponentLaserFromRGBDServerROS1InterfacesExtension
 	
+	// definitions of ComponentLaserFromRGBDServerROSExtension
+	
 	// definitions of ComponentLaserFromRGBDServerRestInterfacesExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentLaserFromRGBDServerExtension
 	
@@ -278,7 +286,11 @@ public:
 		
 		// -- parameters for ComponentLaserFromRGBDServerROS1InterfacesExtension
 		
+		// -- parameters for ComponentLaserFromRGBDServerROSExtension
+		
 		// -- parameters for ComponentLaserFromRGBDServerRestInterfacesExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentLaserFromRGBDServerExtension
 		

@@ -31,7 +31,11 @@ class ComponentGMappingExtension;
 
 // includes for ComponentGMappingROS1InterfacesExtension
 
+// includes for ComponentGMappingROSExtension
+
 // includes for ComponentGMappingRestInterfacesExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
 
 // includes for PlainOpcUaComponentGMappingExtension
 // include plain OPC UA device clients
@@ -134,7 +138,11 @@ public:
 	
 	// definitions of ComponentGMappingROS1InterfacesExtension
 	
+	// definitions of ComponentGMappingROSExtension
+	
 	// definitions of ComponentGMappingRestInterfacesExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentGMappingExtension
 	
@@ -263,7 +271,11 @@ public:
 		
 		// -- parameters for ComponentGMappingROS1InterfacesExtension
 		
+		// -- parameters for ComponentGMappingROSExtension
+		
 		// -- parameters for ComponentGMappingRestInterfacesExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentGMappingExtension
 		

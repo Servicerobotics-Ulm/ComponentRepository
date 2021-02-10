@@ -132,7 +132,7 @@ void RGBDVisualization::displayImage(DomainVision::CommRGBDImage& rgbd_image)
 		double depth_frame_x, depth_frame_y, depth_frame_z;
 		double color_frame_x, color_frame_y, color_frame_z;
 		float r = 0, g = 0, b = 0;
-		std::vector<ColPoint3d> points;
+		std::vector<ColPoint3d> vec_points;
 
 		//const uint8_t* rgbImg = image.get_rgb_image();
 		DomainVision::CommVideoImage comm_color_image = rgbd_image.getColor_image();
@@ -145,6 +145,7 @@ void RGBDVisualization::displayImage(DomainVision::CommRGBDImage& rgbd_image)
 
 		mrpt::poses::CPose3D mrpt_sensorPose(sensor_x, sensor_y, sensor_z,sensor_yaw, sensor_pitch, sensor_roll);
 		//mrpt::poses::CPose3D mrpt_sensor_pose =
+		createColorPointCloud (vec_points, &comm_color_image, &comm_depth_image);
 #ifdef WITH_MRPT_2_0_VERSION
 		opengl::COpenGLScene::Ptr & ptrScene = window3D.get3DSceneAndLock();
 		//////////////////////////////////////////
@@ -152,12 +153,12 @@ void RGBDVisualization::displayImage(DomainVision::CommRGBDImage& rgbd_image)
 		{
 			opengl::CPointCloudColoured::Ptr cloud = std::dynamic_pointer_cast<opengl::CPointCloudColoured>(ptrScene->getByName(identifier + "_cloud"));
 			cloud->clear();
-
-
-			createColorPointCloud (cloud, &comm_color_image, &comm_depth_image);
 			cloud->setPose(mrpt_sensorPose);
-
-
+			//set points to cloud
+			for(const ColPoint3d current_pont : vec_points)
+			{
+				cloud->push_back(current_pont.x, current_pont.y, current_pont.z, current_pont.r, current_pont.g, current_pont.b);
+			}
 			mrpt::opengl::CSetOfObjects::Ptr gl_origin = std::dynamic_pointer_cast<opengl::CSetOfObjects>(ptrScene->getByName(identifier + "_camera_origin"));
 			gl_origin->setPose(mrpt_sensorPose);
 		}
@@ -168,9 +169,12 @@ void RGBDVisualization::displayImage(DomainVision::CommRGBDImage& rgbd_image)
 		{
 			opengl::CPointCloudColouredPtr cloud = (opengl::CPointCloudColouredPtr) ptrScene->getByName(identifier + "_cloud");
 			cloud->clear();
-			createColorPointCloud (cloud, &comm_color_image, &comm_depth_image);
 			cloud->setPose(mrpt_sensorPose);
 
+			for(const ColPoint3d current_pont : vec_points)
+			{
+				cloud->push_back(current_pont.x, current_pont.y, current_pont.z, current_pont.r, current_pont.g, current_pont.b);
+			}
 
 			mrpt::opengl::CSetOfObjectsPtr gl_origin = (mrpt::opengl::CSetOfObjectsPtr) ptrScene->getByName(identifier + "_camera_origin");
 			gl_origin->setPose(mrpt_sensorPose);
@@ -304,10 +308,10 @@ void RGBDVisualization::calcPointXYZ (const uint32_t& r, const uint32_t& c, cons
   }
 }
 #ifdef WITH_MRPT_2_0_VERSION
-void RGBDVisualization::createColorPointCloud (opengl::CPointCloudColoured::Ptr cloud, DomainVision::CommVideoImage *comm_color_image,
+void RGBDVisualization::createColorPointCloud (std::vector<ColPoint3d>& points, DomainVision::CommVideoImage *comm_color_image,
 		                                                                       DomainVision::CommDepthImage *comm_depth_image)
 #else
-void RGBDVisualization::createColorPointCloud (opengl::CPointCloudColouredPtr cloud, DomainVision::CommVideoImage *comm_color_image,
+void RGBDVisualization::createColorPointCloud (std::vector<ColPoint3d>& points, DomainVision::CommVideoImage *comm_color_image,
 		                                                                       DomainVision::CommDepthImage *comm_depth_image)
 #endif
 {
@@ -394,7 +398,8 @@ void RGBDVisualization::createColorPointCloud (opengl::CPointCloudColouredPtr cl
 			}
 
 			//cloud->push_back(z_in_m, x_in_m * (-1), y_in_m * (-1), r/255.0, g/255.0, b/255.0);
-			cloud->push_back(x_in_m, y_in_m, z_in_m, r/255.0, g/255.0, b/255.0);
+			//cloud->push_back(x_in_m, y_in_m, z_in_m, r/255.0, g/255.0, b/255.0);
+			points.push_back(ColPoint3d(x_in_m, y_in_m, z_in_m, r/255.0, g/255.0, b/255.0));
 			//float range = sqrt((x_in_m*x_in_m)+(y_in_m*y_in_m)+(z_in_m*z_in_m));
 			//if(range>0.5&&range<4.0)
 			//cloud->push_back(x_in_m, y_in_m , z_in_m, r/255.0, g/255.0, b/255.0);

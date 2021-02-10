@@ -31,7 +31,11 @@ class ComponentKBExtension;
 
 // includes for ComponentKBROS1InterfacesExtension
 
+// includes for ComponentKBROSExtension
+
 // includes for ComponentKBRestInterfacesExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
 
 // includes for PlainOpcUaComponentKBExtension
 // include plain OPC UA device clients
@@ -142,7 +146,11 @@ public:
 	
 	// definitions of ComponentKBROS1InterfacesExtension
 	
+	// definitions of ComponentKBROSExtension
+	
 	// definitions of ComponentKBRestInterfacesExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentKBExtension
 	
@@ -269,7 +277,11 @@ public:
 		
 		// -- parameters for ComponentKBROS1InterfacesExtension
 		
+		// -- parameters for ComponentKBROSExtension
+		
 		// -- parameters for ComponentKBRestInterfacesExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentKBExtension
 		

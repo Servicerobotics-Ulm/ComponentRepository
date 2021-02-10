@@ -20,11 +20,12 @@ SpeechSendHandlerCore::SpeechSendHandlerCore(
 	Smart::InputSubject<DomainSpeech::CommSpeechOutputMessage> *subject,
 	const int &prescaleFactor)
 	:	Smart::InputTaskTrigger<DomainSpeech::CommSpeechOutputMessage>(subject, prescaleFactor)
-{  
-	updateStatus = Smart::SMART_NODATA;
+{
 }
 SpeechSendHandlerCore::~SpeechSendHandlerCore()
-{  }
+{  
+}
+
 
 void SpeechSendHandlerCore::updateAllCommObjects() {
 }

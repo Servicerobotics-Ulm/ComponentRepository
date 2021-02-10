@@ -65,7 +65,11 @@ ComponentKeyboardNavigation::ComponentKeyboardNavigation()
 	
 	// initialize members of ComponentKeyboardNavigationROS1InterfacesExtension
 	
+	// initialize members of ComponentKeyboardNavigationROSExtension
+	
 	// initialize members of ComponentKeyboardNavigationRestInterfacesExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentKeyboardNavigationExtension
 	
@@ -176,7 +180,11 @@ void ComponentKeyboardNavigation::init(int argc, char *argv[])
 		
 		// initializations of ComponentKeyboardNavigationROS1InterfacesExtension
 		
+		// initializations of ComponentKeyboardNavigationROSExtension
+		
 		// initializations of ComponentKeyboardNavigationRestInterfacesExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentKeyboardNavigationExtension
 		
@@ -386,7 +394,11 @@ void ComponentKeyboardNavigation::fini()
 	
 	// destruction of ComponentKeyboardNavigationROS1InterfacesExtension
 	
+	// destruction of ComponentKeyboardNavigationROSExtension
+	
 	// destruction of ComponentKeyboardNavigationRestInterfacesExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentKeyboardNavigationExtension
 	
@@ -494,7 +506,11 @@ void ComponentKeyboardNavigation::loadParameter(int argc, char *argv[])
 		
 		// load parameters for ComponentKeyboardNavigationROS1InterfacesExtension
 		
+		// load parameters for ComponentKeyboardNavigationROSExtension
+		
 		// load parameters for ComponentKeyboardNavigationRestInterfacesExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentKeyboardNavigationExtension
 		

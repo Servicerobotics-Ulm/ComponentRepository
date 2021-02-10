@@ -164,6 +164,10 @@ int SmartCurrentGridMap::update( CommBasicObjects::CommMobileLaserScan const &sc
   //double laserPolarAngleRad; // = laserPolarAngle*M_PI/180.0;
   //double laserPolarDistance; // = 1000.0*lp[j];
   CommBasicObjects::CommBaseState base_state = scan.get_base_state();
+
+   xa = (int)(floor(scan.get_scanner_x() /(double)idl_CommGridMap.cellSizeMM)-(double)idl_CommGridMap.xOffsetCells);
+   ya = (int)(floor(scan.get_scanner_y() /(double)idl_CommGridMap.cellSizeMM)-(double)idl_CommGridMap.yOffsetCells);
+
   for (i=0; i < scan.get_scan_size(); i++)
   {
     //laserPolarAngleRad = i/2.0 * M_PI / 180.0;
@@ -171,8 +175,6 @@ int SmartCurrentGridMap::update( CommBasicObjects::CommMobileLaserScan const &sc
     //laserPolarDistance = scan.get_scan_distance(i);
 
     // draw line from scanner pos to measured laser point
-    xa = (int)(floor(scan.get_scanner_x() /(double)idl_CommGridMap.cellSizeMM)-(double)idl_CommGridMap.xOffsetCells);
-    ya = (int)(floor(scan.get_scanner_y() /(double)idl_CommGridMap.cellSizeMM)-(double)idl_CommGridMap.yOffsetCells);
 
     //scan.get_scan_cartesian_point_world( (unsigned int) i, x, y );
     //scan.get_scan_cartesian_point_scanner( (unsigned int) i, x1, y1 );

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:componentDefinition="http://www.eclipse.org/smartmdsd/component/componentDefinition" xmlns:componentParameter="http://www.eclipse.org/smartmdsd/component/componentParameter" xmlns:coordinationExtension="http://www.eclipse.org/smartmdsd/component/coordinationExtension" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:diagram="http://www.eclipse.org/sirius/diagram/1.1.0" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xsi:schemaLocation="http://www.eclipse.org/sirius/description/1.1.0 http://www.eclipse.org/sirius/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/style/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description/style">
-  <viewpoint:DAnalysis uid="_xGyKwFeHEemjb5TWagBZCQ" selectedViews="_xMUyEFeHEemjb5TWagBZCQ" version="14.3.0.201909031200">
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:componentDefinition="http://www.eclipse.org/smartmdsd/component/componentDefinition" xmlns:componentParameter="http://www.eclipse.org/smartmdsd/component/componentParameter" xmlns:coordinationExtension="http://www.eclipse.org/smartmdsd/component/coordinationExtension" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:diagram="http://www.eclipse.org/sirius/diagram/1.1.0" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.3/notation" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xsi:schemaLocation="http://www.eclipse.org/sirius/description/1.1.0 http://www.eclipse.org/sirius/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/style/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description/style">
+  <viewpoint:DAnalysis uid="_xGyKwFeHEemjb5TWagBZCQ" selectedViews="_xMUyEFeHEemjb5TWagBZCQ" version="14.3.1.202003261200">
     <semanticResources>model/ComponentFileMover.component</semanticResources>
     <semanticResources>model/ComponentFileMover.componentDocumentation</semanticResources>
     <semanticResources>model/ComponentFileMover.componentParameters</semanticResources>
@@ -39,7 +39,7 @@
     <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.skills</semanticResources>
     <ownedViews xmi:type="viewpoint:DView" uid="_xMUyEFeHEemjb5TWagBZCQ">
       <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']"/>
-      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_xMaRp1eHEemjb5TWagBZCQ" name="ComponentFileMover" repPath="#_xMaRoFeHEemjb5TWagBZCQ" changeId="0f0cea56-6251-4008-84aa-3cb19ce796b9">
+      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_xMaRp1eHEemjb5TWagBZCQ" name="ComponentFileMover" repPath="#_xMaRoFeHEemjb5TWagBZCQ" changeId="2a582f63-219c-435e-aa49-b6489a6ff85e">
         <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
         <target xmi:type="componentDefinition:ComponentDefModel" href="model/ComponentFileMover.component#/"/>
       </ownedRepresentationDescriptors>
@@ -180,9 +180,25 @@
           <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_IPSMFOw5EeqwE8Azki1W1Q" id="(0.5,0.5)"/>
           <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_IPSMFew5EeqwE8Azki1W1Q" id="(0.5,0.5)"/>
         </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_7T_zUDu2Eeux05JTHdSiTA" type="4001" element="_7S2j0Du2Eeux05JTHdSiTA" source="_IPQW4Ow5EeqwE8Azki1W1Q" target="_ZjaUIFeUEemIMLGuoBmMrQ">
+          <children xmi:type="notation:Node" xmi:id="_7UT8YDu2Eeux05JTHdSiTA" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_7UT8YTu2Eeux05JTHdSiTA" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_7UhXwDu2Eeux05JTHdSiTA" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_7UhXwTu2Eeux05JTHdSiTA" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_7Uh-0Du2Eeux05JTHdSiTA" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_7Uh-0Tu2Eeux05JTHdSiTA" y="10"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_7T_zUTu2Eeux05JTHdSiTA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_7T_zUju2Eeux05JTHdSiTA" fontName="Ubuntu" fontHeight="8"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_7T_zUzu2Eeux05JTHdSiTA" points="[15, 0, -624, -19]$[624, 18, -15, -1]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_7U6ZUDu2Eeux05JTHdSiTA" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_7U6ZUTu2Eeux05JTHdSiTA" id="(0.5,0.5)"/>
+        </edges>
       </data>
     </ownedAnnotationEntries>
-    <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_xMaRpFeHEemjb5TWagBZCQ" name="ComponentFileMover" tooltipText="">
+    <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_xMaRpFeHEemjb5TWagBZCQ" name="ComponentFileMover" tooltipText="ComponentDefinition: ComponentFileMover&#xA;">
       <target xmi:type="componentDefinition:ComponentDefinition" href="model/ComponentFileMover.component#//@component"/>
       <semanticElements xmi:type="componentDefinition:ComponentDefinition" href="model/ComponentFileMover.component#//@component"/>
       <ownedBorderedNodes xmi:type="diagram:DNode" uid="_PUkhkFeUEemIMLGuoBmMrQ" name="CommFileReadQueryReq" tooltipText="RequestPort" width="3" height="3" resizeKind="NSEW">
@@ -201,7 +217,7 @@
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='RequestPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_ZjEV4FeUEemIMLGuoBmMrQ" name="CommFileMoveEventOut" tooltipText="OutputPort" incomingEdges="_ZjOG4FeUEemIMLGuoBmMrQ" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_ZjEV4FeUEemIMLGuoBmMrQ" name="CommFileMoveEventOut" tooltipText="OutputPort" incomingEdges="_ZjOG4FeUEemIMLGuoBmMrQ _7S2j0Du2Eeux05JTHdSiTA" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="componentDefinition:OutputPort" href="model/ComponentFileMover.component#//@component/@elements.3"/>
         <semanticElements xmi:type="componentDefinition:OutputPort" href="model/ComponentFileMover.component#//@component/@elements.3"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
@@ -212,7 +228,7 @@
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='OutputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_IN66Jew5EeqwE8Azki1W1Q" name="CoordinationPort" tooltipText="CoordinationSlavePort" outgoingEdges="_IPKQQOw5EeqwE8Azki1W1Q" incomingEdges="_IPNTkOw5EeqwE8Azki1W1Q" width="-1" height="-1" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_IN66Jew5EeqwE8Azki1W1Q" name="CoordinationPort" tooltipText="CoordinationSlavePort" outgoingEdges="_IPKQQOw5EeqwE8Azki1W1Q _7S2j0Du2Eeux05JTHdSiTA" incomingEdges="_IPNTkOw5EeqwE8Azki1W1Q" width="-1" height="-1" resizeKind="NSEW">
         <target xmi:type="coordinationExtension:CoordinationSlavePort" href="model/ComponentFileMover.component#//@component/@elements.4"/>
         <semanticElements xmi:type="coordinationExtension:CoordinationSlavePort" href="model/ComponentFileMover.component#//@component/@elements.4"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
@@ -287,6 +303,15 @@
         <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_IPNTkuw5EeqwE8Azki1W1Q"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ParametersEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_7S2j0Du2Eeux05JTHdSiTA" sourceNode="_IN66Jew5EeqwE8Azki1W1Q" targetNode="_ZjEV4FeUEemIMLGuoBmMrQ">
+      <target xmi:type="coordinationExtension:CommunicationServiceUsageRealization" href="model/ComponentFileMover.component#//@component/@elements.4/@elements.0"/>
+      <semanticElements xmi:type="coordinationExtension:CommunicationServiceUsageRealization" href="model/ComponentFileMover.component#//@component/@elements.4/@elements.0"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_7S3K4Du2Eeux05JTHdSiTA" targetArrow="NoDecoration" size="2">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CommunicationServiceUsageRealizationEdge']/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_7S3K4Tu2Eeux05JTHdSiTA"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CommunicationServiceUsageRealizationEdge']"/>
     </ownedDiagramElements>
     <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
     <filterVariableHistory xmi:type="diagram:FilterVariableHistory" uid="_xMaRpleHEemjb5TWagBZCQ"/>

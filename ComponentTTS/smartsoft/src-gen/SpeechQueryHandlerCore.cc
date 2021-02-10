@@ -22,8 +22,12 @@ SpeechQueryHandlerCore::SpeechQueryHandlerCore(IQueryServer* server)
 :	Smart::IInputHandler<std::pair<Smart::QueryIdPtr,DomainSpeech::CommSpeechOutputMessage>>(server)
 ,	server(server)
 {
-	
 }
+
+SpeechQueryHandlerCore::~SpeechQueryHandlerCore()
+{
+}
+
 
 void SpeechQueryHandlerCore::updateAllCommObjects()
 {

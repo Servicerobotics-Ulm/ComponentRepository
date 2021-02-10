@@ -48,6 +48,14 @@ ComponentSymbolicPlanner::ComponentSymbolicPlanner()
 	connections.symbolicPlannerQueryServer.serviceName = "SymbolicPlannerQueryServer";
 	connections.symbolicPlannerQueryServer.roboticMiddleware = "ACE_SmartSoft";
 	
+	// initialize members of ComponentSymbolicPlannerROS1InterfacesExtension
+	
+	// initialize members of ComponentSymbolicPlannerROSExtension
+	
+	// initialize members of ComponentSymbolicPlannerRestInterfacesExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of PlainOpcUaComponentSymbolicPlannerExtension
 	
 }
@@ -120,6 +128,14 @@ void ComponentSymbolicPlanner::init(int argc, char *argv[])
 		// load initial parameters from ini-file (if found)
 		loadParameter(argc, argv);
 		
+		
+		// initializations of ComponentSymbolicPlannerROS1InterfacesExtension
+		
+		// initializations of ComponentSymbolicPlannerROSExtension
+		
+		// initializations of ComponentSymbolicPlannerRestInterfacesExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentSymbolicPlannerExtension
 		
@@ -278,6 +294,14 @@ void ComponentSymbolicPlanner::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of ComponentSymbolicPlannerROS1InterfacesExtension
+	
+	// destruction of ComponentSymbolicPlannerROSExtension
+	
+	// destruction of ComponentSymbolicPlannerRestInterfacesExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of PlainOpcUaComponentSymbolicPlannerExtension
 	
 }
@@ -359,6 +383,14 @@ void ComponentSymbolicPlanner::loadParameter(int argc, char *argv[])
 			parameter.getString("SymbolicPlannerQueryServer", "roboticMiddleware", connections.symbolicPlannerQueryServer.roboticMiddleware);
 		}
 		
+		
+		// load parameters for ComponentSymbolicPlannerROS1InterfacesExtension
+		
+		// load parameters for ComponentSymbolicPlannerROSExtension
+		
+		// load parameters for ComponentSymbolicPlannerRestInterfacesExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentSymbolicPlannerExtension
 		

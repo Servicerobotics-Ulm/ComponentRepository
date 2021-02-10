@@ -1,14 +1,36 @@
 {
 	"name": "SmartPioneerBaseServer",
 	"shortDescription": "The SmartPioneerBaseServer makes P2OS-based robot platforms available.",
-	"description": "<p></p><p> The SmartPioneerBaseServer makes P2OS-based robot platforms available. It handles all the communication with the hardware. It offers several services for controlling the robot, such as sending navigation commands to the base and providing access to the robot's odometry. Position updates can be sent to the component to overcome odometry failures.</p><p> GPL-License: includes Code from the Player Project.</p><p></p>",
-	"class": "component",
 	"type": "Toolify",
+	"description": "<p></p><p> The SmartPioneerBaseServer makes P2OS-based robot platforms available. It handles all the communication with the hardware. It offers several services for controlling the robot, such as sending navigation commands to the base and providing access to the robot's odometry. Position updates can be sent to the component to overcome odometry failures.</p><p> GPL-License: includes Code from the Player Project.</p><p></p>",
+	"purposes": ["Mobile-Base"],
 	"spdxLicense": "LGPL-2.0-or-later",
 	"technologyReadinessLevel": "TRL5",
 	"homepage": "http://servicerobotik-ulm.de/components",
 	"supplier": "Servicerobotics Ulm",
-	"purpose": "Mobile-Base",
 	"services": [
+	],
+	"mainstates": [
+		"Neutral"
+	],
+	"parameters": [
+	],
+	"triggers": [
+		{
+			"name": "BASE_RESET",
+			"nameFQN": "CommBasicObjects.BaseParams.BASE_RESET",
+			"type": "trigger",
+			"description": " Reset the connection to the base at runtime. The serial connection is closed and reopened. All estimated positions are set to zero. ",
+			"attributes": [
+			]
+		},
+		{
+			"name": "BASE_SONAR",
+			"nameFQN": "CommBasicObjects.BaseParams.BASE_SONAR",
+			"type": "trigger",
+			"description": "",
+			"attributes": [
+			]
+		}
 	]
 }

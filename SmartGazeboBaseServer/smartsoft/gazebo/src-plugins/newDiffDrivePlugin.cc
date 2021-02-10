@@ -23,6 +23,11 @@
 #include <gazebo/transport/transport.hh>
 #include <gazebo/msgs/msgs.hh>
 
+#include <functional>
+#include <gazebo/common/common.hh>
+#include <ignition/math/Vector3.hh>
+
+
 namespace gazebo
 {
   class NewDiffDrivePlugin : public ModelPlugin

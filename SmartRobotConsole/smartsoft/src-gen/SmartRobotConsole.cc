@@ -54,9 +54,13 @@ SmartRobotConsole::SmartRobotConsole()
 	connections.consoleTask.priority = -1;
 	connections.consoleTask.cpuAffinity = -1;
 	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of PlainOpcUaSmartRobotConsoleExtension
 	
 	// initialize members of SmartRobotConsoleROS1InterfacesExtension
+	
+	// initialize members of SmartRobotConsoleROSExtension
 	
 	// initialize members of SmartRobotConsoleRestInterfacesExtension
 	
@@ -145,9 +149,13 @@ void SmartRobotConsole::init(int argc, char *argv[])
 		loadParameter(argc, argv);
 		
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		// initializations of PlainOpcUaSmartRobotConsoleExtension
 		
 		// initializations of SmartRobotConsoleROS1InterfacesExtension
+		
+		// initializations of SmartRobotConsoleROSExtension
 		
 		// initializations of SmartRobotConsoleRestInterfacesExtension
 		
@@ -339,9 +347,13 @@ void SmartRobotConsole::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of PlainOpcUaSmartRobotConsoleExtension
 	
 	// destruction of SmartRobotConsoleROS1InterfacesExtension
+	
+	// destruction of SmartRobotConsoleROSExtension
 	
 	// destruction of SmartRobotConsoleRestInterfacesExtension
 	
@@ -439,9 +451,13 @@ void SmartRobotConsole::loadParameter(int argc, char *argv[])
 			parameter.getInteger("ConsoleTask", "cpuAffinity", connections.consoleTask.cpuAffinity);
 		}
 		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
+		
 		// load parameters for PlainOpcUaSmartRobotConsoleExtension
 		
 		// load parameters for SmartRobotConsoleROS1InterfacesExtension
+		
+		// load parameters for SmartRobotConsoleROSExtension
 		
 		// load parameters for SmartRobotConsoleRestInterfacesExtension
 		

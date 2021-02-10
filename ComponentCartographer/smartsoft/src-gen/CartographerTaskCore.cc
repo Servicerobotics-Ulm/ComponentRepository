@@ -63,7 +63,8 @@ int CartographerTaskCore::execute_protected_region()
 	if(useDefaultState) {
 		Smart::StatusCode status = COMP->stateSlave->acquire("active");
 		if(status != Smart::SMART_OK) {
-			std::cerr << "CartographerTaskCore: ERROR acquiring state active: " << status << std::endl;
+			std::cerr << "CartographerTaskCore: ERROR acquiring state: " << status << std::endl;
+			usleep(500000);
 			return 0;
 		}
 	}
@@ -104,7 +105,7 @@ void CartographerTaskCore::updateAllCommObjects()
 // this method is meant to be used in derived classes
 Smart::StatusCode CartographerTaskCore::gridMapPushServiceOutPut(CommNavigationObjects::CommGridMap &gridMapPushServiceOutDataObject)
 {
-	Smart::StatusCode result = COMP->gridMapPushServiceOut->put(gridMapPushServiceOutDataObject);
+	Smart::StatusCode result = COMP->gridMapPushServiceOutWrapper->put(gridMapPushServiceOutDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
@@ -114,7 +115,7 @@ Smart::StatusCode CartographerTaskCore::gridMapPushServiceOutPut(CommNavigationO
 // this method is meant to be used in derived classes
 Smart::StatusCode CartographerTaskCore::localized_robot_posePut(CommBasicObjects::CommBasePositionUpdate &localized_robot_poseDataObject)
 {
-	Smart::StatusCode result = COMP->localized_robot_pose->send(localized_robot_poseDataObject);
+	Smart::StatusCode result = COMP->localized_robot_poseWrapper->send(localized_robot_poseDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());

@@ -92,6 +92,14 @@ ComponentLaserHokuyoURGServer::ComponentLaserHokuyoURGServer()
 	connections.watchDogTask.priority = -1;
 	connections.watchDogTask.cpuAffinity = -1;
 	
+	// initialize members of ComponentLaserHokuyoURGServerROS1InterfacesExtension
+	
+	// initialize members of ComponentLaserHokuyoURGServerROSExtension
+	
+	// initialize members of ComponentLaserHokuyoURGServerRestInterfacesExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of PlainOpcUaComponentLaserHokuyoURGServerExtension
 	
 }
@@ -234,6 +242,14 @@ void ComponentLaserHokuyoURGServer::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
+		
+		// initializations of ComponentLaserHokuyoURGServerROS1InterfacesExtension
+		
+		// initializations of ComponentLaserHokuyoURGServerROSExtension
+		
+		// initializations of ComponentLaserHokuyoURGServerRestInterfacesExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentLaserHokuyoURGServerExtension
 		
@@ -498,6 +514,14 @@ void ComponentLaserHokuyoURGServer::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of ComponentLaserHokuyoURGServerROS1InterfacesExtension
+	
+	// destruction of ComponentLaserHokuyoURGServerROSExtension
+	
+	// destruction of ComponentLaserHokuyoURGServerRestInterfacesExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of PlainOpcUaComponentLaserHokuyoURGServerExtension
 	
 }
@@ -640,6 +664,14 @@ void ComponentLaserHokuyoURGServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("WatchDogTask", "cpuAffinity")) {
 			parameter.getInteger("WatchDogTask", "cpuAffinity", connections.watchDogTask.cpuAffinity);
 		}
+		
+		// load parameters for ComponentLaserHokuyoURGServerROS1InterfacesExtension
+		
+		// load parameters for ComponentLaserHokuyoURGServerROSExtension
+		
+		// load parameters for ComponentLaserHokuyoURGServerRestInterfacesExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentLaserHokuyoURGServerExtension
 		

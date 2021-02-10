@@ -66,8 +66,13 @@
 #include "cairo/cairo.h"
 // includes for map serialization
 #include <fstream>
-#include <opencv/cxcore.h>
-#include <opencv/highgui.h>
+#ifdef WITH_OPENCV_4_2_VERSION
+   	#include <opencv4/opencv2/core.hpp>
+	#include <opencv4/opencv2/highgui.hpp>
+#else
+	#include <cxcore.h>
+	#include <highgui.h>
+#endif
 #include <OpenCVHelpers/OpenCVHelpers.hh>
 
 #include "eigen3/Eigen/Core"

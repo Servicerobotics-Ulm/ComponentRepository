@@ -31,7 +31,11 @@ class ComponentRobotinoLaserServerExtension;
 
 // includes for ComponentRobotinoLaserServerROS1InterfacesExtension
 
+// includes for ComponentRobotinoLaserServerROSExtension
+
 // includes for ComponentRobotinoLaserServerRestInterfacesExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
 
 // includes for PlainOpcUaComponentRobotinoLaserServerExtension
 // include plain OPC UA device clients
@@ -145,7 +149,11 @@ public:
 	
 	// definitions of ComponentRobotinoLaserServerROS1InterfacesExtension
 	
+	// definitions of ComponentRobotinoLaserServerROSExtension
+	
 	// definitions of ComponentRobotinoLaserServerRestInterfacesExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentRobotinoLaserServerExtension
 	
@@ -273,7 +281,11 @@ public:
 		
 		// -- parameters for ComponentRobotinoLaserServerROS1InterfacesExtension
 		
+		// -- parameters for ComponentRobotinoLaserServerROSExtension
+		
 		// -- parameters for ComponentRobotinoLaserServerRestInterfacesExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentRobotinoLaserServerExtension
 		

@@ -116,7 +116,11 @@ ComponentRealSenseV2Server::ComponentRealSenseV2Server()
 	
 	// initialize members of ComponentRealSenseV2ServerROS1InterfacesExtension
 	
+	// initialize members of ComponentRealSenseV2ServerROSExtension
+	
 	// initialize members of ComponentRealSenseV2ServerRestInterfacesExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentRealSenseV2ServerExtension
 	
@@ -287,7 +291,11 @@ void ComponentRealSenseV2Server::init(int argc, char *argv[])
 		
 		// initializations of ComponentRealSenseV2ServerROS1InterfacesExtension
 		
+		// initializations of ComponentRealSenseV2ServerROSExtension
+		
 		// initializations of ComponentRealSenseV2ServerRestInterfacesExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentRealSenseV2ServerExtension
 		
@@ -563,7 +571,11 @@ void ComponentRealSenseV2Server::fini()
 	
 	// destruction of ComponentRealSenseV2ServerROS1InterfacesExtension
 	
+	// destruction of ComponentRealSenseV2ServerROSExtension
+	
 	// destruction of ComponentRealSenseV2ServerRestInterfacesExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentRealSenseV2ServerExtension
 	
@@ -723,7 +735,11 @@ void ComponentRealSenseV2Server::loadParameter(int argc, char *argv[])
 		
 		// load parameters for ComponentRealSenseV2ServerROS1InterfacesExtension
 		
+		// load parameters for ComponentRealSenseV2ServerROSExtension
+		
 		// load parameters for ComponentRealSenseV2ServerRestInterfacesExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentRealSenseV2ServerExtension
 		

@@ -30,9 +30,6 @@ class SpeechSendHandlerCore
 ,	public SpeechSendServiceInUpcallInterface
 {
 private:
-	Smart::StatusCode updateStatus;
-	DomainSpeech::CommSpeechOutputMessage lastUpdate;
-	
 	
 	virtual void updateAllCommObjects();
 	

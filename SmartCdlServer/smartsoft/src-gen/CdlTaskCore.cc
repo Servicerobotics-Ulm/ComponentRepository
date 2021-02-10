@@ -79,7 +79,8 @@ int CdlTaskCore::execute_protected_region()
 	if(useDefaultState) {
 		Smart::StatusCode status = COMP->stateSlave->acquire("moveRobot");
 		if(status != Smart::SMART_OK) {
-			std::cerr << "CdlTaskCore: ERROR acquiring state active: " << status << std::endl;
+			std::cerr << "CdlTaskCore: ERROR acquiring state: " << status << std::endl;
+			usleep(500000);
 			return 0;
 		}
 	}

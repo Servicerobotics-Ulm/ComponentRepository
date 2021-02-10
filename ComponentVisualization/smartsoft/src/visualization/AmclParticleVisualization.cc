@@ -32,17 +32,19 @@ AmclParticleVisualization::AmclParticleVisualization(CDisplayWindow3D& window3D,
 	{
 		opengl::CPointCloudColoured::Ptr particles = opengl::CPointCloudColoured::Create();
 		particles->setName(identifier+"particles");
+		particles->setColor(0, 1, 0, 0.4);
 		particles->setPointSize(3);
 		ptrScene->insert(particles);
 
 		opengl::CSetOfLines::Ptr particleLines = opengl::CSetOfLines::Create();
 		particleLines->setName(identifier+"particleLines");
-		particleLines->setColor(0, 1, 0);
+		particleLines->setColor(0, 1, 0, 0.4);
 		ptrScene->insert(particleLines);
 
 		opengl::CPointCloudColoured::Ptr hypotheses = opengl::CPointCloudColoured::Create();
 		hypotheses->setName(identifier+"hypotheses");
 		hypotheses->setPointSize(10);
+		hypotheses->setColor(1, 0, 0, 0.4);
 		ptrScene->insert(hypotheses);
 
 
@@ -52,7 +54,8 @@ AmclParticleVisualization::AmclParticleVisualization(CDisplayWindow3D& window3D,
 		{
 			opengl::CEllipsoid2D::Ptr covar_obj = opengl::CEllipsoid2D::Create();
 			covar_obj->setName(identifier + "_covar_" + std::to_string(i));
-			covar_obj->setColor(1, 0, 0);
+			covar_obj->setColor(1, 0, 0, 0.4);
+			covar_obj->enableDrawSolid3D(true);
 			ptrScene->insert(covar_obj);
 		}
 	}
@@ -81,7 +84,7 @@ AmclParticleVisualization::AmclParticleVisualization(CDisplayWindow3D& window3D,
 		{
 			opengl::CEllipsoidPtr covar_obj = opengl::CEllipsoid::Create();
 			covar_obj->setName(identifier + "_covar_" + std::to_string(i));
-			covar_obj->setColor(1, 0, 0);
+			covar_obj->setColor(1, 1, 0);
 			ptrScene->insert(covar_obj);
 		}
 	}
@@ -148,20 +151,27 @@ void AmclParticleVisualization::displayAmclInfo(const CommLocalizationObjects::C
 			if(pf_info.getHypothesesSize()>0)
 			{
 			hypotheses_obj->clear();
-//			for (size_t i = 0; i <max_hypotheses; i++) {
-//				opengl::CEllipsoidPtr covar_obj = (opengl::CEllipsoidPtr)ptrScene->getByName(identifier + "_covar_" + std::to_string(i));
-//				covar_obj->clear();
-//			}
+
+			for (size_t i = 0; i <max_hypotheses; i++) { //clear all the previous covariance ellipses
+				opengl::CEllipsoid2D::Ptr covar_obj = std::dynamic_pointer_cast<opengl::CEllipsoid2D>(ptrScene->getByName(identifier + "_covar_" + std::to_string(i)));
+				covar_obj->setLocation(0, 0, 0.0);
+				covar_obj->setLineWidth(0.0);
+
+				double covar_matrix[4]={0,0,0,0};
+				mrpt::math::CMatrixDouble22 cov2d(covar_matrix);
+				covar_obj->setCovMatrix(cov2d);
+			}
 			}
 
 
-			//particle
+			//particles with direction
 			for (size_t i = 0; i < pf_info.getParticlesSize(); i++) {
 				CommBasicObjects::CommPose3d current_particle_pose = pf_info.getParticlesElemAtPos(i).getPose();
 				double current_particle_weight = pf_info.getParticlesElemAtPos(i).getWeight();
 
 				particles_obj->push_back(current_particle_pose.get_x(1.0), current_particle_pose.get_y(1.0), 0, 0, 1, 0);
 
+				// using "r" to draw the line with length proportional to particle weight
 				double r = std::fmod(current_particle_weight * 100000, 0.25);
 				particleLines_obj->appendLine(current_particle_pose.get_x(1.0) ,current_particle_pose.get_y(1.0), 0,
 						current_particle_pose.get_x(1.0) + r * cos(current_particle_pose.get_azimuth()),
@@ -178,10 +188,31 @@ void AmclParticleVisualization::displayAmclInfo(const CommLocalizationObjects::C
 				//covariance as Ellipsoid
 				opengl::CEllipsoid2D::Ptr covar_obj = std::dynamic_pointer_cast<opengl::CEllipsoid2D>(ptrScene->getByName(identifier + "_covar_" + std::to_string(i)));
 				covar_obj->setLocation(current_particle_pose.get_x(1.0), current_particle_pose.get_y(1.0), 0);
+				covar_obj->setLineWidth(2.0);
 
 				mrpt::math::CMatrixDouble22 cov2d(pf_info.getHypothesesElemAtPos(i).getCovMatrixCopy().data());
 				covar_obj->setCovMatrix(cov2d);
 			}
+
+//            // when max hypothese is less than 10, draw their ellipse of their covariance with {0,0,0,0}
+//			if(hype_num_to_draw<max_hypotheses)
+//			{
+//				for (size_t i = hype_num_to_draw; i <max_hypotheses; i++) {
+////					CommBasicObjects::CommPose3d current_particle_pose = pf_info.getHypothesesElemAtPos(i).getPose();
+////					double current_hypothesis_weight = pf_info.getHypothesesElemAtPos(i).getWeight();
+////					hypotheses_obj->push_back(0, 0, 0, 1, 0, 0);
+//
+//					//covariance as Ellipsoid
+//					opengl::CEllipsoid2D::Ptr covar_obj = std::dynamic_pointer_cast<opengl::CEllipsoid2D>(ptrScene->getByName(identifier + "_covar_" + std::to_string(i)));
+//					covar_obj->setLocation(0, 0, 0);
+//					covar_obj->setLineWidth(0.0);
+//
+//					double covar_matrix[4]={0,0,0,0};
+//					mrpt::math::CMatrixDouble22 cov2d(covar_matrix);
+//					covar_obj->setCovMatrix(cov2d);
+//				}
+//
+//			}
 
 
 		}
@@ -235,8 +266,6 @@ void AmclParticleVisualization::displayAmclInfo(const CommLocalizationObjects::C
 				mrpt::math::CMatrixDouble22 cov2d(pf_info.getHypothesesElemAtPos(i).getCovMatrixCopy().data());
 				covar_obj->setCovMatrix(cov2d);
 			}
-
-
 		}
 #endif
 		window3D.unlockAccess3DScene();

@@ -78,6 +78,9 @@ void CompHandler::onStartup()
 	// COMP->connectMyPortName("SmartExampleComponent", "examplePort");
 	status = COMP->connectAndStartAllServices();
 	
+	if(COMP->getGlobalState().getGeneral().getEnable_visualization() == true){
+			COMP->h.initializeVisualization();
+	}
 	// Start all tasks. If you need manual control, use the content of this function to
 	// start each task individually.
 	COMP->startAllTasks();
@@ -85,10 +88,8 @@ void CompHandler::onStartup()
 	// Start all timers. If you need manual control, use the content of this function to
 	// start each timer individually.
 	COMP->startAllTimers();
-	
-	if(COMP->getGlobalState().getGeneral().getEnable_visualization() == true){
-			COMP->h.initializeVisualization();
-	}
+
+
 
 	// Notify the component that setup/initialization is finished.
 	// You may move this function to any other place.

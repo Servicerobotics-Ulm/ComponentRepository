@@ -38,23 +38,43 @@ SMART_COMPONENT_AUTOBUILD_DEPENDENCIES()
 #################################################################################
 ## here you can put all your project-specific compiler configurations          ##
 ## using regular CMake commands (like FIND_PACKAGE, INCLUDE_DIRECTORIES, etc.) ##
-
+set(CMAKE_CXX_STANDARD 14)
+message("${CMAKE_CXX_STANDARD}")
 # you can add additional external libraries using regular CMake commands, e.g.:
 find_package(Boost REQUIRED COMPONENTS system iostreams)
 find_package(PCL REQUIRED COMPONENTS common)
 find_package(cartographer REQUIRED)
 find_package(LuaGoogle REQUIRED)
 find_package(Eigen3 REQUIRED)
-find_package(OpenCV REQUIRED)
+FIND_PACKAGE(OpenCV REQUIRED)
+IF(OpenCV_VERSION VERSION_LESS 4.2.0)
+  add_definitions(-DWITH_OLD_OPENCV_VERSION)
+ELSE()
+  add_definitions(-DWITH_OPENCV_4_2_VERSION)
+ENDIF()
 
-FIND_PACKAGE( MRPT REQUIRED gui base maps)
+
+
+FIND_PACKAGE( MRPT REQUIRED)
+  GET_PROPERTY(MRPT_INCLUDE_DIRS DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
+IF(MRPT_VERSION VERSION_GREATER 2.0.0)
+  FIND_PACKAGE( MRPT REQUIRED gui maps)
+  add_definitions(-DWITH_MRPT_2_0_VERSION)
+ELSEIF(MRPT_VERSION VERSION_GREATER 1.5.0)
+  FIND_PACKAGE( MRPT REQUIRED gui base maps)
+  add_definitions(-DWITH_MRPT_1_5_VERSION)
+ELSEIF(MRPT_VERSION VERSION_LESS 1.3.0)
+  FIND_PACKAGE( MRPT REQUIRED gui base maps)
+  add_definitions(-DWITH_OLD_MRPT_VERSION)
+ELSE()
+  FIND_PACKAGE( MRPT REQUIRED gui base maps)
+ENDIF()
 
 MESSAGE("MRPT_VERSION: ${MRPT_VERSION}")
 IF(MRPT_VERSION VERSION_LESS 1.3.0)
 MESSAGE("OLD MRPT VERSION DETECTED ..")
 add_definitions(-DWITH_OLD_MRPT_VERSION)
 ENDIF()
-
 
 include("${CARTOGRAPHER_CMAKE_DIR}/functions.cmake")
 INCLUDE(${CMAKE_CURRENT_LIST_DIR}/src-gen/MixedPortIncludes.cmake)

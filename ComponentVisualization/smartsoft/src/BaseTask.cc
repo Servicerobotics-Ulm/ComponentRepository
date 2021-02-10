@@ -82,6 +82,9 @@ int BaseTask::on_entry()
 	// do initialization procedures here, which are called once, each time the task is started
 	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
     base = new BaseVisualization(COMP->getWindow3d(), "Base");
+#ifdef WITH_MRPT_2_0_VERSION
+    base->set_show_trajectory(COMP->getGlobalState().getServices().getShow_trajectory());
+#endif
 	COMP->baseClient->subscribe(COMP->connections.baseClient.interval);
 
 	return (base !=0)? 0 : 1;

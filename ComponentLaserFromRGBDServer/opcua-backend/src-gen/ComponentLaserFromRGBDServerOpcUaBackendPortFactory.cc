@@ -65,7 +65,7 @@ Smart::IPushClientPattern<DomainVision::CommRGBDImage> * ComponentLaserFromRGBDS
 }
 
 
-Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * ComponentLaserFromRGBDServerOpcUaBackendPortFactory::createLaserPushNewestServer(const std::string &serviceName)
+Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * ComponentLaserFromRGBDServerOpcUaBackendPortFactory::createLaserServiceOut(const std::string &serviceName)
 {
 	return new SeRoNet::OPCUA::Server::PushServer<CommBasicObjects::CommMobileLaserScan>(componentImpl, serviceName);
 }

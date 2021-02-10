@@ -84,7 +84,11 @@ ComponentLaserFromRGBDServer::ComponentLaserFromRGBDServer()
 	
 	// initialize members of ComponentLaserFromRGBDServerROS1InterfacesExtension
 	
+	// initialize members of ComponentLaserFromRGBDServerROSExtension
+	
 	// initialize members of ComponentLaserFromRGBDServerRestInterfacesExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentLaserFromRGBDServerExtension
 	
@@ -211,7 +215,11 @@ void ComponentLaserFromRGBDServer::init(int argc, char *argv[])
 		
 		// initializations of ComponentLaserFromRGBDServerROS1InterfacesExtension
 		
+		// initializations of ComponentLaserFromRGBDServerROSExtension
+		
 		// initializations of ComponentLaserFromRGBDServerRestInterfacesExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentLaserFromRGBDServerExtension
 		
@@ -467,7 +475,11 @@ void ComponentLaserFromRGBDServer::fini()
 	
 	// destruction of ComponentLaserFromRGBDServerROS1InterfacesExtension
 	
+	// destruction of ComponentLaserFromRGBDServerROSExtension
+	
 	// destruction of ComponentLaserFromRGBDServerRestInterfacesExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentLaserFromRGBDServerExtension
 	
@@ -605,7 +617,11 @@ void ComponentLaserFromRGBDServer::loadParameter(int argc, char *argv[])
 		
 		// load parameters for ComponentLaserFromRGBDServerROS1InterfacesExtension
 		
+		// load parameters for ComponentLaserFromRGBDServerROSExtension
+		
 		// load parameters for ComponentLaserFromRGBDServerRestInterfacesExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentLaserFromRGBDServerExtension
 		

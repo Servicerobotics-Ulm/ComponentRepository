@@ -20,11 +20,12 @@ NavigationVelocityHandlerCore::NavigationVelocityHandlerCore(
 	Smart::InputSubject<CommBasicObjects::CommNavigationVelocity> *subject,
 	const int &prescaleFactor)
 	:	Smart::InputTaskTrigger<CommBasicObjects::CommNavigationVelocity>(subject, prescaleFactor)
-{  
-	updateStatus = Smart::SMART_NODATA;
+{
 }
 NavigationVelocityHandlerCore::~NavigationVelocityHandlerCore()
-{  }
+{  
+}
+
 
 void NavigationVelocityHandlerCore::updateAllCommObjects() {
 }

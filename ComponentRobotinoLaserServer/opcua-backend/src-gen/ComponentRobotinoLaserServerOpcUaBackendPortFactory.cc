@@ -68,7 +68,7 @@ Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * ComponentRobotinoLa
 }
 
 
-Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * ComponentRobotinoLaserServerOpcUaBackendPortFactory::createPushNewestServer(const std::string &serviceName)
+Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * ComponentRobotinoLaserServerOpcUaBackendPortFactory::createLaserServiceOut(const std::string &serviceName)
 {
 	return new SeRoNet::OPCUA::Server::PushServer<CommBasicObjects::CommMobileLaserScan>(componentImpl, serviceName);
 }

@@ -8,5 +8,32 @@
 	"supplier": "Servicerobotics Ulm",
 	"homepage": "http://servicerobotik-ulm.de/components",
 	"services": [
+	],
+	"mainstates": [
+		"Neutral"
+	],
+	"parameters": [
+	],
+	"triggers": [
+		{
+			"name": "COPYFILE",
+			"nameFQN": "CommBasicObjects.FileOperationsParam.COPYFILE",
+			"type": "trigger",
+			"description": "",
+			"attributes": [
+				{
+					"name": "sourceFile",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "destinationFile",
+					"type": "string",
+					"default": "",
+					"description": ""
+				}
+			]
+		}
 	]
 }

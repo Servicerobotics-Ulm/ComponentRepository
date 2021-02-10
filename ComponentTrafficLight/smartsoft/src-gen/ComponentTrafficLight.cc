@@ -50,6 +50,14 @@ ComponentTrafficLight::ComponentTrafficLight()
 	connections.trafficLightServiceIn.roboticMiddleware = "ACE_SmartSoft";
 	connections.trafficLightServiceInHandler.prescale = 1;
 	
+	// initialize members of ComponentTrafficLightROS1InterfacesExtension
+	
+	// initialize members of ComponentTrafficLightROSExtension
+	
+	// initialize members of ComponentTrafficLightRestInterfacesExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of PlainOpcUaComponentTrafficLightExtension
 	
 }
@@ -123,6 +131,14 @@ void ComponentTrafficLight::init(int argc, char *argv[])
 		// load initial parameters from ini-file (if found)
 		loadParameter(argc, argv);
 		
+		
+		// initializations of ComponentTrafficLightROS1InterfacesExtension
+		
+		// initializations of ComponentTrafficLightROSExtension
+		
+		// initializations of ComponentTrafficLightRestInterfacesExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentTrafficLightExtension
 		
@@ -285,6 +301,14 @@ void ComponentTrafficLight::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of ComponentTrafficLightROS1InterfacesExtension
+	
+	// destruction of ComponentTrafficLightROSExtension
+	
+	// destruction of ComponentTrafficLightRestInterfacesExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of PlainOpcUaComponentTrafficLightExtension
 	
 }
@@ -369,6 +393,14 @@ void ComponentTrafficLight::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("TrafficLightServiceInHandler", "prescale")) {
 			parameter.getInteger("TrafficLightServiceInHandler", "prescale", connections.trafficLightServiceInHandler.prescale);
 		}
+		
+		// load parameters for ComponentTrafficLightROS1InterfacesExtension
+		
+		// load parameters for ComponentTrafficLightROSExtension
+		
+		// load parameters for ComponentTrafficLightRestInterfacesExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentTrafficLightExtension
 		

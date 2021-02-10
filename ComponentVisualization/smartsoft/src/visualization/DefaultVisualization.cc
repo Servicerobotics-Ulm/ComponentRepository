@@ -54,12 +54,14 @@ AbstractVisualization(window3D, identifier)
 			// coordinate axis
 			opengl::CAxis::Ptr gl_axis = opengl::CAxis::Create(-10,-10, 0, 10, 10, 2, 1);
 			gl_axis->setName(identifier + "_axis");
+			gl_axis->setColor(0.0, 0.0, 0.0, 1.0);
 			ptrScene->insert( gl_axis );
 
 			//2d grid
 			mrpt::opengl::CGridPlaneXY::Ptr gl_grid = mrpt::opengl::CGridPlaneXY::Create();
 			gl_grid->setName(identifier + "_grid");
-			gl_grid->setColor(0.6,0.6,0.6);
+			gl_grid->setColor(0.75,0.75,0.75, 1);
+			gl_grid->setPlaneLimits(-10.0, 10.0, -10.0, 10.0);
 			ptrScene->insert( gl_grid );
 
 			//origin

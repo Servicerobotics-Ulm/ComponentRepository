@@ -31,7 +31,11 @@ class ComponentKeyboardNavigationExtension;
 
 // includes for ComponentKeyboardNavigationROS1InterfacesExtension
 
+// includes for ComponentKeyboardNavigationROSExtension
+
 // includes for ComponentKeyboardNavigationRestInterfacesExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
 
 // includes for PlainOpcUaComponentKeyboardNavigationExtension
 // include plain OPC UA device clients
@@ -120,7 +124,11 @@ public:
 	
 	// definitions of ComponentKeyboardNavigationROS1InterfacesExtension
 	
+	// definitions of ComponentKeyboardNavigationROSExtension
+	
 	// definitions of ComponentKeyboardNavigationRestInterfacesExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentKeyboardNavigationExtension
 	
@@ -236,7 +244,11 @@ public:
 		
 		// -- parameters for ComponentKeyboardNavigationROS1InterfacesExtension
 		
+		// -- parameters for ComponentKeyboardNavigationROSExtension
+		
 		// -- parameters for ComponentKeyboardNavigationRestInterfacesExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentKeyboardNavigationExtension
 		

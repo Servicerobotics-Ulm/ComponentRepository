@@ -80,9 +80,13 @@ int CurMapTask::disconnectServices(){
 
 int CurMapTask::on_entry()
 {
-	// do initialization procedures here, which are called once, each time the task is started
-	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
-	gridMap = new GridMapVisualization(COMP->getWindow3d(), "CurrentMap", false, true);
+	GridMapVisualization::VizConfig config;
+	config.identifier = "CurrentMap";
+	config.activateTransparency = true;
+	config.showAxis = false;
+	config.mapType = GridMapVisualization::MapType::CURRENT_MAP;
+
+	gridMap = new GridMapVisualization(COMP->getWindow3d(), config);
 	COMP->curPushClient->subscribe();
 
 	return (gridMap !=0)?0:1;

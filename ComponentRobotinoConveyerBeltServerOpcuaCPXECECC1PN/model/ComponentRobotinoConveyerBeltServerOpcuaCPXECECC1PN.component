@@ -1,0 +1,29 @@
+ComponentDefinition ComponentRobotinoConveyerBeltServerOpcuaCPXECECC1PN logo "/ComponentRobotinoConveyerBeltServerOpcuaCPXECECC1PN/model/logo.png"
+{
+CoordinationSlavePort CoordinationPort implements CommRobotinoObjects.ConveyerBeltCoordinationService 
+{ PublicOperationMode CommRobotinoObjects.ConveyerBeltModes.load { activates ( load ) } 
+	PublicOperationMode CommRobotinoObjects.ConveyerBeltModes.unload { activates ( unload ) } 
+	PublicOperationMode CommRobotinoObjects.ConveyerBeltModes.manualload { activates ( manualload ) } 
+	PublicOperationMode CommRobotinoObjects.ConveyerBeltModes.manualunload { activates ( manualunload ) } 
+	PublicOperationMode CommRobotinoObjects.ConveyerBeltModes.signalerror { activates ( signalerror ) } 
+	
+	PrivateOperationMode load 
+	PrivateOperationMode unload 
+	PrivateOperationMode manualload 
+	PrivateOperationMode manualunload 
+	PrivateOperationMode signalerror
+}
+	Activity LoadTask	{	}
+	Activity UnloadTask	{	OpcUaClientLink ProductionStationCPXECECC1PN
+	}
+	Activity ManualLoadTask	{	}
+	Activity ManualUnloadTask	{	}
+	Activity SignalErrorTask	{	}
+	
+	OpcUaDeviceClient ProductionStationCPXECECC1PN { deviceURI "opc.tcp://192.168.0.100" opcuaXmlFile "/ComponentRobotinoConveyerBeltServerOpcuaCPXECECC1PN/model/ProductionStationCPXECECC1PNNS.xml" rootObjectPath "Server/CPX-E-CEC-C1-PN/Resources/Application/Programs/PLC_PRG" }
+	OutputPort loadEventServer implements CommRobotinoObjects.RobotinoConveyerBeltEvent realizedBy LoadTask {	}
+	InputPort digitalInputEventClient implements CommRobotinoObjects.CommRobotinoDigitalInputEvent {	}
+	OutputPort powerOutPutSendClient implements CommRobotinoObjects.CommPowerOutputSend realizedBy ManualLoadTask {	}
+	RequestPort iOQueryClient implements CommRobotinoObjects.CommRobotinoIOValuesQueryService {	}
+	ComponentParameters ComponentRobotinoConveyerBeltServerOpcuaCPXECECC1PN slave CoordinationPort
+}

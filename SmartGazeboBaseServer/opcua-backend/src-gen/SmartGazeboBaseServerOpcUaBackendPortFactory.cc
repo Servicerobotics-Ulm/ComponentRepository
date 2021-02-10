@@ -31,6 +31,12 @@
 // include referenced CommunicationObject SeRoNetSDK self description implementations
 #include "CommBasicObjectsOpcUa/CommBasePositionUpdateOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommBatteryEventOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommBatteryParameterOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommBatteryStateOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommBumperEventParameterOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommBumperEventResultOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommBumperEventStateOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommMobileLaserScanOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommNavigationVelocityOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
@@ -70,6 +76,16 @@ Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBas
 Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * SmartGazeboBaseServerOpcUaBackendPortFactory::createBaseStateServiceOut(const std::string &serviceName)
 {
 	return new SeRoNet::OPCUA::Server::PushServer<CommBasicObjects::CommBaseState>(componentImpl, serviceName);
+}
+
+Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> * SmartGazeboBaseServerOpcUaBackendPortFactory::createBatteryEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>> batteryEventServiceOutEventTestHandler)
+{
+	return new SeRoNet::OPCUA::Server::EventServer<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>(componentImpl, serviceName, batteryEventServiceOutEventTestHandler);
+}
+
+Smart::IEventServerPattern<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState> * SmartGazeboBaseServerOpcUaBackendPortFactory::createBumperEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState>> bumperEventServiceOutEventTestHandler)
+{
+	return new SeRoNet::OPCUA::Server::EventServer<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState>(componentImpl, serviceName, bumperEventServiceOutEventTestHandler);
 }
 
 Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * SmartGazeboBaseServerOpcUaBackendPortFactory::createLaserServiceOut(const std::string &serviceName)

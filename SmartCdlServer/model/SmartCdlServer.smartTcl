@@ -666,6 +666,7 @@
 
                 (cond
                   ((< counter 3)
+                    (format t "Clean current map! ~%")
                     (tcl-param :server 'mapper :slot 'CommNavigationObjects.MapperParams.CURLOADLTM))
 
                   (T
@@ -673,7 +674,7 @@
                       ;(tcl-state :server 'pathnavigation :state "Neutral")
 ;;TODO V3
 ;;                      (update-robot-state :state 'ERROR)
-                      (update-running-job-state 'ERROR "GotoPosition PATH_BLOCKED")
+;                      (update-running-job-state 'ERROR "GotoPosition PATH_BLOCKED")
                       (tcl-state :server 'cdl :state "Neutral")
                       (tcl-state :server 'purepursuit :state "Neutral")
                       (tcl-state :server 'mapper :state "Neutral")
@@ -707,7 +708,7 @@
                     ;(tcl-state :server 'pathnavigation :state "Neutral")
 ;;TODO V3
 ;;                    (update-robot-state :state 'ERROR)
-                    (update-running-job-state 'ERROR "GotoPosition PATH_BLOCKED")
+;                    (update-running-job-state 'ERROR "GotoPosition PATH_BLOCKED")
                     (tcl-state :server 'cdl :state "Neutral")
                     (tcl-state :server 'mapper :state "Neutral")
                     (tcl-state :server 'planner :state "Neutral")

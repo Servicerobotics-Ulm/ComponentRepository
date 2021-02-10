@@ -74,9 +74,13 @@ SmartJoystickNavigation::SmartJoystickNavigation()
 	connections.joystickNavTask.priority = -1;
 	connections.joystickNavTask.cpuAffinity = -1;
 	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of PlainOpcUaSmartJoystickNavigationExtension
 	
 	// initialize members of SmartJoystickNavigationROS1InterfacesExtension
+	
+	// initialize members of SmartJoystickNavigationROSExtension
 	
 	// initialize members of SmartJoystickNavigationRestInterfacesExtension
 	
@@ -205,9 +209,13 @@ void SmartJoystickNavigation::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		// initializations of PlainOpcUaSmartJoystickNavigationExtension
 		
 		// initializations of SmartJoystickNavigationROS1InterfacesExtension
+		
+		// initializations of SmartJoystickNavigationROSExtension
 		
 		// initializations of SmartJoystickNavigationRestInterfacesExtension
 		
@@ -425,9 +433,13 @@ void SmartJoystickNavigation::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of PlainOpcUaSmartJoystickNavigationExtension
 	
 	// destruction of SmartJoystickNavigationROS1InterfacesExtension
+	
+	// destruction of SmartJoystickNavigationROSExtension
 	
 	// destruction of SmartJoystickNavigationRestInterfacesExtension
 	
@@ -542,9 +554,13 @@ void SmartJoystickNavigation::loadParameter(int argc, char *argv[])
 			parameter.getInteger("JoystickNavTask", "cpuAffinity", connections.joystickNavTask.cpuAffinity);
 		}
 		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
+		
 		// load parameters for PlainOpcUaSmartJoystickNavigationExtension
 		
 		// load parameters for SmartJoystickNavigationROS1InterfacesExtension
+		
+		// load parameters for SmartJoystickNavigationROSExtension
 		
 		// load parameters for SmartJoystickNavigationRestInterfacesExtension
 		

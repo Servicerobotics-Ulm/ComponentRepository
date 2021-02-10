@@ -29,7 +29,11 @@
 class ComponentCartographerPortFactoryInterface;
 class ComponentCartographerExtension;
 
+// includes for ComponentCartographerROS1InterfacesExtension
+
 // includes for ComponentCartographerROSExtension
+
+// includes for ComponentCartographerRestInterfacesExtension
 
 // includes for OpcUaBackendComponentGeneratorExtension
 
@@ -48,11 +52,15 @@ class ComponentCartographerExtension;
 
 // include tasks
 #include "CartographerTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 #include "LaserServiceInUpcallManager.hh"
+#include "LaserServiceInInputCollector.hh"
 
 // include input-handler(s)
 // include request-handler(s)
+// output port wrappers
+#include "GridMapPushServiceOutWrapper.hh"
+#include "Localized_robot_poseWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -112,6 +120,7 @@ public:
 	Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> *laserServiceIn;
 	Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan> *laserServiceInInputTaskTrigger;
 	LaserServiceInUpcallManager *laserServiceInUpcallManager;
+	LaserServiceInInputCollector *laserServiceInInputCollector;
 	
 	// define request-ports
 	
@@ -119,13 +128,19 @@ public:
 	
 	// define output-ports
 	Smart::IPushServerPattern<CommNavigationObjects::CommGridMap> *gridMapPushServiceOut;
+	GridMapPushServiceOutWrapper *gridMapPushServiceOutWrapper;
 	Smart::ISendClientPattern<CommBasicObjects::CommBasePositionUpdate> *localized_robot_pose;
+	Localized_robot_poseWrapper *localized_robot_poseWrapper;
 	
 	// define answer-ports
 	
 	// define request-handlers
 	
+	// definitions of ComponentCartographerROS1InterfacesExtension
+	
 	// definitions of ComponentCartographerROSExtension
+	
+	// definitions of ComponentCartographerRestInterfacesExtension
 	
 	// definitions of OpcUaBackendComponentGeneratorExtension
 	
@@ -254,7 +269,11 @@ public:
 			std::string roboticMiddleware;
 		} localized_robot_pose;
 		
+		// -- parameters for ComponentCartographerROS1InterfacesExtension
+		
 		// -- parameters for ComponentCartographerROSExtension
+		
+		// -- parameters for ComponentCartographerRestInterfacesExtension
 		
 		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		

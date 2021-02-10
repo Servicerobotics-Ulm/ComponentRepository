@@ -55,7 +55,15 @@ SmartJoystickServer::SmartJoystickServer()
 	connections.joystickTask.priority = -1;
 	connections.joystickTask.cpuAffinity = -1;
 	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of PlainOpcUaSmartJoystickServerExtension
+	
+	// initialize members of SmartJoystickServerROS1InterfacesExtension
+	
+	// initialize members of SmartJoystickServerROSExtension
+	
+	// initialize members of SmartJoystickServerRestInterfacesExtension
 	
 }
 
@@ -144,7 +152,15 @@ void SmartJoystickServer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		// initializations of PlainOpcUaSmartJoystickServerExtension
+		
+		// initializations of SmartJoystickServerROS1InterfacesExtension
+		
+		// initializations of SmartJoystickServerROSExtension
+		
+		// initializations of SmartJoystickServerRestInterfacesExtension
 		
 		
 		// initialize all registered port-factories
@@ -313,7 +329,15 @@ void SmartJoystickServer::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of PlainOpcUaSmartJoystickServerExtension
+	
+	// destruction of SmartJoystickServerROS1InterfacesExtension
+	
+	// destruction of SmartJoystickServerROSExtension
+	
+	// destruction of SmartJoystickServerRestInterfacesExtension
 	
 }
 
@@ -405,7 +429,15 @@ void SmartJoystickServer::loadParameter(int argc, char *argv[])
 			parameter.getInteger("JoystickTask", "cpuAffinity", connections.joystickTask.cpuAffinity);
 		}
 		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
+		
 		// load parameters for PlainOpcUaSmartJoystickServerExtension
+		
+		// load parameters for SmartJoystickServerROS1InterfacesExtension
+		
+		// load parameters for SmartJoystickServerROSExtension
+		
+		// load parameters for SmartJoystickServerRestInterfacesExtension
 		
 		
 		// load parameters for all registered component-extensions

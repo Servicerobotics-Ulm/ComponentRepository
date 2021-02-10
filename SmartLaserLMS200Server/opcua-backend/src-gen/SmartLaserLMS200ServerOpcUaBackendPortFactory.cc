@@ -70,7 +70,7 @@ Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMob
 	return new SeRoNet::OPCUA::Server::QueryServer<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan>(componentImpl, serviceName);
 }
 
-Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * SmartLaserLMS200ServerOpcUaBackendPortFactory::createLaserScanOut(const std::string &serviceName)
+Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * SmartLaserLMS200ServerOpcUaBackendPortFactory::createLaserServiceOut(const std::string &serviceName)
 {
 	return new SeRoNet::OPCUA::Server::PushServer<CommBasicObjects::CommMobileLaserScan>(componentImpl, serviceName);
 }

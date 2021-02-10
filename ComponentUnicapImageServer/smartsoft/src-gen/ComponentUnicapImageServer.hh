@@ -29,6 +29,14 @@
 class ComponentUnicapImageServerPortFactoryInterface;
 class ComponentUnicapImageServerExtension;
 
+// includes for ComponentUnicapImageServerROS1InterfacesExtension
+
+// includes for ComponentUnicapImageServerROSExtension
+
+// includes for ComponentUnicapImageServerRestInterfacesExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for PlainOpcUaComponentUnicapImageServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -137,6 +145,14 @@ public:
 	
 	// define request-handlers
 	ImageQueryHandler *imageQueryHandler;
+	
+	// definitions of ComponentUnicapImageServerROS1InterfacesExtension
+	
+	// definitions of ComponentUnicapImageServerROSExtension
+	
+	// definitions of ComponentUnicapImageServerRestInterfacesExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentUnicapImageServerExtension
 	
@@ -266,6 +282,14 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} ptuPushTimedClient;
+		
+		// -- parameters for ComponentUnicapImageServerROS1InterfacesExtension
+		
+		// -- parameters for ComponentUnicapImageServerROSExtension
+		
+		// -- parameters for ComponentUnicapImageServerRestInterfacesExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentUnicapImageServerExtension
 		

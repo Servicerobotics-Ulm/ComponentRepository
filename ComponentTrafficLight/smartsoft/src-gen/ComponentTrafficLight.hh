@@ -29,6 +29,14 @@
 class ComponentTrafficLightPortFactoryInterface;
 class ComponentTrafficLightExtension;
 
+// includes for ComponentTrafficLightROS1InterfacesExtension
+
+// includes for ComponentTrafficLightROSExtension
+
+// includes for ComponentTrafficLightRestInterfacesExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for PlainOpcUaComponentTrafficLightExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -105,6 +113,14 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
+	
+	// definitions of ComponentTrafficLightROS1InterfacesExtension
+	
+	// definitions of ComponentTrafficLightROSExtension
+	
+	// definitions of ComponentTrafficLightRestInterfacesExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentTrafficLightExtension
 	
@@ -197,6 +213,14 @@ public:
 		} trafficLightServiceIn;
 	
 		//--- client port parameter ---
+		
+		// -- parameters for ComponentTrafficLightROS1InterfacesExtension
+		
+		// -- parameters for ComponentTrafficLightROSExtension
+		
+		// -- parameters for ComponentTrafficLightRestInterfacesExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentTrafficLightExtension
 		

@@ -18,6 +18,8 @@
 
 #include "aceSmartSoft.hh"
 
+#include "nlohmann/json.hpp"
+
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -170,6 +172,31 @@ public:
 		// External params
 		
 		// Instance params (encapsulated in a wrapper class for each instantiated parameter repository)
+	}
+	
+	std::string getAsJSONString() {
+		nlohmann::json param;
+	
+		param["RobotinoLaser_ini"] = nlohmann::json {
+			{"activatePushNewest" , getRobotinoLaser_ini().getActivatePushNewest()},
+			{"activate_safetyEventServer" , getRobotinoLaser_ini().getActivate_safetyEventServer()},
+			{"laserPosX" , getRobotinoLaser_ini().getLaserPosX()},
+			{"laserPosY" , getRobotinoLaser_ini().getLaserPosY()},
+			{"laserPosZ" , getRobotinoLaser_ini().getLaserPosZ()},
+			{"laserSafetyDist" , getRobotinoLaser_ini().getLaserSafetyDist()},
+			{"laserWarningSafetyDist" , getRobotinoLaser_ini().getLaserWarningSafetyDist()},
+			{"max_range" , getRobotinoLaser_ini().getMax_range()},
+			{"min_range" , getRobotinoLaser_ini().getMin_range()},
+			{"opening_angle" , getRobotinoLaser_ini().getOpening_angle()},
+			{"pitch" , getRobotinoLaser_ini().getPitch()},
+			{"robotinoAddress" , getRobotinoLaser_ini().getRobotinoAddress()},
+			{"roll" , getRobotinoLaser_ini().getRoll()},
+			{"verbose" , getRobotinoLaser_ini().getVerbose()},
+			{"yaw" , getRobotinoLaser_ini().getYaw()}
+		};
+	
+		
+		return param.dump();
 	}
 };
 

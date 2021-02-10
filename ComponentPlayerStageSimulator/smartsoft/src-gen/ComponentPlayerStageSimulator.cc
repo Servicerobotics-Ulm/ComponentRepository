@@ -96,6 +96,14 @@ ComponentPlayerStageSimulator::ComponentPlayerStageSimulator()
 	connections.localizationUpdateHandler.prescale = 1;
 	connections.navigationVelocityHandler.prescale = 1;
 	
+	// initialize members of ComponentPlayerStageSimulatorROS1InterfacesExtension
+	
+	// initialize members of ComponentPlayerStageSimulatorROSExtension
+	
+	// initialize members of ComponentPlayerStageSimulatorRestInterfacesExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of PlainOpcUaComponentPlayerStageSimulatorExtension
 	
 }
@@ -200,6 +208,14 @@ void ComponentPlayerStageSimulator::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
+		
+		// initializations of ComponentPlayerStageSimulatorROS1InterfacesExtension
+		
+		// initializations of ComponentPlayerStageSimulatorROSExtension
+		
+		// initializations of ComponentPlayerStageSimulatorRestInterfacesExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentPlayerStageSimulatorExtension
 		
@@ -458,6 +474,14 @@ void ComponentPlayerStageSimulator::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of ComponentPlayerStageSimulatorROS1InterfacesExtension
+	
+	// destruction of ComponentPlayerStageSimulatorROSExtension
+	
+	// destruction of ComponentPlayerStageSimulatorRestInterfacesExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of PlainOpcUaComponentPlayerStageSimulatorExtension
 	
 }
@@ -608,6 +632,14 @@ void ComponentPlayerStageSimulator::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("NavigationVelocityHandler", "prescale")) {
 			parameter.getInteger("NavigationVelocityHandler", "prescale", connections.navigationVelocityHandler.prescale);
 		}
+		
+		// load parameters for ComponentPlayerStageSimulatorROS1InterfacesExtension
+		
+		// load parameters for ComponentPlayerStageSimulatorROSExtension
+		
+		// load parameters for ComponentPlayerStageSimulatorRestInterfacesExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentPlayerStageSimulatorExtension
 		

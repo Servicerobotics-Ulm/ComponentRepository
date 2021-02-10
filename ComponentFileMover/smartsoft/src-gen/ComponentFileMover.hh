@@ -31,7 +31,11 @@ class ComponentFileMoverExtension;
 
 // includes for ComponentFileMoverROS1InterfacesExtension
 
+// includes for ComponentFileMoverROSExtension
+
 // includes for ComponentFileMoverRestInterfacesExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
 
 // includes for PlainOpcUaComponentFileMoverExtension
 // include plain OPC UA device clients
@@ -135,7 +139,11 @@ public:
 	
 	// definitions of ComponentFileMoverROS1InterfacesExtension
 	
+	// definitions of ComponentFileMoverROSExtension
+	
 	// definitions of ComponentFileMoverRestInterfacesExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentFileMoverExtension
 	
@@ -264,7 +272,11 @@ public:
 		
 		// -- parameters for ComponentFileMoverROS1InterfacesExtension
 		
+		// -- parameters for ComponentFileMoverROSExtension
+		
 		// -- parameters for ComponentFileMoverRestInterfacesExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentFileMoverExtension
 		

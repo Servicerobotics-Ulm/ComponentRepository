@@ -1,13 +1,8 @@
 {
 	"name": "SmartJoystickNavigation",
 	"shortDescription": "The SmartJoystickNavigation component takes joystick input commands (CommJoystick) and translates them to v/omega navigation commands (CommNavigationVelocity).",
-	"description": "",
-	"class": "component",
 	"type": "Toolify",
-	"assetDependencies": [
-		{ "id": "50f0d34b-063a-4c51-ab94-0b3b6a8c2d68", "type": "domainmodel", "version": "--" },
-		{ "id": "8635cbdb-ef39-4a2b-888e-b1731e25988b", "type": "domainmodel", "version": "--" }
-	],
+	"description": "",
 	"purposes": ["Navigation"],
 	"marketName": "Transform Joystick to Navigation Commands",
 	"supplier": "Servicerobotik Ulm",
@@ -28,5 +23,12 @@
 			"commObjects": "CommBasicObjects::CommNavigationVelocity",
 			"description": ""
 		}
+	],
+	"mainstates": [
+		"Neutral"
+	],
+	"parameters": [
+	],
+	"triggers": [
 	]
 }

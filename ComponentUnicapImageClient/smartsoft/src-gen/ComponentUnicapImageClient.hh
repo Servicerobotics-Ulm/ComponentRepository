@@ -29,7 +29,11 @@
 class ComponentUnicapImageClientPortFactoryInterface;
 class ComponentUnicapImageClientExtension;
 
+// includes for ComponentUnicapImageClientROS1InterfacesExtension
+
 // includes for ComponentUnicapImageClientROSExtension
+
+// includes for ComponentUnicapImageClientRestInterfacesExtension
 
 // includes for OpcUaBackendComponentGeneratorExtension
 
@@ -47,11 +51,13 @@ class ComponentUnicapImageClientExtension;
 // include tasks
 #include "GuiTask.hh"
 #include "ImageTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 #include "PushNewestClientUpcallManager.hh"
+#include "PushNewestClientInputCollector.hh"
 
 // include input-handler(s)
 // include request-handler(s)
+// output port wrappers
 
 // include handler
 #include "CompHandler.hh"
@@ -113,6 +119,7 @@ public:
 	Smart::IPushClientPattern<DomainVision::CommVideoImage> *pushNewestClient;
 	Smart::InputTaskTrigger<DomainVision::CommVideoImage> *pushNewestClientInputTaskTrigger;
 	PushNewestClientUpcallManager *pushNewestClientUpcallManager;
+	PushNewestClientInputCollector *pushNewestClientInputCollector;
 	
 	// define request-ports
 	Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> *queryClient;
@@ -125,7 +132,11 @@ public:
 	
 	// define request-handlers
 	
+	// definitions of ComponentUnicapImageClientROS1InterfacesExtension
+	
 	// definitions of ComponentUnicapImageClientROSExtension
+	
+	// definitions of ComponentUnicapImageClientRestInterfacesExtension
 	
 	// definitions of OpcUaBackendComponentGeneratorExtension
 	
@@ -266,7 +277,11 @@ public:
 			std::string roboticMiddleware;
 		} queryClient;
 		
+		// -- parameters for ComponentUnicapImageClientROS1InterfacesExtension
+		
 		// -- parameters for ComponentUnicapImageClientROSExtension
+		
+		// -- parameters for ComponentUnicapImageClientRestInterfacesExtension
 		
 		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		

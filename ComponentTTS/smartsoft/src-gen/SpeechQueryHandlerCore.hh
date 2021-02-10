@@ -18,6 +18,7 @@
 		
 #include "aceSmartSoft.hh"
 
+
 #include <CommBasicObjects/CommPropertySet.hh>
 #include <DomainSpeech/CommSpeechOutputMessage.hh>
 
@@ -31,9 +32,10 @@ class SpeechQueryHandlerCore
 ,	public Smart::TaskTriggerSubject
 {
 private:
-virtual void handle_input(const std::pair<Smart::QueryIdPtr,DomainSpeech::CommSpeechOutputMessage> &input) override {
-	this->handleQuery(input.first, input.second);
-}
+	// inputs are directly propagated to the implementation (passive handler)
+	virtual void handle_input(const std::pair<Smart::QueryIdPtr,DomainSpeech::CommSpeechOutputMessage> &input) override {
+		this->handleQuery(input.first, input.second);
+	}
 
 
 	virtual void updateAllCommObjects();
@@ -56,7 +58,7 @@ public:
 	using IQueryServer = Smart::IQueryServerPattern<DomainSpeech::CommSpeechOutputMessage, CommBasicObjects::CommPropertySet>;
 	using QueryId = Smart::QueryIdPtr;
 	SpeechQueryHandlerCore(IQueryServer *server);
-	virtual ~SpeechQueryHandlerCore() = default;
+	virtual ~SpeechQueryHandlerCore();
 	
 protected:
 	IQueryServer *server;

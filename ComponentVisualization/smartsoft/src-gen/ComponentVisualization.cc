@@ -55,6 +55,8 @@ ComponentVisualization::ComponentVisualization()
 	laser2TaskTrigger = NULL;
 	laser3Task = NULL;
 	laser3TaskTrigger = NULL;
+	ltmMapTask = NULL;
+	ltmMapTaskTrigger = NULL;
 	managementTask = NULL;
 	managementTaskTrigger = NULL;
 	markerListDetectionServiceIn = NULL;
@@ -65,6 +67,8 @@ ComponentVisualization::ComponentVisualization()
 	markerListTaskTrigger = NULL;
 	personDetectionTask = NULL;
 	personDetectionTaskTrigger = NULL;
+	plannerGoalTask = NULL;
+	plannerGoalTaskTrigger = NULL;
 	rGBDImageQueryServiceReq = NULL;
 	rGBDTask = NULL;
 	rGBDTaskTrigger = NULL;
@@ -108,6 +112,10 @@ ComponentVisualization::ComponentVisualization()
 	personDetectionEventClientUpcallManager = NULL;
 	personDetectionEventClientInputCollector = NULL;
 	personDetectionQueryClient = NULL;
+	plannerGoalPushClient = NULL;
+	plannerGoalPushClientInputTaskTrigger = NULL;
+	plannerGoalPushClientUpcallManager = NULL;
+	plannerGoalPushClientInputCollector = NULL;
 	rgbdPushNewestClient = NULL;
 	rgbdPushNewestClientInputTaskTrigger = NULL;
 	rgbdPushNewestClientUpcallManager = NULL;
@@ -215,6 +223,12 @@ ComponentVisualization::ComponentVisualization()
 	connections.personDetectionQueryClient.serviceName = "unknown";
 	connections.personDetectionQueryClient.interval = 1;
 	connections.personDetectionQueryClient.roboticMiddleware = "ACE_SmartSoft";
+	connections.plannerGoalPushClient.initialConnect = false;
+	connections.plannerGoalPushClient.wiringName = "plannerGoalPushClient";
+	connections.plannerGoalPushClient.serverName = "unknown";
+	connections.plannerGoalPushClient.serviceName = "unknown";
+	connections.plannerGoalPushClient.interval = 1;
+	connections.plannerGoalPushClient.roboticMiddleware = "ACE_SmartSoft";
 	connections.rgbdPushNewestClient.initialConnect = false;
 	connections.rgbdPushNewestClient.wiringName = "rgbdPushNewestClient";
 	connections.rgbdPushNewestClient.serverName = "unknown";
@@ -287,6 +301,14 @@ ComponentVisualization::ComponentVisualization()
 	connections.laser3Task.scheduler = "DEFAULT";
 	connections.laser3Task.priority = -1;
 	connections.laser3Task.cpuAffinity = -1;
+	connections.ltmMapTask.minActFreq = 0.0;
+	connections.ltmMapTask.maxActFreq = 0.0;
+	connections.ltmMapTask.trigger = "PeriodicTimer";
+	connections.ltmMapTask.periodicActFreq = 0.017;
+	// scheduling default parameters
+	connections.ltmMapTask.scheduler = "DEFAULT";
+	connections.ltmMapTask.priority = -1;
+	connections.ltmMapTask.cpuAffinity = -1;
 	connections.managementTask.minActFreq = 0.0;
 	connections.managementTask.maxActFreq = 0.0;
 	// scheduling default parameters
@@ -305,6 +327,12 @@ ComponentVisualization::ComponentVisualization()
 	connections.personDetectionTask.scheduler = "DEFAULT";
 	connections.personDetectionTask.priority = -1;
 	connections.personDetectionTask.cpuAffinity = -1;
+	connections.plannerGoalTask.minActFreq = 0.0;
+	connections.plannerGoalTask.maxActFreq = 0.0;
+	// scheduling default parameters
+	connections.plannerGoalTask.scheduler = "DEFAULT";
+	connections.plannerGoalTask.priority = -1;
+	connections.plannerGoalTask.cpuAffinity = -1;
 	connections.rGBDTask.minActFreq = 0.0;
 	connections.rGBDTask.maxActFreq = 0.0;
 	// scheduling default parameters
@@ -317,6 +345,14 @@ ComponentVisualization::ComponentVisualization()
 	connections.uSArTask.scheduler = "DEFAULT";
 	connections.uSArTask.priority = -1;
 	connections.uSArTask.cpuAffinity = -1;
+	
+	// initialize members of ComponentVisualizationROS1InterfacesExtension
+	
+	// initialize members of ComponentVisualizationROSExtension
+	
+	// initialize members of ComponentVisualizationRestInterfacesExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentVisualizationExtension
 	
@@ -584,6 +620,23 @@ Smart::StatusCode ComponentVisualization::connectPersonDetectionQueryClient(cons
 	std::cout << "connected.\n";
 	return status;
 }
+Smart::StatusCode ComponentVisualization::connectPlannerGoalPushClient(const std::string &serverName, const std::string &serviceName) {
+	Smart::StatusCode status;
+	
+	if(connections.plannerGoalPushClient.initialConnect == false) {
+		return Smart::SMART_OK;
+	}
+	std::cout << "connecting to: " << serverName << "; " << serviceName << std::endl;
+	status = plannerGoalPushClient->connect(serverName, serviceName);
+	while(status != Smart::SMART_OK)
+	{
+		ACE_OS::sleep(ACE_Time_Value(0,500000));
+		status = COMP->plannerGoalPushClient->connect(serverName, serviceName);
+	}
+	std::cout << "connected.\n";
+	plannerGoalPushClient->subscribe(connections.plannerGoalPushClient.interval);
+	return status;
+}
 Smart::StatusCode ComponentVisualization::connectRgbdPushNewestClient(const std::string &serverName, const std::string &serviceName) {
 	Smart::StatusCode status;
 	
@@ -671,6 +724,8 @@ Smart::StatusCode ComponentVisualization::connectAndStartAllServices() {
 	status = connectPersonDetectionEventClient(connections.personDetectionEventClient.serverName, connections.personDetectionEventClient.serviceName);
 	if(status != Smart::SMART_OK) return status;
 	status = connectPersonDetectionQueryClient(connections.personDetectionQueryClient.serverName, connections.personDetectionQueryClient.serviceName);
+	if(status != Smart::SMART_OK) return status;
+	status = connectPlannerGoalPushClient(connections.plannerGoalPushClient.serverName, connections.plannerGoalPushClient.serviceName);
 	if(status != Smart::SMART_OK) return status;
 	status = connectRgbdPushNewestClient(connections.rgbdPushNewestClient.serverName, connections.rgbdPushNewestClient.serviceName);
 	if(status != Smart::SMART_OK) return status;
@@ -811,6 +866,20 @@ void ComponentVisualization::startAllTasks() {
 	} else {
 		laser3Task->start();
 	}
+	// start task LtmMapTask
+	if(connections.ltmMapTask.scheduler != "DEFAULT") {
+		ACE_Sched_Params ltmMapTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
+		if(connections.ltmMapTask.scheduler == "FIFO") {
+			ltmMapTask_SchedParams.policy(ACE_SCHED_FIFO);
+			ltmMapTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+		} else if(connections.ltmMapTask.scheduler == "RR") {
+			ltmMapTask_SchedParams.policy(ACE_SCHED_RR);
+			ltmMapTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+		}
+		ltmMapTask->start(ltmMapTask_SchedParams, connections.ltmMapTask.cpuAffinity);
+	} else {
+		ltmMapTask->start();
+	}
 	// start task ManagementTask
 	if(connections.managementTask.scheduler != "DEFAULT") {
 		ACE_Sched_Params managementTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
@@ -852,6 +921,20 @@ void ComponentVisualization::startAllTasks() {
 		personDetectionTask->start(personDetectionTask_SchedParams, connections.personDetectionTask.cpuAffinity);
 	} else {
 		personDetectionTask->start();
+	}
+	// start task PlannerGoalTask
+	if(connections.plannerGoalTask.scheduler != "DEFAULT") {
+		ACE_Sched_Params plannerGoalTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
+		if(connections.plannerGoalTask.scheduler == "FIFO") {
+			plannerGoalTask_SchedParams.policy(ACE_SCHED_FIFO);
+			plannerGoalTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+		} else if(connections.plannerGoalTask.scheduler == "RR") {
+			plannerGoalTask_SchedParams.policy(ACE_SCHED_RR);
+			plannerGoalTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+		}
+		plannerGoalTask->start(plannerGoalTask_SchedParams, connections.plannerGoalTask.cpuAffinity);
+	} else {
+		plannerGoalTask->start();
 	}
 	// start task RGBDTask
 	if(connections.rGBDTask.scheduler != "DEFAULT") {
@@ -903,6 +986,7 @@ Smart::TaskTriggerSubject* ComponentVisualization::getInputTaskTriggerFromString
 	if(client == "laserClient2") return laserClient2InputTaskTrigger;
 	if(client == "laserClient3") return laserClient3InputTaskTrigger;
 	if(client == "personDetectionEventClient") return personDetectionEventClientInputTaskTrigger;
+	if(client == "plannerGoalPushClient") return plannerGoalPushClientInputTaskTrigger;
 	if(client == "rgbdPushNewestClient") return rgbdPushNewestClientInputTaskTrigger;
 	if(client == "rgbdQueryClient") return rgbdQueryClientInputTaskTrigger;
 	if(client == "ultrasonicPushNewestClient") return ultrasonicPushNewestClientInputTaskTrigger;
@@ -921,6 +1005,14 @@ void ComponentVisualization::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
+		
+		// initializations of ComponentVisualizationROS1InterfacesExtension
+		
+		// initializations of ComponentVisualizationROSExtension
+		
+		// initializations of ComponentVisualizationRestInterfacesExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentVisualizationExtension
 		
@@ -974,6 +1066,7 @@ void ComponentVisualization::init(int argc, char *argv[])
 		ltmQueryClient = portFactoryRegistry[connections.ltmQueryClient.roboticMiddleware]->createLtmQueryClient();
 		personDetectionEventClient = portFactoryRegistry[connections.personDetectionEventClient.roboticMiddleware]->createPersonDetectionEventClient();
 		personDetectionQueryClient = portFactoryRegistry[connections.personDetectionQueryClient.roboticMiddleware]->createPersonDetectionQueryClient();
+		plannerGoalPushClient = portFactoryRegistry[connections.plannerGoalPushClient.roboticMiddleware]->createPlannerGoalPushClient();
 		rgbdPushNewestClient = portFactoryRegistry[connections.rgbdPushNewestClient.roboticMiddleware]->createRgbdPushNewestClient();
 		rgbdQueryClient = portFactoryRegistry[connections.rgbdQueryClient.roboticMiddleware]->createRgbdQueryClient();
 		ultrasonicPushNewestClient = portFactoryRegistry[connections.ultrasonicPushNewestClient.roboticMiddleware]->createUltrasonicPushNewestClient();
@@ -1012,6 +1105,9 @@ void ComponentVisualization::init(int argc, char *argv[])
 		personDetectionEventClientInputCollector = new PersonDetectionEventClientInputCollector(personDetectionEventClient);
 		personDetectionEventClientInputTaskTrigger = new Smart::InputTaskTrigger<Smart::EventInputType<CommTrackingObjects::CommPersonDetectionEventResult>>(personDetectionEventClientInputCollector);
 		personDetectionEventClientUpcallManager = new PersonDetectionEventClientUpcallManager(personDetectionEventClientInputCollector);
+		plannerGoalPushClientInputCollector = new PlannerGoalPushClientInputCollector(plannerGoalPushClient);
+		plannerGoalPushClientInputTaskTrigger = new Smart::InputTaskTrigger<CommNavigationObjects::CommPlannerGoal>(plannerGoalPushClientInputCollector);
+		plannerGoalPushClientUpcallManager = new PlannerGoalPushClientUpcallManager(plannerGoalPushClientInputCollector);
 		rgbdPushNewestClientInputCollector = new RgbdPushNewestClientInputCollector(rgbdPushNewestClient);
 		rgbdPushNewestClientInputTaskTrigger = new Smart::InputTaskTrigger<DomainVision::CommRGBDImage>(rgbdPushNewestClientInputCollector);
 		rgbdPushNewestClientUpcallManager = new RgbdPushNewestClientUpcallManager(rgbdPushNewestClientInputCollector);
@@ -1092,6 +1188,10 @@ void ComponentVisualization::init(int argc, char *argv[])
 		if(connections.personDetectionQueryClient.roboticMiddleware == "ACE_SmartSoft") {
 			//FIXME: this must also work with other implementations
 			dynamic_cast<SmartACE::QueryClient<CommTrackingObjects::CommPersonId, CommTrackingObjects::CommDetectedPerson>*>(personDetectionQueryClient)->add(wiringSlave, connections.personDetectionQueryClient.wiringName);
+		}
+		if(connections.plannerGoalPushClient.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::PushClient<CommNavigationObjects::CommPlannerGoal>*>(plannerGoalPushClient)->add(wiringSlave, connections.plannerGoalPushClient.wiringName);
 		}
 		if(connections.rgbdPushNewestClient.roboticMiddleware == "ACE_SmartSoft") {
 			//FIXME: this must also work with other implementations
@@ -1335,6 +1435,44 @@ void ComponentVisualization::init(int argc, char *argv[])
 			}
 		} 
 		
+		// create Task LtmMapTask
+		ltmMapTask = new LtmMapTask(component);
+		// configure input-links
+		// configure task-trigger (if task is configurable)
+		if(connections.ltmMapTask.trigger == "PeriodicTimer") {
+			// create PeriodicTimerTrigger
+			int microseconds = 1000*1000 / connections.ltmMapTask.periodicActFreq;
+			if(microseconds > 0) {
+				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
+				triggerPtr->attach(ltmMapTask);
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				// store trigger in class member
+				ltmMapTaskTrigger = triggerPtr;
+			} else {
+				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task LtmMapTask" << std::endl;
+			}
+		} else if(connections.ltmMapTask.trigger == "DataTriggered") {
+			ltmMapTaskTrigger = getInputTaskTriggerFromString(connections.ltmMapTask.inPortRef);
+			if(ltmMapTaskTrigger != NULL) {
+				ltmMapTaskTrigger->attach(ltmMapTask, connections.ltmMapTask.prescale);
+			} else {
+				std::cerr << "ERROR: could not set-up InPort " << connections.ltmMapTask.inPortRef << " as activation source for Task LtmMapTask" << std::endl;
+			}
+		} else
+		{
+			// setup default task-trigger as PeriodicTimer
+			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
+			int microseconds = 1000*1000 / 0.017;
+			if(microseconds > 0) {
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				triggerPtr->attach(ltmMapTask);
+				// store trigger in class member
+				ltmMapTaskTrigger = triggerPtr;
+			} else {
+				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task LtmMapTask" << std::endl;
+			}
+		}
+		
 		// create Task ManagementTask
 		managementTask = new ManagementTask(component);
 		// configure input-links
@@ -1407,6 +1545,31 @@ void ComponentVisualization::init(int argc, char *argv[])
 				personDetectionTaskTrigger->attach(personDetectionTask, connections.personDetectionTask.prescale);
 			} else {
 				std::cerr << "ERROR: could not set-up InPort " << connections.personDetectionTask.inPortRef << " as activation source for Task PersonDetectionTask" << std::endl;
+			}
+		} 
+		
+		// create Task PlannerGoalTask
+		plannerGoalTask = new PlannerGoalTask(component);
+		// configure input-links
+		// configure task-trigger (if task is configurable)
+		if(connections.plannerGoalTask.trigger == "PeriodicTimer") {
+			// create PeriodicTimerTrigger
+			int microseconds = 1000*1000 / connections.plannerGoalTask.periodicActFreq;
+			if(microseconds > 0) {
+				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
+				triggerPtr->attach(plannerGoalTask);
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				// store trigger in class member
+				plannerGoalTaskTrigger = triggerPtr;
+			} else {
+				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task PlannerGoalTask" << std::endl;
+			}
+		} else if(connections.plannerGoalTask.trigger == "DataTriggered") {
+			plannerGoalTaskTrigger = getInputTaskTriggerFromString(connections.plannerGoalTask.inPortRef);
+			if(plannerGoalTaskTrigger != NULL) {
+				plannerGoalTaskTrigger->attach(plannerGoalTask, connections.plannerGoalTask.prescale);
+			} else {
+				std::cerr << "ERROR: could not set-up InPort " << connections.plannerGoalTask.inPortRef << " as activation source for Task PlannerGoalTask" << std::endl;
 			}
 		} 
 		
@@ -1576,6 +1739,12 @@ void ComponentVisualization::fini()
 	}
 	// unlink all UpcallManagers
 	// unlink the TaskTrigger
+	if(ltmMapTaskTrigger != NULL){
+		ltmMapTaskTrigger->detach(ltmMapTask);
+		delete ltmMapTask;
+	}
+	// unlink all UpcallManagers
+	// unlink the TaskTrigger
 	if(managementTaskTrigger != NULL){
 		managementTaskTrigger->detach(managementTask);
 		delete managementTask;
@@ -1591,6 +1760,12 @@ void ComponentVisualization::fini()
 	if(personDetectionTaskTrigger != NULL){
 		personDetectionTaskTrigger->detach(personDetectionTask);
 		delete personDetectionTask;
+	}
+	// unlink all UpcallManagers
+	// unlink the TaskTrigger
+	if(plannerGoalTaskTrigger != NULL){
+		plannerGoalTaskTrigger->detach(plannerGoalTask);
+		delete plannerGoalTask;
 	}
 	// unlink all UpcallManagers
 	// unlink the TaskTrigger
@@ -1641,6 +1816,9 @@ void ComponentVisualization::fini()
 	delete personDetectionEventClientInputTaskTrigger;
 	delete personDetectionEventClientUpcallManager;
 	delete personDetectionEventClientInputCollector;
+	delete plannerGoalPushClientInputTaskTrigger;
+	delete plannerGoalPushClientUpcallManager;
+	delete plannerGoalPushClientInputCollector;
 	delete rgbdPushNewestClientInputTaskTrigger;
 	delete rgbdPushNewestClientUpcallManager;
 	delete rgbdPushNewestClientInputCollector;
@@ -1666,6 +1844,7 @@ void ComponentVisualization::fini()
 	delete ltmQueryClient;
 	delete personDetectionEventClient;
 	delete personDetectionQueryClient;
+	delete plannerGoalPushClient;
 	delete rgbdPushNewestClient;
 	delete rgbdQueryClient;
 	delete ultrasonicPushNewestClient;
@@ -1695,6 +1874,14 @@ void ComponentVisualization::fini()
 	{
 		portFactory->second->destroy();
 	}
+	
+	// destruction of ComponentVisualizationROS1InterfacesExtension
+	
+	// destruction of ComponentVisualizationROSExtension
+	
+	// destruction of ComponentVisualizationRestInterfacesExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentVisualizationExtension
 	
@@ -1891,6 +2078,15 @@ void ComponentVisualization::loadParameter(int argc, char *argv[])
 		parameter.getString("personDetectionQueryClient", "wiringName", connections.personDetectionQueryClient.wiringName);
 		if(parameter.checkIfParameterExists("personDetectionQueryClient", "roboticMiddleware")) {
 			parameter.getString("personDetectionQueryClient", "roboticMiddleware", connections.personDetectionQueryClient.roboticMiddleware);
+		}
+		// load parameters for client plannerGoalPushClient
+		parameter.getBoolean("plannerGoalPushClient", "initialConnect", connections.plannerGoalPushClient.initialConnect);
+		parameter.getString("plannerGoalPushClient", "serviceName", connections.plannerGoalPushClient.serviceName);
+		parameter.getString("plannerGoalPushClient", "serverName", connections.plannerGoalPushClient.serverName);
+		parameter.getString("plannerGoalPushClient", "wiringName", connections.plannerGoalPushClient.wiringName);
+		parameter.getInteger("plannerGoalPushClient", "interval", connections.plannerGoalPushClient.interval);
+		if(parameter.checkIfParameterExists("plannerGoalPushClient", "roboticMiddleware")) {
+			parameter.getString("plannerGoalPushClient", "roboticMiddleware", connections.plannerGoalPushClient.roboticMiddleware);
 		}
 		// load parameters for client rgbdPushNewestClient
 		parameter.getBoolean("rgbdPushNewestClient", "initialConnect", connections.rgbdPushNewestClient.initialConnect);
@@ -2092,6 +2288,25 @@ void ComponentVisualization::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("Laser3Task", "cpuAffinity")) {
 			parameter.getInteger("Laser3Task", "cpuAffinity", connections.laser3Task.cpuAffinity);
 		}
+		// load parameters for task LtmMapTask
+		parameter.getDouble("LtmMapTask", "minActFreqHz", connections.ltmMapTask.minActFreq);
+		parameter.getDouble("LtmMapTask", "maxActFreqHz", connections.ltmMapTask.maxActFreq);
+		parameter.getString("LtmMapTask", "triggerType", connections.ltmMapTask.trigger);
+		if(connections.ltmMapTask.trigger == "PeriodicTimer") {
+			parameter.getDouble("LtmMapTask", "periodicActFreqHz", connections.ltmMapTask.periodicActFreq);
+		} else if(connections.ltmMapTask.trigger == "DataTriggered") {
+			parameter.getString("LtmMapTask", "inPortRef", connections.ltmMapTask.inPortRef);
+			parameter.getInteger("LtmMapTask", "prescale", connections.ltmMapTask.prescale);
+		}
+		if(parameter.checkIfParameterExists("LtmMapTask", "scheduler")) {
+			parameter.getString("LtmMapTask", "scheduler", connections.ltmMapTask.scheduler);
+		}
+		if(parameter.checkIfParameterExists("LtmMapTask", "priority")) {
+			parameter.getInteger("LtmMapTask", "priority", connections.ltmMapTask.priority);
+		}
+		if(parameter.checkIfParameterExists("LtmMapTask", "cpuAffinity")) {
+			parameter.getInteger("LtmMapTask", "cpuAffinity", connections.ltmMapTask.cpuAffinity);
+		}
 		// load parameters for task ManagementTask
 		parameter.getDouble("ManagementTask", "minActFreqHz", connections.managementTask.minActFreq);
 		parameter.getDouble("ManagementTask", "maxActFreqHz", connections.managementTask.maxActFreq);
@@ -2149,6 +2364,25 @@ void ComponentVisualization::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("PersonDetectionTask", "cpuAffinity")) {
 			parameter.getInteger("PersonDetectionTask", "cpuAffinity", connections.personDetectionTask.cpuAffinity);
 		}
+		// load parameters for task PlannerGoalTask
+		parameter.getDouble("PlannerGoalTask", "minActFreqHz", connections.plannerGoalTask.minActFreq);
+		parameter.getDouble("PlannerGoalTask", "maxActFreqHz", connections.plannerGoalTask.maxActFreq);
+		parameter.getString("PlannerGoalTask", "triggerType", connections.plannerGoalTask.trigger);
+		if(connections.plannerGoalTask.trigger == "PeriodicTimer") {
+			parameter.getDouble("PlannerGoalTask", "periodicActFreqHz", connections.plannerGoalTask.periodicActFreq);
+		} else if(connections.plannerGoalTask.trigger == "DataTriggered") {
+			parameter.getString("PlannerGoalTask", "inPortRef", connections.plannerGoalTask.inPortRef);
+			parameter.getInteger("PlannerGoalTask", "prescale", connections.plannerGoalTask.prescale);
+		}
+		if(parameter.checkIfParameterExists("PlannerGoalTask", "scheduler")) {
+			parameter.getString("PlannerGoalTask", "scheduler", connections.plannerGoalTask.scheduler);
+		}
+		if(parameter.checkIfParameterExists("PlannerGoalTask", "priority")) {
+			parameter.getInteger("PlannerGoalTask", "priority", connections.plannerGoalTask.priority);
+		}
+		if(parameter.checkIfParameterExists("PlannerGoalTask", "cpuAffinity")) {
+			parameter.getInteger("PlannerGoalTask", "cpuAffinity", connections.plannerGoalTask.cpuAffinity);
+		}
 		// load parameters for task RGBDTask
 		parameter.getDouble("RGBDTask", "minActFreqHz", connections.rGBDTask.minActFreq);
 		parameter.getDouble("RGBDTask", "maxActFreqHz", connections.rGBDTask.maxActFreq);
@@ -2187,6 +2421,14 @@ void ComponentVisualization::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("USArTask", "cpuAffinity")) {
 			parameter.getInteger("USArTask", "cpuAffinity", connections.uSArTask.cpuAffinity);
 		}
+		
+		// load parameters for ComponentVisualizationROS1InterfacesExtension
+		
+		// load parameters for ComponentVisualizationROSExtension
+		
+		// load parameters for ComponentVisualizationRestInterfacesExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentVisualizationExtension
 		

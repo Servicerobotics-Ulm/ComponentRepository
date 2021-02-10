@@ -18,6 +18,8 @@
 
 #include "aceSmartSoft.hh"
 
+#include "nlohmann/json.hpp"
+
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -203,6 +205,33 @@ public:
 		// External params
 		
 		// Instance params (encapsulated in a wrapper class for each instantiated parameter repository)
+	}
+	
+	std::string getAsJSONString() {
+		nlohmann::json param;
+	
+		param["Base"] = nlohmann::json {
+			{"base_a" , getBase().getBase_a()},
+			{"subscribe" , getBase().getSubscribe()},
+			{"x" , getBase().getX()},
+			{"y" , getBase().getY()},
+			{"z" , getBase().getZ()}
+		};
+		param["Laser"] = nlohmann::json {
+			{"azimuth" , getLaser().getAzimuth()},
+			{"baudrate" , getLaser().getBaudrate()},
+			{"device" , getLaser().getDevice()},
+			{"length_unit" , getLaser().getLength_unit()},
+			{"resolution" , getLaser().getResolution()},
+			{"sick_type" , getLaser().getSick_type()},
+			{"verbose" , getLaser().getVerbose()},
+			{"x" , getLaser().getX()},
+			{"y" , getLaser().getY()},
+			{"z" , getLaser().getZ()}
+		};
+	
+		
+		return param.dump();
 	}
 };
 

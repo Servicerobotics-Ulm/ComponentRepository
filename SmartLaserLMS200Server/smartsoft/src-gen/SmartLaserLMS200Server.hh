@@ -29,11 +29,15 @@
 class SmartLaserLMS200ServerPortFactoryInterface;
 class SmartLaserLMS200ServerExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for PlainOpcUaSmartLaserLMS200ServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
 
 // includes for SmartLaserLMS200ServerROS1InterfacesExtension
+
+// includes for SmartLaserLMS200ServerROSExtension
 
 // includes for SmartLaserLMS200ServerRestInterfacesExtension
 
@@ -133,9 +137,13 @@ public:
 	// define request-handlers
 	LaserQueryServiceAnswHandler *laserQueryServiceAnswHandler;
 	
+	// definitions of OpcUaBackendComponentGeneratorExtension
+	
 	// definitions of PlainOpcUaSmartLaserLMS200ServerExtension
 	
 	// definitions of SmartLaserLMS200ServerROS1InterfacesExtension
+	
+	// definitions of SmartLaserLMS200ServerROSExtension
 	
 	// definitions of SmartLaserLMS200ServerRestInterfacesExtension
 	
@@ -247,9 +255,13 @@ public:
 			std::string roboticMiddleware;
 		} baseStateIn;
 		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
+		
 		// -- parameters for PlainOpcUaSmartLaserLMS200ServerExtension
 		
 		// -- parameters for SmartLaserLMS200ServerROS1InterfacesExtension
+		
+		// -- parameters for SmartLaserLMS200ServerROSExtension
 		
 		// -- parameters for SmartLaserLMS200ServerRestInterfacesExtension
 		

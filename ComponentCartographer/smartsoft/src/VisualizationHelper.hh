@@ -58,8 +58,15 @@
 
 #include <mrpt/gui.h>
 #include <mrpt/opengl.h>
+#ifdef WITH_MRPT_2_0_VERSION
+#elif WITH_MRPT_1_5_VERSION
 #include <mrpt/utils.h>
-#include <mrpt/maps.h>
+#endif
+#ifdef WITH_OLD_MRPT_VERSION
+	#include <mrpt/maps.h>
+#else
+	#include <mrpt/maps/COccupancyGridMap2D.h>
+#endif
 #include <cartographer/transform/rigid_transform.h>
 
 using namespace mrpt;
@@ -68,8 +75,9 @@ using namespace mrpt::math;
 using namespace mrpt::slam;
 #endif
 using namespace mrpt::gui;
+using namespace mrpt::opengl;
 
-
+//#include "AmclTypes.hh"
 #include "CommBasicObjects/CommBasePose.hh"
 #include "CommBasicObjects/CommMobileLaserScan.hh"
 
@@ -89,23 +97,12 @@ private:
 public:
 	VisualizationHelper();
 	virtual ~VisualizationHelper();
-
 	void initializeVisualization();
-
 	void initObjects();
-
 	void clear();
-
-//	void displayMap(map_t* map);
-
 	void displayLaserScan(const CommBasicObjects::CommMobileLaserScan& scan);
-
 	void displayBase(const CommBasicObjects::CommBasePose& pos);
-
 	void displayParticles(const std::vector<cartographer::transform::Rigid3d>& poses);
-
-//	void displayHypotheses(const std::vector<amcl_hyp_t>& hyps);
-
 	void displayCoordinateSystem(poses::CPose3D& pose, double size = 0.1);
 
 private:

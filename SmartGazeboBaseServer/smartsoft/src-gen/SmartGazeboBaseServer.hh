@@ -29,11 +29,15 @@
 class SmartGazeboBaseServerPortFactoryInterface;
 class SmartGazeboBaseServerExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for PlainOpcUaSmartGazeboBaseServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
 
 // includes for SmartGazeboBaseServerROS1InterfacesExtension
+
+// includes for SmartGazeboBaseServerROSExtension
 
 // includes for SmartGazeboBaseServerRestInterfacesExtension
 
@@ -177,9 +181,13 @@ public:
 	// define request-handlers
 	BaseStateQueryHandler *baseStateQueryHandler;
 	
+	// definitions of OpcUaBackendComponentGeneratorExtension
+	
 	// definitions of PlainOpcUaSmartGazeboBaseServerExtension
 	
 	// definitions of SmartGazeboBaseServerROS1InterfacesExtension
+	
+	// definitions of SmartGazeboBaseServerROSExtension
 	
 	// definitions of SmartGazeboBaseServerRestInterfacesExtension
 	
@@ -340,9 +348,13 @@ public:
 	
 		//--- client port parameter ---
 		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
+		
 		// -- parameters for PlainOpcUaSmartGazeboBaseServerExtension
 		
 		// -- parameters for SmartGazeboBaseServerROS1InterfacesExtension
+		
+		// -- parameters for SmartGazeboBaseServerROSExtension
 		
 		// -- parameters for SmartGazeboBaseServerRestInterfacesExtension
 		

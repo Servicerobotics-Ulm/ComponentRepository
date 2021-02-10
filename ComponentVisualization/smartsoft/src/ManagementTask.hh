@@ -35,6 +35,7 @@ enum service_ports {
 	port_depth_image_client=11,
 	port_marker_detection_list_client=12,
 	port_particle_filter_info=13,
+	port_planner_goal_push_client=14,
 	port_max};
 
 enum port_types{
@@ -65,7 +66,8 @@ private:
 			"RGBD_push_client",
 			"Depth_image_push_client",
 			"MarkerDetectionList_client",
-			"ParticleFilterInfo_client"
+			"ParticleFilterInfo_client",
+			"PlannerGoal_client"
 	};
 
 	const char* port_type_name[port_types::port_type_max] = {

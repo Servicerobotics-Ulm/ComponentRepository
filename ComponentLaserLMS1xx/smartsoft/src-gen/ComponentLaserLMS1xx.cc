@@ -72,6 +72,14 @@ ComponentLaserLMS1xx::ComponentLaserLMS1xx()
 	connections.laserTask.priority = -1;
 	connections.laserTask.cpuAffinity = -1;
 	
+	// initialize members of ComponentLaserLMS1xxROS1InterfacesExtension
+	
+	// initialize members of ComponentLaserLMS1xxROSExtension
+	
+	// initialize members of ComponentLaserLMS1xxRestInterfacesExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of PlainOpcUaComponentLaserLMS1xxExtension
 	
 }
@@ -180,6 +188,14 @@ void ComponentLaserLMS1xx::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
+		
+		// initializations of ComponentLaserLMS1xxROS1InterfacesExtension
+		
+		// initializations of ComponentLaserLMS1xxROSExtension
+		
+		// initializations of ComponentLaserLMS1xxRestInterfacesExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentLaserLMS1xxExtension
 		
@@ -392,6 +408,14 @@ void ComponentLaserLMS1xx::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of ComponentLaserLMS1xxROS1InterfacesExtension
+	
+	// destruction of ComponentLaserLMS1xxROSExtension
+	
+	// destruction of ComponentLaserLMS1xxRestInterfacesExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of PlainOpcUaComponentLaserLMS1xxExtension
 	
 }
@@ -506,6 +530,14 @@ void ComponentLaserLMS1xx::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("LaserTask", "cpuAffinity")) {
 			parameter.getInteger("LaserTask", "cpuAffinity", connections.laserTask.cpuAffinity);
 		}
+		
+		// load parameters for ComponentLaserLMS1xxROS1InterfacesExtension
+		
+		// load parameters for ComponentLaserLMS1xxROSExtension
+		
+		// load parameters for ComponentLaserLMS1xxRestInterfacesExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentLaserLMS1xxExtension
 		

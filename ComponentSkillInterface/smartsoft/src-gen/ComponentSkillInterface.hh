@@ -29,6 +29,14 @@
 class ComponentSkillInterfacePortFactoryInterface;
 class ComponentSkillInterfaceExtension;
 
+// includes for ComponentSkillInterfaceROS1InterfacesExtension
+
+// includes for ComponentSkillInterfaceROSExtension
+
+// includes for ComponentSkillInterfaceRestInterfacesExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for PlainOpcUaComponentSkillInterfaceExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -116,6 +124,14 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
+	
+	// definitions of ComponentSkillInterfaceROS1InterfacesExtension
+	
+	// definitions of ComponentSkillInterfaceROSExtension
+	
+	// definitions of ComponentSkillInterfaceRestInterfacesExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentSkillInterfaceExtension
 	
@@ -244,6 +260,14 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} kBQueryClient;
+		
+		// -- parameters for ComponentSkillInterfaceROS1InterfacesExtension
+		
+		// -- parameters for ComponentSkillInterfaceROSExtension
+		
+		// -- parameters for ComponentSkillInterfaceRestInterfacesExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentSkillInterfaceExtension
 		

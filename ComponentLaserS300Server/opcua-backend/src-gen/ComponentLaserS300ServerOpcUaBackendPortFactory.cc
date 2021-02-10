@@ -30,6 +30,7 @@
 
 // include referenced CommunicationObject SeRoNetSDK self description implementations
 #include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommIOValuesOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommLaserSafetyEventParamOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommLaserSafetyEventStateOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommLaserSafetyFieldOpcUa.hh"
@@ -62,13 +63,18 @@ int ComponentLaserS300ServerOpcUaBackendPortFactory::onStartup()
 	return -1;
 }
 
+Smart::IPushClientPattern<CommBasicObjects::CommIOValues> * ComponentLaserS300ServerOpcUaBackendPortFactory::createCommIOForkingServiceIn()
+{
+	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommIOValues>(componentImpl);
+}
+
 Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * ComponentLaserS300ServerOpcUaBackendPortFactory::createBaseTimedClient()
 {
 	return new SeRoNet::OPCUA::Client::PushClient<CommBasicObjects::CommBaseState>(componentImpl);
 }
 
 
-Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * ComponentLaserS300ServerOpcUaBackendPortFactory::createLaserPushNewestServer(const std::string &serviceName)
+Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * ComponentLaserS300ServerOpcUaBackendPortFactory::createLaserServiceOut(const std::string &serviceName)
 {
 	return new SeRoNet::OPCUA::Server::PushServer<CommBasicObjects::CommMobileLaserScan>(componentImpl, serviceName);
 }

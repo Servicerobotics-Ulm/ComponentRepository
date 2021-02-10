@@ -84,7 +84,12 @@ Smart::IPushClientPattern<CommBasicObjects::CommDevicePoseState> * ComponentReal
 }
 
 
-Smart::IPushServerPattern<DomainVision::CommVideoImage> * ComponentRealSenseV2ServerOpcUaBackendPortFactory::createColorImagePushNewestServer(const std::string &serviceName)
+Smart::IPushServerPattern<DomainVision::CommRGBDImage> * ComponentRealSenseV2ServerOpcUaBackendPortFactory::createRGBDImagePushServiceOut(const std::string &serviceName)
+{
+	return new SeRoNet::OPCUA::Server::PushServer<DomainVision::CommRGBDImage>(componentImpl, serviceName);
+}
+
+Smart::IPushServerPattern<DomainVision::CommVideoImage> * ComponentRealSenseV2ServerOpcUaBackendPortFactory::createRGBImagePushServiceOut(const std::string &serviceName)
 {
 	return new SeRoNet::OPCUA::Server::PushServer<DomainVision::CommVideoImage>(componentImpl, serviceName);
 }
@@ -97,11 +102,6 @@ Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoIm
 Smart::IPushServerPattern<DomainVision::CommDepthImage> * ComponentRealSenseV2ServerOpcUaBackendPortFactory::createDepthPushNewestServer(const std::string &serviceName)
 {
 	return new SeRoNet::OPCUA::Server::PushServer<DomainVision::CommDepthImage>(componentImpl, serviceName);
-}
-
-Smart::IPushServerPattern<DomainVision::CommRGBDImage> * ComponentRealSenseV2ServerOpcUaBackendPortFactory::createImagePushNewestServer(const std::string &serviceName)
-{
-	return new SeRoNet::OPCUA::Server::PushServer<DomainVision::CommRGBDImage>(componentImpl, serviceName);
 }
 
 Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> * ComponentRealSenseV2ServerOpcUaBackendPortFactory::createImageQueryServer(const std::string &serviceName)

@@ -33,13 +33,16 @@ ComponentCartographer::ComponentCartographer()
 	// set all pointer members to NULL
 	cartographerTask = NULL;
 	cartographerTaskTrigger = NULL;
-	//componentCartographer = NULL;
+	//coordinationPort = NULL;
 	//coordinationPort = NULL;
 	gridMapPushServiceOut = NULL;
+	gridMapPushServiceOutWrapper = NULL;
 	laserServiceIn = NULL;
 	laserServiceInInputTaskTrigger = NULL;
 	laserServiceInUpcallManager = NULL;
+	laserServiceInInputCollector = NULL;
 	localized_robot_pose = NULL;
+	localized_robot_poseWrapper = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
@@ -72,7 +75,11 @@ ComponentCartographer::ComponentCartographer()
 	connections.cartographerTask.priority = -1;
 	connections.cartographerTask.cpuAffinity = -1;
 	
+	// initialize members of ComponentCartographerROS1InterfacesExtension
+	
 	// initialize members of ComponentCartographerROSExtension
+	
+	// initialize members of ComponentCartographerRestInterfacesExtension
 	
 	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
@@ -203,7 +210,11 @@ void ComponentCartographer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
+		// initializations of ComponentCartographerROS1InterfacesExtension
+		
 		// initializations of ComponentCartographerROSExtension
+		
+		// initializations of ComponentCartographerRestInterfacesExtension
 		
 		// initializations of OpcUaBackendComponentGeneratorExtension
 		
@@ -244,14 +255,17 @@ void ComponentCartographer::init(int argc, char *argv[])
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
 		gridMapPushServiceOut = portFactoryRegistry[connections.gridMapPushServiceOut.roboticMiddleware]->createGridMapPushServiceOut(connections.gridMapPushServiceOut.serviceName);
+		gridMapPushServiceOutWrapper = new GridMapPushServiceOutWrapper(gridMapPushServiceOut);
 		
 		// create client ports
 		laserServiceIn = portFactoryRegistry[connections.laserServiceIn.roboticMiddleware]->createLaserServiceIn();
 		localized_robot_pose = portFactoryRegistry[connections.localized_robot_pose.roboticMiddleware]->createLocalized_robot_pose();
+		localized_robot_poseWrapper = new Localized_robot_poseWrapper(localized_robot_pose);
 		
 		// create InputTaskTriggers and UpcallManagers
-		laserServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan>(laserServiceIn);
-		laserServiceInUpcallManager = new LaserServiceInUpcallManager(laserServiceIn);
+		laserServiceInInputCollector = new LaserServiceInInputCollector(laserServiceIn);
+		laserServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan>(laserServiceInInputCollector);
+		laserServiceInUpcallManager = new LaserServiceInUpcallManager(laserServiceInInputCollector);
 		
 		// create input-handler
 		
@@ -379,12 +393,15 @@ void ComponentCartographer::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 	delete laserServiceInInputTaskTrigger;
 	delete laserServiceInUpcallManager;
+	delete laserServiceInInputCollector;
 
 	// destroy client ports
 	delete laserServiceIn;
+	delete localized_robot_poseWrapper;
 	delete localized_robot_pose;
 
 	// destroy server ports
+	delete gridMapPushServiceOutWrapper;
 	delete gridMapPushServiceOut;
 	// destroy event-test handlers (if needed)
 	
@@ -411,7 +428,11 @@ void ComponentCartographer::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of ComponentCartographerROS1InterfacesExtension
+	
 	// destruction of ComponentCartographerROSExtension
+	
+	// destruction of ComponentCartographerRestInterfacesExtension
 	
 	// destruction of OpcUaBackendComponentGeneratorExtension
 	
@@ -533,7 +554,11 @@ void ComponentCartographer::loadParameter(int argc, char *argv[])
 			parameter.getInteger("CartographerTask", "cpuAffinity", connections.cartographerTask.cpuAffinity);
 		}
 		
+		// load parameters for ComponentCartographerROS1InterfacesExtension
+		
 		// load parameters for ComponentCartographerROSExtension
+		
+		// load parameters for ComponentCartographerRestInterfacesExtension
 		
 		// load parameters for OpcUaBackendComponentGeneratorExtension
 		

@@ -1,0 +1,51 @@
+#####################
+# internal parameters
+#####################
+##########################
+# InternalParameter OPCUAstatic
+[OPCUAstatic]
+object_name ProductionStationCPXECECC1PN
+rootObjectPath Server/CPX-E-CEC-C1-PN/Resources/Application/Programs/PLC_PRG
+# server_address has an array value (defined by assigning each array element in a separate line)
+server_address NULL_NOT_USED
+server_address opc.tcp://192.168.0.100:4840
+server_address opc.tcp://192.168.0.100:4840
+
+##########################
+# InternalParameter Robot
+[Robot]
+FallingEdge_PW_Load_mSec 100
+FallingEdge_PW_Unload_mSec 100
+LoadProcess_TimeOutSec 60
+NoOf_FallingEdge_Load 8
+NoOf_FallingEdge_Unload 4
+UnloadProcess_TimeOutSec 60
+ack_pressed_din 4
+belt_time_out_sec 10
+box_present_din 2
+dock_complete_dout 0
+ignore_station_communication false
+ignore_station_communication_unload_time_sec 4
+load_motor_direction 1
+manual_load_dout 5
+signal_error_dout 5
+signal_loading_dout 6
+signal_unloading_dout 7
+station_communication_delay_sec 0
+station_communication_delay_usec 500000
+trans_read_din 3
+unload_motor_direction 1
+
+
+#####################
+# extended parameters
+#####################
+##########################
+# ExtendedParameter SetStationID
+[SetStationID]
+id 2
+
+
+#####################
+# instance parameters
+#####################

@@ -77,7 +77,11 @@ ComponentGMapping::ComponentGMapping()
 	
 	// initialize members of ComponentGMappingROS1InterfacesExtension
 	
+	// initialize members of ComponentGMappingROSExtension
+	
 	// initialize members of ComponentGMappingRestInterfacesExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentGMappingExtension
 	
@@ -208,7 +212,11 @@ void ComponentGMapping::init(int argc, char *argv[])
 		
 		// initializations of ComponentGMappingROS1InterfacesExtension
 		
+		// initializations of ComponentGMappingROSExtension
+		
 		// initializations of ComponentGMappingRestInterfacesExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentGMappingExtension
 		
@@ -422,7 +430,11 @@ void ComponentGMapping::fini()
 	
 	// destruction of ComponentGMappingROS1InterfacesExtension
 	
+	// destruction of ComponentGMappingROSExtension
+	
 	// destruction of ComponentGMappingRestInterfacesExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentGMappingExtension
 	
@@ -544,7 +556,11 @@ void ComponentGMapping::loadParameter(int argc, char *argv[])
 		
 		// load parameters for ComponentGMappingROS1InterfacesExtension
 		
+		// load parameters for ComponentGMappingROSExtension
+		
 		// load parameters for ComponentGMappingRestInterfacesExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentGMappingExtension
 		

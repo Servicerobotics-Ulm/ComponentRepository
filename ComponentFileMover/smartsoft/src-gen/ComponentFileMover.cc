@@ -75,7 +75,11 @@ ComponentFileMover::ComponentFileMover()
 	
 	// initialize members of ComponentFileMoverROS1InterfacesExtension
 	
+	// initialize members of ComponentFileMoverROSExtension
+	
 	// initialize members of ComponentFileMoverRestInterfacesExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentFileMoverExtension
 	
@@ -204,7 +208,11 @@ void ComponentFileMover::init(int argc, char *argv[])
 		
 		// initializations of ComponentFileMoverROS1InterfacesExtension
 		
+		// initializations of ComponentFileMoverROSExtension
+		
 		// initializations of ComponentFileMoverRestInterfacesExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentFileMoverExtension
 		
@@ -412,7 +420,11 @@ void ComponentFileMover::fini()
 	
 	// destruction of ComponentFileMoverROS1InterfacesExtension
 	
+	// destruction of ComponentFileMoverROSExtension
+	
 	// destruction of ComponentFileMoverRestInterfacesExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentFileMoverExtension
 	
@@ -533,7 +545,11 @@ void ComponentFileMover::loadParameter(int argc, char *argv[])
 		
 		// load parameters for ComponentFileMoverROS1InterfacesExtension
 		
+		// load parameters for ComponentFileMoverROSExtension
+		
 		// load parameters for ComponentFileMoverRestInterfacesExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentFileMoverExtension
 		

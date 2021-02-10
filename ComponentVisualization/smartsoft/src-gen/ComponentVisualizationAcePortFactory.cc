@@ -122,6 +122,11 @@ Smart::IQueryClientPattern<CommTrackingObjects::CommPersonId, CommTrackingObject
 	return new SmartACE::QueryClient<CommTrackingObjects::CommPersonId, CommTrackingObjects::CommDetectedPerson>(componentImpl);
 }
 
+Smart::IPushClientPattern<CommNavigationObjects::CommPlannerGoal> * ComponentVisualizationAcePortFactory::createPlannerGoalPushClient()
+{
+	return new SmartACE::PushClient<CommNavigationObjects::CommPlannerGoal>(componentImpl);
+}
+
 Smart::IPushClientPattern<DomainVision::CommRGBDImage> * ComponentVisualizationAcePortFactory::createRgbdPushNewestClient()
 {
 	return new SmartACE::PushClient<DomainVision::CommRGBDImage>(componentImpl);

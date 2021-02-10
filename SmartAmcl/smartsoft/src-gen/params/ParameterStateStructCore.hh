@@ -18,6 +18,8 @@
 
 #include "aceSmartSoft.hh"
 
+#include "nlohmann/json.hpp"
+
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -503,6 +505,62 @@ public:
 		
 		// Instance params (encapsulated in a wrapper class for each instantiated parameter repository)
 		CommLocalizationObjects.to_ostream(os);
+	}
+	
+	std::string getAsJSONString() {
+		nlohmann::json param;
+	
+		param["Filter"] = nlohmann::json {
+			{"kld_err" , getFilter().getKld_err()},
+			{"kld_z" , getFilter().getKld_z()},
+			{"max_particles" , getFilter().getMax_particles()},
+			{"min_particles" , getFilter().getMin_particles()},
+			{"recovery_alpha_fast" , getFilter().getRecovery_alpha_fast()},
+			{"recovery_alpha_slow" , getFilter().getRecovery_alpha_slow()},
+			{"resample_interval" , getFilter().getResample_interval()},
+			{"update_min_alpha" , getFilter().getUpdate_min_alpha()},
+			{"update_min_d" , getFilter().getUpdate_min_d()}
+		};
+		param["General"] = nlohmann::json {
+			{"connect_services" , getGeneral().getConnect_services()},
+			{"enable_visualization" , getGeneral().getEnable_visualization()},
+			{"initPoseFileName" , getGeneral().getInitPoseFileName()},
+			{"initalizationType" , getGeneral().getInitalizationType()},
+			{"initial_a" , getGeneral().getInitial_a()},
+			{"initial_cov_aa" , getGeneral().getInitial_cov_aa()},
+			{"initial_cov_xx" , getGeneral().getInitial_cov_xx()},
+			{"initial_cov_yy" , getGeneral().getInitial_cov_yy()},
+			{"initial_x" , getGeneral().getInitial_x()},
+			{"initial_y" , getGeneral().getInitial_y()},
+			{"lostEventMaxEigValueSum" , getGeneral().getLostEventMaxEigValueSum()},
+			{"lostEventMaxHypothese" , getGeneral().getLostEventMaxHypothese()},
+			{"verbose" , getGeneral().getVerbose()},
+			{"yaml_file" , getGeneral().getYaml_file()}
+		};
+		param["Laser"] = nlohmann::json {
+			{"lambda_short" , getLaser().getLambda_short()},
+			{"laser_likelihood_max_dist" , getLaser().getLaser_likelihood_max_dist()},
+			{"laser_model_type" , getLaser().getLaser_model_type()},
+			{"max_beams" , getLaser().getMax_beams()},
+			{"sigma_hit" , getLaser().getSigma_hit()},
+			{"z_hit" , getLaser().getZ_hit()},
+			{"z_max" , getLaser().getZ_max()},
+			{"z_rand" , getLaser().getZ_rand()},
+			{"z_short" , getLaser().getZ_short()}
+		};
+		param["Odometry"] = nlohmann::json {
+			{"alpha1" , getOdometry().getAlpha1()},
+			{"alpha2" , getOdometry().getAlpha2()},
+			{"alpha3" , getOdometry().getAlpha3()},
+			{"alpha4" , getOdometry().getAlpha4()},
+			{"alpha5" , getOdometry().getAlpha5()},
+			{"odom_model_type" , getOdometry().getOdom_model_type()}
+		};
+	
+		param["LocalizationParameter"] = nlohmann::json {
+		};
+		
+		return param.dump();
 	}
 };
 

@@ -31,7 +31,11 @@ class ComponentRobotinoBaseServerExtension;
 
 // includes for ComponentRobotinoBaseServerROS1InterfacesExtension
 
+// includes for ComponentRobotinoBaseServerROSExtension
+
 // includes for ComponentRobotinoBaseServerRestInterfacesExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
 
 // includes for PlainOpcUaComponentRobotinoBaseServerExtension
 // include plain OPC UA device clients
@@ -216,7 +220,11 @@ public:
 	
 	// definitions of ComponentRobotinoBaseServerROS1InterfacesExtension
 	
+	// definitions of ComponentRobotinoBaseServerROSExtension
+	
 	// definitions of ComponentRobotinoBaseServerRestInterfacesExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentRobotinoBaseServerExtension
 	
@@ -412,7 +420,11 @@ public:
 		
 		// -- parameters for ComponentRobotinoBaseServerROS1InterfacesExtension
 		
+		// -- parameters for ComponentRobotinoBaseServerROSExtension
+		
 		// -- parameters for ComponentRobotinoBaseServerRestInterfacesExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentRobotinoBaseServerExtension
 		

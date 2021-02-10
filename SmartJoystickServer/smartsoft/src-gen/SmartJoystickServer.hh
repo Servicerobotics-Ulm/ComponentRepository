@@ -29,9 +29,17 @@
 class SmartJoystickServerPortFactoryInterface;
 class SmartJoystickServerExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for PlainOpcUaSmartJoystickServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
+
+// includes for SmartJoystickServerROS1InterfacesExtension
+
+// includes for SmartJoystickServerROSExtension
+
+// includes for SmartJoystickServerRestInterfacesExtension
 
 
 // include communication objects
@@ -114,7 +122,15 @@ public:
 	
 	// define request-handlers
 	
+	// definitions of OpcUaBackendComponentGeneratorExtension
+	
 	// definitions of PlainOpcUaSmartJoystickServerExtension
+	
+	// definitions of SmartJoystickServerROS1InterfacesExtension
+	
+	// definitions of SmartJoystickServerROSExtension
+	
+	// definitions of SmartJoystickServerRestInterfacesExtension
 	
 	
 	// define default slave ports
@@ -211,7 +227,15 @@ public:
 	
 		//--- client port parameter ---
 		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
+		
 		// -- parameters for PlainOpcUaSmartJoystickServerExtension
+		
+		// -- parameters for SmartJoystickServerROS1InterfacesExtension
+		
+		// -- parameters for SmartJoystickServerROSExtension
+		
+		// -- parameters for SmartJoystickServerRestInterfacesExtension
 		
 	} connections;
 };

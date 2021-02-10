@@ -110,9 +110,13 @@ SmartGazeboBaseServer::SmartGazeboBaseServer()
 	connections.localizationUpdateHandler.prescale = 1;
 	connections.velocityInpuHandler.prescale = 1;
 	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of PlainOpcUaSmartGazeboBaseServerExtension
 	
 	// initialize members of SmartGazeboBaseServerROS1InterfacesExtension
+	
+	// initialize members of SmartGazeboBaseServerROSExtension
 	
 	// initialize members of SmartGazeboBaseServerRestInterfacesExtension
 	
@@ -233,9 +237,13 @@ void SmartGazeboBaseServer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		// initializations of PlainOpcUaSmartGazeboBaseServerExtension
 		
 		// initializations of SmartGazeboBaseServerROS1InterfacesExtension
+		
+		// initializations of SmartGazeboBaseServerROSExtension
 		
 		// initializations of SmartGazeboBaseServerRestInterfacesExtension
 		
@@ -529,9 +537,13 @@ void SmartGazeboBaseServer::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of PlainOpcUaSmartGazeboBaseServerExtension
 	
 	// destruction of SmartGazeboBaseServerROS1InterfacesExtension
+	
+	// destruction of SmartGazeboBaseServerROSExtension
 	
 	// destruction of SmartGazeboBaseServerRestInterfacesExtension
 	
@@ -699,9 +711,13 @@ void SmartGazeboBaseServer::loadParameter(int argc, char *argv[])
 			parameter.getInteger("VelocityInpuHandler", "prescale", connections.velocityInpuHandler.prescale);
 		}
 		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
+		
 		// load parameters for PlainOpcUaSmartGazeboBaseServerExtension
 		
 		// load parameters for SmartGazeboBaseServerROS1InterfacesExtension
+		
+		// load parameters for SmartGazeboBaseServerROSExtension
 		
 		// load parameters for SmartGazeboBaseServerRestInterfacesExtension
 		

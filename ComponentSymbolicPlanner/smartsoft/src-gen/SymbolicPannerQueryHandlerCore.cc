@@ -22,8 +22,12 @@ SymbolicPannerQueryHandlerCore::SymbolicPannerQueryHandlerCore(IQueryServer* ser
 :	Smart::IInputHandler<std::pair<Smart::QueryIdPtr,DomainSymbolicPlanner::CommSymbolicPlannerRequest>>(server)
 ,	server(server)
 {
-	
 }
+
+SymbolicPannerQueryHandlerCore::~SymbolicPannerQueryHandlerCore()
+{
+}
+
 
 void SymbolicPannerQueryHandlerCore::updateAllCommObjects()
 {

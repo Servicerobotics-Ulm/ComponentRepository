@@ -3,6 +3,7 @@
 # imports: http://seronet-projekt.de/models/t2#Navigation
 
 # imports: http://www.servicerobotik-ulm.de/DomainModels/CommBasicObjects
+# imports: http://www.servicerobotik-ulm.de/DomainModels/CommManipulatorObjects
 
 #######################################
 # Technical Data Sheet
@@ -32,6 +33,7 @@
 @prefix t3: <http://www.servicerobotik-ulm.de/ComponentsAndSystems#> .
 
 @prefix CommBasicObjects: <http://www.servicerobotik-ulm.de/DomainModels/CommBasicObjects#> .
+@prefix CommManipulatorObjects: <http://www.servicerobotik-ulm.de/DomainModels/CommManipulatorObjects#> .
 
 ##### Software Component ComponentLaserHokuyoURGServer
 # see https://robmosys.eu/wiki/modeling:metamodels:component
@@ -39,6 +41,7 @@ t3:ComponentLaserHokuyoURGServer a robmosys:ComponentDefinition;
 	a owl:Ontology ;
 	owl:imports <http://robmosys.eu/rdf/composition-structures> ;
 	owl:imports <http://www.servicerobotik-ulm.de/DomainModels/CommBasicObjects> ;
+	owl:imports <http://www.servicerobotik-ulm.de/DomainModels/CommManipulatorObjects> ;
 	
 	# Human readable name of this component
 	# Equals with the project name

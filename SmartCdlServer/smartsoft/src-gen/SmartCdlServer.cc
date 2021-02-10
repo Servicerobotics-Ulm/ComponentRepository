@@ -151,9 +151,13 @@ SmartCdlServer::SmartCdlServer()
 	connections.cdlTask.priority = -1;
 	connections.cdlTask.cpuAffinity = -1;
 	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of PlainOpcUaSmartCdlServerExtension
 	
 	// initialize members of SmartCdlServerROS1InterfacesExtension
+	
+	// initialize members of SmartCdlServerROSExtension
 	
 	// initialize members of SmartCdlServerRestInterfacesExtension
 	
@@ -403,9 +407,13 @@ void SmartCdlServer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		// initializations of PlainOpcUaSmartCdlServerExtension
 		
 		// initializations of SmartCdlServerROS1InterfacesExtension
+		
+		// initializations of SmartCdlServerROSExtension
 		
 		// initializations of SmartCdlServerRestInterfacesExtension
 		
@@ -736,9 +744,13 @@ void SmartCdlServer::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of PlainOpcUaSmartCdlServerExtension
 	
 	// destruction of SmartCdlServerROS1InterfacesExtension
+	
+	// destruction of SmartCdlServerROSExtension
 	
 	// destruction of SmartCdlServerRestInterfacesExtension
 	
@@ -922,9 +934,13 @@ void SmartCdlServer::loadParameter(int argc, char *argv[])
 			parameter.getInteger("CdlTask", "cpuAffinity", connections.cdlTask.cpuAffinity);
 		}
 		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
+		
 		// load parameters for PlainOpcUaSmartCdlServerExtension
 		
 		// load parameters for SmartCdlServerROS1InterfacesExtension
+		
+		// load parameters for SmartCdlServerROSExtension
 		
 		// load parameters for SmartCdlServerRestInterfacesExtension
 		

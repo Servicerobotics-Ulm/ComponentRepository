@@ -166,6 +166,24 @@ maxActFreqHz 0.0
 # priority 0
 # cpuAffinity 0
 
+[LtmMapTask]
+minActFreqHz 0.0
+maxActFreqHz 0.0
+# setup default trigger as PeriodicTimer
+triggerType PeriodicTimer
+periodicActFreqHz 0.017
+# other trigger-types are:
+#triggerType PeriodicTimer
+#periodicActFreqHz 0.0
+# or alternatively:
+#triggerType DataTriggered
+#inPortRef <InPortName>
+#prescale 1
+# optional scheduling parameters
+# scheduler FIFO
+# priority 0
+# cpuAffinity 0
+
 [ManagementTask]
 minActFreqHz 0.0
 maxActFreqHz 0.0
@@ -197,6 +215,21 @@ maxActFreqHz 0.0
 # cpuAffinity 0
 
 [PersonDetectionTask]
+minActFreqHz 0.0
+maxActFreqHz 0.0
+# other trigger-types are:
+#triggerType PeriodicTimer
+#periodicActFreqHz 0.0
+# or alternatively:
+#triggerType DataTriggered
+#inPortRef <InPortName>
+#prescale 1
+# optional scheduling parameters
+# scheduler FIFO
+# priority 0
+# cpuAffinity 0
+
+[PlannerGoalTask]
 minActFreqHz 0.0
 maxActFreqHz 0.0
 # other trigger-types are:
@@ -362,6 +395,14 @@ wiringName personDetectionQueryClient
 interval 1
 roboticMiddleware ACE_SmartSoft
 
+[plannerGoalPushClient]
+initialConnect false
+serverName unknown
+serviceName unknown
+wiringName plannerGoalPushClient
+interval 1
+roboticMiddleware ACE_SmartSoft
+
 [rgbdPushNewestClient]
 initialConnect false
 serverName unknown
@@ -385,6 +426,18 @@ serviceName unknown
 wiringName ultrasonicPushNewestClient
 interval 1
 roboticMiddleware ACE_SmartSoft
+
+##########################
+## parameters of ComponentVisualizationROS1InterfacesExtension
+
+##########################
+## parameters of ComponentVisualizationROSExtension
+
+##########################
+## parameters of ComponentVisualizationRestInterfacesExtension
+
+##########################
+## parameters of OpcUaBackendComponentGeneratorExtension
 
 ##########################
 ## parameters of PlainOpcUaComponentVisualizationExtension

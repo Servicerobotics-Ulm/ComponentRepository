@@ -20,11 +20,12 @@ TrafficLightServiceInHandlerCore::TrafficLightServiceInHandlerCore(
 	Smart::InputSubject<DomainHMI::CommTrafficLight> *subject,
 	const int &prescaleFactor)
 	:	Smart::InputTaskTrigger<DomainHMI::CommTrafficLight>(subject, prescaleFactor)
-{  
-	updateStatus = Smart::SMART_NODATA;
+{
 }
 TrafficLightServiceInHandlerCore::~TrafficLightServiceInHandlerCore()
-{  }
+{  
+}
+
 
 void TrafficLightServiceInHandlerCore::updateAllCommObjects() {
 }

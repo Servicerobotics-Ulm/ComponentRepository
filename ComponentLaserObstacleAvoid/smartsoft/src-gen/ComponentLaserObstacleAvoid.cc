@@ -70,6 +70,14 @@ ComponentLaserObstacleAvoid::ComponentLaserObstacleAvoid()
 	connections.robotTask.priority = -1;
 	connections.robotTask.cpuAffinity = -1;
 	
+	// initialize members of ComponentLaserObstacleAvoidROS1InterfacesExtension
+	
+	// initialize members of ComponentLaserObstacleAvoidROSExtension
+	
+	// initialize members of ComponentLaserObstacleAvoidRestInterfacesExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of PlainOpcUaComponentLaserObstacleAvoidExtension
 	
 }
@@ -194,6 +202,14 @@ void ComponentLaserObstacleAvoid::init(int argc, char *argv[])
 		// load initial parameters from ini-file (if found)
 		loadParameter(argc, argv);
 		
+		
+		// initializations of ComponentLaserObstacleAvoidROS1InterfacesExtension
+		
+		// initializations of ComponentLaserObstacleAvoidROSExtension
+		
+		// initializations of ComponentLaserObstacleAvoidRestInterfacesExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentLaserObstacleAvoidExtension
 		
@@ -412,6 +428,14 @@ void ComponentLaserObstacleAvoid::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of ComponentLaserObstacleAvoidROS1InterfacesExtension
+	
+	// destruction of ComponentLaserObstacleAvoidROSExtension
+	
+	// destruction of ComponentLaserObstacleAvoidRestInterfacesExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of PlainOpcUaComponentLaserObstacleAvoidExtension
 	
 }
@@ -524,6 +548,14 @@ void ComponentLaserObstacleAvoid::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("RobotTask", "cpuAffinity")) {
 			parameter.getInteger("RobotTask", "cpuAffinity", connections.robotTask.cpuAffinity);
 		}
+		
+		// load parameters for ComponentLaserObstacleAvoidROS1InterfacesExtension
+		
+		// load parameters for ComponentLaserObstacleAvoidROSExtension
+		
+		// load parameters for ComponentLaserObstacleAvoidRestInterfacesExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentLaserObstacleAvoidExtension
 		

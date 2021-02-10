@@ -29,6 +29,14 @@
 class ComponentLaserHokuyoURGServerPortFactoryInterface;
 class ComponentLaserHokuyoURGServerExtension;
 
+// includes for ComponentLaserHokuyoURGServerROS1InterfacesExtension
+
+// includes for ComponentLaserHokuyoURGServerROSExtension
+
+// includes for ComponentLaserHokuyoURGServerRestInterfacesExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for PlainOpcUaComponentLaserHokuyoURGServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -140,6 +148,14 @@ public:
 	
 	// define request-handlers
 	LaserQueryServerHandler *laserQueryServerHandler;
+	
+	// definitions of ComponentLaserHokuyoURGServerROS1InterfacesExtension
+	
+	// definitions of ComponentLaserHokuyoURGServerROSExtension
+	
+	// definitions of ComponentLaserHokuyoURGServerRestInterfacesExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentLaserHokuyoURGServerExtension
 	
@@ -285,6 +301,14 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} manipulatorTimedClient;
+		
+		// -- parameters for ComponentLaserHokuyoURGServerROS1InterfacesExtension
+		
+		// -- parameters for ComponentLaserHokuyoURGServerROSExtension
+		
+		// -- parameters for ComponentLaserHokuyoURGServerRestInterfacesExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentLaserHokuyoURGServerExtension
 		

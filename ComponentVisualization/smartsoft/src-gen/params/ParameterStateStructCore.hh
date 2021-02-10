@@ -18,6 +18,8 @@
 
 #include "aceSmartSoft.hh"
 
+#include "nlohmann/json.hpp"
+
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -52,6 +54,7 @@ public:
 			bool show_ltm;
 			bool show_person_detection;
 			bool show_tof_image;
+			bool show_trajectory;
 			bool show_ultrasonic_point_cloud;
 			bool simple_laser_visualization;
 		
@@ -68,6 +71,7 @@ public:
 				show_ltm = true;
 				show_person_detection = false;
 				show_tof_image = false;
+				show_trajectory = true;
 				show_ultrasonic_point_cloud = false;
 				simple_laser_visualization = true;
 			}
@@ -85,6 +89,7 @@ public:
 			inline bool getShow_ltm() const { return show_ltm; }
 			inline bool getShow_person_detection() const { return show_person_detection; }
 			inline bool getShow_tof_image() const { return show_tof_image; }
+			inline bool getShow_trajectory() const { return show_trajectory; }
 			inline bool getShow_ultrasonic_point_cloud() const { return show_ultrasonic_point_cloud; }
 			inline bool getSimple_laser_visualization() const { return simple_laser_visualization; }
 			
@@ -101,6 +106,7 @@ public:
 				os << "show_ltm = " << show_ltm << ", ";
 				os << "show_person_detection = " << show_person_detection << ", ";
 				os << "show_tof_image = " << show_tof_image << ", ";
+				os << "show_trajectory = " << show_trajectory << ", ";
 				os << "show_ultrasonic_point_cloud = " << show_ultrasonic_point_cloud << ", ";
 				os << "simple_laser_visualization = " << simple_laser_visualization << ", ";
 				os << ")\n";
@@ -249,6 +255,34 @@ public:
 		
 		// Instance params (encapsulated in a wrapper class for each instantiated parameter repository)
 		CommBasicObjects.to_ostream(os);
+	}
+	
+	std::string getAsJSONString() {
+		nlohmann::json param;
+	
+		param["Services"] = nlohmann::json {
+			{"show_base" , getServices().getShow_base()},
+			{"show_cur_map" , getServices().getShow_cur_map()},
+			{"show_ir" , getServices().getShow_ir()},
+			{"show_kinect_image" , getServices().getShow_kinect_image()},
+			{"show_laser_1" , getServices().getShow_laser_1()},
+			{"show_laser_2" , getServices().getShow_laser_2()},
+			{"show_laser_3" , getServices().getShow_laser_3()},
+			{"show_ltm" , getServices().getShow_ltm()},
+			{"show_person_detection" , getServices().getShow_person_detection()},
+			{"show_tof_image" , getServices().getShow_tof_image()},
+			{"show_trajectory" , getServices().getShow_trajectory()},
+			{"show_ultrasonic_point_cloud" , getServices().getShow_ultrasonic_point_cloud()},
+			{"simple_laser_visualization" , getServices().getSimple_laser_visualization()}
+		};
+		param["Settings"] = nlohmann::json {
+			{"verbose" , getSettings().getVerbose()}
+		};
+	
+		param["VisualizationParams"] = nlohmann::json {
+		};
+		
+		return param.dump();
 	}
 };
 

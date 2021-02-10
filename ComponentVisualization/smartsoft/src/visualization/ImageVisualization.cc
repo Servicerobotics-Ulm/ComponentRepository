@@ -2,6 +2,8 @@
 
 #ifdef WITH_MRPT_2_0_VERSION
 	#include <opencv4/opencv2/core.hpp>
+#include <opencv4/opencv2/core/core_c.h>
+#include "OpenCVHelpers/OpenCVHelpers.hh"
 #else
 	#include <cv.h>
 	#include "OpenCVHelpers/OpenCVHelpers.hh"
@@ -47,8 +49,6 @@ ImageVisualization::~ImageVisualization() {
 
 }
 
-#ifdef WITH_MRPT_2_0_VERSION
-#else
 IplImage* convertDataArrayToIplImage(DomainVision::CommVideoImage &query_image, CvSize size)
 {
 	IplImage* ipl_image = NULL;
@@ -86,10 +86,21 @@ IplImage* convertDataArrayToIplImage(DomainVision::CommVideoImage &query_image, 
 
 	return ipl_image;
 }
-#endif
 
 void ImageVisualization::displayImage(DomainVision::CommVideoImage& image) {
 #ifdef WITH_MRPT_2_0_VERSION
+			cv::Mat img_mat;
+			commVideoImage2cvMat(image, img_mat);
+
+			mrpt::img::CImage mrpt_cimg(img_mat, mrpt::img::DEEP_COPY);
+
+			m_image_window->showImage(mrpt_cimg);
+
+			// show dimensions in the title
+			std::stringstream str_dimension;
+			str_dimension << "RGB Image : "<< image.get_width()<<" x "<<image.get_height();
+			m_image_window->setWindowTitle(str_dimension.str());
+
 #else
 	IplImage* currentImage = NULL;
 
@@ -98,6 +109,7 @@ void ImageVisualization::displayImage(DomainVision::CommVideoImage& image) {
 	if (currentImage != NULL){
 		{
 			mrpt::utils::CImage img(currentImage);
+
 			m_image_window->showImage(img);
 
 			// show dimensions in the title
@@ -110,14 +122,15 @@ void ImageVisualization::displayImage(DomainVision::CommVideoImage& image) {
 	}
 	cvReleaseImage(&currentImage);
 #endif
-
 }
 
 void ImageVisualization::displayDepthImage(DomainVision::CommDepthImage& image) {
 #ifdef WITH_MRPT_2_0_VERSION
+	mrpt::img::CImage depthImage(image.getWidth(), image.getHeight());
 #else
-	IplImage* currentImage = NULL;
 	mrpt::utils::CImage depthImage(image.getWidth(), image.getHeight());
+#endif
+	IplImage* currentImage = NULL;
 
 	DomainVision::DepthFormatType depth_format = image.getFormat();
 
@@ -135,8 +148,11 @@ void ImageVisualization::displayDepthImage(DomainVision::CommDepthImage& image) 
 				uint8_t r = pixel / 8* 255 ;
 				uint8_t g = pixel / 8* 255 ;
 				uint8_t b = pixel / 8* 255 ;
-
+#ifdef WITH_MRPT_2_0_VERSION
+				mrpt::img::TColor color(r, g, b);
+#else
 				mrpt::utils::TColor color(r, g, b);
+#endif
 				depthImage.setPixel(j, i, color);
 			}
 		}
@@ -157,7 +173,11 @@ void ImageVisualization::displayDepthImage(DomainVision::CommDepthImage& image) 
 				uint8_t g = pixel[0] / 8* 255 ;
 				uint8_t b = pixel[0] / 8* 255 ;
 
+#ifdef WITH_MRPT_2_0_VERSION
+				mrpt::img::TColor color(r, g, b);
+#else
 				mrpt::utils::TColor color(r, g, b);
+#endif
 				depthImage.setPixel(j, i, color);
 			}
 		}
@@ -173,8 +193,17 @@ void ImageVisualization::displayDepthImage(DomainVision::CommDepthImage& image) 
 	m_image_window->showImage(depthImage);
 	m_image_window->setWindowTitle(str_dimension.str());
 	cvReleaseImage(&currentImage);
-#endif
 }
 void ImageVisualization::clear() {
 
 }
+
+#ifdef WITH_MRPT_2_0_VERSION
+void ImageVisualization::commVideoImage2cvMat(const DomainVision::CommVideoImage& image, cv::Mat& mat)
+{
+	cv::Mat bgr_mat(cv::Size(image.getParameter().width,image.getParameter().height), CV_8UC3, const_cast<unsigned char*>(image.get_data()));
+	cv::Mat rgb_mat;
+	cv::cvtColor(bgr_mat, rgb_mat, cv::COLOR_BGR2RGB);
+    mat = rgb_mat;
+}
+#endif

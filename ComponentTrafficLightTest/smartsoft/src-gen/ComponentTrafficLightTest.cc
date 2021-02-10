@@ -60,6 +60,14 @@ ComponentTrafficLightTest::ComponentTrafficLightTest()
 	connections.generateOut.priority = -1;
 	connections.generateOut.cpuAffinity = -1;
 	
+	// initialize members of ComponentTrafficLightTestROS1InterfacesExtension
+	
+	// initialize members of ComponentTrafficLightTestROSExtension
+	
+	// initialize members of ComponentTrafficLightTestRestInterfacesExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of PlainOpcUaComponentTrafficLightTestExtension
 	
 }
@@ -164,6 +172,14 @@ void ComponentTrafficLightTest::init(int argc, char *argv[])
 		// load initial parameters from ini-file (if found)
 		loadParameter(argc, argv);
 		
+		
+		// initializations of ComponentTrafficLightTestROS1InterfacesExtension
+		
+		// initializations of ComponentTrafficLightTestROSExtension
+		
+		// initializations of ComponentTrafficLightTestRestInterfacesExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentTrafficLightTestExtension
 		
@@ -368,6 +384,14 @@ void ComponentTrafficLightTest::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of ComponentTrafficLightTestROS1InterfacesExtension
+	
+	// destruction of ComponentTrafficLightTestROSExtension
+	
+	// destruction of ComponentTrafficLightTestRestInterfacesExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of PlainOpcUaComponentTrafficLightTestExtension
 	
 }
@@ -471,6 +495,14 @@ void ComponentTrafficLightTest::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("GenerateOut", "cpuAffinity")) {
 			parameter.getInteger("GenerateOut", "cpuAffinity", connections.generateOut.cpuAffinity);
 		}
+		
+		// load parameters for ComponentTrafficLightTestROS1InterfacesExtension
+		
+		// load parameters for ComponentTrafficLightTestROSExtension
+		
+		// load parameters for ComponentTrafficLightTestRestInterfacesExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentTrafficLightTestExtension
 		

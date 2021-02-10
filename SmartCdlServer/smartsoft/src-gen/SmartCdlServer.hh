@@ -29,11 +29,15 @@
 class SmartCdlServerPortFactoryInterface;
 class SmartCdlServerExtension;
 
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for PlainOpcUaSmartCdlServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
 
 // includes for SmartCdlServerROS1InterfacesExtension
+
+// includes for SmartCdlServerROSExtension
 
 // includes for SmartCdlServerRestInterfacesExtension
 
@@ -206,9 +210,13 @@ public:
 	
 	// define request-handlers
 	
+	// definitions of OpcUaBackendComponentGeneratorExtension
+	
 	// definitions of PlainOpcUaSmartCdlServerExtension
 	
 	// definitions of SmartCdlServerROS1InterfacesExtension
+	
+	// definitions of SmartCdlServerROSExtension
 	
 	// definitions of SmartCdlServerRestInterfacesExtension
 	
@@ -397,9 +405,13 @@ public:
 			std::string roboticMiddleware;
 		} trackingClient;
 		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
+		
 		// -- parameters for PlainOpcUaSmartCdlServerExtension
 		
 		// -- parameters for SmartCdlServerROS1InterfacesExtension
+		
+		// -- parameters for SmartCdlServerROSExtension
 		
 		// -- parameters for SmartCdlServerRestInterfacesExtension
 		

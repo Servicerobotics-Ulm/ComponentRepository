@@ -85,9 +85,13 @@ SmartPlannerBreadthFirstSearch::SmartPlannerBreadthFirstSearch()
 	connections.plannerTask.priority = -1;
 	connections.plannerTask.cpuAffinity = -1;
 	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
+	
 	// initialize members of PlainOpcUaSmartPlannerBreadthFirstSearchExtension
 	
 	// initialize members of SmartPlannerBreadthFirstSearchROS1InterfacesExtension
+	
+	// initialize members of SmartPlannerBreadthFirstSearchROSExtension
 	
 	// initialize members of SmartPlannerBreadthFirstSearchRestInterfacesExtension
 	
@@ -218,9 +222,13 @@ void SmartPlannerBreadthFirstSearch::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
+		// initializations of OpcUaBackendComponentGeneratorExtension
+		
 		// initializations of PlainOpcUaSmartPlannerBreadthFirstSearchExtension
 		
 		// initializations of SmartPlannerBreadthFirstSearchROS1InterfacesExtension
+		
+		// initializations of SmartPlannerBreadthFirstSearchROSExtension
 		
 		// initializations of SmartPlannerBreadthFirstSearchRestInterfacesExtension
 		
@@ -460,9 +468,13 @@ void SmartPlannerBreadthFirstSearch::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of OpcUaBackendComponentGeneratorExtension
+	
 	// destruction of PlainOpcUaSmartPlannerBreadthFirstSearchExtension
 	
 	// destruction of SmartPlannerBreadthFirstSearchROS1InterfacesExtension
+	
+	// destruction of SmartPlannerBreadthFirstSearchROSExtension
 	
 	// destruction of SmartPlannerBreadthFirstSearchRestInterfacesExtension
 	
@@ -588,9 +600,13 @@ void SmartPlannerBreadthFirstSearch::loadParameter(int argc, char *argv[])
 			parameter.getInteger("PlannerTask", "cpuAffinity", connections.plannerTask.cpuAffinity);
 		}
 		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
+		
 		// load parameters for PlainOpcUaSmartPlannerBreadthFirstSearchExtension
 		
 		// load parameters for SmartPlannerBreadthFirstSearchROS1InterfacesExtension
+		
+		// load parameters for SmartPlannerBreadthFirstSearchROSExtension
 		
 		// load parameters for SmartPlannerBreadthFirstSearchRestInterfacesExtension
 		

@@ -29,6 +29,14 @@
 class ComponentTTSClientPortFactoryInterface;
 class ComponentTTSClientExtension;
 
+// includes for ComponentTTSClientROS1InterfacesExtension
+
+// includes for ComponentTTSClientROSExtension
+
+// includes for ComponentTTSClientRestInterfacesExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
+
 // includes for PlainOpcUaComponentTTSClientExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -116,6 +124,14 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
+	
+	// definitions of ComponentTTSClientROS1InterfacesExtension
+	
+	// definitions of ComponentTTSClientROSExtension
+	
+	// definitions of ComponentTTSClientRestInterfacesExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentTTSClientExtension
 	
@@ -237,6 +253,14 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} speechSendServiceOut;
+		
+		// -- parameters for ComponentTTSClientROS1InterfacesExtension
+		
+		// -- parameters for ComponentTTSClientROSExtension
+		
+		// -- parameters for ComponentTTSClientRestInterfacesExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentTTSClientExtension
 		

@@ -31,7 +31,11 @@ class ComponentTTSExtension;
 
 // includes for ComponentTTSROS1InterfacesExtension
 
+// includes for ComponentTTSROSExtension
+
 // includes for ComponentTTSRestInterfacesExtension
+
+// includes for OpcUaBackendComponentGeneratorExtension
 
 // includes for PlainOpcUaComponentTTSExtension
 // include plain OPC UA device clients
@@ -132,7 +136,11 @@ public:
 	
 	// definitions of ComponentTTSROS1InterfacesExtension
 	
+	// definitions of ComponentTTSROSExtension
+	
 	// definitions of ComponentTTSRestInterfacesExtension
+	
+	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentTTSExtension
 	
@@ -250,7 +258,11 @@ public:
 		
 		// -- parameters for ComponentTTSROS1InterfacesExtension
 		
+		// -- parameters for ComponentTTSROSExtension
+		
 		// -- parameters for ComponentTTSRestInterfacesExtension
+		
+		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentTTSExtension
 		

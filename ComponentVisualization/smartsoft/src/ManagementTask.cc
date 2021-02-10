@@ -203,18 +203,18 @@ int ManagementTask::on_execute()
 				portType = port_type_name[port_types::port_push_type];
 				commObject1 = "CommBasicObjects::CommMobileIRScan";
 				break;
-//			case port_ltm_query:
-//				if(disconnect && connected[port_ltm_query]){
-//					COMP->ltmQueryClient->disconnect();
-//					COMP->ltmTimer->stop();
-//					connected[port_ltm_query] = 0;
-//					std::cout << "ltmQueryClient disconnected." << std::endl;
-//					return 0;
-//				}
-//				portType = "Query";
-//				commObject1 = "CommNavigationObjects::CommGridMapRequest";
-//				commObject2 = "CommNavigationObjects::CommGridMap";
-//				break;
+			case port_ltm_query:
+				if(disconnect && connected[port_ltm_query]){
+					COMP->ltmMapTask->disconnectServices();
+					COMP->ltmMapTask->stop();
+					connected[port_ltm_query] = 0;
+					std::cout << "ltmQueryClient disconnected." << std::endl;
+					return 0;
+				}
+				portType = "Query";
+				commObject1 = "CommNavigationObjects::CommGridMapRequest";
+				commObject2 = "CommNavigationObjects::CommGridMap";
+				break;
 			case port_video_image_push_newest:
 				if(disconnect && connected[port_video_image_push_newest]){
 					COMP->imageTask->disconnectServices();
@@ -270,6 +270,19 @@ int ManagementTask::on_execute()
 				portType = port_type_name[port_types::port_push_type];
 				commObject1 = "CommLocalizationObjects::CommAmclVisualizationInfo";
 				break;
+
+			case port_planner_goal_push_client:
+				if(disconnect && connected[port_planner_goal_push_client]){
+					COMP->plannerGoalTask->disconnectServices();
+					COMP->plannerGoalTask->stop();
+					connected[port_planner_goal_push_client] = 0;
+					std::cout << display_names[port_planner_goal_push_client]<<" disconnected." << std::endl;
+					return 0;
+				}
+				portType = port_type_name[port_types::port_push_type];
+				commObject1 = "CommNavigationObjects::CommPlannerGoal";
+				break;
+
 			default:  //port_max
 				std::cout << "invalid input!" << std::endl;
 				return 0;
@@ -444,14 +457,15 @@ int ManagementTask::on_execute()
 					COMP->iRTask->start();
 					connected[port_iRTask_push_newest] = 1;
 					break;
-//				case port_ltm_query:
-//					COMP->connections.ltmQueryClient.serverName = con[toCon].first;
-//					COMP->connections.ltmQueryClient.serviceName = con[toCon].second;
-//					std::cout << "starting LtmTimer" << std::endl;
-//					COMP->ltmTimer->init();
-//					COMP->ltmTimer->start();
-//					connected[port_ltm_query] = 1;
-//					break;
+				case port_ltm_query:
+					COMP->connections.ltmQueryClient.serverName = con[toCon].first;
+					COMP->connections.ltmQueryClient.serviceName = con[toCon].second;
+					std::cout << "starting LtmTimer" << std::endl;
+					COMP->ltmMapTask->connectServices();
+					COMP->ltmMapTask->start();
+
+					connected[port_ltm_query] = 1;
+					break;
 				case port_video_image_push_newest:
 					COMP->connections.imagePushNewestClient.serverName = con[toCon].first;
 					COMP->connections.imagePushNewestClient.serviceName = con[toCon].second;
@@ -491,6 +505,14 @@ int ManagementTask::on_execute()
 					COMP->amclVizTask->connectServices();
 					COMP->amclVizTask->start();
 					connected[port_particle_filter_info] = 1;
+					break;
+				case port_planner_goal_push_client:
+					COMP->connections.plannerGoalPushClient.serverName = con[toCon].first;
+					COMP->connections.plannerGoalPushClient.serviceName = con[toCon].second;
+					std::cout << "starting PlannerGoalTask " << std::endl;
+					COMP->plannerGoalTask->connectServices();
+					COMP->plannerGoalTask->start();
+					connected[port_planner_goal_push_client] = 1;
 					break;
 			}
 		}

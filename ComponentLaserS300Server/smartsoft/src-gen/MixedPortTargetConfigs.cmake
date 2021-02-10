@@ -1,6 +1,18 @@
 # target configurations for ComponentLaserS300ServerROS1InterfacesExtension
 
+# target configurations for ComponentLaserS300ServerROSExtension
+IF(EXISTS ${ROS_DIR})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${ROS_LIBS})
+ENDIF(EXISTS ${ROS_DIR})
+
 # target configurations for ComponentLaserS300ServerRestInterfacesExtension
+
+# target configurations for OpcUaBackendComponentGeneratorExtension
+IF(SeRoNetSDK_FOUND)
+# SeRoNetSDK has to be linked at the minimum (in case the component does not have any ports specified for any reason)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} SeRoNetSDK::SeRoNetSDK)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} CommBasicObjectsOpcUa)
+ENDIF(SeRoNetSDK_FOUND)
 
 # target configurations for PlainOpcUaComponentLaserS300ServerExtension
 IF(Open62541CppWrapper_FOUND)

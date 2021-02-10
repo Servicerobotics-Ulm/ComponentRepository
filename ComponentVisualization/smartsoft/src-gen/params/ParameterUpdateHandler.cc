@@ -20,8 +20,239 @@
 SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartACE::CommParameterRequest& request)
 {
 	SmartACE::CommParameterResponse answer;
+	
+	if(request.getParameterDataMode() == SmartACE::ParameterDataMode::NAME){
+		answer = handleParametersNamed(request);
+	} else {
+		answer = handleParametersSequence(request);
+	}
+	return answer;
+}
 
+
+SmartACE::CommParameterResponse ParamUpdateHandler::handleParametersNamed(const SmartACE::CommParameterRequest& request)
+{
+	SmartACE::CommParameterResponse answer;
+	
 	std::string tag = request.getTag();
+	for (auto & c: tag) c = toupper(c);
+	std::cout<<"PARAMETER: "<<tag<<std::endl;
+	
+	if (tag == "COMMIT")
+	{
+		answer.setResponse(globalState.handleCOMMIT(commitState));
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			globalStateLock.acquire();
+			// change the content of the globalState, however change only the generated content
+			// without affecting potential user member variables (which is more intuitive for the user)
+			globalState.setContent(commitState);
+			globalStateLock.release();
+		} else {
+			// the commit validation check returned != OK
+			// the commit state is rejected and is not copied into the global state
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.SHOW_BASE1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_SHOW_BASE1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.SHOW_DEPTHIMAGE1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_SHOW_DEPTHIMAGE1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.SHOW_IR1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_SHOW_IR1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.SHOW_LASER1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_SHOW_LASER1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.SHOW_LASER2")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_SHOW_LASER2Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.SHOW_LASER3")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_SHOW_LASER3Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.SHOW_MAP1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_SHOW_MAP1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.SHOW_RGB1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_SHOW_RGB1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.SHOW_RGBD1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_SHOW_RGBD1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.STOP_BASE1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_STOP_BASE1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.STOP_DEPTHIMAGE1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_STOP_DEPTHIMAGE1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.STOP_IR1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_STOP_IR1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.STOP_LASER1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_STOP_LASER1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.STOP_LASER2")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_STOP_LASER2Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.STOP_LASER3")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_STOP_LASER3Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.STOP_MAP1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_STOP_MAP1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.STOP_RGB1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_STOP_RGB1Core(
+			);
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.VISUALIZATIONPARAMS.STOP_RGBD1")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_VisualizationParams_STOP_RGBD1Core(
+			);
+		}
+	}
+	else
+	{
+		/////////////////////////////////////////////////////////////////////
+		// default new
+		std::cout<<"ERROR wrong Parameter!"<<std::endl;
+		answer.setResponse(SmartACE::ParamResponseType::INVALID);
+	}
+	
+
+	std::cout<<"[handleQuery] PARAMETER "<<tag<<" DONE\n\n";
+
+	return answer;
+}
+
+
+SmartACE::CommParameterResponse ParamUpdateHandler::handleParametersSequence(const SmartACE::CommParameterRequest& request)
+{
+	SmartACE::CommParameterResponse answer;
+	
+	std::string tag = request.getTag();
+	for (auto & c: tag) c = toupper(c);
 	std::cout<<"PARAMETER: "<<tag<<std::endl;
 	
 	if (tag == "COMMIT")
@@ -304,6 +535,10 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		if(parameter.getBoolean("Services", "show_tof_image", commitState.Services.show_tof_image))
 		{
 			globalState.Services.show_tof_image = commitState.Services.show_tof_image;
+		}
+		if(parameter.getBoolean("Services", "show_trajectory", commitState.Services.show_trajectory))
+		{
+			globalState.Services.show_trajectory = commitState.Services.show_trajectory;
 		}
 		if(parameter.getBoolean("Services", "show_ultrasonic_point_cloud", commitState.Services.show_ultrasonic_point_cloud))
 		{

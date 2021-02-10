@@ -86,10 +86,10 @@ public:
     void inline deproject(const st_intrinsics& intrinsics, const uint32_t& r, const uint32_t& c, const float &depth_val_meters, float &out_x, float &out_y, float &out_z);
     void inline project(const st_intrinsics& intrinsics, uint32_t& out_r, uint32_t& out_c, const float &in_x, const float &in_y, const float &in_z);
 #ifdef WITH_MRPT_2_0_VERSION
-    void createColorPointCloud (opengl::CPointCloudColoured::Ptr cloud, DomainVision::CommVideoImage *comm_color_image,
+    void createColorPointCloud (std::vector<ColPoint3d>& points, DomainVision::CommVideoImage *comm_color_image,
         		                                                                       DomainVision::CommDepthImage *comm_depth_image);
 #else
-    void createColorPointCloud (opengl::CPointCloudColouredPtr cloud, DomainVision::CommVideoImage *comm_color_image,
+    void createColorPointCloud (std::vector<ColPoint3d>& points, DomainVision::CommVideoImage *comm_color_image,
     		                                                                       DomainVision::CommDepthImage *comm_depth_image);
 #endif
     void read_intrinsics_extrinsics(const DomainVision::CommRGBDImage& rgbd_image);
