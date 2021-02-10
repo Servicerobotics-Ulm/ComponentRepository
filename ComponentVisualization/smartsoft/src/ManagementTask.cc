@@ -259,6 +259,17 @@ int ManagementTask::on_execute()
 				portType = port_type_name[port_types::port_push_type];
 				commObject1 = "CommTrackingObjects::CommDetectedMarkerList";
 				break;
+			case port_particle_filter_info:
+				if(disconnect && connected[port_particle_filter_info]){
+					COMP->amclVizTask->disconnectServices();
+					COMP->amclVizTask->stop();
+					connected[port_particle_filter_info] = 0;
+					std::cout << display_names[port_particle_filter_info]<<" disconnected." << std::endl;
+					return 0;
+				}
+				portType = port_type_name[port_types::port_push_type];
+				commObject1 = "CommLocalizationObjects::CommAmclVisualizationInfo";
+				break;
 			default:  //port_max
 				std::cout << "invalid input!" << std::endl;
 				return 0;
@@ -266,6 +277,7 @@ int ManagementTask::on_execute()
 
 		// get all entries
 		SmartACE::NSKeyType searchPattern;
+
 		ACE_Unbounded_Queue<SmartACE::NSKeyType> ns_entries = SmartACE::NAMING::instance()->getEntriesForMatchingPattern(searchPattern);
 		components.clear();
 		for (ACE_Unbounded_Queue_Iterator<SmartACE::NSKeyType> iter (ns_entries); !iter.done (); iter.advance ()){
@@ -274,6 +286,8 @@ int ManagementTask::on_execute()
 			std::string comp_name = comp->names[SmartACE::NSKeyType::COMP_NAME].c_str();
 			components[comp_name].push_back(*comp);
 		}
+
+		std::cout <<" size of components" << components.size() << "\n";
 
 		//list all appropriate components with appropriate ports
 		std::map<std::string, std::list<SmartACE::NSKeyType> >::iterator it;
@@ -469,6 +483,14 @@ int ManagementTask::on_execute()
 					COMP->markerListTask->connectServices();
 					COMP->markerListTask->start();
 					connected[port_marker_detection_list_client] = 1;
+					break;
+				case port_particle_filter_info:
+					COMP->connections.amclVisualizationInfoIn.serverName = con[toCon].first;
+					COMP->connections.amclVisualizationInfoIn.serviceName = con[toCon].second;
+					std::cout << "starting AmclVizTask " << std::endl;
+					COMP->amclVizTask->connectServices();
+					COMP->amclVizTask->start();
+					connected[port_particle_filter_info] = 1;
 					break;
 			}
 		}

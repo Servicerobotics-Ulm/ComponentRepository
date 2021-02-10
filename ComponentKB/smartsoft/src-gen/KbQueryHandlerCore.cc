@@ -22,7 +22,39 @@ KbQueryHandlerCore::KbQueryHandlerCore(IQueryServer* server)
 :	Smart::IInputHandler<std::pair<Smart::QueryIdPtr,CommBasicObjects::CommKBRequest>>(server)
 ,	server(server)
 {
+	signalled_to_stop = false;
+	this->start();
+}
+
+KbQueryHandlerCore::~KbQueryHandlerCore()
+{
+	this->stop();
+}
+
+// inputs are pushed to the request_queue
+void KbQueryHandlerCore::handle_input(const std::pair<Smart::QueryIdPtr,CommBasicObjects::CommKBRequest> &input) {
+	std::unique_lock<std::mutex> scoped_lock(handler_mutex);
+	request_queue.push_back(input);
+	scoped_lock.unlock();
 	
+	handler_cond_var.notify_all();
+}
+// inputs are processed from within the thread, thus implementing an active FIFO request-queue
+int KbQueryHandlerCore::task_execution() {
+	while(!signalled_to_stop) {
+		std::unique_lock<std::mutex> scoped_lock(handler_mutex);
+		if(request_queue.empty()) {
+			handler_cond_var.wait(scoped_lock);
+			if(signalled_to_stop)
+				return 0;
+		}
+		std::pair<Smart::QueryIdPtr,CommBasicObjects::CommKBRequest> input = request_queue.front();
+		request_queue.pop_front();
+		scoped_lock.unlock();
+		
+		this->handleQuery(input.first, input.second);
+	}
+	return 0;
 }
 
 void KbQueryHandlerCore::updateAllCommObjects()

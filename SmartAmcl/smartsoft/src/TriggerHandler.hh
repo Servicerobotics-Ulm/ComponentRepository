@@ -29,6 +29,7 @@ public:
 	virtual void handleCommLocalizationObjects_LocalizationParameter_INITIALPOSE(const int &x, const int &y, const double &a);
 	virtual void handleCommLocalizationObjects_LocalizationParameter_GLOBALLOCALIZATION();
 	virtual void handleCommLocalizationObjects_LocalizationParameter_LOADMAP(const std::string &filename);
+	virtual void handleCommLocalizationObjects_LocalizationParameter_SENSORSTOUSE(const unsigned short &sensorsToUse);
 };
 
 #endif // _TRIGGERHANDLER_HH

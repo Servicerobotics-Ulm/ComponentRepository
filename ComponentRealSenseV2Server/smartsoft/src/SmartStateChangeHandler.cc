@@ -59,8 +59,6 @@ void SmartStateChangeHandler::handleEnterState(const std::string & substate) thr
 			COMP->imageTask->startCapturing();
 		}
 		if (substate == "pushimage"){
-			//COMP->colorImagePushNewestServer->start();
-			//std::cout << "Push Newest started.\n";
 		}
 
 }
@@ -74,8 +72,6 @@ void SmartStateChangeHandler::handleQuitState(const std::string & substate) thro
 	}
 
 	if (substate == "pushimage"){
-		//COMP->colorImagePushNewestServer->stop();
-		//std::cout << "Push Timed stopped.\n";
 	}
 
 }

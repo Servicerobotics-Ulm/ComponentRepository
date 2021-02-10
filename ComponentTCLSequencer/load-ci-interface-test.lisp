@@ -66,12 +66,21 @@
 
   (load-coordination-interface "KBCoordinationService" module-path)
   (load-coordination-interface "TestCoordinationService" module-path)
+  (load-coordination-interface "TestCoordinationService2" module-path)
 
   (instantiate-coordination-module "CoordinationTestModule" 'testInst)
+  (instantiate-coordination-module "CoordinationTestModule2" 'testInst2)
   (instantiate-coordination-module "KBModule" 'kbModInst))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TESTMODULE
+
+
+(define-rule (test-rule)
+  (tcb (tcb-sub-block-error))
+  (return-value (ERROR (TEST)))
+  (action (
+              (format t "=========================>>> RULE: test-rule (ERROR (TEST))  ~%"))))
 
 (define-event-handler (test-event-handler)
 	( action (
@@ -100,10 +109,62 @@
                   ;;KB
 		  (tcl-kb-update :key '(is-a name)  :value '((is-a test) (name test1)))
                   (format t "KB Query answer: ~a~%" (get-value (tcl-kb-query :key '(is-a)  :value '((is-a test) )) 'name))
-           )))
+
+                  (tcl-push-plan :plan `((tcb-sub-block-error)
+                                         (testInst2.tcb-sub-block-handler))))))
+
+
+(realize-tcb (tcb-sub-block-error)
+  (module "CoordinationTestModule")
+  (action (	
+            (format t "tcb-sub-block~%")
+            '(ERROR (TEST)))))
+
+
+
+(define-event-handler (test-event-handler2)
+	( action (
+		(format t "Test Event 2 handler called ~s~%"(tcl-event-message))
+		(tcl-state :server 'test2 :state "Neutral")
+		(tcl-abort))))
+
+(realize-tcb (tcb-sub-block-handler)
+  (module "CoordinationTestModule2")
+  (abort-action ( (format t "tcb-sub-block-handler - abort action!~%")
+                  (tcl-state :server 'test2 :state "Neutral")))
+  (action (	
+            (format t "tcb-sub-block-handler~%")
+            ;;EVENT
+            (tcl-activate-event :handler 'test-event-handler2 :mode 'single :name 'eventname2 
+              :server 'test2 :service 'testEvent))))
+
+
+
+
+;; the following three blocks feature the same name, but in different coordination modules!
+(realize-tcb (tcb-same-name)
+  (action ((format t "tcb-same-name 0~%"))))
+
+(realize-tcb (tcb-same-name)
+  (module "CoordinationTestModule")
+  (action ((format t "tcb-same-name 1~%"))))
+
+(realize-tcb (tcb-same-name)
+  (module "CoordinationTestModule2")
+  (action ((format t "tcb-same-name 2~%"))))
+
+
+
 
 (execute '(testInst.tcb-testCoordinationInterface  1 2))
 
+(execute '(tcb-same-name))
+(execute '(testInst.tcb-same-name))
+(execute '(testInst2.tcb-same-name))
+
+;; error cases!
+(execute '(FALSEMODULE.tcb-testCoordinationInterface  1 2))
+(execute '(tcb-testCoordinationInterface  1 2))
 
 ;;TEST the default
 ;(execute '(tcb-testCoordinationInterface  1 2))

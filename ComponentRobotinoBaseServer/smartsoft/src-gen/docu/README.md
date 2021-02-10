@@ -3,131 +3,275 @@
 
 # ComponentRobotinoBaseServer Component
 
-![ComponentRobotinoBaseServer-ComponentImage](model/ComponentRobotinoBaseServerComponentDefinition.jpg)
+<img src="model/ComponentRobotinoBaseServerComponentDefinition.jpg" alt="ComponentRobotinoBaseServer-ComponentImage" width="1000">
 
-The SmartRobotinoBaseServer makes the Robotino platform available. It handles all the communication with the hardware. It offers several services for controlling the robot, such as sending navigation commands to the base and providing access to the robot's odometry. Position updates can be sent to the component to overcome odometry failures.
-
-| Metaelement | Documentation |
-|-------------|---------------|
-| License | LGPL |
-| Hardware Requirements | FESTO Robotino3 robot base |
-| Purpose | Hardware-Driver |
+*Component Short Description:* TODO: add short description for ComponentRobotinoBaseServer datasheet
 
 
-## Coordination Port CoordinationPort
+## Component-Datasheet Properties
 
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Component-Datasheet Properties</caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Property Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Property Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Property Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">MarketName</td>
+<td style="border:1px solid black; padding: 5px;">Robotino Base Server</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Supplier</td>
+<td style="border:1px solid black; padding: 5px;">Servicerobotics Ulm</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Homepage</td>
+<td style="border:1px solid black; padding: 5px;">http://servicerobotik-ulm.de/components</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Purpose</td>
+<td style="border:1px solid black; padding: 5px;">RobotBase</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
 
-### States
-
-
-| MainState Name | MainState Description |
-|----------------|-----------------------|
-
-### DynamicWiring
-
-
-### Parameter
-
-Accept parameters at runtime. See section Parameters.
-
-## Service Ports
-
-### LocalizationUpdateServiceIn
-
-Port for corrections of base pose to overcome the odometry failure. Accepts a pair of an old uncorrected pose and a new corrected pose. The deviation between these two poses is applied to correct the current pose of the robot.
+## Component Ports
 
 ### NavigationVelocityServiceIn
 
-Send new navigation velocity commands v and omega to hardware base. The values are thresholded by the min and max values specified in the ini file before being sent.
+*Documentation:*
 
-### BaseStateServiceOut
 
-Push the base state containing current information about the robot's velocity, pose, raw pose. Should be used when a continuous base pose is required. For example, the SmartLaserLMS200Server uses the latest base pose (received continuously) to stamp the laser scan with the robot's pose at the time the scan was recorded.
+### LocalizationEventServiceIn
+
+*Documentation:*
+
+
+### BatteryEventServiceOut
+
+*Documentation:*
+
 
 ### BaseStateQueryServiceAnsw
 
-Query port to request the base state. Analogous to basePositionPushTimedServer, but a query service. Should be used when the base pose is needed sporadically, for example by a behavior component which explicitly needs to query the base pose from time to time.
+*Documentation:*
 
 
-## Component Parameters ComponentRobotinoBaseServerParams
+### RobotinoIOValuesQueryServiceAnsw
 
-### InternalParameter Robot
-
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| maxVelX | Double |  |
-| maxVelY | Double |  |
-| maxRotVel | Double |  |
-| daemonIP | String |  |
-
-### InternalParameter Bumper
-
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| bumperTimeOutSec | Int32 |  |
-| bumperTimeOutMSec | Int32 |  |
-
-### InternalParameter LaserSafetyField
-
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| generateLaserSafetyFieldEvents | Boolean |  |
-| laserSafetyfFieldTimeOutSec | Int32 |  |
-| laserSafetyfFieldTimeOutMSec | Int32 |  |
-
-### InternalParameter General
-
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| verbose | Boolean |  |
-| hasSignalState | Boolean |  |
-| useLocalizationEvent | Boolean |  |
-| poseFileName | String |  |
-| writePoseFile | Boolean |  |
-
-### ParameterSetInstance BaseParams
-
-#### TriggerInstance BASE_RESET
-
-active = false
+*Documentation:*
 
 
-#### TriggerInstance BASE_SONAR
+### BumperEventServiceOut
 
-active = false
-
-
-#### TriggerInstance SIGNAL_STATE_BUSY
-
-active = false
+*Documentation:*
 
 
-#### TriggerInstance SIGNAL_STATE_ERROR
+### DigitalInputEventOut
 
-active = false
-
-
-#### TriggerInstance SIGNAL_STATE_IDLE
-
-active = false
+*Documentation:*
 
 
-#### TriggerInstance SIGNAL_STATE_LOCALIZATION_ERROR
+### BaseStateServiceOut
 
-active = false
-
-
-#### TriggerInstance SIGNAL_STATE_SAFETY_FIELD
-
-active = false
+*Documentation:*
 
 
-### ExtendedTrigger SET_RELAY
+### LocalizationUpdateServiceIn
 
-active = false
+*Documentation:*
 
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| number | UInt32 |  |
-| value | Boolean |  |
+
+### PowerOutputSendIn
+
+*Documentation:*
+
+
+
+
+## Component Parameters: ComponentRobotinoBaseServerParams
+
+### Internal Parameter: Robot
+
+*Documentation:*
+
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Internal Parameter <b>Robot</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>maxVelX</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">1.0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>maxVelY</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">1.0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>maxRotVel</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">4.0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>daemonIP</b></td>
+<td style="border:1px solid black; padding: 5px;">String</td>
+<td style="border:1px solid black; padding: 5px;">"127.0.0.1"</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
+
+### Internal Parameter: Bumper
+
+*Documentation:*
+
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Internal Parameter <b>Bumper</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>bumperTimeOutSec</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">10</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>bumperTimeOutMSec</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
+
+### Internal Parameter: General
+
+*Documentation:*
+
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Internal Parameter <b>General</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>verbose</b></td>
+<td style="border:1px solid black; padding: 5px;">Boolean</td>
+<td style="border:1px solid black; padding: 5px;">false</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>hasSignalState</b></td>
+<td style="border:1px solid black; padding: 5px;">Boolean</td>
+<td style="border:1px solid black; padding: 5px;">true</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>useLocalizationEvent</b></td>
+<td style="border:1px solid black; padding: 5px;">Boolean</td>
+<td style="border:1px solid black; padding: 5px;">true</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>poseFileName</b></td>
+<td style="border:1px solid black; padding: 5px;">String</td>
+<td style="border:1px solid black; padding: 5px;">"/tmp/lastRobotPose.txt"</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>writePoseFile</b></td>
+<td style="border:1px solid black; padding: 5px;">Boolean</td>
+<td style="border:1px solid black; padding: 5px;">false</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
+
+### ParameterSetInstance: BaseParams
+
+#### Trigger Instance: BASE_RESET
+
+*Property:* active = **false**
+
+*Documentation:*
+
+#### Trigger Instance: BASE_SONAR
+
+*Property:* active = **false**
+
+*Documentation:*
+
+#### Trigger Instance: SIGNAL_STATE_BUSY
+
+*Property:* active = **false**
+
+*Documentation:*
+
+#### Trigger Instance: SIGNAL_STATE_ERROR
+
+*Property:* active = **false**
+
+*Documentation:*
+
+#### Trigger Instance: SIGNAL_STATE_IDLE
+
+*Property:* active = **false**
+
+*Documentation:*
+
+#### Trigger Instance: SIGNAL_STATE_LOCALIZATION_ERROR
+
+*Property:* active = **false**
+
+*Documentation:*
+
+#### Trigger Instance: SIGNAL_STATE_SAFETY_FIELD
+
+*Property:* active = **false**
+
+*Documentation:*
+
+### Extended Trigger: SET_RELAY
+
+*Property:* active = **false**
+
+*Documentation:*
+
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Attributes of Extended Trigger <b>SET_RELAY</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>number</b></td>
+<td style="border:1px solid black; padding: 5px;">UInt32</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>value</b></td>
+<td style="border:1px solid black; padding: 5px;">Boolean</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
 

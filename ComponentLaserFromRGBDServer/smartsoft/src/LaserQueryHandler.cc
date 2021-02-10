@@ -45,7 +45,7 @@
 #include "LaserQueryHandler.hh"
 #include "ComponentLaserFromRGBDServer.hh"
 
-LaserQueryHandler::LaserQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan, SmartACE::QueryId>* server)
+LaserQueryHandler::LaserQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan>* server)
 :	LaserQueryHandlerCore(server)
 {
 	
@@ -58,7 +58,7 @@ LaserQueryHandler::~LaserQueryHandler()
 }
 
 
-void LaserQueryHandler::handleQuery(const SmartACE::QueryId &id, const CommBasicObjects::CommVoid& request) 
+void LaserQueryHandler::handleQuery(const Smart::QueryIdPtr &id, const CommBasicObjects::CommVoid& request)
 {
 	if (COMP->getGlobalState().getScanner().getVerbose())
 				std::cout << "read new laser data\n";

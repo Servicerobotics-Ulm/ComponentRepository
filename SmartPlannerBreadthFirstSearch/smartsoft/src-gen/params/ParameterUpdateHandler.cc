@@ -20,8 +20,157 @@
 SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartACE::CommParameterRequest& request)
 {
 	SmartACE::CommParameterResponse answer;
+	
+	if(request.getParameterDataMode() == SmartACE::ParameterDataMode::NAME){
+		answer = handleParametersNamed(request);
+	} else {
+		answer = handleParametersSequence(request);
+	}
+	return answer;
+}
 
+
+SmartACE::CommParameterResponse ParamUpdateHandler::handleParametersNamed(const SmartACE::CommParameterRequest& request)
+{
+	SmartACE::CommParameterResponse answer;
+	
 	std::string tag = request.getTag();
+	for (auto & c: tag) c = toupper(c);
+	std::cout<<"PARAMETER: "<<tag<<std::endl;
+	
+	if (tag == "COMMIT")
+	{
+		answer.setResponse(globalState.handleCOMMIT(commitState));
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			globalStateLock.acquire();
+			// change the content of the globalState, however change only the generated content
+			// without affecting potential user member variables (which is more intuitive for the user)
+			globalState.setContent(commitState);
+			globalStateLock.release();
+		} else {
+			// the commit validation check returned != OK
+			// the commit state is rejected and is not copied into the global state
+		}
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.PLANNERPARAMS.DELETEGOAL")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommNavigationObjects_PlannerParams_DELETEGOALCore(
+			);
+		}
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.PLANNERPARAMS.ID")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK); // TODO: this should be decided according to validation checks defined in the model (not yet implemented)
+		
+		unsigned int temp_id = 0;
+		if(request.getInteger("id", temp_id) == 0) {
+			commitState.CommNavigationObjects.PlannerParams.ID.id = temp_id;
+		} else {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: id request: "<<request<<std::endl;
+		}
+		
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.PLANNERPARAMS.PLANNERMODE")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK); // TODO: this should be decided according to validation checks defined in the model (not yet implemented)
+		
+		std::string temp_mode = "";
+		if(request.getString("mode", temp_mode) == 0) {
+			commitState.CommNavigationObjects.PlannerParams.PLANNERMODE.mode = temp_mode;
+		} else {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: mode request: "<<request<<std::endl;
+		}
+		
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.PLANNERPARAMS.SETDESTINATIONCIRCLE")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		int temp_x = 0;
+		if(request.getInteger("x", temp_x) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: x request: "<<request<<std::endl;
+		}
+		int temp_y = 0;
+		if(request.getInteger("y", temp_y) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: y request: "<<request<<std::endl;
+		}
+		unsigned int temp_r = 0;
+		if(request.getInteger("r", temp_r) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: r request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommNavigationObjects_PlannerParams_SETDESTINATIONCIRCLECore(
+			temp_x, 
+			temp_y, 
+			temp_r
+			);
+		}
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.PLANNERPARAMS.SETDESTINATIONLINE")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		int temp_x1 = 0;
+		if(request.getInteger("x1", temp_x1) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: x1 request: "<<request<<std::endl;
+		}
+		int temp_y1 = 0;
+		if(request.getInteger("y1", temp_y1) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: y1 request: "<<request<<std::endl;
+		}
+		int temp_x2 = 0;
+		if(request.getInteger("x2", temp_x2) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: x2 request: "<<request<<std::endl;
+		}
+		int temp_y2 = 0;
+		if(request.getInteger("y2", temp_y2) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: y2 request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommNavigationObjects_PlannerParams_SETDESTINATIONLINECore(
+			temp_x1, 
+			temp_y1, 
+			temp_x2, 
+			temp_y2
+			);
+		}
+	}
+	else
+	{
+		/////////////////////////////////////////////////////////////////////
+		// default new
+		std::cout<<"ERROR wrong Parameter!"<<std::endl;
+		answer.setResponse(SmartACE::ParamResponseType::INVALID);
+	}
+	
+
+	std::cout<<"[handleQuery] PARAMETER "<<tag<<" DONE\n\n";
+
+	return answer;
+}
+
+
+SmartACE::CommParameterResponse ParamUpdateHandler::handleParametersSequence(const SmartACE::CommParameterRequest& request)
+{
+	SmartACE::CommParameterResponse answer;
+	
+	std::string tag = request.getTag();
+	for (auto & c: tag) c = toupper(c);
 	std::cout<<"PARAMETER: "<<tag<<std::endl;
 	
 	if (tag == "COMMIT")
@@ -57,6 +206,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 			commitState.CommNavigationObjects.PlannerParams.ID.id = temp_id;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: id request: "<<request<<std::endl;
 		}
 		
 	}
@@ -69,6 +219,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 			commitState.CommNavigationObjects.PlannerParams.PLANNERMODE.mode = temp_mode;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: mode request: "<<request<<std::endl;
 		}
 		
 	}
@@ -79,14 +230,17 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		int temp_x = 0;
 		if(request.getInteger("1", temp_x) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: x request: "<<request<<std::endl;
 		}
 		int temp_y = 0;
 		if(request.getInteger("2", temp_y) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: y request: "<<request<<std::endl;
 		}
 		unsigned int temp_r = 0;
 		if(request.getInteger("3", temp_r) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: r request: "<<request<<std::endl;
 		}
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
@@ -104,18 +258,22 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		int temp_x1 = 0;
 		if(request.getInteger("1", temp_x1) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: x1 request: "<<request<<std::endl;
 		}
 		int temp_y1 = 0;
 		if(request.getInteger("2", temp_y1) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: y1 request: "<<request<<std::endl;
 		}
 		int temp_x2 = 0;
 		if(request.getInteger("3", temp_x2) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: x2 request: "<<request<<std::endl;
 		}
 		int temp_y2 = 0;
 		if(request.getInteger("4", temp_y2) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: y2 request: "<<request<<std::endl;
 		}
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {

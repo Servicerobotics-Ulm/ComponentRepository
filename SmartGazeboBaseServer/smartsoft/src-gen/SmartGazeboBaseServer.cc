@@ -21,6 +21,8 @@
 // the ace port-factory is used as a default port-mapping
 #include "SmartGazeboBaseServerAcePortFactory.hh"
 
+#include "BatteryEventServiceOutEventTestHandler.hh"
+#include "BumperEventServiceOutEventTestHandler.hh"
 
 // initialize static singleton pointer to zero
 SmartGazeboBaseServer* SmartGazeboBaseServer::_smartGazeboBaseServer = 0;
@@ -35,22 +37,32 @@ SmartGazeboBaseServer::SmartGazeboBaseServer()
 	baseSatateQueryAnswInputTaskTrigger = NULL;
 	baseStateQueryHandler = NULL;
 	baseStateServiceOut = NULL;
+	baseStateServiceOutWrapper = NULL;
 	baseStateTask = NULL;
 	baseStateTaskTrigger = NULL;
+	batteryEventServiceOut = NULL;
+	batteryEventServiceOutWrapper = NULL;
+	batteryEventServiceOutEventTestHandler = nullptr; 
+	bumperEventServiceOut = NULL;
+	bumperEventServiceOutWrapper = NULL;
+	bumperEventServiceOutEventTestHandler = nullptr; 
+	//coordinationPort = NULL;
 	//coordinationPort = NULL;
 	laserServiceOut = NULL;
+	laserServiceOutWrapper = NULL;
 	laserTask = NULL;
 	laserTaskTrigger = NULL;
 	localizationUpdateHandler = NULL;
 	localizationUpdateServiceIn = NULL;
 	localizationUpdateServiceInInputTaskTrigger = NULL;
 	localizationUpdateServiceInUpcallManager = NULL;
+	localizationUpdateServiceInInputCollector = NULL;
 	navVelServiceIn = NULL;
 	navVelServiceInInputTaskTrigger = NULL;
 	navVelServiceInUpcallManager = NULL;
+	navVelServiceInInputCollector = NULL;
 	pollForGazeboConnection = NULL;
 	pollForGazeboConnectionTrigger = NULL;
-	//smartGazeboBaseServerParams = NULL;
 	velocityInpuHandler = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
@@ -67,6 +79,10 @@ SmartGazeboBaseServer::SmartGazeboBaseServer()
 	connections.baseSatateQueryAnsw.roboticMiddleware = "ACE_SmartSoft";
 	connections.baseStateServiceOut.serviceName = "BaseStateServiceOut";
 	connections.baseStateServiceOut.roboticMiddleware = "ACE_SmartSoft";
+	connections.batteryEventServiceOut.serviceName = "BatteryEventServiceOut";
+	connections.batteryEventServiceOut.roboticMiddleware = "ACE_SmartSoft";
+	connections.bumperEventServiceOut.serviceName = "BumperEventServiceOut";
+	connections.bumperEventServiceOut.roboticMiddleware = "ACE_SmartSoft";
 	connections.laserServiceOut.serviceName = "LaserServiceOut";
 	connections.laserServiceOut.roboticMiddleware = "ACE_SmartSoft";
 	connections.localizationUpdateServiceIn.serviceName = "LocalizationUpdateServiceIn";
@@ -94,11 +110,11 @@ SmartGazeboBaseServer::SmartGazeboBaseServer()
 	connections.localizationUpdateHandler.prescale = 1;
 	connections.velocityInpuHandler.prescale = 1;
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
 	// initialize members of PlainOpcUaSmartGazeboBaseServerExtension
 	
-	// initialize members of SmartGazeboBaseServerROSExtension
+	// initialize members of SmartGazeboBaseServerROS1InterfacesExtension
+	
+	// initialize members of SmartGazeboBaseServerRestInterfacesExtension
 	
 }
 
@@ -217,11 +233,11 @@ void SmartGazeboBaseServer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of PlainOpcUaSmartGazeboBaseServerExtension
 		
-		// initializations of SmartGazeboBaseServerROSExtension
+		// initializations of SmartGazeboBaseServerROS1InterfacesExtension
+		
+		// initializations of SmartGazeboBaseServerRestInterfacesExtension
 		
 		
 		// initialize all registered port-factories
@@ -254,23 +270,35 @@ void SmartGazeboBaseServer::init(int argc, char *argv[])
 		}
 
 		// create event-test handlers (if needed)
+		batteryEventServiceOutEventTestHandler = std::make_shared<BatteryEventServiceOutEventTestHandler>();
+		bumperEventServiceOutEventTestHandler = std::make_shared<BumperEventServiceOutEventTestHandler>();
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
 		baseSatateQueryAnsw = portFactoryRegistry[connections.baseSatateQueryAnsw.roboticMiddleware]->createBaseSatateQueryAnsw(connections.baseSatateQueryAnsw.serviceName);
 		baseSatateQueryAnswInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>(baseSatateQueryAnsw);
 		baseStateServiceOut = portFactoryRegistry[connections.baseStateServiceOut.roboticMiddleware]->createBaseStateServiceOut(connections.baseStateServiceOut.serviceName);
+		baseStateServiceOutWrapper = new BaseStateServiceOutWrapper(baseStateServiceOut);
+		batteryEventServiceOutEventTestHandler = std::make_shared<BatteryEventServiceOutEventTestHandler>();
+		batteryEventServiceOut = portFactoryRegistry[connections.batteryEventServiceOut.roboticMiddleware]->createBatteryEventServiceOut(connections.batteryEventServiceOut.serviceName, batteryEventServiceOutEventTestHandler);
+		batteryEventServiceOutWrapper = new BatteryEventServiceOutWrapper(batteryEventServiceOut);
+		bumperEventServiceOutEventTestHandler = std::make_shared<BumperEventServiceOutEventTestHandler>();
+		bumperEventServiceOut = portFactoryRegistry[connections.bumperEventServiceOut.roboticMiddleware]->createBumperEventServiceOut(connections.bumperEventServiceOut.serviceName, bumperEventServiceOutEventTestHandler);
+		bumperEventServiceOutWrapper = new BumperEventServiceOutWrapper(bumperEventServiceOut);
 		laserServiceOut = portFactoryRegistry[connections.laserServiceOut.roboticMiddleware]->createLaserServiceOut(connections.laserServiceOut.serviceName);
+		laserServiceOutWrapper = new LaserServiceOutWrapper(laserServiceOut);
 		localizationUpdateServiceIn = portFactoryRegistry[connections.localizationUpdateServiceIn.roboticMiddleware]->createLocalizationUpdateServiceIn(connections.localizationUpdateServiceIn.serviceName);
 		navVelServiceIn = portFactoryRegistry[connections.navVelServiceIn.roboticMiddleware]->createNavVelServiceIn(connections.navVelServiceIn.serviceName);
 		
 		// create client ports
 		
 		// create InputTaskTriggers and UpcallManagers
-		localizationUpdateServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBasePositionUpdate>(localizationUpdateServiceIn);
-		localizationUpdateServiceInUpcallManager = new LocalizationUpdateServiceInUpcallManager(localizationUpdateServiceIn);
-		navVelServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommNavigationVelocity>(navVelServiceIn);
-		navVelServiceInUpcallManager = new NavVelServiceInUpcallManager(navVelServiceIn);
+		localizationUpdateServiceInInputCollector = new LocalizationUpdateServiceInInputCollector(localizationUpdateServiceIn);
+		localizationUpdateServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBasePositionUpdate>(localizationUpdateServiceInInputCollector);
+		localizationUpdateServiceInUpcallManager = new LocalizationUpdateServiceInUpcallManager(localizationUpdateServiceInInputCollector);
+		navVelServiceInInputCollector = new NavVelServiceInInputCollector(navVelServiceIn);
+		navVelServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommNavigationVelocity>(navVelServiceInInputCollector);
+		navVelServiceInUpcallManager = new NavVelServiceInUpcallManager(navVelServiceInInputCollector);
 		
 		// create input-handler
 		localizationUpdateHandler = new LocalizationUpdateHandler(localizationUpdateServiceIn, connections.localizationUpdateHandler.prescale);
@@ -453,19 +481,29 @@ void SmartGazeboBaseServer::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 	delete localizationUpdateServiceInInputTaskTrigger;
 	delete localizationUpdateServiceInUpcallManager;
+	delete localizationUpdateServiceInInputCollector;
 	delete navVelServiceInInputTaskTrigger;
 	delete navVelServiceInUpcallManager;
+	delete navVelServiceInInputCollector;
 
 	// destroy client ports
 
 	// destroy server ports
 	delete baseSatateQueryAnsw;
 	delete baseSatateQueryAnswInputTaskTrigger;
+	delete baseStateServiceOutWrapper;
 	delete baseStateServiceOut;
+	delete batteryEventServiceOutWrapper;
+	delete batteryEventServiceOut;
+	delete bumperEventServiceOutWrapper;
+	delete bumperEventServiceOut;
+	delete laserServiceOutWrapper;
 	delete laserServiceOut;
 	delete localizationUpdateServiceIn;
 	delete navVelServiceIn;
 	// destroy event-test handlers (if needed)
+	batteryEventServiceOutEventTestHandler;
+	bumperEventServiceOutEventTestHandler;
 	
 	// destroy request-handlers
 	delete baseStateQueryHandler;
@@ -491,11 +529,11 @@ void SmartGazeboBaseServer::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
 	// destruction of PlainOpcUaSmartGazeboBaseServerExtension
 	
-	// destruction of SmartGazeboBaseServerROSExtension
+	// destruction of SmartGazeboBaseServerROS1InterfacesExtension
+	
+	// destruction of SmartGazeboBaseServerRestInterfacesExtension
 	
 }
 
@@ -580,6 +618,16 @@ void SmartGazeboBaseServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("BaseStateServiceOut", "roboticMiddleware")) {
 			parameter.getString("BaseStateServiceOut", "roboticMiddleware", connections.baseStateServiceOut.roboticMiddleware);
 		}
+		// load parameters for server BatteryEventServiceOut
+		parameter.getString("BatteryEventServiceOut", "serviceName", connections.batteryEventServiceOut.serviceName);
+		if(parameter.checkIfParameterExists("BatteryEventServiceOut", "roboticMiddleware")) {
+			parameter.getString("BatteryEventServiceOut", "roboticMiddleware", connections.batteryEventServiceOut.roboticMiddleware);
+		}
+		// load parameters for server BumperEventServiceOut
+		parameter.getString("BumperEventServiceOut", "serviceName", connections.bumperEventServiceOut.serviceName);
+		if(parameter.checkIfParameterExists("BumperEventServiceOut", "roboticMiddleware")) {
+			parameter.getString("BumperEventServiceOut", "roboticMiddleware", connections.bumperEventServiceOut.roboticMiddleware);
+		}
 		// load parameters for server LaserServiceOut
 		parameter.getString("LaserServiceOut", "serviceName", connections.laserServiceOut.serviceName);
 		if(parameter.checkIfParameterExists("LaserServiceOut", "roboticMiddleware")) {
@@ -651,11 +699,11 @@ void SmartGazeboBaseServer::loadParameter(int argc, char *argv[])
 			parameter.getInteger("VelocityInpuHandler", "prescale", connections.velocityInpuHandler.prescale);
 		}
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// load parameters for PlainOpcUaSmartGazeboBaseServerExtension
 		
-		// load parameters for SmartGazeboBaseServerROSExtension
+		// load parameters for SmartGazeboBaseServerROS1InterfacesExtension
+		
+		// load parameters for SmartGazeboBaseServerRestInterfacesExtension
 		
 		
 		// load parameters for all registered component-extensions

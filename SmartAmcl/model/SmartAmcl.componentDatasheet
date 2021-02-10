@@ -1,4 +1,5 @@
-ComponentDatasheet SmartAmcl {
+ComponentDatasheet SmartAmcl
+{
 	BaseURI "http://servicerobotik-ulm.de"
 	ShortDescription "The SmartAmcl implements the Adaptive Monte-Carlo Localization (AMCL) algorithm."
 	DatasheetProperty SpdxLicense {
@@ -16,5 +17,16 @@ ComponentDatasheet SmartAmcl {
 	}
 	DatasheetProperty Purpose {
 		value "Localization"
+	}
+	DatasheetProperty MarketName {
+		value "Adaptive Monte-Carlo Localization (AMCL) Component"
+	}
+	ComponentPortDatasheet LaserServiceIn {
+	}
+	ComponentPortDatasheet LocalizationUpdateServiceOut {
+	}
+	ComponentPortDatasheet LocalizationEventServiceOut {
+	}
+	ComponentPortDatasheet AmclVisualizationInfoOut {
 	}
 }

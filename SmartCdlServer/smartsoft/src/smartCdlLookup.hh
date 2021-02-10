@@ -51,8 +51,14 @@
 
 
 #ifdef WITH_OPENCV_CDL_LOOKUP_DEBUG
-	#include "cv.h"
-	#include "highgui.h"
+	#ifdef WITH_OPENCV_4_2_VERSION
+		#include <opencv4/opencv2/highgui.hpp>
+		#include <opencv4/opencv2/core.hpp>
+		#include <opencv4/opencv2/imgproc.hpp>
+	#else
+		#include "cv.h"
+		#include "highgui.h"
+	#endif
 #endif
 
 class CdlLookupClass
@@ -86,7 +92,11 @@ protected:
   // will hold the cdl contur
 
 #ifdef WITH_OPENCV_CDL_LOOKUP_DEBUG
-  void drawCdlContour(IplImage *img, int cdl_x_max, int cdl_y_min, double cdl_to_pixel_scale, CvScalar color);
+	#ifdef WITH_OPENCV_4_2_VERSION
+  		void drawCdlContour(cv::Mat img, int cdl_x_max, int cdl_y_min, double cdl_to_pixel_scale, cv::Scalar color);
+	#else
+  		void drawCdlContour(IplImage *img, int cdl_x_max, int cdl_y_min, double cdl_to_pixel_scale, CvScalar color);
+	#endif
 #endif
 
   bool cdl_check_point_inside_polygon(double x_p,double y_p);
@@ -241,7 +251,11 @@ protected:
   int pixelX;
   int pixelY;
   int gridsize;
-  IplImage* img;
+	#ifdef WITH_OPENCV_4_2_VERSION
+  	  	cv::Mat img;
+	#else
+  		IplImage* img;
+	#endif
 #endif
 
   int cdl_line_intersection(double a1,double b1,double c1,

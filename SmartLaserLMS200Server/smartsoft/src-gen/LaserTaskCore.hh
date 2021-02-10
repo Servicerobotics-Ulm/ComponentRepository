@@ -67,7 +67,7 @@ protected:
 	}
 	
 	// this method is meant to be used in derived classes
-	Smart::StatusCode laserScanOutPut(CommBasicObjects::CommMobileLaserScan &laserScanOutDataObject);
+	Smart::StatusCode laserServiceOutPut(CommBasicObjects::CommMobileLaserScan &laserServiceOutDataObject);
 	
 	
 /**

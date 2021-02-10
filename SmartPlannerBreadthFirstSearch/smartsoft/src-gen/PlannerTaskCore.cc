@@ -67,7 +67,8 @@ int PlannerTaskCore::execute_protected_region()
 	if(useDefaultState) {
 		Smart::StatusCode status = COMP->stateSlave->acquire("pathplanning");
 		if(status != Smart::SMART_OK) {
-			std::cerr << "PlannerTaskCore: ERROR acquiring state active: " << status << std::endl;
+			std::cerr << "PlannerTaskCore: ERROR acquiring state: " << status << std::endl;
+			usleep(500000);
 			return 0;
 		}
 	}
@@ -110,7 +111,7 @@ void PlannerTaskCore::updateAllCommObjects()
 // this method is meant to be used in derived classes
 Smart::StatusCode PlannerTaskCore::plannerEventServerPut(CommNavigationObjects::PlannerEventState &eventState)
 {
-	Smart::StatusCode result = COMP->plannerEventServer->put(eventState);
+	Smart::StatusCode result = COMP->plannerEventServerWrapper->put(eventState);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
@@ -120,7 +121,7 @@ Smart::StatusCode PlannerTaskCore::plannerEventServerPut(CommNavigationObjects::
 // this method is meant to be used in derived classes
 Smart::StatusCode PlannerTaskCore::plannerGoalServerPut(CommNavigationObjects::CommPlannerGoal &plannerGoalServerDataObject)
 {
-	Smart::StatusCode result = COMP->plannerGoalServer->put(plannerGoalServerDataObject);
+	Smart::StatusCode result = COMP->plannerGoalServerWrapper->put(plannerGoalServerDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());

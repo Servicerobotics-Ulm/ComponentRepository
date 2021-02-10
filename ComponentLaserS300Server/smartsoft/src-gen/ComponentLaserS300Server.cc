@@ -32,18 +32,27 @@ ComponentLaserS300Server::ComponentLaserS300Server()
 	std::cout << "constructor of ComponentLaserS300Server\n";
 	
 	// set all pointer members to NULL
-	//componentLaserS300ServerParams = NULL;
+	commIOForkingServiceIn = NULL;
+	commIOForkingServiceInInputTaskTrigger = NULL;
+	commIOForkingServiceInUpcallManager = NULL;
+	commIOForkingServiceInInputCollector = NULL;
+	//coordinationPort = NULL;
 	//coordinationPort = NULL;
 	laserQueryServiceAnswHandler = NULL;
+	laserSafetyTask = NULL;
+	laserSafetyTaskTrigger = NULL;
+	laserServiceOut = NULL;
+	laserServiceOutWrapper = NULL;
 	laserTask = NULL;
 	laserTaskTrigger = NULL;
 	baseTimedClient = NULL;
 	baseTimedClientInputTaskTrigger = NULL;
 	baseTimedClientUpcallManager = NULL;
-	laserPushNewestServer = NULL;
+	baseTimedClientInputCollector = NULL;
 	laserQueryServer = NULL;
 	laserQueryServerInputTaskTrigger = NULL;
 	safetyfieldEventServer = NULL;
+	safetyfieldEventServerWrapper = NULL;
 	safetyfieldEventServerEventTestHandler = nullptr; 
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
@@ -56,18 +65,33 @@ ComponentLaserS300Server::ComponentLaserS300Server()
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
-	connections.laserPushNewestServer.serviceName = "laserPushNewestServer";
-	connections.laserPushNewestServer.roboticMiddleware = "ACE_SmartSoft";
+	connections.laserServiceOut.serviceName = "LaserServiceOut";
+	connections.laserServiceOut.roboticMiddleware = "ACE_SmartSoft";
 	connections.laserQueryServer.serviceName = "laserQueryServer";
 	connections.laserQueryServer.roboticMiddleware = "ACE_SmartSoft";
 	connections.safetyfieldEventServer.serviceName = "safetyfieldEventServer";
 	connections.safetyfieldEventServer.roboticMiddleware = "ACE_SmartSoft";
+	connections.commIOForkingServiceIn.initialConnect = false;
+	connections.commIOForkingServiceIn.wiringName = "CommIOForkingServiceIn";
+	connections.commIOForkingServiceIn.serverName = "unknown";
+	connections.commIOForkingServiceIn.serviceName = "unknown";
+	connections.commIOForkingServiceIn.interval = 1;
+	connections.commIOForkingServiceIn.roboticMiddleware = "ACE_SmartSoft";
 	connections.baseTimedClient.initialConnect = false;
 	connections.baseTimedClient.wiringName = "baseTimedClient";
 	connections.baseTimedClient.serverName = "unknown";
 	connections.baseTimedClient.serviceName = "unknown";
 	connections.baseTimedClient.interval = 1;
 	connections.baseTimedClient.roboticMiddleware = "ACE_SmartSoft";
+	connections.laserSafetyTask.minActFreq = 0.0;
+	connections.laserSafetyTask.maxActFreq = 0.0;
+	connections.laserSafetyTask.trigger = "DataTriggered";
+	connections.laserSafetyTask.inPortRef = "CommIOForkingServiceIn";	
+	connections.laserSafetyTask.prescale = 1;
+	// scheduling default parameters
+	connections.laserSafetyTask.scheduler = "DEFAULT";
+	connections.laserSafetyTask.priority = -1;
+	connections.laserSafetyTask.cpuAffinity = -1;
 	connections.laserTask.minActFreq = 0.0;
 	connections.laserTask.maxActFreq = 0.0;
 	// scheduling default parameters
@@ -75,9 +99,9 @@ ComponentLaserS300Server::ComponentLaserS300Server()
 	connections.laserTask.priority = -1;
 	connections.laserTask.cpuAffinity = -1;
 	
-	// initialize members of ComponentLaserS300ServerROSExtension
+	// initialize members of ComponentLaserS300ServerROS1InterfacesExtension
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
+	// initialize members of ComponentLaserS300ServerRestInterfacesExtension
 	
 	// initialize members of PlainOpcUaComponentLaserS300ServerExtension
 	
@@ -111,6 +135,23 @@ void ComponentLaserS300Server::setStartupFinished() {
 }
 
 
+Smart::StatusCode ComponentLaserS300Server::connectCommIOForkingServiceIn(const std::string &serverName, const std::string &serviceName) {
+	Smart::StatusCode status;
+	
+	if(connections.commIOForkingServiceIn.initialConnect == false) {
+		return Smart::SMART_OK;
+	}
+	std::cout << "connecting to: " << serverName << "; " << serviceName << std::endl;
+	status = commIOForkingServiceIn->connect(serverName, serviceName);
+	while(status != Smart::SMART_OK)
+	{
+		ACE_OS::sleep(ACE_Time_Value(0,500000));
+		status = COMP->commIOForkingServiceIn->connect(serverName, serviceName);
+	}
+	std::cout << "connected.\n";
+	commIOForkingServiceIn->subscribe(connections.commIOForkingServiceIn.interval);
+	return status;
+}
 Smart::StatusCode ComponentLaserS300Server::connectBaseTimedClient(const std::string &serverName, const std::string &serviceName) {
 	Smart::StatusCode status;
 	
@@ -137,6 +178,8 @@ Smart::StatusCode ComponentLaserS300Server::connectBaseTimedClient(const std::st
 Smart::StatusCode ComponentLaserS300Server::connectAndStartAllServices() {
 	Smart::StatusCode status = Smart::SMART_OK;
 	
+	status = connectCommIOForkingServiceIn(connections.commIOForkingServiceIn.serverName, connections.commIOForkingServiceIn.serviceName);
+	if(status != Smart::SMART_OK) return status;
 	status = connectBaseTimedClient(connections.baseTimedClient.serverName, connections.baseTimedClient.serviceName);
 	if(status != Smart::SMART_OK) return status;
 	return status;
@@ -146,6 +189,20 @@ Smart::StatusCode ComponentLaserS300Server::connectAndStartAllServices() {
  * Start all tasks contained in this component.
  */
 void ComponentLaserS300Server::startAllTasks() {
+	// start task LaserSafetyTask
+	if(connections.laserSafetyTask.scheduler != "DEFAULT") {
+		ACE_Sched_Params laserSafetyTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
+		if(connections.laserSafetyTask.scheduler == "FIFO") {
+			laserSafetyTask_SchedParams.policy(ACE_SCHED_FIFO);
+			laserSafetyTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+		} else if(connections.laserSafetyTask.scheduler == "RR") {
+			laserSafetyTask_SchedParams.policy(ACE_SCHED_RR);
+			laserSafetyTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+		}
+		laserSafetyTask->start(laserSafetyTask_SchedParams, connections.laserSafetyTask.cpuAffinity);
+	} else {
+		laserSafetyTask->start();
+	}
 	// start task LaserTask
 	if(connections.laserTask.scheduler != "DEFAULT") {
 		ACE_Sched_Params laserTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
@@ -171,6 +228,7 @@ void ComponentLaserS300Server::startAllTimers() {
 
 Smart::TaskTriggerSubject* ComponentLaserS300Server::getInputTaskTriggerFromString(const std::string &client)
 {
+	if(client == "CommIOForkingServiceIn") return commIOForkingServiceInInputTaskTrigger;
 	if(client == "baseTimedClient") return baseTimedClientInputTaskTrigger;
 	
 	return NULL;
@@ -188,9 +246,9 @@ void ComponentLaserS300Server::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of ComponentLaserS300ServerROSExtension
+		// initializations of ComponentLaserS300ServerROS1InterfacesExtension
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
+		// initializations of ComponentLaserS300ServerRestInterfacesExtension
 		
 		// initializations of PlainOpcUaComponentLaserS300ServerExtension
 		
@@ -229,18 +287,25 @@ void ComponentLaserS300Server::init(int argc, char *argv[])
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
-		laserPushNewestServer = portFactoryRegistry[connections.laserPushNewestServer.roboticMiddleware]->createLaserPushNewestServer(connections.laserPushNewestServer.serviceName);
+		laserServiceOut = portFactoryRegistry[connections.laserServiceOut.roboticMiddleware]->createLaserServiceOut(connections.laserServiceOut.serviceName);
+		laserServiceOutWrapper = new LaserServiceOutWrapper(laserServiceOut);
 		laserQueryServer = portFactoryRegistry[connections.laserQueryServer.roboticMiddleware]->createLaserQueryServer(connections.laserQueryServer.serviceName);
 		laserQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan>(laserQueryServer);
 		safetyfieldEventServerEventTestHandler = std::make_shared<SafetyfieldEventServerEventTestHandler>();
 		safetyfieldEventServer = portFactoryRegistry[connections.safetyfieldEventServer.roboticMiddleware]->createSafetyfieldEventServer(connections.safetyfieldEventServer.serviceName, safetyfieldEventServerEventTestHandler);
+		safetyfieldEventServerWrapper = new SafetyfieldEventServerWrapper(safetyfieldEventServer);
 		
 		// create client ports
+		commIOForkingServiceIn = portFactoryRegistry[connections.commIOForkingServiceIn.roboticMiddleware]->createCommIOForkingServiceIn();
 		baseTimedClient = portFactoryRegistry[connections.baseTimedClient.roboticMiddleware]->createBaseTimedClient();
 		
 		// create InputTaskTriggers and UpcallManagers
-		baseTimedClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(baseTimedClient);
-		baseTimedClientUpcallManager = new BaseTimedClientUpcallManager(baseTimedClient);
+		commIOForkingServiceInInputCollector = new CommIOForkingServiceInInputCollector(commIOForkingServiceIn);
+		commIOForkingServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommIOValues>(commIOForkingServiceInInputCollector);
+		commIOForkingServiceInUpcallManager = new CommIOForkingServiceInUpcallManager(commIOForkingServiceInInputCollector);
+		baseTimedClientInputCollector = new BaseTimedClientInputCollector(baseTimedClient);
+		baseTimedClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(baseTimedClientInputCollector);
+		baseTimedClientUpcallManager = new BaseTimedClientUpcallManager(baseTimedClientInputCollector);
 		
 		// create input-handler
 		
@@ -258,6 +323,10 @@ void ComponentLaserS300Server::init(int argc, char *argv[])
 		
 		wiringSlave = new SmartACE::WiringSlave(component);
 		// add client port to wiring slave
+		if(connections.commIOForkingServiceIn.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::PushClient<CommBasicObjects::CommIOValues>*>(commIOForkingServiceIn)->add(wiringSlave, connections.commIOForkingServiceIn.wiringName);
+		}
 		if(connections.baseTimedClient.roboticMiddleware == "ACE_SmartSoft") {
 			//FIXME: this must also work with other implementations
 			dynamic_cast<SmartACE::PushClient<CommBasicObjects::CommBaseState>*>(baseTimedClient)->add(wiringSlave, connections.baseTimedClient.wiringName);
@@ -266,6 +335,41 @@ void ComponentLaserS300Server::init(int argc, char *argv[])
 		// create parameter slave
 		param = new SmartACE::ParameterSlave(component, &paramHandler);
 		
+		
+		// create Task LaserSafetyTask
+		laserSafetyTask = new LaserSafetyTask(component);
+		// configure input-links
+		commIOForkingServiceInUpcallManager->attach(laserSafetyTask);
+		// configure task-trigger (if task is configurable)
+		if(connections.laserSafetyTask.trigger == "PeriodicTimer") {
+			// create PeriodicTimerTrigger
+			int microseconds = 1000*1000 / connections.laserSafetyTask.periodicActFreq;
+			if(microseconds > 0) {
+				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
+				triggerPtr->attach(laserSafetyTask);
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				// store trigger in class member
+				laserSafetyTaskTrigger = triggerPtr;
+			} else {
+				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task LaserSafetyTask" << std::endl;
+			}
+		} else if(connections.laserSafetyTask.trigger == "DataTriggered") {
+			laserSafetyTaskTrigger = getInputTaskTriggerFromString(connections.laserSafetyTask.inPortRef);
+			if(laserSafetyTaskTrigger != NULL) {
+				laserSafetyTaskTrigger->attach(laserSafetyTask, connections.laserSafetyTask.prescale);
+			} else {
+				std::cerr << "ERROR: could not set-up InPort " << connections.laserSafetyTask.inPortRef << " as activation source for Task LaserSafetyTask" << std::endl;
+			}
+		} else
+		{
+			// setup default task-trigger as InputTrigger
+			laserSafetyTaskTrigger = getInputTaskTriggerFromString("CommIOForkingServiceIn");
+			if(laserSafetyTaskTrigger != NULL) {
+				laserSafetyTaskTrigger->attach(laserSafetyTask, connections.laserSafetyTask.prescale);
+			} else {
+				std::cerr << "ERROR: could not set-up InPort CommIOForkingServiceIn as activation source for Task LaserSafetyTask" << std::endl;
+			}
+		}
 		
 		// create Task LaserTask
 		laserTask = new LaserTask(component);
@@ -353,6 +457,13 @@ void ComponentLaserS300Server::fini()
 	
 	// destroy all task instances
 	// unlink all UpcallManagers
+	commIOForkingServiceInUpcallManager->detach(laserSafetyTask);
+	// unlink the TaskTrigger
+	if(laserSafetyTaskTrigger != NULL){
+		laserSafetyTaskTrigger->detach(laserSafetyTask);
+		delete laserSafetyTask;
+	}
+	// unlink all UpcallManagers
 	// unlink the TaskTrigger
 	if(laserTaskTrigger != NULL){
 		laserTaskTrigger->detach(laserTask);
@@ -362,16 +473,23 @@ void ComponentLaserS300Server::fini()
 	// destroy all input-handler
 
 	// destroy InputTaskTriggers and UpcallManagers
+	delete commIOForkingServiceInInputTaskTrigger;
+	delete commIOForkingServiceInUpcallManager;
+	delete commIOForkingServiceInInputCollector;
 	delete baseTimedClientInputTaskTrigger;
 	delete baseTimedClientUpcallManager;
+	delete baseTimedClientInputCollector;
 
 	// destroy client ports
+	delete commIOForkingServiceIn;
 	delete baseTimedClient;
 
 	// destroy server ports
-	delete laserPushNewestServer;
+	delete laserServiceOutWrapper;
+	delete laserServiceOut;
 	delete laserQueryServer;
 	delete laserQueryServerInputTaskTrigger;
+	delete safetyfieldEventServerWrapper;
 	delete safetyfieldEventServer;
 	// destroy event-test handlers (if needed)
 	safetyfieldEventServerEventTestHandler;
@@ -400,9 +518,9 @@ void ComponentLaserS300Server::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentLaserS300ServerROSExtension
+	// destruction of ComponentLaserS300ServerROS1InterfacesExtension
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
+	// destruction of ComponentLaserS300ServerRestInterfacesExtension
 	
 	// destruction of PlainOpcUaComponentLaserS300ServerExtension
 	
@@ -478,6 +596,15 @@ void ComponentLaserS300Server::loadParameter(int argc, char *argv[])
 			parameter.getBoolean("component", "useLogger", connections.component.useLogger);
 		}
 		
+		// load parameters for client CommIOForkingServiceIn
+		parameter.getBoolean("CommIOForkingServiceIn", "initialConnect", connections.commIOForkingServiceIn.initialConnect);
+		parameter.getString("CommIOForkingServiceIn", "serviceName", connections.commIOForkingServiceIn.serviceName);
+		parameter.getString("CommIOForkingServiceIn", "serverName", connections.commIOForkingServiceIn.serverName);
+		parameter.getString("CommIOForkingServiceIn", "wiringName", connections.commIOForkingServiceIn.wiringName);
+		parameter.getInteger("CommIOForkingServiceIn", "interval", connections.commIOForkingServiceIn.interval);
+		if(parameter.checkIfParameterExists("CommIOForkingServiceIn", "roboticMiddleware")) {
+			parameter.getString("CommIOForkingServiceIn", "roboticMiddleware", connections.commIOForkingServiceIn.roboticMiddleware);
+		}
 		// load parameters for client baseTimedClient
 		parameter.getBoolean("baseTimedClient", "initialConnect", connections.baseTimedClient.initialConnect);
 		parameter.getString("baseTimedClient", "serviceName", connections.baseTimedClient.serviceName);
@@ -488,10 +615,10 @@ void ComponentLaserS300Server::loadParameter(int argc, char *argv[])
 			parameter.getString("baseTimedClient", "roboticMiddleware", connections.baseTimedClient.roboticMiddleware);
 		}
 		
-		// load parameters for server laserPushNewestServer
-		parameter.getString("laserPushNewestServer", "serviceName", connections.laserPushNewestServer.serviceName);
-		if(parameter.checkIfParameterExists("laserPushNewestServer", "roboticMiddleware")) {
-			parameter.getString("laserPushNewestServer", "roboticMiddleware", connections.laserPushNewestServer.roboticMiddleware);
+		// load parameters for server LaserServiceOut
+		parameter.getString("LaserServiceOut", "serviceName", connections.laserServiceOut.serviceName);
+		if(parameter.checkIfParameterExists("LaserServiceOut", "roboticMiddleware")) {
+			parameter.getString("LaserServiceOut", "roboticMiddleware", connections.laserServiceOut.roboticMiddleware);
 		}
 		// load parameters for server laserQueryServer
 		parameter.getString("laserQueryServer", "serviceName", connections.laserQueryServer.serviceName);
@@ -504,6 +631,25 @@ void ComponentLaserS300Server::loadParameter(int argc, char *argv[])
 			parameter.getString("safetyfieldEventServer", "roboticMiddleware", connections.safetyfieldEventServer.roboticMiddleware);
 		}
 		
+		// load parameters for task LaserSafetyTask
+		parameter.getDouble("LaserSafetyTask", "minActFreqHz", connections.laserSafetyTask.minActFreq);
+		parameter.getDouble("LaserSafetyTask", "maxActFreqHz", connections.laserSafetyTask.maxActFreq);
+		parameter.getString("LaserSafetyTask", "triggerType", connections.laserSafetyTask.trigger);
+		if(connections.laserSafetyTask.trigger == "PeriodicTimer") {
+			parameter.getDouble("LaserSafetyTask", "periodicActFreqHz", connections.laserSafetyTask.periodicActFreq);
+		} else if(connections.laserSafetyTask.trigger == "DataTriggered") {
+			parameter.getString("LaserSafetyTask", "inPortRef", connections.laserSafetyTask.inPortRef);
+			parameter.getInteger("LaserSafetyTask", "prescale", connections.laserSafetyTask.prescale);
+		}
+		if(parameter.checkIfParameterExists("LaserSafetyTask", "scheduler")) {
+			parameter.getString("LaserSafetyTask", "scheduler", connections.laserSafetyTask.scheduler);
+		}
+		if(parameter.checkIfParameterExists("LaserSafetyTask", "priority")) {
+			parameter.getInteger("LaserSafetyTask", "priority", connections.laserSafetyTask.priority);
+		}
+		if(parameter.checkIfParameterExists("LaserSafetyTask", "cpuAffinity")) {
+			parameter.getInteger("LaserSafetyTask", "cpuAffinity", connections.laserSafetyTask.cpuAffinity);
+		}
 		// load parameters for task LaserTask
 		parameter.getDouble("LaserTask", "minActFreqHz", connections.laserTask.minActFreq);
 		parameter.getDouble("LaserTask", "maxActFreqHz", connections.laserTask.maxActFreq);
@@ -524,9 +670,9 @@ void ComponentLaserS300Server::loadParameter(int argc, char *argv[])
 			parameter.getInteger("LaserTask", "cpuAffinity", connections.laserTask.cpuAffinity);
 		}
 		
-		// load parameters for ComponentLaserS300ServerROSExtension
+		// load parameters for ComponentLaserS300ServerROS1InterfacesExtension
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
+		// load parameters for ComponentLaserS300ServerRestInterfacesExtension
 		
 		// load parameters for PlainOpcUaComponentLaserS300ServerExtension
 		

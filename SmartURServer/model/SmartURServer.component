@@ -1,3 +1,15 @@
+/**
+ * The SmartURServer component is the device driver component for Universal Robots (UR) manipulators. 
+ *
+ * The component enables the usage of UR manipulators (UR3(e),UR5(e),UR10(e),UR16(e)) together with other software components.
+ * The component provides services for the usage of the manipulators on different abstraction levels. 
+ * Programs created with UR Polyscope, primitive movements, as well as individual joint control e.g. moving planned trajectories can be used.
+ * 
+ * The component provides skills for all its provided capabilities, enabling an easy and fast development of robotic behavior task. 
+ * The component provides skills to enable the usage of sub-programs, which can be created by the end-user on the manipulator using the teach-panel.
+ * 
+ */
+
 ComponentDefinition SmartURServer logo "/SmartURServer/model/logo.png"
 {
 	InputPort trajectorySendServer implements CommManipulatorObjects.SendTrajectoryService {
@@ -5,7 +17,6 @@ ComponentDefinition SmartURServer logo "/SmartURServer/model/logo.png"
 	Activity PoseUpdateActivity
 	{
 		InputPortLink baseStateServiceIn { oversamplingOk undersamplingOk }
-		RequestPortLink laserQueryServiceReq
 		DefaultTrigger PeriodicTimer 10.0 Hz
 	}
 	OutputPort posePushServer implements CommManipulatorObjects.MobileManipulatorStateService realizedBy PoseUpdateActivity {
@@ -17,43 +28,45 @@ ComponentDefinition SmartURServer logo "/SmartURServer/model/logo.png"
 	OutputPort manipulatorEventServiceOut implements CommManipulatorObjects.ManipulatorEventService realizedBy PoseUpdateActivity {
 	}
 
-	InputPort requestScan3dSendServer implements CommManipulatorObjects.SendManipulatorRequestScan3dService {
-	}
-	Activity Scan3dActivity
-	{
-		InputPortLink requestScan3dSendServer { oversamplingOk undersamplingOk }
-	DefaultTrigger InputPortTrigger requestScan3dSendServer
-	}
-	OutputPort scan3dEventServer implements CommManipulatorObjects.Scan3dEventService realizedBy Scan3dActivity {
-	}
+
 	InputHandler TrajectorySendServerHandler triggeredFrom trajectorySendServer { }
-	AnswerPort scan3dQueryServer implements DomainVision.PointCloudQueryService {
-	}
-	RequestHandler Scan3dQueryServerHandler triggeredFrom scan3dQueryServer {
-	}
+
 	InputPort baseStateServiceIn implements CommBasicObjects.BaseStateService {
 	}
-	RequestPort laserQueryServiceReq implements CommBasicObjects.LaserQueryService {
-	}
-	AnswerPort ioQueryServer implements CommRobotinoObjects.CommRobotinoIOValuesQueryService {
+	
+	AnswerPort ioQueryServer implements CommBasicObjects.CommIOValuesQueryService {
 	}
 	RequestHandler IoQueryServerHandler triggeredFrom ioQueryServer {
 	}
-	OutputPort digitalInputEventServer implements CommRobotinoObjects.CommRobotinoDigitalInputEvent realizedBy PoseUpdateActivity {
+	OutputPort digitalInputEventServer implements CommBasicObjects.CommDigitalInputEvent realizedBy PoseUpdateActivity {
 	}
+	
+	
+	AnswerPort programQueryServer implements CommManipulatorObjects.MobileManipulatorProgramQueryService {
+	}
+	RequestHandler programQueryHandler triggeredFrom programQueryServer {
+		
+	}
+	
+	Activity GoalCheckActivity
+	{
+		DefaultTrigger PeriodicTimer 10.0 Hz
+	}
+
 	CoordinationSlavePort CoordinationPort implements CommManipulatorObjects.ManipulatorCoordinationService {
+		
+		with manipulatorevent realizedBy manipulatorEventServiceOut
+		with manipulatorstate realizedBy poseQueryServer
+		with manipulatorprograms realizedBy programQueryServer
 		PrivateOperationMode demonstration;
 		PrivateOperationMode trajectory;
-		PrivateOperationMode scan;
 		PublicOperationMode CommManipulatorObjects.ManipulatorStates.Demonstration {
 			activates ( demonstration )
 		}
 		PublicOperationMode CommManipulatorObjects.ManipulatorStates.Trajectory {
 			activates ( trajectory )
 		}
-		PublicOperationMode CommManipulatorObjects.ManipulatorStates.Scan {
-			activates ( scan )
-		}
+		SkillRealizationsRef UR
 	}
 	ComponentParameters SmartURServerParams slave CoordinationPort
 }

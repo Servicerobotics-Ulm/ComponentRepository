@@ -32,18 +32,21 @@ ComponentRobotinoLaserServer::ComponentRobotinoLaserServer()
 	std::cout << "constructor of ComponentRobotinoLaserServer\n";
 	
 	// set all pointer members to NULL
-	//componentRobotinoLaserServer = NULL;
 	//coordinationPort = NULL;
+	//coordinationPort = NULL;
+	laserServiceOut = NULL;
+	laserServiceOutWrapper = NULL;
 	queryHandler = NULL;
 	readLaserTask = NULL;
 	readLaserTaskTrigger = NULL;
 	baseTimedClient = NULL;
 	baseTimedClientInputTaskTrigger = NULL;
 	baseTimedClientUpcallManager = NULL;
-	pushNewestServer = NULL;
+	baseTimedClientInputCollector = NULL;
 	queryServer = NULL;
 	queryServerInputTaskTrigger = NULL;
 	safetyfieldEventServer = NULL;
+	safetyfieldEventServerWrapper = NULL;
 	safetyfieldEventServerEventTestHandler = nullptr; 
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
@@ -56,8 +59,8 @@ ComponentRobotinoLaserServer::ComponentRobotinoLaserServer()
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
-	connections.pushNewestServer.serviceName = "pushNewestServer";
-	connections.pushNewestServer.roboticMiddleware = "ACE_SmartSoft";
+	connections.laserServiceOut.serviceName = "LaserServiceOut";
+	connections.laserServiceOut.roboticMiddleware = "ACE_SmartSoft";
 	connections.queryServer.serviceName = "queryServer";
 	connections.queryServer.roboticMiddleware = "ACE_SmartSoft";
 	connections.safetyfieldEventServer.serviceName = "safetyfieldEventServer";
@@ -75,9 +78,9 @@ ComponentRobotinoLaserServer::ComponentRobotinoLaserServer()
 	connections.readLaserTask.priority = -1;
 	connections.readLaserTask.cpuAffinity = -1;
 	
-	// initialize members of ComponentRobotinoLaserServerROSExtension
+	// initialize members of ComponentRobotinoLaserServerROS1InterfacesExtension
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
+	// initialize members of ComponentRobotinoLaserServerRestInterfacesExtension
 	
 	// initialize members of PlainOpcUaComponentRobotinoLaserServerExtension
 	
@@ -188,9 +191,9 @@ void ComponentRobotinoLaserServer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of ComponentRobotinoLaserServerROSExtension
+		// initializations of ComponentRobotinoLaserServerROS1InterfacesExtension
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
+		// initializations of ComponentRobotinoLaserServerRestInterfacesExtension
 		
 		// initializations of PlainOpcUaComponentRobotinoLaserServerExtension
 		
@@ -229,18 +232,21 @@ void ComponentRobotinoLaserServer::init(int argc, char *argv[])
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
-		pushNewestServer = portFactoryRegistry[connections.pushNewestServer.roboticMiddleware]->createPushNewestServer(connections.pushNewestServer.serviceName);
+		laserServiceOut = portFactoryRegistry[connections.laserServiceOut.roboticMiddleware]->createLaserServiceOut(connections.laserServiceOut.serviceName);
+		laserServiceOutWrapper = new LaserServiceOutWrapper(laserServiceOut);
 		queryServer = portFactoryRegistry[connections.queryServer.roboticMiddleware]->createQueryServer(connections.queryServer.serviceName);
 		queryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan>(queryServer);
 		safetyfieldEventServerEventTestHandler = std::make_shared<SafetyfieldEventServerEventTestHandler>();
 		safetyfieldEventServer = portFactoryRegistry[connections.safetyfieldEventServer.roboticMiddleware]->createSafetyfieldEventServer(connections.safetyfieldEventServer.serviceName, safetyfieldEventServerEventTestHandler);
+		safetyfieldEventServerWrapper = new SafetyfieldEventServerWrapper(safetyfieldEventServer);
 		
 		// create client ports
 		baseTimedClient = portFactoryRegistry[connections.baseTimedClient.roboticMiddleware]->createBaseTimedClient();
 		
 		// create InputTaskTriggers and UpcallManagers
-		baseTimedClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(baseTimedClient);
-		baseTimedClientUpcallManager = new BaseTimedClientUpcallManager(baseTimedClient);
+		baseTimedClientInputCollector = new BaseTimedClientInputCollector(baseTimedClient);
+		baseTimedClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(baseTimedClientInputCollector);
+		baseTimedClientUpcallManager = new BaseTimedClientUpcallManager(baseTimedClientInputCollector);
 		
 		// create input-handler
 		
@@ -364,14 +370,17 @@ void ComponentRobotinoLaserServer::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 	delete baseTimedClientInputTaskTrigger;
 	delete baseTimedClientUpcallManager;
+	delete baseTimedClientInputCollector;
 
 	// destroy client ports
 	delete baseTimedClient;
 
 	// destroy server ports
-	delete pushNewestServer;
+	delete laserServiceOutWrapper;
+	delete laserServiceOut;
 	delete queryServer;
 	delete queryServerInputTaskTrigger;
+	delete safetyfieldEventServerWrapper;
 	delete safetyfieldEventServer;
 	// destroy event-test handlers (if needed)
 	safetyfieldEventServerEventTestHandler;
@@ -400,9 +409,9 @@ void ComponentRobotinoLaserServer::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentRobotinoLaserServerROSExtension
+	// destruction of ComponentRobotinoLaserServerROS1InterfacesExtension
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
+	// destruction of ComponentRobotinoLaserServerRestInterfacesExtension
 	
 	// destruction of PlainOpcUaComponentRobotinoLaserServerExtension
 	
@@ -488,10 +497,10 @@ void ComponentRobotinoLaserServer::loadParameter(int argc, char *argv[])
 			parameter.getString("baseTimedClient", "roboticMiddleware", connections.baseTimedClient.roboticMiddleware);
 		}
 		
-		// load parameters for server pushNewestServer
-		parameter.getString("pushNewestServer", "serviceName", connections.pushNewestServer.serviceName);
-		if(parameter.checkIfParameterExists("pushNewestServer", "roboticMiddleware")) {
-			parameter.getString("pushNewestServer", "roboticMiddleware", connections.pushNewestServer.roboticMiddleware);
+		// load parameters for server LaserServiceOut
+		parameter.getString("LaserServiceOut", "serviceName", connections.laserServiceOut.serviceName);
+		if(parameter.checkIfParameterExists("LaserServiceOut", "roboticMiddleware")) {
+			parameter.getString("LaserServiceOut", "roboticMiddleware", connections.laserServiceOut.roboticMiddleware);
 		}
 		// load parameters for server queryServer
 		parameter.getString("queryServer", "serviceName", connections.queryServer.serviceName);
@@ -524,9 +533,9 @@ void ComponentRobotinoLaserServer::loadParameter(int argc, char *argv[])
 			parameter.getInteger("ReadLaserTask", "cpuAffinity", connections.readLaserTask.cpuAffinity);
 		}
 		
-		// load parameters for ComponentRobotinoLaserServerROSExtension
+		// load parameters for ComponentRobotinoLaserServerROS1InterfacesExtension
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
+		// load parameters for ComponentRobotinoLaserServerRestInterfacesExtension
 		
 		// load parameters for PlainOpcUaComponentRobotinoLaserServerExtension
 		

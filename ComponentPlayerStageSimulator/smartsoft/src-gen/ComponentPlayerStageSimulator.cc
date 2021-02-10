@@ -36,21 +36,26 @@ ComponentPlayerStageSimulator::ComponentPlayerStageSimulator()
 	baseStateAnswererInputTaskTrigger = NULL;
 	baseStateQueryHandler = NULL;
 	baseStateServiceOut = NULL;
+	baseStateServiceOutWrapper = NULL;
 	batteryEventServiceOut = NULL;
+	batteryEventServiceOutWrapper = NULL;
 	batteryEventServiceOutEventTestHandler = nullptr; 
 	batteryEventTask = NULL;
 	batteryEventTaskTrigger = NULL;
-	//componentPlayerStageSimulatorParams = NULL;
+	//coordinationPort = NULL;
 	//coordinationPort = NULL;
 	laserServiceOut = NULL;
+	laserServiceOutWrapper = NULL;
 	localizationUpdateHandler = NULL;
 	localizationUpdateServiceIn = NULL;
 	localizationUpdateServiceInInputTaskTrigger = NULL;
 	localizationUpdateServiceInUpcallManager = NULL;
+	localizationUpdateServiceInInputCollector = NULL;
 	navigationVelocityHandler = NULL;
 	navigationVelocityServiceIn = NULL;
 	navigationVelocityServiceInInputTaskTrigger = NULL;
 	navigationVelocityServiceInUpcallManager = NULL;
+	navigationVelocityServiceInInputCollector = NULL;
 	playerTask = NULL;
 	playerTaskTrigger = NULL;
 	stateChangeHandler = NULL;
@@ -90,10 +95,6 @@ ComponentPlayerStageSimulator::ComponentPlayerStageSimulator()
 	connections.playerTask.cpuAffinity = -1;
 	connections.localizationUpdateHandler.prescale = 1;
 	connections.navigationVelocityHandler.prescale = 1;
-	
-	// initialize members of ComponentPlayerStageSimulatorROSExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentPlayerStageSimulatorExtension
 	
@@ -200,10 +201,6 @@ void ComponentPlayerStageSimulator::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of ComponentPlayerStageSimulatorROSExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of PlainOpcUaComponentPlayerStageSimulatorExtension
 		
 		
@@ -244,19 +241,24 @@ void ComponentPlayerStageSimulator::init(int argc, char *argv[])
 		baseStateAnswerer = portFactoryRegistry[connections.baseStateAnswerer.roboticMiddleware]->createBaseStateAnswerer(connections.baseStateAnswerer.serviceName);
 		baseStateAnswererInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>(baseStateAnswerer);
 		baseStateServiceOut = portFactoryRegistry[connections.baseStateServiceOut.roboticMiddleware]->createBaseStateServiceOut(connections.baseStateServiceOut.serviceName);
+		baseStateServiceOutWrapper = new BaseStateServiceOutWrapper(baseStateServiceOut);
 		batteryEventServiceOutEventTestHandler = std::make_shared<BatteryEventServiceOutEventTestHandler>();
 		batteryEventServiceOut = portFactoryRegistry[connections.batteryEventServiceOut.roboticMiddleware]->createBatteryEventServiceOut(connections.batteryEventServiceOut.serviceName, batteryEventServiceOutEventTestHandler);
+		batteryEventServiceOutWrapper = new BatteryEventServiceOutWrapper(batteryEventServiceOut);
 		laserServiceOut = portFactoryRegistry[connections.laserServiceOut.roboticMiddleware]->createLaserServiceOut(connections.laserServiceOut.serviceName);
+		laserServiceOutWrapper = new LaserServiceOutWrapper(laserServiceOut);
 		localizationUpdateServiceIn = portFactoryRegistry[connections.localizationUpdateServiceIn.roboticMiddleware]->createLocalizationUpdateServiceIn(connections.localizationUpdateServiceIn.serviceName);
 		navigationVelocityServiceIn = portFactoryRegistry[connections.navigationVelocityServiceIn.roboticMiddleware]->createNavigationVelocityServiceIn(connections.navigationVelocityServiceIn.serviceName);
 		
 		// create client ports
 		
 		// create InputTaskTriggers and UpcallManagers
-		localizationUpdateServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBasePositionUpdate>(localizationUpdateServiceIn);
-		localizationUpdateServiceInUpcallManager = new LocalizationUpdateServiceInUpcallManager(localizationUpdateServiceIn);
-		navigationVelocityServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommNavigationVelocity>(navigationVelocityServiceIn);
-		navigationVelocityServiceInUpcallManager = new NavigationVelocityServiceInUpcallManager(navigationVelocityServiceIn);
+		localizationUpdateServiceInInputCollector = new LocalizationUpdateServiceInInputCollector(localizationUpdateServiceIn);
+		localizationUpdateServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBasePositionUpdate>(localizationUpdateServiceInInputCollector);
+		localizationUpdateServiceInUpcallManager = new LocalizationUpdateServiceInUpcallManager(localizationUpdateServiceInInputCollector);
+		navigationVelocityServiceInInputCollector = new NavigationVelocityServiceInInputCollector(navigationVelocityServiceIn);
+		navigationVelocityServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommNavigationVelocity>(navigationVelocityServiceInInputCollector);
+		navigationVelocityServiceInUpcallManager = new NavigationVelocityServiceInUpcallManager(navigationVelocityServiceInInputCollector);
 		
 		// create input-handler
 		localizationUpdateHandler = new LocalizationUpdateHandler(localizationUpdateServiceIn, connections.localizationUpdateHandler.prescale);
@@ -411,16 +413,21 @@ void ComponentPlayerStageSimulator::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 	delete localizationUpdateServiceInInputTaskTrigger;
 	delete localizationUpdateServiceInUpcallManager;
+	delete localizationUpdateServiceInInputCollector;
 	delete navigationVelocityServiceInInputTaskTrigger;
 	delete navigationVelocityServiceInUpcallManager;
+	delete navigationVelocityServiceInInputCollector;
 
 	// destroy client ports
 
 	// destroy server ports
 	delete baseStateAnswerer;
 	delete baseStateAnswererInputTaskTrigger;
+	delete baseStateServiceOutWrapper;
 	delete baseStateServiceOut;
+	delete batteryEventServiceOutWrapper;
 	delete batteryEventServiceOut;
+	delete laserServiceOutWrapper;
 	delete laserServiceOut;
 	delete localizationUpdateServiceIn;
 	delete navigationVelocityServiceIn;
@@ -450,10 +457,6 @@ void ComponentPlayerStageSimulator::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentPlayerStageSimulatorROSExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentPlayerStageSimulatorExtension
 	
@@ -605,10 +608,6 @@ void ComponentPlayerStageSimulator::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("NavigationVelocityHandler", "prescale")) {
 			parameter.getInteger("NavigationVelocityHandler", "prescale", connections.navigationVelocityHandler.prescale);
 		}
-		
-		// load parameters for ComponentPlayerStageSimulatorROSExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentPlayerStageSimulatorExtension
 		

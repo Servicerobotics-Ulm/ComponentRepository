@@ -65,6 +65,21 @@
 <td style="border:1px solid black; padding: 5px;">Planner</td>
 <td style="border:1px solid black; padding: 5px;"></td>
 </tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Purpose</td>
+<td style="border:1px solid black; padding: 5px;">Navigation</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Purpose</td>
+<td style="border:1px solid black; padding: 5px;">Breadth-First-Search</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">MarketName</td>
+<td style="border:1px solid black; padding: 5px;">Breadth-First-Search Navigation Planner</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
 </table>
 
 ## Component Ports

@@ -36,7 +36,6 @@
 
 
 #include "Robot.hh"
-#include "aceSmartSoft.hh"
 #include <chrono>
 #include <ctime>
 #include <ratio>
@@ -82,14 +81,6 @@ Robot::Robot( )
 
 	this->robotinoBumper.setTimoutConfiguration(COMP->getGlobalState().getBumper().getBumperTimeOutSec(),COMP->getGlobalState().getBumper().getBumperTimeOutMSec());
 
-
-
-	generateLaserSafetyFieldEvents = COMP->getGlobalState().getLaserSafetyField().getGenerateLaserSafetyFieldEvents();
-	laserSafetyFieldIOBit = 0;
-	laserSafetyFieldTimerId = -1;
-	laserSafetyFieldTimeoutSec = COMP->getGlobalState().getLaserSafetyField().getLaserSafetyfFieldTimeOutSec();
-	laserSafetyFieldTimeoutMsec = COMP->getGlobalState().getLaserSafetyField().getLaserSafetyfFieldTimeOutMSec();
-	laserSafetyFieldLastState = 1;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -152,7 +143,7 @@ void Robot::processEvents()
 	robotinoCom.processEvents();
 
 	//fetch state of digital and analog inputs
-	CommRobotinoObjects::CommDigitalInputEventState state;
+	CommBasicObjects::CommDigitalInputEventState state;
 	SmartACE::SmartGuard posGuard(lockIO);
 	{
 	digitalInputArray.values(digitalInputs);
@@ -165,68 +156,6 @@ void Robot::processEvents()
 	}
 
 	}
-
-
-
-	////////////////////////////////////////////////////////////////
-	//robotino laser safety field state evalution
-	//this should be realized within a laser server component
-	//due to firmware issues with the sick s300 laser sever the evaluation of the lasersafety fields
-	//is done using the digital io of the robotino base
-	//This will only work if the laser is configured to switch the io and connected to the digital ios of the robotino base!
-	if(generateLaserSafetyFieldEvents == true){
-
-		int laserSafetyFieldCurrentState = digitalInputs[0];
-
-		if(laserSafetyFieldCurrentState != laserSafetyFieldLastState){
-
-			if(laserSafetyFieldCurrentState == 0){
-				//we need some timeout here. If station is invisible for more than x seconds, we abort this task
-				//COMP->ini.laser.noStationVisibleTimeout
-				if(laserSafetyFieldTimerId == -1){
-					std::cout << "[Robot::processEvents()] laserSafety Event scheduleTimer relative time: " << laserSafetyFieldTimeoutSec << " : " << laserSafetyFieldTimeoutMsec << std::endl;
-
-					std::chrono::seconds sec(laserSafetyFieldTimeoutSec);
-					std::chrono::milliseconds msec(laserSafetyFieldTimeoutMsec);
-					laserSafetyFieldTimerId = COMP->getComponentImpl()->getTimerManager()->scheduleTimer(this,NULL,sec+msec);
-				} else {
-					std::cout<<__FUNCTION__<<":"<<__LINE__<<"ERROR: this should never had happened!"<<std::endl;
-				}
-
-			} else {
-				//abort timer
-				if(laserSafetyFieldTimerId != -1)
-				{
-					std::cout << "[Robot::processEvents()] laserSafety Event cancelTimer!"<< std::endl;
-					COMP->getComponentImpl()->getTimerManager()->cancelTimer(laserSafetyFieldTimerId);
-					laserSafetyFieldTimerId = -1;
-				} else {
-					std::cout<<__FUNCTION__<<":"<<__LINE__<<" ERROR: this should never had happened!"<<std::endl;
-				}
-
-				//send free state immediately
-				CommBasicObjects::CommLaserSafetyEventState state;
-				state.setProtectiveState(CommBasicObjects::SafetyFieldState::FREE);
-				COMP->laserSafetyEventServiceOut->put(state);
-			}
-
-			laserSafetyFieldLastState = laserSafetyFieldCurrentState;
-		} else {
-			//state not changed this is only used for output!
-			if (laserSafetyFieldCurrentState == 0){
-				if(COMP->getGlobalState().getGeneral().getVerbose()){
-					std::cout << "LaserSafety blocked!" << std::endl;
-				}
-				if(laserSafetyFieldTimerId == -1){
-					std::cout << "[Robot::processEvents()] laserSafety Event scheduleTimer relative time: " << laserSafetyFieldTimeoutSec << " : " << laserSafetyFieldTimeoutMsec << std::endl;
-					std::chrono::seconds sec(laserSafetyFieldTimeoutSec);
-					std::chrono::milliseconds msec(laserSafetyFieldTimeoutMsec);
-					laserSafetyFieldTimerId = COMP->getComponentImpl()->getTimerManager()->scheduleTimer(this,NULL, sec+msec);
-				}
-			}
-		}
-	}
-	////////////////////////////////////////////////////////////////
 
 	COMP->digitalInputEventOut->put(state);
 
@@ -802,22 +731,3 @@ void Robot::setAnalogOutput(unsigned int outputNumber, double outputValue){
 bool Robot::getBumperState(){
 	return robotinoBumper.getState();
 }
-
-
-
-
-//void Robot::timerExpired(const ACE_Time_Value & absolute_time,const void * arg){
-void Robot::timerExpired(const Smart::TimePoint &abs_time, const void * arg){
-
-	std::cout<<"[Robot:laserSafetyFieldTimerExpired] LaserSafetyField blocked timeout!"<<std::endl;
-
-	COMP->getComponentImpl()->getTimerManager()->cancelTimer(laserSafetyFieldTimerId);
-	laserSafetyFieldTimerId = -1;
-	CommBasicObjects::CommLaserSafetyEventState state;
-	state.setProtectiveState(CommBasicObjects::SafetyFieldState::BLOCKED);
-	COMP->laserSafetyEventServiceOut->put(state);
-
-}
-
-void Robot::timerCancelled(){};
-void Robot::timerDeleted(const void * arg){};

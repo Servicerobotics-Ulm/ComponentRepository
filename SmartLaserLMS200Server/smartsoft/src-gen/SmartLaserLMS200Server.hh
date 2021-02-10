@@ -29,13 +29,13 @@
 class SmartLaserLMS200ServerPortFactoryInterface;
 class SmartLaserLMS200ServerExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaSmartLaserLMS200ServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
 
-// includes for SmartLaserLMS200ServerROSExtension
+// includes for SmartLaserLMS200ServerROS1InterfacesExtension
+
+// includes for SmartLaserLMS200ServerRestInterfacesExtension
 
 
 // include communication objects
@@ -48,12 +48,15 @@ class SmartLaserLMS200ServerExtension;
 
 // include tasks
 #include "LaserTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 #include "BaseStateInUpcallManager.hh"
+#include "BaseStateInInputCollector.hh"
 
 // include input-handler(s)
 // include request-handler(s)
 #include "LaserQueryServiceAnswHandler.hh"
+// output port wrappers
+#include "LaserServiceOutWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -113,13 +116,15 @@ public:
 	Smart::IPushClientPattern<CommBasicObjects::CommBaseState> *baseStateIn;
 	Smart::InputTaskTrigger<CommBasicObjects::CommBaseState> *baseStateInInputTaskTrigger;
 	BaseStateInUpcallManager *baseStateInUpcallManager;
+	BaseStateInInputCollector *baseStateInInputCollector;
 	
 	// define request-ports
 	
 	// define input-handler
 	
 	// define output-ports
-	Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> *laserScanOut;
+	Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> *laserServiceOut;
+	LaserServiceOutWrapper *laserServiceOutWrapper;
 	
 	// define answer-ports
 	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan> *laserQueryServiceAnsw;
@@ -128,11 +133,11 @@ public:
 	// define request-handlers
 	LaserQueryServiceAnswHandler *laserQueryServiceAnswHandler;
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
 	// definitions of PlainOpcUaSmartLaserLMS200ServerExtension
 	
-	// definitions of SmartLaserLMS200ServerROSExtension
+	// definitions of SmartLaserLMS200ServerROS1InterfacesExtension
+	
+	// definitions of SmartLaserLMS200ServerRestInterfacesExtension
 	
 	
 	// define default slave ports
@@ -227,10 +232,10 @@ public:
 				std::string serviceName;
 				std::string roboticMiddleware;
 		} laserQueryServiceAnsw;
-		struct LaserScanOut_struct {
+		struct LaserServiceOut_struct {
 				std::string serviceName;
 				std::string roboticMiddleware;
-		} laserScanOut;
+		} laserServiceOut;
 	
 		//--- client port parameter ---
 		struct BaseStateIn_struct {
@@ -242,11 +247,11 @@ public:
 			std::string roboticMiddleware;
 		} baseStateIn;
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// -- parameters for PlainOpcUaSmartLaserLMS200ServerExtension
 		
-		// -- parameters for SmartLaserLMS200ServerROSExtension
+		// -- parameters for SmartLaserLMS200ServerROS1InterfacesExtension
+		
+		// -- parameters for SmartLaserLMS200ServerRestInterfacesExtension
 		
 	} connections;
 };

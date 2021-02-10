@@ -52,8 +52,12 @@ maxActFreqHz 0.0
 ##########################
 # server port parameter
 
-[colorImagePushNewestServer]
-serviceName colorImagePushNewestServer
+[RGBDImageQueryServiceOut]
+serviceName RGBDImageQueryServiceOut
+roboticMiddleware ACE_SmartSoft
+
+[RGBImagePushServiceOut]
+serviceName RGBImagePushServiceOut
 roboticMiddleware ACE_SmartSoft
 
 [colorImageQueryServer]
@@ -62,10 +66,6 @@ roboticMiddleware ACE_SmartSoft
 
 [depthImagePushServiceOut]
 serviceName depthImagePushServiceOut
-roboticMiddleware ACE_SmartSoft
-
-[imagePushNewestServer]
-serviceName imagePushNewestServer
 roboticMiddleware ACE_SmartSoft
 
 [imageQueryV2Server]
@@ -92,10 +92,10 @@ interval 1
 roboticMiddleware ACE_SmartSoft
 
 ##########################
-## parameters of ComponentKinectV2ServerROSExtension
+## parameters of ComponentKinectV2ServerROS1InterfacesExtension
 
 ##########################
-## parameters of OpcUaBackendComponentGeneratorExtension
+## parameters of ComponentKinectV2ServerRestInterfacesExtension
 
 ##########################
 ## parameters of PlainOpcUaComponentKinectV2ServerExtension

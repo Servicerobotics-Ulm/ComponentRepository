@@ -29,10 +29,6 @@
 class ComponentSymbolicPlannerPortFactoryInterface;
 class ComponentSymbolicPlannerExtension;
 
-// includes for ComponentSymbolicPlannerROSExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentSymbolicPlannerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -45,11 +41,12 @@ class ComponentSymbolicPlannerExtension;
 #include <DomainSymbolicPlanner/CommSymbolicPlannerRequestACE.hh>
 
 // include tasks
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 
 // include input-handler(s)
 // include request-handler(s)
 #include "SymbolicPannerQueryHandler.hh"
+// output port wrappers
 
 // include handler
 #include "CompHandler.hh"
@@ -105,10 +102,6 @@ public:
 	
 	// define request-handlers
 	SymbolicPannerQueryHandler *symbolicPannerQueryHandler;
-	
-	// definitions of ComponentSymbolicPlannerROSExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentSymbolicPlannerExtension
 	
@@ -198,10 +191,6 @@ public:
 		} symbolicPlannerQueryServer;
 	
 		//--- client port parameter ---
-		
-		// -- parameters for ComponentSymbolicPlannerROSExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentSymbolicPlannerExtension
 		

@@ -94,7 +94,7 @@ void GenerateOutCore::updateAllCommObjects()
 // this method is meant to be used in derived classes
 Smart::StatusCode GenerateOutCore::trafficLightServiceOutPut(DomainHMI::CommTrafficLight &trafficLightServiceOutDataObject)
 {
-	Smart::StatusCode result = COMP->trafficLightServiceOut->send(trafficLightServiceOutDataObject);
+	Smart::StatusCode result = COMP->trafficLightServiceOutWrapper->send(trafficLightServiceOutDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());

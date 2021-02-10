@@ -29,9 +29,9 @@
 class ComponentLaserFromRGBDServerPortFactoryInterface;
 class ComponentLaserFromRGBDServerExtension;
 
-// includes for ComponentLaserFromRGBDServerROSExtension
+// includes for ComponentLaserFromRGBDServerROS1InterfacesExtension
 
-// includes for OpcUaBackendComponentGeneratorExtension
+// includes for ComponentLaserFromRGBDServerRestInterfacesExtension
 
 // includes for PlainOpcUaComponentLaserFromRGBDServerExtension
 // include plain OPC UA device clients
@@ -49,12 +49,15 @@ class ComponentLaserFromRGBDServerExtension;
 // include tasks
 #include "LaserTask.hh"
 #include "VisTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 #include "RgbdClientUpcallManager.hh"
+#include "RgbdClientInputCollector.hh"
 
 // include input-handler(s)
 // include request-handler(s)
 #include "LaserQueryHandler.hh"
+// output port wrappers
+#include "LaserServiceOutWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -116,13 +119,15 @@ public:
 	Smart::IPushClientPattern<DomainVision::CommRGBDImage> *rgbdClient;
 	Smart::InputTaskTrigger<DomainVision::CommRGBDImage> *rgbdClientInputTaskTrigger;
 	RgbdClientUpcallManager *rgbdClientUpcallManager;
+	RgbdClientInputCollector *rgbdClientInputCollector;
 	
 	// define request-ports
 	
 	// define input-handler
 	
 	// define output-ports
-	Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> *laserPushNewestServer;
+	Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> *laserServiceOut;
+	LaserServiceOutWrapper *laserServiceOutWrapper;
 	
 	// define answer-ports
 	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan> *laserQueryServer;
@@ -131,9 +136,9 @@ public:
 	// define request-handlers
 	LaserQueryHandler *laserQueryHandler;
 	
-	// definitions of ComponentLaserFromRGBDServerROSExtension
+	// definitions of ComponentLaserFromRGBDServerROS1InterfacesExtension
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
+	// definitions of ComponentLaserFromRGBDServerRestInterfacesExtension
 	
 	// definitions of PlainOpcUaComponentLaserFromRGBDServerExtension
 	
@@ -252,10 +257,10 @@ public:
 		//--- upcall parameter ---
 		
 		//--- server port parameter ---
-		struct LaserPushNewestServer_struct {
+		struct LaserServiceOut_struct {
 				std::string serviceName;
 				std::string roboticMiddleware;
-		} laserPushNewestServer;
+		} laserServiceOut;
 		struct LaserQueryServer_struct {
 				std::string serviceName;
 				std::string roboticMiddleware;
@@ -271,9 +276,9 @@ public:
 			std::string roboticMiddleware;
 		} rgbdClient;
 		
-		// -- parameters for ComponentLaserFromRGBDServerROSExtension
+		// -- parameters for ComponentLaserFromRGBDServerROS1InterfacesExtension
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
+		// -- parameters for ComponentLaserFromRGBDServerRestInterfacesExtension
 		
 		// -- parameters for PlainOpcUaComponentLaserFromRGBDServerExtension
 		

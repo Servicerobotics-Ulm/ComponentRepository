@@ -32,15 +32,17 @@ ComponentKB::ComponentKB()
 	std::cout << "constructor of ComponentKB\n";
 	
 	// set all pointer members to NULL
-	//componentKBParams = NULL;
+	//coordinationSlave = NULL;
 	//coordinationSlave = NULL;
 	dummy = NULL;
 	dummyTrigger = NULL;
 	kbChainedEntriesEventClient = NULL;
 	kbChainedEntriesEventClientInputTaskTrigger = NULL;
 	kbChainedEntriesEventClientUpcallManager = NULL;
+	kbChainedEntriesEventClientInputCollector = NULL;
 	kbChainedEntriesEventClientHandler = NULL;
 	kbEventServer = NULL;
+	kbEventServerWrapper = NULL;
 	kbEventServerEventTestHandler = nullptr; 
 	kbQuery = NULL;
 	kbQueryInputTaskTrigger = NULL;
@@ -74,9 +76,9 @@ ComponentKB::ComponentKB()
 	connections.dummy.cpuAffinity = -1;
 	connections.kbChainedEntriesEventClientHandler.prescale = 1;
 	
-	// initialize members of ComponentKBROSExtension
+	// initialize members of ComponentKBROS1InterfacesExtension
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
+	// initialize members of ComponentKBRestInterfacesExtension
 	
 	// initialize members of PlainOpcUaComponentKBExtension
 	
@@ -186,9 +188,9 @@ void ComponentKB::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of ComponentKBROSExtension
+		// initializations of ComponentKBROS1InterfacesExtension
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
+		// initializations of ComponentKBRestInterfacesExtension
 		
 		// initializations of PlainOpcUaComponentKBExtension
 		
@@ -229,6 +231,7 @@ void ComponentKB::init(int argc, char *argv[])
 		// TODO: set minCycleTime from Ini-file
 		kbEventServerEventTestHandler = std::make_shared<KbEventServerEventTestHandler>();
 		kbEventServer = portFactoryRegistry[connections.kbEventServer.roboticMiddleware]->createKbEventServer(connections.kbEventServer.serviceName, kbEventServerEventTestHandler);
+		kbEventServerWrapper = new KbEventServerWrapper(kbEventServer);
 		kbQuery = portFactoryRegistry[connections.kbQuery.roboticMiddleware]->createKbQuery(connections.kbQuery.serviceName);
 		kbQueryInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse>(kbQuery);
 		
@@ -236,8 +239,9 @@ void ComponentKB::init(int argc, char *argv[])
 		kbChainedEntriesEventClient = portFactoryRegistry[connections.kbChainedEntriesEventClient.roboticMiddleware]->createKbChainedEntriesEventClient();
 		
 		// create InputTaskTriggers and UpcallManagers
-		kbChainedEntriesEventClientInputTaskTrigger = new Smart::InputTaskTrigger<Smart::EventInputType<CommBasicObjects::CommKBEventResult>>(kbChainedEntriesEventClient);
-		kbChainedEntriesEventClientUpcallManager = new KbChainedEntriesEventClientUpcallManager(kbChainedEntriesEventClient);
+		kbChainedEntriesEventClientInputCollector = new KbChainedEntriesEventClientInputCollector(kbChainedEntriesEventClient);
+		kbChainedEntriesEventClientInputTaskTrigger = new Smart::InputTaskTrigger<Smart::EventInputType<CommBasicObjects::CommKBEventResult>>(kbChainedEntriesEventClientInputCollector);
+		kbChainedEntriesEventClientUpcallManager = new KbChainedEntriesEventClientUpcallManager(kbChainedEntriesEventClientInputCollector);
 		
 		// create input-handler
 		kbChainedEntriesEventClientHandler = new KbChainedEntriesEventClientHandler(kbChainedEntriesEventClient, connections.kbChainedEntriesEventClientHandler.prescale);
@@ -363,11 +367,13 @@ void ComponentKB::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 	delete kbChainedEntriesEventClientInputTaskTrigger;
 	delete kbChainedEntriesEventClientUpcallManager;
+	delete kbChainedEntriesEventClientInputCollector;
 
 	// destroy client ports
 	delete kbChainedEntriesEventClient;
 
 	// destroy server ports
+	delete kbEventServerWrapper;
 	delete kbEventServer;
 	delete kbQuery;
 	delete kbQueryInputTaskTrigger;
@@ -398,9 +404,9 @@ void ComponentKB::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentKBROSExtension
+	// destruction of ComponentKBROS1InterfacesExtension
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
+	// destruction of ComponentKBRestInterfacesExtension
 	
 	// destruction of PlainOpcUaComponentKBExtension
 	
@@ -519,9 +525,9 @@ void ComponentKB::loadParameter(int argc, char *argv[])
 			parameter.getInteger("kbChainedEntriesEventClientHandler", "prescale", connections.kbChainedEntriesEventClientHandler.prescale);
 		}
 		
-		// load parameters for ComponentKBROSExtension
+		// load parameters for ComponentKBROS1InterfacesExtension
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
+		// load parameters for ComponentKBRestInterfacesExtension
 		
 		// load parameters for PlainOpcUaComponentKBExtension
 		

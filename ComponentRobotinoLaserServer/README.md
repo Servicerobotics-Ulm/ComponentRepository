@@ -21,7 +21,7 @@
 
 ## Component Ports
 
-### pushNewestServer
+### LaserServiceOut
 
 *Documentation:*
 

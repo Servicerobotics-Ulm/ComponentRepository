@@ -34,7 +34,9 @@ ComponentLaserObstacleAvoid::ComponentLaserObstacleAvoid()
 	laserServiceIn = NULL;
 	laserServiceInInputTaskTrigger = NULL;
 	laserServiceInUpcallManager = NULL;
+	laserServiceInInputCollector = NULL;
 	navigationVelocityServiceOut = NULL;
+	navigationVelocityServiceOutWrapper = NULL;
 	robotTask = NULL;
 	robotTaskTrigger = NULL;
 	stateChangeHandler = NULL;
@@ -47,6 +49,7 @@ ComponentLaserObstacleAvoid::ComponentLaserObstacleAvoid()
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
+	connections.laserServiceIn.initialConnect = false;
 	connections.laserServiceIn.wiringName = "LaserServiceIn";
 	connections.laserServiceIn.serverName = "unknown";
 	connections.laserServiceIn.serviceName = "unknown";
@@ -66,10 +69,6 @@ ComponentLaserObstacleAvoid::ComponentLaserObstacleAvoid()
 	connections.robotTask.scheduler = "DEFAULT";
 	connections.robotTask.priority = -1;
 	connections.robotTask.cpuAffinity = -1;
-	
-	// initialize members of ComponentLaserObstacleAvoidROSExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentLaserObstacleAvoidExtension
 	
@@ -106,6 +105,9 @@ void ComponentLaserObstacleAvoid::setStartupFinished() {
 Smart::StatusCode ComponentLaserObstacleAvoid::connectLaserServiceIn(const std::string &serverName, const std::string &serviceName) {
 	Smart::StatusCode status;
 	
+	if(connections.laserServiceIn.initialConnect == false) {
+		return Smart::SMART_OK;
+	}
 	std::cout << "connecting to: " << serverName << "; " << serviceName << std::endl;
 	status = laserServiceIn->connect(serverName, serviceName);
 	while(status != Smart::SMART_OK)
@@ -193,10 +195,6 @@ void ComponentLaserObstacleAvoid::init(int argc, char *argv[])
 		loadParameter(argc, argv);
 		
 		
-		// initializations of ComponentLaserObstacleAvoidROSExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of PlainOpcUaComponentLaserObstacleAvoidExtension
 		
 		
@@ -237,10 +235,12 @@ void ComponentLaserObstacleAvoid::init(int argc, char *argv[])
 		// create client ports
 		laserServiceIn = portFactoryRegistry[connections.laserServiceIn.roboticMiddleware]->createLaserServiceIn();
 		navigationVelocityServiceOut = portFactoryRegistry[connections.navigationVelocityServiceOut.roboticMiddleware]->createNavigationVelocityServiceOut();
+		navigationVelocityServiceOutWrapper = new NavigationVelocityServiceOutWrapper(navigationVelocityServiceOut);
 		
 		// create InputTaskTriggers and UpcallManagers
-		laserServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan>(laserServiceIn);
-		laserServiceInUpcallManager = new LaserServiceInUpcallManager(laserServiceIn);
+		laserServiceInInputCollector = new LaserServiceInInputCollector(laserServiceIn);
+		laserServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan>(laserServiceInInputCollector);
+		laserServiceInUpcallManager = new LaserServiceInUpcallManager(laserServiceInInputCollector);
 		
 		// create input-handler
 		
@@ -380,9 +380,11 @@ void ComponentLaserObstacleAvoid::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 	delete laserServiceInInputTaskTrigger;
 	delete laserServiceInUpcallManager;
+	delete laserServiceInInputCollector;
 
 	// destroy client ports
 	delete laserServiceIn;
+	delete navigationVelocityServiceOutWrapper;
 	delete navigationVelocityServiceOut;
 
 	// destroy server ports
@@ -409,10 +411,6 @@ void ComponentLaserObstacleAvoid::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentLaserObstacleAvoidROSExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentLaserObstacleAvoidExtension
 	
@@ -489,6 +487,7 @@ void ComponentLaserObstacleAvoid::loadParameter(int argc, char *argv[])
 		}
 		
 		// load parameters for client LaserServiceIn
+		parameter.getBoolean("LaserServiceIn", "initialConnect", connections.laserServiceIn.initialConnect);
 		parameter.getString("LaserServiceIn", "serviceName", connections.laserServiceIn.serviceName);
 		parameter.getString("LaserServiceIn", "serverName", connections.laserServiceIn.serverName);
 		parameter.getString("LaserServiceIn", "wiringName", connections.laserServiceIn.wiringName);
@@ -525,10 +524,6 @@ void ComponentLaserObstacleAvoid::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("RobotTask", "cpuAffinity")) {
 			parameter.getInteger("RobotTask", "cpuAffinity", connections.robotTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentLaserObstacleAvoidROSExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentLaserObstacleAvoidExtension
 		

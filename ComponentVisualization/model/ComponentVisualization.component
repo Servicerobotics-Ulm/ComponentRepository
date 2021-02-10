@@ -1,7 +1,7 @@
 ComponentDefinition ComponentVisualization logo "/ComponentVisualization/model/logo.png"
 {
 
-InputPort rgbdPushNewestClient implements DomainVision.RGBDImagePushService {
+	InputPort rgbdPushNewestClient implements DomainVision.RGBDImagePushService {
 	}
 	RequestPort RGBDImageQueryServiceReq implements DomainVision.RGBDImageQueryService {
 	}
@@ -15,7 +15,7 @@ InputPort rgbdPushNewestClient implements DomainVision.RGBDImagePushService {
 	}
 	InputPort laserClient3 implements CommBasicObjects.LaserService {
 	}
-	InputPort irPushNewestClient implements CommBasicObjects.CommMobIR {
+	InputPort irPushNewestClient implements CommBasicObjects.MobileIRPush {
 	}
 	InputPort imagePushNewestClient implements DomainVision.RGBImagePushService {
 	}
@@ -78,5 +78,19 @@ Activity MarkerListTask
 	{
 	}
 	InputPort MarkerListDetectionServiceIn implements CommTrackingObjects.MarkerListDetectionService {
+	}
+InputPort AmclVisualizationInfoIn implements CommLocalizationObjects.AmclVisualizationInfo {
+	}
+	Activity AmclVizTask
+	{
+	}
+InputPort plannerGoalPushClient implements CommNavigationObjects.PlannerGoalService {
+	}
+	Activity PlannerGoalTask
+	{
+	}
+Activity LtmMapTask
+	{
+		DefaultTrigger PeriodicTimer 0.017 Hz
 	}
 }

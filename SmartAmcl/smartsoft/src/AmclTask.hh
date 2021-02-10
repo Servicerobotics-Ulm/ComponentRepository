@@ -64,7 +64,7 @@
 #include "AmclTaskCore.hh"
 #include "AmclTypes.hh"
 #include <libgen.h>
-
+#include "CommLocalizationObjects/CommAmclVisualizationInfo.hh"
 
 class AmclTask  : public AmclTaskCore
 {
@@ -75,11 +75,13 @@ private:
 //	AMCLOdom* odom_;
 //	AMCLLaser* laser_;
 	bool laser_update_;
+	bool push_vis_data;
 
 	pf_vector_t pf_odom_pose_;
 
 	int resample_interval_;
 	int resample_count_;
+	CommLocalizationObjects::CommAmclVisualizationInfo particle_visual_info;
 
 public:
 	AmclTask(SmartACE::SmartComponent *comp);
@@ -134,6 +136,9 @@ private:
 
 		return ret_angle;
 	}
+
+	void add_particles_to_visuallization_info(CommLocalizationObjects::CommAmclVisualizationInfo& info, const pf_sample_set_t* set);
+	void add_hypothesis_to_visuallization_info(CommLocalizationObjects::CommAmclVisualizationInfo& info, const std::vector<amcl_hyp_t>& hyps);
 
 };
 

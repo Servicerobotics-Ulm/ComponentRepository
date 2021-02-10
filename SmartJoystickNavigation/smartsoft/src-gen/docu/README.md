@@ -3,52 +3,88 @@
 
 # SmartJoystickNavigation Component
 
-![SmartJoystickNavigation-ComponentImage](model/SmartJoystickNavigationComponentDefinition.jpg)
+<img src="model/SmartJoystickNavigationComponentDefinition.jpg" alt="SmartJoystickNavigation-ComponentImage" width="1000">
 
-The SmartJoystickNavigation component takes joystick input commands (CommJoystick) and translates them to v/omega navigation commands (CommNavigationVelocity). This component can be used in combination with SmartJoystickServer to receive input commands and send them to motion execution, e.g. SmartCdlServer, for collision free steering using a joystick.
-
-Note: This component is used in Examples. 
-
-| Metaelement | Documentation |
-|-------------|---------------|
-| License | LGPL |
-| Hardware Requirements | - |
-| Purpose | Navigation |
+*Component Short Description:* The SmartJoystickNavigation component takes joystick input commands (CommJoystick) and translates them to v/omega navigation commands (CommNavigationVelocity).
 
 
-## Coordination Port CoordinationPort
+## Component-Datasheet Properties
 
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Component-Datasheet Properties</caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Property Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Property Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Property Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">MarketName</td>
+<td style="border:1px solid black; padding: 5px;">Transform Joystick to Navigation Commands</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Supplier</td>
+<td style="border:1px solid black; padding: 5px;">Servicerobotik Ulm</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Homepage</td>
+<td style="border:1px solid black; padding: 5px;">http://servicerobotik-ulm.de/components</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Purpose</td>
+<td style="border:1px solid black; padding: 5px;">Navigation</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">HardwareRequirement</td>
+<td style="border:1px solid black; padding: 5px;">none</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
 
-### States
-
-
-| MainState Name | MainState Description |
-|----------------|-----------------------|
-
-### DynamicWiring
-
-Slave part of wiring pattern. It is responsible for changing the port connections within the component.
-
-### Parameter
-
-
-## Service Ports
+## Component Ports
 
 ### JoystickServiceIn
 
-The component receives joystick input commands via this ports which are translated to navigation commands. This port is connected e.g. to SmartJoystickServer that provides access to joystick hardware.
+*Documentation:*
+
 
 ### NavVelServiceOut
 
-Typically connected to the robot base (e.g. SmartPioneerBaseServer or SmartCdlServer). This port sends navigation commands v, omega which have been translated from joystick commands.
+*Documentation:*
 
 
-## Component Parameters SmartJoystickNavigationParameters
 
-### InternalParameter Settings
 
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| max_velocity | Double | Defines the maximum velocity. This is the velocity [m/s] which will be sent when the joystick axis is at full peak. |
-| max_steering | Double | Defines the minimum steering angle. This is the angle [rad] which will be sent as omega when the joystick axis is at full peak. |
+## Component Parameters: SmartJoystickNavigationParameters
+
+### Internal Parameter: Settings
+
+*Documentation:*
+
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Internal Parameter <b>Settings</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>max_velocity</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">1.0</td>
+<td style="border:1px solid black; padding: 5px;"><p>Defines the maximum velocity. This is the velocity [m/s] which will be sent when the joystick axis is at full peak.
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>max_steering</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">1.2</td>
+<td style="border:1px solid black; padding: 5px;"><p>Defines the minimum steering angle. This is the angle [rad] which will be sent as omega when the joystick axis is at full peak.
+</p></td>
+</tr>
+</table>
 

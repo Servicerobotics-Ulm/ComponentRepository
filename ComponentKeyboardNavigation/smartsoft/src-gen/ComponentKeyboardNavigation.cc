@@ -31,11 +31,12 @@ ComponentKeyboardNavigation::ComponentKeyboardNavigation()
 	std::cout << "constructor of ComponentKeyboardNavigation\n";
 	
 	// set all pointer members to NULL
-	//componentKeyboardNavigationParams = NULL;
+	//coordinationPort = NULL;
 	//coordinationPort = NULL;
 	keyboardInputTask = NULL;
 	keyboardInputTaskTrigger = NULL;
 	navVelSendClient = NULL;
+	navVelSendClientWrapper = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
@@ -62,9 +63,9 @@ ComponentKeyboardNavigation::ComponentKeyboardNavigation()
 	connections.keyboardInputTask.priority = -1;
 	connections.keyboardInputTask.cpuAffinity = -1;
 	
-	// initialize members of ComponentKeyboardNavigationROSExtension
+	// initialize members of ComponentKeyboardNavigationROS1InterfacesExtension
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
+	// initialize members of ComponentKeyboardNavigationRestInterfacesExtension
 	
 	// initialize members of PlainOpcUaComponentKeyboardNavigationExtension
 	
@@ -173,9 +174,9 @@ void ComponentKeyboardNavigation::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of ComponentKeyboardNavigationROSExtension
+		// initializations of ComponentKeyboardNavigationROS1InterfacesExtension
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
+		// initializations of ComponentKeyboardNavigationRestInterfacesExtension
 		
 		// initializations of PlainOpcUaComponentKeyboardNavigationExtension
 		
@@ -216,6 +217,7 @@ void ComponentKeyboardNavigation::init(int argc, char *argv[])
 		
 		// create client ports
 		navVelSendClient = portFactoryRegistry[connections.navVelSendClient.roboticMiddleware]->createNavVelSendClient();
+		navVelSendClientWrapper = new NavVelSendClientWrapper(navVelSendClient);
 		
 		// create InputTaskTriggers and UpcallManagers
 		
@@ -353,6 +355,7 @@ void ComponentKeyboardNavigation::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 
 	// destroy client ports
+	delete navVelSendClientWrapper;
 	delete navVelSendClient;
 
 	// destroy server ports
@@ -381,9 +384,9 @@ void ComponentKeyboardNavigation::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentKeyboardNavigationROSExtension
+	// destruction of ComponentKeyboardNavigationROS1InterfacesExtension
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
+	// destruction of ComponentKeyboardNavigationRestInterfacesExtension
 	
 	// destruction of PlainOpcUaComponentKeyboardNavigationExtension
 	
@@ -489,9 +492,9 @@ void ComponentKeyboardNavigation::loadParameter(int argc, char *argv[])
 			parameter.getInteger("KeyboardInputTask", "cpuAffinity", connections.keyboardInputTask.cpuAffinity);
 		}
 		
-		// load parameters for ComponentKeyboardNavigationROSExtension
+		// load parameters for ComponentKeyboardNavigationROS1InterfacesExtension
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
+		// load parameters for ComponentKeyboardNavigationRestInterfacesExtension
 		
 		// load parameters for PlainOpcUaComponentKeyboardNavigationExtension
 		

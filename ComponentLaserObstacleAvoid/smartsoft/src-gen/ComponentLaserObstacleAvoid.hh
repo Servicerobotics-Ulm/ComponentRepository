@@ -29,10 +29,6 @@
 class ComponentLaserObstacleAvoidPortFactoryInterface;
 class ComponentLaserObstacleAvoidExtension;
 
-// includes for ComponentLaserObstacleAvoidROSExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentLaserObstacleAvoidExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -46,11 +42,14 @@ class ComponentLaserObstacleAvoidExtension;
 
 // include tasks
 #include "RobotTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 #include "LaserServiceInUpcallManager.hh"
+#include "LaserServiceInInputCollector.hh"
 
 // include input-handler(s)
 // include request-handler(s)
+// output port wrappers
+#include "NavigationVelocityServiceOutWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -99,6 +98,7 @@ public:
 	Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> *laserServiceIn;
 	Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan> *laserServiceInInputTaskTrigger;
 	LaserServiceInUpcallManager *laserServiceInUpcallManager;
+	LaserServiceInInputCollector *laserServiceInInputCollector;
 	
 	// define request-ports
 	
@@ -106,14 +106,11 @@ public:
 	
 	// define output-ports
 	Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> *navigationVelocityServiceOut;
+	NavigationVelocityServiceOutWrapper *navigationVelocityServiceOutWrapper;
 	
 	// define answer-ports
 	
 	// define request-handlers
-	
-	// definitions of ComponentLaserObstacleAvoidROSExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentLaserObstacleAvoidExtension
 	
@@ -218,6 +215,7 @@ public:
 	
 		//--- client port parameter ---
 		struct LaserServiceIn_struct {
+			bool initialConnect;
 			std::string serverName;
 			std::string serviceName;
 			std::string wiringName;
@@ -232,10 +230,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} navigationVelocityServiceOut;
-		
-		// -- parameters for ComponentLaserObstacleAvoidROSExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentLaserObstacleAvoidExtension
 		

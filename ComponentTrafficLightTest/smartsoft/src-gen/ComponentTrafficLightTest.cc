@@ -34,6 +34,7 @@ ComponentTrafficLightTest::ComponentTrafficLightTest()
 	generateOut = NULL;
 	generateOutTrigger = NULL;
 	trafficLightServiceOut = NULL;
+	trafficLightServiceOutWrapper = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
@@ -58,10 +59,6 @@ ComponentTrafficLightTest::ComponentTrafficLightTest()
 	connections.generateOut.scheduler = "DEFAULT";
 	connections.generateOut.priority = -1;
 	connections.generateOut.cpuAffinity = -1;
-	
-	// initialize members of ComponentTrafficLightTestROSExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentTrafficLightTestExtension
 	
@@ -168,10 +165,6 @@ void ComponentTrafficLightTest::init(int argc, char *argv[])
 		loadParameter(argc, argv);
 		
 		
-		// initializations of ComponentTrafficLightTestROSExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of PlainOpcUaComponentTrafficLightTestExtension
 		
 		
@@ -211,6 +204,7 @@ void ComponentTrafficLightTest::init(int argc, char *argv[])
 		
 		// create client ports
 		trafficLightServiceOut = portFactoryRegistry[connections.trafficLightServiceOut.roboticMiddleware]->createTrafficLightServiceOut();
+		trafficLightServiceOutWrapper = new TrafficLightServiceOutWrapper(trafficLightServiceOut);
 		
 		// create InputTaskTriggers and UpcallManagers
 		
@@ -346,6 +340,7 @@ void ComponentTrafficLightTest::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 
 	// destroy client ports
+	delete trafficLightServiceOutWrapper;
 	delete trafficLightServiceOut;
 
 	// destroy server ports
@@ -372,10 +367,6 @@ void ComponentTrafficLightTest::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentTrafficLightTestROSExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentTrafficLightTestExtension
 	
@@ -480,10 +471,6 @@ void ComponentTrafficLightTest::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("GenerateOut", "cpuAffinity")) {
 			parameter.getInteger("GenerateOut", "cpuAffinity", connections.generateOut.cpuAffinity);
 		}
-		
-		// load parameters for ComponentTrafficLightTestROSExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentTrafficLightTestExtension
 		

@@ -94,7 +94,7 @@ void KeyboardInputTaskCore::updateAllCommObjects()
 // this method is meant to be used in derived classes
 Smart::StatusCode KeyboardInputTaskCore::navVelSendClientPut(CommBasicObjects::CommNavigationVelocity &navVelSendClientDataObject)
 {
-	Smart::StatusCode result = COMP->navVelSendClient->send(navVelSendClientDataObject);
+	Smart::StatusCode result = COMP->navVelSendClientWrapper->send(navVelSendClientDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());

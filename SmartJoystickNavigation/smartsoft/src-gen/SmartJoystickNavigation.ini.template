@@ -60,6 +60,7 @@ prescale 1
 # client port parameter
 
 [JoystickServiceIn]
+initialConnect false
 serverName unknown
 serviceName unknown
 wiringName JoystickServiceIn
@@ -75,14 +76,14 @@ interval 1
 roboticMiddleware ACE_SmartSoft
 
 ##########################
-## parameters of OpcUaBackendComponentGeneratorExtension
-
-##########################
 ## parameters of PlainOpcUaSmartJoystickNavigationExtension
 
 
 ##########################
-## parameters of SmartJoystickNavigationROSExtension
+## parameters of SmartJoystickNavigationROS1InterfacesExtension
+
+##########################
+## parameters of SmartJoystickNavigationRestInterfacesExtension
 
 
 #####################

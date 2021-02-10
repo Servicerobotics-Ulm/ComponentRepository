@@ -35,16 +35,20 @@ SmartPlannerBreadthFirstSearch::SmartPlannerBreadthFirstSearch()
 	baseStateClient = NULL;
 	baseStateClientInputTaskTrigger = NULL;
 	baseStateClientUpcallManager = NULL;
+	baseStateClientInputCollector = NULL;
+	//coordinationPort = NULL;
 	//coordinationPort = NULL;
 	curMapClient = NULL;
 	curMapClientInputTaskTrigger = NULL;
 	curMapClientUpcallManager = NULL;
+	curMapClientInputCollector = NULL;
 	plannerEventServer = NULL;
+	plannerEventServerWrapper = NULL;
 	plannerEventServerEventTestHandler = nullptr; 
 	plannerGoalServer = NULL;
+	plannerGoalServerWrapper = NULL;
 	plannerTask = NULL;
 	plannerTaskTrigger = NULL;
-	//smartPlannerParams = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
@@ -60,11 +64,13 @@ SmartPlannerBreadthFirstSearch::SmartPlannerBreadthFirstSearch()
 	connections.plannerEventServer.roboticMiddleware = "ACE_SmartSoft";
 	connections.plannerGoalServer.serviceName = "PlannerGoalServer";
 	connections.plannerGoalServer.roboticMiddleware = "ACE_SmartSoft";
+	connections.baseStateClient.initialConnect = false;
 	connections.baseStateClient.wiringName = "BaseStateClient";
 	connections.baseStateClient.serverName = "unknown";
 	connections.baseStateClient.serviceName = "unknown";
 	connections.baseStateClient.interval = 1;
 	connections.baseStateClient.roboticMiddleware = "ACE_SmartSoft";
+	connections.curMapClient.initialConnect = false;
 	connections.curMapClient.wiringName = "CurMapClient";
 	connections.curMapClient.serverName = "unknown";
 	connections.curMapClient.serviceName = "unknown";
@@ -79,11 +85,11 @@ SmartPlannerBreadthFirstSearch::SmartPlannerBreadthFirstSearch()
 	connections.plannerTask.priority = -1;
 	connections.plannerTask.cpuAffinity = -1;
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
 	// initialize members of PlainOpcUaSmartPlannerBreadthFirstSearchExtension
 	
-	// initialize members of SmartPlannerBreadthFirstSearchROSExtension
+	// initialize members of SmartPlannerBreadthFirstSearchROS1InterfacesExtension
+	
+	// initialize members of SmartPlannerBreadthFirstSearchRestInterfacesExtension
 	
 }
 
@@ -118,6 +124,9 @@ void SmartPlannerBreadthFirstSearch::setStartupFinished() {
 Smart::StatusCode SmartPlannerBreadthFirstSearch::connectBaseStateClient(const std::string &serverName, const std::string &serviceName) {
 	Smart::StatusCode status;
 	
+	if(connections.baseStateClient.initialConnect == false) {
+		return Smart::SMART_OK;
+	}
 	std::cout << "connecting to: " << serverName << "; " << serviceName << std::endl;
 	status = baseStateClient->connect(serverName, serviceName);
 	while(status != Smart::SMART_OK)
@@ -132,6 +141,9 @@ Smart::StatusCode SmartPlannerBreadthFirstSearch::connectBaseStateClient(const s
 Smart::StatusCode SmartPlannerBreadthFirstSearch::connectCurMapClient(const std::string &serverName, const std::string &serviceName) {
 	Smart::StatusCode status;
 	
+	if(connections.curMapClient.initialConnect == false) {
+		return Smart::SMART_OK;
+	}
 	std::cout << "connecting to: " << serverName << "; " << serviceName << std::endl;
 	status = curMapClient->connect(serverName, serviceName);
 	while(status != Smart::SMART_OK)
@@ -206,11 +218,11 @@ void SmartPlannerBreadthFirstSearch::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of PlainOpcUaSmartPlannerBreadthFirstSearchExtension
 		
-		// initializations of SmartPlannerBreadthFirstSearchROSExtension
+		// initializations of SmartPlannerBreadthFirstSearchROS1InterfacesExtension
+		
+		// initializations of SmartPlannerBreadthFirstSearchRestInterfacesExtension
 		
 		
 		// initialize all registered port-factories
@@ -249,17 +261,21 @@ void SmartPlannerBreadthFirstSearch::init(int argc, char *argv[])
 		// TODO: set minCycleTime from Ini-file
 		plannerEventServerEventTestHandler = std::make_shared<PlannerEventServerEventTestHandler>();
 		plannerEventServer = portFactoryRegistry[connections.plannerEventServer.roboticMiddleware]->createPlannerEventServer(connections.plannerEventServer.serviceName, plannerEventServerEventTestHandler);
+		plannerEventServerWrapper = new PlannerEventServerWrapper(plannerEventServer);
 		plannerGoalServer = portFactoryRegistry[connections.plannerGoalServer.roboticMiddleware]->createPlannerGoalServer(connections.plannerGoalServer.serviceName);
+		plannerGoalServerWrapper = new PlannerGoalServerWrapper(plannerGoalServer);
 		
 		// create client ports
 		baseStateClient = portFactoryRegistry[connections.baseStateClient.roboticMiddleware]->createBaseStateClient();
 		curMapClient = portFactoryRegistry[connections.curMapClient.roboticMiddleware]->createCurMapClient();
 		
 		// create InputTaskTriggers and UpcallManagers
-		baseStateClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(baseStateClient);
-		baseStateClientUpcallManager = new BaseStateClientUpcallManager(baseStateClient);
-		curMapClientInputTaskTrigger = new Smart::InputTaskTrigger<CommNavigationObjects::CommGridMap>(curMapClient);
-		curMapClientUpcallManager = new CurMapClientUpcallManager(curMapClient);
+		baseStateClientInputCollector = new BaseStateClientInputCollector(baseStateClient);
+		baseStateClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(baseStateClientInputCollector);
+		baseStateClientUpcallManager = new BaseStateClientUpcallManager(baseStateClientInputCollector);
+		curMapClientInputCollector = new CurMapClientInputCollector(curMapClient);
+		curMapClientInputTaskTrigger = new Smart::InputTaskTrigger<CommNavigationObjects::CommGridMap>(curMapClientInputCollector);
+		curMapClientUpcallManager = new CurMapClientUpcallManager(curMapClientInputCollector);
 		
 		// create input-handler
 		
@@ -404,15 +420,19 @@ void SmartPlannerBreadthFirstSearch::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 	delete baseStateClientInputTaskTrigger;
 	delete baseStateClientUpcallManager;
+	delete baseStateClientInputCollector;
 	delete curMapClientInputTaskTrigger;
 	delete curMapClientUpcallManager;
+	delete curMapClientInputCollector;
 
 	// destroy client ports
 	delete baseStateClient;
 	delete curMapClient;
 
 	// destroy server ports
+	delete plannerEventServerWrapper;
 	delete plannerEventServer;
+	delete plannerGoalServerWrapper;
 	delete plannerGoalServer;
 	// destroy event-test handlers (if needed)
 	plannerEventServerEventTestHandler;
@@ -440,11 +460,11 @@ void SmartPlannerBreadthFirstSearch::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
 	// destruction of PlainOpcUaSmartPlannerBreadthFirstSearchExtension
 	
-	// destruction of SmartPlannerBreadthFirstSearchROSExtension
+	// destruction of SmartPlannerBreadthFirstSearchROS1InterfacesExtension
+	
+	// destruction of SmartPlannerBreadthFirstSearchRestInterfacesExtension
 	
 }
 
@@ -519,6 +539,7 @@ void SmartPlannerBreadthFirstSearch::loadParameter(int argc, char *argv[])
 		}
 		
 		// load parameters for client BaseStateClient
+		parameter.getBoolean("BaseStateClient", "initialConnect", connections.baseStateClient.initialConnect);
 		parameter.getString("BaseStateClient", "serviceName", connections.baseStateClient.serviceName);
 		parameter.getString("BaseStateClient", "serverName", connections.baseStateClient.serverName);
 		parameter.getString("BaseStateClient", "wiringName", connections.baseStateClient.wiringName);
@@ -527,6 +548,7 @@ void SmartPlannerBreadthFirstSearch::loadParameter(int argc, char *argv[])
 			parameter.getString("BaseStateClient", "roboticMiddleware", connections.baseStateClient.roboticMiddleware);
 		}
 		// load parameters for client CurMapClient
+		parameter.getBoolean("CurMapClient", "initialConnect", connections.curMapClient.initialConnect);
 		parameter.getString("CurMapClient", "serviceName", connections.curMapClient.serviceName);
 		parameter.getString("CurMapClient", "serverName", connections.curMapClient.serverName);
 		parameter.getString("CurMapClient", "wiringName", connections.curMapClient.wiringName);
@@ -566,11 +588,11 @@ void SmartPlannerBreadthFirstSearch::loadParameter(int argc, char *argv[])
 			parameter.getInteger("PlannerTask", "cpuAffinity", connections.plannerTask.cpuAffinity);
 		}
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// load parameters for PlainOpcUaSmartPlannerBreadthFirstSearchExtension
 		
-		// load parameters for SmartPlannerBreadthFirstSearchROSExtension
+		// load parameters for SmartPlannerBreadthFirstSearchROS1InterfacesExtension
+		
+		// load parameters for SmartPlannerBreadthFirstSearchRestInterfacesExtension
 		
 		
 		// load parameters for all registered component-extensions

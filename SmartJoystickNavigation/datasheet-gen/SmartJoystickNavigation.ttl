@@ -1,0 +1,91 @@
+# baseURI: http://www.servicerobotik-ulm.de/ComponentsAndSystems#SmartJoystickNavigation
+# imports: http://robmosys.eu/rdf/composition-structures
+# imports: http://seronet-projekt.de/models/t2#Navigation
+
+# imports: http://www.servicerobotik-ulm.de/DomainModels/CommBasicObjects
+# imports: http://www.servicerobotik-ulm.de/DomainModels/CommNavigationObjects
+
+#######################################
+# Technical Data Sheet
+# for a SeRoNet Software Component as 
+# exported by the SmartMDSD Toolchain
+#
+# erste Zeile des .ttl muss enthalten: "# ComponentID: <id uri>"
+# This file will be placed in:
+# <componentName>/datasheet-gen/<componentName>.ttl
+#######################################
+
+# all generated files use these prefixes
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix t1: <http://seronet-projekt.de/models/t1#> .
+@prefix spdx: <http://spdx.org/rdf/terms#> .
+@prefix spdx-lic: <http://spdx.org/licenses/> .
+
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# TODO past “Durchstich”: exactly identify which elements belong to SeRoNet and which belong to RobMoSys
+@prefix robmosys: <http://robmosys.eu/rdf/composition-structures#> .
+
+# these namespaces can be different in generated files
+@prefix t3: <http://www.servicerobotik-ulm.de/ComponentsAndSystems#> .
+
+@prefix CommBasicObjects: <http://www.servicerobotik-ulm.de/DomainModels/CommBasicObjects#> .
+@prefix CommNavigationObjects: <http://www.servicerobotik-ulm.de/DomainModels/CommNavigationObjects#> .
+
+##### Software Component SmartJoystickNavigation
+# see https://robmosys.eu/wiki/modeling:metamodels:component
+t3:SmartJoystickNavigation a robmosys:ComponentDefinition;
+	a owl:Ontology ;
+	owl:imports <http://robmosys.eu/rdf/composition-structures> ;
+	owl:imports <http://www.servicerobotik-ulm.de/DomainModels/CommBasicObjects> ;
+	owl:imports <http://www.servicerobotik-ulm.de/DomainModels/CommNavigationObjects> ;
+	
+	# Human readable name of this component
+	# Equals with the project name
+	rdfs:label "SmartJoystickNavigation";
+
+	# Abstract. 1-sentence, very brief, description about this component.
+	t1:shortDescription "The SmartJoystickNavigation component takes joystick input commands (CommJoystick) and translates them to v/omega navigation commands (CommNavigationVelocity).";
+
+	
+	# DatasheetProperty MarketName
+	t1:marketNameDescription "Transform Joystick to Navigation Commands";
+	# DatasheetProperty Supplier
+	t1:supplierDescription "Servicerobotik Ulm";
+	# The webpage with additional information about this component
+	t1:homepage "http://servicerobotik-ulm.de/components"^^xsd:anyURI;
+	# DatasheetProperty Purpose
+	t1:purposeDescription "Navigation";
+	# DatasheetProperty HardwareRequirement
+	t1:hardwareRequirementDescription "none";
+
+	# Services this component provides or requires
+	# ComponentPort JoystickServiceIn
+	t1:requiredService t3:SmartJoystickNavigation_JoystickServiceIn;
+	# ComponentPort NavVelServiceOut
+	t1:requiredService t3:SmartJoystickNavigation_NavVelServiceOut;
+.
+
+# a service definition usage. Here: provided service
+# see https://robmosys.eu/wiki/modeling:metamodels:component
+t3:SmartJoystickNavigation_JoystickServiceIn 
+	rdf:type CommBasicObjects:JoystickService ;
+	# name of this service definition as from the model
+	rdfs:label "JoystickServiceIn";
+
+
+.
+
+# a service definition usage. Here: provided service
+# see https://robmosys.eu/wiki/modeling:metamodels:component
+t3:SmartJoystickNavigation_NavVelServiceOut 
+	rdf:type CommNavigationObjects:NavigationVelocityService ;
+	# name of this service definition as from the model
+	rdfs:label "NavVelServiceOut";
+
+
+.
+

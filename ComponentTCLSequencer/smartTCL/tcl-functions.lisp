@@ -114,7 +114,7 @@
 
 ;; tcl-kb-register-chained-entry
 (defun tcl-kb-register-chained-entry (&key key value)
-  (communication *SMARTSOFT* (list 'special *KB-MODULE-NAME* 'query "kbQuery" `(kb-register-chained-entry :key ',key :value ',value)))
+  (communication *SMARTSOFT* (list 'special *KB-MODULE-NAME* *KB-MODULE-NAME* 'query "kbQuery" `(kb-register-chained-entry :key ',key :value ',value)))
   (smartsoft-result *SMARTSOFT*))
 
 
@@ -157,6 +157,14 @@
   (abort-tcb-all *CURRENT-INSTANCE*)
   (tcl-delete-events)
   '(SUCCESS))
+
+
+;; tcl-abort-child-tcbs-only
+(defun tcl-abort-child-tcbs-only ()
+  "Abort only the child blocks wihtout deleting the own events!"
+  (abort-tcb-all *CURRENT-INSTANCE*)
+  '(SUCCESS))
+
 
 
 ;; tcl-delete-plan
@@ -203,16 +211,26 @@
   (activate-event *CURRENT-INSTANCE* name handler server service mode param)
   '(SUCCESS))
 
+;; tcl-activate-event
+(defun tcl-activate-event-direct (&key name handler server service mode param module module-inst)
+  (activate-event-direct *CURRENT-INSTANCE* name handler server service mode param module module-inst)
+  '(SUCCESS))
+
+
+ ;(tcl-activate-event :handler 'handler-timer-expired :service 'relative :mode 'single :param '(1 100))
+
+
+
 ;; tcl-activate-timer-event
 (defun tcl-activate-timer-event (&key name handler service mode param)
-  (activate-event *CURRENT-INSTANCE* name handler 'timer service mode param)
+  (activate-event *CURRENT-INSTANCE* name handler *TIMER-MODULE-NAME* service mode param)
   '(SUCCESS))
 
 ;; tcl-delete-events
 (defun tcl-delete-events ()
   (loop
     (let ((evt (pop (tcb-events *CURRENT-INSTANCE*))))
-      (destroy-event *CURRENT-INSTANCE* (cdr evt))
+      (if (null evt) (return) (destroy-event *CURRENT-INSTANCE* (cdr evt))) ;call destory only if event exists
       (if (null (tcb-events *CURRENT-INSTANCE*)) (return))))
   '(SUCCESS()))
     
@@ -239,6 +257,14 @@
   (communication *SMARTSOFT* (list module module-inst server 'command service (apply-substitution param (tcb-env-vars *CURRENT-INSTANCE*))))
   '(SUCCESS)))
 
+(defun tcl-send-direct (&key server service param module module-inst)
+"This function is using the send outside of the context of a task block"
+  (if *DEDBUG-CI* (format t "Server ~s~%" Server))
+  (if *DEDBUG-CI* (format t "Module ~s~%" module))
+  (if *DEDBUG-CI* (format t "ModuleInst ~s~%" module-inst))
+  (communication *SMARTSOFT* (list module module-inst server 'command service (apply-substitution param (tcb-env-vars *CURRENT-INSTANCE*))))
+  '(SUCCESS))
+
 
 ;; tcl-query
 (defun tcl-query (&key server service request)
@@ -246,6 +272,14 @@
        (module-inst (tcb-module-inst *CURRENT-INSTANCE*)))
     (communication *SMARTSOFT* (list module module-inst server 'query service (apply-substitution request (tcb-env-vars *CURRENT-INSTANCE*))))
     (smartsoft-result *SMARTSOFT*)))
+
+(defun tcl-query-direct (&key server service request module module-inst)
+"This function is using the query outside of the context of a task block"
+  (if *DEDBUG-CI* (format t "Server ~s~%" Server))
+  (if *DEDBUG-CI* (format t "Module ~s~%" module))
+  (if *DEDBUG-CI* (format t "ModuleInst ~s~%" module-inst))
+  (communication *SMARTSOFT* (list module module-inst server 'query service (apply-substitution request (tcb-env-vars *CURRENT-INSTANCE*))))
+    (smartsoft-result *SMARTSOFT*))
 
 
 ;; tcl-param --> send
@@ -276,6 +310,17 @@
   '(SUCCESS))
 
 
+(defun tcl-param-direct (&key server slot value module module-inst)
+"This function is using the parameter outside of the context of a task block"
+  (if *DEDBUG-CI* (format t "Slot ~s~%" slot))
+  (if *DEDBUG-CI* (format t "Server ~s~%" Server))
+  (if *DEDBUG-CI* (format t "Module ~s~%" module))
+  (if *DEDBUG-CI* (format t "ModuleInst ~s~%" module-inst))
+    ;; send param
+  (communication *SMARTSOFT* (list module module-inst server 'param "param" (list slot value)))
+  '(SUCCESS))
+
+
 ;; tcl-get-param --> read from memory
 (defun tcl-get-param (&key server slot)
   (let ( (comp (query-kb *MEMORY* '(is-a name) `((is-a component)(name ,server)))))
@@ -299,18 +344,56 @@
          (state ,tmp))))
   '(SUCCESS))
 
+(defun tcl-state-direct (&key server state module module-inst)
+"This function is using the state outside of the context of a task block"
+  (if *DEDBUG-CI* (format t "Server ~s~%" Server))
+  (if *DEDBUG-CI* (format t "Module ~s~%" module))
+  (if *DEDBUG-CI* (format t "ModuleInst ~s~%" module-inst))
+  (communication *SMARTSOFT* (list module module-inst server 'state "state" state))
+    '(SUCCESS))
+
 
 (define-condition component-life-cycle-error (error)
   ((text :initarg :text :reader text)))
 
+; (tcl-life-cycle-wait-for-state :module "KBModule" :module-inst 'KBMODINST :server "kb"  :state "Neutral")
+
 ;; tcl-life-cycle-wait-for-state
-(defun tcl-life-cycle-wait-for-state (&key server state)
+(defun tcl-life-cycle-wait-for-state (&key module module-inst server state)
   (let ((tmp (apply-substitution state (tcb-env-vars *CURRENT-INSTANCE*))))
-    ;; send state
-    (if (communication *SMARTSOFT* (list server 'state 'lifecycle-wait tmp))
-       '(SUCCESS)
-       (error 'component-life-cycle-error
-         :text "Component is not in the requested state and an Error occured!"))))
+    (cond
+      ((or (equal module *WIRING-MODULE-NAME*) (equal module *FETCHEVENT-MODULE-NAME*) (equal module *COMPONENT-MODULE-NAME*) (equal module *TIMER-MODULE-NAME*))
+        '(SUCCESS))
+      (T
+        ;; send state
+        (if (communication *SMARTSOFT* (list module module-inst server 'state "waitforlifecyclestate" tmp))
+         '(SUCCESS)
+         (error 'component-life-cycle-error
+           :text "Component is not in the requested state and an Error occured!"))))))
+
+
+; (tcl-get-state :module "KBModule" :module-inst 'KBMODINST :server "kb")
+
+;; tcl-get-state
+(defun tcl-get-state (&key module module-inst server)
+  (communication *SMARTSOFT* (list module module-inst server 'state "getstate" nil))
+  (smartsoft-result *SMARTSOFT*))
+
+
+;;TODO check if this code is correct and the most recent version
+;; tcl-wiring-connect
+;; macro used by the xtext tcl grammar
+;(defmacro tcl-ci-wiring-connect (&rest sections)
+;  (let* ( (clientComp    (coord-inter-get-value ':clientComp     sections))
+;          (wiringName    (coord-inter-get-value ':service        sections))
+;          (serverComp    (coord-inter-get-value ':serverComp     sections))
+;          (serverService (coord-inter-get-value ':serverService  sections)))
+;    `(tcl-wiring-connect :clientComp ',clientComp :wiringName ',wiringName :serverComp ',serverComp :serverService ',serverService)))
+
+;  (tcl-ci-wiring-connect :clientComp "1.SmartFileMover" :wiringName "FileReadQueryClient" :serverComp "master.SmartFileProvider" :serverService "ReadFileQueryServer")
+
+
+;  tcl-module-wiring-connect 
 
 
 ;; tcl-wiring-connect
@@ -321,6 +404,16 @@
     ;; wiring
     (communication *SMARTSOFT* (list 'special *WIRING-MODULE-NAME* (list module module-inst) nil 'connect tmp)))
   '(SUCCESS))
+
+
+;;TODO check if this code is correct and the most recent version
+;; tcl-wiring-disconnect
+;; macro used by the xtext tcl grammar
+;(defmacro tcl-ci-wiring-disconnect (&rest sections)
+;  (let* ( (clientComp    (coord-inter-get-value ':clientComp     sections))
+;          (wiringName    (coord-inter-get-value ':service        sections)))
+;    `(tcl-wiring-disconnect :clientComp ',clientComp :wiringName ',wiringName :serverComp ',serverComp :serverService ',serverService)))
+
 
 
 ;; tcl-wiring-disconnect

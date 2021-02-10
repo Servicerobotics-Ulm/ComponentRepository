@@ -20,8 +20,265 @@
 SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartACE::CommParameterRequest& request)
 {
 	SmartACE::CommParameterResponse answer;
+	
+	if(request.getParameterDataMode() == SmartACE::ParameterDataMode::NAME){
+		answer = handleParametersNamed(request);
+	} else {
+		answer = handleParametersSequence(request);
+	}
+	return answer;
+}
 
+
+SmartACE::CommParameterResponse ParamUpdateHandler::handleParametersNamed(const SmartACE::CommParameterRequest& request)
+{
+	SmartACE::CommParameterResponse answer;
+	
 	std::string tag = request.getTag();
+	for (auto & c: tag) c = toupper(c);
+	std::cout<<"PARAMETER: "<<tag<<std::endl;
+	
+	if (tag == "COMMIT")
+	{
+		answer.setResponse(globalState.handleCOMMIT(commitState));
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			globalStateLock.acquire();
+			// change the content of the globalState, however change only the generated content
+			// without affecting potential user member variables (which is more intuitive for the user)
+			globalState.setContent(commitState);
+			globalStateLock.release();
+		} else {
+			// the commit validation check returned != OK
+			// the commit state is rejected and is not copied into the global state
+		}
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.CDLPARAMETER.APPROACHDIST")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK); // TODO: this should be decided according to validation checks defined in the model (not yet implemented)
+		
+		double temp_approachDistance = 0.0;
+		if(request.getDouble("approachDistance", temp_approachDistance) == 0) {
+			commitState.CommNavigationObjects.CdlParameter.APPROACHDIST.approachDistance = temp_approachDistance;
+		} else {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: approachDistance request: "<<request<<std::endl;
+		}
+		
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.CDLPARAMETER.FREEBEHAVIOR")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK); // TODO: this should be decided according to validation checks defined in the model (not yet implemented)
+		
+		std::string temp_free = "";
+		if(request.getString("free", temp_free) == 0) {
+			commitState.CommNavigationObjects.CdlParameter.FREEBEHAVIOR.free = temp_free;
+		} else {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: free request: "<<request<<std::endl;
+		}
+		
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.CDLPARAMETER.GOALMODE")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK); // TODO: this should be decided according to validation checks defined in the model (not yet implemented)
+		
+		std::string temp_gm = "";
+		if(request.getString("gm", temp_gm) == 0) {
+			commitState.CommNavigationObjects.CdlParameter.GOALMODE.gm = temp_gm;
+		} else {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: gm request: "<<request<<std::endl;
+		}
+		
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.CDLPARAMETER.GOALREGION")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK); // TODO: this should be decided according to validation checks defined in the model (not yet implemented)
+		
+		double temp_goalX = 0.0;
+		if(request.getDouble("goalX", temp_goalX) == 0) {
+			commitState.CommNavigationObjects.CdlParameter.GOALREGION.goalX = temp_goalX;
+		} else {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: goalX request: "<<request<<std::endl;
+		}
+		double temp_goalY = 0.0;
+		if(request.getDouble("goalY", temp_goalY) == 0) {
+			commitState.CommNavigationObjects.CdlParameter.GOALREGION.goalY = temp_goalY;
+		} else {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: goalY request: "<<request<<std::endl;
+		}
+		double temp_goalA = 0.0;
+		if(request.getDouble("goalA", temp_goalA) == 0) {
+			commitState.CommNavigationObjects.CdlParameter.GOALREGION.goalA = temp_goalA;
+		} else {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: goalA request: "<<request<<std::endl;
+		}
+		
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.CDLPARAMETER.ID")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK); // TODO: this should be decided according to validation checks defined in the model (not yet implemented)
+		
+		int temp_id = 0;
+		if(request.getInteger("id", temp_id) == 0) {
+			commitState.CommNavigationObjects.CdlParameter.ID.id = temp_id;
+		} else {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: id request: "<<request<<std::endl;
+		}
+		
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.CDLPARAMETER.LOOKUPTABLE")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK); // TODO: this should be decided according to validation checks defined in the model (not yet implemented)
+		
+		std::string temp_lt = "";
+		if(request.getString("lt", temp_lt) == 0) {
+			commitState.CommNavigationObjects.CdlParameter.LOOKUPTABLE.lt = temp_lt;
+		} else {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: lt request: "<<request<<std::endl;
+		}
+		
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.CDLPARAMETER.PATHNAVFREEBEHAVIOR")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK); // TODO: this should be decided according to validation checks defined in the model (not yet implemented)
+		
+		std::string temp_free = "";
+		if(request.getString("free", temp_free) == 0) {
+			commitState.CommNavigationObjects.CdlParameter.PATHNAVFREEBEHAVIOR.free = temp_free;
+		} else {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: free request: "<<request<<std::endl;
+		}
+		
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.CDLPARAMETER.ROTVEL")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK); // TODO: this should be decided according to validation checks defined in the model (not yet implemented)
+		
+		double temp_wmin = 0.0;
+		if(request.getDouble("wmin", temp_wmin) == 0) {
+			commitState.CommNavigationObjects.CdlParameter.ROTVEL.wmin = temp_wmin;
+		} else {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: wmin request: "<<request<<std::endl;
+		}
+		double temp_wmax = 0.0;
+		if(request.getDouble("wmax", temp_wmax) == 0) {
+			commitState.CommNavigationObjects.CdlParameter.ROTVEL.wmax = temp_wmax;
+		} else {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: wmax request: "<<request<<std::endl;
+		}
+		
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.CDLPARAMETER.SAFETYCL")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK); // TODO: this should be decided according to validation checks defined in the model (not yet implemented)
+		
+		int temp_safetyClearance = 0;
+		if(request.getInteger("safetyClearance", temp_safetyClearance) == 0) {
+			commitState.CommNavigationObjects.CdlParameter.SAFETYCL.safetyClearance = temp_safetyClearance;
+		} else {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: safetyClearance request: "<<request<<std::endl;
+		}
+		
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.CDLPARAMETER.SAVECURPOS")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		int temp_goalId = 0;
+		if(request.getInteger("goalId", temp_goalId) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: goalId request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommNavigationObjects_CdlParameter_SAVECURPOSCore(
+			temp_goalId
+			);
+		}
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.CDLPARAMETER.SETGOALREGION")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		int temp_goalId = 0;
+		if(request.getInteger("goalId", temp_goalId) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: goalId request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommNavigationObjects_CdlParameter_SETGOALREGIONCore(
+			temp_goalId
+			);
+		}
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.CDLPARAMETER.SETSTRATEGY")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		std::string temp_strat = "";
+		if(request.getString("strat", temp_strat) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: strat request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommNavigationObjects_CdlParameter_SETSTRATEGYCore(
+			temp_strat
+			);
+		}
+	}
+	else if (tag == "COMMNAVIGATIONOBJECTS.CDLPARAMETER.TRANSVEL")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK); // TODO: this should be decided according to validation checks defined in the model (not yet implemented)
+		
+		double temp_vmin = 0.0;
+		if(request.getDouble("vmin", temp_vmin) == 0) {
+			commitState.CommNavigationObjects.CdlParameter.TRANSVEL.vmin = temp_vmin;
+		} else {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: vmin request: "<<request<<std::endl;
+		}
+		double temp_vmax = 0.0;
+		if(request.getDouble("vmax", temp_vmax) == 0) {
+			commitState.CommNavigationObjects.CdlParameter.TRANSVEL.vmax = temp_vmax;
+		} else {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: vmax request: "<<request<<std::endl;
+		}
+		
+	}
+	else
+	{
+		/////////////////////////////////////////////////////////////////////
+		// default new
+		std::cout<<"ERROR wrong Parameter!"<<std::endl;
+		answer.setResponse(SmartACE::ParamResponseType::INVALID);
+	}
+	
+
+	std::cout<<"[handleQuery] PARAMETER "<<tag<<" DONE\n\n";
+
+	return answer;
+}
+
+
+SmartACE::CommParameterResponse ParamUpdateHandler::handleParametersSequence(const SmartACE::CommParameterRequest& request)
+{
+	SmartACE::CommParameterResponse answer;
+	
+	std::string tag = request.getTag();
+	for (auto & c: tag) c = toupper(c);
 	std::cout<<"PARAMETER: "<<tag<<std::endl;
 	
 	if (tag == "COMMIT")
@@ -47,6 +304,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 			commitState.CommNavigationObjects.CdlParameter.APPROACHDIST.approachDistance = temp_approachDistance;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: approachDistance request: "<<request<<std::endl;
 		}
 		
 	}
@@ -59,6 +317,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 			commitState.CommNavigationObjects.CdlParameter.FREEBEHAVIOR.free = temp_free;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: free request: "<<request<<std::endl;
 		}
 		
 	}
@@ -71,6 +330,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 			commitState.CommNavigationObjects.CdlParameter.GOALMODE.gm = temp_gm;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: gm request: "<<request<<std::endl;
 		}
 		
 	}
@@ -83,18 +343,21 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 			commitState.CommNavigationObjects.CdlParameter.GOALREGION.goalX = temp_goalX;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: goalX request: "<<request<<std::endl;
 		}
 		double temp_goalY = 0.0;
 		if(request.getDouble("2", temp_goalY) == 0) {
 			commitState.CommNavigationObjects.CdlParameter.GOALREGION.goalY = temp_goalY;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: goalY request: "<<request<<std::endl;
 		}
 		double temp_goalA = 0.0;
 		if(request.getDouble("3", temp_goalA) == 0) {
 			commitState.CommNavigationObjects.CdlParameter.GOALREGION.goalA = temp_goalA;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: goalA request: "<<request<<std::endl;
 		}
 		
 	}
@@ -107,6 +370,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 			commitState.CommNavigationObjects.CdlParameter.ID.id = temp_id;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: id request: "<<request<<std::endl;
 		}
 		
 	}
@@ -119,6 +383,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 			commitState.CommNavigationObjects.CdlParameter.LOOKUPTABLE.lt = temp_lt;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: lt request: "<<request<<std::endl;
 		}
 		
 	}
@@ -131,6 +396,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 			commitState.CommNavigationObjects.CdlParameter.PATHNAVFREEBEHAVIOR.free = temp_free;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: free request: "<<request<<std::endl;
 		}
 		
 	}
@@ -143,12 +409,14 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 			commitState.CommNavigationObjects.CdlParameter.ROTVEL.wmin = temp_wmin;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: wmin request: "<<request<<std::endl;
 		}
 		double temp_wmax = 0.0;
 		if(request.getDouble("2", temp_wmax) == 0) {
 			commitState.CommNavigationObjects.CdlParameter.ROTVEL.wmax = temp_wmax;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: wmax request: "<<request<<std::endl;
 		}
 		
 	}
@@ -161,6 +429,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 			commitState.CommNavigationObjects.CdlParameter.SAFETYCL.safetyClearance = temp_safetyClearance;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: safetyClearance request: "<<request<<std::endl;
 		}
 		
 	}
@@ -171,6 +440,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		int temp_goalId = 0;
 		if(request.getInteger("1", temp_goalId) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: goalId request: "<<request<<std::endl;
 		}
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
@@ -186,6 +456,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		int temp_goalId = 0;
 		if(request.getInteger("1", temp_goalId) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: goalId request: "<<request<<std::endl;
 		}
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
@@ -201,6 +472,7 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		std::string temp_strat = "";
 		if(request.getString("1", temp_strat) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: strat request: "<<request<<std::endl;
 		}
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
@@ -218,12 +490,14 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 			commitState.CommNavigationObjects.CdlParameter.TRANSVEL.vmin = temp_vmin;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: vmin request: "<<request<<std::endl;
 		}
 		double temp_vmax = 0.0;
 		if(request.getDouble("2", temp_vmax) == 0) {
 			commitState.CommNavigationObjects.CdlParameter.TRANSVEL.vmax = temp_vmax;
 		} else {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: vmax request: "<<request<<std::endl;
 		}
 		
 	}

@@ -1,0 +1,22 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; TTS
+
+
+(realize-tcb  (say ?text)
+  (module "TTSModule")
+  (action (
+            (format t "=========================>>> say ~s ~%" '?text)
+            (tcl-send :server 'tts :service 'say :param ?text)
+            '(SUCCESS ()))))
+
+       
+(realize-tcb  (sayWait ?text)
+  (module "TTSModule")
+  (action (
+            (format t "=========================>>> sayWait ~s ~%" '?text)
+            (tcl-query :server 'tts :service 'saywait :request ?text)
+            '(SUCCESS ()))))
+
+;; TTS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

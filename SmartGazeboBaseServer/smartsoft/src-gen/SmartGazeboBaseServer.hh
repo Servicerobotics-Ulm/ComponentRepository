@@ -29,13 +29,13 @@
 class SmartGazeboBaseServerPortFactoryInterface;
 class SmartGazeboBaseServerExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaSmartGazeboBaseServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
 
-// includes for SmartGazeboBaseServerROSExtension
+// includes for SmartGazeboBaseServerROS1InterfacesExtension
+
+// includes for SmartGazeboBaseServerRestInterfacesExtension
 
 
 // include communication objects
@@ -43,6 +43,18 @@ class SmartGazeboBaseServerExtension;
 #include <CommBasicObjects/CommBasePositionUpdateACE.hh>
 #include <CommBasicObjects/CommBaseState.hh>
 #include <CommBasicObjects/CommBaseStateACE.hh>
+#include <CommBasicObjects/CommBatteryEvent.hh>
+#include <CommBasicObjects/CommBatteryEventACE.hh>
+#include <CommBasicObjects/CommBatteryParameter.hh>
+#include <CommBasicObjects/CommBatteryParameterACE.hh>
+#include <CommBasicObjects/CommBatteryState.hh>
+#include <CommBasicObjects/CommBatteryStateACE.hh>
+#include <CommBasicObjects/CommBumperEventParameter.hh>
+#include <CommBasicObjects/CommBumperEventParameterACE.hh>
+#include <CommBasicObjects/CommBumperEventResult.hh>
+#include <CommBasicObjects/CommBumperEventResultACE.hh>
+#include <CommBasicObjects/CommBumperEventState.hh>
+#include <CommBasicObjects/CommBumperEventStateACE.hh>
 #include <CommBasicObjects/CommMobileLaserScan.hh>
 #include <CommBasicObjects/CommMobileLaserScanACE.hh>
 #include <CommBasicObjects/CommNavigationVelocity.hh>
@@ -54,15 +66,22 @@ class SmartGazeboBaseServerExtension;
 #include "BaseStateTask.hh"
 #include "LaserTask.hh"
 #include "PollForGazeboConnection.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 #include "LocalizationUpdateServiceInUpcallManager.hh"
+#include "LocalizationUpdateServiceInInputCollector.hh"
 #include "NavVelServiceInUpcallManager.hh"
+#include "NavVelServiceInInputCollector.hh"
 
 // include input-handler(s)
 #include "LocalizationUpdateHandler.hh"
 #include "VelocityInpuHandler.hh"
 // include request-handler(s)
 #include "BaseStateQueryHandler.hh"
+// output port wrappers
+#include "LaserServiceOutWrapper.hh"
+#include "BaseStateServiceOutWrapper.hh"
+#include "BumperEventServiceOutWrapper.hh"
+#include "BatteryEventServiceOutWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -126,10 +145,12 @@ public:
 	Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> *localizationUpdateServiceIn;
 	Smart::InputTaskTrigger<CommBasicObjects::CommBasePositionUpdate> *localizationUpdateServiceInInputTaskTrigger;
 	LocalizationUpdateServiceInUpcallManager *localizationUpdateServiceInUpcallManager;
+	LocalizationUpdateServiceInInputCollector *localizationUpdateServiceInInputCollector;
 	// InputPort NavVelServiceIn
 	Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> *navVelServiceIn;
 	Smart::InputTaskTrigger<CommBasicObjects::CommNavigationVelocity> *navVelServiceInInputTaskTrigger;
 	NavVelServiceInUpcallManager *navVelServiceInUpcallManager;
+	NavVelServiceInInputCollector *navVelServiceInInputCollector;
 	
 	// define request-ports
 	
@@ -139,7 +160,15 @@ public:
 	
 	// define output-ports
 	Smart::IPushServerPattern<CommBasicObjects::CommBaseState> *baseStateServiceOut;
+	BaseStateServiceOutWrapper *baseStateServiceOutWrapper;
+	Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> *batteryEventServiceOut;
+	BatteryEventServiceOutWrapper *batteryEventServiceOutWrapper;
+	std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>> batteryEventServiceOutEventTestHandler;
+	Smart::IEventServerPattern<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState> *bumperEventServiceOut;
+	BumperEventServiceOutWrapper *bumperEventServiceOutWrapper;
+	std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState>> bumperEventServiceOutEventTestHandler;
 	Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> *laserServiceOut;
+	LaserServiceOutWrapper *laserServiceOutWrapper;
 	
 	// define answer-ports
 	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState> *baseSatateQueryAnsw;
@@ -148,11 +177,11 @@ public:
 	// define request-handlers
 	BaseStateQueryHandler *baseStateQueryHandler;
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
 	// definitions of PlainOpcUaSmartGazeboBaseServerExtension
 	
-	// definitions of SmartGazeboBaseServerROSExtension
+	// definitions of SmartGazeboBaseServerROS1InterfacesExtension
+	
+	// definitions of SmartGazeboBaseServerRestInterfacesExtension
 	
 	
 	// define default slave ports
@@ -288,6 +317,14 @@ public:
 				std::string serviceName;
 				std::string roboticMiddleware;
 		} baseStateServiceOut;
+		struct BatteryEventServiceOut_struct {
+				std::string serviceName;
+				std::string roboticMiddleware;
+		} batteryEventServiceOut;
+		struct BumperEventServiceOut_struct {
+				std::string serviceName;
+				std::string roboticMiddleware;
+		} bumperEventServiceOut;
 		struct LaserServiceOut_struct {
 				std::string serviceName;
 				std::string roboticMiddleware;
@@ -303,11 +340,11 @@ public:
 	
 		//--- client port parameter ---
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// -- parameters for PlainOpcUaSmartGazeboBaseServerExtension
 		
-		// -- parameters for SmartGazeboBaseServerROSExtension
+		// -- parameters for SmartGazeboBaseServerROS1InterfacesExtension
+		
+		// -- parameters for SmartGazeboBaseServerRestInterfacesExtension
 		
 	} connections;
 };

@@ -59,6 +59,7 @@ periodicActFreqHz 10.0
 # client port parameter
 
 [LaserServiceIn]
+initialConnect false
 serverName unknown
 serviceName unknown
 wiringName LaserServiceIn
@@ -72,12 +73,6 @@ serviceName unknown
 wiringName NavigationVelocityServiceOut
 interval 1
 roboticMiddleware ACE_SmartSoft
-
-##########################
-## parameters of ComponentLaserObstacleAvoidROSExtension
-
-##########################
-## parameters of OpcUaBackendComponentGeneratorExtension
 
 ##########################
 ## parameters of PlainOpcUaComponentLaserObstacleAvoidExtension

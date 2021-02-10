@@ -1,4 +1,5 @@
-ComponentDatasheet SmartPlannerBreadthFirstSearch {
+ComponentDatasheet SmartPlannerBreadthFirstSearch
+{
 	BaseURI "http://servicerobotik-ulm.de"
 	ShortDescription "The SmartPlannerBreadthFirstSearch provides path planning services based on grid maps."
 	DatasheetProperty SpdxLicense {
@@ -16,5 +17,22 @@ ComponentDatasheet SmartPlannerBreadthFirstSearch {
 	}
 	DatasheetProperty Purpose {
 		value "Planner"
+	}
+	DatasheetProperty Purpose {
+		value "Navigation"
+	}
+	DatasheetProperty Purpose {
+		value "Breadth-First-Search"
+	}
+	DatasheetProperty MarketName {
+		value "Breadth-First-Search Navigation Planner"
+	}
+	ComponentPortDatasheet CurMapClient {
+	}
+	ComponentPortDatasheet BaseStateClient {
+	}
+	ComponentPortDatasheet PlannerGoalServer {
+	}
+	ComponentPortDatasheet PlannerEventServer {
 	}
 }

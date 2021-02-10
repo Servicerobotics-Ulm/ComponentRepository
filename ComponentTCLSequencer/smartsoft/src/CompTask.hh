@@ -27,6 +27,7 @@ public:
 	virtual ~CompTask();
 	
 	virtual int task_execution() override;
+
 };
 
 #endif

@@ -1,4 +1,5 @@
-ComponentDatasheet SmartMapperGridMap {
+ComponentDatasheet SmartMapperGridMap
+{
 	BaseURI "http://servicerobotik-ulm.de"
 	ShortDescription "The SmartMapperGridMap provides mapping services based on occupancy grid maps."
 	DatasheetProperty SpdxLicense {
@@ -16,5 +17,16 @@ ComponentDatasheet SmartMapperGridMap {
 	}
 	DatasheetProperty Purpose {
 		value "Mapping"
+	}
+	DatasheetProperty MarketName {
+		value "Grid-Map Provider Component"
+	}
+	ComponentPortDatasheet LaserServiceIn {
+	}
+	ComponentPortDatasheet CurrQueryServer {
+	}
+	ComponentPortDatasheet LtmQueryServer {
+	}
+	ComponentPortDatasheet CurrMapOut {
 	}
 }

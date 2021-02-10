@@ -97,7 +97,7 @@ void JoystickNavTaskCore::updateAllCommObjects()
 // this method is meant to be used in derived classes
 Smart::StatusCode JoystickNavTaskCore::navVelServiceOutPut(CommBasicObjects::CommNavigationVelocity &navVelServiceOutDataObject)
 {
-	Smart::StatusCode result = COMP->navVelServiceOut->send(navVelServiceOutDataObject);
+	Smart::StatusCode result = COMP->navVelServiceOutWrapper->send(navVelServiceOutDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());

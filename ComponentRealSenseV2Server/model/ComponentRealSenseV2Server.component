@@ -5,7 +5,7 @@ ComponentDefinition ComponentRealSenseV2Server logo "/ComponentRealSenseV2Server
 	}
 	InputPort ptuPosePushNewestClient implements CommBasicObjects.DevicePoseUpdateService {
 	}
-Activity ImageTask
+	Activity ImageTask
 	{
 		InputPortLink basePushTimedClient { oversamplingOk undersamplingOk }
 		InputPortLink ptuPosePushNewestClient { oversamplingOk undersamplingOk }
@@ -22,9 +22,9 @@ Activity ImageTask
 	}
 	RequestHandler ImageQueryHandler triggeredFrom imageQueryServer {
 	}
-	OutputPort imagePushNewestServer implements DomainVision.RGBDImagePushService realizedBy ImageTask {
+	OutputPort RGBDImagePushServiceOut implements DomainVision.RGBDImagePushService realizedBy ImageTask {
 	}
-	OutputPort colorImagePushNewestServer implements DomainVision.RGBImagePushService realizedBy ImageTask {
+	OutputPort RGBImagePushServiceOut implements DomainVision.RGBImagePushService realizedBy ImageTask {
 	}
 	AnswerPort colorImageQueryServer implements DomainVision.RGBImageQueryService {
 	}
@@ -43,7 +43,7 @@ Activity ImageTask
 		} 
 		PrivateOperationMode pushimage 
 		PrivateOperationMode queryonly
-		SkillRealizationsRef RealsenseCameraModule
+		SkillRealizationsRef CameraModule
 	}
 	
 	ComponentParameters ComponentRealSenseV2ServerParams slave CoordinationPort

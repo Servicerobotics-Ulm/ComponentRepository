@@ -31,19 +31,21 @@ ComponentLaserFromRGBDServer::ComponentLaserFromRGBDServer()
 	std::cout << "constructor of ComponentLaserFromRGBDServer\n";
 	
 	// set all pointer members to NULL
-	//componentLaserFromRGBDServerParams = NULL;
+	//coordinationPort = NULL;
 	//coordinationPort = NULL;
 	laserQueryHandler = NULL;
+	laserServiceOut = NULL;
+	laserServiceOutWrapper = NULL;
 	laserTask = NULL;
 	laserTaskTrigger = NULL;
 	visTask = NULL;
 	visTaskTrigger = NULL;
-	laserPushNewestServer = NULL;
 	laserQueryServer = NULL;
 	laserQueryServerInputTaskTrigger = NULL;
 	rgbdClient = NULL;
 	rgbdClientInputTaskTrigger = NULL;
 	rgbdClientUpcallManager = NULL;
+	rgbdClientInputCollector = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
@@ -55,8 +57,8 @@ ComponentLaserFromRGBDServer::ComponentLaserFromRGBDServer()
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
-	connections.laserPushNewestServer.serviceName = "laserPushNewestServer";
-	connections.laserPushNewestServer.roboticMiddleware = "ACE_SmartSoft";
+	connections.laserServiceOut.serviceName = "LaserServiceOut";
+	connections.laserServiceOut.roboticMiddleware = "ACE_SmartSoft";
 	connections.laserQueryServer.serviceName = "laserQueryServer";
 	connections.laserQueryServer.roboticMiddleware = "ACE_SmartSoft";
 	connections.rgbdClient.initialConnect = false;
@@ -67,22 +69,22 @@ ComponentLaserFromRGBDServer::ComponentLaserFromRGBDServer()
 	connections.rgbdClient.roboticMiddleware = "ACE_SmartSoft";
 	connections.laserTask.minActFreq = 0.0;
 	connections.laserTask.maxActFreq = 0.0;
+	connections.laserTask.trigger = "PeriodicTimer";
+	connections.laserTask.periodicActFreq = 5.0;
 	// scheduling default parameters
 	connections.laserTask.scheduler = "DEFAULT";
 	connections.laserTask.priority = -1;
 	connections.laserTask.cpuAffinity = -1;
 	connections.visTask.minActFreq = 0.0;
 	connections.visTask.maxActFreq = 0.0;
-	connections.visTask.trigger = "PeriodicTimer";
-	connections.visTask.periodicActFreq = 10.0;
 	// scheduling default parameters
 	connections.visTask.scheduler = "DEFAULT";
 	connections.visTask.priority = -1;
 	connections.visTask.cpuAffinity = -1;
 	
-	// initialize members of ComponentLaserFromRGBDServerROSExtension
+	// initialize members of ComponentLaserFromRGBDServerROS1InterfacesExtension
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
+	// initialize members of ComponentLaserFromRGBDServerRestInterfacesExtension
 	
 	// initialize members of PlainOpcUaComponentLaserFromRGBDServerExtension
 	
@@ -207,9 +209,9 @@ void ComponentLaserFromRGBDServer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of ComponentLaserFromRGBDServerROSExtension
+		// initializations of ComponentLaserFromRGBDServerROS1InterfacesExtension
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
+		// initializations of ComponentLaserFromRGBDServerRestInterfacesExtension
 		
 		// initializations of PlainOpcUaComponentLaserFromRGBDServerExtension
 		
@@ -247,7 +249,8 @@ void ComponentLaserFromRGBDServer::init(int argc, char *argv[])
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
-		laserPushNewestServer = portFactoryRegistry[connections.laserPushNewestServer.roboticMiddleware]->createLaserPushNewestServer(connections.laserPushNewestServer.serviceName);
+		laserServiceOut = portFactoryRegistry[connections.laserServiceOut.roboticMiddleware]->createLaserServiceOut(connections.laserServiceOut.serviceName);
+		laserServiceOutWrapper = new LaserServiceOutWrapper(laserServiceOut);
 		laserQueryServer = portFactoryRegistry[connections.laserQueryServer.roboticMiddleware]->createLaserQueryServer(connections.laserQueryServer.serviceName);
 		laserQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan>(laserQueryServer);
 		
@@ -255,8 +258,9 @@ void ComponentLaserFromRGBDServer::init(int argc, char *argv[])
 		rgbdClient = portFactoryRegistry[connections.rgbdClient.roboticMiddleware]->createRgbdClient();
 		
 		// create InputTaskTriggers and UpcallManagers
-		rgbdClientInputTaskTrigger = new Smart::InputTaskTrigger<DomainVision::CommRGBDImage>(rgbdClient);
-		rgbdClientUpcallManager = new RgbdClientUpcallManager(rgbdClient);
+		rgbdClientInputCollector = new RgbdClientInputCollector(rgbdClient);
+		rgbdClientInputTaskTrigger = new Smart::InputTaskTrigger<DomainVision::CommRGBDImage>(rgbdClientInputCollector);
+		rgbdClientUpcallManager = new RgbdClientUpcallManager(rgbdClientInputCollector);
 		
 		// create input-handler
 		
@@ -307,7 +311,20 @@ void ComponentLaserFromRGBDServer::init(int argc, char *argv[])
 			} else {
 				std::cerr << "ERROR: could not set-up InPort " << connections.laserTask.inPortRef << " as activation source for Task LaserTask" << std::endl;
 			}
-		} 
+		} else
+		{
+			// setup default task-trigger as PeriodicTimer
+			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
+			int microseconds = 1000*1000 / 5.0;
+			if(microseconds > 0) {
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				triggerPtr->attach(laserTask);
+				// store trigger in class member
+				laserTaskTrigger = triggerPtr;
+			} else {
+				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task LaserTask" << std::endl;
+			}
+		}
 		
 		// create Task VisTask
 		visTask = new VisTask(component);
@@ -332,20 +349,7 @@ void ComponentLaserFromRGBDServer::init(int argc, char *argv[])
 			} else {
 				std::cerr << "ERROR: could not set-up InPort " << connections.visTask.inPortRef << " as activation source for Task VisTask" << std::endl;
 			}
-		} else
-		{
-			// setup default task-trigger as PeriodicTimer
-			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-			int microseconds = 1000*1000 / 10.0;
-			if(microseconds > 0) {
-				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
-				triggerPtr->attach(visTask);
-				// store trigger in class member
-				visTaskTrigger = triggerPtr;
-			} else {
-				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task VisTask" << std::endl;
-			}
-		}
+		} 
 		
 		
 		// link observers with subjects
@@ -425,12 +429,14 @@ void ComponentLaserFromRGBDServer::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 	delete rgbdClientInputTaskTrigger;
 	delete rgbdClientUpcallManager;
+	delete rgbdClientInputCollector;
 
 	// destroy client ports
 	delete rgbdClient;
 
 	// destroy server ports
-	delete laserPushNewestServer;
+	delete laserServiceOutWrapper;
+	delete laserServiceOut;
 	delete laserQueryServer;
 	delete laserQueryServerInputTaskTrigger;
 	// destroy event-test handlers (if needed)
@@ -459,9 +465,9 @@ void ComponentLaserFromRGBDServer::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentLaserFromRGBDServerROSExtension
+	// destruction of ComponentLaserFromRGBDServerROS1InterfacesExtension
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
+	// destruction of ComponentLaserFromRGBDServerRestInterfacesExtension
 	
 	// destruction of PlainOpcUaComponentLaserFromRGBDServerExtension
 	
@@ -547,10 +553,10 @@ void ComponentLaserFromRGBDServer::loadParameter(int argc, char *argv[])
 			parameter.getString("rgbdClient", "roboticMiddleware", connections.rgbdClient.roboticMiddleware);
 		}
 		
-		// load parameters for server laserPushNewestServer
-		parameter.getString("laserPushNewestServer", "serviceName", connections.laserPushNewestServer.serviceName);
-		if(parameter.checkIfParameterExists("laserPushNewestServer", "roboticMiddleware")) {
-			parameter.getString("laserPushNewestServer", "roboticMiddleware", connections.laserPushNewestServer.roboticMiddleware);
+		// load parameters for server LaserServiceOut
+		parameter.getString("LaserServiceOut", "serviceName", connections.laserServiceOut.serviceName);
+		if(parameter.checkIfParameterExists("LaserServiceOut", "roboticMiddleware")) {
+			parameter.getString("LaserServiceOut", "roboticMiddleware", connections.laserServiceOut.roboticMiddleware);
 		}
 		// load parameters for server laserQueryServer
 		parameter.getString("laserQueryServer", "serviceName", connections.laserQueryServer.serviceName);
@@ -597,9 +603,9 @@ void ComponentLaserFromRGBDServer::loadParameter(int argc, char *argv[])
 			parameter.getInteger("VisTask", "cpuAffinity", connections.visTask.cpuAffinity);
 		}
 		
-		// load parameters for ComponentLaserFromRGBDServerROSExtension
+		// load parameters for ComponentLaserFromRGBDServerROS1InterfacesExtension
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
+		// load parameters for ComponentLaserFromRGBDServerRestInterfacesExtension
 		
 		// load parameters for PlainOpcUaComponentLaserFromRGBDServerExtension
 		

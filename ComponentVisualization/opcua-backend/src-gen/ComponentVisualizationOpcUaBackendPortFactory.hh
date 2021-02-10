@@ -45,6 +45,7 @@ public:
 	virtual void initialize(ComponentVisualization *component, int argc, char* argv[]) override;
 	virtual int onStartup() override;
 
+	virtual Smart::IPushClientPattern<CommLocalizationObjects::CommAmclVisualizationInfo> * createAmclVisualizationInfoIn() override;
 	virtual Smart::IPushClientPattern<CommTrackingObjects::CommDetectedMarkerList> * createMarkerListDetectionServiceIn() override;
 	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> * createRGBDImageQueryServiceReq() override;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * createBaseClient() override;
@@ -58,6 +59,7 @@ public:
 	virtual Smart::IQueryClientPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap> * createLtmQueryClient() override;
 	virtual Smart::IEventClientPattern<CommTrackingObjects::CommPersonLostEventParameter, CommTrackingObjects::CommPersonDetectionEventResult> * createPersonDetectionEventClient() override;
 	virtual Smart::IQueryClientPattern<CommTrackingObjects::CommPersonId, CommTrackingObjects::CommDetectedPerson> * createPersonDetectionQueryClient() override;
+	virtual Smart::IPushClientPattern<CommNavigationObjects::CommPlannerGoal> * createPlannerGoalPushClient() override;
 	virtual Smart::IPushClientPattern<DomainVision::CommRGBDImage> * createRgbdPushNewestClient() override;
 	virtual Smart::IPushClientPattern<DomainVision::CommDepthImage> * createRgbdQueryClient() override;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileUltrasonicScan> * createUltrasonicPushNewestClient() override;

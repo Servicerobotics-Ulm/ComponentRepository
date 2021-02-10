@@ -58,7 +58,7 @@ Smart::IPushClientPattern<DomainVision::CommRGBDImage> * ComponentLaserFromRGBDS
 }
 
 
-Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * ComponentLaserFromRGBDServerAcePortFactory::createLaserPushNewestServer(const std::string &serviceName)
+Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * ComponentLaserFromRGBDServerAcePortFactory::createLaserServiceOut(const std::string &serviceName)
 {
 	return new SmartACE::PushServer<CommBasicObjects::CommMobileLaserScan>(componentImpl, serviceName);
 }

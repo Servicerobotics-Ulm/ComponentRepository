@@ -2,7 +2,6 @@
 ;;
 ;;  Copyright (C) 	2011 Andreas Steck
 ;;
-;;		steck@hs-ulm.de
 ;;
 ;;      ZAFH Servicerobotic Ulm
 ;;      Christian Schlegel
@@ -90,7 +89,9 @@
   
   ;; initialize the c++ component (init, connect, set alive)
   (format t "Starting C++ part of component...~%")
-  (initialize (format nil "~{~A~^ ~}" sb-ext:*posix-argv*))
+ ; (initialize (format nil "~{~A~^ ~}" sb-ext:*posix-argv*))
+  (cffi:with-foreign-strings ((args_str (format nil "~{~A~^ ~}" sb-ext:*posix-argv*)))
+    (initialize args_str))
 
   (compile-file (format nil "~asmartTCL/tcl-basic.lisp" tcl-prefix))
   (load (format nil "~asmartTCL/tcl-basic.fasl" tcl-prefix))

@@ -31,15 +31,18 @@ ComponentGMapping::ComponentGMapping()
 	std::cout << "constructor of ComponentGMapping\n";
 	
 	// set all pointer members to NULL
-	//componentGMappingParams = NULL;
+	//coordinationPort = NULL;
 	//coordinationPort = NULL;
 	gMappingTask = NULL;
 	gMappingTaskTrigger = NULL;
 	basePositionUpdateClient = NULL;
+	basePositionUpdateClientWrapper = NULL;
 	laserClient = NULL;
 	laserClientInputTaskTrigger = NULL;
 	laserClientUpcallManager = NULL;
+	laserClientInputCollector = NULL;
 	newestMapPushServer = NULL;
+	newestMapPushServerWrapper = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
@@ -72,9 +75,9 @@ ComponentGMapping::ComponentGMapping()
 	connections.gMappingTask.priority = -1;
 	connections.gMappingTask.cpuAffinity = -1;
 	
-	// initialize members of ComponentGMappingROSExtension
+	// initialize members of ComponentGMappingROS1InterfacesExtension
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
+	// initialize members of ComponentGMappingRestInterfacesExtension
 	
 	// initialize members of PlainOpcUaComponentGMappingExtension
 	
@@ -203,9 +206,9 @@ void ComponentGMapping::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of ComponentGMappingROSExtension
+		// initializations of ComponentGMappingROS1InterfacesExtension
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
+		// initializations of ComponentGMappingRestInterfacesExtension
 		
 		// initializations of PlainOpcUaComponentGMappingExtension
 		
@@ -244,14 +247,17 @@ void ComponentGMapping::init(int argc, char *argv[])
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
 		newestMapPushServer = portFactoryRegistry[connections.newestMapPushServer.roboticMiddleware]->createNewestMapPushServer(connections.newestMapPushServer.serviceName);
+		newestMapPushServerWrapper = new NewestMapPushServerWrapper(newestMapPushServer);
 		
 		// create client ports
 		basePositionUpdateClient = portFactoryRegistry[connections.basePositionUpdateClient.roboticMiddleware]->createBasePositionUpdateClient();
+		basePositionUpdateClientWrapper = new BasePositionUpdateClientWrapper(basePositionUpdateClient);
 		laserClient = portFactoryRegistry[connections.laserClient.roboticMiddleware]->createLaserClient();
 		
 		// create InputTaskTriggers and UpcallManagers
-		laserClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan>(laserClient);
-		laserClientUpcallManager = new LaserClientUpcallManager(laserClient);
+		laserClientInputCollector = new LaserClientInputCollector(laserClient);
+		laserClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan>(laserClientInputCollector);
+		laserClientUpcallManager = new LaserClientUpcallManager(laserClientInputCollector);
 		
 		// create input-handler
 		
@@ -260,7 +266,7 @@ void ComponentGMapping::init(int argc, char *argv[])
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
 		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
-		if (stateSlave->defineStates("Active" ,"active") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion Active.active" << std::endl;
+		if (stateSlave->defineStates("Mapping" ,"active") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion Mapping.active" << std::endl;
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -379,12 +385,15 @@ void ComponentGMapping::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 	delete laserClientInputTaskTrigger;
 	delete laserClientUpcallManager;
+	delete laserClientInputCollector;
 
 	// destroy client ports
+	delete basePositionUpdateClientWrapper;
 	delete basePositionUpdateClient;
 	delete laserClient;
 
 	// destroy server ports
+	delete newestMapPushServerWrapper;
 	delete newestMapPushServer;
 	// destroy event-test handlers (if needed)
 	
@@ -411,9 +420,9 @@ void ComponentGMapping::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentGMappingROSExtension
+	// destruction of ComponentGMappingROS1InterfacesExtension
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
+	// destruction of ComponentGMappingRestInterfacesExtension
 	
 	// destruction of PlainOpcUaComponentGMappingExtension
 	
@@ -533,9 +542,9 @@ void ComponentGMapping::loadParameter(int argc, char *argv[])
 			parameter.getInteger("GMappingTask", "cpuAffinity", connections.gMappingTask.cpuAffinity);
 		}
 		
-		// load parameters for ComponentGMappingROSExtension
+		// load parameters for ComponentGMappingROS1InterfacesExtension
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
+		// load parameters for ComponentGMappingRestInterfacesExtension
 		
 		// load parameters for PlainOpcUaComponentGMappingExtension
 		

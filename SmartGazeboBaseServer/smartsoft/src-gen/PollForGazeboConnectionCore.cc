@@ -95,7 +95,7 @@ void PollForGazeboConnectionCore::updateAllCommObjects()
 void PollForGazeboConnectionCore::triggerLogEntry(const int& idOffset)
 {
 	if(useLogging == true) {
-		int logId = taskLoggingId + 2*2 + idOffset;
+		int logId = taskLoggingId + 2*4 + idOffset;
 		//FIXME: use logging
 		//Smart::LOGGER->log(logId, getCurrentUpdateCount(), getPreviousCommObjId());
 	}

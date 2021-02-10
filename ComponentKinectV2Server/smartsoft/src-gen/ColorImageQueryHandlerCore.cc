@@ -22,8 +22,12 @@ ColorImageQueryHandlerCore::ColorImageQueryHandlerCore(IQueryServer* server)
 :	Smart::IInputHandler<std::pair<Smart::QueryIdPtr,CommBasicObjects::CommVoid>>(server)
 ,	server(server)
 {
-	
 }
+
+ColorImageQueryHandlerCore::~ColorImageQueryHandlerCore()
+{
+}
+
 
 void ColorImageQueryHandlerCore::updateAllCommObjects()
 {

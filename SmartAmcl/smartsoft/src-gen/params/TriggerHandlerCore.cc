@@ -39,6 +39,12 @@
 		this->handleCommLocalizationObjects_LocalizationParameter_LOADMAP(filename);
 	}
 
+	// handle SENSORSTOUSE
+	void TriggerHandlerCore::handleCommLocalizationObjects_LocalizationParameter_SENSORSTOUSECore(const unsigned short &sensorsToUse)
+	{
+		this->handleCommLocalizationObjects_LocalizationParameter_SENSORSTOUSE(sensorsToUse);
+	}
+
 //
 // extended trigger internal handler methods
 //

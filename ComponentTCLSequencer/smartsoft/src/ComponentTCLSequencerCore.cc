@@ -147,3 +147,102 @@ std::string ComponentTCLSequencerCore::setState(SmartACE::StateMaster *stateMast
 
 		return outString.str();
 }
+
+std::string ComponentTCLSequencerCore::getState(SmartACE::StateMaster *stateMaster, const std::string& server){
+
+	std::ostringstream outString;
+	Smart::StatusCode status;
+
+	std::string mainState;
+	status = stateMaster->getCurrentMainState(mainState, server);
+	switch (status)
+	{
+	case Smart::SMART_OK:
+		outString<<"(ok ("<<mainState.c_str()<<"))";
+		break;
+	case Smart::SMART_UNKNOWNSTATE:
+		outString<<"(error (smart unknown state))";
+		break;
+	case Smart::SMART_NOTACTIVATED:
+		outString<<"(error (smart state not activated))";
+		break;
+	case Smart::SMART_CANCELLED:
+		outString<<"(error (smart cancelled))";
+		break;
+	case Smart::SMART_ERROR_COMMUNICATION:
+		outString<<"(error (smart communication error))";
+		break;
+	case Smart::SMART_ERROR:
+		outString<<"(error (smart error))";
+		break;
+	case Smart::SMART_SERVICEUNAVAILABLE:
+		outString<<"(error (smart service unavailable))";
+		break;
+	default:
+		std::cout<<"error : "<<Smart::StatusCodeConversion(status)<<std::endl;
+		outString<<"(error (unknown error))";
+		break;
+	}
+
+	return outString.str();
+}
+
+
+std::string ComponentTCLSequencerCore::waitForLifeCycleState(SmartACE::StateMaster *stateMaster, const std::string& server, const std::string& lifeCycleState){
+
+	std::ostringstream outString;
+	Smart::StatusCode status;
+
+	std::string str(lifeCycleState);
+	str.erase(std::remove(str.begin(), str.end(), '"'), str.end());
+
+	std::cout<<"Check if component: "<<server<<" is in state: "<<str<<std::endl;
+	bool done = false;
+
+	do{
+		std::string mainState;
+		status = stateMaster->getCurrentMainState(mainState, server);
+		switch (status)
+		{
+		case Smart::SMART_OK:
+			if(mainState.compare(str) == 0){
+				done = true;
+				outString<<"(ok ())";
+				std::cout<<"[waitForLifeCycleState] Component "<< server <<" is in state to wait for: "<<str<<std::endl;
+				return outString.str();
+			} else {
+				std::cout<<"[waitForLifeCycleState] Component "<< server <<"  is in state: "<<mainState<<std::endl;
+			}
+			break;
+		case Smart::SMART_NOTACTIVATED:
+			outString<<"(error (smart state not activated))";
+			break;
+		case Smart::SMART_CANCELLED:
+			outString<<"(error (smart cancelled))";
+			break;
+		case Smart::SMART_ERROR_COMMUNICATION:
+			outString<<"(error (smart communication error))";
+			break;
+		case Smart::SMART_ERROR:
+			outString<<"(error (smart error))";
+			done = true;
+			break;
+		case Smart::SMART_SERVICEUNAVAILABLE:
+			outString<<"(error (smart service unavailable))";
+			break;
+		default:
+			std::cout<<"[waitForLifeCycleState]  error : "<<Smart::StatusCodeConversion(status)<<std::endl;
+			outString<<"(error (unknown error))";
+			done = true;
+			break;
+		}
+
+		std::cout<<"[waitForLifeCycleState] Status: "<<Smart::StatusCodeConversion(status)<<std::endl;
+		ACE_OS::sleep(ACE_Time_Value(0,500000));
+
+
+	}while(done == false);
+
+
+	return outString.str();
+}

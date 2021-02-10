@@ -31,6 +31,21 @@ initialComponentMode Neutral
 ##########################
 # Task parameters
 
+[AmclVizTask]
+minActFreqHz 0.0
+maxActFreqHz 0.0
+# other trigger-types are:
+#triggerType PeriodicTimer
+#periodicActFreqHz 0.0
+# or alternatively:
+#triggerType DataTriggered
+#inPortRef <InPortName>
+#prescale 1
+# optional scheduling parameters
+# scheduler FIFO
+# priority 0
+# cpuAffinity 0
+
 [BaseTask]
 minActFreqHz 0.0
 maxActFreqHz 0.0
@@ -235,6 +250,14 @@ maxActFreqHz 0.0
 ##########################
 # client port parameter
 
+[AmclVisualizationInfoIn]
+initialConnect false
+serverName unknown
+serviceName unknown
+wiringName AmclVisualizationInfoIn
+interval 1
+roboticMiddleware ACE_SmartSoft
+
 [MarkerListDetectionServiceIn]
 initialConnect false
 serverName unknown
@@ -362,12 +385,6 @@ serviceName unknown
 wiringName ultrasonicPushNewestClient
 interval 1
 roboticMiddleware ACE_SmartSoft
-
-##########################
-## parameters of ComponentVisualizationROSExtension
-
-##########################
-## parameters of OpcUaBackendComponentGeneratorExtension
 
 ##########################
 ## parameters of PlainOpcUaComponentVisualizationExtension

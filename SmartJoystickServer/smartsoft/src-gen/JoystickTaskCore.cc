@@ -94,7 +94,7 @@ void JoystickTaskCore::updateAllCommObjects()
 // this method is meant to be used in derived classes
 Smart::StatusCode JoystickTaskCore::joystickServcieOutPut(CommBasicObjects::CommJoystick &joystickServcieOutDataObject)
 {
-	Smart::StatusCode result = COMP->joystickServcieOut->put(joystickServcieOutDataObject);
+	Smart::StatusCode result = COMP->joystickServcieOutWrapper->put(joystickServcieOutDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());

@@ -18,6 +18,8 @@
 
 #include "aceSmartSoft.hh"
 
+#include "nlohmann/json.hpp"
+
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -321,6 +323,51 @@ public:
 		
 		// Instance params (encapsulated in a wrapper class for each instantiated parameter repository)
 		CommLocalizationObjects.to_ostream(os);
+	}
+	
+	std::string getAsJSONString() {
+		nlohmann::json param;
+	
+		param["gfs"] = nlohmann::json {
+			{"angularUpdate" , getGfs().getAngularUpdate()},
+			{"astep" , getGfs().getAstep()},
+			{"critscore" , getGfs().getCritscore()},
+			{"delta" , getGfs().getDelta()},
+			{"generateMap" , getGfs().getGenerateMap()},
+			{"iterations" , getGfs().getIterations()},
+			{"kernelSize" , getGfs().getKernelSize()},
+			{"linearUpdate" , getGfs().getLinearUpdate()},
+			{"lsigma" , getGfs().getLsigma()},
+			{"lskip" , getGfs().getLskip()},
+			{"lstep" , getGfs().getLstep()},
+			{"maxMove" , getGfs().getMaxMove()},
+			{"maxUrange" , getGfs().getMaxUrange()},
+			{"maxrange" , getGfs().getMaxrange()},
+			{"ogain" , getGfs().getOgain()},
+			{"particles" , getGfs().getParticles()},
+			{"regscore" , getGfs().getRegscore()},
+			{"resampleThreshold" , getGfs().getResampleThreshold()},
+			{"sigma" , getGfs().getSigma()},
+			{"srr" , getGfs().getSrr()},
+			{"srt" , getGfs().getSrt()},
+			{"str" , getGfs().getStr()},
+			{"stt" , getGfs().getStt()},
+			{"xmax" , getGfs().getXmax()},
+			{"xmin" , getGfs().getXmin()},
+			{"ymax" , getGfs().getYmax()},
+			{"ymin" , getGfs().getYmin()}
+		};
+		param["settings"] = nlohmann::json {
+			{"initial_pose_azimuth" , getSettings().getInitial_pose_azimuth()},
+			{"initial_pose_x" , getSettings().getInitial_pose_x()},
+			{"initial_pose_y" , getSettings().getInitial_pose_y()},
+			{"verbose" , getSettings().getVerbose()}
+		};
+	
+		param["SlamParameter"] = nlohmann::json {
+		};
+		
+		return param.dump();
 	}
 };
 

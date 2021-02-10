@@ -1,0 +1,63 @@
+ComponentDefinition ComponentWebotsMobileRobot {
+	InputPort NavigationVelocityServiceIn implements CommNavigationObjects.NavigationVelocityService {
+	}
+	InputPort LocalizationEventServiceIn implements CommLocalizationObjects.LocalizationEventService {
+	}
+
+	InputHandler NavigationVelocityServiceInHandler triggeredFrom NavigationVelocityServiceIn { }
+	InputHandler LocalizationEventServiceInHandler triggeredFrom LocalizationEventServiceIn { }
+	Activity OdomTask
+	{
+		DefaultTrigger PeriodicTimer 50.0 Hz
+		ActivationConstraints {
+			configurable = true
+			minActFreq = 20.0 Hz
+			maxActFreq = 1.0 Hz
+		}
+	}
+	Activity SignalStateTask
+	{
+	}
+
+	OutputPort BatteryEventServiceOut implements CommNavigationObjects.BatteryEventService realizedBy OdomTask {
+	}
+	AnswerPort BaseStateQueryServiceAnsw implements CommBasicObjects.BaseStateQueryService {
+	}
+	RequestHandler BaseStateQueryServiceAnswHandler triggeredFrom BaseStateQueryServiceAnsw {
+	}
+	AnswerPort RobotinoIOValuesQueryServiceAnsw implements CommBasicObjects.CommIOValuesQueryService {
+	}
+	RequestHandler RobotinoIOValuesQueryServiceAnswHandler triggeredFrom RobotinoIOValuesQueryServiceAnsw {
+	}
+
+	OutputPort BumperEventServiceOut implements CommBasicObjects.BumperEventService realizedBy OdomTask {
+	}
+	OutputPort DigitalInputEventOut implements CommBasicObjects.CommDigitalInputEvent realizedBy WebotsAPITask {
+	}
+	CoordinationSlavePort CoordinationPort implements CommNavigationObjects.BaseCoordinationService {
+		with baseState realizedBy BaseStateQueryServiceAnsw
+		with bumperEvent realizedBy BumperEventServiceOut
+		with batteryEvent realizedBy BatteryEventServiceOut
+		PrivateOperationMode eStop 
+		PublicOperationMode CommBasicObjects.RobotBaseModes.emergencyStop {
+			activates (eStop)} 
+		SkillRealizationsRef baseInst
+	}
+
+	ComponentParameters ComponentWebotsMobileRobotParams slave CoordinationPort 
+	OutputPort BaseStateServiceOut implements CommBasicObjects.BaseStateService realizedBy OdomTask {
+	}
+	
+	InputPort LocalizationUpdateServiceIn implements CommNavigationObjects.LocalizationUpdateService {
+	}
+	InputHandler LocalizationUpdateServiceInHandler triggeredFrom LocalizationUpdateServiceIn { }
+	
+	OutputPort LaserSafetyEventServiceOut implements CommBasicObjects.LaserSafetyEventService realizedBy WebotsAPITask {
+	}
+	InputPort PowerOutputSendIn implements CommRobotinoObjects.CommPowerOutputSend {
+	}
+	InputHandler PowerOutputSendInHandler triggeredFrom PowerOutputSendIn { }
+Activity WebotsAPITask
+	{
+	}
+}

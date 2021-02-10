@@ -94,7 +94,7 @@ void OdomTaskCore::updateAllCommObjects()
 // this method is meant to be used in derived classes
 Smart::StatusCode OdomTaskCore::baseStateServiceOutPut(CommBasicObjects::CommBaseState &baseStateServiceOutDataObject)
 {
-	Smart::StatusCode result = COMP->baseStateServiceOut->put(baseStateServiceOutDataObject);
+	Smart::StatusCode result = COMP->baseStateServiceOutWrapper->put(baseStateServiceOutDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
@@ -104,7 +104,7 @@ Smart::StatusCode OdomTaskCore::baseStateServiceOutPut(CommBasicObjects::CommBas
 // this method is meant to be used in derived classes
 Smart::StatusCode OdomTaskCore::batteryEventServiceOutPut(CommBasicObjects::CommBatteryState &eventState)
 {
-	Smart::StatusCode result = COMP->batteryEventServiceOut->put(eventState);
+	Smart::StatusCode result = COMP->batteryEventServiceOutWrapper->put(eventState);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
@@ -114,7 +114,7 @@ Smart::StatusCode OdomTaskCore::batteryEventServiceOutPut(CommBasicObjects::Comm
 // this method is meant to be used in derived classes
 Smart::StatusCode OdomTaskCore::bumperEventServiceOutPut(CommBasicObjects::CommBumperEventState &eventState)
 {
-	Smart::StatusCode result = COMP->bumperEventServiceOut->put(eventState);
+	Smart::StatusCode result = COMP->bumperEventServiceOutWrapper->put(eventState);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
@@ -125,7 +125,7 @@ Smart::StatusCode OdomTaskCore::bumperEventServiceOutPut(CommBasicObjects::CommB
 void OdomTaskCore::triggerLogEntry(const int& idOffset)
 {
 	if(useLogging == true) {
-		int logId = taskLoggingId + 2*5 + idOffset;
+		int logId = taskLoggingId + 2*4 + idOffset;
 		//FIXME: use logging
 		//Smart::LOGGER->log(logId, getCurrentUpdateCount(), getPreviousCommObjId());
 	}

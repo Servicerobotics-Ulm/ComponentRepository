@@ -1,7 +1,6 @@
 # baseURI: http://www.servicerobotik-ulm.de/ComponentsAndSystems#ComponentRobotinoLaserServer
 # imports: http://robmosys.eu/rdf/composition-structures
 # imports: http://seronet-projekt.de/models/t2#Navigation
-# imports: http://spdx.org/licenses/LGPL-2.0-or-later
 
 # imports: http://www.servicerobotik-ulm.de/DomainModels/CommBasicObjects
 
@@ -51,8 +50,8 @@ t3:ComponentRobotinoLaserServer a robmosys:ComponentDefinition;
 	
 
 	# Services this component provides or requires
-	# ComponentPort pushNewestServer
-	t1:providedService t3:ComponentRobotinoLaserServer_pushNewestServer;
+	# ComponentPort LaserServiceOut
+	t1:providedService t3:ComponentRobotinoLaserServer_LaserServiceOut;
 	# ComponentPort queryServer
 	t1:providedService t3:ComponentRobotinoLaserServer_queryServer;
 	# ComponentPort safetyfieldEventServer
@@ -63,10 +62,10 @@ t3:ComponentRobotinoLaserServer a robmosys:ComponentDefinition;
 
 # a service definition usage. Here: provided service
 # see https://robmosys.eu/wiki/modeling:metamodels:component
-t3:ComponentRobotinoLaserServer_pushNewestServer 
+t3:ComponentRobotinoLaserServer_LaserServiceOut 
 	rdf:type CommBasicObjects:LaserService ;
 	# name of this service definition as from the model
-	rdfs:label "pushNewestServer";
+	rdfs:label "LaserServiceOut";
 
 
 .

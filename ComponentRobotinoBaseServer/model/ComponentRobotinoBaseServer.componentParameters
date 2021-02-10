@@ -20,12 +20,6 @@ ComponentParameter ComponentRobotinoBaseServerParams component ComponentRobotino
 		bumperTimeOutMSec : Int32 = 0		
 	}
 	
-	InternalParameter LaserSafetyField{
-		generateLaserSafetyFieldEvents : Boolean = false
-		laserSafetyfFieldTimeOutSec : Int32 = 10
-		laserSafetyfFieldTimeOutMSec : Int32 = 0		
-	}
-	
 	InternalParameter General {
 		verbose: Boolean = false
 		hasSignalState : Boolean = true

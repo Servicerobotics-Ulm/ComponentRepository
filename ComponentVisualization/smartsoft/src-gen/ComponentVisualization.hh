@@ -29,16 +29,14 @@
 class ComponentVisualizationPortFactoryInterface;
 class ComponentVisualizationExtension;
 
-// includes for ComponentVisualizationROSExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentVisualizationExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
 
 
 // include communication objects
+#include <CommLocalizationObjects/CommAmclVisualizationInfo.hh>
+#include <CommLocalizationObjects/CommAmclVisualizationInfoACE.hh>
 #include <CommBasicObjects/CommBaseState.hh>
 #include <CommBasicObjects/CommBaseStateACE.hh>
 #include <DomainVision/CommDepthImage.hh>
@@ -73,6 +71,7 @@ class ComponentVisualizationExtension;
 #include <CommTrackingObjects/PersonLostEventStateACE.hh>
 
 // include tasks
+#include "AmclVizTask.hh"
 #include "BaseTask.hh"
 #include "CurMapTask.hh"
 #include "DepthTask.hh"
@@ -86,23 +85,39 @@ class ComponentVisualizationExtension;
 #include "PersonDetectionTask.hh"
 #include "RGBDTask.hh"
 #include "USArTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
+#include "AmclVisualizationInfoInUpcallManager.hh"
+#include "AmclVisualizationInfoInInputCollector.hh"
 #include "MarkerListDetectionServiceInUpcallManager.hh"
+#include "MarkerListDetectionServiceInInputCollector.hh"
 #include "BaseClientUpcallManager.hh"
+#include "BaseClientInputCollector.hh"
 #include "CurPushClientUpcallManager.hh"
+#include "CurPushClientInputCollector.hh"
 #include "DepthPushNewestClientUpcallManager.hh"
+#include "DepthPushNewestClientInputCollector.hh"
 #include "ImagePushNewestClientUpcallManager.hh"
+#include "ImagePushNewestClientInputCollector.hh"
 #include "IrPushNewestClientUpcallManager.hh"
+#include "IrPushNewestClientInputCollector.hh"
 #include "LaserClient1UpcallManager.hh"
+#include "LaserClient1InputCollector.hh"
 #include "LaserClient2UpcallManager.hh"
+#include "LaserClient2InputCollector.hh"
 #include "LaserClient3UpcallManager.hh"
+#include "LaserClient3InputCollector.hh"
 #include "PersonDetectionEventClientUpcallManager.hh"
+#include "PersonDetectionEventClientInputCollector.hh"
 #include "RgbdPushNewestClientUpcallManager.hh"
+#include "RgbdPushNewestClientInputCollector.hh"
 #include "RgbdQueryClientUpcallManager.hh"
+#include "RgbdQueryClientInputCollector.hh"
 #include "UltrasonicPushNewestClientUpcallManager.hh"
+#include "UltrasonicPushNewestClientInputCollector.hh"
 
 // include input-handler(s)
 // include request-handler(s)
+// output port wrappers
 
 // include handler
 #include "CompHandler.hh"
@@ -154,6 +169,8 @@ public:
 	}
 	
 	// define tasks
+	Smart::TaskTriggerSubject* amclVizTaskTrigger;
+	AmclVizTask *amclVizTask;
 	Smart::TaskTriggerSubject* baseTaskTrigger;
 	BaseTask *baseTask;
 	Smart::TaskTriggerSubject* curMapTaskTrigger;
@@ -182,58 +199,76 @@ public:
 	USArTask *uSArTask;
 	
 	// define input-ports
+	// InputPort AmclVisualizationInfoIn
+	Smart::IPushClientPattern<CommLocalizationObjects::CommAmclVisualizationInfo> *amclVisualizationInfoIn;
+	Smart::InputTaskTrigger<CommLocalizationObjects::CommAmclVisualizationInfo> *amclVisualizationInfoInInputTaskTrigger;
+	AmclVisualizationInfoInUpcallManager *amclVisualizationInfoInUpcallManager;
+	AmclVisualizationInfoInInputCollector *amclVisualizationInfoInInputCollector;
 	// InputPort MarkerListDetectionServiceIn
 	Smart::IPushClientPattern<CommTrackingObjects::CommDetectedMarkerList> *markerListDetectionServiceIn;
 	Smart::InputTaskTrigger<CommTrackingObjects::CommDetectedMarkerList> *markerListDetectionServiceInInputTaskTrigger;
 	MarkerListDetectionServiceInUpcallManager *markerListDetectionServiceInUpcallManager;
+	MarkerListDetectionServiceInInputCollector *markerListDetectionServiceInInputCollector;
 	// InputPort baseClient
 	Smart::IPushClientPattern<CommBasicObjects::CommBaseState> *baseClient;
 	Smart::InputTaskTrigger<CommBasicObjects::CommBaseState> *baseClientInputTaskTrigger;
 	BaseClientUpcallManager *baseClientUpcallManager;
+	BaseClientInputCollector *baseClientInputCollector;
 	// InputPort curPushClient
 	Smart::IPushClientPattern<CommNavigationObjects::CommGridMap> *curPushClient;
 	Smart::InputTaskTrigger<CommNavigationObjects::CommGridMap> *curPushClientInputTaskTrigger;
 	CurPushClientUpcallManager *curPushClientUpcallManager;
+	CurPushClientInputCollector *curPushClientInputCollector;
 	// InputPort depthPushNewestClient
 	Smart::IPushClientPattern<DomainVision::CommDepthImage> *depthPushNewestClient;
 	Smart::InputTaskTrigger<DomainVision::CommDepthImage> *depthPushNewestClientInputTaskTrigger;
 	DepthPushNewestClientUpcallManager *depthPushNewestClientUpcallManager;
+	DepthPushNewestClientInputCollector *depthPushNewestClientInputCollector;
 	// InputPort imagePushNewestClient
 	Smart::IPushClientPattern<DomainVision::CommVideoImage> *imagePushNewestClient;
 	Smart::InputTaskTrigger<DomainVision::CommVideoImage> *imagePushNewestClientInputTaskTrigger;
 	ImagePushNewestClientUpcallManager *imagePushNewestClientUpcallManager;
+	ImagePushNewestClientInputCollector *imagePushNewestClientInputCollector;
 	// InputPort irPushNewestClient
 	Smart::IPushClientPattern<CommBasicObjects::CommMobileIRScan> *irPushNewestClient;
 	Smart::InputTaskTrigger<CommBasicObjects::CommMobileIRScan> *irPushNewestClientInputTaskTrigger;
 	IrPushNewestClientUpcallManager *irPushNewestClientUpcallManager;
+	IrPushNewestClientInputCollector *irPushNewestClientInputCollector;
 	// InputPort laserClient1
 	Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> *laserClient1;
 	Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan> *laserClient1InputTaskTrigger;
 	LaserClient1UpcallManager *laserClient1UpcallManager;
+	LaserClient1InputCollector *laserClient1InputCollector;
 	// InputPort laserClient2
 	Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> *laserClient2;
 	Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan> *laserClient2InputTaskTrigger;
 	LaserClient2UpcallManager *laserClient2UpcallManager;
+	LaserClient2InputCollector *laserClient2InputCollector;
 	// InputPort laserClient3
 	Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> *laserClient3;
 	Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan> *laserClient3InputTaskTrigger;
 	LaserClient3UpcallManager *laserClient3UpcallManager;
+	LaserClient3InputCollector *laserClient3InputCollector;
 	// InputPort personDetectionEventClient
 	Smart::IEventClientPattern<CommTrackingObjects::CommPersonLostEventParameter, CommTrackingObjects::CommPersonDetectionEventResult> *personDetectionEventClient;
 	Smart::InputTaskTrigger<Smart::EventInputType<CommTrackingObjects::CommPersonDetectionEventResult>> *personDetectionEventClientInputTaskTrigger;
 	PersonDetectionEventClientUpcallManager *personDetectionEventClientUpcallManager;
+	PersonDetectionEventClientInputCollector *personDetectionEventClientInputCollector;
 	// InputPort rgbdPushNewestClient
 	Smart::IPushClientPattern<DomainVision::CommRGBDImage> *rgbdPushNewestClient;
 	Smart::InputTaskTrigger<DomainVision::CommRGBDImage> *rgbdPushNewestClientInputTaskTrigger;
 	RgbdPushNewestClientUpcallManager *rgbdPushNewestClientUpcallManager;
+	RgbdPushNewestClientInputCollector *rgbdPushNewestClientInputCollector;
 	// InputPort rgbdQueryClient
 	Smart::IPushClientPattern<DomainVision::CommDepthImage> *rgbdQueryClient;
 	Smart::InputTaskTrigger<DomainVision::CommDepthImage> *rgbdQueryClientInputTaskTrigger;
 	RgbdQueryClientUpcallManager *rgbdQueryClientUpcallManager;
+	RgbdQueryClientInputCollector *rgbdQueryClientInputCollector;
 	// InputPort ultrasonicPushNewestClient
 	Smart::IPushClientPattern<CommBasicObjects::CommMobileUltrasonicScan> *ultrasonicPushNewestClient;
 	Smart::InputTaskTrigger<CommBasicObjects::CommMobileUltrasonicScan> *ultrasonicPushNewestClientInputTaskTrigger;
 	UltrasonicPushNewestClientUpcallManager *ultrasonicPushNewestClientUpcallManager;
+	UltrasonicPushNewestClientInputCollector *ultrasonicPushNewestClientInputCollector;
 	
 	// define request-ports
 	Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> *rGBDImageQueryServiceReq;
@@ -247,10 +282,6 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
-	
-	// definitions of ComponentVisualizationROSExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentVisualizationExtension
 	
@@ -302,6 +333,7 @@ public:
 	/// start all associated timers
 	void startAllTimers();
 	
+	Smart::StatusCode connectAmclVisualizationInfoIn(const std::string &serverName, const std::string &serviceName);
 	Smart::StatusCode connectMarkerListDetectionServiceIn(const std::string &serverName, const std::string &serviceName);
 	Smart::StatusCode connectRGBDImageQueryServiceReq(const std::string &serverName, const std::string &serviceName);
 	Smart::StatusCode connectBaseClient(const std::string &serverName, const std::string &serviceName);
@@ -348,6 +380,22 @@ public:
 		} component;
 		
 		//--- task parameter ---
+		struct AmclVizTask_struct {
+			double minActFreq;
+			double maxActFreq;
+			std::string trigger;
+			// only one of the following two params is 
+			// actually used at run-time according 
+			// to the system config model
+			double periodicActFreq;
+			// or
+			std::string inPortRef;
+			int prescale;
+			// scheduling parameters
+			std::string scheduler;
+			int priority;
+			int cpuAffinity;
+		} amclVizTask;
 		struct BaseTask_struct {
 			double minActFreq;
 			double maxActFreq;
@@ -562,6 +610,14 @@ public:
 		//--- server port parameter ---
 	
 		//--- client port parameter ---
+		struct AmclVisualizationInfoIn_struct {
+			bool initialConnect;
+			std::string serverName;
+			std::string serviceName;
+			std::string wiringName;
+			long interval;
+			std::string roboticMiddleware;
+		} amclVisualizationInfoIn;
 		struct MarkerListDetectionServiceIn_struct {
 			bool initialConnect;
 			std::string serverName;
@@ -690,10 +746,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} ultrasonicPushNewestClient;
-		
-		// -- parameters for ComponentVisualizationROSExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentVisualizationExtension
 		

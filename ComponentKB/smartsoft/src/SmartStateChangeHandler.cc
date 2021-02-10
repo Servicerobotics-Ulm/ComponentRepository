@@ -17,12 +17,25 @@
 #include "SmartStateChangeHandler.hh"
 #include "ComponentKB.hh"
 
+#include "KbEventServerEventTestHandler.hh"
+
 #include <iostream>
 
 // Called when a substate is entered
 void SmartStateChangeHandler::handleEnterState(const std::string & substate) throw()
 {
-	// change this code to your needs !!!
+	if(substate == "shutdown"){
+		std::cout<<__FUNCTION__<<substate<<std::endl;
+
+		COMP->comp_shutdown = true;
+
+		std::cout<<__FUNCTION__<<" COMPONENT SHUTDOWN = true"<<std::endl;
+		std::dynamic_pointer_cast<KbEventServerEventTestHandler>(COMP->kbEventServerEventTestHandler)->shutdownReleaseSema();
+		COMP->kbQueryHandler->insertCompShutdownQuery();
+
+		ACE_OS::sleep(ACE_Time_Value(0,250000));
+		std::cout<<__FUNCTION__<<" QUIT "<<std::endl;
+	}
 
 }
 

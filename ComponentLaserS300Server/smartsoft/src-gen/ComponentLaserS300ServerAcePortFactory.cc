@@ -52,13 +52,18 @@ int ComponentLaserS300ServerAcePortFactory::onStartup()
 	return componentImpl->startComponentInfrastructure();
 }
 
+Smart::IPushClientPattern<CommBasicObjects::CommIOValues> * ComponentLaserS300ServerAcePortFactory::createCommIOForkingServiceIn()
+{
+	return new SmartACE::PushClient<CommBasicObjects::CommIOValues>(componentImpl);
+}
+
 Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * ComponentLaserS300ServerAcePortFactory::createBaseTimedClient()
 {
 	return new SmartACE::PushClient<CommBasicObjects::CommBaseState>(componentImpl);
 }
 
 
-Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * ComponentLaserS300ServerAcePortFactory::createLaserPushNewestServer(const std::string &serviceName)
+Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * ComponentLaserS300ServerAcePortFactory::createLaserServiceOut(const std::string &serviceName)
 {
 	return new SmartACE::PushServer<CommBasicObjects::CommMobileLaserScan>(componentImpl, serviceName);
 }

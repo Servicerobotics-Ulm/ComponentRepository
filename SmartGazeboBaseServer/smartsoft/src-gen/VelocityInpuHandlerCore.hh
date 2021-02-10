@@ -30,9 +30,6 @@ class VelocityInpuHandlerCore
 ,	public NavVelServiceInUpcallInterface
 {
 private:
-	Smart::StatusCode updateStatus;
-	CommBasicObjects::CommNavigationVelocity lastUpdate;
-	
 	
 	virtual void updateAllCommObjects();
 	

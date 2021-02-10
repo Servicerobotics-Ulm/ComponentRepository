@@ -7,7 +7,7 @@
 		"coordination-interfaces-instances" : [
 		{ "type" : "KBCoordinationService",
 		"inst-name" : "kb",
-		"component-inst" : "ComponentKB_11",
+		"component-inst" : "ComponentKB",
 		"services" : [{ "coordservice" : "kbQuery", "compservice" : "kbQuery"},{ "coordservice" : "kbEvent", "compservice" : "kbEventServer"}]
 		} 
 		]
@@ -23,6 +23,19 @@
 		"component-inst" : "ComponentSkillInterfaceSlaveTest",
 		"services" : [{ "coordservice" : "testEvent", "compservice" : "TestEventServer"},{ "coordservice" : "testQuery", "compservice" : "TestQueryServer"},{ "coordservice" : "testSend", "compservice" : "TestSendServer"}]
 		} 
+		]
+		}
+	},
+	{
+		"coordination-module-inst" : {
+		"type" : "CoordinationTestModule2",
+		"inst-name" : "testInst2",
+		"coordination-interfaces-instances" : [
+		{ "type" : "TestCoordinationService2",
+		"inst-name" : "test2",
+		"component-inst" : "ComponentCoordinationInterfaceTest2",
+		"services" : [{ "coordservice" : "testEvent", "compservice" : "TestEventServer"}]
+		}
 		]
 		}
 	}

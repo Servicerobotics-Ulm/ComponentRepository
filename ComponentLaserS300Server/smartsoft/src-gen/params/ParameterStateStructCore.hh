@@ -18,6 +18,8 @@
 
 #include "aceSmartSoft.hh"
 
+#include "nlohmann/json.hpp"
+
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -129,6 +131,50 @@ public:
 		}; // end class scannerType
 		
 		/**
+		 * Definition of Parameter safetyEvents
+		 */
+		class safetyEventsType 
+		{
+			friend class ParamUpdateHandler;
+		protected:
+			/**
+			 * here are the member definitions
+			 */
+			int laserSafetyBit;
+			int laserSafetyFieldTimeOutMSec;
+			int laserSafetyFieldTimeOutSec;
+			bool safetyEventsFromIO;
+		
+		public:
+			// default constructor
+			safetyEventsType() {
+				laserSafetyBit = 0;
+				laserSafetyFieldTimeOutMSec = 0;
+				laserSafetyFieldTimeOutSec = 10;
+				safetyEventsFromIO = false;
+			}
+		
+			/**
+			 * here are the public getters
+			 */
+			inline int getLaserSafetyBit() const { return laserSafetyBit; }
+			inline int getLaserSafetyFieldTimeOutMSec() const { return laserSafetyFieldTimeOutMSec; }
+			inline int getLaserSafetyFieldTimeOutSec() const { return laserSafetyFieldTimeOutSec; }
+			inline bool getSafetyEventsFromIO() const { return safetyEventsFromIO; }
+			
+			void to_ostream(std::ostream &os = std::cout) const
+			{
+				os << "safetyEvents(";
+				os << "laserSafetyBit = " << laserSafetyBit << ", ";
+				os << "laserSafetyFieldTimeOutMSec = " << laserSafetyFieldTimeOutMSec << ", ";
+				os << "laserSafetyFieldTimeOutSec = " << laserSafetyFieldTimeOutSec << ", ";
+				os << "safetyEventsFromIO = " << safetyEventsFromIO << ", ";
+				os << ")\n";
+			}
+			
+		}; // end class safetyEventsType
+		
+		/**
 		 * Definition of Parameter base_manipulator
 		 */
 		class base_manipulatorType 
@@ -196,14 +242,12 @@ public:
 			 */
 			bool activate_push_newest;
 			bool activate_push_timed;
-			bool activate_safetyEventServer;
 		
 		public:
 			// default constructor
 			servicesType() {
 				activate_push_newest = true;
 				activate_push_timed = true;
-				activate_safetyEventServer = true;
 			}
 		
 			/**
@@ -211,14 +255,12 @@ public:
 			 */
 			inline bool getActivate_push_newest() const { return activate_push_newest; }
 			inline bool getActivate_push_timed() const { return activate_push_timed; }
-			inline bool getActivate_safetyEventServer() const { return activate_safetyEventServer; }
 			
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "services(";
 				os << "activate_push_newest = " << activate_push_newest << ", ";
 				os << "activate_push_timed = " << activate_push_timed << ", ";
-				os << "activate_safetyEventServer = " << activate_safetyEventServer << ", ";
 				os << ")\n";
 			}
 			
@@ -239,6 +281,7 @@ protected:
 
 	// Internal params
 	base_manipulatorType base_manipulator;
+	safetyEventsType safetyEvents;
 	scannerType scanner;
 	servicesType services;
 	
@@ -262,6 +305,9 @@ public:
 	base_manipulatorType getBase_manipulator() const {
 		return base_manipulator;
 	}
+	safetyEventsType getSafetyEvents() const {
+		return safetyEvents;
+	}
 	scannerType getScanner() const {
 		return scanner;
 	}
@@ -278,12 +324,59 @@ public:
 	{
 		// Internal params
 		base_manipulator.to_ostream(os);
+		safetyEvents.to_ostream(os);
 		scanner.to_ostream(os);
 		services.to_ostream(os);
 		
 		// External params
 		
 		// Instance params (encapsulated in a wrapper class for each instantiated parameter repository)
+	}
+	
+	std::string getAsJSONString() {
+		nlohmann::json param;
+	
+		param["base_manipulator"] = nlohmann::json {
+			{"base_a" , getBase_manipulator().getBase_a()},
+			{"on_base" , getBase_manipulator().getOn_base()},
+			{"steer_a" , getBase_manipulator().getSteer_a()},
+			{"turret_a" , getBase_manipulator().getTurret_a()},
+			{"x" , getBase_manipulator().getX()},
+			{"y" , getBase_manipulator().getY()},
+			{"z" , getBase_manipulator().getZ()}
+		};
+		param["safetyEvents"] = nlohmann::json {
+			{"laserSafetyBit" , getSafetyEvents().getLaserSafetyBit()},
+			{"laserSafetyFieldTimeOutMSec" , getSafetyEvents().getLaserSafetyFieldTimeOutMSec()},
+			{"laserSafetyFieldTimeOutSec" , getSafetyEvents().getLaserSafetyFieldTimeOutSec()},
+			{"safetyEventsFromIO" , getSafetyEvents().getSafetyEventsFromIO()}
+		};
+		param["scanner"] = nlohmann::json {
+			{"azimuth" , getScanner().getAzimuth()},
+			{"baudrate" , getScanner().getBaudrate()},
+			{"device" , getScanner().getDevice()},
+			{"elevation" , getScanner().getElevation()},
+			{"frequency" , getScanner().getFrequency()},
+			{"length_unit" , getScanner().getLength_unit()},
+			{"max_range" , getScanner().getMax_range()},
+			{"min_range" , getScanner().getMin_range()},
+			{"on_turret" , getScanner().getOn_turret()},
+			{"opening_angle" , getScanner().getOpening_angle()},
+			{"resolution" , getScanner().getResolution()},
+			{"roll" , getScanner().getRoll()},
+			{"telgrm_v103" , getScanner().getTelgrm_v103()},
+			{"verbose" , getScanner().getVerbose()},
+			{"x" , getScanner().getX()},
+			{"y" , getScanner().getY()},
+			{"z" , getScanner().getZ()}
+		};
+		param["services"] = nlohmann::json {
+			{"activate_push_newest" , getServices().getActivate_push_newest()},
+			{"activate_push_timed" , getServices().getActivate_push_timed()}
+		};
+	
+		
+		return param.dump();
 	}
 };
 

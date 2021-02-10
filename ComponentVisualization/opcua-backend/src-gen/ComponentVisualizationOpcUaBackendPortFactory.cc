@@ -34,8 +34,10 @@
 #include "CommBasicObjectsOpcUa/CommMobileLaserScanOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommMobileUltrasonicScanOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
+#include "CommLocalizationObjectsOpcUa/CommAmclVisualizationInfoOpcUa.hh"
 #include "CommNavigationObjectsOpcUa/CommGridMapOpcUa.hh"
 #include "CommNavigationObjectsOpcUa/CommGridMapRequestOpcUa.hh"
+#include "CommNavigationObjectsOpcUa/CommPlannerGoalOpcUa.hh"
 #include "CommTrackingObjectsOpcUa/CommDetectedMarkerListOpcUa.hh"
 #include "CommTrackingObjectsOpcUa/CommDetectedPersonOpcUa.hh"
 #include "CommTrackingObjectsOpcUa/CommPersonDetectionEventResultOpcUa.hh"
@@ -70,6 +72,11 @@ int ComponentVisualizationOpcUaBackendPortFactory::onStartup()
     	return 0;
     }
 	return -1;
+}
+
+Smart::IPushClientPattern<CommLocalizationObjects::CommAmclVisualizationInfo> * ComponentVisualizationOpcUaBackendPortFactory::createAmclVisualizationInfoIn()
+{
+	return new SeRoNet::OPCUA::Client::PushClient<CommLocalizationObjects::CommAmclVisualizationInfo>(componentImpl);
 }
 
 Smart::IPushClientPattern<CommTrackingObjects::CommDetectedMarkerList> * ComponentVisualizationOpcUaBackendPortFactory::createMarkerListDetectionServiceIn()
@@ -135,6 +142,11 @@ Smart::IEventClientPattern<CommTrackingObjects::CommPersonLostEventParameter, Co
 Smart::IQueryClientPattern<CommTrackingObjects::CommPersonId, CommTrackingObjects::CommDetectedPerson> * ComponentVisualizationOpcUaBackendPortFactory::createPersonDetectionQueryClient()
 {
 	return new SeRoNet::OPCUA::Client::QueryClient<CommTrackingObjects::CommPersonId, CommTrackingObjects::CommDetectedPerson>(componentImpl);
+}
+
+Smart::IPushClientPattern<CommNavigationObjects::CommPlannerGoal> * ComponentVisualizationOpcUaBackendPortFactory::createPlannerGoalPushClient()
+{
+	return new SeRoNet::OPCUA::Client::PushClient<CommNavigationObjects::CommPlannerGoal>(componentImpl);
 }
 
 Smart::IPushClientPattern<DomainVision::CommRGBDImage> * ComponentVisualizationOpcUaBackendPortFactory::createRgbdPushNewestClient()

@@ -32,13 +32,15 @@ SmartJoystickNavigation::SmartJoystickNavigation()
 	
 	// set all pointer members to NULL
 	//coordinationPort = NULL;
+	//coordinationPort = NULL;
 	joystickNavTask = NULL;
 	joystickNavTaskTrigger = NULL;
 	joystickServiceIn = NULL;
 	joystickServiceInInputTaskTrigger = NULL;
 	joystickServiceInUpcallManager = NULL;
+	joystickServiceInInputCollector = NULL;
 	navVelServiceOut = NULL;
-	//smartJoystickNavigationParameters = NULL;
+	navVelServiceOutWrapper = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
@@ -50,6 +52,7 @@ SmartJoystickNavigation::SmartJoystickNavigation()
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
+	connections.joystickServiceIn.initialConnect = false;
 	connections.joystickServiceIn.wiringName = "JoystickServiceIn";
 	connections.joystickServiceIn.serverName = "unknown";
 	connections.joystickServiceIn.serviceName = "unknown";
@@ -71,11 +74,11 @@ SmartJoystickNavigation::SmartJoystickNavigation()
 	connections.joystickNavTask.priority = -1;
 	connections.joystickNavTask.cpuAffinity = -1;
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
 	// initialize members of PlainOpcUaSmartJoystickNavigationExtension
 	
-	// initialize members of SmartJoystickNavigationROSExtension
+	// initialize members of SmartJoystickNavigationROS1InterfacesExtension
+	
+	// initialize members of SmartJoystickNavigationRestInterfacesExtension
 	
 }
 
@@ -110,6 +113,9 @@ void SmartJoystickNavigation::setStartupFinished() {
 Smart::StatusCode SmartJoystickNavigation::connectJoystickServiceIn(const std::string &serverName, const std::string &serviceName) {
 	Smart::StatusCode status;
 	
+	if(connections.joystickServiceIn.initialConnect == false) {
+		return Smart::SMART_OK;
+	}
 	std::cout << "connecting to: " << serverName << "; " << serviceName << std::endl;
 	status = joystickServiceIn->connect(serverName, serviceName);
 	while(status != Smart::SMART_OK)
@@ -199,11 +205,11 @@ void SmartJoystickNavigation::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of PlainOpcUaSmartJoystickNavigationExtension
 		
-		// initializations of SmartJoystickNavigationROSExtension
+		// initializations of SmartJoystickNavigationROS1InterfacesExtension
+		
+		// initializations of SmartJoystickNavigationRestInterfacesExtension
 		
 		
 		// initialize all registered port-factories
@@ -243,10 +249,12 @@ void SmartJoystickNavigation::init(int argc, char *argv[])
 		// create client ports
 		joystickServiceIn = portFactoryRegistry[connections.joystickServiceIn.roboticMiddleware]->createJoystickServiceIn();
 		navVelServiceOut = portFactoryRegistry[connections.navVelServiceOut.roboticMiddleware]->createNavVelServiceOut();
+		navVelServiceOutWrapper = new NavVelServiceOutWrapper(navVelServiceOut);
 		
 		// create InputTaskTriggers and UpcallManagers
-		joystickServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommJoystick>(joystickServiceIn);
-		joystickServiceInUpcallManager = new JoystickServiceInUpcallManager(joystickServiceIn);
+		joystickServiceInInputCollector = new JoystickServiceInInputCollector(joystickServiceIn);
+		joystickServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommJoystick>(joystickServiceInInputCollector);
+		joystickServiceInUpcallManager = new JoystickServiceInUpcallManager(joystickServiceInInputCollector);
 		
 		// create input-handler
 		
@@ -384,9 +392,11 @@ void SmartJoystickNavigation::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 	delete joystickServiceInInputTaskTrigger;
 	delete joystickServiceInUpcallManager;
+	delete joystickServiceInInputCollector;
 
 	// destroy client ports
 	delete joystickServiceIn;
+	delete navVelServiceOutWrapper;
 	delete navVelServiceOut;
 
 	// destroy server ports
@@ -415,11 +425,11 @@ void SmartJoystickNavigation::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
 	// destruction of PlainOpcUaSmartJoystickNavigationExtension
 	
-	// destruction of SmartJoystickNavigationROSExtension
+	// destruction of SmartJoystickNavigationROS1InterfacesExtension
+	
+	// destruction of SmartJoystickNavigationRestInterfacesExtension
 	
 }
 
@@ -494,6 +504,7 @@ void SmartJoystickNavigation::loadParameter(int argc, char *argv[])
 		}
 		
 		// load parameters for client JoystickServiceIn
+		parameter.getBoolean("JoystickServiceIn", "initialConnect", connections.joystickServiceIn.initialConnect);
 		parameter.getString("JoystickServiceIn", "serviceName", connections.joystickServiceIn.serviceName);
 		parameter.getString("JoystickServiceIn", "serverName", connections.joystickServiceIn.serverName);
 		parameter.getString("JoystickServiceIn", "wiringName", connections.joystickServiceIn.wiringName);
@@ -531,11 +542,11 @@ void SmartJoystickNavigation::loadParameter(int argc, char *argv[])
 			parameter.getInteger("JoystickNavTask", "cpuAffinity", connections.joystickNavTask.cpuAffinity);
 		}
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// load parameters for PlainOpcUaSmartJoystickNavigationExtension
 		
-		// load parameters for SmartJoystickNavigationROSExtension
+		// load parameters for SmartJoystickNavigationROS1InterfacesExtension
+		
+		// load parameters for SmartJoystickNavigationRestInterfacesExtension
 		
 		
 		// load parameters for all registered component-extensions

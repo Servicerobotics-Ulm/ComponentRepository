@@ -27,7 +27,7 @@ SMART_COMPONENT_PROJECT()
 # find SmartSoft package
 #FIND_SMARTSOFT(3.0)
 #FIXME: generalize this
-FIND_PACKAGE(AceSmartSoft PATHS $ENV{SMART_ROOT_ACE}/build)
+FIND_PACKAGE(AceSmartSoft PATHS $ENV{SMART_ROOT_ACE})
 
 # generte doxygen documentation
 SMART_COMPONENT_GENERATE_DOC()
@@ -49,9 +49,15 @@ IF(WIN32)
 ENDIF()
 
 add_definitions("-DWITH_OPENCV_YAML")
-find_package( OpenCV REQUIRED )
-INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
 
+
+find_package(OpenCV REQUIRED)
+
+IF(OpenCV_VERSION VERSION_LESS 4.2.0)
+  add_definitions(-DWITH_OLD_OPENCV_VERSION)
+ELSE()
+  add_definitions(-DWITH_OPENCV_4_2_VERSION)
+ENDIF()
 
 # these are the regular includes (add your own includes, if needed)
 INCLUDE_DIRECTORIES(
@@ -59,8 +65,8 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_LIST_DIR}/src-gen
   ${CMAKE_CURRENT_LIST_DIR}/src-gen/params
   ${CMAKE_CURRENT_LIST_DIR}/src/pugixml1.9
+  ${OpenCV_INCLUDE_DIRS}
 )
-
 
 # collect the toolchain-generated source-files
 FILE(GLOB_RECURSE SRC ${CMAKE_CURRENT_LIST_DIR}/src/*.cc)

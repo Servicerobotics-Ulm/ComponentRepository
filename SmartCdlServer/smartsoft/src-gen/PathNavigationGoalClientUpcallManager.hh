@@ -26,23 +26,23 @@
  * of incoming data to all associated (i.e. attached) Upcalls.
  */
 class PathNavigationGoalClientUpcallManager
-:	public Smart::IInputHandler<CommRobotinoObjects::CommPathNavigationGoal>
+:	public Smart::IInputHandler<CommNavigationObjects::CommCorridorNavigationGoal>
 {
 private:
 	// list of associated updalls
 	std::list<PathNavigationGoalClientUpcallInterface*> upcalls;
 
 	// call the on_PathNavigationGoalClient of all the attached PathNavigationGoalClientUpcallInterfaces
-	void notify_upcalls(const CommRobotinoObjects::CommPathNavigationGoal &input);
+	void notify_upcalls(const CommNavigationObjects::CommCorridorNavigationGoal &input);
 	
 protected:
-	virtual void handle_input(const CommRobotinoObjects::CommPathNavigationGoal &input) {
+	virtual void handle_input(const CommNavigationObjects::CommCorridorNavigationGoal &input) {
 		// relay input-handling to all attached PathNavigationGoalClientUpcallInterfaces
 		this->notify_upcalls(input);
 	}
 public:
 	PathNavigationGoalClientUpcallManager(
-		Smart::InputSubject<CommRobotinoObjects::CommPathNavigationGoal> *subject,
+		Smart::InputSubject<CommNavigationObjects::CommCorridorNavigationGoal> *subject,
 		const int &prescaleFactor=1
 	);
 	virtual ~PathNavigationGoalClientUpcallManager();

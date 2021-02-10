@@ -39,7 +39,7 @@ public:
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * createLaserClient() override;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileLaserScan> * createLaserClient2() override;
 	virtual Smart::ISendClientPattern<CommBasicObjects::CommNavigationVelocity> * createNavVelSendClient() override;
-	virtual Smart::IPushClientPattern<CommRobotinoObjects::CommPathNavigationGoal> * createPathNavigationGoalClient() override;
+	virtual Smart::IPushClientPattern<CommNavigationObjects::CommCorridorNavigationGoal> * createPathNavigationGoalClient() override;
 	virtual Smart::IPushClientPattern<CommNavigationObjects::CommPlannerGoal> * createPlannerClient() override;
 	virtual Smart::IPushClientPattern<CommTrackingObjects::CommTrackingGoal> * createTrackingClient() override;
 	

@@ -30,8 +30,8 @@ KbChainedEntriesEventClientHandler::~KbChainedEntriesEventClientHandler()
 
 void KbChainedEntriesEventClientHandler::on_kbChainedEntriesEventClient(const Smart::EventInputType<CommBasicObjects::CommKBEventResult> &input)
 {
-	std::cout << "ChainedEntriesEventHandler id: "<<input.event_id<< " entries: "<<input.event << std::endl;
+	std::cout << "ChainedEntriesEventHandler id: "<<input.event_id<< " entries: "<<input.event.getResult() << std::endl;
 	std::stringstream ss;
-	ss<<"(kb-update-from-master-entry :id "<< input.event_id <<" :entries '"<<input.event<<")";
+	ss<<"(kb-update-from-master-entry :id "<< input.event_id <<" :entries '"<<input.event.getResult()<<")";
 	COMP->kbQueryHandler->insertChainedQueryFromComponent(ss.str());
 }

@@ -51,7 +51,6 @@
 #include <boost/numeric/ublas/matrix_sparse.hpp>
 #include <boost/numeric/ublas/operation.hpp>
 
-#include "aceSmartSoft.hh"
 
 #include <CommBasicObjects/CommBasePose.hh>
 #include <CommBasicObjects/CommBasePositionUpdate.hh>
@@ -67,7 +66,7 @@
  * \class Robot
  * Encapsulates the Robot
  */
-class Robot: public Smart::ITimerHandler
+class Robot
 {
 public:
 
@@ -225,10 +224,6 @@ public:
 
 	/////////////////////////////// private
 private:
-	void timerExpired(const Smart::TimePoint &abs_time, const void * arg);
-//	void timerExpired(const ACE_Time_Value & absolute_time,const void * arg);
-	void timerCancelled();
-	void timerDeleted(const void * arg);
 
 	void initVariables();
 	
@@ -309,13 +304,6 @@ private:
 	rec::robotino::api2::Motor robotinoM1, robotinoM2, robotinoM3;
 
 	rec::robotino::api2::PowerManagement power;
-
-
-	bool generateLaserSafetyFieldEvents;
-	int laserSafetyFieldIOBit;
-    	int laserSafetyFieldTimerId;
-	int laserSafetyFieldTimeoutSec, laserSafetyFieldTimeoutMsec;
-	int laserSafetyFieldLastState;
 
 };
 

@@ -21,9 +21,32 @@ bool SafetyfieldEventServerEventTestHandler::testEvent(
 	CommBasicObjects::CommLaserSafetyField &r,
 	const CommBasicObjects::CommLaserSafetyEventState &s
 ) throw() {
-	// fire all events (without filtering) in the default implementation
-	// implement your own (specific) event-filtering code using the event-parameter as input
-	// true means that the current event will be fired to the according client
-	// false means that the current event is ignored (it will not be communicated to the according client)
-	return true;
+	bool changed = false;
+	CommBasicObjects::SafetyFieldState changedState;
+	//std::cout<<"Param: "<<p<<std::endl;
+	//check if anything changed and remember the state it changed to
+	//std::cout<<"State: "<<s<<std::endl;
+
+	if(p.getWarningState() != s.getWarningState()){
+		changed = true;
+	}
+
+	if(p.getProtectiveState() != s.getProtectiveState()){
+		changed = true;
+	}
+
+	if(changed)
+	{
+		p.setProtectiveState(s.getProtectiveState());
+		p.setWarningState(s.getWarningState());
+
+		r.setProtectiveState(s.getProtectiveState());
+		r.setWarningState(s.getWarningState());
+
+		std::cout<<"fire event"<<std::endl;
+	}
+
+	// true --> send event
+	// false --> don't send event
+	return changed;
 }

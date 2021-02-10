@@ -244,7 +244,7 @@ void MyLaserRangeFinder::scanEvent( const LaserRangeFinderReadings& scan )
 
 
 		if (COMP->getGlobalState().getRobotinoLaser_ini().getActivatePushNewest()) {
-			Smart::StatusCode push_status = COMP->pushNewestServer->put(lScanComm);
+			Smart::StatusCode push_status = COMP->laserServiceOut->put(lScanComm);
 			if (push_status != Smart::SMART_OK) {
 				std::cerr << "[LaserTask] WARNING: error on push (" << Smart::StatusCodeConversion(push_status)
 						<< ")" << std::endl;

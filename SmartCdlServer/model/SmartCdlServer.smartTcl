@@ -1,11 +1,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; NAVIGATION
 
-
-(realize-tcb  (tcb-load-navigation-map ?map)
+(realize-tcb  (setNavigationNeutral)
   (module "NavigationModule")
   (action (
-            (format t "=========================>>> tcb-load-navigation-map ~s ~%" '?map)
+            (format t "=========================>>> setNavigationNeutral ~%" )
+            (tcl-state :server 'mapper  :state "Neutral")
+            (tcl-state :server 'cdl :state "Neutral")
+            (tcl-state :server 'planner :state "Deactivated")
+            (tcl-state :server 'planner :state "Neutral"))))
+
+
+(realize-tcb  (loadNavigationMap ?map)
+  (module "NavigationModule")
+  (action (
+            (format t "=========================>>> loadNavigationMap ~s ~%" '?map)
             (let* ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot))))
                    (robot-current-room-name (get-value (tcl-kb-query :key '(is-a)  :value '((is-a robot))) 'current-room))
                    (robot-room (tcl-kb-query :key '(is-a name) :value `((is-a room)(name ,robot-current-room-name)))))
@@ -21,12 +30,29 @@
             (tcl-state :server 'mapper :state "BuildCurrMap")
             '(SUCCESS ())))))
 
-
-
-(realize-tcb  (tcb-init-navigation)
+(realize-tcb  (loadNavigationMapFromFile ?map)
   (module "NavigationModule")
   (action (
-            (format t "=========================>>> tcb-init-navigation ~%")
+            (format t "=========================>>> loadNavigationMapFromFile ~s ~%" '?map)
+            (let* ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot))))
+                   (robot-current-room-name (get-value (tcl-kb-query :key '(is-a)  :value '((is-a robot))) 'current-room))
+                   (robot-room (tcl-kb-query :key '(is-a name) :value `((is-a room)(name ,robot-current-room-name)))))
+
+            (tcl-state :server 'mapper  :state "Neutral")
+            (tcl-param :server 'mapper :slot 'CommNavigationObjects.MapperParams.LTMLOADYAML :value ?map)
+            (tcl-param :server 'mapper :slot 'CommNavigationObjects.MapperParams.CURLTM      :value '(DISABLE 30))
+            (tcl-param :server 'mapper :slot 'CommNavigationObjects.MapperParams.CUREMPTY    :value 'ACCUMULATE)
+            (tcl-param :server 'mapper :slot 'COMMIT)
+  
+            (tcl-state :server 'mapper :state "BuildCurrMap")
+            '(SUCCESS ())))))
+
+
+
+(realize-tcb  (initNavigation)
+  (module "NavigationModule")
+  (action (
+            (format t "=========================>>> initNavigation ~%")
             (let* ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot))))
                    (robot-current-room-name (get-value (tcl-kb-query :key '(is-a)  :value '((is-a robot))) 'current-room))
                    (robot-room (tcl-kb-query :key '(is-a name) :value `((is-a room)(name ,robot-current-room-name)))))
@@ -50,9 +76,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; approach-location
+;; approachLocation
 
-(define-tcb (tcb-approach-location ?location)
+(define-tcb (approachLocation ?location)
   (module "NavigationModule")
   (rules (rule-unknown-location rule-location-success rule-robot-blocked rule-abort-job-error-ack))
   (precondition  (equal '(region) (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a location) (name ?location))) 'approach-type)))
@@ -66,7 +92,7 @@
           (tcb-move-robot 'orientate-region ?location))))
 
 
-(define-tcb (tcb-approach-location ?location)
+(define-tcb (approachLocation ?location)
   (module "NavigationModule")
   (rules (rule-unknown-location rule-location-success rule-robot-blocked))
   (precondition  (equal '(exact) (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a location) (name ?location))) 'approach-type)))
@@ -83,7 +109,7 @@
 
 ;;TODO TEST
 ;;detector wall
-(define-tcb (tcb-approach-location ?location)
+(define-tcb (approachLocation ?location)
   (module "NavigationModule")
   (rules (rule-unknown-location rule-location-success rule-robot-blocked rule-abort-job-error-ack))
   (precondition  (equal '(detector wall) (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a location) (name ?location))) 'approach-type)))
@@ -98,13 +124,13 @@
           (tcb-approach-wall))))
 
 
-(define-tcb (tcb-approach-location ?location)
+(define-tcb (approachLocation ?location)
 ;; this is the default block in case no approach-type precondition matches!
   (module "NavigationModule")
   (rules (rule-unknown-location rule-location-success))
   (priority 2)
   (action (
-            (format t "=========================>>> tcb-approach-location DEFAULT approach-type choosen !!! --> exact~%")))
+            (format t "=========================>>> approachLocation DEFAULT approach-type choosen !!! --> exact~%")))
   (abort-action (
                   (tcl-state :server 'cdl :state "Neutral")
                   (tcl-state :server 'mapper :state "Neutral")
@@ -116,12 +142,11 @@
           (tcb-move-robot 'orientate-exact ?location))))
 
 
-(define-tcb (tcb-approach-location ?location)
+(define-tcb (approachLocation ?location)
   (module "NavigationModule")
   (priority 1)
   (action (
-            (format t "=========================>>> tcb-approach-location ~a DEFAULT ~%" '?location)
-            (tcl-send :server 'tts :service 'say-wait :param (format nil "I do not know this location."))
+            (format t "=========================>>> approachLocation ~a DEFAULT ~%" '?location)
             '(ERROR (UNKNOWN LOCATION)))))
 
 ;; approach-location
@@ -204,7 +229,7 @@
                   (tcl-state :server 'planner :state "PathPlanning")
                   ;;(tcl-state :server 'mapper :state "BuildBothMaps")
                   (tcl-state :server 'mapper :state "BuildCurrMap")
-;;TODO
+;;TODO V3
                  ; (update-robot-state :sub-state "FREE-NAV")
                   '(SUCCESS ())))))))
 
@@ -253,7 +278,7 @@
                   ;;(tcl-param :server 'cdl :slot 'SETGOALREGION :value dist) ;;no GOAL ID needed for direct movement with CDL (without planner)
 
                   (tcl-state :server 'cdl :state "MoveRobot")
-;;TODO                  (update-robot-state :sub-state "FREE-NAV")
+;;TODO V3                 (update-robot-state :sub-state "FREE-NAV")
                   '(SUCCESS ())))))))
 
 
@@ -513,7 +538,7 @@
 
 (define-tcb (tcb-move-robot 'plain ?x ?y ?radius)
   (module "NavigationModule")
- (action (
+  (action (
             (format t "=========================>>> tcb-move-robot 'plain x: ~s Y: ~s radius: ~s ~%" '?x '?x '?radius)
             (let* ((pose '(?x ?y))
                    (dist ?radius)
@@ -576,7 +601,7 @@
                   (tcl-state :server 'planner :state "PathPlanning")
                   ;;(tcl-state :server 'mapper :state "BuildBothMaps")
                   (tcl-state :server 'mapper :state "BuildCurrMap")
-;;TODO
+;;TODO V3
                   ;(update-robot-state :sub-state "FREE-NAV")
                   '(SUCCESS ())))))
 
@@ -599,7 +624,7 @@
                   :value '(
                            (is-a robot)
                            (current-symbolic-position ?location)))
-;;TODO
+;;TODO V3
                 ;;(check-robot-parked-state)
                 (tcl-abort)
                 '(SUCCESS ()))))))
@@ -620,7 +645,7 @@
                   :value '(
                            (is-a robot)
                            (current-symbolic-position ?location)))
-;;TODO
+;;TODO V3
                 ;;(check-robot-parked-state)
                 (tcl-abort)
                 '(SUCCESS ()))
@@ -646,7 +671,7 @@
                   (T
                     (let ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot)))))
                       ;(tcl-state :server 'pathnavigation :state "Neutral")
-;;TODO
+;;TODO V3
 ;;                      (update-robot-state :state 'ERROR)
                       (update-running-job-state 'ERROR "GotoPosition PATH_BLOCKED")
                       (tcl-state :server 'cdl :state "Neutral")
@@ -680,7 +705,7 @@
                 ;(cond 
                  ; ((equal (not (get-value robot 'performs-task)) nil)
                     ;(tcl-state :server 'pathnavigation :state "Neutral")
-;;TODO
+;;TODO V3
 ;;                    (update-robot-state :state 'ERROR)
                     (update-running-job-state 'ERROR "GotoPosition PATH_BLOCKED")
                     (tcl-state :server 'cdl :state "Neutral")
@@ -701,7 +726,7 @@
   (action (
             (format t "RULE: robot-blocked (ERROR (ROBOT BLOCKED)) ~%")
             (format t "=>>> Called from TCB:  ~a ~a~%" (tcb-name *RULE-CHILD-TCB*) (tcb-in-vars *RULE-CHILD-TCB*)) 
-            (tcl-push-plan :plan `( (tcb-wait-for-error-ack 'SW-ACK)
+            (tcl-push-plan :plan `( (FLEETMANAGER.tcb-wait-for-error-ack 'SW-ACK)
                                     ,(append (list (tcb-name *RULE-CHILD-TCB*)) (tcb-in-vars *RULE-CHILD-TCB*))))
             '(SUCCESS ()))))
 
@@ -837,6 +862,25 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+
+(defun get-room-from-pos (x y safety)
+  (let ( (result nil))
+    (dolist (room (tcl-kb-query-all :key '(is-a) :value '((is-a room))))
+      (let (
+             (size-x (first (get-value room 'size)))
+             (size-y (second (get-value room 'size)))
+             (offset-x (first (get-value room 'offset)))
+             (offset-y (second (get-value room 'offset))))
+        (cond
+          ((and
+             (>= (- x safety) offset-x)
+             (<= (+ x safety) (+ offset-x size-x))
+             (>= (- y safety) offset-y)
+             (<= (+ y safety) (+ offset-y size-y)))
+            (format t "-------------->>> room ~s -- ~s ~s ~s ~s ~%" (get-value room 'name) size-x size-y offset-x offset-y)
+            (setf result room);(get-value room 'name))
+            (return)))))
+    result))
 
 ;; NAVIGATION
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

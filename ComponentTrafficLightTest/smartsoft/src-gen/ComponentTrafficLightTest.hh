@@ -29,10 +29,6 @@
 class ComponentTrafficLightTestPortFactoryInterface;
 class ComponentTrafficLightTestExtension;
 
-// includes for ComponentTrafficLightTestROSExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentTrafficLightTestExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -44,10 +40,12 @@ class ComponentTrafficLightTestExtension;
 
 // include tasks
 #include "GenerateOut.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 
 // include input-handler(s)
 // include request-handler(s)
+// output port wrappers
+#include "TrafficLightServiceOutWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -99,14 +97,11 @@ public:
 	
 	// define output-ports
 	Smart::ISendClientPattern<DomainHMI::CommTrafficLight> *trafficLightServiceOut;
+	TrafficLightServiceOutWrapper *trafficLightServiceOutWrapper;
 	
 	// define answer-ports
 	
 	// define request-handlers
-	
-	// definitions of ComponentTrafficLightTestROSExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentTrafficLightTestExtension
 	
@@ -217,10 +212,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} trafficLightServiceOut;
-		
-		// -- parameters for ComponentTrafficLightTestROSExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentTrafficLightTestExtension
 		

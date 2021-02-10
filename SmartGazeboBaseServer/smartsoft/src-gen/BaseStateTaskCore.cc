@@ -95,7 +95,27 @@ void BaseStateTaskCore::updateAllCommObjects()
 // this method is meant to be used in derived classes
 Smart::StatusCode BaseStateTaskCore::baseStateServiceOutPut(CommBasicObjects::CommBaseState &baseStateServiceOutDataObject)
 {
-	Smart::StatusCode result = COMP->baseStateServiceOut->put(baseStateServiceOutDataObject);
+	Smart::StatusCode result = COMP->baseStateServiceOutWrapper->put(baseStateServiceOutDataObject);
+	if(useLogging == true) {
+		//FIXME: use logging
+		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
+	}
+	return result;
+}
+// this method is meant to be used in derived classes
+Smart::StatusCode BaseStateTaskCore::batteryEventServiceOutPut(CommBasicObjects::CommBatteryState &eventState)
+{
+	Smart::StatusCode result = COMP->batteryEventServiceOutWrapper->put(eventState);
+	if(useLogging == true) {
+		//FIXME: use logging
+		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
+	}
+	return result;
+}
+// this method is meant to be used in derived classes
+Smart::StatusCode BaseStateTaskCore::bumperEventServiceOutPut(CommBasicObjects::CommBumperEventState &eventState)
+{
+	Smart::StatusCode result = COMP->bumperEventServiceOutWrapper->put(eventState);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
@@ -106,7 +126,7 @@ Smart::StatusCode BaseStateTaskCore::baseStateServiceOutPut(CommBasicObjects::Co
 void BaseStateTaskCore::triggerLogEntry(const int& idOffset)
 {
 	if(useLogging == true) {
-		int logId = taskLoggingId + 2*2 + idOffset;
+		int logId = taskLoggingId + 2*4 + idOffset;
 		//FIXME: use logging
 		//Smart::LOGGER->log(logId, getCurrentUpdateCount(), getPreviousCommObjId());
 	}

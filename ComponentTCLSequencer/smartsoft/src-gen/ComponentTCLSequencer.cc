@@ -31,8 +31,8 @@ ComponentTCLSequencer::ComponentTCLSequencer()
 	std::cout << "constructor of ComponentTCLSequencer\n";
 	
 	// set all pointer members to NULL
-	//componentTCLSequencerParams = NULL;
 	//coordinationMaster = NULL;
+	//coordinationPort = NULL;
 	//coordinationPort = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
@@ -49,9 +49,9 @@ ComponentTCLSequencer::ComponentTCLSequencer()
 	connections.component.useLogger = false;
 	
 	
-	// initialize members of ComponentTCLSequencerROSExtension
+	// initialize members of ComponentTCLSequencerROS1InterfacesExtension
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
+	// initialize members of ComponentTCLSequencerRestInterfacesExtension
 	
 	// initialize members of PlainOpcUaComponentTCLSequencerExtension
 	
@@ -128,9 +128,9 @@ void ComponentTCLSequencer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of ComponentTCLSequencerROSExtension
+		// initializations of ComponentTCLSequencerROS1InterfacesExtension
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
+		// initializations of ComponentTCLSequencerRestInterfacesExtension
 		
 		// initializations of PlainOpcUaComponentTCLSequencerExtension
 		
@@ -294,9 +294,9 @@ void ComponentTCLSequencer::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentTCLSequencerROSExtension
+	// destruction of ComponentTCLSequencerROS1InterfacesExtension
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
+	// destruction of ComponentTCLSequencerRestInterfacesExtension
 	
 	// destruction of PlainOpcUaComponentTCLSequencerExtension
 	
@@ -375,9 +375,9 @@ void ComponentTCLSequencer::loadParameter(int argc, char *argv[])
 		
 		
 		
-		// load parameters for ComponentTCLSequencerROSExtension
+		// load parameters for ComponentTCLSequencerROS1InterfacesExtension
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
+		// load parameters for ComponentTCLSequencerRestInterfacesExtension
 		
 		// load parameters for PlainOpcUaComponentTCLSequencerExtension
 		

@@ -52,13 +52,13 @@ std::string switchComponentLifeCycleEvents(const std::string& moduleInst, const 
 
 	std::cout<<__FUNCTION__<<" service: "<<service<<std::endl;
 
-	if(service == "activate")
+	if(service == "SHUTDOWNEVENT-activate")
 	{
 		int evtId = 0;
 		outString.str("");
 		outString<< "(ok ("<<evtId<<"))";
 	}
-	else if (service == "deactivate")
+	else if (service == "SHUTDOWNEVENT-deactivate")
 		//event deactivate
 	{
 		Smart::StatusCode status;

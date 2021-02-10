@@ -8,13 +8,13 @@ Activity ImageTask
 	}
 	InputPort ptuPosePushNewestClient implements CommBasicObjects.DevicePoseUpdateService {
 	}
-	OutputPort imagePushNewestServer implements DomainVision.RGBDImagePushService realizedBy ImageTask {
+	OutputPort RGBDImageQueryServiceOut implements DomainVision.RGBDImagePushService realizedBy ImageTask {
 	}
 	AnswerPort imageQueryV2Server implements DomainVision.RGBDImageQueryService {
 	}
 	RequestHandler ImageQueryHandler triggeredFrom imageQueryV2Server {
 	}
-	OutputPort colorImagePushNewestServer implements DomainVision.RGBImagePushService realizedBy ImageTask {
+	OutputPort RGBImagePushServiceOut implements DomainVision.RGBImagePushService realizedBy ImageTask {
 	}
 	AnswerPort colorImageQueryServer implements DomainVision.RGBImageQueryService {
 	}

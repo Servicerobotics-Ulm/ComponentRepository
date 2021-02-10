@@ -78,14 +78,9 @@ Smart::IEventServerPattern<CommBasicObjects::CommBumperEventParameter, CommBasic
 	return new SmartACE::EventServer<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState>(componentImpl, serviceName, bumperEventServiceOutEventTestHandler);
 }
 
-Smart::IEventServerPattern<CommRobotinoObjects::CommDigitalInputEventParameter, CommRobotinoObjects::CommDigitalInputEventResult, CommRobotinoObjects::CommDigitalInputEventState> * ComponentRobotinoBaseServerAcePortFactory::createDigitalInputEventOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommRobotinoObjects::CommDigitalInputEventParameter, CommRobotinoObjects::CommDigitalInputEventResult, CommRobotinoObjects::CommDigitalInputEventState>> digitalInputEventOutEventTestHandler)
+Smart::IEventServerPattern<CommBasicObjects::CommDigitalInputEventParameter, CommBasicObjects::CommDigitalInputEventResult, CommBasicObjects::CommDigitalInputEventState> * ComponentRobotinoBaseServerAcePortFactory::createDigitalInputEventOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommDigitalInputEventParameter, CommBasicObjects::CommDigitalInputEventResult, CommBasicObjects::CommDigitalInputEventState>> digitalInputEventOutEventTestHandler)
 {
-	return new SmartACE::EventServer<CommRobotinoObjects::CommDigitalInputEventParameter, CommRobotinoObjects::CommDigitalInputEventResult, CommRobotinoObjects::CommDigitalInputEventState>(componentImpl, serviceName, digitalInputEventOutEventTestHandler);
-}
-
-Smart::IEventServerPattern<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState> * ComponentRobotinoBaseServerAcePortFactory::createLaserSafetyEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState>> laserSafetyEventServiceOutEventTestHandler)
-{
-	return new SmartACE::EventServer<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState>(componentImpl, serviceName, laserSafetyEventServiceOutEventTestHandler);
+	return new SmartACE::EventServer<CommBasicObjects::CommDigitalInputEventParameter, CommBasicObjects::CommDigitalInputEventResult, CommBasicObjects::CommDigitalInputEventState>(componentImpl, serviceName, digitalInputEventOutEventTestHandler);
 }
 
 Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * ComponentRobotinoBaseServerAcePortFactory::createLocalizationUpdateServiceIn(const std::string &serviceName)
@@ -103,9 +98,9 @@ Smart::ISendServerPattern<CommRobotinoObjects::CommRobotinoPowerOutputValue> * C
 	return new SmartACE::SendServer<CommRobotinoObjects::CommRobotinoPowerOutputValue>(componentImpl, serviceName);
 }
 
-Smart::IQueryServerPattern<CommRobotinoObjects::CommRobotinoIOValues, CommRobotinoObjects::CommRobotinoIOValues> * ComponentRobotinoBaseServerAcePortFactory::createRobotinoIOValuesQueryServiceAnsw(const std::string &serviceName)
+Smart::IQueryServerPattern<CommBasicObjects::CommIOValues, CommBasicObjects::CommIOValues> * ComponentRobotinoBaseServerAcePortFactory::createRobotinoIOValuesQueryServiceAnsw(const std::string &serviceName)
 {
-	return new SmartACE::QueryServer<CommRobotinoObjects::CommRobotinoIOValues, CommRobotinoObjects::CommRobotinoIOValues>(componentImpl, serviceName);
+	return new SmartACE::QueryServer<CommBasicObjects::CommIOValues, CommBasicObjects::CommIOValues>(componentImpl, serviceName);
 }
 
 

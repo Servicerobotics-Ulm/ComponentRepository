@@ -42,6 +42,9 @@ public:
 		
 		virtual void handleCommLocalizationObjects_LocalizationParameter_LOADMAP(const std::string &filename) = 0;
 	
+		
+		virtual void handleCommLocalizationObjects_LocalizationParameter_SENSORSTOUSE(const unsigned short &sensorsToUse) = 0;
+	
 	// extended trigger user methods
 	
 private:
@@ -49,6 +52,7 @@ private:
 	void handleCommLocalizationObjects_LocalizationParameter_GLOBALLOCALIZATIONCore();
 	void handleCommLocalizationObjects_LocalizationParameter_INITIALPOSECore(const int &x, const int &y, const double &a);
 	void handleCommLocalizationObjects_LocalizationParameter_LOADMAPCore(const std::string &filename);
+	void handleCommLocalizationObjects_LocalizationParameter_SENSORSTOUSECore(const unsigned short &sensorsToUse);
 	
 	// extended trigger internal methods 
 };

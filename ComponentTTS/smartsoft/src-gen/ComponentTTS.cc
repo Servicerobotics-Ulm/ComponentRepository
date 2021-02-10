@@ -31,7 +31,7 @@ ComponentTTS::ComponentTTS()
 	std::cout << "constructor of ComponentTTS\n";
 	
 	// set all pointer members to NULL
-	//componentTTSParams = NULL;
+	//coordinationPort = NULL;
 	//coordinationPort = NULL;
 	speechQueryHandler = NULL;
 	speechQueryServiceAnsw = NULL;
@@ -40,6 +40,7 @@ ComponentTTS::ComponentTTS()
 	speechSendServiceIn = NULL;
 	speechSendServiceInInputTaskTrigger = NULL;
 	speechSendServiceInUpcallManager = NULL;
+	speechSendServiceInInputCollector = NULL;
 	speechTask = NULL;
 	speechTaskTrigger = NULL;
 	stateChangeHandler = NULL;
@@ -65,9 +66,9 @@ ComponentTTS::ComponentTTS()
 	connections.speechTask.cpuAffinity = -1;
 	connections.speechSendHandler.prescale = 1;
 	
-	// initialize members of ComponentTTSROSExtension
+	// initialize members of ComponentTTSROS1InterfacesExtension
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
+	// initialize members of ComponentTTSRestInterfacesExtension
 	
 	// initialize members of PlainOpcUaComponentTTSExtension
 	
@@ -159,9 +160,9 @@ void ComponentTTS::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of ComponentTTSROSExtension
+		// initializations of ComponentTTSROS1InterfacesExtension
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
+		// initializations of ComponentTTSRestInterfacesExtension
 		
 		// initializations of PlainOpcUaComponentTTSExtension
 		
@@ -206,8 +207,9 @@ void ComponentTTS::init(int argc, char *argv[])
 		// create client ports
 		
 		// create InputTaskTriggers and UpcallManagers
-		speechSendServiceInInputTaskTrigger = new Smart::InputTaskTrigger<DomainSpeech::CommSpeechOutputMessage>(speechSendServiceIn);
-		speechSendServiceInUpcallManager = new SpeechSendServiceInUpcallManager(speechSendServiceIn);
+		speechSendServiceInInputCollector = new SpeechSendServiceInInputCollector(speechSendServiceIn);
+		speechSendServiceInInputTaskTrigger = new Smart::InputTaskTrigger<DomainSpeech::CommSpeechOutputMessage>(speechSendServiceInInputCollector);
+		speechSendServiceInUpcallManager = new SpeechSendServiceInUpcallManager(speechSendServiceInInputCollector);
 		
 		// create input-handler
 		speechSendHandler = new SpeechSendHandler(speechSendServiceIn, connections.speechSendHandler.prescale);
@@ -329,6 +331,7 @@ void ComponentTTS::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 	delete speechSendServiceInInputTaskTrigger;
 	delete speechSendServiceInUpcallManager;
+	delete speechSendServiceInInputCollector;
 
 	// destroy client ports
 
@@ -362,9 +365,9 @@ void ComponentTTS::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentTTSROSExtension
+	// destruction of ComponentTTSROS1InterfacesExtension
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
+	// destruction of ComponentTTSRestInterfacesExtension
 	
 	// destruction of PlainOpcUaComponentTTSExtension
 	
@@ -475,9 +478,9 @@ void ComponentTTS::loadParameter(int argc, char *argv[])
 			parameter.getInteger("SpeechSendHandler", "prescale", connections.speechSendHandler.prescale);
 		}
 		
-		// load parameters for ComponentTTSROSExtension
+		// load parameters for ComponentTTSROS1InterfacesExtension
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
+		// load parameters for ComponentTTSRestInterfacesExtension
 		
 		// load parameters for PlainOpcUaComponentTTSExtension
 		

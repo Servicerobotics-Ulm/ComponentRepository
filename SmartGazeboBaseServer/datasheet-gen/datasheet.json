@@ -1,0 +1,56 @@
+{
+	"name": "SmartGazeboBaseServer",
+	"shortDescription": "The SmartGazeboBaseServer can be used to command a robot in a 3D environment using the Gazebo simulator.",
+	"type": "Toolify",
+	"description": "<p></p><p> The SmartGazeboBaseServer can be used to command a robot in a 3D environment using the Gazebo simulator. It offers services for controlling the robot via SmartCDL or SmartJoystickNavigation by receiving v and omega values from SmartCDL or SmartJoystickNavigation. Those values are directly handed over to the Gazebo simulator in case of a differential drive. The communication between the SmartGazeboBaseServer and Gazebo is based on the communication lib of gazebo..</p><p> GPL-License: includes Code from the Player Project.</p><p> See also: http://playerstage.sourceforge.net/doc/Player-2.0.0/player/group__driver__amcl.html</p><p></p>",
+	"purposes": ["Simulation"],
+	"spdxLicense": "LGPL-2.0-or-later",
+	"technologyReadinessLevel": "TRL5",
+	"homepage": "http://servicerobotik-ulm.de/components",
+	"supplier": "Servicerobotics Ulm",
+	"marketName": "Gazebo Simulation Component",
+	"services": [
+		{
+			"name": "NavVelServiceIn",
+			"type": "InputPort",
+			"serviceDefinition": "CommNavigationObjects::NavigationVelocityService",
+			"commObjects": "CommBasicObjects::CommNavigationVelocity",
+			"description": ""
+		},
+		{
+			"name": "LocalizationUpdateServiceIn",
+			"type": "InputPort",
+			"serviceDefinition": "CommNavigationObjects::LocalizationUpdateService",
+			"commObjects": "CommBasicObjects::CommBasePositionUpdate",
+			"description": ""
+		},
+		{
+			"name": "BaseSatateQueryAnsw",
+			"type": "AnswerPort",
+			"serviceDefinition": "CommBasicObjects::BaseStateQueryService",
+			"commObjects": "CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState",
+			"description": ""
+		},
+		{
+			"name": "LaserServiceOut",
+			"type": "OutputPort",
+			"serviceDefinition": "CommBasicObjects::LaserService",
+			"commObjects": "CommBasicObjects::CommMobileLaserScan",
+			"description": ""
+		},
+		{
+			"name": "BaseStateServiceOut",
+			"type": "OutputPort",
+			"serviceDefinition": "CommBasicObjects::BaseStateService",
+			"commObjects": "CommBasicObjects::CommBaseState",
+			"description": ""
+		}
+	],
+	"mainstates": [
+		"Neutral"
+	],
+	"parameters": [
+	],
+	"triggers": [
+	]
+}

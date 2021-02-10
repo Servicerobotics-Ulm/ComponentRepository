@@ -58,9 +58,16 @@ void HandlerTimerService::timerExpired(const Smart::TimePoint &abs_time, const v
 
 	std::cout << "expired: " << param.param << " id: " << *currCounter << std::endl;
 
-	char eventResult[LISP_STRING];
-	sprintf(eventResult,"((timer timer %s %d) nil)",param.param.c_str(), (int)*currCounter);
-	COMP->eventInterface->append(eventResult);
+	std::ostringstream eventResult;
+	eventResult<< "(";
+	eventResult<< "( coordination-interfaces-type . \"TIMER\")";
+	eventResult<< "( coordination-interface-instance . \"TIMER.TIMER\")";
+	eventResult<< "( service-name . \""<<param.param<<"\")";
+	eventResult<< "( id . "<<*currCounter<<")";
+	eventResult<< "( data . \"("<<param.param<<")\")";
+	eventResult<< ")";
+
+	COMP->eventInterface->append(eventResult.str());
 
 	delete currCounter;
 }

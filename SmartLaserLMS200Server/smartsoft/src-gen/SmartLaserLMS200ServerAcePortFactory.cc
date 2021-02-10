@@ -63,7 +63,7 @@ Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMob
 	return new SmartACE::QueryServer<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan>(componentImpl, serviceName);
 }
 
-Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * SmartLaserLMS200ServerAcePortFactory::createLaserScanOut(const std::string &serviceName)
+Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * SmartLaserLMS200ServerAcePortFactory::createLaserServiceOut(const std::string &serviceName)
 {
 	return new SmartACE::PushServer<CommBasicObjects::CommMobileLaserScan>(componentImpl, serviceName);
 }

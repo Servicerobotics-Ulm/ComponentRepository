@@ -45,13 +45,20 @@ ComponentDefinition SmartGazeboBaseServer {
 	OutputPort LaserServiceOut implements CommBasicObjects.LaserService realizedBy LaserTask { }
 	OutputPort BaseStateServiceOut implements CommBasicObjects.BaseStateService realizedBy BaseStateTask { } 
 	
+	OutputPort BumperEventServiceOut implements CommBasicObjects.BumperEventService realizedBy BaseStateTask {
+	}
+	OutputPort BatteryEventServiceOut implements CommNavigationObjects.BatteryEventService realizedBy BaseStateTask {
+	}
+	
 	ComponentParameters SmartGazeboBaseServerParams slave CoordinationPort;
 Activity PollForGazeboConnection
 	{
 	}
 
-		CoordinationSlavePort CoordinationPort implements CommNavigationObjects.BaseCoordinationService {
+	CoordinationSlavePort CoordinationPort implements CommNavigationObjects.BaseCoordinationService {
 		with baseState realizedBy BaseSatateQueryAnsw
+		with batteryEvent realizedBy BatteryEventServiceOut
+		with bumperEvent realizedBy BumperEventServiceOut
 
 		
 		SkillRealizationsRef baseInst 

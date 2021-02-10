@@ -62,20 +62,32 @@
 
 #include "AmclTask.hh"
 #include "SmartAmcl.hh"
-
+#include "CommLocalizationObjects/CommAmclVisualizationInfo.hh"
 #include <iostream>
 #include <fstream>
 
 // We use SDL_image to load the image from disk
 #include <yaml.h>
+#ifdef WITH_OPENCV_4_2_VERSION
+#include <opencv4/opencv2/highgui.hpp>
+#include <opencv4/opencv2/core.hpp>
+#else
 #include <cxcore.h>
 #include <highgui.h>
+#endif
+
+#ifdef WITH_OPENCV_4_2_VERSION
+#include <Eigen/Dense>
+#else
+#endif
+
 
 AmclTask::AmclTask(SmartACE::SmartComponent *comp) 
 :	AmclTaskCore(comp)
 {
 	std::cout << "constructor AmclTask\n";
 	COMP->pf_init_ = false;
+	push_vis_data = false;
 
 }
 AmclTask::~AmclTask() 
@@ -349,6 +361,9 @@ int AmclTask::on_execute()
 
 				pf_odom_pose_ = raw_pose;
 
+				// adding information about particles poses and weights to see the different weights of particles
+				add_particles_to_visuallization_info(particle_visual_info, COMP->pf_->sets + COMP->pf_->current_set);
+
 				// Resample the particles
 				if (!(++resample_count_ % resample_interval_)) {
 					std::cout << ">>> do resample\n";
@@ -400,7 +415,7 @@ int AmclTask::on_execute()
 				if(COMP->getGlobalState().getGeneral().getEnable_visualization() == true){
 					COMP->h.displayHypotheses(hyps);
 				}
-
+				add_hypothesis_to_visuallization_info(particle_visual_info, hyps);
 				if (max_weight > 0.0) {
 
 
@@ -473,7 +488,12 @@ int AmclTask::on_execute()
 					std::cerr << "No pose!\n";
 				}
 			}
+			//push the vis data only if it has changed
+			if(push_vis_data){
+				COMP->amclVisualizationInfoOut->put(particle_visual_info);
+				push_vis_data=false;
 
+			}
 		} //pfGuard.release();
 	} //if (scan.is_scan_valid())
 	else {
@@ -722,7 +742,83 @@ int AmclTask::init(const std::string& mapFilename) {
 	std::cout << "[AMCL] init finished!\n";
 	return 0;
 }
+#ifdef WITH_OPENCV_4_2_VERSION
+map_t* AmclTask::loadMapFromFile(const std::string& fname, double res, bool negate, double occ_th, double free_th,
+		double* origin) {
 
+	unsigned char* pixels;
+	unsigned char* p;
+	int rowstride, n_channels;
+	int i, j;
+	int k;
+	double occ;
+	int color_sum;
+	double color_avg;
+
+	map_t* map = map_alloc();
+	cv::Mat img;
+
+
+
+
+	// Load the image using SDL.  If we get NULL back, the image load failed.
+	img = cv::imread(fname.c_str(), cv::IMREAD_UNCHANGED);
+	if(img.empty()){
+		std::string errmsg = std::string("failed to open image file \"") + fname + std::string("\"");
+		throw std::runtime_error(errmsg);
+	}
+
+	map->size_x = img.cols;
+	map->size_y = img.rows;
+	map->scale = res;
+	std::cout<<" origin[0]"<<origin[0]<<std::endl;
+	std::cout<<" origin[1]"<<origin[1]<<std::endl;
+	map->origin_x = origin[0] + (map->size_x / 2.0) * map->scale;
+	map->origin_y = origin[1] + (map->size_y / 2.0) * map->scale;
+	map->cells = (map_cell_t*) malloc(sizeof(map_cell_t) * map->size_x * map->size_y);
+
+	// Get values that we'll need to iterate through the pixels
+	rowstride = img.channels()*img.cols;
+	n_channels = img.channels();
+
+	// Copy pixel data into the map structure
+	pixels = (unsigned char*) (img.data);
+
+	for (j = 0; j < img.rows; j++) {
+		for (i = 0; i < img.cols; i++) {
+
+			// Compute mean of RGB for this pixel
+			p = pixels + j * rowstride + i * n_channels;
+			color_sum = 0;
+			for (k = 0; k < n_channels; k++) {
+				color_sum += *(p + (k));
+			}
+			color_avg = color_sum / (double) n_channels;
+
+			// If negate is true, we consider blacker pixels free, and whiter
+			// pixels free.  Otherwise, it's vice versa.
+			if (negate) {
+				occ = color_avg / 255.0;
+			} else {
+				occ = (255 - color_avg) / 255.0;
+			}
+
+			// Apply thresholds to RGB means to determine occupancy values for
+			// map.  Note that we invert the graphics-ordering of the pixels to
+			// produce a map with cell (0,0) in the lower-left corner.
+			if (occ > occ_th) {
+				map->cells[MAP_IDX(img.cols, i, img.rows - j - 1)].occ_state = +1;
+			} else if (occ < free_th) {
+				map->cells[MAP_IDX(img.cols, i, img.rows - j - 1)].occ_state = -1;
+			} else {
+				map->cells[MAP_IDX(img.cols, i, img.rows - j - 1)].occ_state = 0;
+			}
+		}
+	}
+
+	return map;
+}
+#else
 map_t* AmclTask::loadMapFromFile(const std::string& fname, double res, bool negate, double occ_th, double free_th,
 		double* origin) {
 
@@ -797,6 +893,38 @@ map_t* AmclTask::loadMapFromFile(const std::string& fname, double res, bool nega
 	cvReleaseImage(&img);
 
 	return map;
+}
+#endif
+
+void AmclTask::add_particles_to_visuallization_info(CommLocalizationObjects::CommAmclVisualizationInfo& info, const pf_sample_set_t* set)
+{
+	info.clearParticles();
+	for (int i = 0; i < set->sample_count; i++) {
+		info.add_amcl_particle(set->samples[i].pose.v[0], set->samples[i].pose.v[1], set->samples[i].pose.v[2], set->samples[i].weight);
+		//std::cout << "particle x, y, yaw :" <<set->samples[i].pose.v[0] << ", "<< set->samples[i].pose.v[1] << ", "<<set->samples[i].pose.v[2] <<"\n";
+	}
+	push_vis_data=true;
+}
+void AmclTask::add_hypothesis_to_visuallization_info(CommLocalizationObjects::CommAmclVisualizationInfo& info, const std::vector<amcl_hyp_t>& hyps)
+{
+	info.clearHypotheses();
+	for (int i = 0; i < hyps.size(); i++) {
+		double covar_matrix[9];
+		covar_matrix[0]=hyps[i].pf_pose_cov.m[0][0];
+		covar_matrix[1]=hyps[i].pf_pose_cov.m[0][1];
+		covar_matrix[2]=hyps[i].pf_pose_cov.m[0][2];
+
+		covar_matrix[3]=hyps[i].pf_pose_cov.m[1][0];
+		covar_matrix[4]=hyps[i].pf_pose_cov.m[1][1];
+		covar_matrix[5]=hyps[i].pf_pose_cov.m[1][2];
+
+		covar_matrix[6]=hyps[i].pf_pose_cov.m[2][0];
+		covar_matrix[7]=hyps[i].pf_pose_cov.m[2][1];
+		covar_matrix[8]=hyps[i].pf_pose_cov.m[2][2];
+
+		info.add_amcl_hypothesis(hyps[i].pf_pose_mean.v[0], hyps[i].pf_pose_mean.v[1], hyps[i].pf_pose_mean.v[2], covar_matrix, hyps[i].weight);
+		//std::cout << "Hypothesis x, y, yaw :" <<hyps[i].pf_pose_mean.v[0] << ", "<< hyps[i].pf_pose_mean.v[1] << ", "<<hyps[i].pf_pose_mean.v[2] <<"\n";
+	}
 }
 
 

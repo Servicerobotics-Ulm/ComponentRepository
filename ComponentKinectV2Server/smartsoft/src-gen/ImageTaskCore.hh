@@ -21,9 +21,9 @@
 // include upcall interface
 
 // include communication-objects for output ports
+#include <DomainVision/CommRGBDImage.hh>
 #include <DomainVision/CommVideoImage.hh>
 #include <DomainVision/CommDepthImage.hh>
-#include <DomainVision/CommRGBDImage.hh>
 
 // include all interaction-observer interfaces
 #include <ImageTaskObserverInterface.hh>
@@ -53,11 +53,11 @@ protected:
 	
 	
 	// this method is meant to be used in derived classes
-	Smart::StatusCode colorImagePushNewestServerPut(DomainVision::CommVideoImage &colorImagePushNewestServerDataObject);
+	Smart::StatusCode rGBDImageQueryServiceOutPut(DomainVision::CommRGBDImage &rGBDImageQueryServiceOutDataObject);
+	// this method is meant to be used in derived classes
+	Smart::StatusCode rGBImagePushServiceOutPut(DomainVision::CommVideoImage &rGBImagePushServiceOutDataObject);
 	// this method is meant to be used in derived classes
 	Smart::StatusCode depthImagePushServiceOutPut(DomainVision::CommDepthImage &depthImagePushServiceOutDataObject);
-	// this method is meant to be used in derived classes
-	Smart::StatusCode imagePushNewestServerPut(DomainVision::CommRGBDImage &imagePushNewestServerDataObject);
 	
 	
 /**

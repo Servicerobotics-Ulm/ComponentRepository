@@ -1,14 +1,6 @@
-# target configurations for ComponentGMappingROSExtension
-IF(EXISTS ${ROS_DIR})
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${ROS_LIBS})
-ENDIF(EXISTS ${ROS_DIR})
+# target configurations for ComponentGMappingROS1InterfacesExtension
 
-# target configurations for OpcUaBackendComponentGeneratorExtension
-IF(SeRoNetSDK_FOUND)
-#TARGET_LINK_LIBRARIES(${PROJECT_NAME} SeRoNetSDK::SeRoNetSDK)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} CommBasicObjectsOpcUa)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} CommNavigationObjectsOpcUa)
-ENDIF(SeRoNetSDK_FOUND)
+# target configurations for ComponentGMappingRestInterfacesExtension
 
 # target configurations for PlainOpcUaComponentGMappingExtension
 IF(Open62541CppWrapper_FOUND)

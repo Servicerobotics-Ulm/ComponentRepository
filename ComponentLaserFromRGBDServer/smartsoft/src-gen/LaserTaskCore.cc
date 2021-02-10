@@ -63,7 +63,8 @@ int LaserTaskCore::execute_protected_region()
 	if(useDefaultState) {
 		Smart::StatusCode status = COMP->stateSlave->acquire("GenerateLaser");
 		if(status != Smart::SMART_OK) {
-			std::cerr << "LaserTaskCore: ERROR acquiring state active: " << status << std::endl;
+			std::cerr << "LaserTaskCore: ERROR acquiring state: " << status << std::endl;
+			usleep(500000);
 			return 0;
 		}
 	}
@@ -102,9 +103,9 @@ void LaserTaskCore::updateAllCommObjects()
 
 
 // this method is meant to be used in derived classes
-Smart::StatusCode LaserTaskCore::laserPushNewestServerPut(CommBasicObjects::CommMobileLaserScan &laserPushNewestServerDataObject)
+Smart::StatusCode LaserTaskCore::laserServiceOutPut(CommBasicObjects::CommMobileLaserScan &laserServiceOutDataObject)
 {
-	Smart::StatusCode result = COMP->laserPushNewestServer->put(laserPushNewestServerDataObject);
+	Smart::StatusCode result = COMP->laserServiceOutWrapper->put(laserServiceOutDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());

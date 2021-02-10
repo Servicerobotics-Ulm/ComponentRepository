@@ -22,6 +22,12 @@
 
 // include communication-objects for output ports
 #include <CommBasicObjects/CommBaseState.hh>
+#include <CommBasicObjects/CommBatteryEvent.hh>
+#include <CommBasicObjects/CommBatteryParameter.hh>
+#include <CommBasicObjects/CommBatteryState.hh>
+#include <CommBasicObjects/CommBumperEventParameter.hh>
+#include <CommBasicObjects/CommBumperEventResult.hh>
+#include <CommBasicObjects/CommBumperEventState.hh>
 
 // include all interaction-observer interfaces
 #include <BaseStateTaskObserverInterface.hh>
@@ -58,6 +64,10 @@ protected:
 	
 	// this method is meant to be used in derived classes
 	Smart::StatusCode baseStateServiceOutPut(CommBasicObjects::CommBaseState &baseStateServiceOutDataObject);
+	// this method is meant to be used in derived classes
+	Smart::StatusCode batteryEventServiceOutPut(CommBasicObjects::CommBatteryState &eventState);
+	// this method is meant to be used in derived classes
+	Smart::StatusCode bumperEventServiceOutPut(CommBasicObjects::CommBumperEventState &eventState);
 	
 	
 /**

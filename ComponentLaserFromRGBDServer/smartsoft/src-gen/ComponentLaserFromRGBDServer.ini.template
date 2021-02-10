@@ -34,6 +34,9 @@ initialComponentMode Neutral
 [LaserTask]
 minActFreqHz 0.0
 maxActFreqHz 0.0
+# setup default trigger as PeriodicTimer
+triggerType PeriodicTimer
+periodicActFreqHz 5.0
 # other trigger-types are:
 #triggerType PeriodicTimer
 #periodicActFreqHz 0.0
@@ -49,9 +52,6 @@ maxActFreqHz 0.0
 [VisTask]
 minActFreqHz 0.0
 maxActFreqHz 0.0
-# setup default trigger as PeriodicTimer
-triggerType PeriodicTimer
-periodicActFreqHz 10.0
 # other trigger-types are:
 #triggerType PeriodicTimer
 #periodicActFreqHz 0.0
@@ -70,8 +70,8 @@ periodicActFreqHz 10.0
 ##########################
 # server port parameter
 
-[laserPushNewestServer]
-serviceName laserPushNewestServer
+[LaserServiceOut]
+serviceName LaserServiceOut
 roboticMiddleware ACE_SmartSoft
 
 [laserQueryServer]
@@ -90,10 +90,10 @@ interval 1
 roboticMiddleware ACE_SmartSoft
 
 ##########################
-## parameters of ComponentLaserFromRGBDServerROSExtension
+## parameters of ComponentLaserFromRGBDServerROS1InterfacesExtension
 
 ##########################
-## parameters of OpcUaBackendComponentGeneratorExtension
+## parameters of ComponentLaserFromRGBDServerRestInterfacesExtension
 
 ##########################
 ## parameters of PlainOpcUaComponentLaserFromRGBDServerExtension
@@ -134,15 +134,9 @@ elevation 0
 on_turret false
 roll 0
 verbose true
-x 0
+x 190
 y 0
 z 0
-
-##########################
-# InternalParameter services
-[services]
-activate_push_newest true
-active_push_timed false
 
 
 #####################

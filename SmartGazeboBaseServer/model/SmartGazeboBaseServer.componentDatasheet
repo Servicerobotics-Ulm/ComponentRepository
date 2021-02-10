@@ -1,4 +1,5 @@
-ComponentDatasheet SmartGazeboBaseServer {
+ComponentDatasheet SmartGazeboBaseServer
+{
 	BaseURI "http://servicerobotik-ulm.de"
 	ShortDescription "The SmartGazeboBaseServer can be used to command a robot in a 3D environment using the Gazebo simulator."
 	DatasheetProperty SpdxLicense {
@@ -16,5 +17,18 @@ ComponentDatasheet SmartGazeboBaseServer {
 	}
 	DatasheetProperty Purpose {
 		value "Simulation"
+	}
+	DatasheetProperty MarketName {
+		value "Gazebo Simulation Component"
+	}
+	ComponentPortDatasheet NavVelServiceIn {
+	}
+	ComponentPortDatasheet LocalizationUpdateServiceIn {
+	}
+	ComponentPortDatasheet BaseSatateQueryAnsw {
+	}
+	ComponentPortDatasheet LaserServiceOut {
+	}
+	ComponentPortDatasheet BaseStateServiceOut {
 	}
 }

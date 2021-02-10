@@ -6,43 +6,52 @@
   (module "LocalizationModule")
   (action (
     (format t "=========================>>> tcb-activate-localization~%")
-    (tcl-state :server 'amcl1 :state "Active"))))
+    (tcl-state :server 'amcl :state "Active"))))
 
 ;;OK
 (define-tcb (tcb-deactivate-localization)
   (module "LocalizationModule")
   (action (
     (format t "=========================>>> tcb-deactivate-localization~%")
-    (tcl-state :server 'amcl1 :state "Neutral"))))
+    (tcl-state :server 'amcl :state "Neutral"))))
 
 ;;OK
 (define-tcb (tcb-load-localization-map ?map)
   (module "LocalizationModule")
   (action (
     (format t "=========================>>> tcb-load-localization-map~%")
-    (tcl-state :server 'amcl1 :state "Neutral")
-    (tcl-param :server 'amcl1   :slot 'CommLocalizationObjects.LocalizationParameter.LOADMAP :value ?map)
-    (tcl-param :server 'amcl1   :slot 'CommLocalizationObjects.LocalizationParameter.GLOBALLOCALIZATION)
-    (tcl-state :server 'amcl1 :state "Active"))))
+    (tcl-state :server 'amcl :state "Neutral")
+    (tcl-param :server 'amcl   :slot 'CommLocalizationObjects.LocalizationParameter.LOADMAP :value ?map)
+    (tcl-param :server 'amcl   :slot 'CommLocalizationObjects.LocalizationParameter.GLOBALLOCALIZATION)
+    (tcl-state :server 'amcl :state "Active"))))
+    
+;;OK
+(define-tcb (tcb-load-localization-map-only ?map)
+  (module "LocalizationModule")
+  (action (
+    (format t "=========================>>> tcb-load-localization-map~%")
+    (tcl-state :server 'amcl :state "Neutral")
+    (tcl-param :server 'amcl   :slot 'CommLocalizationObjects.LocalizationParameter.LOADMAP :value ?map)
+    (tcl-state :server 'amcl :state "Active"))))
 
 ;;OK
 (define-tcb (tcb-trigger-global-localization)
   (module "LocalizationModule")
   (action (
     (format t "=========================>>> tcb-trigger-global-localization~%")
-    (tcl-state :server 'amcl1 :state "Neutral")
-    (tcl-param :server 'amcl1   :slot 'CommLocalizationObjects.LocalizationParameter.GLOBALLOCALIZATION)
-    (tcl-state :server 'amcl1 :state "Active"))))
+    (tcl-state :server 'amcl :state "Neutral")
+    (tcl-param :server 'amcl   :slot 'CommLocalizationObjects.LocalizationParameter.GLOBALLOCALIZATION)
+    (tcl-state :server 'amcl :state "Active"))))
 
 ;;OK
-(define-tcb (tcb-set-robot-pose ?x ?y ?yaw)
+(define-tcb (localizationSetRobotPose ?x ?y ?yaw)
   (module "LocalizationModule")
   (action (
-    (format t "=========================>>> tcb-set-robot-pose~%")
+    (format t "=========================>>> localizationSetRobotPose~%")
     (format t "SetRobotPose x: ~s y: ~s phi: ~s ~%" ?x ?y ?yaw)
-    (tcl-state :server 'amcl1 :state "Neutral")
-    (tcl-param :server 'amcl1   :slot 'CommLocalizationObjects.LocalizationParameter.INITIALPOSE :value '(?x ?y ?yaw))
-    (tcl-state :server 'amcl1 :state "Active"))))
+    (tcl-state :server 'amcl :state "Neutral")
+    (tcl-param :server 'amcl :slot 'CommLocalizationObjects.LocalizationParameter.INITIALPOSE :value '(?x ?y ?yaw))
+    (tcl-state :server 'amcl :state "Active"))))
 
 
 ;; LOCALIZATION

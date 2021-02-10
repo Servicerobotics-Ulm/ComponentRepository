@@ -18,6 +18,7 @@
 		
 #include "aceSmartSoft.hh"
 
+
 #include <DomainVision/CommVideoImage.hh>
 #include <CommBasicObjects/CommVoid.hh>
 
@@ -31,9 +32,10 @@ class ColorImageQueryHandlerCore
 ,	public Smart::TaskTriggerSubject
 {
 private:
-virtual void handle_input(const std::pair<Smart::QueryIdPtr,CommBasicObjects::CommVoid> &input) override {
-	this->handleQuery(input.first, input.second);
-}
+	// inputs are directly propagated to the implementation (passive handler)
+	virtual void handle_input(const std::pair<Smart::QueryIdPtr,CommBasicObjects::CommVoid> &input) override {
+		this->handleQuery(input.first, input.second);
+	}
 
 
 	virtual void updateAllCommObjects();
@@ -56,7 +58,7 @@ public:
 	using IQueryServer = Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage>;
 	using QueryId = Smart::QueryIdPtr;
 	ColorImageQueryHandlerCore(IQueryServer *server);
-	virtual ~ColorImageQueryHandlerCore() = default;
+	virtual ~ColorImageQueryHandlerCore();
 	
 protected:
 	IQueryServer *server;

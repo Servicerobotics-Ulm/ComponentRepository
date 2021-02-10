@@ -27,7 +27,7 @@ SMART_COMPONENT_PROJECT()
 # find SmartSoft package
 #FIND_SMARTSOFT(3.0)
 #FIXME: generalize this
-FIND_PACKAGE(AceSmartSoft PATHS $ENV{SMART_ROOT_ACE}/build)
+FIND_PACKAGE(AceSmartSoft PATHS $ENV{SMART_ROOT_ACE})
 
 # generte doxygen documentation
 SMART_COMPONENT_GENERATE_DOC()
@@ -39,19 +39,44 @@ SMART_COMPONENT_AUTOBUILD_DEPENDENCIES()
 ## here you can put all your project-specific compiler configurations          ##
 ## using regular CMake commands (like FIND_PACKAGE, INCLUDE_DIRECTORIES, etc.) ##
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 # you can add additional external libraries using regular CMake commands, e.g.:
 #FIND_PACKAGE(<SomePackageName>)
+
+FIND_PACKAGE( MRPT REQUIRED )
+  GET_PROPERTY(MRPT_INCLUDE_DIRS DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
+IF(MRPT_VERSION VERSION_GREATER 2.0.0)
+  FIND_PACKAGE( MRPT REQUIRED comms)
+  add_definitions(-DWITH_MRPT_2_0_VERSION)
+ELSEIF(MRPT_VERSION VERSION_GREATER 1.5.0)
+  FIND_PACKAGE( MRPT REQUIRED base)
+  add_definitions(-DWITH_MRPT_1_5_VERSION)
+ELSEIF(MRPT_VERSION VERSION_LESS 1.3.0)
+  FIND_PACKAGE( MRPT REQUIRED base )
+  add_definitions(-DWITH_OLD_MRPT_VERSION)
+ELSE()
+  FIND_PACKAGE( MRPT REQUIRED base )
+ENDIF()
+
+message("MRPT_VERSION     :${MRPT_VERSION}")
 
 INCLUDE(${CMAKE_CURRENT_LIST_DIR}/src-gen/MixedPortIncludes.cmake)
 
 # these are the regular includes (add your own includes, if needed)
 INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_LIST_DIR}/src
+  ${CMAKE_CURRENT_LIST_DIR}/src/driver
   ${CMAKE_CURRENT_LIST_DIR}/src-gen
   ${CMAKE_CURRENT_LIST_DIR}/src-gen/params
+  ${MRPT_INCLUDES}
 )
 
 # collect the toolchain-generated source-files
+FILE(GLOB_RECURSE SRC ${CMAKE_CURRENT_LIST_DIR}/src/ssl/*.cc)
+FILE(GLOB_RECURSE SRC ${CMAKE_CURRENT_LIST_DIR}/src/driver/*.cc)
 FILE(GLOB_RECURSE SRC ${CMAKE_CURRENT_LIST_DIR}/src/*.cc)
 FILE(GLOB_RECURSE SRC_GEN ${CMAKE_CURRENT_LIST_DIR}/src-gen/*.cc)
 FILE(GLOB_RECURSE SRC_GEN_PARAMS ${CMAKE_CURRENT_LIST_DIR}/src-gen/params/*.cc)
@@ -62,8 +87,10 @@ FILE(GLOB_RECURSE SRC_GEN_PARAMS ${CMAKE_CURRENT_LIST_DIR}/src-gen/params/*.cc)
 # create the executable using collected source-files
 ADD_EXECUTABLE(${PROJECT_NAME} ${SRC} ${SRC_GEN} ${SRC_GEN_PARAMS} ${FURTHER_SRCS}) # add ${USER_SRC} (if needed)
 
+
+
 # link your external libraries here (if there are any)
-#TARGET_LINK_LIBRARIES(${PROJECT_NAME} <your-libs>)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${MRPT_LIBS} "ssh" "stdc++fs" )
 
 INCLUDE(${CMAKE_CURRENT_LIST_DIR}/src-gen/MixedPortTargetConfigs.cmake)
 

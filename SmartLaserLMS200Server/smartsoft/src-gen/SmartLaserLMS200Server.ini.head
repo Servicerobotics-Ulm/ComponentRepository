@@ -47,8 +47,8 @@ initialComponentMode Neutral
 serviceName LaserQueryServiceAnsw
 roboticMiddleware ACE_SmartSoft
 
-[LaserScanOut]
-serviceName LaserScanOut
+[LaserServiceOut]
+serviceName LaserServiceOut
 roboticMiddleware ACE_SmartSoft
 
 ##########################
@@ -63,13 +63,13 @@ interval 1
 roboticMiddleware ACE_SmartSoft
 
 ##########################
-## parameters of OpcUaBackendComponentGeneratorExtension
-
-##########################
 ## parameters of PlainOpcUaSmartLaserLMS200ServerExtension
 
 
 ##########################
-## parameters of SmartLaserLMS200ServerROSExtension
+## parameters of SmartLaserLMS200ServerROS1InterfacesExtension
+
+##########################
+## parameters of SmartLaserLMS200ServerRestInterfacesExtension
 
 

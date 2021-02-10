@@ -27,7 +27,7 @@ SMART_COMPONENT_PROJECT()
 # find SmartSoft package
 #FIND_SMARTSOFT(3.0)
 #FIXME: generalize this
-FIND_PACKAGE(AceSmartSoft PATHS $ENV{SMART_ROOT_ACE}/build)
+FIND_PACKAGE(AceSmartSoft PATHS $ENV{SMART_ROOT_ACE})
 
 # generte doxygen documentation
 SMART_COMPONENT_GENERATE_DOC()
@@ -73,8 +73,9 @@ ENDIF(SeRoNetSDK_FOUND)
 INCLUDE(${CMAKE_CURRENT_LIST_DIR}/src-gen/MixedPortTargetConfigs.cmake)
 
 #INSTALL(FILES ${PROJECT_SOURCE_DIR}/src-gen/${PROJECT_NAME}.ini.template DESTINATION etc)
-
-INSTALL(FILES ComponentTCLSequencer PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+#copy start sh file to build dir, to enable build check (platform upload)
+CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/${PROJECT_NAME} ${PROJECT_BINARY_DIR}/${PROJECT_NAME} COPYONLY)
+INSTALL(FILES ComponentTCLSequencer PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 
 ## end user-code                                                               ##
 #################################################################################

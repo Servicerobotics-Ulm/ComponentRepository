@@ -49,6 +49,8 @@
 #include "CompTask.hh"
 #include "ComponentTCLSequencer.hh"
 
+#include <thread>
+
 #include <iostream>
 
 CompTask::CompTask(): SmartACE::Task()
@@ -64,33 +66,23 @@ CompTask::~CompTask()
 int CompTask::task_execution()
 {
 
-	// coponent will now start running and will continue (block in the run method) until it is commanded to shutdown (i.e. by a SIGINT signal)
-	COMP->run();
+	std::cout<<" ========================================================== "<<std::endl;
+	std::cout<<__FUNCTION__<<" COMPONENT RUN --> "<<std::endl;
 
-	std::cout<<__FUNCTION__<<" COMPONENT SHUTDOWN"<<std::endl;
 
-	char eventResult[LISP_STRING];
-	sprintf(eventResult,"((component shutdownEvent %d) %s)",0, "(shutdown)");
-	COMP->eventInterface->append(eventResult);
+	COMP->getComponentImpl()->run();
+
+
+	std::cout<<__FUNCTION__<<" --> COMPONENT SHUTDOWN"<<std::endl;
 
 	ACE_OS::sleep(ACE_Time_Value(1,0));
-
-	// destroy all task instances
-
-	// now clean-up all communication ports
-	// delete all client ports
-	//TODO clean up ports ...
-	//e.g. old: delete COMP->purePursuitEventClient;
-
-	// delete all ThreadQueueHandler
-	// delete all other handlers
-
-	COMP->fini();
-
 	// finally delete the component itself
 	ComponentTCLSequencer::deleteInstance();
 
 	std::cout<<"EXIT on_entry COMP task - "<<ACE_OS::gettimeofday()<<std::endl;
+
+//	exit(0);
+
 
 	return 0;
 }

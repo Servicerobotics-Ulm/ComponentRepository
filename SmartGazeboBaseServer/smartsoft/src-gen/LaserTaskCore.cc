@@ -94,7 +94,7 @@ void LaserTaskCore::updateAllCommObjects()
 // this method is meant to be used in derived classes
 Smart::StatusCode LaserTaskCore::laserServiceOutPut(CommBasicObjects::CommMobileLaserScan &laserServiceOutDataObject)
 {
-	Smart::StatusCode result = COMP->laserServiceOut->put(laserServiceOutDataObject);
+	Smart::StatusCode result = COMP->laserServiceOutWrapper->put(laserServiceOutDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
@@ -105,7 +105,7 @@ Smart::StatusCode LaserTaskCore::laserServiceOutPut(CommBasicObjects::CommMobile
 void LaserTaskCore::triggerLogEntry(const int& idOffset)
 {
 	if(useLogging == true) {
-		int logId = taskLoggingId + 2*2 + idOffset;
+		int logId = taskLoggingId + 2*4 + idOffset;
 		//FIXME: use logging
 		//Smart::LOGGER->log(logId, getCurrentUpdateCount(), getPreviousCommObjId());
 	}

@@ -16,13 +16,13 @@
 #ifndef _PATHNAVIGATIONGOALCLIENT_UPCALL_INTERFACE_HH
 #define _PATHNAVIGATIONGOALCLIENT_UPCALL_INTERFACE_HH
 
-#include "CommRobotinoObjects/CommPathNavigationGoal.hh"
+#include "CommNavigationObjects/CommCorridorNavigationGoal.hh"
 
 class PathNavigationGoalClientUpcallInterface {
 public:
 	virtual ~PathNavigationGoalClientUpcallInterface() {  }
 
-	virtual void on_PathNavigationGoalClient(const CommRobotinoObjects::CommPathNavigationGoal &input) = 0;
+	virtual void on_PathNavigationGoalClient(const CommNavigationObjects::CommCorridorNavigationGoal &input) = 0;
 };
 
 #endif

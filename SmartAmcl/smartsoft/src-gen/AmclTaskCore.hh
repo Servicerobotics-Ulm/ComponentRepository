@@ -22,6 +22,7 @@
 #include "LaserServiceInUpcallInterface.hh"
 
 // include communication-objects for output ports
+#include <CommLocalizationObjects/CommAmclVisualizationInfo.hh>
 #include <CommLocalizationObjects/CommLocalizationEventParameter.hh>
 #include <CommLocalizationObjects/CommLocalizationEventResult.hh>
 #include <CommLocalizationObjects/LocalizationEventState.hh>
@@ -69,6 +70,8 @@ protected:
 		return laserServiceInStatus;
 	}
 	
+	// this method is meant to be used in derived classes
+	Smart::StatusCode amclVisualizationInfoOutPut(CommLocalizationObjects::CommAmclVisualizationInfo &amclVisualizationInfoOutDataObject);
 	// this method is meant to be used in derived classes
 	Smart::StatusCode localizationEventServiceOutPut(CommLocalizationObjects::LocalizationEventState &eventState);
 	// this method is meant to be used in derived classes

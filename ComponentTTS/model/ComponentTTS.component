@@ -11,6 +11,13 @@ InputPort SpeechSendServiceIn implements DomainSpeech.SpeechSendService {
 	{
 	}
 	ComponentParameters ComponentTTSParams
-slave CoordinationPort
-	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService { }
+	slave CoordinationPort
+
+	CoordinationSlavePort CoordinationPort implements DomainSpeech.TTSCorrdinationService {
+		with say realizedBy SpeechSendServiceIn
+		with sayWait realizedBy SpeechQueryServiceAnsw		
+		SkillRealizationsRef ttsModuleMatthias
+		}
+	
+	
 }

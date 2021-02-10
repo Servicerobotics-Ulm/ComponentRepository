@@ -20,7 +20,78 @@
 SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartACE::CommParameterRequest& request)
 {
 	SmartACE::CommParameterResponse answer;
+	
+	if(request.getParameterDataMode() == SmartACE::ParameterDataMode::NAME){
+		answer = handleParametersNamed(request);
+	} else {
+		answer = handleParametersSequence(request);
+	}
+	return answer;
+}
 
+
+SmartACE::CommParameterResponse ParamUpdateHandler::handleParametersNamed(const SmartACE::CommParameterRequest& request)
+{
+	SmartACE::CommParameterResponse answer;
+	
+	std::string tag = request.getTag();
+	std::cout<<"PARAMETER: "<<tag<<std::endl;
+	
+	if (tag == "COMMIT")
+	{
+		answer.setResponse(globalState.handleCOMMIT(commitState));
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			globalStateLock.acquire();
+			// change the content of the globalState, however change only the generated content
+			// without affecting potential user member variables (which is more intuitive for the user)
+			globalState.setContent(commitState);
+			globalStateLock.release();
+		} else {
+			// the commit validation check returned != OK
+			// the commit state is rejected and is not copied into the global state
+		}
+	}
+	else if (tag == "COMMBASICOBJECTS.FILEOPERATIONSPARAM.COPYFILE")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		std::string temp_sourceFile = "";
+		if(request.getString("sourceFile", temp_sourceFile) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: sourceFile request: "<<request<<std::endl;
+		}
+		std::string temp_destinationFile = "";
+		if(request.getString("destinationFile", temp_destinationFile) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: destinationFile request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommBasicObjects_FileOperationsParam_COPYFILECore(
+			temp_sourceFile, 
+			temp_destinationFile
+			);
+		}
+	}
+	else
+	{
+		/////////////////////////////////////////////////////////////////////
+		// default new
+		std::cout<<"ERROR wrong Parameter!"<<std::endl;
+		answer.setResponse(SmartACE::ParamResponseType::INVALID);
+	}
+	
+
+	std::cout<<"[handleQuery] PARAMETER "<<tag<<" DONE\n\n";
+
+	return answer;
+}
+
+
+SmartACE::CommParameterResponse ParamUpdateHandler::handleParametersSequence(const SmartACE::CommParameterRequest& request)
+{
+	SmartACE::CommParameterResponse answer;
+	
 	std::string tag = request.getTag();
 	std::cout<<"PARAMETER: "<<tag<<std::endl;
 	
@@ -45,10 +116,12 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParameter(const SmartA
 		std::string temp_sourceFile = "";
 		if(request.getString("1", temp_sourceFile) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: sourceFile request: "<<request<<std::endl;
 		}
 		std::string temp_destinationFile = "";
 		if(request.getString("2", temp_destinationFile) != 0) {
 			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: destinationFile request: "<<request<<std::endl;
 		}
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {

@@ -30,9 +30,6 @@ class LocalizationUpdateHandlerCore
 ,	public LocalizationUpdateServiceInUpcallInterface
 {
 private:
-	Smart::StatusCode updateStatus;
-	CommBasicObjects::CommBasePositionUpdate lastUpdate;
-	
 	
 	virtual void updateAllCommObjects();
 	

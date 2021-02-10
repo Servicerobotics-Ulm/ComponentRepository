@@ -31,9 +31,15 @@ ComponentVisualization::ComponentVisualization()
 	std::cout << "constructor of ComponentVisualization\n";
 	
 	// set all pointer members to NULL
+	amclVisualizationInfoIn = NULL;
+	amclVisualizationInfoInInputTaskTrigger = NULL;
+	amclVisualizationInfoInUpcallManager = NULL;
+	amclVisualizationInfoInInputCollector = NULL;
+	amclVizTask = NULL;
+	amclVizTaskTrigger = NULL;
 	baseTask = NULL;
 	baseTaskTrigger = NULL;
-	//componentVisualizationParams = NULL;
+	//coordinationPort = NULL;
 	//coordinationPort = NULL;
 	curMapTask = NULL;
 	curMapTaskTrigger = NULL;
@@ -54,6 +60,7 @@ ComponentVisualization::ComponentVisualization()
 	markerListDetectionServiceIn = NULL;
 	markerListDetectionServiceInInputTaskTrigger = NULL;
 	markerListDetectionServiceInUpcallManager = NULL;
+	markerListDetectionServiceInInputCollector = NULL;
 	markerListTask = NULL;
 	markerListTaskTrigger = NULL;
 	personDetectionTask = NULL;
@@ -66,41 +73,53 @@ ComponentVisualization::ComponentVisualization()
 	baseClient = NULL;
 	baseClientInputTaskTrigger = NULL;
 	baseClientUpcallManager = NULL;
+	baseClientInputCollector = NULL;
 	curPushClient = NULL;
 	curPushClientInputTaskTrigger = NULL;
 	curPushClientUpcallManager = NULL;
+	curPushClientInputCollector = NULL;
 	depthPushNewestClient = NULL;
 	depthPushNewestClientInputTaskTrigger = NULL;
 	depthPushNewestClientUpcallManager = NULL;
+	depthPushNewestClientInputCollector = NULL;
 	imagePushNewestClient = NULL;
 	imagePushNewestClientInputTaskTrigger = NULL;
 	imagePushNewestClientUpcallManager = NULL;
+	imagePushNewestClientInputCollector = NULL;
 	irPushNewestClient = NULL;
 	irPushNewestClientInputTaskTrigger = NULL;
 	irPushNewestClientUpcallManager = NULL;
+	irPushNewestClientInputCollector = NULL;
 	laserClient1 = NULL;
 	laserClient1InputTaskTrigger = NULL;
 	laserClient1UpcallManager = NULL;
+	laserClient1InputCollector = NULL;
 	laserClient2 = NULL;
 	laserClient2InputTaskTrigger = NULL;
 	laserClient2UpcallManager = NULL;
+	laserClient2InputCollector = NULL;
 	laserClient3 = NULL;
 	laserClient3InputTaskTrigger = NULL;
 	laserClient3UpcallManager = NULL;
+	laserClient3InputCollector = NULL;
 	ltmQueryClient = NULL;
 	personDetectionEventClient = NULL;
 	personDetectionEventClientInputTaskTrigger = NULL;
 	personDetectionEventClientUpcallManager = NULL;
+	personDetectionEventClientInputCollector = NULL;
 	personDetectionQueryClient = NULL;
 	rgbdPushNewestClient = NULL;
 	rgbdPushNewestClientInputTaskTrigger = NULL;
 	rgbdPushNewestClientUpcallManager = NULL;
+	rgbdPushNewestClientInputCollector = NULL;
 	rgbdQueryClient = NULL;
 	rgbdQueryClientInputTaskTrigger = NULL;
 	rgbdQueryClientUpcallManager = NULL;
+	rgbdQueryClientInputCollector = NULL;
 	ultrasonicPushNewestClient = NULL;
 	ultrasonicPushNewestClientInputTaskTrigger = NULL;
 	ultrasonicPushNewestClientUpcallManager = NULL;
+	ultrasonicPushNewestClientInputCollector = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
@@ -112,6 +131,12 @@ ComponentVisualization::ComponentVisualization()
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
+	connections.amclVisualizationInfoIn.initialConnect = false;
+	connections.amclVisualizationInfoIn.wiringName = "AmclVisualizationInfoIn";
+	connections.amclVisualizationInfoIn.serverName = "unknown";
+	connections.amclVisualizationInfoIn.serviceName = "unknown";
+	connections.amclVisualizationInfoIn.interval = 1;
+	connections.amclVisualizationInfoIn.roboticMiddleware = "ACE_SmartSoft";
 	connections.markerListDetectionServiceIn.initialConnect = false;
 	connections.markerListDetectionServiceIn.wiringName = "MarkerListDetectionServiceIn";
 	connections.markerListDetectionServiceIn.serverName = "unknown";
@@ -208,6 +233,12 @@ ComponentVisualization::ComponentVisualization()
 	connections.ultrasonicPushNewestClient.serviceName = "unknown";
 	connections.ultrasonicPushNewestClient.interval = 1;
 	connections.ultrasonicPushNewestClient.roboticMiddleware = "ACE_SmartSoft";
+	connections.amclVizTask.minActFreq = 0.0;
+	connections.amclVizTask.maxActFreq = 0.0;
+	// scheduling default parameters
+	connections.amclVizTask.scheduler = "DEFAULT";
+	connections.amclVizTask.priority = -1;
+	connections.amclVizTask.cpuAffinity = -1;
 	connections.baseTask.minActFreq = 0.0;
 	connections.baseTask.maxActFreq = 0.0;
 	// scheduling default parameters
@@ -287,10 +318,6 @@ ComponentVisualization::ComponentVisualization()
 	connections.uSArTask.priority = -1;
 	connections.uSArTask.cpuAffinity = -1;
 	
-	// initialize members of ComponentVisualizationROSExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
 	// initialize members of PlainOpcUaComponentVisualizationExtension
 	
 }
@@ -323,6 +350,23 @@ void ComponentVisualization::setStartupFinished() {
 }
 
 
+Smart::StatusCode ComponentVisualization::connectAmclVisualizationInfoIn(const std::string &serverName, const std::string &serviceName) {
+	Smart::StatusCode status;
+	
+	if(connections.amclVisualizationInfoIn.initialConnect == false) {
+		return Smart::SMART_OK;
+	}
+	std::cout << "connecting to: " << serverName << "; " << serviceName << std::endl;
+	status = amclVisualizationInfoIn->connect(serverName, serviceName);
+	while(status != Smart::SMART_OK)
+	{
+		ACE_OS::sleep(ACE_Time_Value(0,500000));
+		status = COMP->amclVisualizationInfoIn->connect(serverName, serviceName);
+	}
+	std::cout << "connected.\n";
+	amclVisualizationInfoIn->subscribe(connections.amclVisualizationInfoIn.interval);
+	return status;
+}
 Smart::StatusCode ComponentVisualization::connectMarkerListDetectionServiceIn(const std::string &serverName, const std::string &serviceName) {
 	Smart::StatusCode status;
 	
@@ -600,6 +644,8 @@ Smart::StatusCode ComponentVisualization::connectUltrasonicPushNewestClient(cons
 Smart::StatusCode ComponentVisualization::connectAndStartAllServices() {
 	Smart::StatusCode status = Smart::SMART_OK;
 	
+	status = connectAmclVisualizationInfoIn(connections.amclVisualizationInfoIn.serverName, connections.amclVisualizationInfoIn.serviceName);
+	if(status != Smart::SMART_OK) return status;
 	status = connectMarkerListDetectionServiceIn(connections.markerListDetectionServiceIn.serverName, connections.markerListDetectionServiceIn.serviceName);
 	if(status != Smart::SMART_OK) return status;
 	status = connectRGBDImageQueryServiceReq(connections.rGBDImageQueryServiceReq.serverName, connections.rGBDImageQueryServiceReq.serviceName);
@@ -639,6 +685,20 @@ Smart::StatusCode ComponentVisualization::connectAndStartAllServices() {
  * Start all tasks contained in this component.
  */
 void ComponentVisualization::startAllTasks() {
+	// start task AmclVizTask
+	if(connections.amclVizTask.scheduler != "DEFAULT") {
+		ACE_Sched_Params amclVizTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
+		if(connections.amclVizTask.scheduler == "FIFO") {
+			amclVizTask_SchedParams.policy(ACE_SCHED_FIFO);
+			amclVizTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+		} else if(connections.amclVizTask.scheduler == "RR") {
+			amclVizTask_SchedParams.policy(ACE_SCHED_RR);
+			amclVizTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+		}
+		amclVizTask->start(amclVizTask_SchedParams, connections.amclVizTask.cpuAffinity);
+	} else {
+		amclVizTask->start();
+	}
 	// start task BaseTask
 	if(connections.baseTask.scheduler != "DEFAULT") {
 		ACE_Sched_Params baseTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
@@ -832,6 +892,7 @@ void ComponentVisualization::startAllTimers() {
 
 Smart::TaskTriggerSubject* ComponentVisualization::getInputTaskTriggerFromString(const std::string &client)
 {
+	if(client == "AmclVisualizationInfoIn") return amclVisualizationInfoInInputTaskTrigger;
 	if(client == "MarkerListDetectionServiceIn") return markerListDetectionServiceInInputTaskTrigger;
 	if(client == "baseClient") return baseClientInputTaskTrigger;
 	if(client == "curPushClient") return curPushClientInputTaskTrigger;
@@ -860,10 +921,6 @@ void ComponentVisualization::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentVisualizationROSExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentVisualizationExtension
 		
@@ -903,6 +960,7 @@ void ComponentVisualization::init(int argc, char *argv[])
 		// TODO: set minCycleTime from Ini-file
 		
 		// create client ports
+		amclVisualizationInfoIn = portFactoryRegistry[connections.amclVisualizationInfoIn.roboticMiddleware]->createAmclVisualizationInfoIn();
 		markerListDetectionServiceIn = portFactoryRegistry[connections.markerListDetectionServiceIn.roboticMiddleware]->createMarkerListDetectionServiceIn();
 		rGBDImageQueryServiceReq = portFactoryRegistry[connections.rGBDImageQueryServiceReq.roboticMiddleware]->createRGBDImageQueryServiceReq();
 		baseClient = portFactoryRegistry[connections.baseClient.roboticMiddleware]->createBaseClient();
@@ -921,32 +979,48 @@ void ComponentVisualization::init(int argc, char *argv[])
 		ultrasonicPushNewestClient = portFactoryRegistry[connections.ultrasonicPushNewestClient.roboticMiddleware]->createUltrasonicPushNewestClient();
 		
 		// create InputTaskTriggers and UpcallManagers
-		markerListDetectionServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommTrackingObjects::CommDetectedMarkerList>(markerListDetectionServiceIn);
-		markerListDetectionServiceInUpcallManager = new MarkerListDetectionServiceInUpcallManager(markerListDetectionServiceIn);
-		baseClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(baseClient);
-		baseClientUpcallManager = new BaseClientUpcallManager(baseClient);
-		curPushClientInputTaskTrigger = new Smart::InputTaskTrigger<CommNavigationObjects::CommGridMap>(curPushClient);
-		curPushClientUpcallManager = new CurPushClientUpcallManager(curPushClient);
-		depthPushNewestClientInputTaskTrigger = new Smart::InputTaskTrigger<DomainVision::CommDepthImage>(depthPushNewestClient);
-		depthPushNewestClientUpcallManager = new DepthPushNewestClientUpcallManager(depthPushNewestClient);
-		imagePushNewestClientInputTaskTrigger = new Smart::InputTaskTrigger<DomainVision::CommVideoImage>(imagePushNewestClient);
-		imagePushNewestClientUpcallManager = new ImagePushNewestClientUpcallManager(imagePushNewestClient);
-		irPushNewestClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileIRScan>(irPushNewestClient);
-		irPushNewestClientUpcallManager = new IrPushNewestClientUpcallManager(irPushNewestClient);
-		laserClient1InputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan>(laserClient1);
-		laserClient1UpcallManager = new LaserClient1UpcallManager(laserClient1);
-		laserClient2InputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan>(laserClient2);
-		laserClient2UpcallManager = new LaserClient2UpcallManager(laserClient2);
-		laserClient3InputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan>(laserClient3);
-		laserClient3UpcallManager = new LaserClient3UpcallManager(laserClient3);
-		personDetectionEventClientInputTaskTrigger = new Smart::InputTaskTrigger<Smart::EventInputType<CommTrackingObjects::CommPersonDetectionEventResult>>(personDetectionEventClient);
-		personDetectionEventClientUpcallManager = new PersonDetectionEventClientUpcallManager(personDetectionEventClient);
-		rgbdPushNewestClientInputTaskTrigger = new Smart::InputTaskTrigger<DomainVision::CommRGBDImage>(rgbdPushNewestClient);
-		rgbdPushNewestClientUpcallManager = new RgbdPushNewestClientUpcallManager(rgbdPushNewestClient);
-		rgbdQueryClientInputTaskTrigger = new Smart::InputTaskTrigger<DomainVision::CommDepthImage>(rgbdQueryClient);
-		rgbdQueryClientUpcallManager = new RgbdQueryClientUpcallManager(rgbdQueryClient);
-		ultrasonicPushNewestClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileUltrasonicScan>(ultrasonicPushNewestClient);
-		ultrasonicPushNewestClientUpcallManager = new UltrasonicPushNewestClientUpcallManager(ultrasonicPushNewestClient);
+		amclVisualizationInfoInInputCollector = new AmclVisualizationInfoInInputCollector(amclVisualizationInfoIn);
+		amclVisualizationInfoInInputTaskTrigger = new Smart::InputTaskTrigger<CommLocalizationObjects::CommAmclVisualizationInfo>(amclVisualizationInfoInInputCollector);
+		amclVisualizationInfoInUpcallManager = new AmclVisualizationInfoInUpcallManager(amclVisualizationInfoInInputCollector);
+		markerListDetectionServiceInInputCollector = new MarkerListDetectionServiceInInputCollector(markerListDetectionServiceIn);
+		markerListDetectionServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommTrackingObjects::CommDetectedMarkerList>(markerListDetectionServiceInInputCollector);
+		markerListDetectionServiceInUpcallManager = new MarkerListDetectionServiceInUpcallManager(markerListDetectionServiceInInputCollector);
+		baseClientInputCollector = new BaseClientInputCollector(baseClient);
+		baseClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(baseClientInputCollector);
+		baseClientUpcallManager = new BaseClientUpcallManager(baseClientInputCollector);
+		curPushClientInputCollector = new CurPushClientInputCollector(curPushClient);
+		curPushClientInputTaskTrigger = new Smart::InputTaskTrigger<CommNavigationObjects::CommGridMap>(curPushClientInputCollector);
+		curPushClientUpcallManager = new CurPushClientUpcallManager(curPushClientInputCollector);
+		depthPushNewestClientInputCollector = new DepthPushNewestClientInputCollector(depthPushNewestClient);
+		depthPushNewestClientInputTaskTrigger = new Smart::InputTaskTrigger<DomainVision::CommDepthImage>(depthPushNewestClientInputCollector);
+		depthPushNewestClientUpcallManager = new DepthPushNewestClientUpcallManager(depthPushNewestClientInputCollector);
+		imagePushNewestClientInputCollector = new ImagePushNewestClientInputCollector(imagePushNewestClient);
+		imagePushNewestClientInputTaskTrigger = new Smart::InputTaskTrigger<DomainVision::CommVideoImage>(imagePushNewestClientInputCollector);
+		imagePushNewestClientUpcallManager = new ImagePushNewestClientUpcallManager(imagePushNewestClientInputCollector);
+		irPushNewestClientInputCollector = new IrPushNewestClientInputCollector(irPushNewestClient);
+		irPushNewestClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileIRScan>(irPushNewestClientInputCollector);
+		irPushNewestClientUpcallManager = new IrPushNewestClientUpcallManager(irPushNewestClientInputCollector);
+		laserClient1InputCollector = new LaserClient1InputCollector(laserClient1);
+		laserClient1InputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan>(laserClient1InputCollector);
+		laserClient1UpcallManager = new LaserClient1UpcallManager(laserClient1InputCollector);
+		laserClient2InputCollector = new LaserClient2InputCollector(laserClient2);
+		laserClient2InputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan>(laserClient2InputCollector);
+		laserClient2UpcallManager = new LaserClient2UpcallManager(laserClient2InputCollector);
+		laserClient3InputCollector = new LaserClient3InputCollector(laserClient3);
+		laserClient3InputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan>(laserClient3InputCollector);
+		laserClient3UpcallManager = new LaserClient3UpcallManager(laserClient3InputCollector);
+		personDetectionEventClientInputCollector = new PersonDetectionEventClientInputCollector(personDetectionEventClient);
+		personDetectionEventClientInputTaskTrigger = new Smart::InputTaskTrigger<Smart::EventInputType<CommTrackingObjects::CommPersonDetectionEventResult>>(personDetectionEventClientInputCollector);
+		personDetectionEventClientUpcallManager = new PersonDetectionEventClientUpcallManager(personDetectionEventClientInputCollector);
+		rgbdPushNewestClientInputCollector = new RgbdPushNewestClientInputCollector(rgbdPushNewestClient);
+		rgbdPushNewestClientInputTaskTrigger = new Smart::InputTaskTrigger<DomainVision::CommRGBDImage>(rgbdPushNewestClientInputCollector);
+		rgbdPushNewestClientUpcallManager = new RgbdPushNewestClientUpcallManager(rgbdPushNewestClientInputCollector);
+		rgbdQueryClientInputCollector = new RgbdQueryClientInputCollector(rgbdQueryClient);
+		rgbdQueryClientInputTaskTrigger = new Smart::InputTaskTrigger<DomainVision::CommDepthImage>(rgbdQueryClientInputCollector);
+		rgbdQueryClientUpcallManager = new RgbdQueryClientUpcallManager(rgbdQueryClientInputCollector);
+		ultrasonicPushNewestClientInputCollector = new UltrasonicPushNewestClientInputCollector(ultrasonicPushNewestClient);
+		ultrasonicPushNewestClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileUltrasonicScan>(ultrasonicPushNewestClientInputCollector);
+		ultrasonicPushNewestClientUpcallManager = new UltrasonicPushNewestClientUpcallManager(ultrasonicPushNewestClientInputCollector);
 		
 		// create input-handler
 		
@@ -963,6 +1037,10 @@ void ComponentVisualization::init(int argc, char *argv[])
 		
 		wiringSlave = new SmartACE::WiringSlave(component);
 		// add client port to wiring slave
+		if(connections.amclVisualizationInfoIn.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::PushClient<CommLocalizationObjects::CommAmclVisualizationInfo>*>(amclVisualizationInfoIn)->add(wiringSlave, connections.amclVisualizationInfoIn.wiringName);
+		}
 		if(connections.markerListDetectionServiceIn.roboticMiddleware == "ACE_SmartSoft") {
 			//FIXME: this must also work with other implementations
 			dynamic_cast<SmartACE::PushClient<CommTrackingObjects::CommDetectedMarkerList>*>(markerListDetectionServiceIn)->add(wiringSlave, connections.markerListDetectionServiceIn.wiringName);
@@ -1031,6 +1109,31 @@ void ComponentVisualization::init(int argc, char *argv[])
 		// create parameter slave
 		param = new SmartACE::ParameterSlave(component, &paramHandler);
 		
+		
+		// create Task AmclVizTask
+		amclVizTask = new AmclVizTask(component);
+		// configure input-links
+		// configure task-trigger (if task is configurable)
+		if(connections.amclVizTask.trigger == "PeriodicTimer") {
+			// create PeriodicTimerTrigger
+			int microseconds = 1000*1000 / connections.amclVizTask.periodicActFreq;
+			if(microseconds > 0) {
+				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
+				triggerPtr->attach(amclVizTask);
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				// store trigger in class member
+				amclVizTaskTrigger = triggerPtr;
+			} else {
+				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task AmclVizTask" << std::endl;
+			}
+		} else if(connections.amclVizTask.trigger == "DataTriggered") {
+			amclVizTaskTrigger = getInputTaskTriggerFromString(connections.amclVizTask.inPortRef);
+			if(amclVizTaskTrigger != NULL) {
+				amclVizTaskTrigger->attach(amclVizTask, connections.amclVizTask.prescale);
+			} else {
+				std::cerr << "ERROR: could not set-up InPort " << connections.amclVizTask.inPortRef << " as activation source for Task AmclVizTask" << std::endl;
+			}
+		} 
 		
 		// create Task BaseTask
 		baseTask = new BaseTask(component);
@@ -1419,6 +1522,12 @@ void ComponentVisualization::fini()
 	// destroy all task instances
 	// unlink all UpcallManagers
 	// unlink the TaskTrigger
+	if(amclVizTaskTrigger != NULL){
+		amclVizTaskTrigger->detach(amclVizTask);
+		delete amclVizTask;
+	}
+	// unlink all UpcallManagers
+	// unlink the TaskTrigger
 	if(baseTaskTrigger != NULL){
 		baseTaskTrigger->detach(baseTask);
 		delete baseTask;
@@ -1499,34 +1608,51 @@ void ComponentVisualization::fini()
 	// destroy all input-handler
 
 	// destroy InputTaskTriggers and UpcallManagers
+	delete amclVisualizationInfoInInputTaskTrigger;
+	delete amclVisualizationInfoInUpcallManager;
+	delete amclVisualizationInfoInInputCollector;
 	delete markerListDetectionServiceInInputTaskTrigger;
 	delete markerListDetectionServiceInUpcallManager;
+	delete markerListDetectionServiceInInputCollector;
 	delete baseClientInputTaskTrigger;
 	delete baseClientUpcallManager;
+	delete baseClientInputCollector;
 	delete curPushClientInputTaskTrigger;
 	delete curPushClientUpcallManager;
+	delete curPushClientInputCollector;
 	delete depthPushNewestClientInputTaskTrigger;
 	delete depthPushNewestClientUpcallManager;
+	delete depthPushNewestClientInputCollector;
 	delete imagePushNewestClientInputTaskTrigger;
 	delete imagePushNewestClientUpcallManager;
+	delete imagePushNewestClientInputCollector;
 	delete irPushNewestClientInputTaskTrigger;
 	delete irPushNewestClientUpcallManager;
+	delete irPushNewestClientInputCollector;
 	delete laserClient1InputTaskTrigger;
 	delete laserClient1UpcallManager;
+	delete laserClient1InputCollector;
 	delete laserClient2InputTaskTrigger;
 	delete laserClient2UpcallManager;
+	delete laserClient2InputCollector;
 	delete laserClient3InputTaskTrigger;
 	delete laserClient3UpcallManager;
+	delete laserClient3InputCollector;
 	delete personDetectionEventClientInputTaskTrigger;
 	delete personDetectionEventClientUpcallManager;
+	delete personDetectionEventClientInputCollector;
 	delete rgbdPushNewestClientInputTaskTrigger;
 	delete rgbdPushNewestClientUpcallManager;
+	delete rgbdPushNewestClientInputCollector;
 	delete rgbdQueryClientInputTaskTrigger;
 	delete rgbdQueryClientUpcallManager;
+	delete rgbdQueryClientInputCollector;
 	delete ultrasonicPushNewestClientInputTaskTrigger;
 	delete ultrasonicPushNewestClientUpcallManager;
+	delete ultrasonicPushNewestClientInputCollector;
 
 	// destroy client ports
+	delete amclVisualizationInfoIn;
 	delete markerListDetectionServiceIn;
 	delete rGBDImageQueryServiceReq;
 	delete baseClient;
@@ -1569,10 +1695,6 @@ void ComponentVisualization::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentVisualizationROSExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentVisualizationExtension
 	
@@ -1648,6 +1770,15 @@ void ComponentVisualization::loadParameter(int argc, char *argv[])
 			parameter.getBoolean("component", "useLogger", connections.component.useLogger);
 		}
 		
+		// load parameters for client AmclVisualizationInfoIn
+		parameter.getBoolean("AmclVisualizationInfoIn", "initialConnect", connections.amclVisualizationInfoIn.initialConnect);
+		parameter.getString("AmclVisualizationInfoIn", "serviceName", connections.amclVisualizationInfoIn.serviceName);
+		parameter.getString("AmclVisualizationInfoIn", "serverName", connections.amclVisualizationInfoIn.serverName);
+		parameter.getString("AmclVisualizationInfoIn", "wiringName", connections.amclVisualizationInfoIn.wiringName);
+		parameter.getInteger("AmclVisualizationInfoIn", "interval", connections.amclVisualizationInfoIn.interval);
+		if(parameter.checkIfParameterExists("AmclVisualizationInfoIn", "roboticMiddleware")) {
+			parameter.getString("AmclVisualizationInfoIn", "roboticMiddleware", connections.amclVisualizationInfoIn.roboticMiddleware);
+		}
 		// load parameters for client MarkerListDetectionServiceIn
 		parameter.getBoolean("MarkerListDetectionServiceIn", "initialConnect", connections.markerListDetectionServiceIn.initialConnect);
 		parameter.getString("MarkerListDetectionServiceIn", "serviceName", connections.markerListDetectionServiceIn.serviceName);
@@ -1790,6 +1921,25 @@ void ComponentVisualization::loadParameter(int argc, char *argv[])
 		}
 		
 		
+		// load parameters for task AmclVizTask
+		parameter.getDouble("AmclVizTask", "minActFreqHz", connections.amclVizTask.minActFreq);
+		parameter.getDouble("AmclVizTask", "maxActFreqHz", connections.amclVizTask.maxActFreq);
+		parameter.getString("AmclVizTask", "triggerType", connections.amclVizTask.trigger);
+		if(connections.amclVizTask.trigger == "PeriodicTimer") {
+			parameter.getDouble("AmclVizTask", "periodicActFreqHz", connections.amclVizTask.periodicActFreq);
+		} else if(connections.amclVizTask.trigger == "DataTriggered") {
+			parameter.getString("AmclVizTask", "inPortRef", connections.amclVizTask.inPortRef);
+			parameter.getInteger("AmclVizTask", "prescale", connections.amclVizTask.prescale);
+		}
+		if(parameter.checkIfParameterExists("AmclVizTask", "scheduler")) {
+			parameter.getString("AmclVizTask", "scheduler", connections.amclVizTask.scheduler);
+		}
+		if(parameter.checkIfParameterExists("AmclVizTask", "priority")) {
+			parameter.getInteger("AmclVizTask", "priority", connections.amclVizTask.priority);
+		}
+		if(parameter.checkIfParameterExists("AmclVizTask", "cpuAffinity")) {
+			parameter.getInteger("AmclVizTask", "cpuAffinity", connections.amclVizTask.cpuAffinity);
+		}
 		// load parameters for task BaseTask
 		parameter.getDouble("BaseTask", "minActFreqHz", connections.baseTask.minActFreq);
 		parameter.getDouble("BaseTask", "maxActFreqHz", connections.baseTask.maxActFreq);
@@ -2037,10 +2187,6 @@ void ComponentVisualization::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("USArTask", "cpuAffinity")) {
 			parameter.getInteger("USArTask", "cpuAffinity", connections.uSArTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentVisualizationROSExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentVisualizationExtension
 		

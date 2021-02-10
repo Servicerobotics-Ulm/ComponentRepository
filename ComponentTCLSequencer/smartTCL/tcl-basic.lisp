@@ -185,20 +185,46 @@ if there were an empty string between them."
    when (not(null item))
    collect (append-prefix item prefix)))
 
-
+;; append prefix for module, only if not prefix is present
 (defun append-prefix (entry prefix)
  ;(format t "Entry: ~a~%" entry)
-  (if (null entry)
-   nil
-   (append (list (intern (concatenate 'string (symbol-name prefix) "." (symbol-name (first entry)) ))) (rest entry))))
+  (cond 
+   ((null entry)
+     nil)
+   ((equal (first entry) 'one-of)
+     (format t "one-of case~%")
+     `(one-of ,(loop
+       for item in (second entry)
+      ;do (format t "Item: ~a~%" item)
+      when (not(null item))
+      collect (append-prefix item prefix))))
+   ((equal (first entry) 'parallel)
+     (format t "parallel case~%")
+     `(parallel ,(loop
+       for item in (second entry)
+      ;do (format t "Item: ~a~%" item)
+      when (not(null item))
+      collect (append-prefix item prefix))))
 
-; (append-prefix '() 'INST2)
-; (append-prefix '(abc) 'INST2)
+   ((null( first (split-namespace (symbol-name (first entry)))))
+    (append (list (intern (concatenate 'string (symbol-name prefix) "." (symbol-name (first entry)) ))) (rest entry)))
+   (T
+     entry)))
+
+; (append-prefix '() 'INST2) --> NIL
+; (append-prefix '(abc) 'INST2) --> (INST2.ABC)
 ; (append-prefix-to-each-entry '((abc x y)(def)) 'INST2)
 ; (append-prefix-to-each-entry '((abc x y => x "Matthias" 2)(def)()) 'INST2)
 ; (append-prefix-to-each-entry '((abc)) 'INST2)
+; error case do not append
+; (append-prefix '(INT1.abc) 'INST2) --> (INT1.ABC)
+; (append-prefix-to-each-entry '((abc x y => x "Matthias" 2)(INT1.def)()) 'INST2)
 
+; (append-prefix '(one-of ((abc)(dec))) 'INST2) --> (one-of ((INST2.abc)(INST2.dec))
 
+; (append-prefix-to-each-entry '((one-of ((tcb-manual-load-hw-ack) (FLEETMANAGER.tcb-request-manual-ack-from-fleetmanager)))) 'INST2)
+
+;(split-namespace "abc")
 
 ;;; THE FOLLOWING IS USED FOR THE SKILL INTERFACE 
 

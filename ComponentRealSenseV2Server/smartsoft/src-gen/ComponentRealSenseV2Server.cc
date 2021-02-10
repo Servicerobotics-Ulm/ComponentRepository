@@ -32,28 +32,34 @@ ComponentRealSenseV2Server::ComponentRealSenseV2Server()
 	
 	// set all pointer members to NULL
 	colorImageQueryHandler = NULL;
-	//componentRealSenseV2ServerParams = NULL;
+	//coordinationPort = NULL;
 	//coordinationPort = NULL;
 	imageQueryHandler = NULL;
 	imageTask = NULL;
 	imageTaskTrigger = NULL;
+	rGBDImagePushServiceOut = NULL;
+	rGBDImagePushServiceOutWrapper = NULL;
+	rGBImagePushServiceOut = NULL;
+	rGBImagePushServiceOutWrapper = NULL;
 	urPosePushTimedClient = NULL;
 	urPosePushTimedClientInputTaskTrigger = NULL;
 	urPosePushTimedClientUpcallManager = NULL;
+	urPosePushTimedClientInputCollector = NULL;
 	urPoseQueryClient = NULL;
 	basePushTimedClient = NULL;
 	basePushTimedClientInputTaskTrigger = NULL;
 	basePushTimedClientUpcallManager = NULL;
-	colorImagePushNewestServer = NULL;
+	basePushTimedClientInputCollector = NULL;
 	colorImageQueryServer = NULL;
 	colorImageQueryServerInputTaskTrigger = NULL;
 	depthPushNewestServer = NULL;
-	imagePushNewestServer = NULL;
+	depthPushNewestServerWrapper = NULL;
 	imageQueryServer = NULL;
 	imageQueryServerInputTaskTrigger = NULL;
 	ptuPosePushNewestClient = NULL;
 	ptuPosePushNewestClientInputTaskTrigger = NULL;
 	ptuPosePushNewestClientUpcallManager = NULL;
+	ptuPosePushNewestClientInputCollector = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
@@ -65,16 +71,17 @@ ComponentRealSenseV2Server::ComponentRealSenseV2Server()
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
-	connections.colorImagePushNewestServer.serviceName = "colorImagePushNewestServer";
-	connections.colorImagePushNewestServer.roboticMiddleware = "ACE_SmartSoft";
+	connections.rGBDImagePushServiceOut.serviceName = "RGBDImagePushServiceOut";
+	connections.rGBDImagePushServiceOut.roboticMiddleware = "ACE_SmartSoft";
+	connections.rGBImagePushServiceOut.serviceName = "RGBImagePushServiceOut";
+	connections.rGBImagePushServiceOut.roboticMiddleware = "ACE_SmartSoft";
 	connections.colorImageQueryServer.serviceName = "colorImageQueryServer";
 	connections.colorImageQueryServer.roboticMiddleware = "ACE_SmartSoft";
 	connections.depthPushNewestServer.serviceName = "depthPushNewestServer";
 	connections.depthPushNewestServer.roboticMiddleware = "ACE_SmartSoft";
-	connections.imagePushNewestServer.serviceName = "imagePushNewestServer";
-	connections.imagePushNewestServer.roboticMiddleware = "ACE_SmartSoft";
 	connections.imageQueryServer.serviceName = "imageQueryServer";
 	connections.imageQueryServer.roboticMiddleware = "ACE_SmartSoft";
+	connections.urPosePushTimedClient.initialConnect = false;
 	connections.urPosePushTimedClient.wiringName = "UrPosePushTimedClient";
 	connections.urPosePushTimedClient.serverName = "unknown";
 	connections.urPosePushTimedClient.serviceName = "unknown";
@@ -86,11 +93,13 @@ ComponentRealSenseV2Server::ComponentRealSenseV2Server()
 	connections.urPoseQueryClient.serviceName = "unknown";
 	connections.urPoseQueryClient.interval = 1;
 	connections.urPoseQueryClient.roboticMiddleware = "ACE_SmartSoft";
+	connections.basePushTimedClient.initialConnect = false;
 	connections.basePushTimedClient.wiringName = "basePushTimedClient";
 	connections.basePushTimedClient.serverName = "unknown";
 	connections.basePushTimedClient.serviceName = "unknown";
 	connections.basePushTimedClient.interval = 1;
 	connections.basePushTimedClient.roboticMiddleware = "ACE_SmartSoft";
+	connections.ptuPosePushNewestClient.initialConnect = false;
 	connections.ptuPosePushNewestClient.wiringName = "ptuPosePushNewestClient";
 	connections.ptuPosePushNewestClient.serverName = "unknown";
 	connections.ptuPosePushNewestClient.serviceName = "unknown";
@@ -105,9 +114,9 @@ ComponentRealSenseV2Server::ComponentRealSenseV2Server()
 	connections.imageTask.priority = -1;
 	connections.imageTask.cpuAffinity = -1;
 	
-	// initialize members of ComponentRealSenseV2ServerROSExtension
+	// initialize members of ComponentRealSenseV2ServerROS1InterfacesExtension
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
+	// initialize members of ComponentRealSenseV2ServerRestInterfacesExtension
 	
 	// initialize members of PlainOpcUaComponentRealSenseV2ServerExtension
 	
@@ -144,6 +153,9 @@ void ComponentRealSenseV2Server::setStartupFinished() {
 Smart::StatusCode ComponentRealSenseV2Server::connectUrPosePushTimedClient(const std::string &serverName, const std::string &serviceName) {
 	Smart::StatusCode status;
 	
+	if(connections.urPosePushTimedClient.initialConnect == false) {
+		return Smart::SMART_OK;
+	}
 	std::cout << "connecting to: " << serverName << "; " << serviceName << std::endl;
 	status = urPosePushTimedClient->connect(serverName, serviceName);
 	while(status != Smart::SMART_OK)
@@ -174,6 +186,9 @@ Smart::StatusCode ComponentRealSenseV2Server::connectUrPoseQueryClient(const std
 Smart::StatusCode ComponentRealSenseV2Server::connectBasePushTimedClient(const std::string &serverName, const std::string &serviceName) {
 	Smart::StatusCode status;
 	
+	if(connections.basePushTimedClient.initialConnect == false) {
+		return Smart::SMART_OK;
+	}
 	std::cout << "connecting to: " << serverName << "; " << serviceName << std::endl;
 	status = basePushTimedClient->connect(serverName, serviceName);
 	while(status != Smart::SMART_OK)
@@ -188,6 +203,9 @@ Smart::StatusCode ComponentRealSenseV2Server::connectBasePushTimedClient(const s
 Smart::StatusCode ComponentRealSenseV2Server::connectPtuPosePushNewestClient(const std::string &serverName, const std::string &serviceName) {
 	Smart::StatusCode status;
 	
+	if(connections.ptuPosePushNewestClient.initialConnect == false) {
+		return Smart::SMART_OK;
+	}
 	std::cout << "connecting to: " << serverName << "; " << serviceName << std::endl;
 	status = ptuPosePushNewestClient->connect(serverName, serviceName);
 	while(status != Smart::SMART_OK)
@@ -267,9 +285,9 @@ void ComponentRealSenseV2Server::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of ComponentRealSenseV2ServerROSExtension
+		// initializations of ComponentRealSenseV2ServerROS1InterfacesExtension
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
+		// initializations of ComponentRealSenseV2ServerRestInterfacesExtension
 		
 		// initializations of PlainOpcUaComponentRealSenseV2ServerExtension
 		
@@ -307,11 +325,14 @@ void ComponentRealSenseV2Server::init(int argc, char *argv[])
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
-		colorImagePushNewestServer = portFactoryRegistry[connections.colorImagePushNewestServer.roboticMiddleware]->createColorImagePushNewestServer(connections.colorImagePushNewestServer.serviceName);
+		rGBDImagePushServiceOut = portFactoryRegistry[connections.rGBDImagePushServiceOut.roboticMiddleware]->createRGBDImagePushServiceOut(connections.rGBDImagePushServiceOut.serviceName);
+		rGBDImagePushServiceOutWrapper = new RGBDImagePushServiceOutWrapper(rGBDImagePushServiceOut);
+		rGBImagePushServiceOut = portFactoryRegistry[connections.rGBImagePushServiceOut.roboticMiddleware]->createRGBImagePushServiceOut(connections.rGBImagePushServiceOut.serviceName);
+		rGBImagePushServiceOutWrapper = new RGBImagePushServiceOutWrapper(rGBImagePushServiceOut);
 		colorImageQueryServer = portFactoryRegistry[connections.colorImageQueryServer.roboticMiddleware]->createColorImageQueryServer(connections.colorImageQueryServer.serviceName);
 		colorImageQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommVideoImage>(colorImageQueryServer);
 		depthPushNewestServer = portFactoryRegistry[connections.depthPushNewestServer.roboticMiddleware]->createDepthPushNewestServer(connections.depthPushNewestServer.serviceName);
-		imagePushNewestServer = portFactoryRegistry[connections.imagePushNewestServer.roboticMiddleware]->createImagePushNewestServer(connections.imagePushNewestServer.serviceName);
+		depthPushNewestServerWrapper = new DepthPushNewestServerWrapper(depthPushNewestServer);
 		imageQueryServer = portFactoryRegistry[connections.imageQueryServer.roboticMiddleware]->createImageQueryServer(connections.imageQueryServer.serviceName);
 		imageQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage>(imageQueryServer);
 		
@@ -322,12 +343,15 @@ void ComponentRealSenseV2Server::init(int argc, char *argv[])
 		ptuPosePushNewestClient = portFactoryRegistry[connections.ptuPosePushNewestClient.roboticMiddleware]->createPtuPosePushNewestClient();
 		
 		// create InputTaskTriggers and UpcallManagers
-		urPosePushTimedClientInputTaskTrigger = new Smart::InputTaskTrigger<CommManipulatorObjects::CommMobileManipulatorState>(urPosePushTimedClient);
-		urPosePushTimedClientUpcallManager = new UrPosePushTimedClientUpcallManager(urPosePushTimedClient);
-		basePushTimedClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(basePushTimedClient);
-		basePushTimedClientUpcallManager = new BasePushTimedClientUpcallManager(basePushTimedClient);
-		ptuPosePushNewestClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommDevicePoseState>(ptuPosePushNewestClient);
-		ptuPosePushNewestClientUpcallManager = new PtuPosePushNewestClientUpcallManager(ptuPosePushNewestClient);
+		urPosePushTimedClientInputCollector = new UrPosePushTimedClientInputCollector(urPosePushTimedClient);
+		urPosePushTimedClientInputTaskTrigger = new Smart::InputTaskTrigger<CommManipulatorObjects::CommMobileManipulatorState>(urPosePushTimedClientInputCollector);
+		urPosePushTimedClientUpcallManager = new UrPosePushTimedClientUpcallManager(urPosePushTimedClientInputCollector);
+		basePushTimedClientInputCollector = new BasePushTimedClientInputCollector(basePushTimedClient);
+		basePushTimedClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(basePushTimedClientInputCollector);
+		basePushTimedClientUpcallManager = new BasePushTimedClientUpcallManager(basePushTimedClientInputCollector);
+		ptuPosePushNewestClientInputCollector = new PtuPosePushNewestClientInputCollector(ptuPosePushNewestClient);
+		ptuPosePushNewestClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommDevicePoseState>(ptuPosePushNewestClientInputCollector);
+		ptuPosePushNewestClientUpcallManager = new PtuPosePushNewestClientUpcallManager(ptuPosePushNewestClientInputCollector);
 		
 		// create input-handler
 		
@@ -485,10 +509,13 @@ void ComponentRealSenseV2Server::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 	delete urPosePushTimedClientInputTaskTrigger;
 	delete urPosePushTimedClientUpcallManager;
+	delete urPosePushTimedClientInputCollector;
 	delete basePushTimedClientInputTaskTrigger;
 	delete basePushTimedClientUpcallManager;
+	delete basePushTimedClientInputCollector;
 	delete ptuPosePushNewestClientInputTaskTrigger;
 	delete ptuPosePushNewestClientUpcallManager;
+	delete ptuPosePushNewestClientInputCollector;
 
 	// destroy client ports
 	delete urPosePushTimedClient;
@@ -497,11 +524,14 @@ void ComponentRealSenseV2Server::fini()
 	delete ptuPosePushNewestClient;
 
 	// destroy server ports
-	delete colorImagePushNewestServer;
+	delete rGBDImagePushServiceOutWrapper;
+	delete rGBDImagePushServiceOut;
+	delete rGBImagePushServiceOutWrapper;
+	delete rGBImagePushServiceOut;
 	delete colorImageQueryServer;
 	delete colorImageQueryServerInputTaskTrigger;
+	delete depthPushNewestServerWrapper;
 	delete depthPushNewestServer;
-	delete imagePushNewestServer;
 	delete imageQueryServer;
 	delete imageQueryServerInputTaskTrigger;
 	// destroy event-test handlers (if needed)
@@ -531,9 +561,9 @@ void ComponentRealSenseV2Server::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentRealSenseV2ServerROSExtension
+	// destruction of ComponentRealSenseV2ServerROS1InterfacesExtension
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
+	// destruction of ComponentRealSenseV2ServerRestInterfacesExtension
 	
 	// destruction of PlainOpcUaComponentRealSenseV2ServerExtension
 	
@@ -610,6 +640,7 @@ void ComponentRealSenseV2Server::loadParameter(int argc, char *argv[])
 		}
 		
 		// load parameters for client UrPosePushTimedClient
+		parameter.getBoolean("UrPosePushTimedClient", "initialConnect", connections.urPosePushTimedClient.initialConnect);
 		parameter.getString("UrPosePushTimedClient", "serviceName", connections.urPosePushTimedClient.serviceName);
 		parameter.getString("UrPosePushTimedClient", "serverName", connections.urPosePushTimedClient.serverName);
 		parameter.getString("UrPosePushTimedClient", "wiringName", connections.urPosePushTimedClient.wiringName);
@@ -626,6 +657,7 @@ void ComponentRealSenseV2Server::loadParameter(int argc, char *argv[])
 			parameter.getString("UrPoseQueryClient", "roboticMiddleware", connections.urPoseQueryClient.roboticMiddleware);
 		}
 		// load parameters for client basePushTimedClient
+		parameter.getBoolean("basePushTimedClient", "initialConnect", connections.basePushTimedClient.initialConnect);
 		parameter.getString("basePushTimedClient", "serviceName", connections.basePushTimedClient.serviceName);
 		parameter.getString("basePushTimedClient", "serverName", connections.basePushTimedClient.serverName);
 		parameter.getString("basePushTimedClient", "wiringName", connections.basePushTimedClient.wiringName);
@@ -634,6 +666,7 @@ void ComponentRealSenseV2Server::loadParameter(int argc, char *argv[])
 			parameter.getString("basePushTimedClient", "roboticMiddleware", connections.basePushTimedClient.roboticMiddleware);
 		}
 		// load parameters for client ptuPosePushNewestClient
+		parameter.getBoolean("ptuPosePushNewestClient", "initialConnect", connections.ptuPosePushNewestClient.initialConnect);
 		parameter.getString("ptuPosePushNewestClient", "serviceName", connections.ptuPosePushNewestClient.serviceName);
 		parameter.getString("ptuPosePushNewestClient", "serverName", connections.ptuPosePushNewestClient.serverName);
 		parameter.getString("ptuPosePushNewestClient", "wiringName", connections.ptuPosePushNewestClient.wiringName);
@@ -642,10 +675,15 @@ void ComponentRealSenseV2Server::loadParameter(int argc, char *argv[])
 			parameter.getString("ptuPosePushNewestClient", "roboticMiddleware", connections.ptuPosePushNewestClient.roboticMiddleware);
 		}
 		
-		// load parameters for server colorImagePushNewestServer
-		parameter.getString("colorImagePushNewestServer", "serviceName", connections.colorImagePushNewestServer.serviceName);
-		if(parameter.checkIfParameterExists("colorImagePushNewestServer", "roboticMiddleware")) {
-			parameter.getString("colorImagePushNewestServer", "roboticMiddleware", connections.colorImagePushNewestServer.roboticMiddleware);
+		// load parameters for server RGBDImagePushServiceOut
+		parameter.getString("RGBDImagePushServiceOut", "serviceName", connections.rGBDImagePushServiceOut.serviceName);
+		if(parameter.checkIfParameterExists("RGBDImagePushServiceOut", "roboticMiddleware")) {
+			parameter.getString("RGBDImagePushServiceOut", "roboticMiddleware", connections.rGBDImagePushServiceOut.roboticMiddleware);
+		}
+		// load parameters for server RGBImagePushServiceOut
+		parameter.getString("RGBImagePushServiceOut", "serviceName", connections.rGBImagePushServiceOut.serviceName);
+		if(parameter.checkIfParameterExists("RGBImagePushServiceOut", "roboticMiddleware")) {
+			parameter.getString("RGBImagePushServiceOut", "roboticMiddleware", connections.rGBImagePushServiceOut.roboticMiddleware);
 		}
 		// load parameters for server colorImageQueryServer
 		parameter.getString("colorImageQueryServer", "serviceName", connections.colorImageQueryServer.serviceName);
@@ -656,11 +694,6 @@ void ComponentRealSenseV2Server::loadParameter(int argc, char *argv[])
 		parameter.getString("depthPushNewestServer", "serviceName", connections.depthPushNewestServer.serviceName);
 		if(parameter.checkIfParameterExists("depthPushNewestServer", "roboticMiddleware")) {
 			parameter.getString("depthPushNewestServer", "roboticMiddleware", connections.depthPushNewestServer.roboticMiddleware);
-		}
-		// load parameters for server imagePushNewestServer
-		parameter.getString("imagePushNewestServer", "serviceName", connections.imagePushNewestServer.serviceName);
-		if(parameter.checkIfParameterExists("imagePushNewestServer", "roboticMiddleware")) {
-			parameter.getString("imagePushNewestServer", "roboticMiddleware", connections.imagePushNewestServer.roboticMiddleware);
 		}
 		// load parameters for server imageQueryServer
 		parameter.getString("imageQueryServer", "serviceName", connections.imageQueryServer.serviceName);
@@ -688,9 +721,9 @@ void ComponentRealSenseV2Server::loadParameter(int argc, char *argv[])
 			parameter.getInteger("ImageTask", "cpuAffinity", connections.imageTask.cpuAffinity);
 		}
 		
-		// load parameters for ComponentRealSenseV2ServerROSExtension
+		// load parameters for ComponentRealSenseV2ServerROS1InterfacesExtension
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
+		// load parameters for ComponentRealSenseV2ServerRestInterfacesExtension
 		
 		// load parameters for PlainOpcUaComponentRealSenseV2ServerExtension
 		

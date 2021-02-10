@@ -68,21 +68,27 @@
 #include "LaserTask.hh"
 #include "ComponentLaserFromRGBDServer.hh"
 
+#ifdef WITH_MRPT_2_0_VERSION
+#include <mrpt/system/CTicTac.h>
+#else
 #include <mrpt/utils/CTicTac.h>
+#endif
+
 #include <EulerTransformationMatrices.hh>
 //#include <Eigen/src/Core/Matrix.h>
 //#include <Eigen/src/Core/MatrixBase.h>
 
 #include <pcl/filters/passthrough.h>
 #include <pcl/common/transforms.h>
+#include <cmath>
 
 #define STOP while (std::cin.get() != '\n');
 
 #define DEGTORAD(x) x*M_PI/180.0f
 #define RADTODEG(x) x*180.0f/M_PI
 
-LaserTask::LaserTask(SmartACE::SmartComponent *comp) 
-:	LaserTaskCore(comp), timer()
+LaserTask::LaserTask(SmartACE::SmartComponent *comp)
+:	LaserTaskCore(comp)
 {
 	first_image_flag =true;
 }
@@ -101,26 +107,24 @@ int LaserTask::on_entry()
     angle_resolution = DEGTORAD(global_state.getLaser_generator().getAngle_resolution()); // angular resolution
     robot_base_frame_height_from_floor = COMP->getGlobalState().getLaser_generator().getFloor_threshold_distance();
 
+    sensor_pose_x = global_state.getScanner().getX();
+    sensor_pose_y = global_state.getScanner().getY();
+    sensor_pose_z = global_state.getScanner().getZ();
+    sensor_pose_azimuth = global_state.getScanner().getAzimuth();
+    sensor_pose_elevation = global_state.getScanner().getElevation();
+    sensor_pose_roll = global_state.getScanner().getRoll();
+
 	std::cout << "[LaserTask] Initializing ..." << std::endl;
-
-	this->timer.start();
-
 	return 0;
 }
 int LaserTask::on_execute()
 {
-	mrpt::utils::CTicTac stopwatch;
-	stopwatch.Tic();
-
-	this->timer.waitTimer();
-
-
 	// this method is called from an outside loop,
 	// hence, NEVER use an infinite loop (like "while(1)") here inside!!!
 	// also do not use blocking calls which do not result from smartsoft kernel
 
 		// wait for scan (PushNewest)
-		status = COMP->rgbdClient->getUpdate(rgbd_scan);
+		status = COMP->rgbdClient->getUpdateWait(rgbd_scan);
 
 		if (status != Smart::SMART_OK) {
 
@@ -140,7 +144,7 @@ int LaserTask::on_execute()
 					init_laser_generation();
 				}
 				//Convert range image into 2D laser
-				realsense_to_laserscan(rgbd_scan, laser_scan);
+				//realsense_to_laserscan(rgbd_scan, laser_scan);
 
 				//set basestate
 				CommBasicObjects::CommBaseState base_state = rgbd_scan.getBase_state();
@@ -153,11 +157,14 @@ int LaserTask::on_execute()
 				laser_scan.setBase_state(base_state);
 				CommBasicObjects::CommPose3d base_pose = base_state.getBasePose().getPose3D();
 
+
+
 				CommBasicObjects::CommPose3d sensor_pose(rgbd_scan.getSensor_pose());
 				//laser_scan.set_sensor_pose(sensor_pose);
 				//laser_scan.set_sensor_pose(CommBasicObjects::CommPose3d(sensor_pose.get_x(),sensor_pose.get_y(),sensor_pose.get_z(),0,0,0));
 				//publish the laser in robot base frame
-				laser_scan.set_sensor_pose(CommBasicObjects::CommPose3d(0, 0, 0, 0, 0, 0));
+				laser_scan.set_sensor_pose(CommBasicObjects::CommPose3d(sensor_pose_x, sensor_pose_y, sensor_pose_z,
+																		sensor_pose_azimuth, sensor_pose_elevation, sensor_pose_roll));
 
 				// set robot scanner position
 				double x = sensor_pose.get_x();
@@ -168,7 +175,8 @@ int LaserTask::on_execute()
 				double roll = sensor_pose.get_roll();
 				arma::mat mat_sensor;
 
-				EulerTransformationMatrices::create_zyx_matrix(x, y, z, azimuth, elevation, roll, mat_sensor);
+				EulerTransformationMatrices::create_zyx_matrix(sensor_pose_x, sensor_pose_y, sensor_pose_z,
+						                                       sensor_pose_azimuth, sensor_pose_elevation, sensor_pose_roll, mat_sensor);
 
 				// set world scanner position
 				double base_x = 0;
@@ -192,11 +200,11 @@ int LaserTask::on_execute()
 
 
 
-				double sensor_yaw = sensor_pose.get_azimuth(), sensor_pitch = sensor_pose.get_elevation(), sensor_roll = sensor_pose.get_roll();
-				double sensor_x = sensor_pose.getPosition().getX() / 1000, sensor_y = sensor_pose.getPosition().getY() / 1000, sensor_z = sensor_pose.getPosition().getZ() / 1000;
-
-				double bbase_yaw = base_pose.get_azimuth(), bbase_pitch = base_pose.get_elevation(), bbase_roll = base_pose.get_roll();
-				double bbase_x = base_pose.getPosition().getX() / 1000, bbase_y = base_pose.getPosition().getY() / 1000, bbase_z = base_pose.getPosition().getZ() / 1000;
+//				double sensor_yaw = sensor_pose.get_azimuth(), sensor_pitch = sensor_pose.get_elevation(), sensor_roll = sensor_pose.get_roll();
+//				double sensor_x = sensor_pose.getPosition().getX() / 1000, sensor_y = sensor_pose.getPosition().getY() / 1000, sensor_z = sensor_pose.getPosition().getZ() / 1000;
+//
+//				double bbase_yaw = base_pose.get_azimuth(), bbase_pitch = base_pose.get_elevation(), bbase_roll = base_pose.get_roll();
+//				double bbase_x = base_pose.getPosition().getX() / 1000, bbase_y = base_pose.getPosition().getY() / 1000, bbase_z = base_pose.getPosition().getZ() / 1000;
 
 				laser_scan.set_scanner_x(world_pose.get_x());
 				laser_scan.set_scanner_y(world_pose.get_y());
@@ -206,13 +214,16 @@ int LaserTask::on_execute()
 				laser_scan.set_scanner_elevation(world_pose.get_elevation());
 				laser_scan.set_scanner_roll(world_pose.get_roll());
 
-				if (COMP->getGlobalState().getServices().getActivate_push_newest()) {
-					Smart::StatusCode push_status = COMP->laserPushNewestServer->put(laser_scan);
-					if (push_status != Smart::SMART_OK) {
-						std::cerr << "[LaserTask] WARNING: error on push (" << Smart::StatusCodeConversion(push_status)
-						<< ")" << std::endl;
-					}
+
+				realsense_to_laserscan(rgbd_scan, laser_scan);
+
+
+				Smart::StatusCode push_status = COMP->laserServiceOut->put(laser_scan);
+				if (push_status != Smart::SMART_OK) {
+					std::cerr << "[LaserTask] WARNING: error on push (" << Smart::StatusCodeConversion(push_status)
+					<< ")" << std::endl;
 				}
+
 				// copy local scan to global scan
 				SmartACE::SmartGuard scan_guard(COMP->ScanLock);
 				COMP->global_scan = laser_scan;
@@ -221,33 +232,22 @@ int LaserTask::on_execute()
 				if (COMP->getGlobalState().getScanner().getVerbose())
 				{
 					const unsigned int index = laser_scan.get_scan_size();
-					//std::cout << "[LaserTask] Scan " << laser_scan.get_scan_update_count() << " sent." << " Scan Size " << index << "/"
-					//<< "Max Distance = " << laser_scan.get_max_distance() << "mm" << std::endl;
+					std::cout << "[LaserTask] Scan " << laser_scan.get_scan_update_count() << " sent." << " Scan Size " << index << "/"
+					<< "Max Distance = " << laser_scan.get_max_distance() << "mm" << std::endl;
 
 				}
 
 			}
 		}
-
-
-			double detection_time = stopwatch.Tac();
-			if (COMP->getGlobalState().getScanner().getVerbose()){
-			std::cout << '\r'<< " Current Frequency: " <<std::setw(10) << 1.0f/detection_time << " Hz";
-			}
-
-
+			auto now = Smart::Clock::now();
+			std::cout <<'\r'<<"Laser frequency = " <<1000.0f/std::chrono::duration_cast<std::chrono::milliseconds>(now -last).count()<< " Hz" <<std::flush;
+			last = now;
 	// it is possible to return != 0 (e.g. when the task detects errors), then the outer loop breaks and the task stops
 	return 0;
 }
 int LaserTask::on_exit()
 {
-	//laser.stopMeas();
-
-	std::cout << "[LaserTask] Disconnect from laser" << std::endl;
-
-	this->timer.stop();
-
-	//laser.disconnect();
+	std::cout << "[LaserTask] Exiting the task" << std::endl;
 	// use this method to clean-up resources which are initialized in on_entry() and needs to be freed before the on_execute() can be called again
 	return 0;
 }
@@ -321,7 +321,7 @@ void LaserTask::findMinimumDistances(const pcl::PointCloud<pcl::PointXYZ>::Ptr i
 		}
 	}
 
-#ifdef WITH_PCL_VISUALIZATION
+#ifdef HEW //WITH_PCL_VISUALIZATION
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_laser_min(new pcl::PointCloud<pcl::PointXYZ>);
 
 	for(auto it=laser_points_min.begin();it!=laser_points_min.end();++it){
@@ -362,7 +362,11 @@ bool LaserTask::realsense_to_laserscan(DomainVision::CommRGBDImage &rgbd_scan, C
 
 	DomainVision::CommDepthImage comm_depth_image = rgbd_scan.getDepth_image();
 
+#ifdef WITH_MRPT_2_0_VERSION
+	mrpt::system::CTicTac stopwatch;
+#else
 	mrpt::utils::CTicTac stopwatch;
+#endif
 
 	/////////////////////////////
 	// 1. generate pointcloud (camera frame
@@ -444,7 +448,7 @@ bool LaserTask::realsense_to_laserscan(DomainVision::CommRGBDImage &rgbd_scan, C
 		commlasercloud->push_back(pcl::PointXYZ(x,y,z));
 	}
 
-	COMP->visTask->showPointCloud(commlasercloud, "commlasercloud", 255,0,0);
+	COMP->visTask->showPointCloud(commlasercloud, "commlasercloud", 255,0,255);
 #endif
 
 	return true;
@@ -458,11 +462,14 @@ void LaserTask::init_laser_generation()
 	hfov_rad = std::atan2(depth_intrinsics.cx + 0.5f, depth_intrinsics.fx) + std::atan2(depth_intrinsics.cols - (depth_intrinsics.cx + 0.5f), depth_intrinsics.fx);
 	vfov_rad = std::atan2(depth_intrinsics.cy + 0.5f, depth_intrinsics.fy) + std::atan2(depth_intrinsics.rows - (depth_intrinsics.cy + 0.5f), depth_intrinsics.fy);
 
-	nLaserRays           = ceil(1 + (hfov_rad/angle_resolution));
-	start_angle          = (double)-1.0f*hfov_rad*0.5f;
-	vertical_view        = vfov_rad*2.0f; // consider all the vertical fov
-	depth_data_type      = rgbd_scan.getDepth_image().getFormat();
-	first_image_flag     = false;
+	//round off horizontal view to multiple of angle_resolution
+	hfov_rad = hfov_rad-fmod(hfov_rad,angle_resolution);
+
+	nLaserRays         = ceil(1 + (hfov_rad/angle_resolution));
+	start_angle        = -0.5f*hfov_rad;
+	vertical_view      = vfov_rad*2.0f; // consider all the vertical fov
+	depth_data_type    = rgbd_scan.getDepth_image().getFormat();
+	first_image_flag   = false;
 
 	display_parameters();
 }

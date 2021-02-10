@@ -29,10 +29,6 @@
 class ComponentLaserLMS1xxPortFactoryInterface;
 class ComponentLaserLMS1xxExtension;
 
-// includes for ComponentLaserLMS1xxROSExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentLaserLMS1xxExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -48,12 +44,15 @@ class ComponentLaserLMS1xxExtension;
 
 // include tasks
 #include "LaserTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 #include "BaseStateServiceInUpcallManager.hh"
+#include "BaseStateServiceInInputCollector.hh"
 
 // include input-handler(s)
 // include request-handler(s)
 #include "LaserQueryServiceAnswHandler.hh"
+// output port wrappers
+#include "LaserServiceOutWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -113,6 +112,7 @@ public:
 	Smart::IPushClientPattern<CommBasicObjects::CommBaseState> *baseStateServiceIn;
 	Smart::InputTaskTrigger<CommBasicObjects::CommBaseState> *baseStateServiceInInputTaskTrigger;
 	BaseStateServiceInUpcallManager *baseStateServiceInUpcallManager;
+	BaseStateServiceInInputCollector *baseStateServiceInInputCollector;
 	
 	// define request-ports
 	
@@ -120,6 +120,7 @@ public:
 	
 	// define output-ports
 	Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> *laserServiceOut;
+	LaserServiceOutWrapper *laserServiceOutWrapper;
 	
 	// define answer-ports
 	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommMobileLaserScan> *laserQueryServiceAnsw;
@@ -127,10 +128,6 @@ public:
 	
 	// define request-handlers
 	LaserQueryServiceAnswHandler *laserQueryServiceAnswHandler;
-	
-	// definitions of ComponentLaserLMS1xxROSExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentLaserLMS1xxExtension
 	
@@ -251,10 +248,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} baseStateServiceIn;
-		
-		// -- parameters for ComponentLaserLMS1xxROSExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentLaserLMS1xxExtension
 		

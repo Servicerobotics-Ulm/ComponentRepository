@@ -95,7 +95,7 @@ void SignalStateTaskCore::updateAllCommObjects()
 void SignalStateTaskCore::triggerLogEntry(const int& idOffset)
 {
 	if(useLogging == true) {
-		int logId = taskLoggingId + 2*5 + idOffset;
+		int logId = taskLoggingId + 2*4 + idOffset;
 		//FIXME: use logging
 		//Smart::LOGGER->log(logId, getCurrentUpdateCount(), getPreviousCommObjId());
 	}

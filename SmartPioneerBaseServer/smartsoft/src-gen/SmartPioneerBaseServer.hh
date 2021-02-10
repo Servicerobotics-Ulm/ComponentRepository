@@ -29,13 +29,9 @@
 class SmartPioneerBaseServerPortFactoryInterface;
 class SmartPioneerBaseServerExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaSmartPioneerBaseServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
-
-// includes for SmartPioneerBaseServerROSExtension
 
 
 // include communication objects
@@ -57,13 +53,18 @@ class SmartPioneerBaseServerExtension;
 // include tasks
 #include "PoseUpdateTask.hh"
 #include "RobotTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 #include "LocalizationUpdateUpcallManager.hh"
+#include "LocalizationUpdateInputCollector.hh"
 #include "NavVelInUpcallManager.hh"
+#include "NavVelInInputCollector.hh"
 
 // include input-handler(s)
 // include request-handler(s)
 #include "BaseStateQueryHandler.hh"
+// output port wrappers
+#include "BasePositionOutWrapper.hh"
+#include "BatteryEventServerWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -125,10 +126,12 @@ public:
 	Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> *localizationUpdate;
 	Smart::InputTaskTrigger<CommBasicObjects::CommBasePositionUpdate> *localizationUpdateInputTaskTrigger;
 	LocalizationUpdateUpcallManager *localizationUpdateUpcallManager;
+	LocalizationUpdateInputCollector *localizationUpdateInputCollector;
 	// InputPort NavVelIn
 	Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> *navVelIn;
 	Smart::InputTaskTrigger<CommBasicObjects::CommNavigationVelocity> *navVelInInputTaskTrigger;
 	NavVelInUpcallManager *navVelInUpcallManager;
+	NavVelInInputCollector *navVelInInputCollector;
 	
 	// define request-ports
 	
@@ -136,7 +139,9 @@ public:
 	
 	// define output-ports
 	Smart::IPushServerPattern<CommBasicObjects::CommBaseState> *basePositionOut;
+	BasePositionOutWrapper *basePositionOutWrapper;
 	Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> *batteryEventServer;
+	BatteryEventServerWrapper *batteryEventServerWrapper;
 	std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>> batteryEventServerEventTestHandler;
 	
 	// define answer-ports
@@ -146,11 +151,7 @@ public:
 	// define request-handlers
 	BaseStateQueryHandler *baseStateQueryHandler;
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
 	// definitions of PlainOpcUaSmartPioneerBaseServerExtension
-	
-	// definitions of SmartPioneerBaseServerROSExtension
 	
 	
 	// define default slave ports
@@ -279,11 +280,7 @@ public:
 	
 		//--- client port parameter ---
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// -- parameters for PlainOpcUaSmartPioneerBaseServerExtension
-		
-		// -- parameters for SmartPioneerBaseServerROSExtension
 		
 	} connections;
 };

@@ -36,36 +36,47 @@ SmartCdlServer::SmartCdlServer()
 	baseStateClient = NULL;
 	baseStateClientInputTaskTrigger = NULL;
 	baseStateClientUpcallManager = NULL;
+	baseStateClientInputCollector = NULL;
 	cdlTask = NULL;
 	cdlTaskTrigger = NULL;
 	//coordinationPort = NULL;
+	//coordinationPort = NULL;
 	goalEventServer = NULL;
+	goalEventServerWrapper = NULL;
 	goalEventServerEventTestHandler = nullptr; 
 	iRClient = NULL;
 	iRClientInputTaskTrigger = NULL;
 	iRClientUpcallManager = NULL;
+	iRClientInputCollector = NULL;
 	laserClient = NULL;
 	laserClientInputTaskTrigger = NULL;
 	laserClientUpcallManager = NULL;
+	laserClientInputCollector = NULL;
 	laserClient2 = NULL;
 	laserClient2InputTaskTrigger = NULL;
 	laserClient2UpcallManager = NULL;
+	laserClient2InputCollector = NULL;
 	navVelSendClient = NULL;
+	navVelSendClientWrapper = NULL;
 	navVelSendServer = NULL;
 	navVelSendServerInputTaskTrigger = NULL;
 	navVelSendServerUpcallManager = NULL;
+	navVelSendServerInputCollector = NULL;
 	pathNavigationGoalClient = NULL;
 	pathNavigationGoalClientInputTaskTrigger = NULL;
 	pathNavigationGoalClientUpcallManager = NULL;
+	pathNavigationGoalClientInputCollector = NULL;
 	plannerClient = NULL;
 	plannerClientInputTaskTrigger = NULL;
 	plannerClientUpcallManager = NULL;
+	plannerClientInputCollector = NULL;
 	robotBlockedEventServer = NULL;
+	robotBlockedEventServerWrapper = NULL;
 	robotBlockedEventServerEventTestHandler = nullptr; 
-	//smartCdlServerParams = NULL;
 	trackingClient = NULL;
 	trackingClientInputTaskTrigger = NULL;
 	trackingClientUpcallManager = NULL;
+	trackingClientInputCollector = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
@@ -95,6 +106,7 @@ SmartCdlServer::SmartCdlServer()
 	connections.iRClient.serviceName = "unknown";
 	connections.iRClient.interval = 1;
 	connections.iRClient.roboticMiddleware = "ACE_SmartSoft";
+	connections.laserClient.initialConnect = false;
 	connections.laserClient.wiringName = "LaserClient";
 	connections.laserClient.serverName = "unknown";
 	connections.laserClient.serviceName = "unknown";
@@ -139,11 +151,11 @@ SmartCdlServer::SmartCdlServer()
 	connections.cdlTask.priority = -1;
 	connections.cdlTask.cpuAffinity = -1;
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
 	// initialize members of PlainOpcUaSmartCdlServerExtension
 	
-	// initialize members of SmartCdlServerROSExtension
+	// initialize members of SmartCdlServerROS1InterfacesExtension
+	
+	// initialize members of SmartCdlServerRestInterfacesExtension
 	
 }
 
@@ -212,6 +224,9 @@ Smart::StatusCode SmartCdlServer::connectIRClient(const std::string &serverName,
 Smart::StatusCode SmartCdlServer::connectLaserClient(const std::string &serverName, const std::string &serviceName) {
 	Smart::StatusCode status;
 	
+	if(connections.laserClient.initialConnect == false) {
+		return Smart::SMART_OK;
+	}
 	std::cout << "connecting to: " << serverName << "; " << serviceName << std::endl;
 	status = laserClient->connect(serverName, serviceName);
 	while(status != Smart::SMART_OK)
@@ -388,11 +403,11 @@ void SmartCdlServer::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
 		// initializations of PlainOpcUaSmartCdlServerExtension
 		
-		// initializations of SmartCdlServerROSExtension
+		// initializations of SmartCdlServerROS1InterfacesExtension
+		
+		// initializations of SmartCdlServerRestInterfacesExtension
 		
 		
 		// initialize all registered port-factories
@@ -432,9 +447,11 @@ void SmartCdlServer::init(int argc, char *argv[])
 		// TODO: set minCycleTime from Ini-file
 		goalEventServerEventTestHandler = std::make_shared<GoalEventServerEventTestHandler>();
 		goalEventServer = portFactoryRegistry[connections.goalEventServer.roboticMiddleware]->createGoalEventServer(connections.goalEventServer.serviceName, goalEventServerEventTestHandler);
+		goalEventServerWrapper = new GoalEventServerWrapper(goalEventServer);
 		navVelSendServer = portFactoryRegistry[connections.navVelSendServer.roboticMiddleware]->createNavVelSendServer(connections.navVelSendServer.serviceName);
 		robotBlockedEventServerEventTestHandler = std::make_shared<RobotBlockedEventServerEventTestHandler>();
 		robotBlockedEventServer = portFactoryRegistry[connections.robotBlockedEventServer.roboticMiddleware]->createRobotBlockedEventServer(connections.robotBlockedEventServer.serviceName, robotBlockedEventServerEventTestHandler);
+		robotBlockedEventServerWrapper = new RobotBlockedEventServerWrapper(robotBlockedEventServer);
 		
 		// create client ports
 		baseStateClient = portFactoryRegistry[connections.baseStateClient.roboticMiddleware]->createBaseStateClient();
@@ -442,27 +459,36 @@ void SmartCdlServer::init(int argc, char *argv[])
 		laserClient = portFactoryRegistry[connections.laserClient.roboticMiddleware]->createLaserClient();
 		laserClient2 = portFactoryRegistry[connections.laserClient2.roboticMiddleware]->createLaserClient2();
 		navVelSendClient = portFactoryRegistry[connections.navVelSendClient.roboticMiddleware]->createNavVelSendClient();
+		navVelSendClientWrapper = new NavVelSendClientWrapper(navVelSendClient);
 		pathNavigationGoalClient = portFactoryRegistry[connections.pathNavigationGoalClient.roboticMiddleware]->createPathNavigationGoalClient();
 		plannerClient = portFactoryRegistry[connections.plannerClient.roboticMiddleware]->createPlannerClient();
 		trackingClient = portFactoryRegistry[connections.trackingClient.roboticMiddleware]->createTrackingClient();
 		
 		// create InputTaskTriggers and UpcallManagers
-		baseStateClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(baseStateClient);
-		baseStateClientUpcallManager = new BaseStateClientUpcallManager(baseStateClient);
-		iRClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileIRScan>(iRClient);
-		iRClientUpcallManager = new IRClientUpcallManager(iRClient);
-		laserClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan>(laserClient);
-		laserClientUpcallManager = new LaserClientUpcallManager(laserClient);
-		laserClient2InputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan>(laserClient2);
-		laserClient2UpcallManager = new LaserClient2UpcallManager(laserClient2);
-		navVelSendServerInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommNavigationVelocity>(navVelSendServer);
-		navVelSendServerUpcallManager = new NavVelSendServerUpcallManager(navVelSendServer);
-		pathNavigationGoalClientInputTaskTrigger = new Smart::InputTaskTrigger<CommRobotinoObjects::CommPathNavigationGoal>(pathNavigationGoalClient);
-		pathNavigationGoalClientUpcallManager = new PathNavigationGoalClientUpcallManager(pathNavigationGoalClient);
-		plannerClientInputTaskTrigger = new Smart::InputTaskTrigger<CommNavigationObjects::CommPlannerGoal>(plannerClient);
-		plannerClientUpcallManager = new PlannerClientUpcallManager(plannerClient);
-		trackingClientInputTaskTrigger = new Smart::InputTaskTrigger<CommTrackingObjects::CommTrackingGoal>(trackingClient);
-		trackingClientUpcallManager = new TrackingClientUpcallManager(trackingClient);
+		baseStateClientInputCollector = new BaseStateClientInputCollector(baseStateClient);
+		baseStateClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(baseStateClientInputCollector);
+		baseStateClientUpcallManager = new BaseStateClientUpcallManager(baseStateClientInputCollector);
+		iRClientInputCollector = new IRClientInputCollector(iRClient);
+		iRClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileIRScan>(iRClientInputCollector);
+		iRClientUpcallManager = new IRClientUpcallManager(iRClientInputCollector);
+		laserClientInputCollector = new LaserClientInputCollector(laserClient);
+		laserClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan>(laserClientInputCollector);
+		laserClientUpcallManager = new LaserClientUpcallManager(laserClientInputCollector);
+		laserClient2InputCollector = new LaserClient2InputCollector(laserClient2);
+		laserClient2InputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommMobileLaserScan>(laserClient2InputCollector);
+		laserClient2UpcallManager = new LaserClient2UpcallManager(laserClient2InputCollector);
+		navVelSendServerInputCollector = new NavVelSendServerInputCollector(navVelSendServer);
+		navVelSendServerInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommNavigationVelocity>(navVelSendServerInputCollector);
+		navVelSendServerUpcallManager = new NavVelSendServerUpcallManager(navVelSendServerInputCollector);
+		pathNavigationGoalClientInputCollector = new PathNavigationGoalClientInputCollector(pathNavigationGoalClient);
+		pathNavigationGoalClientInputTaskTrigger = new Smart::InputTaskTrigger<CommNavigationObjects::CommCorridorNavigationGoal>(pathNavigationGoalClientInputCollector);
+		pathNavigationGoalClientUpcallManager = new PathNavigationGoalClientUpcallManager(pathNavigationGoalClientInputCollector);
+		plannerClientInputCollector = new PlannerClientInputCollector(plannerClient);
+		plannerClientInputTaskTrigger = new Smart::InputTaskTrigger<CommNavigationObjects::CommPlannerGoal>(plannerClientInputCollector);
+		plannerClientUpcallManager = new PlannerClientUpcallManager(plannerClientInputCollector);
+		trackingClientInputCollector = new TrackingClientInputCollector(trackingClient);
+		trackingClientInputTaskTrigger = new Smart::InputTaskTrigger<CommTrackingObjects::CommTrackingGoal>(trackingClientInputCollector);
+		trackingClientUpcallManager = new TrackingClientUpcallManager(trackingClientInputCollector);
 		
 		// create input-handler
 		
@@ -502,7 +528,7 @@ void SmartCdlServer::init(int argc, char *argv[])
 		}
 		if(connections.pathNavigationGoalClient.roboticMiddleware == "ACE_SmartSoft") {
 			//FIXME: this must also work with other implementations
-			dynamic_cast<SmartACE::PushClient<CommRobotinoObjects::CommPathNavigationGoal>*>(pathNavigationGoalClient)->add(wiringSlave, connections.pathNavigationGoalClient.wiringName);
+			dynamic_cast<SmartACE::PushClient<CommNavigationObjects::CommCorridorNavigationGoal>*>(pathNavigationGoalClient)->add(wiringSlave, connections.pathNavigationGoalClient.wiringName);
 		}
 		if(connections.plannerClient.roboticMiddleware == "ACE_SmartSoft") {
 			//FIXME: this must also work with other implementations
@@ -643,34 +669,45 @@ void SmartCdlServer::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 	delete baseStateClientInputTaskTrigger;
 	delete baseStateClientUpcallManager;
+	delete baseStateClientInputCollector;
 	delete iRClientInputTaskTrigger;
 	delete iRClientUpcallManager;
+	delete iRClientInputCollector;
 	delete laserClientInputTaskTrigger;
 	delete laserClientUpcallManager;
+	delete laserClientInputCollector;
 	delete laserClient2InputTaskTrigger;
 	delete laserClient2UpcallManager;
+	delete laserClient2InputCollector;
 	delete navVelSendServerInputTaskTrigger;
 	delete navVelSendServerUpcallManager;
+	delete navVelSendServerInputCollector;
 	delete pathNavigationGoalClientInputTaskTrigger;
 	delete pathNavigationGoalClientUpcallManager;
+	delete pathNavigationGoalClientInputCollector;
 	delete plannerClientInputTaskTrigger;
 	delete plannerClientUpcallManager;
+	delete plannerClientInputCollector;
 	delete trackingClientInputTaskTrigger;
 	delete trackingClientUpcallManager;
+	delete trackingClientInputCollector;
 
 	// destroy client ports
 	delete baseStateClient;
 	delete iRClient;
 	delete laserClient;
 	delete laserClient2;
+	delete navVelSendClientWrapper;
 	delete navVelSendClient;
 	delete pathNavigationGoalClient;
 	delete plannerClient;
 	delete trackingClient;
 
 	// destroy server ports
+	delete goalEventServerWrapper;
 	delete goalEventServer;
 	delete navVelSendServer;
+	delete robotBlockedEventServerWrapper;
 	delete robotBlockedEventServer;
 	// destroy event-test handlers (if needed)
 	goalEventServerEventTestHandler;
@@ -699,11 +736,11 @@ void SmartCdlServer::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
 	// destruction of PlainOpcUaSmartCdlServerExtension
 	
-	// destruction of SmartCdlServerROSExtension
+	// destruction of SmartCdlServerROS1InterfacesExtension
+	
+	// destruction of SmartCdlServerRestInterfacesExtension
 	
 }
 
@@ -796,6 +833,7 @@ void SmartCdlServer::loadParameter(int argc, char *argv[])
 			parameter.getString("IRClient", "roboticMiddleware", connections.iRClient.roboticMiddleware);
 		}
 		// load parameters for client LaserClient
+		parameter.getBoolean("LaserClient", "initialConnect", connections.laserClient.initialConnect);
 		parameter.getString("LaserClient", "serviceName", connections.laserClient.serviceName);
 		parameter.getString("LaserClient", "serverName", connections.laserClient.serverName);
 		parameter.getString("LaserClient", "wiringName", connections.laserClient.wiringName);
@@ -884,11 +922,11 @@ void SmartCdlServer::loadParameter(int argc, char *argv[])
 			parameter.getInteger("CdlTask", "cpuAffinity", connections.cdlTask.cpuAffinity);
 		}
 		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
 		// load parameters for PlainOpcUaSmartCdlServerExtension
 		
-		// load parameters for SmartCdlServerROSExtension
+		// load parameters for SmartCdlServerROS1InterfacesExtension
+		
+		// load parameters for SmartCdlServerRestInterfacesExtension
 		
 		
 		// load parameters for all registered component-extensions

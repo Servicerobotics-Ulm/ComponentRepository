@@ -45,7 +45,11 @@
 
 #include <iostream>
 #include <armadillo.hh>
+
+#ifdef WITH_OPENCV_4_2_VERSION
+#else
 #include "OpenCVHelpers/OpenCVHelpers.hh"
+#endif
 
 #include "ParameterStateStruct.hh"
 
@@ -226,6 +230,8 @@ int ImageTask::on_exit()
 		return 0;
 }
 
+#ifdef WITH_OPENCV_4_2_VERSION
+#else
 IplImage* ImageTask::convertDataArrayToIplImage(DomainVision::CommVideoImage &query_image, CvSize size)
 {
         IplImage* ipl_image = NULL;
@@ -263,6 +269,7 @@ IplImage* ImageTask::convertDataArrayToIplImage(DomainVision::CommVideoImage &qu
         return ipl_image;
 
 }
+#endif
 //----------------------------------------------------------------
 // ImagePushNewestCleanupThread - Methods
 //----------------------------------------------------------------

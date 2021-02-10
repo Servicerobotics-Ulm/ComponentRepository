@@ -1,0 +1,9 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; monitorBaseBumper
+
+(realize-tcb (monitorLaserSafetyFields)
+	(module "LaserSafetyModule")
+	(action ((format t "===== monitorLaserSafetyFields~%")
+                 (format t "Simulate laser safety by timer event!~%")))
+        (plan ((TIMER.tcb-timer 7200 0)))) ;120 min
+                  

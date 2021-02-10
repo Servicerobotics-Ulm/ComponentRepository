@@ -22,6 +22,18 @@
 #include <CommBasicObjects/CommBasePositionUpdateACE.hh>
 #include <CommBasicObjects/CommBaseState.hh>
 #include <CommBasicObjects/CommBaseStateACE.hh>
+#include <CommBasicObjects/CommBatteryEvent.hh>
+#include <CommBasicObjects/CommBatteryEventACE.hh>
+#include <CommBasicObjects/CommBatteryParameter.hh>
+#include <CommBasicObjects/CommBatteryParameterACE.hh>
+#include <CommBasicObjects/CommBatteryState.hh>
+#include <CommBasicObjects/CommBatteryStateACE.hh>
+#include <CommBasicObjects/CommBumperEventParameter.hh>
+#include <CommBasicObjects/CommBumperEventParameterACE.hh>
+#include <CommBasicObjects/CommBumperEventResult.hh>
+#include <CommBasicObjects/CommBumperEventResultACE.hh>
+#include <CommBasicObjects/CommBumperEventState.hh>
+#include <CommBasicObjects/CommBumperEventStateACE.hh>
 #include <CommBasicObjects/CommMobileLaserScan.hh>
 #include <CommBasicObjects/CommMobileLaserScanACE.hh>
 #include <CommBasicObjects/CommNavigationVelocity.hh>
@@ -48,6 +60,8 @@ public:
 	
 	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState> * createBaseSatateQueryAnsw(const std::string &serviceName) = 0;
 	virtual Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * createBaseStateServiceOut(const std::string &serviceName) = 0;
+	virtual Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> * createBatteryEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>> batteryEventServiceOutEventTestHandler) = 0;
+	virtual Smart::IEventServerPattern<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState> * createBumperEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState>> bumperEventServiceOutEventTestHandler) = 0;
 	virtual Smart::IPushServerPattern<CommBasicObjects::CommMobileLaserScan> * createLaserServiceOut(const std::string &serviceName) = 0;
 	virtual Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * createLocalizationUpdateServiceIn(const std::string &serviceName) = 0;
 	virtual Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * createNavVelServiceIn(const std::string &serviceName) = 0;

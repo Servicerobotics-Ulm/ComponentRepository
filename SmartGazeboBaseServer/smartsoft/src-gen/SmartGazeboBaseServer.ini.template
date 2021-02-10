@@ -90,6 +90,14 @@ roboticMiddleware ACE_SmartSoft
 serviceName BaseStateServiceOut
 roboticMiddleware ACE_SmartSoft
 
+[BatteryEventServiceOut]
+serviceName BatteryEventServiceOut
+roboticMiddleware ACE_SmartSoft
+
+[BumperEventServiceOut]
+serviceName BumperEventServiceOut
+roboticMiddleware ACE_SmartSoft
+
 [LaserServiceOut]
 serviceName LaserServiceOut
 roboticMiddleware ACE_SmartSoft
@@ -106,14 +114,14 @@ roboticMiddleware ACE_SmartSoft
 # client port parameter
 
 ##########################
-## parameters of OpcUaBackendComponentGeneratorExtension
-
-##########################
 ## parameters of PlainOpcUaSmartGazeboBaseServerExtension
 
 
 ##########################
-## parameters of SmartGazeboBaseServerROSExtension
+## parameters of SmartGazeboBaseServerROS1InterfacesExtension
+
+##########################
+## parameters of SmartGazeboBaseServerRestInterfacesExtension
 
 
 #####################

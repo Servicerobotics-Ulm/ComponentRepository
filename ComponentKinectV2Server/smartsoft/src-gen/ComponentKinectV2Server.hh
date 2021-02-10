@@ -29,9 +29,9 @@
 class ComponentKinectV2ServerPortFactoryInterface;
 class ComponentKinectV2ServerExtension;
 
-// includes for ComponentKinectV2ServerROSExtension
+// includes for ComponentKinectV2ServerROS1InterfacesExtension
 
-// includes for OpcUaBackendComponentGeneratorExtension
+// includes for ComponentKinectV2ServerRestInterfacesExtension
 
 // includes for PlainOpcUaComponentKinectV2ServerExtension
 // include plain OPC UA device clients
@@ -54,14 +54,20 @@ class ComponentKinectV2ServerExtension;
 
 // include tasks
 #include "ImageTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 #include "BasePushTimedClientUpcallManager.hh"
+#include "BasePushTimedClientInputCollector.hh"
 #include "PtuPosePushNewestClientUpcallManager.hh"
+#include "PtuPosePushNewestClientInputCollector.hh"
 
 // include input-handler(s)
 // include request-handler(s)
 #include "ColorImageQueryHandler.hh"
 #include "ImageQueryHandler.hh"
+// output port wrappers
+#include "RGBDImageQueryServiceOutWrapper.hh"
+#include "RGBImagePushServiceOutWrapper.hh"
+#include "DepthImagePushServiceOutWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -121,19 +127,24 @@ public:
 	Smart::IPushClientPattern<CommBasicObjects::CommBaseState> *basePushTimedClient;
 	Smart::InputTaskTrigger<CommBasicObjects::CommBaseState> *basePushTimedClientInputTaskTrigger;
 	BasePushTimedClientUpcallManager *basePushTimedClientUpcallManager;
+	BasePushTimedClientInputCollector *basePushTimedClientInputCollector;
 	// InputPort ptuPosePushNewestClient
 	Smart::IPushClientPattern<CommBasicObjects::CommDevicePoseState> *ptuPosePushNewestClient;
 	Smart::InputTaskTrigger<CommBasicObjects::CommDevicePoseState> *ptuPosePushNewestClientInputTaskTrigger;
 	PtuPosePushNewestClientUpcallManager *ptuPosePushNewestClientUpcallManager;
+	PtuPosePushNewestClientInputCollector *ptuPosePushNewestClientInputCollector;
 	
 	// define request-ports
 	
 	// define input-handler
 	
 	// define output-ports
-	Smart::IPushServerPattern<DomainVision::CommVideoImage> *colorImagePushNewestServer;
+	Smart::IPushServerPattern<DomainVision::CommRGBDImage> *rGBDImageQueryServiceOut;
+	RGBDImageQueryServiceOutWrapper *rGBDImageQueryServiceOutWrapper;
+	Smart::IPushServerPattern<DomainVision::CommVideoImage> *rGBImagePushServiceOut;
+	RGBImagePushServiceOutWrapper *rGBImagePushServiceOutWrapper;
 	Smart::IPushServerPattern<DomainVision::CommDepthImage> *depthImagePushServiceOut;
-	Smart::IPushServerPattern<DomainVision::CommRGBDImage> *imagePushNewestServer;
+	DepthImagePushServiceOutWrapper *depthImagePushServiceOutWrapper;
 	
 	// define answer-ports
 	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> *colorImageQueryServer;
@@ -145,9 +156,9 @@ public:
 	ColorImageQueryHandler *colorImageQueryHandler;
 	ImageQueryHandler *imageQueryHandler;
 	
-	// definitions of ComponentKinectV2ServerROSExtension
+	// definitions of ComponentKinectV2ServerROS1InterfacesExtension
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
+	// definitions of ComponentKinectV2ServerRestInterfacesExtension
 	
 	// definitions of PlainOpcUaComponentKinectV2ServerExtension
 	
@@ -251,10 +262,14 @@ public:
 		//--- upcall parameter ---
 		
 		//--- server port parameter ---
-		struct ColorImagePushNewestServer_struct {
+		struct RGBDImageQueryServiceOut_struct {
 				std::string serviceName;
 				std::string roboticMiddleware;
-		} colorImagePushNewestServer;
+		} rGBDImageQueryServiceOut;
+		struct RGBImagePushServiceOut_struct {
+				std::string serviceName;
+				std::string roboticMiddleware;
+		} rGBImagePushServiceOut;
 		struct ColorImageQueryServer_struct {
 				std::string serviceName;
 				std::string roboticMiddleware;
@@ -263,10 +278,6 @@ public:
 				std::string serviceName;
 				std::string roboticMiddleware;
 		} depthImagePushServiceOut;
-		struct ImagePushNewestServer_struct {
-				std::string serviceName;
-				std::string roboticMiddleware;
-		} imagePushNewestServer;
 		struct ImageQueryV2Server_struct {
 				std::string serviceName;
 				std::string roboticMiddleware;
@@ -290,9 +301,9 @@ public:
 			std::string roboticMiddleware;
 		} ptuPosePushNewestClient;
 		
-		// -- parameters for ComponentKinectV2ServerROSExtension
+		// -- parameters for ComponentKinectV2ServerROS1InterfacesExtension
 		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
+		// -- parameters for ComponentKinectV2ServerRestInterfacesExtension
 		
 		// -- parameters for PlainOpcUaComponentKinectV2ServerExtension
 		

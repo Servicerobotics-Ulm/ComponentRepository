@@ -65,7 +65,8 @@ int AmclTaskCore::execute_protected_region()
 	if(useDefaultState) {
 		Smart::StatusCode status = COMP->stateSlave->acquire("active");
 		if(status != Smart::SMART_OK) {
-			std::cerr << "AmclTaskCore: ERROR acquiring state active: " << status << std::endl;
+			std::cerr << "AmclTaskCore: ERROR acquiring state: " << status << std::endl;
+			usleep(500000);
 			return 0;
 		}
 	}
@@ -105,9 +106,19 @@ void AmclTaskCore::updateAllCommObjects()
 
 
 // this method is meant to be used in derived classes
+Smart::StatusCode AmclTaskCore::amclVisualizationInfoOutPut(CommLocalizationObjects::CommAmclVisualizationInfo &amclVisualizationInfoOutDataObject)
+{
+	Smart::StatusCode result = COMP->amclVisualizationInfoOutWrapper->put(amclVisualizationInfoOutDataObject);
+	if(useLogging == true) {
+		//FIXME: use logging
+		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
+	}
+	return result;
+}
+// this method is meant to be used in derived classes
 Smart::StatusCode AmclTaskCore::localizationEventServiceOutPut(CommLocalizationObjects::LocalizationEventState &eventState)
 {
-	Smart::StatusCode result = COMP->localizationEventServiceOut->put(eventState);
+	Smart::StatusCode result = COMP->localizationEventServiceOutWrapper->put(eventState);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
@@ -117,7 +128,7 @@ Smart::StatusCode AmclTaskCore::localizationEventServiceOutPut(CommLocalizationO
 // this method is meant to be used in derived classes
 Smart::StatusCode AmclTaskCore::localizationUpdateServiceOutPut(CommBasicObjects::CommBasePositionUpdate &localizationUpdateServiceOutDataObject)
 {
-	Smart::StatusCode result = COMP->localizationUpdateServiceOut->send(localizationUpdateServiceOutDataObject);
+	Smart::StatusCode result = COMP->localizationUpdateServiceOutWrapper->send(localizationUpdateServiceOutDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
@@ -128,7 +139,7 @@ Smart::StatusCode AmclTaskCore::localizationUpdateServiceOutPut(CommBasicObjects
 void AmclTaskCore::triggerLogEntry(const int& idOffset)
 {
 	if(useLogging == true) {
-		int logId = taskLoggingId + 2*2 + idOffset;
+		int logId = taskLoggingId + 2*3 + idOffset;
 		//FIXME: use logging
 		//Smart::LOGGER->log(logId, getCurrentUpdateCount(), getPreviousCommObjId());
 	}

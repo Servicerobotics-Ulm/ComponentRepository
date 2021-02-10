@@ -8,12 +8,26 @@ AnswerPort laserQueryServer implements CommBasicObjects.LaserQueryService {
 	Activity LaserTask
 	{
 	}
-	OutputPort laserPushNewestServer implements CommBasicObjects.LaserService realizedBy LaserTask {
+	OutputPort LaserServiceOut implements CommBasicObjects.LaserService realizedBy LaserTask {
 	}
 	InputPort baseTimedClient implements CommBasicObjects.BaseStateService {
 	}
+	
 	OutputPort safetyfieldEventServer implements CommBasicObjects.LaserSafetyEventService realizedBy LaserTask {
 	}
-	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService { }
+	
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.LaserSafetyCoordinationService {
+		with safetyFieldEvent realizedBy safetyfieldEventServer
+		SkillRealizationsRef laser
+	}
+	
+	
 	ComponentParameters ComponentLaserS300ServerParams slave CoordinationPort
+InputPort CommIOForkingServiceIn implements CommBasicObjects.CommIOForkingService {
+	}
+	Activity LaserSafetyTask
+	{
+		InputPortLink CommIOForkingServiceIn { oversamplingOk undersamplingOk }
+		DefaultTrigger InputPortTrigger CommIOForkingServiceIn
+	}
 }

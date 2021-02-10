@@ -3,34 +3,68 @@
 
 # ComponentFileMover Component
 
-![ComponentFileMover-ComponentImage](model/ComponentFileMoverComponentDefinition.jpg)
+<img src="model/ComponentFileMoverComponentDefinition.jpg" alt="ComponentFileMover-ComponentImage" width="1000">
+
+*Component Short Description:* TODO: add short description for ComponentFileMover datasheet
 
 
-| Metaelement | Documentation |
-|-------------|---------------|
-| License |  |
-| Hardware Requirements |  |
-| Purpose |  |
+## Component-Datasheet Properties
 
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Component-Datasheet Properties</caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Property Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Property Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Property Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">MarketName</td>
+<td style="border:1px solid black; padding: 5px;">ComponentFileMover</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Supplier</td>
+<td style="border:1px solid black; padding: 5px;">Servicerobotics Ulm</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Homepage</td>
+<td style="border:1px solid black; padding: 5px;">http://servicerobotik-ulm.de/components</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Purpose</td>
+<td style="border:1px solid black; padding: 5px;">Example</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
 
-
-## Service Ports
+## Component Ports
 
 ### CommFileReadQueryReq
 
-Sends Read request for the file
+*Documentation:*
+
 
 ### CommFileWriteQueryReq
 
-Sends Write request for the file
+*Documentation:*
 
 
-## Component Parameters ComponentFileMoverParams
+### CommFileMoveEventOut
 
-### ParameterSetInstance FileOperationsParam
+*Documentation:*
 
-#### TriggerInstance COPYFILE
 
-active = true
 
+
+## Component Parameters: ComponentFileMoverParams
+
+### ParameterSetInstance: FileOperationsParam
+
+#### Trigger Instance: COPYFILE
+
+*Property:* active = **true**
+
+*Documentation:*
 
