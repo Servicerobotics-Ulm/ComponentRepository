@@ -3,60 +3,252 @@
 
 # ComponentLaserLMS1xx Component
 
-![ComponentLaserLMS1xx-ComponentImage](model/ComponentLaserLMS1xxComponentDefinition.jpg)
+<img src="model/ComponentLaserLMS1xxComponentDefinition.jpg" alt="ComponentLaserLMS1xx-ComponentImage" width="1000">
 
-The ComponentLaserLMS1xx makes laser scans from SICK LMS 1xx series and PLS langer rangers available. Scans can be requested by push newest or query communication. This component includes Code from the Player Project
-
-| Metaelement | Documentation |
-|-------------|---------------|
-| License | LGPL v2.1 |
-| Hardware Requirements | A Sick Laser LMS1xx series |
-| Purpose |  |
+*Component Short Description:* TODO: add short description for ComponentLaserLMS1xx datasheet
 
 
+## Component-Datasheet Properties
 
-## Service Ports
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Component-Datasheet Properties</caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Property Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Property Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Property Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">MarketName</td>
+<td style="border:1px solid black; padding: 5px;">ComponentLaserLMS1xx</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Supplier</td>
+<td style="border:1px solid black; padding: 5px;">Servicerobotics Ulm</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Homepage</td>
+<td style="border:1px solid black; padding: 5px;">http://servicerobotik-ulm.de/components</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Purpose</td>
+<td style="border:1px solid black; padding: 5px;">Example</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
+
+## Component Ports
+
+### BaseStateServiceIn
+
+*Documentation:*
 
 
-## Component Parameters ComponentLaserLMS1xxParams
+### LaserServiceOut
 
-### InternalParameter scanner
+*Documentation:*
 
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| verbose | Boolean |  |
-| on_turret | Boolean |  |
-| x | Int32 |  |
-| y | Int32 |  |
-| z | Int32 |  |
-| azimuth | Double |  |
-| elevation | Double |  |
-| roll | Double |  |
-| ip_address | String |  |
-| port | UInt32 |  |
-| min_range | UInt32 |  |
-| max_range | UInt32 |  |
-| opening_angle | UInt32 |  |
-| resolution | Double |  |
-| length_unit | UInt32 |  |
-| frequency | UInt32 |  |
 
-### InternalParameter base_manipulator
+### LaserQueryServiceAnsw
 
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| on_base | Boolean |  |
-| x | Int32 |  |
-| y | Int32 |  |
-| z | Int32 |  |
-| base_a | Double |  |
-| steer_a | Double |  |
-| turret_a | Double |  |
+*Documentation:*
 
-### InternalParameter services
 
-| Attribute Name | Attribute Type | Description |
-|----------------|----------------|-------------|
-| activate_push_newest | Boolean |  |
-| active_push_timed | Boolean |  |
+
+
+## Component Parameters: ComponentLaserLMS1xxParams
+
+### Internal Parameter: scanner
+
+*Documentation:*
+
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Internal Parameter <b>scanner</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>verbose</b></td>
+<td style="border:1px solid black; padding: 5px;">Boolean</td>
+<td style="border:1px solid black; padding: 5px;">false</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>on_turret</b></td>
+<td style="border:1px solid black; padding: 5px;">Boolean</td>
+<td style="border:1px solid black; padding: 5px;">false</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>x</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>y</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>z</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>azimuth</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>elevation</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>roll</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>ip_address</b></td>
+<td style="border:1px solid black; padding: 5px;">String</td>
+<td style="border:1px solid black; padding: 5px;">"192.168.0.1"</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>port</b></td>
+<td style="border:1px solid black; padding: 5px;">UInt32</td>
+<td style="border:1px solid black; padding: 5px;">2111</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>min_range</b></td>
+<td style="border:1px solid black; padding: 5px;">UInt32</td>
+<td style="border:1px solid black; padding: 5px;">10</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>max_range</b></td>
+<td style="border:1px solid black; padding: 5px;">UInt32</td>
+<td style="border:1px solid black; padding: 5px;">20000</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>opening_angle</b></td>
+<td style="border:1px solid black; padding: 5px;">UInt32</td>
+<td style="border:1px solid black; padding: 5px;">270</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>resolution</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0.5</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>length_unit</b></td>
+<td style="border:1px solid black; padding: 5px;">UInt32</td>
+<td style="border:1px solid black; padding: 5px;">1</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>frequency</b></td>
+<td style="border:1px solid black; padding: 5px;">UInt32</td>
+<td style="border:1px solid black; padding: 5px;">50</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
+
+### Internal Parameter: base_manipulator
+
+*Documentation:*
+
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Internal Parameter <b>base_manipulator</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>on_base</b></td>
+<td style="border:1px solid black; padding: 5px;">Boolean</td>
+<td style="border:1px solid black; padding: 5px;">true</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>x</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>y</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>z</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>base_a</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>steer_a</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>turret_a</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
+
+### Internal Parameter: services
+
+*Documentation:*
+
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Internal Parameter <b>services</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>activate_push_newest</b></td>
+<td style="border:1px solid black; padding: 5px;">Boolean</td>
+<td style="border:1px solid black; padding: 5px;">true</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>active_push_timed</b></td>
+<td style="border:1px solid black; padding: 5px;">Boolean</td>
+<td style="border:1px solid black; padding: 5px;">true</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+</table>
 
