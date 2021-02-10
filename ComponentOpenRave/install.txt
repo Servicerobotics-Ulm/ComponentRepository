@@ -1,0 +1,66 @@
+###################################################
+Installation of OpenRave in Ubuntu 16.04 Machine
+Matthias Lutz - 11.2019
+###################################################
+(following the https://scaron.info/teaching/installing-openrave-on-ubuntu-16.04.html)
+
+sudo apt-get install cmake g++ git ipython minizip python-dev python-h5py python-numpy python-scipy python-sympy qt4-dev-tools
+
+sudo apt-get install libassimp-dev libavcodec-dev libavformat-dev libavformat-dev libboost-all-dev libboost-date-time-dev libbullet-dev libfaac-dev libglew-dev libgsm1-dev liblapack-dev liblog4cxx-dev libmpfr-dev libode-dev libogg-dev libpcrecpp0v5 libpcre3-dev libqhull-dev libqt4-dev libsoqt-dev-common libsoqt4-dev libswscale-dev libswscale-dev libvorbis-dev libx264-dev libxml2-dev libxvidcore-dev
+
+
+cd ~/SOFTWARE
+git clone https://github.com/rdiankov/collada-dom.git
+cd collada-dom && mkdir build && cd build
+cmake ..
+make -j4
+sudo make install
+
+
+sudo apt-get install libcairo2-dev libjasper-dev libpoppler-glib-dev libsdl2-dev libtiff5-dev libxrandr-dev
+cd ~/SOFTWARE
+git clone --branch OpenSceneGraph-3.4 https://github.com/openscenegraph/OpenSceneGraph.git
+cd OpenSceneGraph && mkdir build && cd build
+cmake .. -DDESIRED_QT_VERSION=4
+make -j4
+sudo make install
+
+
+sudo apt-get install libccd-dev
+cd ~/SOFTWARE
+git clone https://github.com/flexible-collision-library/fcl.git
+cd fcl
+git checkout 0.5.0  # use FCL 0.5.0
+mkdir build && cd build
+cmake ..
+make -j4
+sudo make install
+
+
+#latest commit on latest_stable (test at date: 2019-11-20) 9c79ea260e1c009b0a6f7c03ec34f59629ccbe2c
+git clone --branch latest_stable https://github.com/rdiankov/openrave.git
+cd openrave && mkdir build && cd build
+cmake .. -DOSG_DIR=/usr/local/lib64/
+make -j4
+sudo make install
+
+
+
+
+
+###################### FURTHER SMARTSOFT COMPONENT DEPENDENCIES: #########################
+
+sudo apt-get install libxerces-c-dev xsdcxx
+
+apt-get install libnewmat10-dev
+
+### INSTALL COMPS
+## set .profile
+export OPENRAVE_PLUGINS=/opt/comps/plugins
+
+### untar comps and copy to /opt/
+tar xzvf ComponentOpenRave/dependencies/comps.tar.gz
+sudo cp -r ComponentOpenRave/dependencies/comps /opt/
+
+sudo /opt/comps/buildallplugins.sh
+

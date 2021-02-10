@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ComponentDefinition="http://www.eclipse.org/smartmdsd/component/componentDefinition" xmlns:ComponentParameter="http://www.eclipse.org/smartmdsd/component/ComponentParameter" xmlns:CoordinationExtension="http://www.eclipse.org/smartmdsd/component/CoordinationExtension" xmlns:PerformanceExtension="http://www.eclipse.org/smartmdsd/component/performanceExtension" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:diagram="http://www.eclipse.org/sirius/diagram/1.1.0" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xsi:schemaLocation="http://www.eclipse.org/sirius/description/1.1.0 http://www.eclipse.org/sirius/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/style/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description/style">
-  <viewpoint:DAnalysis uid="_xAMeMCPMEemx6OFqbRSS_w" selectedViews="_xFgcACPMEemx6OFqbRSS_w" version="14.1.0.201810161215">
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ComponentParameter="http://www.eclipse.org/smartmdsd/component/ComponentParameter" xmlns:CoordinationExtension="http://www.eclipse.org/smartmdsd/component/CoordinationExtension" xmlns:componentDefinition="http://www.eclipse.org/smartmdsd/component/componentDefinition" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:diagram="http://www.eclipse.org/sirius/diagram/1.1.0" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.3/notation" xmlns:performanceExtension="http://www.eclipse.org/smartmdsd/component/performanceExtension" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xsi:schemaLocation="http://www.eclipse.org/sirius/description/1.1.0 http://www.eclipse.org/sirius/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/style/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description/style">
+  <viewpoint:DAnalysis uid="_xAMeMCPMEemx6OFqbRSS_w" selectedViews="_xFgcACPMEemx6OFqbRSS_w" version="14.3.1.202003261200">
     <semanticResources>model/ComponentOpenRave.component</semanticResources>
     <semanticResources>model/ComponentOpenRave.componentDocumentation</semanticResources>
     <semanticResources>model/ComponentOpenRave.componentParameters</semanticResources>
@@ -25,15 +25,40 @@
     <semanticResources>model/ComponentOpenRave.skillRealization</semanticResources>
     <semanticResources>platform:/resource/CommManipulatorObjects/model/CommManipulatorObjects.skills</semanticResources>
     <semanticResources>platform:/resource/CommManipulationPlannerObjects/model/CommManipulationPlannerObjects.skills</semanticResources>
+    <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.modes</semanticResources>
+    <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.services</semanticResources>
+    <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.parameters</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign</semanticResources>
+    <semanticResources>environment:/viewpoint</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.component.componentDefinition/model/componentDefinition.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.base.documentation/model/documentation.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.service.serviceDefinition/model/serviceDefinition.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.service.coordinationPattern/model/coordinationPattern.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.base.stateMachine/model/stateMachine.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.service.componentMode/model/componentMode.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.service.parameterDefinition/model/parameterDefinition.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.base.basicAttributes/model/basicAttributes.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.service.communicationPattern/model/communicationPattern.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.service.communicationObject/model/communicationObject.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.component.componentParameter/model/componentParameter.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.component.coordinationExtension/model/coordinationExtension.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.behavior.skillRealization/model/skillRealization.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.service.skillDefinition/model/skillDefinition.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.component.performanceExtension/model/performanceExtension.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.component.seronetExtension/model/seronetExtension.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.service.roboticMiddleware/model/roboticMiddleware.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.base.mixedport/model/mixedport.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.component.nativeInterfaces/model/nativeInterfaces.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.sirius.properties.defaultrules/model/properties.odesign</semanticResources>
     <ownedViews xmi:type="viewpoint:DView" uid="_xFgcACPMEemx6OFqbRSS_w">
       <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']"/>
       <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_xFxhwCPMEemx6OFqbRSS_w" name="ComponentOpenRave" repPath="#_xFvskCPMEemx6OFqbRSS_w">
         <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
-        <target xmi:type="ComponentDefinition:ComponentDefModel" href="model/ComponentOpenRave.component#/"/>
+        <target xmi:type="componentDefinition:ComponentDefModel" href="model/ComponentOpenRave.component#/"/>
       </ownedRepresentationDescriptors>
     </ownedViews>
   </viewpoint:DAnalysis>
-  <diagram:DSemanticDiagram uid="_xFvskCPMEemx6OFqbRSS_w" name="ComponentOpenRave">
+  <diagram:DSemanticDiagram uid="_xFvskCPMEemx6OFqbRSS_w">
     <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="_xFvskSPMEemx6OFqbRSS_w" source="DANNOTATION_CUSTOMIZATION_KEY">
       <data xmi:type="diagram:ComputedStyleDescriptionRegistry" uid="_xFvskiPMEemx6OFqbRSS_w"/>
     </ownedAnnotationEntries>
@@ -518,11 +543,11 @@
       </data>
     </ownedAnnotationEntries>
     <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_xFvslCPMEemx6OFqbRSS_w" name="ComponentOpenRave" tooltipText="ComponentDefinition: ComponentOpenRave&#xA;">
-      <target xmi:type="ComponentDefinition:ComponentDefinition" href="model/ComponentOpenRave.component#//@component"/>
-      <semanticElements xmi:type="ComponentDefinition:ComponentDefinition" href="model/ComponentOpenRave.component#//@component"/>
+      <target xmi:type="componentDefinition:ComponentDefinition" href="model/ComponentOpenRave.component#//@component"/>
+      <semanticElements xmi:type="componentDefinition:ComponentDefinition" href="model/ComponentOpenRave.component#//@component"/>
       <ownedBorderedNodes xmi:type="diagram:DNode" uid="_5Yov0CPMEemx6OFqbRSS_w" name="MobileManipulatorStateServiceIn" tooltipText="InputPort: MobileManipulatorStateServiceIn&#xA;" outgoingEdges="_q3scoCPREemx6OFqbRSS_w" width="3" height="3" resizeKind="NSEW">
-        <target xmi:type="ComponentDefinition:InputPort" href="model/ComponentOpenRave.component#//@component/@elements.3"/>
-        <semanticElements xmi:type="ComponentDefinition:InputPort" href="model/ComponentOpenRave.component#//@component/@elements.3"/>
+        <target xmi:type="componentDefinition:InputPort" href="model/ComponentOpenRave.component#//@component/@elements.3"/>
+        <semanticElements xmi:type="componentDefinition:InputPort" href="model/ComponentOpenRave.component#//@component/@elements.3"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
@@ -532,8 +557,8 @@
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']"/>
       </ownedBorderedNodes>
       <ownedBorderedNodes xmi:type="diagram:DNode" uid="_5YpW4iPMEemx6OFqbRSS_w" name="GripperStateServiceIn" tooltipText="InputPort: GripperStateServiceIn&#xA;" outgoingEdges="_q3wuEiPREemx6OFqbRSS_w" width="3" height="3" resizeKind="NSEW">
-        <target xmi:type="ComponentDefinition:InputPort" href="model/ComponentOpenRave.component#//@component/@elements.8"/>
-        <semanticElements xmi:type="ComponentDefinition:InputPort" href="model/ComponentOpenRave.component#//@component/@elements.8"/>
+        <target xmi:type="componentDefinition:InputPort" href="model/ComponentOpenRave.component#//@component/@elements.8"/>
+        <semanticElements xmi:type="componentDefinition:InputPort" href="model/ComponentOpenRave.component#//@component/@elements.8"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
@@ -543,8 +568,8 @@
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']"/>
       </ownedBorderedNodes>
       <ownedBorderedNodes xmi:type="diagram:DNode" uid="_5Yp98SPMEemx6OFqbRSS_w" name="GripperEventServiceIn" tooltipText="InputPort: GripperEventServiceIn&#xA;" outgoingEdges="_SF-aACPSEemx6OFqbRSS_w" width="3" height="3" resizeKind="NSEW">
-        <target xmi:type="ComponentDefinition:InputPort" href="model/ComponentOpenRave.component#//@component/@elements.9"/>
-        <semanticElements xmi:type="ComponentDefinition:InputPort" href="model/ComponentOpenRave.component#//@component/@elements.9"/>
+        <target xmi:type="componentDefinition:InputPort" href="model/ComponentOpenRave.component#//@component/@elements.9"/>
+        <semanticElements xmi:type="componentDefinition:InputPort" href="model/ComponentOpenRave.component#//@component/@elements.9"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
@@ -554,8 +579,8 @@
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']"/>
       </ownedBorderedNodes>
       <ownedBorderedNodes xmi:type="diagram:DNode" uid="_q29c0CPREemx6OFqbRSS_w" name="ManipulatorEventServiceIn" tooltipText="InputPort: ManipulatorEventServiceIn&#xA;" outgoingEdges="_q34p4CPREemx6OFqbRSS_w" width="3" height="3" resizeKind="NSEW">
-        <target xmi:type="ComponentDefinition:InputPort" href="model/ComponentOpenRave.component#//@component/@elements.2"/>
-        <semanticElements xmi:type="ComponentDefinition:InputPort" href="model/ComponentOpenRave.component#//@component/@elements.2"/>
+        <target xmi:type="componentDefinition:InputPort" href="model/ComponentOpenRave.component#//@component/@elements.2"/>
+        <semanticElements xmi:type="componentDefinition:InputPort" href="model/ComponentOpenRave.component#//@component/@elements.2"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
@@ -565,8 +590,8 @@
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']"/>
       </ownedBorderedNodes>
       <ownedBorderedNodes xmi:type="diagram:DNode" uid="_q2-q8CPREemx6OFqbRSS_w" name="SendTrajectoryOut" tooltipText="OutputPort" incomingEdges="_q3yjQCPREemx6OFqbRSS_w" width="3" height="3" resizeKind="NSEW">
-        <target xmi:type="ComponentDefinition:OutputPort" href="model/ComponentOpenRave.component#//@component/@elements.0"/>
-        <semanticElements xmi:type="ComponentDefinition:OutputPort" href="model/ComponentOpenRave.component#//@component/@elements.0"/>
+        <target xmi:type="componentDefinition:OutputPort" href="model/ComponentOpenRave.component#//@component/@elements.0"/>
+        <semanticElements xmi:type="componentDefinition:OutputPort" href="model/ComponentOpenRave.component#//@component/@elements.0"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
@@ -576,8 +601,8 @@
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='OutputPortNode']"/>
       </ownedBorderedNodes>
       <ownedBorderedNodes xmi:type="diagram:DNode" uid="_q2-q8iPREemx6OFqbRSS_w" name="PlanningEventServiceOut" tooltipText="OutputPort" incomingEdges="_q3yjQyPREemx6OFqbRSS_w _Xk890HI3EemE1fI5iy6r3Q" width="3" height="3" resizeKind="NSEW">
-        <target xmi:type="ComponentDefinition:OutputPort" href="model/ComponentOpenRave.component#//@component/@elements.1"/>
-        <semanticElements xmi:type="ComponentDefinition:OutputPort" href="model/ComponentOpenRave.component#//@component/@elements.1"/>
+        <target xmi:type="componentDefinition:OutputPort" href="model/ComponentOpenRave.component#//@component/@elements.1"/>
+        <semanticElements xmi:type="componentDefinition:OutputPort" href="model/ComponentOpenRave.component#//@component/@elements.1"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
@@ -587,8 +612,8 @@
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='OutputPortNode']"/>
       </ownedBorderedNodes>
       <ownedBorderedNodes xmi:type="diagram:DNode" uid="_q2-q9CPREemx6OFqbRSS_w" name="ObjectQueryServiceAnsw" tooltipText="AnswerPort" outgoingEdges="_q31mkCPREemx6OFqbRSS_w" width="3" height="3" resizeKind="NSEW">
-        <target xmi:type="ComponentDefinition:AnswerPort" href="model/ComponentOpenRave.component#//@component/@elements.10"/>
-        <semanticElements xmi:type="ComponentDefinition:AnswerPort" href="model/ComponentOpenRave.component#//@component/@elements.10"/>
+        <target xmi:type="componentDefinition:AnswerPort" href="model/ComponentOpenRave.component#//@component/@elements.10"/>
+        <semanticElements xmi:type="componentDefinition:AnswerPort" href="model/ComponentOpenRave.component#//@component/@elements.10"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
@@ -598,8 +623,8 @@
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='AnswerPortNode']"/>
       </ownedBorderedNodes>
       <ownedBorderedNodes xmi:type="diagram:DNode" uid="_q2_SACPREemx6OFqbRSS_w" name="MobileManipulatorStateQueryServiceReq" tooltipText="RequestPort" width="3" height="3" resizeKind="NSEW">
-        <target xmi:type="ComponentDefinition:RequestPort" href="model/ComponentOpenRave.component#//@component/@elements.4"/>
-        <semanticElements xmi:type="ComponentDefinition:RequestPort" href="model/ComponentOpenRave.component#//@component/@elements.4"/>
+        <target xmi:type="componentDefinition:RequestPort" href="model/ComponentOpenRave.component#//@component/@elements.4"/>
+        <semanticElements xmi:type="componentDefinition:RequestPort" href="model/ComponentOpenRave.component#//@component/@elements.4"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
@@ -609,8 +634,8 @@
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='RequestPortNode']"/>
       </ownedBorderedNodes>
       <ownedBorderedNodes xmi:type="diagram:DNode" uid="_q2_SAiPREemx6OFqbRSS_w" name="EnvironmentQueryServiceReq" tooltipText="RequestPort" width="3" height="3" resizeKind="NSEW">
-        <target xmi:type="ComponentDefinition:RequestPort" href="model/ComponentOpenRave.component#//@component/@elements.5"/>
-        <semanticElements xmi:type="ComponentDefinition:RequestPort" href="model/ComponentOpenRave.component#//@component/@elements.5"/>
+        <target xmi:type="componentDefinition:RequestPort" href="model/ComponentOpenRave.component#//@component/@elements.5"/>
+        <semanticElements xmi:type="componentDefinition:RequestPort" href="model/ComponentOpenRave.component#//@component/@elements.5"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
@@ -620,8 +645,8 @@
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='RequestPortNode']"/>
       </ownedBorderedNodes>
       <ownedBorderedNodes xmi:type="diagram:DNode" uid="_q2_SBCPREemx6OFqbRSS_w" name="ObjectQueryServiceReq" tooltipText="RequestPort" width="3" height="3" resizeKind="NSEW">
-        <target xmi:type="ComponentDefinition:RequestPort" href="model/ComponentOpenRave.component#//@component/@elements.6"/>
-        <semanticElements xmi:type="ComponentDefinition:RequestPort" href="model/ComponentOpenRave.component#//@component/@elements.6"/>
+        <target xmi:type="componentDefinition:RequestPort" href="model/ComponentOpenRave.component#//@component/@elements.6"/>
+        <semanticElements xmi:type="componentDefinition:RequestPort" href="model/ComponentOpenRave.component#//@component/@elements.6"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
@@ -631,8 +656,8 @@
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='RequestPortNode']"/>
       </ownedBorderedNodes>
       <ownedBorderedNodes xmi:type="diagram:DNode" uid="_q2_5ESPREemx6OFqbRSS_w" name="GripperStateQueryServiceReq" tooltipText="RequestPort" width="3" height="3" resizeKind="NSEW">
-        <target xmi:type="ComponentDefinition:RequestPort" href="model/ComponentOpenRave.component#//@component/@elements.7"/>
-        <semanticElements xmi:type="ComponentDefinition:RequestPort" href="model/ComponentOpenRave.component#//@component/@elements.7"/>
+        <target xmi:type="componentDefinition:RequestPort" href="model/ComponentOpenRave.component#//@component/@elements.7"/>
+        <semanticElements xmi:type="componentDefinition:RequestPort" href="model/ComponentOpenRave.component#//@component/@elements.7"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
@@ -642,8 +667,6 @@
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='RequestPortNode']"/>
       </ownedBorderedNodes>
       <ownedBorderedNodes xmi:type="diagram:DNode" uid="_q2_5EyPREemx6OFqbRSS_w" name="CoordinationPort" tooltipText="CoordinationSlavePort" outgoingEdges="_q39iYCPREemx6OFqbRSS_w _Xk890HI3EemE1fI5iy6r3Q" incomingEdges="_q3_-piPREemx6OFqbRSS_w" width="-1" height="-1" resizeKind="NSEW">
-        <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentOpenRave.component#//@component/@elements.16"/>
-        <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentOpenRave.component#//@component/@elements.16"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
@@ -651,6 +674,8 @@
           <description xmi:type="style:WorkspaceImageDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='CoordinationSlaveNode']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='CoordinationSlaveNode']"/>
+        <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentOpenRave.component#//@component/@elements.16"/>
+        <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentOpenRave.component#//@component/@elements.16"/>
       </ownedBorderedNodes>
       <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
       <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
@@ -661,8 +686,8 @@
       </ownedStyle>
       <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']"/>
       <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_5Yu2ciPMEemx6OFqbRSS_w" name="TrajectorySampling" tooltipText="Activity" outgoingEdges="_q3yjQCPREemx6OFqbRSS_w">
-        <target xmi:type="ComponentDefinition:Activity" href="model/ComponentOpenRave.component#//@component/@elements.11"/>
-        <semanticElements xmi:type="ComponentDefinition:Activity" href="model/ComponentOpenRave.component#//@component/@elements.11"/>
+        <target xmi:type="componentDefinition:Activity" href="model/ComponentOpenRave.component#//@component/@elements.11"/>
+        <semanticElements xmi:type="componentDefinition:Activity" href="model/ComponentOpenRave.component#//@component/@elements.11"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
@@ -673,8 +698,8 @@
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']"/>
       </ownedDiagramElements>
       <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_q3AgICPREemx6OFqbRSS_w" name="EventActivity" tooltipText="Activity" outgoingEdges="_q3yjQyPREemx6OFqbRSS_w">
-        <target xmi:type="ComponentDefinition:Activity" href="model/ComponentOpenRave.component#//@component/@elements.12"/>
-        <semanticElements xmi:type="ComponentDefinition:Activity" href="model/ComponentOpenRave.component#//@component/@elements.12"/>
+        <target xmi:type="componentDefinition:Activity" href="model/ComponentOpenRave.component#//@component/@elements.12"/>
+        <semanticElements xmi:type="componentDefinition:Activity" href="model/ComponentOpenRave.component#//@component/@elements.12"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
@@ -685,8 +710,8 @@
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']"/>
       </ownedDiagramElements>
       <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_q3BHMCPREemx6OFqbRSS_w" name="DemonstrationTask" tooltipText="Activity" incomingEdges="_q3scoCPREemx6OFqbRSS_w _q3wuEiPREemx6OFqbRSS_w">
-        <target xmi:type="ComponentDefinition:Activity" href="model/ComponentOpenRave.component#//@component/@elements.13"/>
-        <semanticElements xmi:type="ComponentDefinition:Activity" href="model/ComponentOpenRave.component#//@component/@elements.13"/>
+        <target xmi:type="componentDefinition:Activity" href="model/ComponentOpenRave.component#//@component/@elements.13"/>
+        <semanticElements xmi:type="componentDefinition:Activity" href="model/ComponentOpenRave.component#//@component/@elements.13"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
@@ -697,8 +722,8 @@
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']"/>
       </ownedDiagramElements>
       <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_q3BHMiPREemx6OFqbRSS_w" name="ManipulatorEventServiceInHandler" tooltipText="InputHandler" incomingEdges="_q34p4CPREemx6OFqbRSS_w">
-        <target xmi:type="ComponentDefinition:InputHandler" href="model/ComponentOpenRave.component#//@component/@elements.14"/>
-        <semanticElements xmi:type="ComponentDefinition:InputHandler" href="model/ComponentOpenRave.component#//@component/@elements.14"/>
+        <target xmi:type="componentDefinition:InputHandler" href="model/ComponentOpenRave.component#//@component/@elements.14"/>
+        <semanticElements xmi:type="componentDefinition:InputHandler" href="model/ComponentOpenRave.component#//@component/@elements.14"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
@@ -709,8 +734,8 @@
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='InputHandlerContainer']"/>
       </ownedDiagramElements>
       <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_q3b98CPREemx6OFqbRSS_w" name="ObjectQueryServiceAnswHandler" tooltipText="RequestHandler" incomingEdges="_q31mkCPREemx6OFqbRSS_w">
-        <target xmi:type="ComponentDefinition:RequestHandler" href="model/ComponentOpenRave.component#//@component/@elements.15"/>
-        <semanticElements xmi:type="ComponentDefinition:RequestHandler" href="model/ComponentOpenRave.component#//@component/@elements.15"/>
+        <target xmi:type="componentDefinition:RequestHandler" href="model/ComponentOpenRave.component#//@component/@elements.15"/>
+        <semanticElements xmi:type="componentDefinition:RequestHandler" href="model/ComponentOpenRave.component#//@component/@elements.15"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
@@ -721,8 +746,6 @@
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='RequestHandlerContainer']"/>
       </ownedDiagramElements>
       <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_q3gPYCPREemx6OFqbRSS_w" name="ComponentModes" tooltipText="ComponentModes" incomingEdges="_q39iYCPREemx6OFqbRSS_w">
-        <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentOpenRave.component#//@component/@elements.16"/>
-        <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentOpenRave.component#//@component/@elements.16"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
@@ -732,57 +755,57 @@
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']"/>
         <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_q3kg0SPREemx6OFqbRSS_w" name="Trajectory" tooltipText="PublicOperationMode" outgoingEdges="_q3_XkCPREemx6OFqbRSS_w">
-          <target xmi:type="CoordinationExtension:PublicOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.1"/>
-          <semanticElements xmi:type="CoordinationExtension:PublicOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.1"/>
           <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_q3kg0iPREemx6OFqbRSS_w" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
             <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PublicOperationModeContainer']/@style"/>
           </ownedStyle>
           <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PublicOperationModeContainer']"/>
+          <target xmi:type="CoordinationExtension:PublicOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.1"/>
+          <semanticElements xmi:type="CoordinationExtension:PublicOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.1"/>
         </ownedDiagramElements>
         <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_q3kg0yPREemx6OFqbRSS_w" name="Demonstration" tooltipText="PublicOperationMode" outgoingEdges="_q3_-oCPREemx6OFqbRSS_w">
-          <target xmi:type="CoordinationExtension:PublicOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.3"/>
-          <semanticElements xmi:type="CoordinationExtension:PublicOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.3"/>
           <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_q3kg1CPREemx6OFqbRSS_w" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
             <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PublicOperationModeContainer']/@style"/>
           </ownedStyle>
           <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PublicOperationModeContainer']"/>
+          <target xmi:type="CoordinationExtension:PublicOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.3"/>
+          <semanticElements xmi:type="CoordinationExtension:PublicOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.3"/>
         </ownedDiagramElements>
         <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_q3lH4CPREemx6OFqbRSS_w" name="Simulation" tooltipText="PublicOperationMode" outgoingEdges="_q3_-oyPREemx6OFqbRSS_w">
-          <target xmi:type="CoordinationExtension:PublicOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.5"/>
-          <semanticElements xmi:type="CoordinationExtension:PublicOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.5"/>
           <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_q3lH4SPREemx6OFqbRSS_w" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
             <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PublicOperationModeContainer']/@style"/>
           </ownedStyle>
           <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PublicOperationModeContainer']"/>
+          <target xmi:type="CoordinationExtension:PublicOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.5"/>
+          <semanticElements xmi:type="CoordinationExtension:PublicOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.5"/>
         </ownedDiagramElements>
         <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_q3lH4iPREemx6OFqbRSS_w" name="trajectory" tooltipText="PrivateOperationMode" incomingEdges="_q3_XkCPREemx6OFqbRSS_w">
-          <target xmi:type="CoordinationExtension:PrivateOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.0"/>
-          <semanticElements xmi:type="CoordinationExtension:PrivateOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.0"/>
           <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_q3lH4yPREemx6OFqbRSS_w" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
             <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PrivateOperationModeContainer']/@style"/>
           </ownedStyle>
           <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PrivateOperationModeContainer']"/>
+          <target xmi:type="CoordinationExtension:PrivateOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.0"/>
+          <semanticElements xmi:type="CoordinationExtension:PrivateOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.0"/>
         </ownedDiagramElements>
         <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_q3lH5CPREemx6OFqbRSS_w" name="demonstration" tooltipText="PrivateOperationMode" incomingEdges="_q3_-oCPREemx6OFqbRSS_w">
-          <target xmi:type="CoordinationExtension:PrivateOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.2"/>
-          <semanticElements xmi:type="CoordinationExtension:PrivateOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.2"/>
           <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_q3lH5SPREemx6OFqbRSS_w" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
             <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PrivateOperationModeContainer']/@style"/>
           </ownedStyle>
           <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PrivateOperationModeContainer']"/>
+          <target xmi:type="CoordinationExtension:PrivateOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.2"/>
+          <semanticElements xmi:type="CoordinationExtension:PrivateOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.2"/>
         </ownedDiagramElements>
         <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_q3lu8CPREemx6OFqbRSS_w" name="simulation" tooltipText="PrivateOperationMode" incomingEdges="_q3_-oyPREemx6OFqbRSS_w">
-          <target xmi:type="CoordinationExtension:PrivateOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.4"/>
-          <semanticElements xmi:type="CoordinationExtension:PrivateOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.4"/>
           <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_q3lu8SPREemx6OFqbRSS_w" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
             <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PrivateOperationModeContainer']/@style"/>
           </ownedStyle>
           <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PrivateOperationModeContainer']"/>
+          <target xmi:type="CoordinationExtension:PrivateOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.4"/>
+          <semanticElements xmi:type="CoordinationExtension:PrivateOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.4"/>
         </ownedDiagramElements>
+        <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentOpenRave.component#//@component/@elements.16"/>
+        <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentOpenRave.component#//@component/@elements.16"/>
       </ownedDiagramElements>
       <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_q3lu8iPREemx6OFqbRSS_w" name="ComponentOpenRaveParams" tooltipText="ComponentParameters" outgoingEdges="_q3_-piPREemx6OFqbRSS_w">
-        <target xmi:type="ComponentParameter:ComponentParametersRef" href="model/ComponentOpenRave.component#//@component/@elements.17"/>
-        <semanticElements xmi:type="ComponentParameter:ComponentParametersRef" href="model/ComponentOpenRave.component#//@component/@elements.17"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
@@ -791,10 +814,12 @@
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentParametersContainer']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentParametersContainer']"/>
+        <target xmi:type="ComponentParameter:ComponentParametersRef" href="model/ComponentOpenRave.component#//@component/@elements.17"/>
+        <semanticElements xmi:type="ComponentParameter:ComponentParametersRef" href="model/ComponentOpenRave.component#//@component/@elements.17"/>
       </ownedDiagramElements>
       <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_SFXWACPSEemx6OFqbRSS_w" name="GripperEventServiceInHandler" tooltipText="InputHandler" incomingEdges="_SF-aACPSEemx6OFqbRSS_w">
-        <target xmi:type="ComponentDefinition:InputHandler" href="model/ComponentOpenRave.component#//@component/@elements.18"/>
-        <semanticElements xmi:type="ComponentDefinition:InputHandler" href="model/ComponentOpenRave.component#//@component/@elements.18"/>
+        <target xmi:type="componentDefinition:InputHandler" href="model/ComponentOpenRave.component#//@component/@elements.18"/>
+        <semanticElements xmi:type="componentDefinition:InputHandler" href="model/ComponentOpenRave.component#//@component/@elements.18"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
@@ -806,8 +831,8 @@
       </ownedDiagramElements>
     </ownedDiagramElements>
     <ownedDiagramElements xmi:type="diagram:DEdge" uid="_q3scoCPREemx6OFqbRSS_w" sourceNode="_5Yov0CPMEemx6OFqbRSS_w" targetNode="_q3BHMCPREemx6OFqbRSS_w">
-      <target xmi:type="PerformanceExtension:InputLinkExtension" href="model/ComponentOpenRave.component#//@component/@elements.13/@links.0"/>
-      <semanticElements xmi:type="PerformanceExtension:InputLinkExtension" href="model/ComponentOpenRave.component#//@component/@elements.13/@links.0"/>
+      <target xmi:type="performanceExtension:InputLinkExtension" href="model/ComponentOpenRave.component#//@component/@elements.13/@links.0"/>
+      <semanticElements xmi:type="performanceExtension:InputLinkExtension" href="model/ComponentOpenRave.component#//@component/@elements.13/@links.0"/>
       <ownedStyle xmi:type="diagram:EdgeStyle" uid="_q3wuECPREemx6OFqbRSS_w" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']/@style"/>
         <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_q3wuESPREemx6OFqbRSS_w"/>
@@ -815,8 +840,8 @@
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']"/>
     </ownedDiagramElements>
     <ownedDiagramElements xmi:type="diagram:DEdge" uid="_q3wuEiPREemx6OFqbRSS_w" sourceNode="_5YpW4iPMEemx6OFqbRSS_w" targetNode="_q3BHMCPREemx6OFqbRSS_w">
-      <target xmi:type="PerformanceExtension:InputLinkExtension" href="model/ComponentOpenRave.component#//@component/@elements.13/@links.1"/>
-      <semanticElements xmi:type="PerformanceExtension:InputLinkExtension" href="model/ComponentOpenRave.component#//@component/@elements.13/@links.1"/>
+      <target xmi:type="performanceExtension:InputLinkExtension" href="model/ComponentOpenRave.component#//@component/@elements.13/@links.1"/>
+      <semanticElements xmi:type="performanceExtension:InputLinkExtension" href="model/ComponentOpenRave.component#//@component/@elements.13/@links.1"/>
       <ownedStyle xmi:type="diagram:EdgeStyle" uid="_q3wuEyPREemx6OFqbRSS_w" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']/@style"/>
         <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_q3wuFCPREemx6OFqbRSS_w"/>
@@ -824,8 +849,8 @@
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']"/>
     </ownedDiagramElements>
     <ownedDiagramElements xmi:type="diagram:DEdge" uid="_q3yjQCPREemx6OFqbRSS_w" sourceNode="_5Yu2ciPMEemx6OFqbRSS_w" targetNode="_q2-q8CPREemx6OFqbRSS_w">
-      <target xmi:type="ComponentDefinition:OutputPort" href="model/ComponentOpenRave.component#//@component/@elements.0"/>
-      <semanticElements xmi:type="ComponentDefinition:OutputPort" href="model/ComponentOpenRave.component#//@component/@elements.0"/>
+      <target xmi:type="componentDefinition:OutputPort" href="model/ComponentOpenRave.component#//@component/@elements.0"/>
+      <semanticElements xmi:type="componentDefinition:OutputPort" href="model/ComponentOpenRave.component#//@component/@elements.0"/>
       <ownedStyle xmi:type="diagram:EdgeStyle" uid="_q3yjQSPREemx6OFqbRSS_w" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ActivityOutputEdge']/@style"/>
         <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_q3yjQiPREemx6OFqbRSS_w"/>
@@ -833,8 +858,8 @@
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ActivityOutputEdge']"/>
     </ownedDiagramElements>
     <ownedDiagramElements xmi:type="diagram:DEdge" uid="_q3yjQyPREemx6OFqbRSS_w" sourceNode="_q3AgICPREemx6OFqbRSS_w" targetNode="_q2-q8iPREemx6OFqbRSS_w">
-      <target xmi:type="ComponentDefinition:OutputPort" href="model/ComponentOpenRave.component#//@component/@elements.1"/>
-      <semanticElements xmi:type="ComponentDefinition:OutputPort" href="model/ComponentOpenRave.component#//@component/@elements.1"/>
+      <target xmi:type="componentDefinition:OutputPort" href="model/ComponentOpenRave.component#//@component/@elements.1"/>
+      <semanticElements xmi:type="componentDefinition:OutputPort" href="model/ComponentOpenRave.component#//@component/@elements.1"/>
       <ownedStyle xmi:type="diagram:EdgeStyle" uid="_q3yjRCPREemx6OFqbRSS_w" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ActivityOutputEdge']/@style"/>
         <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_q3yjRSPREemx6OFqbRSS_w"/>
@@ -842,8 +867,8 @@
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ActivityOutputEdge']"/>
     </ownedDiagramElements>
     <ownedDiagramElements xmi:type="diagram:DEdge" uid="_q31mkCPREemx6OFqbRSS_w" sourceNode="_q2-q9CPREemx6OFqbRSS_w" targetNode="_q3b98CPREemx6OFqbRSS_w">
-      <target xmi:type="ComponentDefinition:RequestHandler" href="model/ComponentOpenRave.component#//@component/@elements.15"/>
-      <semanticElements xmi:type="ComponentDefinition:RequestHandler" href="model/ComponentOpenRave.component#//@component/@elements.15"/>
+      <target xmi:type="componentDefinition:RequestHandler" href="model/ComponentOpenRave.component#//@component/@elements.15"/>
+      <semanticElements xmi:type="componentDefinition:RequestHandler" href="model/ComponentOpenRave.component#//@component/@elements.15"/>
       <ownedStyle xmi:type="diagram:EdgeStyle" uid="_q31mkSPREemx6OFqbRSS_w" targetArrow="OutputClosedArrow" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='RequestHandlerEdge']/@style"/>
         <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_q31mkiPREemx6OFqbRSS_w" showIcon="false"/>
@@ -851,8 +876,8 @@
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='RequestHandlerEdge']"/>
     </ownedDiagramElements>
     <ownedDiagramElements xmi:type="diagram:DEdge" uid="_q34p4CPREemx6OFqbRSS_w" name="upcall" sourceNode="_q29c0CPREemx6OFqbRSS_w" targetNode="_q3BHMiPREemx6OFqbRSS_w">
-      <target xmi:type="ComponentDefinition:InputHandler" href="model/ComponentOpenRave.component#//@component/@elements.14"/>
-      <semanticElements xmi:type="ComponentDefinition:InputHandler" href="model/ComponentOpenRave.component#//@component/@elements.14"/>
+      <target xmi:type="componentDefinition:InputHandler" href="model/ComponentOpenRave.component#//@component/@elements.14"/>
+      <semanticElements xmi:type="componentDefinition:InputHandler" href="model/ComponentOpenRave.component#//@component/@elements.14"/>
       <ownedStyle xmi:type="diagram:EdgeStyle" uid="_q34p4SPREemx6OFqbRSS_w" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputHandlerLink']/@style"/>
         <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_q34p4iPREemx6OFqbRSS_w" showIcon="false"/>
@@ -860,49 +885,49 @@
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputHandlerLink']"/>
     </ownedDiagramElements>
     <ownedDiagramElements xmi:type="diagram:DEdge" uid="_q39iYCPREemx6OFqbRSS_w" sourceNode="_q2_5EyPREemx6OFqbRSS_w" targetNode="_q3gPYCPREemx6OFqbRSS_w">
-      <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentOpenRave.component#//@component/@elements.16"/>
-      <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentOpenRave.component#//@component/@elements.16"/>
       <ownedStyle xmi:type="diagram:EdgeStyle" uid="_q39iYSPREemx6OFqbRSS_w" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CoordinationSlaveEdge']/@style"/>
         <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_q39iYiPREemx6OFqbRSS_w"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CoordinationSlaveEdge']"/>
+      <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentOpenRave.component#//@component/@elements.16"/>
+      <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentOpenRave.component#//@component/@elements.16"/>
     </ownedDiagramElements>
     <ownedDiagramElements xmi:type="diagram:DEdge" uid="_q3_XkCPREemx6OFqbRSS_w" sourceNode="_q3kg0SPREemx6OFqbRSS_w" targetNode="_q3lH4iPREemx6OFqbRSS_w">
-      <target xmi:type="CoordinationExtension:PublicOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.1"/>
       <ownedStyle xmi:type="diagram:EdgeStyle" uid="_q3_XkSPREemx6OFqbRSS_w" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='PrivateOperationModeEdge']/@style"/>
         <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_q3_XkiPREemx6OFqbRSS_w" showIcon="false"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='PrivateOperationModeEdge']"/>
+      <target xmi:type="CoordinationExtension:PublicOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.1"/>
     </ownedDiagramElements>
     <ownedDiagramElements xmi:type="diagram:DEdge" uid="_q3_-oCPREemx6OFqbRSS_w" sourceNode="_q3kg0yPREemx6OFqbRSS_w" targetNode="_q3lH5CPREemx6OFqbRSS_w">
-      <target xmi:type="CoordinationExtension:PublicOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.3"/>
       <ownedStyle xmi:type="diagram:EdgeStyle" uid="_q3_-oSPREemx6OFqbRSS_w" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='PrivateOperationModeEdge']/@style"/>
         <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_q3_-oiPREemx6OFqbRSS_w" showIcon="false"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='PrivateOperationModeEdge']"/>
+      <target xmi:type="CoordinationExtension:PublicOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.3"/>
     </ownedDiagramElements>
     <ownedDiagramElements xmi:type="diagram:DEdge" uid="_q3_-oyPREemx6OFqbRSS_w" sourceNode="_q3lH4CPREemx6OFqbRSS_w" targetNode="_q3lu8CPREemx6OFqbRSS_w">
-      <target xmi:type="CoordinationExtension:PublicOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.5"/>
       <ownedStyle xmi:type="diagram:EdgeStyle" uid="_q3_-pCPREemx6OFqbRSS_w" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='PrivateOperationModeEdge']/@style"/>
         <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_q3_-pSPREemx6OFqbRSS_w" showIcon="false"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='PrivateOperationModeEdge']"/>
+      <target xmi:type="CoordinationExtension:PublicOperationMode" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.5"/>
     </ownedDiagramElements>
     <ownedDiagramElements xmi:type="diagram:DEdge" uid="_q3_-piPREemx6OFqbRSS_w" sourceNode="_q3lu8iPREemx6OFqbRSS_w" targetNode="_q2_5EyPREemx6OFqbRSS_w">
-      <target xmi:type="ComponentParameter:ComponentParametersRef" href="model/ComponentOpenRave.component#//@component/@elements.17"/>
       <ownedStyle xmi:type="diagram:EdgeStyle" uid="_q3_-pyPREemx6OFqbRSS_w" sourceArrow="InputArrow" targetArrow="NoDecoration" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ParametersEdge']/@style"/>
         <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_q3_-qCPREemx6OFqbRSS_w"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ParametersEdge']"/>
+      <target xmi:type="ComponentParameter:ComponentParametersRef" href="model/ComponentOpenRave.component#//@component/@elements.17"/>
     </ownedDiagramElements>
     <ownedDiagramElements xmi:type="diagram:DEdge" uid="_SF-aACPSEemx6OFqbRSS_w" name="upcall" sourceNode="_5Yp98SPMEemx6OFqbRSS_w" targetNode="_SFXWACPSEemx6OFqbRSS_w">
-      <target xmi:type="ComponentDefinition:InputHandler" href="model/ComponentOpenRave.component#//@component/@elements.18"/>
-      <semanticElements xmi:type="ComponentDefinition:InputHandler" href="model/ComponentOpenRave.component#//@component/@elements.18"/>
+      <target xmi:type="componentDefinition:InputHandler" href="model/ComponentOpenRave.component#//@component/@elements.18"/>
+      <semanticElements xmi:type="componentDefinition:InputHandler" href="model/ComponentOpenRave.component#//@component/@elements.18"/>
       <ownedStyle xmi:type="diagram:EdgeStyle" uid="_SF_BECPSEemx6OFqbRSS_w" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputHandlerLink']/@style"/>
         <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_SF_BESPSEemx6OFqbRSS_w" showIcon="false"/>
@@ -910,17 +935,17 @@
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputHandlerLink']"/>
     </ownedDiagramElements>
     <ownedDiagramElements xmi:type="diagram:DEdge" uid="_Xk890HI3EemE1fI5iy6r3Q" sourceNode="_q2_5EyPREemx6OFqbRSS_w" targetNode="_q2-q8iPREemx6OFqbRSS_w">
-      <target xmi:type="CoordinationExtension:CommunicationServiceUsageRealization" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.6"/>
-      <semanticElements xmi:type="CoordinationExtension:CommunicationServiceUsageRealization" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.6"/>
       <ownedStyle xmi:type="diagram:EdgeStyle" uid="_Xk9k4HI3EemE1fI5iy6r3Q" targetArrow="NoDecoration" size="2">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CommunicationServiceUsageRealizationEdge']/@style"/>
         <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_Xk9k4XI3EemE1fI5iy6r3Q"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CommunicationServiceUsageRealizationEdge']"/>
+      <target xmi:type="CoordinationExtension:CommunicationServiceUsageRealization" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.6"/>
+      <semanticElements xmi:type="CoordinationExtension:CommunicationServiceUsageRealization" href="model/ComponentOpenRave.component#//@component/@elements.16/@elements.6"/>
     </ownedDiagramElements>
     <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
     <filterVariableHistory xmi:type="diagram:FilterVariableHistory" uid="_xFvsliPMEemx6OFqbRSS_w"/>
     <activatedLayers xmi:type="description_1:Layer" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer"/>
-    <target xmi:type="ComponentDefinition:ComponentDefModel" href="model/ComponentOpenRave.component#/"/>
+    <target xmi:type="componentDefinition:ComponentDefModel" href="model/ComponentOpenRave.component#/"/>
   </diagram:DSemanticDiagram>
 </xmi:XMI>

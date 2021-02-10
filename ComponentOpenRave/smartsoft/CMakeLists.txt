@@ -27,7 +27,7 @@ SMART_COMPONENT_PROJECT()
 # find SmartSoft package
 #FIND_SMARTSOFT(3.0)
 #FIXME: generalize this
-FIND_PACKAGE(AceSmartSoft PATHS $ENV{SMART_ROOT_ACE})
+FIND_PACKAGE(AceSmartSoft PATHS $ENV{SMART_ROOT_ACE}/build)
 
 # generte doxygen documentation
 SMART_COMPONENT_GENERATE_DOC()
@@ -41,6 +41,8 @@ SMART_COMPONENT_AUTOBUILD_DEPENDENCIES()
 
 # you can add additional external libraries using regular CMake commands, e.g.:
 #FIND_PACKAGE(<SomePackageName>)
+FIND_PACKAGE(XercesC REQUIRED)
+FIND_PACKAGE(PythonLibs 2.7 REQUIRED)
 
 INCLUDE(${CMAKE_CURRENT_LIST_DIR}/src-gen/MixedPortIncludes.cmake)
 
@@ -49,6 +51,8 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_LIST_DIR}/src
   ${CMAKE_CURRENT_LIST_DIR}/src-gen
   ${CMAKE_CURRENT_LIST_DIR}/src-gen/params
+  ${XercesC_INCLUDE_DIRS}
+  ${PYTHON_INCLUDE_DIR}
 )
 
 # collect the toolchain-generated source-files
@@ -63,7 +67,7 @@ FILE(GLOB_RECURSE SRC_GEN_PARAMS ${CMAKE_CURRENT_LIST_DIR}/src-gen/params/*.cc)
 ADD_EXECUTABLE(${PROJECT_NAME} ${SRC} ${SRC_GEN} ${SRC_GEN_PARAMS} ${FURTHER_SRCS}) # add ${USER_SRC} (if needed)
 
 # link your external libraries here (if there are any)
-#TARGET_LINK_LIBRARIES(${PROJECT_NAME} <your-libs>)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${XercesC_LIBRARIES} ${PYTHON_LIBRARY})
 
 INCLUDE(${CMAKE_CURRENT_LIST_DIR}/src-gen/MixedPortTargetConfigs.cmake)
 

@@ -1,233 +1,122 @@
-(define-tcb (loadenv ?envId)
-	(module "manipulationPlannerModule")
+(define-tcb (graspObject ?obj-id)
+  (rules (rule-tcb-grasp-object-real-failed 
+           rule-tcb-grasp-object-real-collision-failed 
+           rule-tcb-grasp-object-real-ik-solution-failed
+           rule-tcb-grasp-object-real-success
+           rule-tcb-grasp-object-real-success-empty))
   (action (
-            (format t "=========================>>> tcb-load-env-into-openrave ~s ~%" '?envId)
-            (tcl-state :server 'manipPlanning :state "Neutral")
-            (tcl-param :server 'manipPlanning :slot 'COMMMANIPULATIONPLANNEROBJECTS.MANIPULATIONPLANNERPARAMETER.ENV_LOAD_OBJECTRECOGNITION :value ?envId)
-            (sleep 2)
-            '(SUCCESS ()))))
+          (format t "=========================>>> tcb-grasp-object real ~%")))
+  (plan (
+          ;(tcb-gripper open)
+          ;(tcb-grasp-object move-manipulator ?obj-id)
+          (move ?obj-id)
+          ;(tcb-gripper close)
+          )))
             
-(define-tcb (clearenv)
+(define-tcb (move ?obj-id)
   (module "manipulationPlannerModule")
   (action (
-            (format t "=========================>>> tcb-clear-env-openrave ~%")
-            (tcl-state :server 'manipPlanning :state "Neutral")
-            (tcl-param :server 'manipPlanning :slot 'COMMMANIPULATIONPLANNEROBJECTS.MANIPULATIONPLANNERPARAMETER.ENV_CLEAR)
-            '(SUCCESS ()))))
+            (format t "=========================>>> move ~d ~%" '?obj-id)
+            (let* ((obj (tcl-kb-query :key '(is-a id) :value '((is-a object)(id ?obj-id))))
+                   (pose (get-value obj 'pose))
+                   (type (get-value obj 'type))
+                   (obj-class (tcl-kb-query :key '(is-a type) :value `((is-a object-class)(type ,type))))
+                   (grasp-strategy (first (get-value obj-class 'grasping)))
+                   (grasp-angles (second (get-value obj-class 'grasping)))
+                   ;(speech (get-value obj 'speech))
+                   )
+           
+              (tcl-state :server 'cs_trajPlanning :state "Neutral")
+              
+		;; Timo
+	      (setf grasp-angles `(,(first grasp-angles),(second grasp-angles),(third grasp-angles),(fourth grasp-angles), (fifth grasp-angles), (sixth grasp-angles), (-(*(nth 10 pose)57.296)0.5) ,(+(*(nth 10 pose)57.296)0.5),(-(*(nth 11 pose)57.296)0.5) ,(+(*(nth 11 pose)57.296)0.5),(nth 10 grasp-angles), (nth 11 grasp-angles)))
+	      
 
-(define-tcb (deleteobj ?obj-id)
+	   
+              (format t "GRASP-ANGLES 2: ~s ~s~%" grasp-strategy grasp-angles)
+	      (tcl-param :server 'cs_trajPlanning :slot grasp-strategy :value grasp-angles)
+              (tcl-param :server 'cs_trajPlanning :slot 'COMMIT)
+              (tcl-state :server 'cs_trajExecution :state "Trajectory")
+              (tcl-state :server 'cs_trajPlanning :state "Trajectory")
+              (tcl-activate-event :name 'evt-traj 
+                                  :handler 'handler-grasping 
+                                  :server 'cs_trajExecution 
+                                  :service 'manipulatorevent 
+                                  :mode 'continuous)
+              ;(tcl-activate-event :name 'evt-grasp-openrave
+              ;                    :handler 'handler-grasping-openrave
+              ;                    :server 'openrave 
+              ;                    :service 'trajectoryevent
+              ;                    :mode 'continuous)
+              ;; Timo
+	      ;; Center Pose
+	      ;;(setf pose `(,(first pose) ,(second pose) ,(third pose) 0 0 0))
+	      ;; Oberflächen Pose
+              (setf pose `(,(eighth pose) ,(ninth pose) ,(tenth pose) 0 0 0))
+	      ;;(setf pose `(,(eighth pose) ,(ninth pose) ,(tenth pose), (nth 10 pose), (nth 11 pose), (nth 12 pose)))            
+
+              (format t "pose: ~s ~%" pose)
+              
+              ;(tcl-send :server 'openrave 
+              ;         :service 'trajectory 
+              ;          :param (append (list 'POSE) pose))
+                        
+              (tcl-param :server 'cs_trajPlanning :slot 'COMMMANIPULATIONPLANNEROBJECTS.MANIPULATIONPLANNERPARAMETER.PLAN_PATH_TARGET_TCP_POSE :value pose)
+
+                        
+              '(SUCCESS ())))))
+              
+              
+(define-tcb (setManipulatorPose ?pose)
   (module "manipulationPlannerModule")
-  (action (
-            (format t "=========================>>> tcb-delete-obj-from-openrave ~s ~%" '?obj-id)
-            (tcl-state :server 'manipPlanning :state "Neutral")
-            (tcl-param :server 'manipPlanning :slot 'COMMMANIPULATIONPLANNEROBJECTS.MANIPULATIONPLANNERPARAMETER.OBJ_DELETE :value ?obj-id)
-            '(SUCCESS ()))))
-
-(define-tcb (graspobjects real ?obj-id)
-   (module "manipulationPlannerModule")
-   (plan (
-          (tcb-gripper open) ;; manipulation.lisp
-          (tcb-grasp-object move-manipulator ?obj-id) ;; manipulation.lisp
-	  	  (tcb-gripper close) ;; manipulation.lisp
-          ))
-)
-
-(define-tcb (graspobjects-no-gripper-actions real ?obj-id)
-   (module "manipulationPlannerModule")
-   (plan (
-          (tcb-grasp-object move-manipulator-new ?obj-id) ;; manipulation.lisp
-          ))
-)
-
-; (execute '(tcb-gripper open))
-(define-tcb (tcb-gripper open)
-  (module "manipulationPlannerModule")
-  (action (
-            (format t "=========================>>> tcb-gripper open~%")
-            ;;(tcl-activate-event :handler 'handler-gripper
-            ;;                    :server 'gazeboManip
-            ;;                    :service 'goalevent
-            ;;                    :mode 'continuous)
+  (precondition  (not (equal '() (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a manipulator-pose) (name ?pose))) 'angles))))
+  (action ((format t "=========================>>> tcb-manipulator-pose ~s ~%" '?pose)
             
-            ;(tcl-state :server 'gazeboManip
-            ;           :state "Active")
+           (let* ((gripper-before (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a manipulator-pose) (name ?pose))) 'gripper-before))
+                  (gripper-after (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a manipulator-pose) (name ?pose))) 'gripper-after))
+                  (angles (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a manipulator-pose) (name ?pose))) 'angles)))
             
-            (tcl-param :server 'gazeboManip 
-                       :slot 'COMMMANIPULATOROBJECTS.GRIPPERPARAMETER.GRIPPER_OPEN)
-            
-                                
-            '(SUCCESS ()))))
-
-(define-tcb (tcb-gripper-release open ?obj-id)
-  (module "manipulationPlannerModule")
-  (action (
-            (format t "=========================>>> tcb-gripper open~%")
-            ;;(tcl-activate-event :handler 'handler-gripper
-            ;;                    :server 'gazeboManip
-            ;;                    :service 'goalevent
-            ;;                    :mode 'continuous)
-            
-            ;(tcl-state :server 'gazeboManip
-            ;           :state "Active")
-            
-            (tcl-param :server 'gazeboManip 
-                       :slot 'COMMMANIPULATOROBJECTS.GRIPPERPARAMETER.GRIPPER_OPEN)
-
-	    (tcl-param :server 'manipPlanning :slot 'COMMMANIPULATIONPLANNEROBJECTS.MANIPULATIONPLANNERPARAMETER.PLANNING_RELEASEOBJ :value ?obj-id)
-                                
-            '(SUCCESS ()))))
-
-
-            
-; (execute '(tcb-gripper close))
-(define-tcb (tcb-gripper close)
-  (module "manipulationPlannerModule")
-  (action (
-            (format t "=========================>>> tcb-gripper close~%")
-            ;;(tcl-activate-event :handler 'handler-gripper
-            ;;                    :server 'gazeboManip 
-            ;;                    :service 'goalevent
-            ;;                    :mode 'continuous)
-            
-            ;(tcl-state :server 'gazeboManip 
-            ;           :state "active")
-            (tcl-param :server 'gazeboManip
-                       :slot 'COMMMANIPULATOROBJECTS.GRIPPERPARAMETER.GRIPPER_CLOSE)
-            
-            '(SUCCESS ()))))
+           ;(cond
+           ;  ((not (null gripper-after))
+           ;   (tcl-push-plan :plan `((tcb-gripper ,gripper-after)))))
              
-;; handler-gripper
-(define-event-handler (handler-gripper)
+           (tcl-push-plan :plan `((tcb-manipulator-pose-angles ,angles)))
+             
+           ;(cond
+           ;  ((not (null gripper-before))
+           ;   (tcl-push-plan :plan `((tcb-gripper ,gripper-before)))))
+             
+            '(SUCCESS ())) 
+            ))
+            
+             ; (plan (
+	;		(tcb-manipulator-pose-angles ?pose)
+         ;	 ))
+            
+)
+            
+(define-tcb (tcb-manipulator-pose-angles ?angles)
+  (module "manipulationPlannerModule")
   (action (
-            (format t "=========================>>> HANDLER GRIPPER ~s ~%~%" (tcl-event-message))
-            (cond 
-              ((equal (tcl-event-message) '(reached))
-                (format t "=========================>>> GOAL REACHED !!! ~%")
-                (tcl-state :server 'gazeboManip :state "Neutral")
-                (tcl-abort)
-                '(SUCCESS ()))
-              ((equal (tcl-event-message) '(reached empty))
-                (format t "=========================>>> GOAL REACHED EMPTY !!! ~%")
-                (tcl-state :server 'gazeboManip :state "Neutral")
-                (tcl-abort)
-                '(ERROR (GRIPPER EMPTY)))
-              ))))
-              
- (define-tcb (tcb-grasp-object move-manipulator ?obj-id)
- 	(module "manipulationPlannerModule")
-  	(action (
-            (format t "=========================>>> tcb-grasp-object move-manipulator ~d ~%" '?obj-id)
+            (format t "=========================>>> tcb-manipulator-pose-angles ~s ~%" '?angles)
+            (tcl-activate-event :name 'evt-traj 
+                                :handler 'handler-grasping
+                               :server 'cs_trajExecution 
+                                :service 'manipulatorevent 
+                                :mode 'continuous)
+            ;(tcl-activate-event :name 'evt-grasp-openrave
+            ;                   :handler 'handler-planning
+            ;                  :server 'cs_trajPlanning 
+            ;                 :service 'plannerevent
+            ;                :mode 'continuous)
+                
+              (tcl-state :server 'cs_trajExecution :state "Trajectory")
+              (tcl-state :server 'cs_trajPlanning :state "Trajectory")
             
-	    (let* ((obj (tcl-kb-query :key '(is-a id) :value '((is-a object)(id ?obj-id))))
-                   (pose (get-value obj 'pose))
-                   (type (get-value obj 'type))
-                   (obj-class (tcl-kb-query :key '(is-a type) :value `((is-a object-class)(type ,type))))
-                   (grasp-strategy (first (get-value obj-class 'grasping)))
-                   (grasp-angles (second (get-value obj-class 'grasping)))
-                   ;;(speech (get-value obj 'speech))
-                  )
-           
-              (tcl-state :server 'manipPlanning :state "Neutral")
-	      
-	      (format t "pose: ~s ~%" pose)
-              (format t "GRASP-ANGLES 1: ~s ~s~%" grasp-strategy grasp-angles)
-	      
- 	      ;;Timo
-	      ;;(setf grasp-angles `(,(first grasp-angles),(second grasp-angles),(third grasp-angles),(fourth grasp-angles), (fifth grasp-angles), (sixth grasp-angles), (-(*(fourth pose)57.296)0.5) ,(+(*(fourth 
-	      ;;pose)57.296)0.5),(-(*(fifth pose)57.296)0.5) ,(+(*(fifth pose)57.296)0.5),(nth 10 grasp-angles), (nth 11 grasp-angles)))
-              ;;(format t "GRASP-ANGLES 2: ~s ~s~%" grasp-strategy grasp-angles)
-	      ;;(tcl-param :server 'manipPlanning :slot grasp-strategy :value grasp-angles) ;; Timo: Parsing error in SmartLispServer
-              
-	      (tcl-param :server 'manipPlanning :slot 'COMMIT)
-              (tcl-state :server 'gazeboManip :state "Trajectory")
-              (tcl-state :server 'manipPlanning :state "Trajectory")
-              
-	      (tcl-activate-event :name 'evt-traj 
-                                  :handler 'handler-grasping 
-                                  :server 'gazeboManip 
-                                  :service 'manipulatorevent 
-                                  :mode 'continuous)
-              
-	      ;(tcl-activate-event :name 'evt-grasp-openrave
-              ;                    :handler 'handler-grasping-openrave
-              ;                    :server 'manipPlanning 
-              ;                    :service 'plannerevent
-              ;                    :mode 'continuous)
-              
-	      ;;Timo
-	      ;;Center Pose
-	      ;;(setf pose `(,(first pose) ,(second pose) ,(third pose) ,(fourth pose) ,(fifth pose) ,(sixth pose)))
-	      ;;Oberflächen Pose
-              ;;(setf pose `(,(eighth pose) ,(ninth pose) ,(tenth pose) 0 0 0))
-	      ;;(setf pose `(,(eighth pose) ,(ninth pose) ,(tenth pose), (nth 10 pose), (nth 11 pose), (nth 12 pose)))            
-              ;;(format t "pose: ~s ~%" pose)
-              
-	      ;;(tcl-send :server 'manipPlanning :service 'trajectory :param (append (list 'POSE) pose))
+            (tcl-param :server 'cs_trajPlanning :slot 'COMMMANIPULATIONPLANNEROBJECTS.MANIPULATIONPLANNERPARAMETER.PLAN_PATH_TARGET_JOINT_ANGLES :value '(?angles))
 
-	      (tcl-param :server 'manipPlanning :slot 'COMMMANIPULATIONPLANNEROBJECTS.MANIPULATIONPLANNERPARAMETER.PLAN_PATH_TARGET_TCP_POSE :value `(,(first pose) ,(second pose) ,(third pose) ,(fourth pose) ,(fifth pose) ,(sixth pose)))
-
-              '(SUCCESS ())
-	))))
-
-
- (define-tcb (tcb-grasp-object move-manipulator-new ?obj-id)
- 	(module "manipulationPlannerModule")
-  	(action (
-            (format t "=========================>>> tcb-grasp-object move-manipulator ~d ~%" '?obj-id)
+            '(SUCCESS ()))))
             
-	    (let* ((obj (tcl-kb-query :key '(is-a id) :value '((is-a object)(id ?obj-id))))
-                   (pose (get-value obj 'pose))
-                   (type (get-value obj 'type))
-                   (obj-class (tcl-kb-query :key '(is-a type) :value `((is-a object-class)(type ,type))))
-                   (grasp-strategy (first (get-value obj-class 'grasping)))
-                   (grasp-angles (second (get-value obj-class 'grasping)))
-                   ;;(speech (get-value obj 'speech))
-                  )
-           
-              (tcl-state :server 'manipPlanning :state "Neutral")
-	      
-	      (format t "pose: ~s ~%" pose)
-              (format t "GRASP-ANGLES 1: ~s ~s~%" grasp-strategy grasp-angles)
-	      
- 	      ;;Timo
-	      ;;(setf grasp-angles `(,(first grasp-angles),(second grasp-angles),(third grasp-angles),(fourth grasp-angles), (fifth grasp-angles), (sixth grasp-angles), (-(*(fourth pose)57.296)0.5) ,(+(*(fourth 
-	      ;;pose)57.296)0.5),(-(*(fifth pose)57.296)0.5) ,(+(*(fifth pose)57.296)0.5),(nth 10 grasp-angles), (nth 11 grasp-angles)))
-              ;;(format t "GRASP-ANGLES 2: ~s ~s~%" grasp-strategy grasp-angles)
-	      ;;(tcl-param :server 'manipPlanning :slot grasp-strategy :value grasp-angles) ;; Timo: Parsing error in SmartLispServer
-              
-	      (tcl-param :server 'manipPlanning :slot 'COMMIT)
-              (tcl-state :server 'gazeboManip :state "Trajectory")
-              (tcl-state :server 'manipPlanning :state "Trajectory")
-              
-	      (tcl-activate-event :name 'evt-traj 
-                                  :handler 'handler-grasping 
-                                  :server 'gazeboManip 
-                                  :service 'manipulatorevent 
-                                  :mode 'continuous)
-              
-	      ;(tcl-activate-event :name 'evt-grasp-openrave
-              ;                    :handler 'handler-grasping-openrave
-              ;                    :server 'manipPlanning 
-              ;                    :service 'plannerevent
-              ;                    :mode 'continuous)
-              
-	      ;;Timo
-	      ;;Center Pose
-	      (setf pose `(,(first pose) ,(second pose) ,(+(third pose)0.05) ,(fourth pose) ,(fifth pose) ,(sixth pose)))
-	      ;;Oberflächen Pose
-              ;;(setf pose `(,(eighth pose) ,(ninth pose) ,(tenth pose) 0 0 0))
-	      ;;(setf pose `(,(eighth pose) ,(ninth pose) ,(tenth pose), (nth 10 pose), (nth 11 pose), (nth 12 pose)))            
-              ;;(format t "pose: ~s ~%" pose)
-              
-	      ;;(tcl-send :server 'manipPlanning :service 'trajectory :param (append (list 'POSE) pose))
-
-	      (tcl-param :server 'manipPlanning :slot 'COMMMANIPULATIONPLANNEROBJECTS.MANIPULATIONPLANNERPARAMETER.PLAN_PATH_TARGET_TCP_POSE :value `(,(first pose) ,(second pose) ,(third pose) ,(fourth pose) ,(fifth pose) ,(sixth pose)))
-
-              '(SUCCESS ())
-	))))
-
-
-              
 ;; handler-grasping
 (define-event-handler (handler-grasping)
   (module "manipulationPlannerModule")
@@ -237,14 +126,14 @@
                 ;; ok
                 ((equal (tcl-event-message) "(GOAL REACHED)")
                   (format t "=========================>>> goal reached !!! obj-id ~s ~%" '?obj-id)
-                  (tcl-state :server 'manipPlanning :state "Neutral") 
-                  (tcl-param :server 'manipPlanning :slot 'COMMMANIPULATIONPLANNEROBJECTS.MANIPULATIONPLANNERPARAMETER.PLANNING_GRASPOBJ :value '?obj-id)
+                  (tcl-state :server 'cs_trajPlanning :state "Neutral") 
+                  ;(tcl-param :server 'cs_trajPlanning :slot 'COMMMANIPULATIONPLANNEROBJECTS.MANIPULATIONPLANNERPARAMETER.OPENRAVE_GRASPOBJ :value '?obj-id)
                 ;; TODO: Check error obj-id unbound  
-		;;(tcl-kb-update :key '(is-a id) 
-                   ;;              :value `(
-                     ;;                      (is-a OBJECT)
-                       ;;                    (id ,?obj-id)
-                         ;;                  (status IN_GRIPPER)))
+		  (tcl-kb-update :key '(is-a id) 
+                                 :value `(
+                                           (is-a OBJECT)
+                                           (id ?obj-id)
+                                           (status IN_GRIPPER)))
                   (tcl-abort)
                   '(SUCCESS ()))
 
@@ -254,69 +143,19 @@
                   (tcl-send :server 'tts 
                        :service 'say 
                        :param (format nil "Oh sorry, it seems that I collided with an object." ))
-                  (tcl-kb-update :key '(is-a id) 
-                                 :value `(
-                                           (is-a OBJECT)
-                                           (id ,?obj-id)
-                                           (status NOT_GRASPABLE)))
+; commented out by Matthias R., is done in scenario.lisp
+;                  (tcl-kb-update :key '(is-a id) 
+;                                 :value `(
+;                                           (is-a OBJECT)
+;                                           (id ,?obj-id)
+;                                           (status NOT_GRASPABLE)))
                   (tcl-abort)
                   '(ERROR (GRASPING COLLISION)))
 
                 ;; out of range
                 ((equal (tcl-event-message) '(value out of range))
                   (format t "=========================>>> value out of range !!! ~%")   
-	          (tcl-state :server 'gazeboManip :state "Neutral")
-                  (tcl-kb-update :key '(is-a id) 
-                                 :value `(
-                                           (is-a OBJECT)
-                                           (id ,?obj-id)
-                                           (status NOT_GRASPABLE)))
-                  (tcl-abort)
-                  '(ERROR (GRASPING FAILED)))))))
-
-
-
-;; handler-grasping-openrave
-(define-event-handler (handler-grasping-openrave)
-(module "manipulationPlannerModule")
-  (action (
-            (format t "=========================>>> HANDLER GRASPING OPENRAVE ~s ~%~%" (tcl-event-message))
-            (cond
-                ;; path found
-                ((equal (first (tcl-event-message)) '(PATH FOUND))
-                  (format t "=========================>>> PATH FOUND !!! obj-id ~s ~%" '?obj-id))
-              
-                ;; planning path
-                ((equal (first (tcl-event-message)) '(PLANNING_PATH))
-                  (format t "=========================>>> PLANNING_PATH !!! obj-id ~s ~%" '?obj-id)
-                  (let* ((obj (tcl-kb-query :key '(is-a id) :value '((is-a object)(id ?obj-id))))
-                         (pose (get-value obj 'pose))
-                         (grasp-offset nil)
-                         (manip-pose nil)
-                         (obj-point nil))
-                    (setf obj-point `(,(first pose) ,(second pose) ,(third pose)))
-                 ;   (setf manip-pose `(,(first (second (tcl-event-message))) ,(second (second (tcl-event-message))) 
-                 ;                      ,(third (second (tcl-event-message))) ,(- (fourth (second (tcl-event-message))) (/ pi 2))
-                 ;                      ,(+ (fifth (second (tcl-event-message))) (/ pi 2)) ,(sixth (second (tcl-event-message)))))
-                   
-                    (setf manip-pose `(,(first (second (tcl-event-message))) ,(second (second (tcl-event-message))) 
-                                       ,(third (second (tcl-event-message))) ,(fourth (second (tcl-event-message))) 
-                                       ,(fifth (second (tcl-event-message))) ,(sixth (second (tcl-event-message)))))
-                    
-                    (setf grasp-offset (eval (append '(getPointRelativeToPose) manip-pose obj-point)))
-                    (format t "######## grasp-offset ~s ~%~%~%~%" grasp-offset)
-                    (tcl-kb-update :key '(is-a id) 
-                                   :value `(
-                                             (is-a OBJECT)
-                                             (id ?obj-id)
-                                             (current-grasp-offset ,grasp-offset)))))
-              
-                ;; no ik solution found
-                ((equal (first (tcl-event-message)) '(NO IK SOLUTION FOUND))
-                  (format t "=========================>>> NO IK SOLUTION FOUND !!! ~%")   
-                  (tcl-send :server 'tts 
-                       :service 'say 
-                       :param (format nil "Sorry, I was not able to calculate a path." ))
+	          (tcl-state :server 'manipulator :state "Neutral")
                   (tcl-kb-update :key '(is-a id) 
                                  :value `(
                                            (is-a OBJECT)
@@ -324,101 +163,12 @@
                                            (status NOT_GRASPABLE)))
                   (tcl-abort)
                   '(ERROR (GRASPING FAILED)))
-              
-                ;; no path found
-                ((equal (first (tcl-event-message)) '(NO PATH FOUND))
-                  (format t "=========================>>> NO PATH FOUND !!! ~%")
-                  (tcl-send :server 'tts 
-                       :service 'say 
-                       :param (format nil "Sorry, I was not able to calculate a path." ))
-                  (tcl-kb-update :key '(is-a id) 
-                                 :value `(
-                                           (is-a OBJECT)
-                                           (id ,?obj-id)
-                                           (status NOT_GRASPABLE)))   
-                  (tcl-abort)
-                  '(ERROR (GRASPING FAILED)))))))
                   
+                  (t (format t "NO MATCH ~%"))
+                  )
+                  )))
                   
-;; ANGLE Planning
-
-; angles
-(define-tcb (tcb-manipulator-pose-angles ?angles)
-(module "manipulationPlannerModule")
-  (action (
-            (format t "=========================>>> tcb-manipulator-pose-angles ~s ~%" '?angles)
-            (tcl-activate-event :name 'evt-traj 
-                                :handler 'handler-grasping
-                               :server 'gazeboManip 
-                                :service 'manipulatorevent 
-                                :mode 'continuous)
-            ;(tcl-activate-event :name 'evt-grasp-openrave
-             ;                   :handler 'handler-manipulator-pose-openrave
-              ;                  :server 'manipPlanning 
-               ;                 :service 'plannerevent
-                ;                :mode 'continuous)
-            (tcl-state :server 'gazeboManip :state "Trajectory")
-            (tcl-state :server 'manipPlanning :state "Trajectory")
-            
-            ;(tcl-send :server 'manipPlanning 
-             ;         :service 'trajectory 
-		      ;        :param (append (list 'ANGLES) (list (length '?angles)) '?angles))
-            
-            ;(tcl-param :server 'manipPlanning :slot 'COMMMANIPULATIONPLANNEROBJECTS.MANIPULATIONPLANNERPARAMETER.PLAN_PATH_TARGET_TCP_POSE :value `(,(first pose) ,(second pose) ,(third pose) ,(fourth pose) ,(fifth pose) ,(sixth pose)))
-
-;(let ((x '(0 0 0)))
-;            (tcl-param :server 'manipPlanning :slot 'COMMMANIPULATIONPLANNEROBJECTS.MANIPULATIONPLANNERPARAMETER.PLAN_PATH_TARGET_JOINT_ANGLES :value x)
-;            )
-
-            (tcl-param :server 'manipPlanning :slot 'COMMMANIPULATIONPLANNEROBJECTS.MANIPULATIONPLANNERPARAMETER.PLAN_PATH_TARGET_JOINT_ANGLES :value '(?angles))
-
-            '(SUCCESS ()))))
-            
-            	      ;(tcl-activate-event :name 'evt-traj 
-                       ;           :handler 'handler-grasping 
-                        ;          :server 'gazeboManip 
-                         ;         :service 'manipulatorevent 
-                          ;        :mode 'continuous)
-            
-;; handler-trajectory Matthias
-(define-event-handler (handler-trajectory)
-(module "manipulationPlannerModule")
-  (action (
-            (format t "=========================>>> HANDLER TRAJECTORY: ~s ~%~%" (tcl-event-message))
-            (cond
-                ;; goal reached
-                ((equal (tcl-event-message) '(goal reached))
-                  (format t "=========================>>> goal reached !!! ~%")   
-                  (tcl-abort)
-                  '(SUCCESS ()))
-
-	    	;; goal not reached
-                ;((equal (tcl-event-message) '(goal not reached))
-                ;  (format t "=========================>>> goal not reached !!! ~%")   
-                ;  (tcl-abort)
-                ;  '(SUCCESS ()))
-              
-                ;; goal reached gripper empty
-                ((equal (tcl-event-message) '(goal reached gripper empty))
-                  (format t "=========================>>> goal reached gripper empty !!! ~%")   
-                  (tcl-abort)
-                  '(SUCCESS ()))
-              
-                ;; collision
-                ((equal (tcl-event-message) '(collision))
-                  (format t "=========================>>> collision detected !!! ~%")   
-                  (tcl-abort)
-                  '(ERROR (COLLISION)))
-              
-                ;; value out of range
-                ((equal (tcl-event-message) '(value out of range))
-                  (format t "=========================>>> value out of range !!! ~%")   
-                  (tcl-abort)
-                  '(ERROR (NO PATH)))))))
-
-;; handler-manipulator-pose-openrave
-(define-event-handler (handler-manipulator-pose-openrave)
-(module "manipulationPlannerModule")
+(define-event-handler (handler-planning)
   (action (
             (format t "=========================>>> HANDLER MANIPULATOR POSE OPENRAVE ~s ~%~%" (tcl-event-message))
             (cond
@@ -463,183 +213,119 @@
                                     (status NOT_GRASPABLE))))))
                   (tcl-abort)
                   '(ERROR (NO PATH)))))))
-
- 
-  ;; Objekt auf Objekt platzieren
- 
- (define-tcb (tcb-position-object-on-location ?obj-id ?location ?slot)
- (module "manipulationPlannerModule")
-  (rules (rule-position-object-failed rule-trigger-positioning-failed))
-  (action (
-            (format t "=========================>>> tcb-position-object-on-location ~s ~s ~s ~%" '?obj-id '?location '?slot)
-            (let* ((location (tcl-kb-query :key '(is-a name) :value '((is-a location)(name ?location))))
-                   (placing-poses (get-value location 'placing-poses))
-                   (grasp-iteration (get-value location 'placing-iteration))
-                   (slot (nth ?slot placing-poses))
-                   (x (first slot))
-                   (y (second slot))
-                   (z (third slot)))                        
-              (tcl-push-plan :plan `(
-                                     (tcb-position-object real ?obj-id ,x ,y ,z ,grasp-iteration t nil))))
-            '(SUCCESS ())))) 
-      
-(define-rule (rule-position-object-failed)
-(module "manipulationPlannerModule")
-  (tcb (tcb-position-object real ?obj-id ?x ?y ?z ?grasp-iteration ?open ?level))
-  (return-value (ERROR (POSITIONING FAILED)))
-  (action (
-            (format t "RULE: (ERROR (POSITIONING FAILED)) ~%")
-            (tcl-push-plan :plan `(
-                                   (tcb-delete-grasped-obj-form-openrave)
-                                   (tcb-trigger-return (ERROR (POSITIONING FAILED))))))))
-
-(define-rule (rule-trigger-positioning-failed)
-(module "manipulationPlannerModule")
-  (tcb (tcb-trigger-return ?msg))
-  (return-value (ERROR (POSITIONING FAILED)))
-  (action (
-            (format t "RULE: (ERROR (POSITIONING FAILED)) ~%")
-            '(ERROR (POSITIONING FAILED)))))
-            
-(define-tcb (tcb-position-object real ?obj-id ?x ?y ?z ?grasp-iteration ?open ?level)
-(module "manipulationPlannerModule")
-  (rules (rule-positioning-object-failed))
-  (action (
-            (cond
-                ((equal '?open t)
-                  (format t "OPEN_AFTER ~%")
-                  (tcl-push-plan :plan `((tcb-gripper open)))))
-            
-            (tcl-push-plan :plan `((tcb-position-object real move-manipulator ?obj-id ?x ?y ?z ?grasp-iteration ?open ?level)))
-            
-            '(SUCCESS ()))))
-            
-(define-rule (rule-positioning-object-failed)
-(module "manipulationPlannerModule")
-  (tcb (tcb-position-object real move-manipulator ?obj-id ?x ?y ?z ?grasp-iteration ?open ?level))
-  (return-value (ERROR (POSITIONING FAILED)))
-  (action (
-            (format t "RULE: (ERROR (POSITIONING FAILED)) ~%")
-            (tcl-delete-plan)
-            '(ERROR (POSITIONING FAILED)))))
-            
-(define-tcb (tcb-position-object real move-manipulator ?obj-id ?x ?y ?z ?grasp-iteration ?open ?level)
-(module "manipulationPlannerModule")
-  (action (
-            (format t "=========================>>> tcb-position-object real move-manipulator ~d ~d ~d ~d ~s ~a ~%" 
-              '?obj-id '?x '?y '?z '?grasp-iteration '?open)
-            (let* ((obj (tcl-kb-query :key '(is-a id) :value '((is-a object)(id ?obj-id))))
-                   (simple-grasping nil)
-                   (pose '(?x ?y ?z 0 0 0))
-                   (speech (get-value obj 'speech)))
-                        
-              (tcl-state :server 'manipPlanning :state "Neutral")
-              (format t "~s ~s~%" (first '?grasp-iteration) (second '?grasp-iteration))
-              ;(tcl-param :server 'manipPlanning :slot (first '?grasp-iteration)  :value (second '?grasp-iteration))
-              ;(tcl-param :server 'manipPlanning :slot 'PARALLELIZATION_OFF)
-              (tcl-state :server 'gazeboManip :state "Trajectory")
-              (tcl-state :server 'manipPlanning :state "Trajectory")
-              
-              (tcl-activate-event :name 'evt-position-object
-                                  :handler 'handler-position-object
-                                  :server 'gazeboManip 
-                                  :service 'manipulatorevent 
-                                  :mode 'continuous)
-              (tcl-activate-event :name 'evt-position-object-openrave
-                                  :handler 'handler-position-object-openrave
-                                  :server 'manipPlanning 
-                                  :service 'plannerevent
-                                  :mode 'continuous)
-              
-              ;(tcl-send :server 'manipPlanning 
-              ;              :service 'trajectory 
-              ;              :param (append (list 'POSE) pose))
-              
-              
-              ; TODO: per param
-              (tcl-param :server 'manipPlanning :slot 'COMMMANIPULATIONPLANNEROBJECTS.MANIPULATIONPLANNERPARAMETER.PLAN_PATH_TARGET_TCP_POSE :value `(,(first pose) ,(second pose) ,(third pose) ,(fourth pose) ,(fifth pose) ,(sixth pose)))
-              
-              '(SUCCESS ())))))
-              
-(define-event-handler (handler-position-object)
-(module "manipulationPlannerModule")
-  (action (
-            (format t "=========================>>> HANDLER POSITION OBJECT ~s ~%~%" (tcl-event-message))
-            (cond
-                ;; ok
-                ((equal (tcl-event-message) '(goal reached))
-                  (format t "=========================>>> goal reached !!! obj-id ~s ~%" '?obj-id)
-                  (tcl-state :server 'manipPlanning :state "Neutral")
-                  (cond
-                    ((equal '?open t)
-                      (let ((pose nil))
-                        (format t "release object ~d in OpenRAVE ~%" '?obj-id)
-                        (tcl-param :server 'manipPlanning :slot 'OPENRAVE_RELEASEOBJ :value '?obj-id)
-                        (setf pose (tcl-query :server 'manipPlanning :service 'objprop :request ?obj-id))
-                        (tcl-kb-update :key '(is-a id) 
-                                       :value `(
-                                                 (is-a OBJECT)
-                                                 (id ?obj-id)
-                                                 (pose (,(second pose) ,(third pose) ,(fourth pose) 
-                                                        ,(fifth pose) ,(sixth pose) ,(seventh pose) ))
-                                                 (status GRASPABLE)))
-			(cond
-                          ((equal '?level t)
-                  	    (format t "pose: ~s -- Level Object ~%" pose)
-                            (setf pose `(?obj-id ,(second pose) ,(third pose) ,(+ (fourth pose) 0.002) ,(fifth pose) ,(sixth pose) ,(seventh pose) ))
-                            (tcl-param :server 'manipPlanning :slot 'OBJ_MOVE :value pose)))
-                                               
-                        )))
-                  (tcl-abort)
-                  '(SUCCESS ()))
-
-                ;; slipped out --> this should never happen !!!
-                ((equal (tcl-event-message) '(goal reached gripper empty))
-                  (format t "=========================>>> goal reached gripper empty !!! obj-id ~s ~%" '?obj-id)
-                  (tcl-state :server 'manipPlanning :state "Neutral")
-                  (tcl-param :server 'manipPlanning :slot 'OPENRAVE_RELEASEOBJ :value '?obj-id)
-                  (tcl-kb-update :key '(is-a id) 
-                                 :value `(
-                                           (is-a OBJECT)
-                                           (id ?obj-id)
-                                           (status UNKNOWN)))
-                  (tcl-abort)
-                  '(SUCCESS ()))
-
-                ;; collision
-                ((equal (tcl-event-message) '(collision))
-                  (format t "=========================>>> collision detected !!! obj-id ~s ~%" '?obj-id)
-                  (tcl-state :server 'manipPlanning :state "Neutral")
-                  (tcl-abort)
-                  '(ERROR (POSITIONING FAILED)))
-
-                ;; out of range
-                ((equal (tcl-event-message) '(value out of range))
-                  (format t "=========================>>> value out of range !!! ~%")   
-	          (tcl-state :server 'gazeboManip :state "Neutral")
-                  (tcl-abort)
-                  '(ERROR (POSITIONING FAILED)))))))
                   
-  (define-event-handler (handler-position-object-openrave)
+(define-tcb (loadEnvInOpenRave ?envId)
   (module "manipulationPlannerModule")
   (action (
-            (format t "=========================>>> HANDLER POSITION OBJECT OPENRAVE ~s ~%~%" (tcl-event-message))
+            (format t "=========================>>> tcb-load-env-into-openrave ~s ~%" '?envId)
+            (tcl-state :server 'cs_trajPlanning :state "Neutral")
+            (tcl-activate-event :name 'evt-grasp-openrave
+                                :handler 'handler-load-env
+                                :server 'cs_trajPlanning 
+                                :service 'trajectoryevent
+                                :mode 'continuous)
+            (tcl-param :server 'cs_trajPlanning :slot 'COMMMANIPULATIONPLANNEROBJECTS.MANIPULATIONPLANNERPARAMETER.ENV_LOAD_OBJECTRECOGNITION :value ?envId)
+            (tcl-kb-update 
+                      :key '(is-a id) 
+                      :value `( 
+                               (is-a environment)
+                               (id ?envId)
+                               (in-openrave true))))))
+                               
+(define-event-handler (handler-load-env)
+  (module "manipulationPlannerModule")
+  (action (
+            (format t "=========================>>> HANDLER LOAD ENV TO OPENRAVE ~s ~%~%" (tcl-event-message))
             (cond
-                ((equal (first (tcl-event-message)) '(PATH FOUND))
-                  (format t "=========================>>> PATH FOUND !!! obj-id ~s ~%" '?obj-id))
-
-                ((equal (first (tcl-event-message)) '(NO IK SOLUTION FOUND))
-                  (format t "=========================>>> NO IK SOLUTION FOUND !!! ~%")   
-                  ;(tcl-send :server 'tts 
-                  ;     :service 'say 
-                  ;     :param (format nil "Sorry, I was not able to calculate a path." ))
+                ((equal (first (tcl-event-message)) '(LOAD OBJREC DATA DONE))
+                  (format t "=========================>>> LOAD OBJREC DATA DONE !!! ~%")
                   (tcl-abort)
-                  '(ERROR (POSITIONING FAILED)))
-
-                ((equal (first (tcl-event-message)) '(NO PATH FOUND))
-                  (format t "=========================>>> NO PATH FOUND !!! ~%")
-                  ;(tcl-send :server 'tts 
-                  ;     :service 'say 
-                  ;     :param (format nil "Sorry, I was not able to calculate a path." ))  
+                  '(SUCCESS ()))
+                (T
+                  (format t "=========================>>> ERROR UNSUPPORTED EVENT !!! ~%")
                   (tcl-abort)
-                  '(ERROR (POSITIONING FAILED)))))))  
+                  '(SUCCESS ()))))))
+                  
+(define-tcb (deleteObjInOpenRave ?obj-id)
+  (module "manipulationPlannerModule")
+  (action (
+            (format t "=========================>>> tcb-delete-obj-from-openrave ~s ~%" '?obj-id)
+            (tcl-state :server 'cs_trajPlanning :state "Neutral")
+            (tcl-param :server 'cs_trajPlanning :slot 'COMMMANIPULATIONPLANNEROBJECTS.MANIPULATIONPLANNERPARAMETER.OBJ_DELETE :value '?obj-id)
+            (tcl-param :server 'cs_trajPlanning :slot 'COMMIT)
+            '(SUCCESS ()))))
+            
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; vacuum-gripper
+
+(define-tcb (OpenGripper)
+  (module "manipulationPlannerModule")
+  (action (
+            (format t "=========================>>> tcb-gripper open~%")
+            (tcl-query :server 'cs_trajExecution :service 'ioquery :request '(DIGITAL 0 0 ))
+            (tcl-query :server 'cs_trajExecution :service 'ioquery :request '(DIGITAL 1 1 ))
+            (sleep 1.0)
+            (tcl-query :server 'cs_trajExecution :service 'ioquery :request '(DIGITAL 1 0 ))                
+            '(SUCCESS ()))))
+
+
+(define-tcb (closeGripper)
+  (module "manipulationPlannerModule")
+  (action (
+            (format t "=========================>>> tcb-gripper close~%")
+            (tcl-activate-event :name    'evt-digitalin-ack
+                                :handler 'handler-digitalin-grasp
+                                :server  'cs_trajExecution 
+                                :service 'ioevent
+                                :mode    'single
+                                :param   '(0 T))
+;            (tcl-activate-event :handler 'handler-timer-expired-grasp
+;                                :server  'timer 
+;                                :service 'relative
+;                                :mode    'single
+;                                :param   '(2 0))
+	    (tcl-query :server 'cs_trajExecution :service 'ioquery :request '(DIGITAL 0 1))
+            ;(let* ((qres (tcl-query :server 'cs_trajExecution :service 'ioquery :request '(DIGITAL 0 1))))
+            ;(format t "=========================>>> ioquery ~S ~%" 'qres))
+            )))
+
+
+(define-event-handler (handler-timer-expired-grasp)
+  (module "manipulationPlannerModule")
+  (action (
+            (format t "=========================>>> HANDLER TIMER EXPIRED GRASP ~s ~%~%" (tcl-event-message))
+            (let ((digitalin (first (tcl-query :server 'cs_trajExecution :service 'ioquery :request '(DIGITAL 0 1 )))))
+              (format t "Grasp digital in: ~a~%" digitalin)
+              (cond
+                ((equal (nth 0 digitalin) 1)
+                  (format t "Gripper grasp success!~%")
+                  (tcl-abort)
+                  '(SUCCESS ()))
+               (T
+                 (format t "Gripper grasp error!~%")
+                 (tcl-abort)
+                 '(ERROR (GRIPPER EMPTY)))))))) 
+            
+           
+
+(define-event-handler (handler-digitalin-grasp)
+  (module "manipulationPlannerModule")
+  (action (
+    (format t "=========================>>> HANDLER handler-digitalin-grasp: ~s ~%~%" (tcl-event-message))
+    (let ((digitalin (first (tcl-query :server 'cs_trajExecution :service 'ioquery :request '(DIGITAL 0 1 )))))
+           (format t "Grasp digital in: ~a~%" digitalin)
+           (cond
+             ((equal (nth 0 digitalin) 1)
+               (format t "Gripper grasp success!~%")            
+               (tcl-abort)
+               '(SUCCESS ()))
+             (T
+               (format t "Gripper grasp error!~%")            
+               (tcl-abort)
+               '(ERROR (GRIPPER EMPTY))))))))
+
+;; gripper
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
