@@ -1,0 +1,27 @@
+-------------------------------------------------
+	Installing RTAB-map library
+-------------------------------------------------
+
+1)Installing dependencies :
+       
+	sudo apt-get install libsqlite3-dev libpcl-dev libopencv-dev git cmake libproj-dev libqt5svg5-dev			
+
+1.1) installing g2o (recommended)
+	git clone https://github.com/RainerKuemmerle/g2o.git 
+	cd g2o
+	mkdir build
+	cd build
+	cmake -DBUILD_WITH_MARCH_NATIVE=OFF -DG2O_BUILD_APPS=OFF -DG2O_BUILD_EXAMPLES=OFF -DG2O_USE_OPENGL=OFF ..
+	make -j4
+	sudo make install
+
+
+2)Build and install rtab-map form source:
+
+	git clone https://github.com/introlab/rtabmap.git rtabmap
+	cd rtabmap/build
+	cmake ..
+	make -j4
+	sudo make install
+	
+Ref : https://github.com/introlab/rtabmap/wiki/Installation#ubuntu

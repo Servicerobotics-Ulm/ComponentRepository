@@ -1,0 +1,17 @@
+ComponentParameter ComponentRTABSlamParams component ComponentRTABSlam {
+	//"Parameter to select SLAM or Localization task"
+	InternalParameter TaskSelection{
+	IsLocalization : Boolean = false		
+	}
+//"Parameters to configure SLAM task"	
+	InternalParameter ConfigureSLAM{
+	// "Odometry 0 = Visual Odometry, 1= Wheeled Odometry from Robotino"
+	Odomtype : Int32 = 0
+	//@doc" if multisession continue the mapping with existing rtabmap.db, otherwise start mapping by creating new rtab.db"
+	MultiSession : Boolean = false
+}
+ParameterSetInstance CommLocalizationObjects.SlamParameter {	
+	TriggerInstance INITNEWMAP passive		
+	TriggerInstance SAVEMAP passive
+}
+}

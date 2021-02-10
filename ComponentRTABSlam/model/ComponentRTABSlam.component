@@ -1,0 +1,15 @@
+ComponentDefinition ComponentRTABSlam logo "/ComponentRTABSlam/model/logo.png"
+{
+	InputPort rgbd_client implements DomainVision.RGBDImagePushService {
+	}
+	InputPort baseStatePushNewestClient implements CommBasicObjects.BaseStateService {
+	}
+	Activity MappingThread
+	{
+	}
+	Activity LocalizationThread
+	{
+	}
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService { }
+	ComponentParameters ComponentRTABSlamParams slave CoordinationPort
+}
