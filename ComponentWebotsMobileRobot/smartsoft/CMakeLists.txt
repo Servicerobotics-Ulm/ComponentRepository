@@ -64,7 +64,7 @@ ADD_EXECUTABLE(${PROJECT_NAME} ${SRC} ${SRC_GEN} ${SRC_GEN_PARAMS}) # add ${USER
 
 # link your external libraries here (if there are any)
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} $ENV{WEBOTS_HOME}/lib/controller/libCppController.so)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} -ljsoncpp)
+# TARGET_LINK_LIBRARIES(${PROJECT_NAME} -ljsoncpp)
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${WEBOTS})
 
 #INSTALL(FILES ${PROJECT_SOURCE_DIR}/src-gen/${PROJECT_NAME}.ini.template DESTINATION etc)

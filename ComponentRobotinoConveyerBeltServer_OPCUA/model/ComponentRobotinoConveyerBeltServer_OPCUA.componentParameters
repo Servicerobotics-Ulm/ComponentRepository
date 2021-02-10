@@ -1,0 +1,69 @@
+ComponentParameter ComponentRobotinoConveyerBeltServer_OPCUA component ComponentRobotinoConveyerBeltServer_OPCUA
+{
+	
+	ParameterSetInstance CommRobotinoObjects.RobotinoConveyerParameter {
+		ParameterInstance SetStationID {
+			id = 0
+		}
+	}
+	InternalParameter OPCUAstatic{
+		object_name : String = "MPS"
+		//  "The index on the array is used as key for the station id!"
+		server_address : String [*] = ["NULL_NOT_USED","opc.tcp://10.36.34.241:4840","opc.tcp://10.36.32.125:4840"]
+	}
+	
+	InternalParameter Robot {
+
+     	// "delay for the communication response of the fleet, value is the sum of both values seconds and microseconds"
+		station_communication_delay_sec: UInt32 = 0
+		station_communication_delay_usec: UInt32 = 500000
+		
+		// "timeout for the belt in case no box has been detected by sensor, in seconds"
+		belt_time_out_sec :UInt32 = 10
+		
+		// "change the direction of the belt motor depend on the hardware setup (1 nomal -1 inverse)"
+		unload_motor_direction:Float = 1
+		// "change the direction of the belt motor depend on the hardware setup (1 nomal -1 inverse)"
+		load_motor_direction:Float = 1
+		
+		// "signal loading process with DOUT high (DOUT number in case >=0, otherwise (-1) disabled)"
+		signal_loading_dout:Int16 = 6
+	
+		// "signal unloading process with DOUT high (DOUT number in case >=0, otherwise (-1) disabled)"
+		signal_unloading_dout:Int16 = 7
+		
+		// "signal error ack with DOUT high"
+		signal_error_dout:Int16 = 5
+		
+		// "signal manual Load or UnLoad with DOUT high"
+		manual_load_dout:Int16 = 5
+		
+		ack_pressed_din:Int16 = 4
+		
+		box_present_din:UInt16 = 2
+		trans_read_din:UInt16 = 3
+		dock_complete_dout:UInt16 = 0
+		
+		// "with true the communication with the station is disabled"
+		ignore_station_communication:Boolean = false
+		ignore_station_communication_unload_time_sec:Int32 = 4
+		
+		// "Number of falling edge to indicate load operation(Station-To-Robotoino)"
+		NoOf_FallingEdge_Load:UInt16 = 8
+		
+		// "Falling edge pulse width for load operation(Station-To-Robotoino)"
+		FallingEdge_PW_Load_mSec:UInt32 = 100
+		
+		// "Number of falling edge to indicate unload operation(Robotino-To-Station)"
+		NoOf_FallingEdge_Unload:UInt16 = 4
+		
+		// "Falling edge pulse width for unload operation(Robotino-To-Station)"
+		FallingEdge_PW_Unload_mSec:UInt32 = 100
+		
+		// "Falling edge pulse width for unload operation(Robotino-To-Station)"
+		LoadProcess_TimeOutSec:UInt32 = 60
+		
+		// "Falling edge pulse width for unload operation(Robotino-To-Station)"
+		UnloadProcess_TimeOutSec:UInt32 = 60
+	}
+}

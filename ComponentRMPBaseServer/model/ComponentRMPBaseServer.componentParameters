@@ -1,0 +1,41 @@
+ComponentParameter ComponentRMPBaseServer component ComponentRMPBaseServer
+{
+	
+	ParameterSetInstance CommBasicObjects.BaseParams{
+		TriggerInstance BASE_RESET passive
+		TriggerInstance BASE_SONAR passive
+		TriggerInstance SIGNAL_STATE_BUSY passive
+		TriggerInstance SIGNAL_STATE_ERROR passive
+		TriggerInstance SIGNAL_STATE_IDLE passive
+		TriggerInstance SIGNAL_STATE_LOCALIZATION_ERROR passive
+		TriggerInstance SIGNAL_STATE_SAFETY_FIELD passive
+	}
+	InternalParameter robot{
+		verbose: Boolean = false
+		debug: Boolean = false
+		back_is_front: Boolean = false
+		rmp_config_file: String = "data/rmp_config.ini"
+		enable_motors: Boolean = true
+		max_vel: UInt32 = 1000
+		max_rot_vel: UInt32 =600
+		max_velocity_scale_factor: UInt16 = 16
+		max_acceleration_scale_factor: UInt16 = 16
+		max_turn_rate_scale_factor: UInt16 = 16
+		gain_schedule: UInt16 = 1
+		limit_scale_factor: UInt16 = 256
+		accelerationForward: Int32 = 100
+		decelerationFoward: Int32 = 1000
+		accelerationBackward: Int32 = 100
+		decelerationBackward: Int32 = 100
+		
+		accelerationLeftward: Double = 0.4
+		decelerationLeftward: Double = 0.4
+		accelerationRightward: Double = 0.4
+		decelerationRightward: Double = 0.4
+	}
+	InternalParameter kalman_filter{
+		lamda_sigma_d: Double = 50
+		lamda_sigma_delta_alpha: Double = 5
+		lamda_sigma_delta_beta: Double = 2
+	}
+}

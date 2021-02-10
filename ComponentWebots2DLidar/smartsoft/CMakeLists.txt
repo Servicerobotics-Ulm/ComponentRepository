@@ -27,10 +27,11 @@ SMART_COMPONENT_PROJECT()
 # find SmartSoft package
 #FIND_SMARTSOFT(3.0)
 #FIXME: generalize this
-FIND_PACKAGE(AceSmartSoft PATHS $ENV{SMART_ROOT_ACE}/build)
+FIND_PACKAGE(AceSmartSoft PATHS $ENV{SMART_ROOT_ACE})
 
 # generte doxygen documentation
-SMART_COMPONENT_GENERATE_DOC()
+# move down below ADD_EXECUTABLE
+# SMART_COMPONENT_GENERATE_DOC()
 
 # automatically build CommunicationObject dependencies
 SMART_COMPONENT_AUTOBUILD_DEPENDENCIES()
@@ -74,12 +75,13 @@ FILE(GLOB_RECURSE SRC_GEN_PARAMS ${CMAKE_CURRENT_LIST_DIR}/src-gen/params/*.cc)
 
 # create the executable using collected source-files
 ADD_EXECUTABLE(${PROJECT_NAME} ${SRC} ${SRC_GEN} ${SRC_GEN_PARAMS}) # add ${USER_SRC} (if needed)
+SMART_COMPONENT_GENERATE_DOC()
 
 # link your external libraries here (if there are any)
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${ARMADILLO_LIBRARIES})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} $ENV{WEBOTS_HOME}/lib/controller/libController.so)
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} $ENV{WEBOTS_HOME}/lib/controller/libCppController.so)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} -ljsoncpp)
+# TARGET_LINK_LIBRARIES(${PROJECT_NAME} -ljsoncpp)
 
 #INSTALL(FILES ${PROJECT_SOURCE_DIR}/src-gen/${PROJECT_NAME}.ini.template DESTINATION etc)
 

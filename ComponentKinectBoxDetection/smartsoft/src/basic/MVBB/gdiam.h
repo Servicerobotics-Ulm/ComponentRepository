@@ -1,0 +1,781 @@
+/*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
+ * gdiam.h -
+ *     Implmeents an algorithm for computing a diameter,
+ * 
+ * Copyright 2000 Sariel Har-Peled (ssaarriieell@cs.uiuc.edu)
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2, or (at your option) any
+ * later version.
+ * 
+ * Code is based on the paper:
+ *   A Practical Approach for Computing the Diameter of a Point-Set.
+ *   Sariel Har-Peled (http://www.uiuc.edu/~sariel)
+\*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*/
+
+/**
+ * This header implements the classes GPointPair, GBBox, gdiam_bbox
+ * and some global functions.
+ */
+
+#ifndef  __GDIAM__H
+#define  __GDIAM__H
+
+//#define _DEBUG_
+
+#include <math.h>
+#include <algorithm>
+#include <vector>
+#include <stdio.h>
+#include <string>
+#include <string.h>
+#include <assert.h>
+#include <iostream>
+
+using namespace std;
+
+const int    GDIAM_DIM = 3;
+const int    UDM_SIMPLE = 1;
+const int    UDM_BIG_SAMPLE = 2;
+const double EPS = 1e-6;
+const double ZERO_EPS = (1e-6);
+
+typedef double gdiam_real;
+typedef gdiam_real  gdiam_point_t[ GDIAM_DIM ];
+typedef gdiam_real  gdiam_point_2d_t[ 2 ];
+typedef gdiam_real* gdiam_point_2d;
+typedef gdiam_real* gdiam_point;
+typedef const gdiam_real* gdiam_point_cnt;
+typedef long double ldouble;
+
+template <class T>
+inline void gdiam_exchange( T& a, T& b ) {
+	T tmp = a;
+	a = b;
+	b = tmp;
+}
+
+////////////////////////////////////////////////////////
+//////////////// GLOBAL FUNCTIONS /////////////////////
+//////////////////////////////////////////////////////
+inline gdiam_real pnt_length( const gdiam_point pnt ) {
+  return sqrt( pnt[ 0 ] * pnt[ 0 ] + pnt[ 1 ] * pnt[ 1 ] + pnt[ 2 ] * pnt[ 2 ] );
+}
+
+inline void pnt_copy( gdiam_point_t dest, gdiam_point_t src ) {
+  dest[ 0 ] = src[ 0 ];
+  dest[ 1 ] = src[ 1 ];
+  dest[ 2 ] = src[ 2 ];
+}
+
+inline void pnt_normalize( gdiam_point pnt ) 
+{
+  gdiam_real len = pnt_length( pnt );
+  if ( len == 0.0 )
+    return;
+  
+  pnt[ 0 ] /= len;
+  pnt[ 1 ] /= len;
+  pnt[ 2 ] /= len;
+}
+
+inline gdiam_real pnt_dot_prod( gdiam_point_cnt a, gdiam_point_cnt b ) {
+  return a[ 0 ] * b[ 0 ] + a[ 1 ] * b[ 1 ] + a[ 2 ] * b[ 2 ];
+}
+
+inline void pnt_cross_prod( const gdiam_point a, const gdiam_point b, const gdiam_point out ) {
+  out[ 0 ] = a[ 1 ] * b[ 2 ] - a[ 2 ] * b[ 1 ];
+  out[ 1 ] = - ( a[ 0 ] * b[ 2 ] - a[ 2 ] * b[ 0 ] );
+  out[ 2 ] = a[ 0 ] * b[ 1 ] - a[ 1 ] * b[ 0 ];
+}
+
+inline void pnt_scale_and_add( gdiam_point dest, gdiam_real coef, gdiam_point_cnt vec ) {
+  dest[ 0 ] += coef * vec[ 0 ];
+  dest[ 1 ] += coef * vec[ 1 ];
+  dest[ 2 ] += coef * vec[ 2 ];
+}
+
+inline void pnt_zero( gdiam_point  dst ) {
+  dst[ 0 ] = dst[ 1 ] = dst[ 2 ] = 0;
+}
+
+inline void pnt_init( gdiam_point pnt, gdiam_real x, gdiam_real y, gdiam_real z ) {
+  pnt[ 0 ] = x;
+  pnt[ 1 ] = y;
+  pnt[ 2 ] = z;
+}
+
+inline void pnt_init_normalize( gdiam_point pnt, gdiam_real x, gdiam_real y, gdiam_real z ) {
+  pnt[ 0 ] = x;
+  pnt[ 1 ] = y;
+  pnt[ 2 ] = z;
+  
+  pnt_normalize( pnt );
+}
+
+inline gdiam_real pnt_distance_2d( gdiam_point_2d  p, gdiam_point_2d q ) {
+  gdiam_real valx = (p[ 0 ] - q[ 0 ]);
+  gdiam_real valy = (p[ 1 ] - q[ 1 ]);
+  
+  return sqrt( valx * valx + valy * valy );
+}
+
+inline gdiam_real pnt_distance( gdiam_point p, gdiam_point q ) {
+  gdiam_real valx = (p[ 0 ] - q[ 0 ]);
+  gdiam_real valy = (p[ 1 ] - q[ 1 ]);
+  gdiam_real valz = (p[ 2 ] - q[ 2 ]);
+  
+  return  sqrt( valx * valx + valy * valy + valz * valz );
+}
+
+inline gdiam_real pnt_distance( gdiam_point p, gdiam_point q, gdiam_point_cnt dir ) {
+  gdiam_real valx = (p[ 0 ] - q[ 0 ]);
+  gdiam_real valy = (p[ 1 ] - q[ 1 ]);
+  gdiam_real valz = (p[ 2 ] - q[ 2 ]);
+  
+  gdiam_real len, proj_len;
+  
+  len = sqrt( valx * valx + valy * valy + valz * valz );
+  
+  proj_len = dir[ 0 ] * valx + dir[ 1 ] * valy + dir[ 2 ] * valz;
+  
+  return sqrt( len * len - proj_len * proj_len );
+}
+
+inline bool pnt_isEqual( const gdiam_point p, const gdiam_point q ) {
+  return ( ( p[ 0 ] == q[ 0 ] ) && ( p[ 1 ] == q[ 1 ] )	&& ( p[ 2 ] == q[ 2 ] ) );
+}
+
+////////////////////////////////////////////////////////
+//////////////// class GPointPair /////////////////////
+//////////////////////////////////////////////////////
+class GPointPair {
+  
+ public:
+  gdiam_real  distance;
+  gdiam_point p, q;
+  
+ GPointPair() : p(), q() {
+    distance = 0.0;
+  }
+  
+  void init( const gdiam_point _p, const gdiam_point _q ) {
+    
+#ifdef _DEBUG_
+    cout << "GPointPair::init()..." << endl;
+#endif
+    p = _p;
+    q = _q;
+    distance = pnt_distance( p, q );
+  }
+  
+  void init( const gdiam_point _p, const gdiam_point _q, const gdiam_point proj ) {
+    p = _p;
+    q = _q;
+    distance = pnt_distance( p, q, proj );
+  }
+  
+  void init( const gdiam_point pnt ) {
+    distance = 0;
+    p = q = pnt;
+  }
+  
+  void update_diam_simple( const gdiam_point _p, const gdiam_point _q ) {
+    gdiam_real new_dist;
+    
+    new_dist = pnt_distance( _p, _q );
+    if  ( new_dist <= distance )
+      return;
+    
+    distance = new_dist;
+    p = _p;
+    q = _q;
+  }
+		
+  void update_diam_simple( const gdiam_point _p, const gdiam_point _q, const gdiam_point dir ) {
+    gdiam_real  new_dist;
+    
+    new_dist = pnt_distance( _p, _q, dir );
+    if  ( new_dist <= distance )
+      return;
+    
+    distance = new_dist;
+    p = _p;
+    q = _q;
+  }
+  
+  void update_diam( const gdiam_point _p, const gdiam_point _q ) {
+    update_diam_simple( _p, _q );
+  }
+  
+  void update_diam( const gdiam_point _p, const gdiam_point _q, const gdiam_point  dir ) {
+    update_diam_simple( _p, _q, dir );
+  }
+  
+  void update_diam( GPointPair& pp ) {
+    update_diam_simple( pp.p, pp.q );
+  }
+};
+
+////////////////////////////////////////////////////////
+////////////////// class GBBox ////////////////////////
+//////////////////////////////////////////////////////
+class GBBox {
+  
+ private:
+  
+  gdiam_real min_coords[ GDIAM_DIM ];
+  gdiam_real max_coords[ GDIAM_DIM ];
+  
+ public:
+		
+  void init( const GBBox& a, const GBBox& b ) {
+    for (int  ind = 0; ind < GDIAM_DIM; ind++ ) {
+      min_coords[ ind ] = std::min( a.min_coords[ ind ], b.min_coords[ ind ] );
+      max_coords[ ind ] = std::max( a.max_coords[ ind ], b.max_coords[ ind ] );
+    }
+  }
+  
+  void dump() const { }
+  
+  void center( gdiam_point out ) const {
+    for (int  ind = 0; ind < GDIAM_DIM; ind++ ) {
+      out[ ind ] = ( min_coords[ ind ] + max_coords[ ind ] ) / 2.0;
+    }
+  }
+
+  gdiam_real volume() const {
+    gdiam_real  prod, val;
+    
+    prod = 1;
+    for ( int  ind = 0; ind < GDIAM_DIM; ind++ ) {
+      val = length_dim( ind );
+      prod *= val;
+    }
+    return prod;
+  }
+  
+  void init() {
+    for (int ind = 0; ind < GDIAM_DIM; ind++ ) {
+      min_coords[ ind ] =  1e20;
+      max_coords[ ind ] = -1e20;
+    }
+  }
+  
+  const gdiam_real& min_coord( int coord ) const {
+    return min_coords[ coord ];
+  }
+  
+  const gdiam_real& max_coord( int coord ) const {
+    return max_coords[ coord ];
+  }
+  
+  void bound( const gdiam_point pnt ) {
+    
+    for ( int ind = 0; ind < GDIAM_DIM; ind++ ) {
+      if ( pnt[ ind ] < min_coords[ ind ] )
+	min_coords[ ind ] = pnt[ ind ];
+      if ( pnt[ ind ] > max_coords[ ind ] )
+	max_coords[ ind ] = pnt[ ind ];
+    }
+  }
+  
+  gdiam_real length_dim( int dim ) const {
+    return max_coords[ dim ] - min_coords[ dim ];
+  }
+  
+  int getLongestDim() const {
+    int dim = 0;
+    gdiam_real len = length_dim( 0 );
+    
+    for ( int ind = 1; ind < GDIAM_DIM; ind++ )
+      if ( length_dim( ind ) > len ) {
+	len = length_dim( ind );
+	dim = ind;
+      }
+    return dim;
+  }
+  
+  gdiam_real getLongestEdge() const {
+    return length_dim( getLongestDim() );
+  }
+  
+  gdiam_real get_diam() const {
+    
+    gdiam_real sum, val;
+    sum = 0;
+    for ( int ind = 0; ind < GDIAM_DIM; ind++ ) {
+      val = length_dim( ind );
+      sum += val * val;
+    }
+    
+    return sqrt( sum );
+  }
+  
+  // 		in the following we assume that the length of dir is ONE!!!
+  // 		Note that the following is an overestaime - the diameter of
+  // 		projection of a cube, is bounded by the length of projections
+  // 		of its edges....
+  gdiam_real get_diam_proj( gdiam_point dir ) const {
+    gdiam_real sum, coord;
+    gdiam_real prod, val;
+    
+    sum = 0;
+    for ( int ind = 0; ind < GDIAM_DIM; ind++ ) {
+      coord = length_dim( ind );
+      prod = coord * dir [ ind ];
+      val = coord * coord - prod * prod;
+      assert( val >= 0 );
+      sum += sqrt( val );
+    }
+    return  get_diam();
+  }
+  
+  gdiam_real get_min_coord( int  dim ) const {
+    return min_coords[ dim ];
+  }
+		
+  gdiam_real get_max_coord( int  dim ) const {
+    return max_coords[ dim ];
+  }		
+};
+
+
+////////////////////////////////////////////////////////
+////////////////// class gdiam_bbox ///////////////////
+//////////////////////////////////////////////////////
+class  gdiam_bbox {
+  // 	gdiam_bbox is the famous - arbitrary oriented bounding box
+ private:
+  gdiam_point_t dir_1, dir_2, dir_3;
+  
+  gdiam_real low_1, high_1;
+  gdiam_real low_2, high_2;
+  gdiam_real low_3, high_3;
+  
+  bool f_init;
+  
+ public:
+  gdiam_bbox() {
+    f_init = false;
+    sprintf(bbFile,"bbiv.iv");
+  }
+  
+  char bbFile[128];
+      
+  gdiam_real volume() const {
+    
+    if (!f_init) return 0;
+    
+    gdiam_real len1, len2, len3;
+    
+    len1 = ( high_1 - low_1 );
+    len2 = ( high_2 - low_2 );
+    len3 = ( high_3 - low_3 );
+    
+    return  len1 * len2 * len3;
+  }
+  
+  void  set_third_dim_longest() {
+    gdiam_point_t  pnt_tmp;
+    
+    if  ( ( high_1 - low_1 ) > ( high_3 - low_3 ) ) {
+      gdiam_exchange( high_1, high_3 );
+      gdiam_exchange( low_1, low_3 );
+      
+      memcpy( pnt_tmp, dir_1, sizeof( dir_1 ) );
+      //             		pnt_tmp = dir_1;
+      memcpy( dir_1, dir_3, sizeof( dir_3) );
+      //             		dir_1 = dir_3;
+      memcpy( dir_3, pnt_tmp, sizeof( dir_3 ) );
+      //             		dir_3 = pnt_tmp;
+    }
+    if  ( ( high_2 - low_2 ) > ( high_3 - low_3 ) ) {
+      gdiam_exchange( high_2, high_3 );
+      gdiam_exchange( low_2, low_3 );
+      
+      pnt_copy( pnt_tmp, dir_2 );
+      pnt_copy( dir_2, dir_3 );
+      pnt_copy( dir_3, pnt_tmp );
+    }
+  }
+  
+  gdiam_point get_dir( int ind ) {
+    if  ( ind == 0 )
+      return  dir_1;
+    if  ( ind == 1 )
+      return  dir_2;
+    if  ( ind == 2 )
+      return  dir_3;
+    
+    assert( false );
+    
+    return  NULL;
+  }
+  
+  void  combine( gdiam_point out, double a_coef, double b_coef, double c_coef ) 
+  {
+    int ind;
+    for ( ind = 0; ind < GDIAM_DIM; ind++ )
+      out[ ind ] = a_coef * dir_1[ ind ] 
+	+ b_coef * dir_2[ ind ] 
+	+ c_coef * dir_3[ ind ];
+  }
+  
+  void  dump_vertex( double sel1, double sel2, double sel3, bool iv=false ) const {
+    
+    gdiam_real  coef1, coef2, coef3;
+    
+    // 			printf( "selection: (%g, %g, %g)\n", sel1, sel2, sel3 );
+    coef1 = low_1 + sel1 * ( high_1 - low_1 );
+    coef2 = low_2 + sel2 * ( high_2 - low_2 );
+    coef3 = low_3 + sel3 * ( high_3 - low_3 );
+    
+    // 			printf( "coeficients: (%g, %g,  %g)\n", coef1, coef2, coef3 );
+    
+    gdiam_point_t pnt;
+    pnt_zero( pnt );
+    
+    // 			printf( "starting...\n" );
+    // 			pnt_dump( pnt );
+    pnt_scale_and_add( pnt, coef1, dir_1 );
+    // 			pnt_dump( pnt );
+    pnt_scale_and_add( pnt, coef2, dir_2 );
+    // 			pnt_dump( pnt );
+    pnt_scale_and_add( pnt, coef3, dir_3 );
+    // 			pnt_dump( pnt );
+        
+    pnt_dump_iv( pnt );
+  }
+  
+  void  dump_vertex_to_vector( vector<double>& out_bb_vec, vector<string>& out_bbiv_vec,
+			       double sel1, double sel2, double sel3, bool iv=false ) const {
+    
+    gdiam_real  coef1, coef2, coef3;
+    
+    // 			printf( "selection: (%g, %g, %g)\n", sel1, sel2, sel3 );
+    coef1 = low_1 + sel1 * ( high_1 - low_1 );
+    coef2 = low_2 + sel2 * ( high_2 - low_2 );
+    coef3 = low_3 + sel3 * ( high_3 - low_3 );
+    
+    // 			printf( "coeficients: (%g, %g,  %g)\n", coef1, coef2, coef3 );
+    
+    gdiam_point_t pnt;
+    pnt_zero( pnt );
+    
+    // 			printf( "starting...\n" );
+    // 			pnt_dump( pnt );
+    pnt_scale_and_add( pnt, coef1, dir_1 );
+    // 			pnt_dump( pnt );
+    pnt_scale_and_add( pnt, coef2, dir_2 );
+    // 			pnt_dump( pnt );
+    pnt_scale_and_add( pnt, coef3, dir_3 );
+    // 			pnt_dump( pnt );
+    
+    if (iv) {
+      char buffer[ 64 ];
+      sprintf( buffer, "%g %g %g,", pnt[ 0 ], pnt[ 1 ], pnt[ 2 ] );
+      out_bbiv_vec.push_back(buffer);      
+      pnt_dump_iv( pnt ); //TODO:THIS IS ONLY FOR NOW!!!      
+    } 
+  }
+
+  void  dump_vertex_to_bb_vector(vector<double>& VEC, double sel1, double sel2, double sel3) const {
+    
+    gdiam_real  coef1, coef2, coef3;
+    
+    coef1 = low_1 + sel1 * ( high_1 - low_1 );
+    coef2 = low_2 + sel2 * ( high_2 - low_2 );
+    coef3 = low_3 + sel3 * ( high_3 - low_3 );
+    
+    gdiam_point_t pnt;
+    pnt_zero( pnt );
+    
+    pnt_scale_and_add( pnt, coef1, dir_1 );
+    pnt_scale_and_add( pnt, coef2, dir_2 );
+    pnt_scale_and_add( pnt, coef3, dir_3 );
+    
+    VEC.push_back( pnt[ 0 ] );
+    VEC.push_back( pnt[ 1 ] );
+    VEC.push_back( pnt[ 2 ] );
+    
+  }
+  
+  void  dump_vertex_to_bbiv_vector(vector<string>& VEC, double sel1, double sel2, double sel3) const {
+    
+    gdiam_real  coef1, coef2, coef3;
+    
+    coef1 = low_1 + sel1 * ( high_1 - low_1 );
+    coef2 = low_2 + sel2 * ( high_2 - low_2 );
+    coef3 = low_3 + sel3 * ( high_3 - low_3 );
+    
+    gdiam_point_t pnt;
+    pnt_zero( pnt );
+			
+    pnt_scale_and_add( pnt, coef1, dir_1 );
+    pnt_scale_and_add( pnt, coef2, dir_2 );
+    pnt_scale_and_add( pnt, coef3, dir_3 );
+    
+    char buffer[ 64 ];
+    sprintf( buffer, "%g %g %g,", pnt[ 0 ], pnt[ 1 ], pnt[ 2 ] );
+    VEC.push_back(buffer);
+  }
+  
+  void  dump(const char* type = "w") const 
+  {		
+    FILE *fp = fopen(bbFile, type);
+    if (fp == NULL)
+      return;
+    // 			Dump the .iv file
+    
+    if (strcmp(type,"w")==0) {
+      fprintf(fp, "#Inventor V2.0 ascii\n#glass\n#200\nSeparator {\n  Material {\n    ambientColor    0.8 0.8 0.8\n    diffuseColor    0.0 0.5 0.5\n    transparency 0.7\n  }\n");
+    }
+    
+    fprintf(fp, "Coordinate3 {\n    point [\n");
+    fclose(fp);
+    
+    dump_vertex( 0, 0, 0, true );
+    dump_vertex( 1, 0, 0, true );
+    dump_vertex( 1, 1, 0, true );
+    dump_vertex( 0, 1, 0, true );
+    dump_vertex( 0, 1, 1, true );
+    dump_vertex( 1, 1, 1, true );
+    dump_vertex( 1, 0, 1, true );
+    dump_vertex( 0, 0, 1, true );
+    
+    fp = fopen (bbFile, "a");
+    fprintf(fp, "   ]\n  }\n  IndexedFaceSet {\n    coordIndex [\n      3, 2, 1, 0, -1,\n      7, 6, 5, 4, -1,\n      2, 5, 6, 1, -1,\n      3, 4, 5, 2, -1,\n      0, 7, 4, 3, -1,\n      1, 6, 7, 0, -1,\n    ]\n  }\n");
+    fclose(fp);
+  }
+  
+  void  dumpToVec(vector<double>& out_bb_vec, vector<string>& out_bbiv_vec, char* type = "w") const {
+    FILE *fp = fopen (bbFile, type);
+    if (strcmp(type,"w")==0) {
+      fprintf(fp, "#Inventor V2.0 ascii\n#glass\n#200\nSeparator {\n  Material {\n    ambientColor    0.8 0.8 0.8\n    diffuseColor    0.0 0.5 0.5\n    transparency 0.7\n  }\n");
+      
+      out_bbiv_vec.clear();
+      out_bbiv_vec.push_back("#Inventor V2.0 ascii");
+      out_bbiv_vec.push_back("#glass");
+      out_bbiv_vec.push_back("#200");
+      out_bbiv_vec.push_back("Separator {");
+      out_bbiv_vec.push_back("  Material {");
+      out_bbiv_vec.push_back("    ambientColor    0.8 0.8 0.8");
+      out_bbiv_vec.push_back("    diffuseColor    0.0 0.5 0.5");
+      out_bbiv_vec.push_back("    transparency 0.7");
+      out_bbiv_vec.push_back("  }");
+      
+    }
+    fprintf(fp, "Coordinate3 {\n    point [\n");
+    fclose(fp);
+    
+    out_bbiv_vec.push_back("Coordinate3 {");
+    out_bbiv_vec.push_back("    point [");
+
+    dump_vertex_to_vector( out_bb_vec, out_bbiv_vec, 0, 0, 0, true );
+    dump_vertex_to_vector( out_bb_vec, out_bbiv_vec, 1, 0, 0, true );
+    dump_vertex_to_vector( out_bb_vec, out_bbiv_vec, 1, 1, 0, true );
+    dump_vertex_to_vector( out_bb_vec, out_bbiv_vec, 0, 1, 0, true );
+    dump_vertex_to_vector( out_bb_vec, out_bbiv_vec, 0, 1, 1, true );
+    dump_vertex_to_vector( out_bb_vec, out_bbiv_vec, 1, 1, 1, true );
+    dump_vertex_to_vector( out_bb_vec, out_bbiv_vec, 1, 0, 1, true );
+    dump_vertex_to_vector( out_bb_vec, out_bbiv_vec, 0, 0, 1, true );
+    
+    fp = fopen (bbFile, "a");
+    fprintf(fp, "   ]\n  }\n  IndexedFaceSet {\n    coordIndex [\n      3, 2, 1, 0, -1,\n      7, 6, 5, 4, -1,\n      2, 5, 6, 1, -1,\n      3, 4, 5, 2, -1,\n      0, 7, 4, 3, -1,\n      1, 6, 7, 0, -1,\n    ]\n  }\n");
+    fclose(fp);
+    
+    out_bbiv_vec.push_back("   ]");
+    out_bbiv_vec.push_back("  }");
+    out_bbiv_vec.push_back("  IndexedFaceSet {");
+    out_bbiv_vec.push_back("    coordIndex [");
+    out_bbiv_vec.push_back("      3, 2, 1, 0, -1,");
+    out_bbiv_vec.push_back("      7, 6, 5, 4, -1,");
+    out_bbiv_vec.push_back("      2, 5, 6, 1, -1,");
+    out_bbiv_vec.push_back("      3, 4, 5, 2, -1,");
+    out_bbiv_vec.push_back("      0, 7, 4, 3, -1,");
+    out_bbiv_vec.push_back("      1, 6, 7, 0, -1,");
+    out_bbiv_vec.push_back("    ]");
+    out_bbiv_vec.push_back("  }");
+  }  
+  
+  void  dumpToBBVec(vector<double>& vec, bool append = false) const {
+    
+    if (!append)
+      vec.clear();
+    
+    dump_vertex_to_bb_vector( vec, 0, 0, 0 );
+    dump_vertex_to_bb_vector( vec, 0, 0, 1 );
+    dump_vertex_to_bb_vector( vec, 0, 1, 0 );
+    dump_vertex_to_bb_vector( vec, 0, 1, 1 );
+    dump_vertex_to_bb_vector( vec, 1, 0, 0 );
+    dump_vertex_to_bb_vector( vec, 1, 0, 1 );
+    dump_vertex_to_bb_vector( vec, 1, 1, 0 );
+    dump_vertex_to_bb_vector( vec, 1, 1, 1 );
+  }
+
+  void  dumpToBBIVVec(vector<string>& vec, bool append = false) const 
+  {					  
+    if (!append) {
+      
+      vec.clear();
+      vec.push_back("#Inventor V2.0 ascii");
+      vec.push_back("#glass");
+      vec.push_back("#200");
+      vec.push_back("Separator {");
+      vec.push_back("  Material {");
+      vec.push_back("    ambientColor    0.8 0.8 0.8");
+      vec.push_back("    diffuseColor    0.0 0.5 0.5");
+      vec.push_back("    transparency 0.7");
+      vec.push_back("  }");
+    }
+    
+    vec.push_back("Coordinate3 {");
+    vec.push_back("    point [");
+    
+    dump_vertex_to_bbiv_vector( vec, 0, 0, 0 );
+    dump_vertex_to_bbiv_vector( vec, 1, 0, 0 );
+    dump_vertex_to_bbiv_vector( vec, 1, 1, 0 );
+    dump_vertex_to_bbiv_vector( vec, 0, 1, 0 );
+    dump_vertex_to_bbiv_vector( vec, 0, 1, 1 );
+    dump_vertex_to_bbiv_vector( vec, 1, 1, 1 );
+    dump_vertex_to_bbiv_vector( vec, 1, 0, 1 );
+    dump_vertex_to_bbiv_vector( vec, 0, 0, 1 );
+    
+    vec.push_back("   ]");
+    vec.push_back("  }");
+    vec.push_back("  IndexedFaceSet {");
+    vec.push_back("    coordIndex [");
+    vec.push_back("      3, 2, 1, 0, -1,");
+    vec.push_back("      7, 6, 5, 4, -1,");
+    vec.push_back("      2, 5, 6, 1, -1,");
+    vec.push_back("      3, 4, 5, 2, -1,");
+    vec.push_back("      0, 7, 4, 3, -1,");
+    vec.push_back("      1, 6, 7, 0, -1,");
+    vec.push_back("    ]");
+    vec.push_back("  }");
+  }
+  
+  void pnt_dump_iv( gdiam_point_cnt pnt ) const 
+  {		
+    FILE *fp = fopen(bbFile, "a");
+    fprintf(fp, "%g %g %g,\n", pnt[ 0 ], pnt[ 1 ], pnt[ 2 ] );
+    fclose(fp);
+  }
+  
+  void init( const GBBox& bb ) {
+    
+    pnt_init( dir_1, 1, 0, 0 );
+    pnt_init( dir_2, 0, 1, 0 );
+    pnt_init( dir_3, 0, 0, 1 );
+    
+    low_1 = bb.min_coord( 0 );
+    high_1 = bb.max_coord( 0 );
+    
+    low_2 = bb.min_coord( 1 );
+    high_2 = bb.max_coord( 1 );
+    
+    low_3 = bb.min_coord( 2 );
+    high_3 = bb.max_coord( 2 );
+    f_init = true;
+  }
+  
+  void init( const gdiam_point _dir_1, const gdiam_point _dir_2, const gdiam_point _dir_3 ) {
+    
+    memset( this, 0, sizeof( gdiam_bbox ) );
+    
+    pnt_copy( dir_1, _dir_1 );
+    pnt_copy( dir_2, _dir_2 );
+    pnt_copy( dir_3, _dir_3 );
+    pnt_normalize( dir_1 );
+    pnt_normalize( dir_2 );
+    pnt_normalize( dir_3 );
+    
+    if ( ( ! (fabs( pnt_dot_prod( dir_1, dir_2 ) ) < 1e-6 ) ) || ( ! (fabs( pnt_dot_prod( dir_1, dir_3 ) ) < 1e-6 ) )
+	 || ( ! (fabs( pnt_dot_prod( dir_2, dir_3 ) ) < 1e-6 ) ) ) {
+      
+      printf( "should be all close to zero: %g, %g, %g\n",
+	      pnt_dot_prod( dir_1, dir_2 ),
+	      pnt_dot_prod( dir_1, dir_3 ),
+	      pnt_dot_prod( dir_2, dir_3 ) );
+      
+      fflush( stdout );
+      fflush( stderr );
+      
+      if (  fabs( pnt_dot_prod( dir_1, dir_2 ) ) >= 1e-6 ||
+	    fabs( pnt_dot_prod( dir_1, dir_3 ) ) >= 1e-6 ||
+	    fabs( pnt_dot_prod( dir_2, dir_3 ) ) >= 1e-6) {
+	
+	throw(47);
+					return;
+      }
+    }
+    
+    // 			The following reduce the error by slightly improve the
+    // 			orthoginality of the third vector. Doing to the second
+    // 			vector is not efficient...
+    pnt_scale_and_add( dir_3, -pnt_dot_prod( dir_3, dir_1 ), dir_1 );
+    pnt_scale_and_add( dir_3, -pnt_dot_prod( dir_3, dir_2 ), dir_2 );
+    pnt_normalize( dir_3 );
+    
+  }
+  
+  void bound( const gdiam_point pnt ) {
+    
+    gdiam_real prod_1, prod_2, prod_3;
+    
+    prod_1 = pnt_dot_prod( dir_1, pnt );
+    prod_2 = pnt_dot_prod( dir_2, pnt );
+    prod_3 = pnt_dot_prod( dir_3, pnt );
+    
+    if  ( ! f_init ) {
+      f_init = true;
+      low_1 = high_1 = prod_1;
+      low_2 = high_2 = prod_2;
+      low_3 = high_3 = prod_3;
+      return;
+    }
+    if  ( prod_1 < low_1 )
+      low_1 = prod_1;
+    if  ( prod_2 < low_2 )
+      low_2 = prod_2;
+    if  ( prod_3 < low_3 )
+      low_3 = prod_3;
+    
+    if  ( prod_1 > high_1 )
+      high_1 = prod_1;
+    if  ( prod_2 > high_2 )
+      high_2 = prod_2;
+    if  ( prod_3 > high_3 )
+      high_3 = prod_3;
+  }
+
+  // 		compute the coordinates as if the bounding box is unit cube of
+  // 		the grid
+  void  get_normalized_coordinates( gdiam_point in, gdiam_point out ) {
+    out[ 0 ] = ( pnt_dot_prod( dir_1, in ) - low_1 ) / ( high_1 - low_1 );
+    out[ 1 ] = ( pnt_dot_prod( dir_2, in ) - low_2 ) / ( high_2 - low_2 );
+    out[ 2 ] = ( pnt_dot_prod( dir_3, in ) - low_3 ) / ( high_3 - low_3 );
+  }
+  
+};
+
+////////////////////////////////////////////////////////
+/////////////// MORE GLOBAL FUNCTIONS /////////////////
+//////////////////////////////////////////////////////
+gdiam_point* gdiam_convert( gdiam_real* start, int size );
+gdiam_bbox gdiam_approx_const_mvbb( gdiam_point* start, int size, gdiam_real eps_, GBBox* p_ap_bbox );
+gdiam_bbox gdiam_approx_mvbb_grid( gdiam_point* start, int size, int grid_size );
+gdiam_point* gdiam_convex_sample( gdiam_point* start, int size, gdiam_bbox& bb, int sample_size );
+gdiam_bbox gdiam_approx_mvbb_grid( gdiam_point* start, int size, int grid_size );
+gdiam_bbox gdiam_approx_mvbb_grid_sample( gdiam_point* start, int size, int grid_size, int sample_size );
+GPointPair gdiam_approx_diam( gdiam_point* start, int size, gdiam_real eps_ );
+GPointPair gdiam_approx_diam_pair( gdiam_real* start, int size, gdiam_real eps_ );
+void gdiam_generate_orthonormal_base( gdiam_point in, gdiam_point out1, gdiam_point out2 );
+
+#else   /* __GDIAM__H */
+#error  Header file gdiam.h included twice
+#endif  /* __GDIAM__H */
+
+

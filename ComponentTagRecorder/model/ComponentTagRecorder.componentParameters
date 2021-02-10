@@ -1,0 +1,11 @@
+ComponentParameter ComponentTagRecorder component ComponentTagRecorder
+{
+	InternalParameter options{
+		log_path: String = "~/Desktop"		
+	}
+	
+	ParameterSetInstance CommTrackingObjects.Markers {
+		TriggerInstance SAVE_TAGS_AS_JSON passive	
+	}
+}
+

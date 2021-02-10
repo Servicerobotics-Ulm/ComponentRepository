@@ -1,0 +1,26 @@
+ComponentDefinition ComponentKinectBoxDetection logo "/ComponentKinectBoxDetection/model/logo.png"
+{
+Activity DetectionTask
+	{
+	}
+
+	ComponentParameters ComponentKinectBoxDetection slave CoordinationPort
+	AnswerPort objectPropertyQueryServer implements CommObjectRecognitionObjects.ObjectQueryService {
+	}
+	RequestHandler ObjectQueryServiceAnswHandler triggeredFrom objectPropertyQueryServer {
+	}
+	AnswerPort environmentQueryServer implements CommObjectRecognitionObjects.EnvironmentQueryService {
+	}
+	RequestHandler EnvironmentQueryServiceAnswHandler triggeredFrom environmentQueryServer {
+	}
+	RequestPort kinectQueryClient implements DomainVision.RGBDImageQueryService {
+	}
+	OutputPort objectEventServer implements CommObjectRecognitionObjects.ObjectEventService realizedBy DetectionTask {
+	}
+	
+	CoordinationSlavePort CoordinationPort implements CommObjectRecognitionObjects.ObjectRecognitionCoordinationService {
+		with objectquery realizedBy objectPropertyQueryServer
+		with objectrecognitionevent realizedBy objectEventServer
+		SkillRealizationsRef boxDetection
+	}
+}

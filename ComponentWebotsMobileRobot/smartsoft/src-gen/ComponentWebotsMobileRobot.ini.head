@@ -31,39 +31,6 @@ initialComponentMode Neutral
 ##########################
 # Task parameters
 
-[OdomTask]
-minActFreqHz 20.0
-maxActFreqHz 1.0
-# setup default trigger as PeriodicTimer
-triggerType PeriodicTimer
-periodicActFreqHz 50.0
-# other trigger-types are:
-#triggerType PeriodicTimer
-#periodicActFreqHz 20.0
-# or alternatively:
-#triggerType DataTriggered
-#inPortRef <InPortName>
-#prescale 1
-# optional scheduling parameters
-# scheduler FIFO
-# priority 0
-# cpuAffinity 0
-
-[SignalStateTask]
-minActFreqHz 0.0
-maxActFreqHz 0.0
-# other trigger-types are:
-#triggerType PeriodicTimer
-#periodicActFreqHz 0.0
-# or alternatively:
-#triggerType DataTriggered
-#inPortRef <InPortName>
-#prescale 1
-# optional scheduling parameters
-# scheduler FIFO
-# priority 0
-# cpuAffinity 0
-
 [WebotsAPITask]
 minActFreqHz 0.0
 maxActFreqHz 0.0
@@ -91,9 +58,6 @@ prescale 1
 [NavigationVelocityServiceInHandler]
 prescale 1
 
-[PowerOutputSendInHandler]
-prescale 1
-
 ##########################
 # server port parameter
 
@@ -105,36 +69,12 @@ roboticMiddleware ACE_SmartSoft
 serviceName BaseStateServiceOut
 roboticMiddleware ACE_SmartSoft
 
-[BatteryEventServiceOut]
-serviceName BatteryEventServiceOut
-roboticMiddleware ACE_SmartSoft
-
-[BumperEventServiceOut]
-serviceName BumperEventServiceOut
-roboticMiddleware ACE_SmartSoft
-
-[DigitalInputEventOut]
-serviceName DigitalInputEventOut
-roboticMiddleware ACE_SmartSoft
-
-[LaserSafetyEventServiceOut]
-serviceName LaserSafetyEventServiceOut
-roboticMiddleware ACE_SmartSoft
-
 [LocalizationUpdateServiceIn]
 serviceName LocalizationUpdateServiceIn
 roboticMiddleware ACE_SmartSoft
 
 [NavigationVelocityServiceIn]
 serviceName NavigationVelocityServiceIn
-roboticMiddleware ACE_SmartSoft
-
-[PowerOutputSendIn]
-serviceName PowerOutputSendIn
-roboticMiddleware ACE_SmartSoft
-
-[RobotinoIOValuesQueryServiceAnsw]
-serviceName RobotinoIOValuesQueryServiceAnsw
 roboticMiddleware ACE_SmartSoft
 
 ##########################

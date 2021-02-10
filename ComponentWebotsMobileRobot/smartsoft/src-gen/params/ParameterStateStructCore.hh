@@ -86,6 +86,7 @@ public:
 			 */
 			std::list<double> distanceToRobotCentre;
 			std::list<double> heading;
+			bool keyboardControl;
 			std::list<double> maxAcceleration;
 			std::list<std::string> motorName;
 			std::list<double> radius;
@@ -100,6 +101,7 @@ public:
 				heading.push_back(90.0);
 				heading.push_back(210.0);
 				heading.push_back(330.0);
+				keyboardControl = true;
 				maxAcceleration.push_back(10.0);
 				maxAcceleration.push_back(6.0);
 				maxAcceleration.push_back(40.0);
@@ -117,6 +119,7 @@ public:
 			 */
 			inline std::list<double> getDistanceToRobotCentre() const { return distanceToRobotCentre; }
 			inline std::list<double> getHeading() const { return heading; }
+			inline bool getKeyboardControl() const { return keyboardControl; }
 			inline std::list<double> getMaxAcceleration() const { return maxAcceleration; }
 			inline std::list<std::string> getMotorName() const { return motorName; }
 			inline std::list<double> getRadius() const { return radius; }
@@ -139,6 +142,7 @@ public:
 				os << "heading = " << *headingIt << ", ";
 				os << "heading = " << *headingIt << ", ";
 				}
+				os << "keyboardControl = " << keyboardControl << ", ";
 				std::list<double>::const_iterator maxAccelerationIt;
 				for(maxAccelerationIt=maxAcceleration.begin(); maxAccelerationIt!=maxAcceleration.end(); maxAccelerationIt++)
 				{
@@ -176,7 +180,6 @@ public:
 			/**
 			 * here are the member definitions
 			 */
-			std::string daemonIP;
 			double maxRotVel;
 			double maxVelX;
 			double maxVelY;
@@ -184,7 +187,6 @@ public:
 		public:
 			// default constructor
 			RobotType() {
-				daemonIP = "127.0.0.1";
 				maxRotVel = 4.0;
 				maxVelX = 1.0;
 				maxVelY = 1.0;
@@ -193,7 +195,6 @@ public:
 			/**
 			 * here are the public getters
 			 */
-			inline std::string getDaemonIP() const { return daemonIP; }
 			inline double getMaxRotVel() const { return maxRotVel; }
 			inline double getMaxVelX() const { return maxVelX; }
 			inline double getMaxVelY() const { return maxVelY; }
@@ -201,7 +202,6 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Robot(";
-				os << "daemonIP = " << daemonIP << ", ";
 				os << "maxRotVel = " << maxRotVel << ", ";
 				os << "maxVelX = " << maxVelX << ", ";
 				os << "maxVelY = " << maxVelY << ", ";
@@ -209,82 +209,6 @@ public:
 			}
 			
 		}; // end class RobotType
-		
-		/**
-		 * Definition of Parameter Bumper
-		 */
-		class BumperType 
-		{
-			friend class ParamUpdateHandler;
-		protected:
-			/**
-			 * here are the member definitions
-			 */
-			int bumperTimeOutMSec;
-			int bumperTimeOutSec;
-		
-		public:
-			// default constructor
-			BumperType() {
-				bumperTimeOutMSec = 0;
-				bumperTimeOutSec = 10;
-			}
-		
-			/**
-			 * here are the public getters
-			 */
-			inline int getBumperTimeOutMSec() const { return bumperTimeOutMSec; }
-			inline int getBumperTimeOutSec() const { return bumperTimeOutSec; }
-			
-			void to_ostream(std::ostream &os = std::cout) const
-			{
-				os << "Bumper(";
-				os << "bumperTimeOutMSec = " << bumperTimeOutMSec << ", ";
-				os << "bumperTimeOutSec = " << bumperTimeOutSec << ", ";
-				os << ")\n";
-			}
-			
-		}; // end class BumperType
-		
-		/**
-		 * Definition of Parameter LaserSafetyField
-		 */
-		class LaserSafetyFieldType 
-		{
-			friend class ParamUpdateHandler;
-		protected:
-			/**
-			 * here are the member definitions
-			 */
-			bool generateLaserSafetyFieldEvents;
-			int laserSafetyfFieldTimeOutMSec;
-			int laserSafetyfFieldTimeOutSec;
-		
-		public:
-			// default constructor
-			LaserSafetyFieldType() {
-				generateLaserSafetyFieldEvents = false;
-				laserSafetyfFieldTimeOutMSec = 0;
-				laserSafetyfFieldTimeOutSec = 10;
-			}
-		
-			/**
-			 * here are the public getters
-			 */
-			inline bool getGenerateLaserSafetyFieldEvents() const { return generateLaserSafetyFieldEvents; }
-			inline int getLaserSafetyfFieldTimeOutMSec() const { return laserSafetyfFieldTimeOutMSec; }
-			inline int getLaserSafetyfFieldTimeOutSec() const { return laserSafetyfFieldTimeOutSec; }
-			
-			void to_ostream(std::ostream &os = std::cout) const
-			{
-				os << "LaserSafetyField(";
-				os << "generateLaserSafetyFieldEvents = " << generateLaserSafetyFieldEvents << ", ";
-				os << "laserSafetyfFieldTimeOutMSec = " << laserSafetyfFieldTimeOutMSec << ", ";
-				os << "laserSafetyfFieldTimeOutSec = " << laserSafetyfFieldTimeOutSec << ", ";
-				os << ")\n";
-			}
-			
-		}; // end class LaserSafetyFieldType
 		
 		/**
 		 * Definition of Parameter General
@@ -344,61 +268,11 @@ public:
 		// Instance params
 		///////////////////////////////////////////
 		
-		/**
-		 * Definition of instantiated ParameterRepository CommBasicObjects
-		 */
-		class CommBasicObjectsType {
-			friend class ParamUpdateHandler;
-			public:
-			/**
-			 * Definition of instantiated ParameterSet BaseParams
-			 */
-			class BaseParamsType {
-				friend class ParamUpdateHandler;
-				public:
-				protected:
-					/**
-					 * internal members
-					 */
-					
-				public:
-					/**
-					 * public getter methods
-					 */
-					
-					void to_ostream(std::ostream &os = std::cout) const
-					{
-						os << "BaseParams(\n";
-						os << ")";
-					}
-			}; // end of parameter-set class BaseParamsType
-			
-			protected:
-				/**
-				 * internal members
-				 */
-				BaseParamsType BaseParams;
-			
-			public:
-				/**
-				 * public getter methods
-				 */
-				inline BaseParamsType getBaseParams() const { return BaseParams; }
-				
-				void to_ostream(std::ostream &os = std::cout) const
-				{
-					os << "CommBasicObjects(\n";
-					BaseParams.to_ostream(os);
-					os << ")";
-				}
-		}; // end of parameter-repository wrapper class CommBasicObjectsType
 	
 protected:
 
 	// Internal params
-	BumperType Bumper;
 	GeneralType General;
-	LaserSafetyFieldType LaserSafetyField;
 	OdometryRandomErrorType OdometryRandomError;
 	RobotType Robot;
 	WebotsType Webots;
@@ -406,13 +280,11 @@ protected:
 	// External params
 	
 	// Instance params (encapsulated in a wrapper class for each instantiated parameter repository)
-	CommBasicObjectsType CommBasicObjects;
 	
 
 	void setContent(const ParameterStateStructCore &commit) {
 		// External params
 	
-		this->CommBasicObjects = commit.getCommBasicObjects();
 	}
 
 	// special trigger method (user upcall) called before updating parameter global state
@@ -422,14 +294,8 @@ public:
 	virtual ~ParameterStateStructCore() {  }
 	
 	// internal param getters
-	BumperType getBumper() const {
-		return Bumper;
-	}
 	GeneralType getGeneral() const {
 		return General;
-	}
-	LaserSafetyFieldType getLaserSafetyField() const {
-		return LaserSafetyField;
 	}
 	OdometryRandomErrorType getOdometryRandomError() const {
 		return OdometryRandomError;
@@ -444,17 +310,12 @@ public:
 	// external param getters
 	
 	// repo wrapper class getter(s)
-	CommBasicObjectsType getCommBasicObjects() const {
-		return CommBasicObjects;
-	}
 	
 	// helper method to easily implement output stream in derived classes
 	void to_ostream(std::ostream &os = std::cout) const
 	{
 		// Internal params
-		Bumper.to_ostream(os);
 		General.to_ostream(os);
-		LaserSafetyField.to_ostream(os);
 		OdometryRandomError.to_ostream(os);
 		Robot.to_ostream(os);
 		Webots.to_ostream(os);
@@ -462,16 +323,11 @@ public:
 		// External params
 		
 		// Instance params (encapsulated in a wrapper class for each instantiated parameter repository)
-		CommBasicObjects.to_ostream(os);
 	}
 	
 	std::string getAsJSONString() {
 		nlohmann::json param;
 	
-		param["Bumper"] = nlohmann::json {
-			{"bumperTimeOutMSec" , getBumper().getBumperTimeOutMSec()},
-			{"bumperTimeOutSec" , getBumper().getBumperTimeOutSec()}
-		};
 		param["General"] = nlohmann::json {
 			{"hasSignalState" , getGeneral().getHasSignalState()},
 			{"poseFileName" , getGeneral().getPoseFileName()},
@@ -479,18 +335,12 @@ public:
 			{"verbose" , getGeneral().getVerbose()},
 			{"writePoseFile" , getGeneral().getWritePoseFile()}
 		};
-		param["LaserSafetyField"] = nlohmann::json {
-			{"generateLaserSafetyFieldEvents" , getLaserSafetyField().getGenerateLaserSafetyFieldEvents()},
-			{"laserSafetyfFieldTimeOutMSec" , getLaserSafetyField().getLaserSafetyfFieldTimeOutMSec()},
-			{"laserSafetyfFieldTimeOutSec" , getLaserSafetyField().getLaserSafetyfFieldTimeOutSec()}
-		};
 		param["OdometryRandomError"] = nlohmann::json {
 			{"varianceOfDistancePerMeter" , getOdometryRandomError().getVarianceOfDistancePerMeter()},
 			{"varianceOfHeadingPerMeter" , getOdometryRandomError().getVarianceOfHeadingPerMeter()},
 			{"varianceOfHeadingPerRadians" , getOdometryRandomError().getVarianceOfHeadingPerRadians()}
 		};
 		param["Robot"] = nlohmann::json {
-			{"daemonIP" , getRobot().getDaemonIP()},
 			{"maxRotVel" , getRobot().getMaxRotVel()},
 			{"maxVelX" , getRobot().getMaxVelX()},
 			{"maxVelY" , getRobot().getMaxVelY()}
@@ -498,14 +348,13 @@ public:
 		param["Webots"] = nlohmann::json {
 			{"distanceToRobotCentre" , getWebots().getDistanceToRobotCentre()},
 			{"heading" , getWebots().getHeading()},
+			{"keyboardControl" , getWebots().getKeyboardControl()},
 			{"maxAcceleration" , getWebots().getMaxAcceleration()},
 			{"motorName" , getWebots().getMotorName()},
 			{"radius" , getWebots().getRadius()},
 			{"robotName" , getWebots().getRobotName()}
 		};
 	
-		param["BaseParams"] = nlohmann::json {
-		};
 		
 		return param.dump();
 	}

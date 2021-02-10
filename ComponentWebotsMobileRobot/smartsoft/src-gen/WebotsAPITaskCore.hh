@@ -21,12 +21,7 @@
 // include upcall interface
 
 // include communication-objects for output ports
-#include <CommBasicObjects/CommDigitalInputEventParameter.hh>
-#include <CommBasicObjects/CommDigitalInputEventResult.hh>
-#include <CommBasicObjects/CommDigitalInputEventState.hh>
-#include <CommBasicObjects/CommLaserSafetyEventParam.hh>
-#include <CommBasicObjects/CommLaserSafetyEventState.hh>
-#include <CommBasicObjects/CommLaserSafetyField.hh>
+#include <CommBasicObjects/CommBaseState.hh>
 
 // include all interaction-observer interfaces
 #include <WebotsAPITaskObserverInterface.hh>
@@ -56,9 +51,7 @@ protected:
 	
 	
 	// this method is meant to be used in derived classes
-	Smart::StatusCode digitalInputEventOutPut(CommBasicObjects::CommDigitalInputEventState &eventState);
-	// this method is meant to be used in derived classes
-	Smart::StatusCode laserSafetyEventServiceOutPut(CommBasicObjects::CommLaserSafetyEventState &eventState);
+	Smart::StatusCode baseStateServiceOutPut(CommBasicObjects::CommBaseState &baseStateServiceOutDataObject);
 	
 	
 /**

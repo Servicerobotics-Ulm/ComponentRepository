@@ -169,6 +169,31 @@ int LaserTask::on_entry()
     return 0;
 }
 
+/* value                              webots                       smartsoft
+ * horizontal field of view           getFov() [radians]           opening_angle [degrees]
+ * number of horizontal points        getHorizontalResolution()    -
+ * angle between 2 horizontal points  -                            resolution [degrees]
+ *
+ * If in smartsoft these values are smaller than the correspondent values in webots,
+ * only this part of the scanned points are returned.
+ * e.g. if in webots the Lidar has a horizontal field of view of 3.14 radians
+ *      but in smartsoft the opening_angle is set to 120 degrees, some points at the left/right side are not returned.
+ *      resolution can be reduced too.
+ *
+ * note: webots calculates the number of rays = opening_angle / resolution,
+ *       but real lidar (e.g. Sick LMS 200) and smartsoft use 1 + opening_angle / resolution
+ *       e.g. opening_angle = 180, resolution = 0.5 => max. number data points = 361
+ *
+ * what happens if there is no obstacle between minRange and maxRange of the lidar ray?
+ *   webots will return infinity as distance (even in case obstacle < minRange)
+ *   smartsoft will handle this data point as 'invalid', removing this point from CommMobileLaserScan
+ *   (get_scan_angle(i) returns the angle of an data point, 0=front of lidar, pi/2=left of lidar, 3*pi/2=right of lidar, 0<=angle<2*pi)
+ *
+ * In webots scan points are from left to right, but in smartsoft from right to left ordered.
+ *
+ * In webots distances are floating point numbers in m, but in smartsoft lidar distances are unsigned short (16 bit) in mm
+ * (=> max. distance 65535 mm, you can set length_unit to e.g. 10 to change from mm to cm so lidar has bigger maxRange but less accuracy)
+ */
 int LaserTask::on_execute()
 {
     while(webotsRobot->step(webotsTimeStep)!=-1) {
@@ -210,7 +235,8 @@ int LaserTask::on_execute()
                 ++num_valid_points;
             }
         }
-        std::cout << "valid_points:" << num_valid_points << " allScans:" << allScans << " desiredScans:" << desiredScans << " rangerScans:" << rangerScans << " resolution:" << resolution << std::endl;
+        if (COMP->getGlobalState().getScanner().getVerbose())
+          std::cout << "valid_points:" << num_valid_points << " allScans:" << allScans << " desiredScans:" << desiredScans << " rangerScans:" << rangerScans << " resolution:" << resolution << std::endl;
 
         CommBasicObjects::CommTimeStamp lastTimeStep = CommBasicObjects::CommTimeStamp::now();
         // webots is updating the physics world only every timeStep,

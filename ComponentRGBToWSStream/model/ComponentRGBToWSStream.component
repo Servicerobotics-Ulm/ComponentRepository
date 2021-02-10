@@ -1,0 +1,14 @@
+ComponentDefinition ComponentRGBToWSStream logo "/ComponentRGBToWSStream/model/logo.png"
+{
+Activity CameraTask
+	{
+	}
+	Activity ServerTask
+	{
+	}
+	InputPort VideoImageClient implements DomainVision.RGBImagePushService {
+	}
+	CoordinationSlavePort CoordinationPort implements DomainVision.VisionCoordinationService
+	{
+	}
+}

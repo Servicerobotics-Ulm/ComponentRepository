@@ -1,0 +1,57 @@
+/**
+ * The SmartURServerLegacy component is the device driver component for Universal Robots (UR) manipulators, with a UR Software version older then: . 
+ *
+ * The component enables the usage of UR manipulators UR5 together with other software components.
+ * The component provides services for the usage of the manipulators on different abstraction levels. 
+ * Individual joint control e.g. moving planned trajectories can be used.
+ * 
+ * The component provides skills for all its provided capabilities, enabling an easy and fast development of robotic behavior task. 
+ * 
+ */
+
+ComponentDefinition SmartURServerLegacy logo "/SmartURServerLegacy/model/logo.png"
+{
+	InputPort trajectorySendServer implements CommManipulatorObjects.SendTrajectoryService {}
+	Activity PoseUpdateActivity
+	{
+		InputPortLink baseStateServiceIn { oversamplingOk undersamplingOk }
+		DefaultTrigger PeriodicTimer 10.0 Hz
+	}
+	OutputPort posePushServer implements CommManipulatorObjects.MobileManipulatorStateService realizedBy PoseUpdateActivity {}
+	AnswerPort poseQueryServer implements CommManipulatorObjects.MobileManipulatorStateQueryService {}
+	RequestHandler PoseQueryServerHandler triggeredFrom poseQueryServer {}
+	OutputPort manipulatorEventServiceOut implements CommManipulatorObjects.ManipulatorEventService realizedBy PoseUpdateActivity {}
+
+
+	InputHandler TrajectorySendServerHandler triggeredFrom trajectorySendServer { }
+
+	InputPort baseStateServiceIn implements CommBasicObjects.BaseStateService {}
+	
+	AnswerPort ioQueryServer implements CommBasicObjects.CommIOValuesQueryService {}
+	RequestHandler IoQueryServerHandler triggeredFrom ioQueryServer {}
+	OutputPort digitalInputEventServer implements CommBasicObjects.CommDigitalInputEvent realizedBy PoseUpdateActivity {}
+	
+	
+	AnswerPort programQueryServer implements CommManipulatorObjects.MobileManipulatorProgramQueryService {}
+	RequestHandler programQueryHandler triggeredFrom programQueryServer {}
+
+	CoordinationSlavePort CoordinationPort implements CommManipulatorObjects.ManipulatorCoordinationService {
+		
+		with manipulatorevent realizedBy manipulatorEventServiceOut
+		with manipulatorstate realizedBy poseQueryServer
+		with manipulatorprograms realizedBy programQueryServer
+		with ioquery realizedBy ioQueryServer
+		with ioevent realizedBy digitalInputEventServer
+		PrivateOperationMode demonstration;
+		PrivateOperationMode trajectory;
+		PublicOperationMode CommManipulatorObjects.ManipulatorStates.Demonstration {
+			activates ( demonstration )
+		}
+		PublicOperationMode CommManipulatorObjects.ManipulatorStates.Trajectory {
+			activates ( trajectory )
+		}
+		SkillRealizationsRef UR
+	}
+	ComponentParameters SmartURServerLegacy slave CoordinationPort
+
+}

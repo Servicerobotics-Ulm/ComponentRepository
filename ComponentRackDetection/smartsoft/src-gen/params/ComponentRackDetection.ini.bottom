@@ -1,0 +1,74 @@
+#####################
+# internal parameters
+#####################
+##########################
+# InternalParameter General
+[General]
+init_relative_obj_pose_x 0.027
+init_relative_obj_pose_y 0.115
+init_relative_obj_pose_z 0.055
+max_detection_score 0.016
+model_path /mnt/ssh/zafh/tausch/matthias_r/rack_model_cloud.pcd
+obj_depth 0.04
+obj_height 0.105
+obj_types CHOCO,SPECIAL,FROSTIES,CORN-FLAKES,SMACKS
+obj_width 0.07
+rack_dimension_max_x 2.0
+rack_dimension_max_y 0.8
+rack_dimension_max_z 2.0
+rack_dimension_min_x 0.0
+rack_dimension_min_y -0.8
+rack_dimension_min_z 0.1
+relative_obj_pose_pitch -0.2
+relative_obj_pose_x 0.0
+relative_obj_pose_y 0.115
+relative_obj_pose_z 0.0
+send_obstacle_mesh true
+
+##########################
+# InternalParameter ModelCreation
+[ModelCreation]
+capture_model false
+create_model false
+load_model_path /home/rollenhagen/rack_models/a-frame_model_clouds/model_cloud.pcd
+save_model_path /tmp/rack_model_cloud.pcd
+theta 0.0
+transformation_x -0.65
+transformation_y 0.35
+transformation_z -0.75
+
+
+#####################
+# extended parameters
+#####################
+
+#####################
+# instance parameters
+#####################
+##########################
+# ParameterSet ObjectRecognitionParameter
+##########################
+# ParameterInstance BELIEF_THRESHOLD
+[BELIEF_THRESHOLD]
+threshold 0.0
+
+##########################
+# ParameterInstance CLOUD
+[CLOUD]
+id 0
+
+##########################
+# ParameterInstance CLUSTERING
+[CLUSTERING]
+doClustering true
+
+##########################
+# ParameterInstance ESTIMATEFILLING
+[ESTIMATEFILLING]
+estimateObjectProperties false
+
+##########################
+# ParameterInstance SETOBJECTID
+[SETOBJECTID]
+id 0
+

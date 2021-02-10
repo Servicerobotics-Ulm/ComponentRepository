@@ -52,97 +52,6 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParametersNamed(const 
 			// the commit state is rejected and is not copied into the global state
 		}
 	}
-	else if (tag == "SET_RELAY")
-	{
-		answer.setResponse(SmartACE::ParamResponseType::OK); // TODO: this should be decided according to validation checks defined in the model (not yet implemented)
-		unsigned int temp_number = 0;
-		if(request.getInteger("number", temp_number) != 0) {
-			std::cout<<"ParamUpdateHandler - error parsing value: number request: "<<request<<std::endl;
-			answer.setResponse(SmartACE::ParamResponseType::INVALID);
-		}
-		bool temp_value = false;
-		if(request.getBoolean("value", temp_value) != 0) {
-			std::cout<<"ParamUpdateHandler - error parsing value: value request: "<<request<<std::endl;
-			answer.setResponse(SmartACE::ParamResponseType::INVALID);
-		}
-		
-		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
-			triggerHandler.handleSET_RELAYCore(
-			temp_number, 
-			temp_value
-			);
-		}
-	}
-	else if (tag == "COMMBASICOBJECTS.BASEPARAMS.BASE_RESET")
-	{
-		answer.setResponse(SmartACE::ParamResponseType::OK);
-		
-		
-		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
-			triggerHandler.handleCommBasicObjects_BaseParams_BASE_RESETCore(
-			);
-		}
-	}
-	else if (tag == "COMMBASICOBJECTS.BASEPARAMS.BASE_SONAR")
-	{
-		answer.setResponse(SmartACE::ParamResponseType::OK);
-		
-		
-		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
-			triggerHandler.handleCommBasicObjects_BaseParams_BASE_SONARCore(
-			);
-		}
-	}
-	else if (tag == "COMMBASICOBJECTS.BASEPARAMS.SIGNAL_STATE_BUSY")
-	{
-		answer.setResponse(SmartACE::ParamResponseType::OK);
-		
-		
-		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
-			triggerHandler.handleCommBasicObjects_BaseParams_SIGNAL_STATE_BUSYCore(
-			);
-		}
-	}
-	else if (tag == "COMMBASICOBJECTS.BASEPARAMS.SIGNAL_STATE_ERROR")
-	{
-		answer.setResponse(SmartACE::ParamResponseType::OK);
-		
-		
-		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
-			triggerHandler.handleCommBasicObjects_BaseParams_SIGNAL_STATE_ERRORCore(
-			);
-		}
-	}
-	else if (tag == "COMMBASICOBJECTS.BASEPARAMS.SIGNAL_STATE_IDLE")
-	{
-		answer.setResponse(SmartACE::ParamResponseType::OK);
-		
-		
-		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
-			triggerHandler.handleCommBasicObjects_BaseParams_SIGNAL_STATE_IDLECore(
-			);
-		}
-	}
-	else if (tag == "COMMBASICOBJECTS.BASEPARAMS.SIGNAL_STATE_LOCALIZATION_ERROR")
-	{
-		answer.setResponse(SmartACE::ParamResponseType::OK);
-		
-		
-		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
-			triggerHandler.handleCommBasicObjects_BaseParams_SIGNAL_STATE_LOCALIZATION_ERRORCore(
-			);
-		}
-	}
-	else if (tag == "COMMBASICOBJECTS.BASEPARAMS.SIGNAL_STATE_SAFETY_FIELD")
-	{
-		answer.setResponse(SmartACE::ParamResponseType::OK);
-		
-		
-		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
-			triggerHandler.handleCommBasicObjects_BaseParams_SIGNAL_STATE_SAFETY_FIELDCore(
-			);
-		}
-	}
 	else
 	{
 		/////////////////////////////////////////////////////////////////////
@@ -178,98 +87,6 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParametersSequence(con
 		} else {
 			// the commit validation check returned != OK
 			// the commit state is rejected and is not copied into the global state
-		}
-	}
-	else if (tag == "SET_RELAY")
-	{
-		answer.setResponse(SmartACE::ParamResponseType::OK);
-		
-		unsigned int temp_number = 0;
-		if(request.getInteger("1", temp_number) != 0) {
-			answer.setResponse(SmartACE::ParamResponseType::INVALID);
-			std::cout<<"ParamUpdateHandler - error parsing value: number request: "<<request<<std::endl;
-		}
-		bool temp_value = false;
-		if(request.getBoolean("2", temp_value) != 0) {
-			answer.setResponse(SmartACE::ParamResponseType::INVALID);
-			std::cout<<"ParamUpdateHandler - error parsing value: value request: "<<request<<std::endl;
-		}
-		
-		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
-			triggerHandler.handleSET_RELAYCore(
-			temp_number, 
-			temp_value
-			);
-		}
-	}
-	else if (tag == "COMMBASICOBJECTS.BASEPARAMS.BASE_RESET")
-	{
-		answer.setResponse(SmartACE::ParamResponseType::OK);
-		
-		
-		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
-			triggerHandler.handleCommBasicObjects_BaseParams_BASE_RESETCore(
-			);
-		}
-	}
-	else if (tag == "COMMBASICOBJECTS.BASEPARAMS.BASE_SONAR")
-	{
-		answer.setResponse(SmartACE::ParamResponseType::OK);
-		
-		
-		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
-			triggerHandler.handleCommBasicObjects_BaseParams_BASE_SONARCore(
-			);
-		}
-	}
-	else if (tag == "COMMBASICOBJECTS.BASEPARAMS.SIGNAL_STATE_BUSY")
-	{
-		answer.setResponse(SmartACE::ParamResponseType::OK);
-		
-		
-		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
-			triggerHandler.handleCommBasicObjects_BaseParams_SIGNAL_STATE_BUSYCore(
-			);
-		}
-	}
-	else if (tag == "COMMBASICOBJECTS.BASEPARAMS.SIGNAL_STATE_ERROR")
-	{
-		answer.setResponse(SmartACE::ParamResponseType::OK);
-		
-		
-		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
-			triggerHandler.handleCommBasicObjects_BaseParams_SIGNAL_STATE_ERRORCore(
-			);
-		}
-	}
-	else if (tag == "COMMBASICOBJECTS.BASEPARAMS.SIGNAL_STATE_IDLE")
-	{
-		answer.setResponse(SmartACE::ParamResponseType::OK);
-		
-		
-		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
-			triggerHandler.handleCommBasicObjects_BaseParams_SIGNAL_STATE_IDLECore(
-			);
-		}
-	}
-	else if (tag == "COMMBASICOBJECTS.BASEPARAMS.SIGNAL_STATE_LOCALIZATION_ERROR")
-	{
-		answer.setResponse(SmartACE::ParamResponseType::OK);
-		
-		
-		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
-			triggerHandler.handleCommBasicObjects_BaseParams_SIGNAL_STATE_LOCALIZATION_ERRORCore(
-			);
-		}
-	}
-	else if (tag == "COMMBASICOBJECTS.BASEPARAMS.SIGNAL_STATE_SAFETY_FIELD")
-	{
-		answer.setResponse(SmartACE::ParamResponseType::OK);
-		
-		
-		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
-			triggerHandler.handleCommBasicObjects_BaseParams_SIGNAL_STATE_SAFETY_FIELDCore(
-			);
 		}
 	}
 	else
@@ -318,15 +135,6 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		//
 		// load internal parameters (if any)
 		//
-		// parameter Bumper
-		if(parameter.getInteger("Bumper", "bumperTimeOutMSec", commitState.Bumper.bumperTimeOutMSec))
-		{
-			globalState.Bumper.bumperTimeOutMSec = commitState.Bumper.bumperTimeOutMSec;
-		}
-		if(parameter.getInteger("Bumper", "bumperTimeOutSec", commitState.Bumper.bumperTimeOutSec))
-		{
-			globalState.Bumper.bumperTimeOutSec = commitState.Bumper.bumperTimeOutSec;
-		}
 		// parameter General
 		if(parameter.getBoolean("General", "hasSignalState", commitState.General.hasSignalState))
 		{
@@ -348,19 +156,6 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.General.writePoseFile = commitState.General.writePoseFile;
 		}
-		// parameter LaserSafetyField
-		if(parameter.getBoolean("LaserSafetyField", "generateLaserSafetyFieldEvents", commitState.LaserSafetyField.generateLaserSafetyFieldEvents))
-		{
-			globalState.LaserSafetyField.generateLaserSafetyFieldEvents = commitState.LaserSafetyField.generateLaserSafetyFieldEvents;
-		}
-		if(parameter.getInteger("LaserSafetyField", "laserSafetyfFieldTimeOutMSec", commitState.LaserSafetyField.laserSafetyfFieldTimeOutMSec))
-		{
-			globalState.LaserSafetyField.laserSafetyfFieldTimeOutMSec = commitState.LaserSafetyField.laserSafetyfFieldTimeOutMSec;
-		}
-		if(parameter.getInteger("LaserSafetyField", "laserSafetyfFieldTimeOutSec", commitState.LaserSafetyField.laserSafetyfFieldTimeOutSec))
-		{
-			globalState.LaserSafetyField.laserSafetyfFieldTimeOutSec = commitState.LaserSafetyField.laserSafetyfFieldTimeOutSec;
-		}
 		// parameter OdometryRandomError
 		if(parameter.getDouble("OdometryRandomError", "varianceOfDistancePerMeter", commitState.OdometryRandomError.varianceOfDistancePerMeter))
 		{
@@ -375,10 +170,6 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 			globalState.OdometryRandomError.varianceOfHeadingPerRadians = commitState.OdometryRandomError.varianceOfHeadingPerRadians;
 		}
 		// parameter Robot
-		if(parameter.getString("Robot", "daemonIP", commitState.Robot.daemonIP))
-		{
-			globalState.Robot.daemonIP = commitState.Robot.daemonIP;
-		}
 		if(parameter.getDouble("Robot", "maxRotVel", commitState.Robot.maxRotVel))
 		{
 			globalState.Robot.maxRotVel = commitState.Robot.maxRotVel;
@@ -399,6 +190,10 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		if(parameter.getDoubleList("Webots", "heading", commitState.Webots.heading))
 		{
 			globalState.Webots.heading = commitState.Webots.heading;
+		}
+		if(parameter.getBoolean("Webots", "keyboardControl", commitState.Webots.keyboardControl))
+		{
+			globalState.Webots.keyboardControl = commitState.Webots.keyboardControl;
 		}
 		if(parameter.getDoubleList("Webots", "maxAcceleration", commitState.Webots.maxAcceleration))
 		{

@@ -74,10 +74,10 @@ void LocalizationEventServiceInHandler::on_LocalizationEventServiceIn(const Smar
 		if(value == CommLocalizationObjects::LocalizationEventType::LOCALIZATION_LOST)
 		{
 
-			COMP->signalStateTask->setLocalizationState(false);
+			//COMP->signalStateTask->setLocalizationState(false);
 		}
 		else if (value == CommLocalizationObjects::LocalizationEventType::LOCALIZATION_OK)
 		{
-			COMP->signalStateTask->setLocalizationState(true);
+			//COMP->signalStateTask->setLocalizationState(true);
 		}
 }

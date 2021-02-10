@@ -68,26 +68,6 @@ Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * ComponentWebotsMobi
 	return new SmartACE::PushServer<CommBasicObjects::CommBaseState>(componentImpl, serviceName);
 }
 
-Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> * ComponentWebotsMobileRobotAcePortFactory::createBatteryEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>> batteryEventServiceOutEventTestHandler)
-{
-	return new SmartACE::EventServer<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>(componentImpl, serviceName, batteryEventServiceOutEventTestHandler);
-}
-
-Smart::IEventServerPattern<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState> * ComponentWebotsMobileRobotAcePortFactory::createBumperEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState>> bumperEventServiceOutEventTestHandler)
-{
-	return new SmartACE::EventServer<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState>(componentImpl, serviceName, bumperEventServiceOutEventTestHandler);
-}
-
-Smart::IEventServerPattern<CommBasicObjects::CommDigitalInputEventParameter, CommBasicObjects::CommDigitalInputEventResult, CommBasicObjects::CommDigitalInputEventState> * ComponentWebotsMobileRobotAcePortFactory::createDigitalInputEventOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommDigitalInputEventParameter, CommBasicObjects::CommDigitalInputEventResult, CommBasicObjects::CommDigitalInputEventState>> digitalInputEventOutEventTestHandler)
-{
-	return new SmartACE::EventServer<CommBasicObjects::CommDigitalInputEventParameter, CommBasicObjects::CommDigitalInputEventResult, CommBasicObjects::CommDigitalInputEventState>(componentImpl, serviceName, digitalInputEventOutEventTestHandler);
-}
-
-Smart::IEventServerPattern<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState> * ComponentWebotsMobileRobotAcePortFactory::createLaserSafetyEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState>> laserSafetyEventServiceOutEventTestHandler)
-{
-	return new SmartACE::EventServer<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState>(componentImpl, serviceName, laserSafetyEventServiceOutEventTestHandler);
-}
-
 Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * ComponentWebotsMobileRobotAcePortFactory::createLocalizationUpdateServiceIn(const std::string &serviceName)
 {
 	return new SmartACE::SendServer<CommBasicObjects::CommBasePositionUpdate>(componentImpl, serviceName);
@@ -96,16 +76,6 @@ Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * ComponentW
 Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * ComponentWebotsMobileRobotAcePortFactory::createNavigationVelocityServiceIn(const std::string &serviceName)
 {
 	return new SmartACE::SendServer<CommBasicObjects::CommNavigationVelocity>(componentImpl, serviceName);
-}
-
-Smart::ISendServerPattern<CommRobotinoObjects::CommRobotinoPowerOutputValue> * ComponentWebotsMobileRobotAcePortFactory::createPowerOutputSendIn(const std::string &serviceName)
-{
-	return new SmartACE::SendServer<CommRobotinoObjects::CommRobotinoPowerOutputValue>(componentImpl, serviceName);
-}
-
-Smart::IQueryServerPattern<CommBasicObjects::CommIOValues, CommBasicObjects::CommIOValues> * ComponentWebotsMobileRobotAcePortFactory::createRobotinoIOValuesQueryServiceAnsw(const std::string &serviceName)
-{
-	return new SmartACE::QueryServer<CommBasicObjects::CommIOValues, CommBasicObjects::CommIOValues>(componentImpl, serviceName);
 }
 
 

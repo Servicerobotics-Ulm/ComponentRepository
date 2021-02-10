@@ -56,17 +56,11 @@
 #include <CommBasicObjects/CommBasePose.hh>
 #include <CommBasicObjects/CommBasePositionUpdate.hh>
 
-//#include "RobotinoCom.hh"
-//#include "RobotinoOdom.hh"
-//#include "RobotinoBumper.hh"
-//#include "rec/robotino/api2/all.h"
-//#include "rec/robotino/api2/OmniDriveModel.h"
-
 /**
  * \class Robot
  * Encapsulates the Robot
  */
-class Robot: public Smart::ITimerHandler
+class Robot//: public Smart::ITimerHandler
 {
 public:
 
@@ -197,25 +191,10 @@ public:
 
 	void processEvents();
 
-	std::vector<bool> getDigitalInputArray() const;
-	std::vector<float> getAnalogInputArray() const;
-
-	void setDigitalOutput(unsigned int outputNumber, bool outputValue);
-	void setAnalogOutput(unsigned int outputNumber, double outputValue);
-
-	void setRelay(unsigned int relayNumber, bool state);
-
-	bool getBumperState();
-
-	void setPowerOutput(float value);
 
 
 	/////////////////////////////// private
 private:
-	void timerExpired(const Smart::TimePoint &abs_time, const void * arg);
-//	void timerExpired(const ACE_Time_Value & absolute_time,const void * arg);
-	void timerCancelled();
-	void timerDeleted(const void * arg);
 
 	void initVariables();
 	
@@ -257,24 +236,6 @@ private:
 	double lamdaSigmaDeltaAlpha;
 	double lamdaSigmaDeltaBeta;
 
-	// Daemnon IP
-	//std::string hostIP;
-	// Object handling the connection to Robotino
-	//RobotinoCom robotinoCom;
-
-	//rec::robotino::api2::DigitalInputArray digitalInputArray;
-	int digitalInputs[8];
-	//rec::robotino::api2::AnalogInputArray analogInputArray;
-	float analogInputs[8];
-	mutable SmartACE::SmartMutex lockIO;
-
-	//rec::robotino::api2::DigitalOutput digitalOutput;
-	//rec::robotino::api2::AnalogOutput analogOutputy;
-	//rec::robotino::api2::PowerOutput powerOutput;
-
-	//rec::robotino::api2::Relay relay;
-	mutable SmartACE::SmartMutex lockRelay;
-
 	//RobotinoOdom robotinoOdom;
 	bool _ignoreOdometryEvent;
 	
@@ -292,11 +253,6 @@ private:
 
 	//rec::robotino::api2::PowerManagement power;
 
-	bool generateLaserSafetyFieldEvents;
-	int laserSafetyFieldIOBit;
-	int laserSafetyFieldTimerId;
-	int laserSafetyFieldTimeoutSec, laserSafetyFieldTimeoutMsec;
-	int laserSafetyFieldLastState;
 };
 
 #endif // ROBOT_HH

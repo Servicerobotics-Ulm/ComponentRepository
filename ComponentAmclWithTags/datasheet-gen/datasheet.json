@@ -1,0 +1,69 @@
+{
+	"name": "ComponentAmclWithTags",
+	"shortDescription": "The ComponentAmclWithTags implements the Adaptive Monte-Carlo Localization (AMCL) algorithm.",
+	"type": "Toolify",
+	"description": "<p></p><p> ComponentAmclWithTags implements the Adaptive Monte-Carlo Localization (AMCL) algorithm.	Localization is based on a particle filter and a pre-captured grid map of the environment.	AMCL maintains a set of possible robot poses and updates this distribution by comparing laser scans against the pre-captured map.	AMCL is adaptive because the amount of particles depends on the pose certainty: large number of particles if uncertainty increases and vice versa.</p><p>	Based on its localization, ComponentAmclWithTags sends position updates to the base server (e.g. SmartPioneerBaseServer).</p><p>	GPL-License: includes Code from the Player Project.</p><p>	See also: http://playerstage.sourceforge.net/doc/Player-2.0.0/player/group__driver__amcl.html</p><p></p>",
+	"purposes": ["Localization"],
+	"spdxLicense": "LGPL-2.0-or-later",
+	"technologyReadinessLevel": "TRL5",
+	"homepage": "http://servicerobotik-ulm.de/components",
+	"supplier": "Servicerobotics Ulm",
+	"services": [
+	],
+	"mainstates": [
+		"Active",
+		"Neutral"
+	],
+	"parameters": [
+	],
+	"triggers": [
+		{
+			"name": "INITIALPOSE",
+			"nameFQN": "CommLocalizationObjects.LocalizationParameter.INITIALPOSE",
+			"type": "trigger",
+			"description": " Set the initial pose in normal distribution. ?x = x coordinate [m], ?y = y coordinate [m], ?a = rotation in [rad].",
+			"attributes": [
+				{
+					"name": "x",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "y",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "a",
+					"type": "string",
+					"default": "",
+					"description": ""
+				}
+			]
+		},
+		{
+			"name": "GLOBALLOCALIZATION",
+			"nameFQN": "CommLocalizationObjects.LocalizationParameter.GLOBALLOCALIZATION",
+			"type": "trigger",
+			"description": "  Initializes the Amcl, particles equally distributed.",
+			"attributes": [
+			]
+		},
+		{
+			"name": "LOADMAP",
+			"nameFQN": "CommLocalizationObjects.LocalizationParameter.LOADMAP",
+			"type": "trigger",
+			"description": "",
+			"attributes": [
+				{
+					"name": "filename",
+					"type": "string",
+					"default": "",
+					"description": ""
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,54 @@
+ComponentParameter SmartOpenRaveParams component SmartOpenRave {
+	
+	InternalParameter OpenRave {
+		defaultEnvironmentPath: String = "data/defaultOpenRave.env.xml"
+		robotPath: String = "robots/katana.robot.xml"
+		saveTrajectoryToFile: Boolean = false
+		saveObjectsToFile: Boolean = false
+		debugSend: Boolean = false
+		debugOpenRave: Boolean = true
+		debugGrasping: Boolean = false
+		gui_active: Boolean = true
+		robotName: String = "Katana"
+		showCompleteTrajectory: Boolean = false
+		storedEnvironmentPath: String = "data/"
+		storedEnvironmentName: String = "storedEnvironment"
+		python_path: String = "etc/"
+		objectDatabasePath: String = "data/openRaveModels/"
+		objectDatabaseXMLFilename: String = "openRaveObjectsDB.xml"
+	}
+
+	InternalParameter PortParameter{
+		withManipulator: Boolean = true
+		withGripper: Boolean = true
+		gripperComponentName: String="SmartSchunkGripperServer"
+		gripperComponentParameterService: String="param"
+		withObjectRecognition: Boolean = true
+	}
+	
+	ParameterSetInstance CommManipulationPlannerObjects.ManipulationPlannerParameter {
+		TriggerInstance CONSTRAINED_PATH passive
+		TriggerInstance ENV_CLEAR passive
+		TriggerInstance ENV_LOAD_FILE passive
+		TriggerInstance ENV_LOAD_OBJECTRECOGNITION passive
+		TriggerInstance ENV_SAVE_FILE passive
+		TriggerInstance GRASPING_CENTERED passive
+		TriggerInstance GRASPING_NONE passive
+		TriggerInstance GRASPING_SIMPLE passive
+		TriggerInstance NORMAL_PATH passive
+		TriggerInstance OBJ_ADD passive
+		TriggerInstance OBJ_COMPUTEGRASPTABLE passive
+		TriggerInstance OBJ_DELETE passive
+		TriggerInstance OBJ_MOVE passive
+		//FIXME
+//		TriggerInstance OPENRAVE_GRASPOBJ passive
+//		TriggerInstance OPENRAVE_RELEASEOBJ passive
+		TriggerInstance SIMULATION_PLAN_ALL passive
+		TriggerInstance SIMULATION_TEST_IK_ONLY passive
+	}
+}
+
+
+
+
+

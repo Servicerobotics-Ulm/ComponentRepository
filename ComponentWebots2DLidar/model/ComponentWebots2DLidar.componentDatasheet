@@ -1,0 +1,47 @@
+ComponentDatasheet ComponentWebots2DLidar
+{
+	BaseURI "http://www.servicerobotik-ulm.de"
+	ShortDescription "
+
+ComponentWebots2DLidar connects to an lidar (laser scanner) in the webots simulator, measuring distances with laser rays.
+ 
+The scans are made each Webots timeStep, at the same time (see Time of flight (ToF)). The rays are ordered horizontal from right to left. Distances are in measured in mm.
+
+Note that it is possible to reduce the data size by removing distance values with are not within a min or max distance or by reducing the resolution (angle between two rays) or the opening_angle (angle of all rays in the reduced data set).
+
+How a new lidar can be added to Webots:
+* Add a new Robot, set its controller to '&lt;extern&gt;', its coordinate system should be x=front, y=left, z=up of the lidar rays.
+* The robots name must set the same in Webots and here.
+* Add the lidar in children of the robot, rotate it to match the coordinate system above.
+
+example code:
+
+```cpp
+CommBasicObjects::CommMobileLaserScan scan;
+if(this->laserServiceInGetUpdate(scan) != Smart::SMART_OK) (some error handling here)
+int count = scan.get_scan_size();
+for (int i = 0; i < count; ++i) {
+	// scan.get_scan_angle is between 0 and 2*pi, 0=front of lidar
+	double angle = scan.get_scan_angle(i) / M_PI * 180;
+	// angle should be between -180 and +180 degrees, 0=front of lidar
+	if( angle > 180 )
+		angle -= 360;
+	double distance = scan.get_scan_distance(i);
+    ...
+}
+```
+  
+"
+	DatasheetProperty MarketName {
+		value "ComponentWebots2DLidar"
+	}
+	DatasheetProperty Supplier {
+		value "Servicerobotics Ulm"
+	}
+	DatasheetProperty Homepage {
+		value "http://servicerobotik-ulm.de/components"
+	}
+	DatasheetProperty Purpose {
+		value "Example"
+	}
+}

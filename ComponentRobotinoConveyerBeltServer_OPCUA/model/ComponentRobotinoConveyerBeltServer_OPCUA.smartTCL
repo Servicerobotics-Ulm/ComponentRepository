@@ -1,0 +1,381 @@
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; neutral
+
+(define-tcb (setBeltNeutral)
+  (module "MPSModule")
+  (action (
+            (format t "=========================>>> setBeltNeutral~%")
+            (tcl-state :server 'BELT :state "Neutral"))))
+
+;; neutral
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; belt load and unload
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; mps loading
+
+
+(define-rule (rule-mps-load-failed)
+  (tcb (tcb-mps-station-load-belts ?stationid))
+  (return-value (ERROR (LOAD LOADING)))
+  (action (
+              (format t "=========================>>> RULE: rule-mps-load-failed (ERROR (LOAD LOADING))  ~%")
+                        
+              (tcl-push-plan :plan `(
+                                  (FLEETMANAGER.tcb-wait-for-error-ack 'SW-ACK)
+                                  (MPS.tcb-mps-station-load-belts ?stationid)
+                                  )))))
+
+(define-rule (rule-mps-manual-load-failed)
+  (tcb (tcb-manual-load))
+  (return-value (ERROR (LOAD LOADING)))
+  (action (
+              (format t "=========================>>> RULE: rule-mps-manual-load-failed (ERROR (LOAD LOADING))  ~%")
+                        
+              (tcl-push-plan :plan `(
+                                  (FLEETMANAGER.tcb-wait-for-error-ack 'HW-ACK)
+                                  (MPS.tcb-manual-load)
+                                  )))))
+
+(define-rule (rule-mps-unload-failed)
+  (tcb (tcb-mps-station-unload-belts ?stationid))
+  (return-value (ERROR (UNLOAD LOADING)))
+  (action (
+              (format t "=========================>>> RULE: rule-mps-unload-failed (ERROR (UNLOAD LOADING))  ~%")
+
+              (tcl-push-plan :plan `(
+                                  (FLEETMANAGER.tcb-wait-for-error-ack 'SW-ACK)
+                                  (MPS.tcb-mps-station-unload-belts ?stationid)
+                                  )))))
+
+(define-rule (rule-mps-manual-unload-failed)
+  (tcb (tcb-manual-unload))
+  (return-value (ERROR (UNLOAD LOADING)))
+  (action (
+              (format t "=========================>>> RULE: rule-mps-manual-unload-failed (ERROR (UNLOAD LOADING))  ~%")
+
+              (tcl-push-plan :plan `(
+                                  (FLEETMANAGER.tcb-wait-for-error-ack 'HW-ACK)
+                                  (MPS.tcb-manual-unload)
+                                  )))))
+
+
+
+(define-rule (rule-abort-job-load-unload)
+  (tcb (ANY-TCB))
+  (return-value (ERROR (TASK ABBORT)))
+  (action (
+            (format t "=========================>>> RULE: rule-abort-job-load-unload ERROR (TASK ABBORT)  ~%")
+            (tcl-delete-plan)
+            (tcl-abort)
+            '(ERROR (TASK ABBORT)))))
+
+                   
+
+(define-tcb (tcb-mps-station-load ?stationid)
+  (module "MPSModule")
+  (rules (rule-mps-load-failed rule-mps-manual-load-failed rule-abort-job-load-unload)) 
+  (action (
+            (let* ( (station-type (get-value (tcl-kb-query :key '(is-a id) :value '((is-a station)(id ?stationid))) 'type)) )
+              (format t "=========================>>> tcb-mps-station-load stationid: ~a station-type: ~a ~%" ?stationid station-type)
+
+
+              (cond 
+                ((equal station-type 'MANUAL-STATION)
+                  (tcl-push-back-plan :plan `(
+                                               (tcb-update-running-job-state 'LOADING)
+                                               (tcb-manual-load)
+                                               (tcb-update-running-job-state 'LOADING-DONE))))
+
+                (T
+                  (tcl-push-back-plan :plan `(
+                                               (tcb-update-running-job-state 'LOADING)
+                                               (tcb-mps-station-load-belts '?stationid)
+                                               (tcb-update-running-job-state 'LOADING-DONE)))))))))
+        
+
+(define-tcb (tcb-mps-station-unload ?stationid)
+  (module "MPSModule")
+  (rules (rule-mps-unload-failed rule-mps-manual-unload-failed rule-abort-job-load-unload)) 
+  (action (
+            (let* ( (station-type (get-value (tcl-kb-query :key '(is-a id) :value '((is-a station)(id ?stationid))) 'type)) )
+              (format t "=========================>>> tcb-mps-station-unload stationid: ~a station-type: ~a ~%" ?stationid station-type)
+
+
+              (cond 
+                ((equal station-type 'MANUAL-STATION)
+                  (tcl-push-back-plan :plan `(
+                                               (tcb-update-running-job-state 'UNLOADING)
+                                               (tcb-manual-unload)
+                                               (tcb-update-running-job-state 'UNLOADING-DONE))))
+
+                (T
+                  (tcl-push-back-plan :plan `(
+                                               (tcb-update-running-job-state 'UNLOADING)
+                                               (tcb-mps-station-unload-belts '?stationid)
+                                               (tcb-update-running-job-state 'UNLOADING-DONE)))))))))
+  
+
+
+
+;;(execute '(MPS.tcb-mps-station-load-belts 1))
+
+(define-tcb (tcb-mps-station-load-belts ?stationid)
+  (module "MPSModule")
+  (abort-action ( (format t "=========================>>> ABORT ACTION tcb-mps-station-load-belts ~%")
+                  (tcl-state :server 'BELT :state "Neutral")))
+  (action (
+            (format t "=========================>>> tcb-mps-station-load-belts stationid: ~a~%" ?stationid)
+            (format t "DO LOADING ~%")
+            (tcl-activate-event :name 'evt-belt-loading
+                                :handler 'handler-mps-loading
+                                :server 'BELT 
+                                :service 'loadevent
+                                :mode 'continuous)
+            (tcl-param :server 'BELT :slot 'COMMROBOTINOOBJECTS.ROBOTINOCONVEYERPARAMETER.SETSTATIONID :value ?stationid)
+            (tcl-param :server 'BELT :slot 'COMMIT)
+            (tcl-state :server 'BELT :state "load"))))
+
+
+;;(execute '(MPS.tcb-mps-station-unload-belts 1))
+(define-tcb (tcb-mps-station-unload-belts ?stationid)
+  (module "MPSModule")
+  (abort-action ( (format t "=========================>>> ABORT ACTION tcb-mps-station-unload-belts~%")
+                  (tcl-state :server 'BELT :state "Neutral")))
+  (action (
+            (format t "=========================>>> tcb-mps-station-unload-belts stationid:~a ~%" ?stationid)
+            (format t "DO UNLOADING ~%")
+            (tcl-activate-event :name 'evt-highlevel
+                                :handler 'handler-mps-loading
+                                :server 'BELT 
+                                :service 'loadevent
+                                :mode 'continuous)
+            (tcl-param :server 'BELT :slot 'COMMROBOTINOOBJECTS.ROBOTINOCONVEYERPARAMETER.SETSTATIONID :value ?stationid)
+            (tcl-param :server 'BELT :slot 'COMMIT)
+            (tcl-state :server 'BELT :state "unload"))))
+
+
+(define-event-handler (handler-mps-loading)
+  (action (
+            (format t "=========================>>> HANDLER MPS LOADING: ~s ~%~%" (tcl-event-message))
+            (cond
+	      ;;LOAD
+              ((equal (tcl-event-message) "(load not done)")
+                (format t "==========>>> load START ~%" ))
+
+              ((equal (tcl-event-message) "(load done)")
+                (format t "==========>>> load DONE SUCCESS ~%" )
+                (tcl-state :server 'BELT :state "Neutral")
+                (update-robot-state :box-loaded 1)
+                (tcl-delete-plan)
+                (tcl-abort)
+                '(SUCCESS ()))
+
+              ((equal (tcl-event-message) "(load error no box)")
+                (format t "==========>>> load DONE ERROR ~%" )
+                (tcl-state :server 'BELT :state "Neutral")
+                (update-robot-state :box-loaded 0)
+                (update-robot-state :state 'ERROR)
+                (update-running-job-lc-state 'ERROR "LoadBox NO_BOX")
+                (tcl-delete-plan)
+                (tcl-abort)
+                '(ERROR (LOAD LOADING)))
+
+              ((equal (tcl-event-message) "(load error box already present)")
+                (tcl-state :server 'BELT :state "Neutral")
+                (update-robot-state :box-loaded 1)
+                (update-robot-state :state 'ERROR)
+                (update-running-job-lc-state 'ERROR "LoadBox BOX_PRESENT")
+                (tcl-delete-plan)
+                (tcl-abort)
+                '(ERROR (LOAD LOADING)))
+
+              ((equal (tcl-event-message) "(load error no response from station)")
+                (format t "==========>>> load DONE ERROR ~%" )
+                (tcl-state :server 'BELT :state "Neutral")
+                (let ((digitalIn (queryDigitalIO "IOQueryModule" 'IO '())))
+	          (cond 
+	            ((equal (third digitalIn) 1)
+                      (update-robot-state :box-loaded 1))
+	            ((equal (third digitalIn) 0)
+                      (update-robot-state :box-loaded 0))))
+                (update-robot-state :state 'ERROR)
+                (update-running-job-lc-state 'ERROR "LoadBox NO_RESPONSE_FROM_STATION")
+                (tcl-delete-plan)
+                (tcl-abort)
+                '(ERROR (LOAD LOADING)))
+
+              ;;UNLOAD
+              ((equal (tcl-event-message) "(unload not done)")
+                (format t "==========>>> unload START ~%" ))
+
+              ((equal (tcl-event-message) "(unload done)")
+                (format t "==========>>> unload DONE SUCCESS ~%" )
+                (tcl-state :server 'BELT :state "Neutral")
+                (update-robot-state :box-loaded 0)
+                (tcl-delete-plan)
+                (tcl-abort)
+                '(SUCCESS ()))
+
+              ((equal (tcl-event-message) "(unload error no box)")
+                (format t "==========>>> unload DONE ERROR ~%" )
+                (tcl-state :server 'BELT :state "Neutral")
+                (update-robot-state :box-loaded 0)
+                (update-robot-state :state 'ERROR)
+                (update-running-job-lc-state 'ERROR "UnloadBox NO_BOX")
+                (tcl-delete-plan)
+                (tcl-abort)
+                '(ERROR (UNLOAD LOADING)))
+
+              ((equal (tcl-event-message) "(unload error box still present)")
+                (format t "==========>>> unload DONE ERROR ~%" )
+                (tcl-state :server 'BELT :state "Neutral")
+                (update-robot-state :box-loaded 1)
+                (update-robot-state :state 'ERROR)
+                (update-running-job-lc-state 'ERROR "UnloadBox BOX_PRESENT")
+                (tcl-delete-plan)
+                (tcl-abort)
+                '(ERROR (UNLOAD LOADING)))
+
+              ((equal (tcl-event-message) "(unload error no response from station)")
+                (format t "==========>>> unload DONE ERROR ~%" )
+                (tcl-state :server 'BELT :state "Neutral")
+                (let ((digitalIn (queryDigitalIO "IOQueryModule" 'IO '())))
+	          (cond 
+	            ((equal (third digitalIn) 1)
+                      (update-robot-state :box-loaded 1))
+	            ((equal (third digitalIn) 0)
+                      (update-robot-state :box-loaded 0))))
+                (update-robot-state :state 'ERROR)
+                (update-running-job-lc-state 'ERROR "UnloadBox NO_RESPONSE_FROM_STATION")
+                (tcl-delete-plan)
+                (tcl-abort)
+                '(ERROR (UNLOAD LOADING)))
+               ))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; manual loading
+
+; (execute '(MPS.tcb-manual-load))
+
+(define-tcb (tcb-manual-load)
+  (module "MPSModule")
+  (rules (rule-load-fleet-manual-ack))
+  (action (
+    (format t "=========================>>> tcb-manual-load~%")
+    (tcl-activate-event :name 'evt-highlevel
+                              :handler 'handler-mps-loading
+                              :server 'BELT 
+                              :service 'loadevent
+                              :mode 'continuous)
+    (tcl-state :server 'BELT :state "manualload")
+    (tcl-push-back-plan :plan `((FLEETMANAGER.tcb-request-manual-ack-from-fleetmanager))))))
+
+
+(define-rule (rule-load-fleet-manual-ack)
+  (tcb (tcb-request-manual-ack-from-fleetmanager))
+  (return-value (SUCCESS (ManualAcknowledge)))
+  (action (
+    (format t "=========================>>> RULE: rule-load-fleet-manual-ack (SUCCESS (ManualAcknowledge)) ~%")
+    (queryDigitalIO "IOQueryModule" 'IO '(DIGITAL 5 0))
+    (tcl-state :server 'BELT :state "Neutral")
+    (tcl-abort)
+    ;;check if box is present
+    (let ((digitalIn (queryDigitalIO "IOQueryModule" 'IO '())))
+      (cond
+        ((equal (third digitalIn) 1)
+          (update-robot-state :box-loaded 1)
+          '(SUCCESS ()))
+        ((equal (third digitalIn) 0)
+          (update-robot-state :box-loaded 0)
+          (update-robot-state :state 'ERROR)
+          (update-running-job-lc-state 'ERROR "LoadBox NO_BOX")
+          '(ERROR (LOAD LOADING))))))))
+
+;  (execute '(MPS.tcb-manual-unload))
+
+(define-tcb (tcb-manual-unload)
+  (module "MPSModule")
+  (rules (rule-unload-fleet-manual-ack))
+  (action (
+    (format t "=========================>>> tcb-manual-unload~%")
+    (tcl-activate-event :name 'evt-highlevel
+                              :handler 'handler-mps-loading
+                              :server 'BELT 
+                              :service 'loadevent
+                              :mode 'continuous)
+    (tcl-state :server 'BELT :state "manualunload")
+    (tcl-push-back-plan :plan `((FLEETMANAGER.tcb-request-manual-ack-from-fleetmanager))))))
+
+
+(define-rule (rule-unload-fleet-manual-ack)
+  (tcb (tcb-request-manual-ack-from-fleetmanager))
+  (return-value (SUCCESS (ManualAcknowledge)))
+  (action (
+    (format t "=========================>>> RULE: rule-unload-fleet-manual-ack (SUCCESS (ManualAcknowledge)) ~%")
+    (queryDigitalIO "IOQueryModule" 'IO '(DIGITAL 5 0))
+    (tcl-state :server 'BELT :state "Neutral")
+    (tcl-abort)
+    ;;check if box is still present
+    (let ((digitalIn (queryDigitalIO "IOQueryModule" 'IO '())))
+          (cond
+            ((equal (third digitalIn) 0)
+              (update-robot-state :box-loaded 0)
+              '(SUCCESS ()))
+	    ((equal (third digitalIn) 1)
+              (update-robot-state :box-loaded 1)
+              (update-robot-state :state 'ERROR)
+              (update-running-job-lc-state 'ERROR "UnloadBox BOX_PRESENT")
+              '(ERROR (UNLOAD LOADING))))))))
+
+; (execute '(MPS.tcb-request-hw-ack))
+
+(define-tcb (tcb-request-hw-ack)
+  (module "MPSModule")
+  (abort-action (
+    (format t "=========================>>> ABORT ACTION tcb-request-hw-ack~%")
+    (tcl-state-direct :server 'BELT :state "Neutral" :module "MPSModule" :module-inst 'MPS)))
+    ;(tcl-state :server 'BELT :state "Neutral"))) ;;TODO V3 --> the abort-action need to be in the correct context!
+  (action (
+    (format t "=========================>>> tcb-request-hw-ack ~%")
+    (tcl-state :server 'BELT :state "signalerror")
+    (tcl-activate-event :name 'evt-highlevel
+                        :handler 'handler-error-ack-hw-button
+                        :server 'BELT 
+                        :service 'loadevent
+                        :mode 'continuous))))
+
+
+(define-event-handler (handler-error-ack-hw-button)
+  (action (
+            (format t "=========================>>> HANDLER ERROR ACK HW BUTTON: ~s ~%~%" (tcl-event-message))
+            (cond
+	      ;;LOAD
+              ((equal (tcl-event-message) "(load not done)")
+                (format t "==========>>> ERROR STATE Set ~%" ))
+
+              ((equal (tcl-event-message) "(load done)")
+                (format t "==========>>> ACK HW BUTTON ClearError ~%" )
+                (tcl-state :server 'BELT :state "Neutral")
+                ;(send-command-info "ClearErrorACK")
+                (update-running-job-lc-state 'RUNNING)
+                (update-robot-state :state 'BUSY)
+                (format t "==========>>> Sleep 1 --> to get HW clear ~%" )
+                (sleep 1)
+                (tcl-abort)
+                '(SUCCESS (ACK)))))))
+
+;; belt load and unload
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

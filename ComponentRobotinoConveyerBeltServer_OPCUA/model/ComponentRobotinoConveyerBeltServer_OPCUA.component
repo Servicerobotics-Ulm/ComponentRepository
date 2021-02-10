@@ -1,0 +1,46 @@
+ComponentDefinition ComponentRobotinoConveyerBeltServer_OPCUA logo "/ComponentRobotinoConveyerBeltServer_OPCUA/model/logo.png"
+{
+	Activity LoadTask
+	{
+	}
+	Activity UnLoadTask
+	{
+	}
+	RequestPort CommIOValuesQueryServiceReq implements CommBasicObjects.CommIOValuesQueryService {
+	}
+	InputPort CommDigitalInputEventIn implements CommBasicObjects.CommDigitalInputEvent {
+	}
+	OutputPort CommPowerOutputSendOut implements CommRobotinoObjects.CommPowerOutputSend realizedBy LoadTask {
+	}
+	OutputPort RobotinoConveyerBeltEventOut implements CommRobotinoObjects.RobotinoConveyerBeltEvent realizedBy LoadTask {
+	}
+	CoordinationSlavePort CoordinationPort implements CommRobotinoObjects.ConveyerBeltCoordinationService
+	{
+		with loadevent realizedBy RobotinoConveyerBeltEventOut 
+		PublicOperationMode CommRobotinoObjects.ConveyerBeltModes.load { activates ( load ) } 
+		PublicOperationMode CommRobotinoObjects.ConveyerBeltModes.manualload { activates ( manualload ) } 
+		PublicOperationMode CommRobotinoObjects.ConveyerBeltModes.manualunload { activates ( manualunload ) } 
+		PublicOperationMode CommRobotinoObjects.ConveyerBeltModes.signalerror { activates ( signalerror ) } 
+		PublicOperationMode CommRobotinoObjects.ConveyerBeltModes.unload { activates ( unload ) } 
+		PrivateOperationMode signalerror 
+		PrivateOperationMode unload 
+		PrivateOperationMode load 
+		PrivateOperationMode manualunload 
+		PrivateOperationMode manualload
+	}
+	ComponentParameters ComponentRobotinoConveyerBeltServer_OPCUA slave CoordinationPort
+	Activity ManualLoadTask
+	{
+		DefaultTrigger PeriodicTimer 10.0 Hz
+	}
+	Activity ManualUnLoadTask
+	{
+		DefaultTrigger PeriodicTimer 10.0 Hz
+	}
+	Activity SignalErrorTask
+	{
+		DefaultTrigger PeriodicTimer 2.0 Hz
+	}
+	InputHandler DigitalInputEventHandler triggeredFrom CommDigitalInputEventIn { }
+OpcUaDeviceClient ProductionStation { deviceURI "opc.tcp://localhost:4840" opcuaXmlFile "/ComponentRobotinoConveyerBeltServer_OPCUA/model/ProductionStation.xml" }
+}

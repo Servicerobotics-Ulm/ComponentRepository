@@ -1,37 +1,46 @@
 ComponentParameter ComponentWebots2DLidarParams component ComponentWebots2DLidar 
 {
 InternalParameter webots{
+  /** the webots lidar must be a children of an extra robot with this name */
   robotName : String = "Lidar"
 }  
 InternalParameter scanner{
+	/** more debug information if set to true */
 	verbose: Boolean = false
 	on_turret: Boolean = false
+	/** position of the lidar relative to the robot in mm */
 	x: Int32 = 0
+	/** position of the lidar relative to the robot in mm */
 	y: Int32 = 0
+	/** position of the lidar relative to the robot in mm */
 	z: Int32 = 0
+	/** position of the lidar relative to the robot in radians */
 	azimuth: Double = 0
+	/** position of the lidar relative to the robot in radians */
 	elevation: Double = 0
+	/** position of the lidar relative to the robot in radians */
 	roll: Double = 0
-	ip_address: String = "192.168.0.1"
-	port: UInt32 = 2111
-	//@doc "min_range should not be 0!"
-	min_range: UInt32 = 10 
+	/** if one laser scan distance value is less than this, it is removed from the scan, unit mm. may differ from webots minRange */ 
+	min_range: UInt32 = 10
+	/** if one laser scan distance value is more than this, it is removed from the scan, unit mm. may differ from webots maxRange */
 	max_range: UInt32 = 20000
-	//@doc "in deg"
+	/** only the lidar rays within this angle are kept in a scan, unit degrees, may be less than webots fieldOfView */
 	opening_angle: UInt32 = 270
-	//@doc "in deg"
+	/** unit degrees, the angle between two lidar rays, should be set to webots fieldOfView/Pi*180/(horizontalResolution-1) */
 	resolution: Double = 0.5
+	/** the length unit of distances (values are 16 bit only, so length_unit=1 means a max. distance of 65535 mm) */
 	length_unit: UInt32 = 1
-	//@doc "in Hz"
+	/** not used yet, a webots lidar updates every WorldInfo.basicTimeStep ms (see webots timeStep) */
 	frequency: UInt32 = 50
 }
 InternalParameter base_manipulator{
+	/** if set to false, the baseState is not added to the scan data object */
 	on_base: Boolean = true
 	x: Int32 = 0
 	y: Int32 = 0
 	z: Int32 = 0
 	base_a: Double = 0
-	steer_a: Double = 0
+	steer_a: Double = 0 
 	turret_a: Double = 0
 }
 InternalParameter services{

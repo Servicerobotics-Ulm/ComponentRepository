@@ -2,12 +2,6 @@
 # internal parameters
 #####################
 ##########################
-# InternalParameter Bumper
-[Bumper]
-bumperTimeOutMSec 0
-bumperTimeOutSec 10
-
-##########################
 # InternalParameter General
 [General]
 hasSignalState true
@@ -15,13 +9,6 @@ poseFileName /tmp/lastRobotPose.txt
 useLocalizationEvent true
 verbose false
 writePoseFile false
-
-##########################
-# InternalParameter LaserSafetyField
-[LaserSafetyField]
-generateLaserSafetyFieldEvents false
-laserSafetyfFieldTimeOutMSec 0
-laserSafetyfFieldTimeOutSec 10
 
 ##########################
 # InternalParameter OdometryRandomError
@@ -33,7 +20,6 @@ varianceOfHeadingPerRadians 0.001212
 ##########################
 # InternalParameter Robot
 [Robot]
-daemonIP 127.0.0.1
 maxRotVel 4.0
 maxVelX 1.0
 maxVelY 1.0
@@ -49,6 +35,7 @@ distanceToRobotCentre -0.1826
 heading 90.0
 heading 210.0
 heading 330.0
+keyboardControl true
 # maxAcceleration has an array value (defined by assigning each array element in a separate line)
 maxAcceleration 10.0
 maxAcceleration 6.0
@@ -71,5 +58,3 @@ robotName Robotino 3
 #####################
 # instance parameters
 #####################
-##########################
-# ParameterSet BaseParams

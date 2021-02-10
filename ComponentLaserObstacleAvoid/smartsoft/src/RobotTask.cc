@@ -89,12 +89,6 @@ int RobotTask::on_execute()
 	std::cout << "Velocity : " << velocity	<< std::endl;
 	std::cout << "turnrate :" << turnrate	<< std::endl;
 
-
-	// threshold speed:
-	if(velocity > 500)
-		velocity=500;
-
-
 	// Provide result to output port, thereby command the robot:
 	status = this->navigationVelocityServiceOutPut(navigationVelocity);
 

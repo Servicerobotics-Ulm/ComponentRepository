@@ -1,0 +1,47 @@
+ComponentParameter ComponentKinectBoxDetection component ComponentKinectBoxDetection
+{	
+	ParameterSetInstance CommObjectRecognitionObjects.ObjectRecognitionParameter {	 	
+	 	ParameterInstance BELIEF_THRESHOLD {
+	 			 		threshold = 0.0
+	 	}	 	
+	 	ParameterInstance CLOUD {
+	 		id = 0
+	 	}	 	
+	 	ParameterInstance CLUSTERING {
+	 		doClustering= true
+	 	}	 	
+	 	ParameterInstance ESTIMATEFILLING {
+            estimateObjectProperties = false
+	 	}	 	
+	 	ParameterInstance SETOBJECTID {
+	 		id = 0
+	 	}
+	 	TriggerInstance RECOGNIZE active	 	
+	 }
+	 
+	 InternalParameter General{
+			verbose: Boolean = true
+			use_kinect: Boolean = false
+			use_kinect_v2: Boolean = true
+			use_hsv: Boolean = false
+			do_x_filtering: Boolean = true
+			do_y_filtering: Boolean = true
+			do_z_filtering: Boolean = true
+			x_detection_distance_min: Double = -1000
+			x_detection_distance_max: Double = 1000
+			y_detection_distance_min: Double = -1000
+			y_detection_distance_max: Double = 1000
+			z_detection_distance_min: Double = 50
+			z_detection_distance_max: Double = 1300
+			box_aspect_ratio: Double = 3.0
+			send_obstacle_mesh:Boolean = true
+	}
+	
+	ExtendedParameter SETSEARCHHEIGHT {
+		minM: Double = 0.0
+		maxM: Double = 0.0
+	}
+}
+
+
+

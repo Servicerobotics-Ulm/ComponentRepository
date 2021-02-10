@@ -1,0 +1,30 @@
+/**
+ * Component to dected AprilTags in the given images
+ */
+ComponentDefinition ComponentAprilTagDetector logo "/ComponentAprilTagDetector/model/logo.png"
+{
+	Activity DetectorTask
+	{
+	OperationModeBinding CoordinationPort.active
+	}
+	InputPort RGBImagePushServiceIn implements DomainVision.RGBImagePushService {
+	}
+
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService { 
+		PublicOperationMode CommBasicObjects.BasicModes.Active { activates ( active ) } 
+		PrivateOperationMode active
+	}
+	ComponentParameters ComponentAprilTagDetector slave CoordinationPort
+/**
+ * Pushes a RGB image with Detected Markers visualized
+ */
+OutputPort RGBImagePushServiceOut implements DomainVision.RGBImagePushService realizedBy DetectorTask {
+	}
+/**
+ * Pushes a List of Markers detcted in the input picture
+ */
+OutputPort MarkerListDetectionServiceOut implements CommTrackingObjects.MarkerListDetectionService realizedBy DetectorTask {
+	}
+OutputPort MarkerListEventServiceOut implements CommTrackingObjects.MarkerListEventService realizedBy DetectorTask {
+	}
+}

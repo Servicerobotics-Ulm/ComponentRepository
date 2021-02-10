@@ -58,7 +58,7 @@ BaseStateQueryServiceAnswHandler::~BaseStateQueryServiceAnswHandler()
 	
 }
 
-
+// same was done in OdomTask.cc::on_execute(), now in WebotsAPITask::on_execute()
 void BaseStateQueryServiceAnswHandler::handleQuery(const Smart::QueryIdPtr &id, const CommBasicObjects::CommVoid& request)
 {
 	CommBasicObjects::CommBaseState answer;
@@ -82,12 +82,12 @@ void BaseStateQueryServiceAnswHandler::handleQuery(const Smart::QueryIdPtr &id, 
 	base_state.set_base_raw_position( COMP->robot->getBaseRawPosition() );
 	base_state.set_base_velocity(base_velocity);
 
-	CommBasicObjects::CommBatteryLevel batteryLevel;
-	batteryLevel.setPotential(COMP->robot->getBatteryVoltage());
-    batteryLevel.setCurrent(COMP->robot->getBatteryCurrent());
-	batteryLevel.setExternalPower(COMP->robot->getExternalPower());
-
-	base_state.set_battery_state(batteryLevel);
+//	CommBasicObjects::CommBatteryLevel batteryLevel;
+//	batteryLevel.setPotential(COMP->robot->getBatteryVoltage());
+//    batteryLevel.setCurrent(COMP->robot->getBatteryCurrent());
+//	batteryLevel.setExternalPower(COMP->robot->getExternalPower());
+//
+//	base_state.set_battery_state(batteryLevel);
 	
 	this->server->answer(id, base_state);
 }

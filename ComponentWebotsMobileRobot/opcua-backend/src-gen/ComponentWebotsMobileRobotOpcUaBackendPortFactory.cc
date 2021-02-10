@@ -31,25 +31,11 @@
 // include referenced CommunicationObject SeRoNetSDK self description implementations
 #include "CommBasicObjectsOpcUa/CommBasePositionUpdateOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommBaseStateOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommBatteryEventOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommBatteryParameterOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommBatteryStateOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommBumperEventParameterOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommBumperEventResultOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommBumperEventStateOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommDigitalInputEventParameterOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommDigitalInputEventResultOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommDigitalInputEventStateOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommIOValuesOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommLaserSafetyEventParamOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommLaserSafetyEventStateOpcUa.hh"
-#include "CommBasicObjectsOpcUa/CommLaserSafetyFieldOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommNavigationVelocityOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
 #include "CommLocalizationObjectsOpcUa/CommLocalizationEventParameterOpcUa.hh"
 #include "CommLocalizationObjectsOpcUa/CommLocalizationEventResultOpcUa.hh"
 #include "CommLocalizationObjectsOpcUa/LocalizationEventStateOpcUa.hh"
-#include "CommRobotinoObjectsOpcUa/CommRobotinoPowerOutputValueOpcUa.hh"
 
 // create a static instance of the OpcUaBackendPortFactory
 static ComponentWebotsMobileRobotOpcUaBackendPortFactory OpcUaBackendPortFactory;
@@ -93,26 +79,6 @@ Smart::IPushServerPattern<CommBasicObjects::CommBaseState> * ComponentWebotsMobi
 	return new SeRoNet::OPCUA::Server::PushServer<CommBasicObjects::CommBaseState>(componentImpl, serviceName);
 }
 
-Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> * ComponentWebotsMobileRobotOpcUaBackendPortFactory::createBatteryEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>> batteryEventServiceOutEventTestHandler)
-{
-	return new SeRoNet::OPCUA::Server::EventServer<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>(componentImpl, serviceName, batteryEventServiceOutEventTestHandler);
-}
-
-Smart::IEventServerPattern<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState> * ComponentWebotsMobileRobotOpcUaBackendPortFactory::createBumperEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState>> bumperEventServiceOutEventTestHandler)
-{
-	return new SeRoNet::OPCUA::Server::EventServer<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState>(componentImpl, serviceName, bumperEventServiceOutEventTestHandler);
-}
-
-Smart::IEventServerPattern<CommBasicObjects::CommDigitalInputEventParameter, CommBasicObjects::CommDigitalInputEventResult, CommBasicObjects::CommDigitalInputEventState> * ComponentWebotsMobileRobotOpcUaBackendPortFactory::createDigitalInputEventOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommDigitalInputEventParameter, CommBasicObjects::CommDigitalInputEventResult, CommBasicObjects::CommDigitalInputEventState>> digitalInputEventOutEventTestHandler)
-{
-	return new SeRoNet::OPCUA::Server::EventServer<CommBasicObjects::CommDigitalInputEventParameter, CommBasicObjects::CommDigitalInputEventResult, CommBasicObjects::CommDigitalInputEventState>(componentImpl, serviceName, digitalInputEventOutEventTestHandler);
-}
-
-Smart::IEventServerPattern<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState> * ComponentWebotsMobileRobotOpcUaBackendPortFactory::createLaserSafetyEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState>> laserSafetyEventServiceOutEventTestHandler)
-{
-	return new SeRoNet::OPCUA::Server::EventServer<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState>(componentImpl, serviceName, laserSafetyEventServiceOutEventTestHandler);
-}
-
 Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * ComponentWebotsMobileRobotOpcUaBackendPortFactory::createLocalizationUpdateServiceIn(const std::string &serviceName)
 {
 	return new SeRoNet::OPCUA::Server::SendServer<CommBasicObjects::CommBasePositionUpdate>(componentImpl, serviceName);
@@ -121,16 +87,6 @@ Smart::ISendServerPattern<CommBasicObjects::CommBasePositionUpdate> * ComponentW
 Smart::ISendServerPattern<CommBasicObjects::CommNavigationVelocity> * ComponentWebotsMobileRobotOpcUaBackendPortFactory::createNavigationVelocityServiceIn(const std::string &serviceName)
 {
 	return new SeRoNet::OPCUA::Server::SendServer<CommBasicObjects::CommNavigationVelocity>(componentImpl, serviceName);
-}
-
-Smart::ISendServerPattern<CommRobotinoObjects::CommRobotinoPowerOutputValue> * ComponentWebotsMobileRobotOpcUaBackendPortFactory::createPowerOutputSendIn(const std::string &serviceName)
-{
-	return new SeRoNet::OPCUA::Server::SendServer<CommRobotinoObjects::CommRobotinoPowerOutputValue>(componentImpl, serviceName);
-}
-
-Smart::IQueryServerPattern<CommBasicObjects::CommIOValues, CommBasicObjects::CommIOValues> * ComponentWebotsMobileRobotOpcUaBackendPortFactory::createRobotinoIOValuesQueryServiceAnsw(const std::string &serviceName)
-{
-	return new SeRoNet::OPCUA::Server::QueryServer<CommBasicObjects::CommIOValues, CommBasicObjects::CommIOValues>(componentImpl, serviceName);
 }
 
 

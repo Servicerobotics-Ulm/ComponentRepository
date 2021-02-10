@@ -1,0 +1,38 @@
+{
+	"name": "ComponentSlcPacking",
+	"shortDescription": "TODO: add short description for ComponentSlcPacking datasheet",
+	"type": "Toolify",
+	"description": "",
+	"purposes": [],
+	"services": [
+	],
+	"mainstates": [
+		"Neutral"
+	],
+	"parameters": [
+	],
+	"triggers": [
+		{
+			"name": "RECOGNIZE",
+			"nameFQN": "CommObjectRecognitionObjects.ObjectRecognitionParameter.RECOGNIZE",
+			"type": "trigger",
+			"description": "",
+			"attributes": [
+				{
+					"name": "viewPointID",
+					"type": "string",
+					"default": "",
+					"description": ""
+				}
+			]
+		},
+		{
+			"name": "CAPTURE",
+			"nameFQN": "CommObjectRecognitionObjects.ObjectRecognitionParameter.CAPTURE",
+			"type": "trigger",
+			"description": "",
+			"attributes": [
+			]
+		}
+	]
+}

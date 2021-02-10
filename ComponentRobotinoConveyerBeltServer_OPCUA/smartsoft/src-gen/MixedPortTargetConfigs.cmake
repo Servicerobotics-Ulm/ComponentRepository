@@ -1,0 +1,10 @@
+# target configurations for ComponentRobotinoConveyerBeltServer_OPCUAROS1InterfacesExtension
+
+# target configurations for ComponentRobotinoConveyerBeltServer_OPCUARestInterfacesExtension
+
+# target configurations for PlainOpcUaComponentRobotinoConveyerBeltServer_OPCUAExtension
+IF(Open62541CppWrapper_FOUND)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} Open62541CppWrapper)
+TARGET_COMPILE_DEFINITIONS(${PROJECT_NAME} PUBLIC HAS_OPCUA)
+ENDIF(Open62541CppWrapper_FOUND)
+

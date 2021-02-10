@@ -1,0 +1,31 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; getBasePose
+(realize-tcb (getBasePose => ?x ?y ?yaw)
+	(module "MobileBaseModule")
+	(action (	
+                  (format t "===== getBasePose~%")	
+                  (let ((basepose (tcl-query :server 'base :service 'baseState)))
+                    (format t "got base pose Query ~a~%" basepose)
+                    (tcl-bind-var :name '?x :value (first basepose))
+                    (tcl-bind-var :name '?y :value (second basepose))
+                    (tcl-bind-var :name '?yaw :value (third basepose)))
+                  '(SUCCESS (OK)))))
+                 
+
+;; getBaseCharging
+(realize-tcb (getBaseCharging => ?charging)
+	(module "MobileBaseModule")
+	(action (	
+                  (format t "===== getBaseCharging~%")	
+                  (let ((basepose (tcl-query :server 'base :service 'baseState)))
+                    (format t "got base pose Query ~a~%" basepose)
+                    (tcl-bind-var :name '?charging :value (fourth basepose)))
+                  '(SUCCESS (OK)))))
+                  
+;; resetBase
+(realize-tcb (resetBase)
+	(module "MobileBaseModule")
+	(action (	
+                  (format t "===== resetBase~%")	                   
+                  (tcl-param :server 'base :slot 'COMMBASICOBJECTS.BASEPARAMS.BASE_RESET)
+                  '(SUCCESS (OK)))))

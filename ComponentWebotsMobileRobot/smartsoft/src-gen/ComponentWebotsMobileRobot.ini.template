@@ -31,39 +31,6 @@ initialComponentMode Neutral
 ##########################
 # Task parameters
 
-[OdomTask]
-minActFreqHz 20.0
-maxActFreqHz 1.0
-# setup default trigger as PeriodicTimer
-triggerType PeriodicTimer
-periodicActFreqHz 50.0
-# other trigger-types are:
-#triggerType PeriodicTimer
-#periodicActFreqHz 20.0
-# or alternatively:
-#triggerType DataTriggered
-#inPortRef <InPortName>
-#prescale 1
-# optional scheduling parameters
-# scheduler FIFO
-# priority 0
-# cpuAffinity 0
-
-[SignalStateTask]
-minActFreqHz 0.0
-maxActFreqHz 0.0
-# other trigger-types are:
-#triggerType PeriodicTimer
-#periodicActFreqHz 0.0
-# or alternatively:
-#triggerType DataTriggered
-#inPortRef <InPortName>
-#prescale 1
-# optional scheduling parameters
-# scheduler FIFO
-# priority 0
-# cpuAffinity 0
-
 [WebotsAPITask]
 minActFreqHz 0.0
 maxActFreqHz 0.0
@@ -91,9 +58,6 @@ prescale 1
 [NavigationVelocityServiceInHandler]
 prescale 1
 
-[PowerOutputSendInHandler]
-prescale 1
-
 ##########################
 # server port parameter
 
@@ -105,36 +69,12 @@ roboticMiddleware ACE_SmartSoft
 serviceName BaseStateServiceOut
 roboticMiddleware ACE_SmartSoft
 
-[BatteryEventServiceOut]
-serviceName BatteryEventServiceOut
-roboticMiddleware ACE_SmartSoft
-
-[BumperEventServiceOut]
-serviceName BumperEventServiceOut
-roboticMiddleware ACE_SmartSoft
-
-[DigitalInputEventOut]
-serviceName DigitalInputEventOut
-roboticMiddleware ACE_SmartSoft
-
-[LaserSafetyEventServiceOut]
-serviceName LaserSafetyEventServiceOut
-roboticMiddleware ACE_SmartSoft
-
 [LocalizationUpdateServiceIn]
 serviceName LocalizationUpdateServiceIn
 roboticMiddleware ACE_SmartSoft
 
 [NavigationVelocityServiceIn]
 serviceName NavigationVelocityServiceIn
-roboticMiddleware ACE_SmartSoft
-
-[PowerOutputSendIn]
-serviceName PowerOutputSendIn
-roboticMiddleware ACE_SmartSoft
-
-[RobotinoIOValuesQueryServiceAnsw]
-serviceName RobotinoIOValuesQueryServiceAnsw
 roboticMiddleware ACE_SmartSoft
 
 ##########################
@@ -169,12 +109,6 @@ roboticMiddleware ACE_SmartSoft
 # internal parameters
 #####################
 ##########################
-# InternalParameter Bumper
-[Bumper]
-bumperTimeOutMSec 0
-bumperTimeOutSec 10
-
-##########################
 # InternalParameter General
 [General]
 hasSignalState true
@@ -182,13 +116,6 @@ poseFileName /tmp/lastRobotPose.txt
 useLocalizationEvent true
 verbose false
 writePoseFile false
-
-##########################
-# InternalParameter LaserSafetyField
-[LaserSafetyField]
-generateLaserSafetyFieldEvents false
-laserSafetyfFieldTimeOutMSec 0
-laserSafetyfFieldTimeOutSec 10
 
 ##########################
 # InternalParameter OdometryRandomError
@@ -200,7 +127,6 @@ varianceOfHeadingPerRadians 0.001212
 ##########################
 # InternalParameter Robot
 [Robot]
-daemonIP 127.0.0.1
 maxRotVel 4.0
 maxVelX 1.0
 maxVelY 1.0
@@ -216,6 +142,7 @@ distanceToRobotCentre -0.1826
 heading 90.0
 heading 210.0
 heading 330.0
+keyboardControl true
 # maxAcceleration has an array value (defined by assigning each array element in a separate line)
 maxAcceleration 10.0
 maxAcceleration 6.0
@@ -238,5 +165,3 @@ robotName Robotino 3
 #####################
 # instance parameters
 #####################
-##########################
-# ParameterSet BaseParams

@@ -1,0 +1,18 @@
+ComponentDefinition ComponentWebInterfaceComissioning logo "/ComponentWebInterfaceComissioning/model/logo.png"
+{
+Activity WorkerTask
+	{
+	}
+	OutputPort sequencerEventServer implements CommBasicObjects.SequnecerHLInterfaceEvent realizedBy WorkerTask {
+	}
+	Activity DataTask
+	{
+	}
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService
+	{
+	}
+	ComponentParameters ComponentWebInterfaceComissioning slave CoordinationPort
+	InputPort sequencerSendServer implements CommBasicObjects.SequnecerHLInterfaceSend {
+	}
+	InputHandler SendHandler triggeredFrom sequencerSendServer { }
+}

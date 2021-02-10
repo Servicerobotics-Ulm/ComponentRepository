@@ -31,9 +31,12 @@ ComponentWebots::ComponentWebots()
 	std::cout << "constructor of ComponentWebots\n";
 	
 	// set all pointer members to NULL
+	//coordinationPort = NULL;
+	//coordinationPort = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
+	param = NULL;
 	
 	// set default ini parameter values
 	connections.component.name = "ComponentWebots";
@@ -122,6 +125,8 @@ void ComponentWebots::init(int argc, char *argv[])
 		// load initial parameters from ini-file (if found)
 		loadParameter(argc, argv);
 		
+		// print out the actual parameters which are used to initialize the component
+		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
 		// initializations of ComponentWebotsROS1InterfacesExtension
 		
@@ -188,6 +193,8 @@ void ComponentWebots::init(int argc, char *argv[])
 		wiringSlave = new SmartACE::WiringSlave(component);
 		// add client port to wiring slave
 		
+		// create parameter slave
+		param = new SmartACE::ParameterSlave(component, &paramHandler);
 		
 		
 		
@@ -268,6 +275,7 @@ void ComponentWebots::fini()
 	
 	// destroy all master/slave ports
 	delete wiringSlave;
+	delete param;
 	
 
 	// destroy all registered component-extensions
@@ -384,6 +392,7 @@ void ComponentWebots::loadParameter(int argc, char *argv[])
 			extension->second->loadParameters(parameter);
 		}
 		
+		paramHandler.loadParameter(parameter);
 	
 	} catch (const SmartACE::IniParameterError & e) {
 		std::cerr << e.what() << std::endl;

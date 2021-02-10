@@ -1,0 +1,32 @@
+ComponentDefinition ComponentRMPBaseServer logo "/ComponentRMPBaseServer/model/logo.png"
+{
+Activity BaseTimerTask
+	{
+		DefaultTrigger PeriodicTimer 20.0 Hz
+	}
+
+	ComponentParameters ComponentRMPBaseServer slave CoordinationPort
+	InputPort navigationVelocityServer implements CommNavigationObjects.NavigationVelocityService {
+	}
+	InputHandler NavigationVelocityHandler triggeredFrom navigationVelocityServer { }
+	OutputPort basePositionServer implements CommBasicObjects.BaseStateService realizedBy BaseStateTask {
+	}
+	AnswerPort baseQueryServer implements CommBasicObjects.BaseStateQueryService {
+	}
+	RequestHandler BaseStateQueryHandler triggeredFrom baseQueryServer {
+	}
+	OutputPort batteryEventServer implements CommBasicObjects.BatteryEventService realizedBy BaseStateTask {
+	}
+	InputPort basePositionUpdateServer implements CommNavigationObjects.LocalizationUpdateService {
+	}
+	InputHandler BasePositionUpdateHandler triggeredFrom basePositionUpdateServer { }
+	Activity BaseStateTask
+	{
+		DefaultTrigger PeriodicTimer 10.0 Hz
+	}
+CoordinationSlavePort CoordinationPort implements CommNavigationObjects.BaseCoordinationService
+	{
+		with baseState realizedBy baseQueryServer	
+		SkillRealizationsRef baseInst
+	}
+}

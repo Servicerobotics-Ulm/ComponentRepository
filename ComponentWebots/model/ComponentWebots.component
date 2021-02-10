@@ -1,3 +1,7 @@
 ComponentDefinition ComponentWebots logo "/ComponentWebots/model/logo.png"
 {
+CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService
+	{
+	}
+	ComponentParameters ComponentWebots slave CoordinationPort
 }

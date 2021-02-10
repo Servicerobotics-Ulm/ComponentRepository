@@ -1,0 +1,73 @@
+ComponentParameter ComponentRackDetection component ComponentRackDetection
+{
+	InternalParameter General{
+			model_path:String="/mnt/ssh/zafh/tausch/matthias_r/rack_model_cloud.pcd"
+			
+  			send_obstacle_mesh:Boolean=true
+  			max_detection_score:Float=0.016
+			
+			rack_dimension_min_x :Float= 0.0
+		  	rack_dimension_max_x:Float = 2.0
+			rack_dimension_min_y:Float = -0.8
+			rack_dimension_max_y:Float = 0.8
+			rack_dimension_min_z:Float = 0.1
+			rack_dimension_max_z:Float = 2.0
+			
+			init_relative_obj_pose_x: Float = 0.027
+			init_relative_obj_pose_y: Float = 0.115
+			init_relative_obj_pose_z: Float = 0.055
+			
+			relative_obj_pose_x: Float = 0.0
+			relative_obj_pose_y: Float = 0.115
+			relative_obj_pose_z: Float = 0.0
+			relative_obj_pose_pitch: Float = -0.2
+			
+			obj_width: Float = 0.07
+			obj_height: Float = 0.105
+			obj_depth: Float =  0.04
+			
+			obj_types:String = "CHOCO,SPECIAL,FROSTIES,CORN-FLAKES,SMACKS"		
+					
+	}
+	
+	InternalParameter ModelCreation{
+			create_model: Boolean = false
+			capture_model: Boolean = false
+			
+			transformation_x:Float= -0.65
+		  	transformation_y:Float = 0.35
+			transformation_z:Float = -0.75
+			theta:Float = 0.0
+			
+			save_model_path:String="/tmp/rack_model_cloud.pcd"
+			load_model_path:String="/home/rollenhagen/rack_models/a-frame_model_clouds/model_cloud.pcd"
+			
+	}
+	
+		ParameterSetInstance CommObjectRecognitionObjects.ObjectRecognitionParameter {
+	 	
+	 	ParameterInstance BELIEF_THRESHOLD {
+	 		threshold = 0.0
+	 	}
+	 	
+	 	ParameterInstance CLOUD {
+           id = 0
+	 	}
+	 	
+	 	ParameterInstance CLUSTERING {
+	 		doClustering= true
+	 	}
+	 	
+	 	ParameterInstance ESTIMATEFILLING {
+	 		estimateObjectProperties = false
+	 	}
+	 	
+	 	ParameterInstance SETOBJECTID {
+	 		id = 0
+	 	}
+//	   ParameterInstance SETENVID {
+//	 		id = 0
+//	 	}
+	 	TriggerInstance RECOGNIZE active	 	
+	 }
+}

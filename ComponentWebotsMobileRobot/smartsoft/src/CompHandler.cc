@@ -51,14 +51,13 @@
 // include communication objects
 #include "ComponentWebotsMobileRobot.hh"
 
-void CompHandler::onStartup() 
-{
-	std::cout << "startup - put your startupCode in CompHandler::onStartup()!!!\n";
+void CompHandler::onStartup() {
+	std::cout
+			<< "startup - put your startupCode in CompHandler::onStartup()!!!\n";
 
 	Smart::StatusCode status;
 
-    	COMP->robot = new Robot();
-
+	COMP->robot = new Robot();
 
 //	while(COMP->robot->openSerial( COMP->getGlobalState().getRobot().getDaemonIP() )!=0)
 //	{
@@ -66,88 +65,82 @@ void CompHandler::onStartup()
 //		sleep(1);
 //	}
 
-	COMP->robot->setParameters(	COMP->getGlobalState().getRobot().getMaxVelX(),
-			COMP->getGlobalState().getRobot().getMaxVelY(),
-			COMP->getGlobalState().getRobot().getMaxRotVel());
+	COMP->robot->setParameters( COMP->getGlobalState().getRobot().getMaxVelX(),
+	COMP->getGlobalState().getRobot().getMaxVelY(),
+	COMP->getGlobalState().getRobot().getMaxRotVel());
 
 	// Start all services. If you need manual control, use the content of this function to
 	// connect and start each service individually, e.g:
 	// COMP->connectMyPortName("SmartExampleComponent", "examplePort");
-	
-
 
 	//status = COMP->connectAndStartAllServices();
 
-	if(COMP->getGlobalState().getGeneral().getUseLocalizationEvent())
-	{
+	if (COMP->getGlobalState().getGeneral().getUseLocalizationEvent()) {
 
 		//status = COMP->connectLocalizationEventClient(COMP->connections.localizationEventClient.serverName, COMP->connections.localizationEventClient.serviceName);
-		std::cout<<"if(COMP->getGlobalState().getGeneral().getUseLocalizationEvent())..."<<std::endl;
+		std::cout
+				<< "if(COMP->getGlobalState().getGeneral().getUseLocalizationEvent())..."
+				<< std::endl;
 
-		COMP->connectLocalizationEventServiceIn(COMP->connections.localizationEventServiceIn.serverName,COMP->connections.localizationEventServiceIn.serviceName);
+		COMP->connectLocalizationEventServiceIn(
+				COMP->connections.localizationEventServiceIn.serverName,
+				COMP->connections.localizationEventServiceIn.serviceName);
 
 		//status = COMP->localizationEventServiceIn(COMP->connections.localizationEventServiceIn.serverName, COMP->connections.localizationEventServiceIn.serviceName);
 
-
-
 	}
-
 
 	// start push timed server
 	//COMP->basePositionServer->start();
 
-
 	// COMP->baseStateServiceOut->
 	///COMP->baseStateServiceOut->
-
 
 	// Start all tasks. If you need manual control, use the content of this function to
 	// start each task individually.
 	//COMP->startAllTasks();
 
 	// start all tasks
-	COMP->odomTask->start();
-	//COMP->robotinoAPITask->start();
 	COMP->webotsAPITask->start();
 
-	if(COMP->getGlobalState().getGeneral().getHasSignalState()){
-		COMP->signalStateTask->start();
-	}
-	
 	// Start all timers. If you need manual control, use the content of this function to
 	// start each timer individually.
 	COMP->startAllTimers();
-	
+
 	// Notify the component that setup/initialization is finished.
 	// You may move this function to any other place.
-	COMP->setStartupFinished(); 
+	COMP->setStartupFinished();
 
-	std::cout<<"End of CompHandler onStartup!"<<std::endl;
+	std::cout << "End of CompHandler onStartup!" << std::endl;
 }
 
-void CompHandler::onShutdown() 
-{
-	std::cout << "shutdown - put your cleanup code in CompHandler::onShutdown()!!!\n";
+void CompHandler::onShutdown() {
+	std::cout
+			<< "shutdown - put your cleanup code in CompHandler::onShutdown()!!!\n";
 
-	if(COMP->getGlobalState().getGeneral().getWritePoseFile() == true){
-		if(COMP->signalStateTask->getLocalizationState() == true){
-			std::cout<<"onShutdown-->Write last pose to file!"<<std::endl;
+	if (COMP->getGlobalState().getGeneral().getWritePoseFile() == true) {
+		//if(COMP->signalStateTask->getLocalizationState() == true){
+		if (true) {
+			std::cout << "onShutdown-->Write last pose to file!" << std::endl;
 			std::ofstream poseFile;
-			poseFile.open(COMP->getGlobalState().getGeneral().getPoseFileName().c_str());
-			if(poseFile.is_open()){
-				CommBasicObjects::CommBasePose pose = COMP->robot->getBasePosition();
-				poseFile << pose.get_x(1)<< ";"<< pose.get_y(1) << ";" << pose.get_base_azimuth()<<";";
+			poseFile.open(
+					COMP->getGlobalState().getGeneral().getPoseFileName().c_str());
+			if (poseFile.is_open()) {
+				CommBasicObjects::CommBasePose pose =
+						COMP->robot->getBasePosition();
+				poseFile << pose.get_x(1) << ";" << pose.get_y(1) << ";"
+						<< pose.get_base_azimuth() << ";";
 				poseFile.close();
 			} else {
-				std::cout<<"ERROR opening file: "<<COMP->getGlobalState().getGeneral().getPoseFileName() <<std::endl;
+				std::cout << "ERROR opening file: "
+						<< COMP->getGlobalState().getGeneral().getPoseFileName()
+						<< std::endl;
 			}
 		} else {
-			std::cout<<"Pose NOT saved, robot not localized!"<<std::endl;
+			std::cout << "Pose NOT saved, robot not localized!" << std::endl;
 		}
 	}
 
-
 	//COMP->robot->closeSerial();
 }
-
 

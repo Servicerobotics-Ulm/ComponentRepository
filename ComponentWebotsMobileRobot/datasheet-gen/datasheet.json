@@ -1,0 +1,73 @@
+{
+	"name": "ComponentWebotsMobileRobot",
+	"shortDescription": "
+	
+	A generic driver for robots in the webots simulator with differential or omnidirectional drive.
+	
+	How a new robot can be added to Webots:
+	* Add a new Robot, set its controller to '&lt;extern&gt;'.
+	* The robots name must set the same in Webots and here.
+	
+	The coordinate system of the robot should be:
+	* x=front, y=left (x=y=0 is at the turning point of the robot (center between wheels))  
+	* z=up (z=0 is at floor level)
+	
+	If a robot is not like this, add a Transformation node to him: 
+	* Add it into children of the robot 
+	* set DEF 'CoordinateSystem*Abc_def*' in the Transformation node if the robots name would be *Abc def*
+	* now move and rotate the Transformation node so its coordinate system is like it should be
+	
+	
+	",
+	"type": "Toolify",
+	"description": "",
+	"purposes": ["Webots mobile robot"],
+	"marketName": "Webots mobile robot",
+	"supplier": "Servicerobotics Ulm",
+	"homepage": "http://servicerobotik-ulm.de/components",
+	"services": [
+		{
+			"name": "NavigationVelocityServiceIn",
+			"type": "InputPort",
+			"serviceDefinition": "CommNavigationObjects::NavigationVelocityService",
+			"commObjects": "CommBasicObjects::CommNavigationVelocity",
+			"description": ""
+		},
+		{
+			"name": "LocalizationEventServiceIn",
+			"type": "InputPort",
+			"serviceDefinition": "CommLocalizationObjects::LocalizationEventService",
+			"commObjects": "CommLocalizationObjects::CommLocalizationEventParameter, CommLocalizationObjects::CommLocalizationEventResult, CommLocalizationObjects::LocalizationEventState",
+			"description": ""
+		},
+		{
+			"name": "BaseStateQueryServiceAnsw",
+			"type": "AnswerPort",
+			"serviceDefinition": "CommBasicObjects::BaseStateQueryService",
+			"commObjects": "CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState",
+			"description": ""
+		},
+		{
+			"name": "BaseStateServiceOut",
+			"type": "OutputPort",
+			"serviceDefinition": "CommBasicObjects::BaseStateService",
+			"commObjects": "CommBasicObjects::CommBaseState",
+			"description": ""
+		},
+		{
+			"name": "LocalizationUpdateServiceIn",
+			"type": "InputPort",
+			"serviceDefinition": "CommNavigationObjects::LocalizationUpdateService",
+			"commObjects": "CommBasicObjects::CommBasePositionUpdate",
+			"description": ""
+		}
+	],
+	"mainstates": [
+		"emergencyStop",
+		"Neutral"
+	],
+	"parameters": [
+	],
+	"triggers": [
+	]
+}

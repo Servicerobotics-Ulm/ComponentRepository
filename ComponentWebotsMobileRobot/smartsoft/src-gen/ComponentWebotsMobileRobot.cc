@@ -21,10 +21,6 @@
 // the ace port-factory is used as a default port-mapping
 #include "ComponentWebotsMobileRobotAcePortFactory.hh"
 
-#include "BatteryEventServiceOutEventTestHandler.hh"
-#include "BumperEventServiceOutEventTestHandler.hh"
-#include "DigitalInputEventOutEventTestHandler.hh"
-#include "LaserSafetyEventServiceOutEventTestHandler.hh"
 
 // initialize static singleton pointer to zero
 ComponentWebotsMobileRobot* ComponentWebotsMobileRobot::_componentWebotsMobileRobot = 0;
@@ -40,20 +36,8 @@ ComponentWebotsMobileRobot::ComponentWebotsMobileRobot()
 	baseStateQueryServiceAnswHandler = NULL;
 	baseStateServiceOut = NULL;
 	baseStateServiceOutWrapper = NULL;
-	batteryEventServiceOut = NULL;
-	batteryEventServiceOutWrapper = NULL;
-	batteryEventServiceOutEventTestHandler = nullptr; 
-	bumperEventServiceOut = NULL;
-	bumperEventServiceOutWrapper = NULL;
-	bumperEventServiceOutEventTestHandler = nullptr; 
 	//coordinationPort = NULL;
 	//coordinationPort = NULL;
-	digitalInputEventOut = NULL;
-	digitalInputEventOutWrapper = NULL;
-	digitalInputEventOutEventTestHandler = nullptr; 
-	laserSafetyEventServiceOut = NULL;
-	laserSafetyEventServiceOutWrapper = NULL;
-	laserSafetyEventServiceOutEventTestHandler = nullptr; 
 	localizationEventServiceIn = NULL;
 	localizationEventServiceInInputTaskTrigger = NULL;
 	localizationEventServiceInUpcallManager = NULL;
@@ -69,18 +53,6 @@ ComponentWebotsMobileRobot::ComponentWebotsMobileRobot()
 	navigationVelocityServiceInUpcallManager = NULL;
 	navigationVelocityServiceInInputCollector = NULL;
 	navigationVelocityServiceInHandler = NULL;
-	odomTask = NULL;
-	odomTaskTrigger = NULL;
-	powerOutputSendIn = NULL;
-	powerOutputSendInInputTaskTrigger = NULL;
-	powerOutputSendInUpcallManager = NULL;
-	powerOutputSendInInputCollector = NULL;
-	powerOutputSendInHandler = NULL;
-	robotinoIOValuesQueryServiceAnsw = NULL;
-	robotinoIOValuesQueryServiceAnswInputTaskTrigger = NULL;
-	robotinoIOValuesQueryServiceAnswHandler = NULL;
-	signalStateTask = NULL;
-	signalStateTaskTrigger = NULL;
 	webotsAPITask = NULL;
 	webotsAPITaskTrigger = NULL;
 	stateChangeHandler = NULL;
@@ -98,42 +70,16 @@ ComponentWebotsMobileRobot::ComponentWebotsMobileRobot()
 	connections.baseStateQueryServiceAnsw.roboticMiddleware = "ACE_SmartSoft";
 	connections.baseStateServiceOut.serviceName = "BaseStateServiceOut";
 	connections.baseStateServiceOut.roboticMiddleware = "ACE_SmartSoft";
-	connections.batteryEventServiceOut.serviceName = "BatteryEventServiceOut";
-	connections.batteryEventServiceOut.roboticMiddleware = "ACE_SmartSoft";
-	connections.bumperEventServiceOut.serviceName = "BumperEventServiceOut";
-	connections.bumperEventServiceOut.roboticMiddleware = "ACE_SmartSoft";
-	connections.digitalInputEventOut.serviceName = "DigitalInputEventOut";
-	connections.digitalInputEventOut.roboticMiddleware = "ACE_SmartSoft";
-	connections.laserSafetyEventServiceOut.serviceName = "LaserSafetyEventServiceOut";
-	connections.laserSafetyEventServiceOut.roboticMiddleware = "ACE_SmartSoft";
 	connections.localizationUpdateServiceIn.serviceName = "LocalizationUpdateServiceIn";
 	connections.localizationUpdateServiceIn.roboticMiddleware = "ACE_SmartSoft";
 	connections.navigationVelocityServiceIn.serviceName = "NavigationVelocityServiceIn";
 	connections.navigationVelocityServiceIn.roboticMiddleware = "ACE_SmartSoft";
-	connections.powerOutputSendIn.serviceName = "PowerOutputSendIn";
-	connections.powerOutputSendIn.roboticMiddleware = "ACE_SmartSoft";
-	connections.robotinoIOValuesQueryServiceAnsw.serviceName = "RobotinoIOValuesQueryServiceAnsw";
-	connections.robotinoIOValuesQueryServiceAnsw.roboticMiddleware = "ACE_SmartSoft";
 	connections.localizationEventServiceIn.initialConnect = false;
 	connections.localizationEventServiceIn.wiringName = "LocalizationEventServiceIn";
 	connections.localizationEventServiceIn.serverName = "unknown";
 	connections.localizationEventServiceIn.serviceName = "unknown";
 	connections.localizationEventServiceIn.interval = 1;
 	connections.localizationEventServiceIn.roboticMiddleware = "ACE_SmartSoft";
-	connections.odomTask.minActFreq = 20.0;
-	connections.odomTask.maxActFreq = 1.0;
-	connections.odomTask.trigger = "PeriodicTimer";
-	connections.odomTask.periodicActFreq = 50.0;
-	// scheduling default parameters
-	connections.odomTask.scheduler = "DEFAULT";
-	connections.odomTask.priority = -1;
-	connections.odomTask.cpuAffinity = -1;
-	connections.signalStateTask.minActFreq = 0.0;
-	connections.signalStateTask.maxActFreq = 0.0;
-	// scheduling default parameters
-	connections.signalStateTask.scheduler = "DEFAULT";
-	connections.signalStateTask.priority = -1;
-	connections.signalStateTask.cpuAffinity = -1;
 	connections.webotsAPITask.minActFreq = 0.0;
 	connections.webotsAPITask.maxActFreq = 0.0;
 	// scheduling default parameters
@@ -143,7 +89,6 @@ ComponentWebotsMobileRobot::ComponentWebotsMobileRobot()
 	connections.localizationEventServiceInHandler.prescale = 1;
 	connections.localizationUpdateServiceInHandler.prescale = 1;
 	connections.navigationVelocityServiceInHandler.prescale = 1;
-	connections.powerOutputSendInHandler.prescale = 1;
 	
 	// initialize members of ComponentWebotsMobileRobotROS1InterfacesExtension
 	
@@ -219,34 +164,6 @@ Smart::StatusCode ComponentWebotsMobileRobot::connectAndStartAllServices() {
  * Start all tasks contained in this component.
  */
 void ComponentWebotsMobileRobot::startAllTasks() {
-	// start task OdomTask
-	if(connections.odomTask.scheduler != "DEFAULT") {
-		ACE_Sched_Params odomTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
-		if(connections.odomTask.scheduler == "FIFO") {
-			odomTask_SchedParams.policy(ACE_SCHED_FIFO);
-			odomTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
-		} else if(connections.odomTask.scheduler == "RR") {
-			odomTask_SchedParams.policy(ACE_SCHED_RR);
-			odomTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
-		}
-		odomTask->start(odomTask_SchedParams, connections.odomTask.cpuAffinity);
-	} else {
-		odomTask->start();
-	}
-	// start task SignalStateTask
-	if(connections.signalStateTask.scheduler != "DEFAULT") {
-		ACE_Sched_Params signalStateTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
-		if(connections.signalStateTask.scheduler == "FIFO") {
-			signalStateTask_SchedParams.policy(ACE_SCHED_FIFO);
-			signalStateTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
-		} else if(connections.signalStateTask.scheduler == "RR") {
-			signalStateTask_SchedParams.policy(ACE_SCHED_RR);
-			signalStateTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
-		}
-		signalStateTask->start(signalStateTask_SchedParams, connections.signalStateTask.cpuAffinity);
-	} else {
-		signalStateTask->start();
-	}
 	// start task WebotsAPITask
 	if(connections.webotsAPITask.scheduler != "DEFAULT") {
 		ACE_Sched_Params webotsAPITask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
@@ -275,7 +192,6 @@ Smart::TaskTriggerSubject* ComponentWebotsMobileRobot::getInputTaskTriggerFromSt
 	if(client == "LocalizationEventServiceIn") return localizationEventServiceInInputTaskTrigger;
 	if(client == "LocalizationUpdateServiceIn") return localizationUpdateServiceInInputTaskTrigger;
 	if(client == "NavigationVelocityServiceIn") return navigationVelocityServiceInInputTaskTrigger;
-	if(client == "PowerOutputSendIn") return powerOutputSendInInputTaskTrigger;
 	
 	return NULL;
 }
@@ -333,10 +249,6 @@ void ComponentWebotsMobileRobot::init(int argc, char *argv[])
 		}
 
 		// create event-test handlers (if needed)
-		batteryEventServiceOutEventTestHandler = std::make_shared<BatteryEventServiceOutEventTestHandler>();
-		bumperEventServiceOutEventTestHandler = std::make_shared<BumperEventServiceOutEventTestHandler>();
-		digitalInputEventOutEventTestHandler = std::make_shared<DigitalInputEventOutEventTestHandler>();
-		laserSafetyEventServiceOutEventTestHandler = std::make_shared<LaserSafetyEventServiceOutEventTestHandler>();
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
@@ -344,23 +256,8 @@ void ComponentWebotsMobileRobot::init(int argc, char *argv[])
 		baseStateQueryServiceAnswInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState>(baseStateQueryServiceAnsw);
 		baseStateServiceOut = portFactoryRegistry[connections.baseStateServiceOut.roboticMiddleware]->createBaseStateServiceOut(connections.baseStateServiceOut.serviceName);
 		baseStateServiceOutWrapper = new BaseStateServiceOutWrapper(baseStateServiceOut);
-		batteryEventServiceOutEventTestHandler = std::make_shared<BatteryEventServiceOutEventTestHandler>();
-		batteryEventServiceOut = portFactoryRegistry[connections.batteryEventServiceOut.roboticMiddleware]->createBatteryEventServiceOut(connections.batteryEventServiceOut.serviceName, batteryEventServiceOutEventTestHandler);
-		batteryEventServiceOutWrapper = new BatteryEventServiceOutWrapper(batteryEventServiceOut);
-		bumperEventServiceOutEventTestHandler = std::make_shared<BumperEventServiceOutEventTestHandler>();
-		bumperEventServiceOut = portFactoryRegistry[connections.bumperEventServiceOut.roboticMiddleware]->createBumperEventServiceOut(connections.bumperEventServiceOut.serviceName, bumperEventServiceOutEventTestHandler);
-		bumperEventServiceOutWrapper = new BumperEventServiceOutWrapper(bumperEventServiceOut);
-		digitalInputEventOutEventTestHandler = std::make_shared<DigitalInputEventOutEventTestHandler>();
-		digitalInputEventOut = portFactoryRegistry[connections.digitalInputEventOut.roboticMiddleware]->createDigitalInputEventOut(connections.digitalInputEventOut.serviceName, digitalInputEventOutEventTestHandler);
-		digitalInputEventOutWrapper = new DigitalInputEventOutWrapper(digitalInputEventOut);
-		laserSafetyEventServiceOutEventTestHandler = std::make_shared<LaserSafetyEventServiceOutEventTestHandler>();
-		laserSafetyEventServiceOut = portFactoryRegistry[connections.laserSafetyEventServiceOut.roboticMiddleware]->createLaserSafetyEventServiceOut(connections.laserSafetyEventServiceOut.serviceName, laserSafetyEventServiceOutEventTestHandler);
-		laserSafetyEventServiceOutWrapper = new LaserSafetyEventServiceOutWrapper(laserSafetyEventServiceOut);
 		localizationUpdateServiceIn = portFactoryRegistry[connections.localizationUpdateServiceIn.roboticMiddleware]->createLocalizationUpdateServiceIn(connections.localizationUpdateServiceIn.serviceName);
 		navigationVelocityServiceIn = portFactoryRegistry[connections.navigationVelocityServiceIn.roboticMiddleware]->createNavigationVelocityServiceIn(connections.navigationVelocityServiceIn.serviceName);
-		powerOutputSendIn = portFactoryRegistry[connections.powerOutputSendIn.roboticMiddleware]->createPowerOutputSendIn(connections.powerOutputSendIn.serviceName);
-		robotinoIOValuesQueryServiceAnsw = portFactoryRegistry[connections.robotinoIOValuesQueryServiceAnsw.roboticMiddleware]->createRobotinoIOValuesQueryServiceAnsw(connections.robotinoIOValuesQueryServiceAnsw.serviceName);
-		robotinoIOValuesQueryServiceAnswInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommIOValues, CommBasicObjects::CommIOValues>(robotinoIOValuesQueryServiceAnsw);
 		
 		// create client ports
 		localizationEventServiceIn = portFactoryRegistry[connections.localizationEventServiceIn.roboticMiddleware]->createLocalizationEventServiceIn();
@@ -375,19 +272,14 @@ void ComponentWebotsMobileRobot::init(int argc, char *argv[])
 		navigationVelocityServiceInInputCollector = new NavigationVelocityServiceInInputCollector(navigationVelocityServiceIn);
 		navigationVelocityServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommNavigationVelocity>(navigationVelocityServiceInInputCollector);
 		navigationVelocityServiceInUpcallManager = new NavigationVelocityServiceInUpcallManager(navigationVelocityServiceInInputCollector);
-		powerOutputSendInInputCollector = new PowerOutputSendInInputCollector(powerOutputSendIn);
-		powerOutputSendInInputTaskTrigger = new Smart::InputTaskTrigger<CommRobotinoObjects::CommRobotinoPowerOutputValue>(powerOutputSendInInputCollector);
-		powerOutputSendInUpcallManager = new PowerOutputSendInUpcallManager(powerOutputSendInInputCollector);
 		
 		// create input-handler
 		localizationEventServiceInHandler = new LocalizationEventServiceInHandler(localizationEventServiceIn, connections.localizationEventServiceInHandler.prescale);
 		localizationUpdateServiceInHandler = new LocalizationUpdateServiceInHandler(localizationUpdateServiceIn, connections.localizationUpdateServiceInHandler.prescale);
 		navigationVelocityServiceInHandler = new NavigationVelocityServiceInHandler(navigationVelocityServiceIn, connections.navigationVelocityServiceInHandler.prescale);
-		powerOutputSendInHandler = new PowerOutputSendInHandler(powerOutputSendIn, connections.powerOutputSendInHandler.prescale);
 		
 		// create request-handlers
 		baseStateQueryServiceAnswHandler = new BaseStateQueryServiceAnswHandler(baseStateQueryServiceAnsw);
-		robotinoIOValuesQueryServiceAnswHandler = new RobotinoIOValuesQueryServiceAnswHandler(robotinoIOValuesQueryServiceAnsw);
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
@@ -409,69 +301,6 @@ void ComponentWebotsMobileRobot::init(int argc, char *argv[])
 		// create parameter slave
 		param = new SmartACE::ParameterSlave(component, &paramHandler);
 		
-		
-		// create Task OdomTask
-		odomTask = new OdomTask(component);
-		// configure input-links
-		// configure task-trigger (if task is configurable)
-		if(connections.odomTask.trigger == "PeriodicTimer") {
-			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.odomTask.periodicActFreq;
-			if(microseconds > 0) {
-				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-				triggerPtr->attach(odomTask);
-				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
-				// store trigger in class member
-				odomTaskTrigger = triggerPtr;
-			} else {
-				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task OdomTask" << std::endl;
-			}
-		} else if(connections.odomTask.trigger == "DataTriggered") {
-			odomTaskTrigger = getInputTaskTriggerFromString(connections.odomTask.inPortRef);
-			if(odomTaskTrigger != NULL) {
-				odomTaskTrigger->attach(odomTask, connections.odomTask.prescale);
-			} else {
-				std::cerr << "ERROR: could not set-up InPort " << connections.odomTask.inPortRef << " as activation source for Task OdomTask" << std::endl;
-			}
-		} else
-		{
-			// setup default task-trigger as PeriodicTimer
-			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-			int microseconds = 1000*1000 / 50.0;
-			if(microseconds > 0) {
-				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
-				triggerPtr->attach(odomTask);
-				// store trigger in class member
-				odomTaskTrigger = triggerPtr;
-			} else {
-				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task OdomTask" << std::endl;
-			}
-		}
-		
-		// create Task SignalStateTask
-		signalStateTask = new SignalStateTask(component);
-		// configure input-links
-		// configure task-trigger (if task is configurable)
-		if(connections.signalStateTask.trigger == "PeriodicTimer") {
-			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.signalStateTask.periodicActFreq;
-			if(microseconds > 0) {
-				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-				triggerPtr->attach(signalStateTask);
-				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
-				// store trigger in class member
-				signalStateTaskTrigger = triggerPtr;
-			} else {
-				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task SignalStateTask" << std::endl;
-			}
-		} else if(connections.signalStateTask.trigger == "DataTriggered") {
-			signalStateTaskTrigger = getInputTaskTriggerFromString(connections.signalStateTask.inPortRef);
-			if(signalStateTaskTrigger != NULL) {
-				signalStateTaskTrigger->attach(signalStateTask, connections.signalStateTask.prescale);
-			} else {
-				std::cerr << "ERROR: could not set-up InPort " << connections.signalStateTask.inPortRef << " as activation source for Task SignalStateTask" << std::endl;
-			}
-		} 
 		
 		// create Task WebotsAPITask
 		webotsAPITask = new WebotsAPITask(component);
@@ -560,18 +389,6 @@ void ComponentWebotsMobileRobot::fini()
 	// destroy all task instances
 	// unlink all UpcallManagers
 	// unlink the TaskTrigger
-	if(odomTaskTrigger != NULL){
-		odomTaskTrigger->detach(odomTask);
-		delete odomTask;
-	}
-	// unlink all UpcallManagers
-	// unlink the TaskTrigger
-	if(signalStateTaskTrigger != NULL){
-		signalStateTaskTrigger->detach(signalStateTask);
-		delete signalStateTask;
-	}
-	// unlink all UpcallManagers
-	// unlink the TaskTrigger
 	if(webotsAPITaskTrigger != NULL){
 		webotsAPITaskTrigger->detach(webotsAPITask);
 		delete webotsAPITask;
@@ -581,7 +398,6 @@ void ComponentWebotsMobileRobot::fini()
 	delete localizationEventServiceInHandler;
 	delete localizationUpdateServiceInHandler;
 	delete navigationVelocityServiceInHandler;
-	delete powerOutputSendInHandler;
 
 	// destroy InputTaskTriggers and UpcallManagers
 	delete localizationEventServiceInInputTaskTrigger;
@@ -593,9 +409,6 @@ void ComponentWebotsMobileRobot::fini()
 	delete navigationVelocityServiceInInputTaskTrigger;
 	delete navigationVelocityServiceInUpcallManager;
 	delete navigationVelocityServiceInInputCollector;
-	delete powerOutputSendInInputTaskTrigger;
-	delete powerOutputSendInUpcallManager;
-	delete powerOutputSendInInputCollector;
 
 	// destroy client ports
 	delete localizationEventServiceIn;
@@ -605,28 +418,12 @@ void ComponentWebotsMobileRobot::fini()
 	delete baseStateQueryServiceAnswInputTaskTrigger;
 	delete baseStateServiceOutWrapper;
 	delete baseStateServiceOut;
-	delete batteryEventServiceOutWrapper;
-	delete batteryEventServiceOut;
-	delete bumperEventServiceOutWrapper;
-	delete bumperEventServiceOut;
-	delete digitalInputEventOutWrapper;
-	delete digitalInputEventOut;
-	delete laserSafetyEventServiceOutWrapper;
-	delete laserSafetyEventServiceOut;
 	delete localizationUpdateServiceIn;
 	delete navigationVelocityServiceIn;
-	delete powerOutputSendIn;
-	delete robotinoIOValuesQueryServiceAnsw;
-	delete robotinoIOValuesQueryServiceAnswInputTaskTrigger;
 	// destroy event-test handlers (if needed)
-	batteryEventServiceOutEventTestHandler;
-	bumperEventServiceOutEventTestHandler;
-	digitalInputEventOutEventTestHandler;
-	laserSafetyEventServiceOutEventTestHandler;
 	
 	// destroy request-handlers
 	delete baseStateQueryServiceAnswHandler;
-	delete robotinoIOValuesQueryServiceAnswHandler;
 	
 	delete stateSlave;
 	// destroy state-change-handler
@@ -750,26 +547,6 @@ void ComponentWebotsMobileRobot::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("BaseStateServiceOut", "roboticMiddleware")) {
 			parameter.getString("BaseStateServiceOut", "roboticMiddleware", connections.baseStateServiceOut.roboticMiddleware);
 		}
-		// load parameters for server BatteryEventServiceOut
-		parameter.getString("BatteryEventServiceOut", "serviceName", connections.batteryEventServiceOut.serviceName);
-		if(parameter.checkIfParameterExists("BatteryEventServiceOut", "roboticMiddleware")) {
-			parameter.getString("BatteryEventServiceOut", "roboticMiddleware", connections.batteryEventServiceOut.roboticMiddleware);
-		}
-		// load parameters for server BumperEventServiceOut
-		parameter.getString("BumperEventServiceOut", "serviceName", connections.bumperEventServiceOut.serviceName);
-		if(parameter.checkIfParameterExists("BumperEventServiceOut", "roboticMiddleware")) {
-			parameter.getString("BumperEventServiceOut", "roboticMiddleware", connections.bumperEventServiceOut.roboticMiddleware);
-		}
-		// load parameters for server DigitalInputEventOut
-		parameter.getString("DigitalInputEventOut", "serviceName", connections.digitalInputEventOut.serviceName);
-		if(parameter.checkIfParameterExists("DigitalInputEventOut", "roboticMiddleware")) {
-			parameter.getString("DigitalInputEventOut", "roboticMiddleware", connections.digitalInputEventOut.roboticMiddleware);
-		}
-		// load parameters for server LaserSafetyEventServiceOut
-		parameter.getString("LaserSafetyEventServiceOut", "serviceName", connections.laserSafetyEventServiceOut.serviceName);
-		if(parameter.checkIfParameterExists("LaserSafetyEventServiceOut", "roboticMiddleware")) {
-			parameter.getString("LaserSafetyEventServiceOut", "roboticMiddleware", connections.laserSafetyEventServiceOut.roboticMiddleware);
-		}
 		// load parameters for server LocalizationUpdateServiceIn
 		parameter.getString("LocalizationUpdateServiceIn", "serviceName", connections.localizationUpdateServiceIn.serviceName);
 		if(parameter.checkIfParameterExists("LocalizationUpdateServiceIn", "roboticMiddleware")) {
@@ -780,55 +557,7 @@ void ComponentWebotsMobileRobot::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("NavigationVelocityServiceIn", "roboticMiddleware")) {
 			parameter.getString("NavigationVelocityServiceIn", "roboticMiddleware", connections.navigationVelocityServiceIn.roboticMiddleware);
 		}
-		// load parameters for server PowerOutputSendIn
-		parameter.getString("PowerOutputSendIn", "serviceName", connections.powerOutputSendIn.serviceName);
-		if(parameter.checkIfParameterExists("PowerOutputSendIn", "roboticMiddleware")) {
-			parameter.getString("PowerOutputSendIn", "roboticMiddleware", connections.powerOutputSendIn.roboticMiddleware);
-		}
-		// load parameters for server RobotinoIOValuesQueryServiceAnsw
-		parameter.getString("RobotinoIOValuesQueryServiceAnsw", "serviceName", connections.robotinoIOValuesQueryServiceAnsw.serviceName);
-		if(parameter.checkIfParameterExists("RobotinoIOValuesQueryServiceAnsw", "roboticMiddleware")) {
-			parameter.getString("RobotinoIOValuesQueryServiceAnsw", "roboticMiddleware", connections.robotinoIOValuesQueryServiceAnsw.roboticMiddleware);
-		}
 		
-		// load parameters for task OdomTask
-		parameter.getDouble("OdomTask", "minActFreqHz", connections.odomTask.minActFreq);
-		parameter.getDouble("OdomTask", "maxActFreqHz", connections.odomTask.maxActFreq);
-		parameter.getString("OdomTask", "triggerType", connections.odomTask.trigger);
-		if(connections.odomTask.trigger == "PeriodicTimer") {
-			parameter.getDouble("OdomTask", "periodicActFreqHz", connections.odomTask.periodicActFreq);
-		} else if(connections.odomTask.trigger == "DataTriggered") {
-			parameter.getString("OdomTask", "inPortRef", connections.odomTask.inPortRef);
-			parameter.getInteger("OdomTask", "prescale", connections.odomTask.prescale);
-		}
-		if(parameter.checkIfParameterExists("OdomTask", "scheduler")) {
-			parameter.getString("OdomTask", "scheduler", connections.odomTask.scheduler);
-		}
-		if(parameter.checkIfParameterExists("OdomTask", "priority")) {
-			parameter.getInteger("OdomTask", "priority", connections.odomTask.priority);
-		}
-		if(parameter.checkIfParameterExists("OdomTask", "cpuAffinity")) {
-			parameter.getInteger("OdomTask", "cpuAffinity", connections.odomTask.cpuAffinity);
-		}
-		// load parameters for task SignalStateTask
-		parameter.getDouble("SignalStateTask", "minActFreqHz", connections.signalStateTask.minActFreq);
-		parameter.getDouble("SignalStateTask", "maxActFreqHz", connections.signalStateTask.maxActFreq);
-		parameter.getString("SignalStateTask", "triggerType", connections.signalStateTask.trigger);
-		if(connections.signalStateTask.trigger == "PeriodicTimer") {
-			parameter.getDouble("SignalStateTask", "periodicActFreqHz", connections.signalStateTask.periodicActFreq);
-		} else if(connections.signalStateTask.trigger == "DataTriggered") {
-			parameter.getString("SignalStateTask", "inPortRef", connections.signalStateTask.inPortRef);
-			parameter.getInteger("SignalStateTask", "prescale", connections.signalStateTask.prescale);
-		}
-		if(parameter.checkIfParameterExists("SignalStateTask", "scheduler")) {
-			parameter.getString("SignalStateTask", "scheduler", connections.signalStateTask.scheduler);
-		}
-		if(parameter.checkIfParameterExists("SignalStateTask", "priority")) {
-			parameter.getInteger("SignalStateTask", "priority", connections.signalStateTask.priority);
-		}
-		if(parameter.checkIfParameterExists("SignalStateTask", "cpuAffinity")) {
-			parameter.getInteger("SignalStateTask", "cpuAffinity", connections.signalStateTask.cpuAffinity);
-		}
 		// load parameters for task WebotsAPITask
 		parameter.getDouble("WebotsAPITask", "minActFreqHz", connections.webotsAPITask.minActFreq);
 		parameter.getDouble("WebotsAPITask", "maxActFreqHz", connections.webotsAPITask.maxActFreq);
@@ -856,9 +585,6 @@ void ComponentWebotsMobileRobot::loadParameter(int argc, char *argv[])
 		}
 		if(parameter.checkIfParameterExists("NavigationVelocityServiceInHandler", "prescale")) {
 			parameter.getInteger("NavigationVelocityServiceInHandler", "prescale", connections.navigationVelocityServiceInHandler.prescale);
-		}
-		if(parameter.checkIfParameterExists("PowerOutputSendInHandler", "prescale")) {
-			parameter.getInteger("PowerOutputSendInHandler", "prescale", connections.powerOutputSendInHandler.prescale);
 		}
 		
 		// load parameters for ComponentWebotsMobileRobotROS1InterfacesExtension

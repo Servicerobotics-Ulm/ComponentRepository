@@ -1,0 +1,49 @@
+ComponentParameter ComponentWebInterfaceComissioning component ComponentWebInterfaceComissioning
+{
+	InternalParameter Settings{
+		//@doc "TCP-port of the web interface component to communicate instructions for worker thread"
+		workerServerPort: UInt32 = 8081
+			
+		//@doc "For communication with the sequencer. Not used within FIONA."
+		apacheServerPort: UInt32 = 8082
+		
+		//@doc "Main folder where the web-ui files are located."
+		wwwRoot : String = "/var/www/fiona-example"
+				
+		//@doc"name of the map which should be displayed in the Demonstrator. If the image isn't stored in wwwRoot the parameter must contain the relative path to the image."
+		map : String = "comland-bw.png"
+		
+		//@doc"x value (in pixel) of real world (0,0,0) in the map"
+		xOffset : UInt32 = 514
+		
+		//@doc"y value (in pixel) of real world (0,0,0) in the map"
+		yOffset : UInt32 = 268
+		
+		//@doc"scaling from meter to pixel (pixel in the image/ corresponding length in real world)"
+		scale : Float = 39.736842105
+		
+		//@doc"rotation of the coordinate system in degree"
+		rotation : Float = 0.0
+		
+		//@doc"rotation of the initial orientation in degree"
+		orientation : Float = 0.0
+		
+		//@doc "Enable or disable usage of authentication service."
+		useAuthentication : Boolean = false
+		
+		//@doc "Enable or disable usage of destination service"
+		useDestinationRequest : Boolean = true
+
+		//@doc "Enable or disable usage of location service"
+		useLocationRequestor : Boolean = true
+		
+		//@doc "Enable or disable usage of navigation instruction service"
+		useNavigationInstructions : Boolean = false
+		
+		//@doc"Enable or disable usage of imuData"
+		useImuData : Boolean = false
+		
+		//@doc "Enable or disable usage of rasterMapRequestor"
+		useRasterMapRequestor : Boolean = false
+	}
+}

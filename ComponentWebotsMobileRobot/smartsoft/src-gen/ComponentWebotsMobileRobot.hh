@@ -47,48 +47,18 @@ class ComponentWebotsMobileRobotExtension;
 #include <CommBasicObjects/CommBasePositionUpdateACE.hh>
 #include <CommBasicObjects/CommBaseState.hh>
 #include <CommBasicObjects/CommBaseStateACE.hh>
-#include <CommBasicObjects/CommBatteryEvent.hh>
-#include <CommBasicObjects/CommBatteryEventACE.hh>
-#include <CommBasicObjects/CommBatteryParameter.hh>
-#include <CommBasicObjects/CommBatteryParameterACE.hh>
-#include <CommBasicObjects/CommBatteryState.hh>
-#include <CommBasicObjects/CommBatteryStateACE.hh>
-#include <CommBasicObjects/CommBumperEventParameter.hh>
-#include <CommBasicObjects/CommBumperEventParameterACE.hh>
-#include <CommBasicObjects/CommBumperEventResult.hh>
-#include <CommBasicObjects/CommBumperEventResultACE.hh>
-#include <CommBasicObjects/CommBumperEventState.hh>
-#include <CommBasicObjects/CommBumperEventStateACE.hh>
-#include <CommBasicObjects/CommDigitalInputEventParameter.hh>
-#include <CommBasicObjects/CommDigitalInputEventParameterACE.hh>
-#include <CommBasicObjects/CommDigitalInputEventResult.hh>
-#include <CommBasicObjects/CommDigitalInputEventResultACE.hh>
-#include <CommBasicObjects/CommDigitalInputEventState.hh>
-#include <CommBasicObjects/CommDigitalInputEventStateACE.hh>
-#include <CommBasicObjects/CommIOValues.hh>
-#include <CommBasicObjects/CommIOValuesACE.hh>
-#include <CommBasicObjects/CommLaserSafetyEventParam.hh>
-#include <CommBasicObjects/CommLaserSafetyEventParamACE.hh>
-#include <CommBasicObjects/CommLaserSafetyEventState.hh>
-#include <CommBasicObjects/CommLaserSafetyEventStateACE.hh>
-#include <CommBasicObjects/CommLaserSafetyField.hh>
-#include <CommBasicObjects/CommLaserSafetyFieldACE.hh>
 #include <CommLocalizationObjects/CommLocalizationEventParameter.hh>
 #include <CommLocalizationObjects/CommLocalizationEventParameterACE.hh>
 #include <CommLocalizationObjects/CommLocalizationEventResult.hh>
 #include <CommLocalizationObjects/CommLocalizationEventResultACE.hh>
 #include <CommBasicObjects/CommNavigationVelocity.hh>
 #include <CommBasicObjects/CommNavigationVelocityACE.hh>
-#include <CommRobotinoObjects/CommRobotinoPowerOutputValue.hh>
-#include <CommRobotinoObjects/CommRobotinoPowerOutputValueACE.hh>
 #include <CommBasicObjects/CommVoid.hh>
 #include <CommBasicObjects/CommVoidACE.hh>
 #include <CommLocalizationObjects/LocalizationEventState.hh>
 #include <CommLocalizationObjects/LocalizationEventStateACE.hh>
 
 // include tasks
-#include "OdomTask.hh"
-#include "SignalStateTask.hh"
 #include "WebotsAPITask.hh"
 // include UpcallManagers and InputCollectors
 #include "LocalizationEventServiceInUpcallManager.hh"
@@ -97,23 +67,15 @@ class ComponentWebotsMobileRobotExtension;
 #include "LocalizationUpdateServiceInInputCollector.hh"
 #include "NavigationVelocityServiceInUpcallManager.hh"
 #include "NavigationVelocityServiceInInputCollector.hh"
-#include "PowerOutputSendInUpcallManager.hh"
-#include "PowerOutputSendInInputCollector.hh"
 
 // include input-handler(s)
 #include "LocalizationEventServiceInHandler.hh"
 #include "LocalizationUpdateServiceInHandler.hh"
 #include "NavigationVelocityServiceInHandler.hh"
-#include "PowerOutputSendInHandler.hh"
 // include request-handler(s)
 #include "BaseStateQueryServiceAnswHandler.hh"
-#include "RobotinoIOValuesQueryServiceAnswHandler.hh"
 // output port wrappers
-#include "BatteryEventServiceOutWrapper.hh"
-#include "BumperEventServiceOutWrapper.hh"
-#include "DigitalInputEventOutWrapper.hh"
 #include "BaseStateServiceOutWrapper.hh"
-#include "LaserSafetyEventServiceOutWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -165,10 +127,6 @@ public:
 	}
 	
 	// define tasks
-	Smart::TaskTriggerSubject* odomTaskTrigger;
-	OdomTask *odomTask;
-	Smart::TaskTriggerSubject* signalStateTaskTrigger;
-	SignalStateTask *signalStateTask;
 	Smart::TaskTriggerSubject* webotsAPITaskTrigger;
 	WebotsAPITask *webotsAPITask;
 	
@@ -188,11 +146,6 @@ public:
 	Smart::InputTaskTrigger<CommBasicObjects::CommNavigationVelocity> *navigationVelocityServiceInInputTaskTrigger;
 	NavigationVelocityServiceInUpcallManager *navigationVelocityServiceInUpcallManager;
 	NavigationVelocityServiceInInputCollector *navigationVelocityServiceInInputCollector;
-	// InputPort PowerOutputSendIn
-	Smart::ISendServerPattern<CommRobotinoObjects::CommRobotinoPowerOutputValue> *powerOutputSendIn;
-	Smart::InputTaskTrigger<CommRobotinoObjects::CommRobotinoPowerOutputValue> *powerOutputSendInInputTaskTrigger;
-	PowerOutputSendInUpcallManager *powerOutputSendInUpcallManager;
-	PowerOutputSendInInputCollector *powerOutputSendInInputCollector;
 	
 	// define request-ports
 	
@@ -200,33 +153,17 @@ public:
 	LocalizationEventServiceInHandler *localizationEventServiceInHandler;
 	LocalizationUpdateServiceInHandler *localizationUpdateServiceInHandler;
 	NavigationVelocityServiceInHandler *navigationVelocityServiceInHandler;
-	PowerOutputSendInHandler *powerOutputSendInHandler;
 	
 	// define output-ports
 	Smart::IPushServerPattern<CommBasicObjects::CommBaseState> *baseStateServiceOut;
 	BaseStateServiceOutWrapper *baseStateServiceOutWrapper;
-	Smart::IEventServerPattern<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState> *batteryEventServiceOut;
-	BatteryEventServiceOutWrapper *batteryEventServiceOutWrapper;
-	std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBatteryParameter, CommBasicObjects::CommBatteryEvent, CommBasicObjects::CommBatteryState>> batteryEventServiceOutEventTestHandler;
-	Smart::IEventServerPattern<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState> *bumperEventServiceOut;
-	BumperEventServiceOutWrapper *bumperEventServiceOutWrapper;
-	std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommBumperEventParameter, CommBasicObjects::CommBumperEventResult, CommBasicObjects::CommBumperEventState>> bumperEventServiceOutEventTestHandler;
-	Smart::IEventServerPattern<CommBasicObjects::CommDigitalInputEventParameter, CommBasicObjects::CommDigitalInputEventResult, CommBasicObjects::CommDigitalInputEventState> *digitalInputEventOut;
-	DigitalInputEventOutWrapper *digitalInputEventOutWrapper;
-	std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommDigitalInputEventParameter, CommBasicObjects::CommDigitalInputEventResult, CommBasicObjects::CommDigitalInputEventState>> digitalInputEventOutEventTestHandler;
-	Smart::IEventServerPattern<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState> *laserSafetyEventServiceOut;
-	LaserSafetyEventServiceOutWrapper *laserSafetyEventServiceOutWrapper;
-	std::shared_ptr<Smart::IEventTestHandler<CommBasicObjects::CommLaserSafetyEventParam, CommBasicObjects::CommLaserSafetyField, CommBasicObjects::CommLaserSafetyEventState>> laserSafetyEventServiceOutEventTestHandler;
 	
 	// define answer-ports
 	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState> *baseStateQueryServiceAnsw;
 	Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, CommBasicObjects::CommBaseState> *baseStateQueryServiceAnswInputTaskTrigger;
-	Smart::IQueryServerPattern<CommBasicObjects::CommIOValues, CommBasicObjects::CommIOValues> *robotinoIOValuesQueryServiceAnsw;
-	Smart::QueryServerTaskTrigger<CommBasicObjects::CommIOValues, CommBasicObjects::CommIOValues> *robotinoIOValuesQueryServiceAnswInputTaskTrigger;
 	
 	// define request-handlers
 	BaseStateQueryServiceAnswHandler *baseStateQueryServiceAnswHandler;
-	RobotinoIOValuesQueryServiceAnswHandler *robotinoIOValuesQueryServiceAnswHandler;
 	
 	// definitions of ComponentWebotsMobileRobotROS1InterfacesExtension
 	
@@ -317,38 +254,6 @@ public:
 		} component;
 		
 		//--- task parameter ---
-		struct OdomTask_struct {
-			double minActFreq;
-			double maxActFreq;
-			std::string trigger;
-			// only one of the following two params is 
-			// actually used at run-time according 
-			// to the system config model
-			double periodicActFreq;
-			// or
-			std::string inPortRef;
-			int prescale;
-			// scheduling parameters
-			std::string scheduler;
-			int priority;
-			int cpuAffinity;
-		} odomTask;
-		struct SignalStateTask_struct {
-			double minActFreq;
-			double maxActFreq;
-			std::string trigger;
-			// only one of the following two params is 
-			// actually used at run-time according 
-			// to the system config model
-			double periodicActFreq;
-			// or
-			std::string inPortRef;
-			int prescale;
-			// scheduling parameters
-			std::string scheduler;
-			int priority;
-			int cpuAffinity;
-		} signalStateTask;
 		struct WebotsAPITask_struct {
 			double minActFreq;
 			double maxActFreq;
@@ -376,9 +281,6 @@ public:
 		struct NavigationVelocityServiceInHandler_struct {
 			int prescale;
 		} navigationVelocityServiceInHandler;
-		struct PowerOutputSendInHandler_struct {
-			int prescale;
-		} powerOutputSendInHandler;
 		
 		//--- server port parameter ---
 		struct BaseStateQueryServiceAnsw_struct {
@@ -389,22 +291,6 @@ public:
 				std::string serviceName;
 				std::string roboticMiddleware;
 		} baseStateServiceOut;
-		struct BatteryEventServiceOut_struct {
-				std::string serviceName;
-				std::string roboticMiddleware;
-		} batteryEventServiceOut;
-		struct BumperEventServiceOut_struct {
-				std::string serviceName;
-				std::string roboticMiddleware;
-		} bumperEventServiceOut;
-		struct DigitalInputEventOut_struct {
-				std::string serviceName;
-				std::string roboticMiddleware;
-		} digitalInputEventOut;
-		struct LaserSafetyEventServiceOut_struct {
-				std::string serviceName;
-				std::string roboticMiddleware;
-		} laserSafetyEventServiceOut;
 		struct LocalizationUpdateServiceIn_struct {
 				std::string serviceName;
 				std::string roboticMiddleware;
@@ -413,14 +299,6 @@ public:
 				std::string serviceName;
 				std::string roboticMiddleware;
 		} navigationVelocityServiceIn;
-		struct PowerOutputSendIn_struct {
-				std::string serviceName;
-				std::string roboticMiddleware;
-		} powerOutputSendIn;
-		struct RobotinoIOValuesQueryServiceAnsw_struct {
-				std::string serviceName;
-				std::string roboticMiddleware;
-		} robotinoIOValuesQueryServiceAnsw;
 	
 		//--- client port parameter ---
 		struct LocalizationEventServiceIn_struct {

@@ -1,0 +1,65 @@
+INSTALL
+=====================================================================
+
+1. The component need the FTDI linux driver (version 1.0.4 tested) to be globally installed to the system once.
+   Therefor execute the INSTALL_FTDI.sh script as root (sudo).
+
+2. UDEV RULE
+   Segway vendor ID is 0x0403
+
+   Insert the following udev rule to e.g /etc/udev/rules.d/usbftdi.rules
+   # For FTDI FT232 & FT245 USB devices with Vendor ID = 0x0403, Product ID = 0xe729
+   SYSFS{idProduct}=="e729", SYSFS{idVendor}=="0403", RUN+="/sbin/modprobe -rq ftdi_sio product=0xe729 vendor=0x0403", MODE="0777"
+
+FOR Ubuntu 16.04:
+        #Bus 001 Device 006: ID 0403:e729 Future Technology Devices International, Ltd Segway Robotic Mobility Platforms 200
+       # idVendor=0403, idProduct=e729
+       SUBSYSTEM=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="e729", MODE="0666", GROUP="users", RUN+="/sbin/modprobe -rq ftdi_sio product=0xe729 vendor=0x0403"
+
+3. To be sure that the udev rule is loaded you may want to restart the system.
+
+=====================================================================
+
+The INSTALL_FTDI.sh does:
+  - Download and extract FTDI linux driver version 1.0.4 (tested) : http://www.ftdichip.com/Drivers/D2XX.htm
+  (Installation of FTDI driver reproduced here for convenience)
+
+  - It installs either the 32 or the 64 bit version of the libftd2xx.so.0.4.16 to /usr/local/lib
+
+  - It installs the ftd2xx.h and WinTypes.h headers to /usr/local/include/ftd2xx 
+  
+  - It creates sysmlink to the so file from /usr/local/lib/libftd2xx.so /usr/lib/libftd2xx.so 
+
+
+=====================================================================
+Problems with the UDEV rules or the usb device:
+
+      To instantiate a udev rule, run the following command:
+
+      # sudo udevcontrol reload_rules <CR>
+
+      (You only need to run this command once. The rule file will always be executed at system startup.)
+      Plug in the FTDI device with the customized VID/PID and enter:
+
+      # dmesg | grep FTDI  <CR>
+
+
+      This will confirm a successful driver load. You should see the following:
+
+      [   15.768872] drivers/usb/serial/usb-serial.c: USB Serial support registered for FTDI USB Serial Device
+      [   15.768927] ftdi_sio 4-1:1.0: FTDI USB Serial Device converter detected
+      [   15.769177] usb 4-1: FTDI USB Serial Device converter now attached to ttyUSB0
+
+      The new VID/PIDs will stay resident on the Linux PC after shutdown and restart.
+      
+    8. Important: Create links for ftd2xx.h and WinTypes.h from /usr/local/ftdi to /usr/include
+    
+    
+    If you have problems with this check with usbview (search on the internet for application 
+	or it can be sent to you by ftdi) or lsusb (command line tool) to check the usb file system is mounted properly.  
+	
+	Other problems will be related to the ftdi_sio driver loading - 
+-->	1.you must unload this driver (and usbserial) if it is attached to your device ("rmmod ftdi_sio" and "rmmod usbserial" as root user). 
+	2.Your PID/VID has not been included in the distribution.A PID of 0x6006 and VID of
+	0x0403 should work as a temporary workaround.
+    

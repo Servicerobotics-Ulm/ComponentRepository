@@ -177,10 +177,6 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.scanner.frequency = commitState.scanner.frequency;
 		}
-		if(parameter.getString("scanner", "ip_address", commitState.scanner.ip_address))
-		{
-			globalState.scanner.ip_address = commitState.scanner.ip_address;
-		}
 		if(parameter.getInteger("scanner", "length_unit", commitState.scanner.length_unit))
 		{
 			globalState.scanner.length_unit = commitState.scanner.length_unit;
@@ -200,10 +196,6 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		if(parameter.getInteger("scanner", "opening_angle", commitState.scanner.opening_angle))
 		{
 			globalState.scanner.opening_angle = commitState.scanner.opening_angle;
-		}
-		if(parameter.getInteger("scanner", "port", commitState.scanner.port))
-		{
-			globalState.scanner.port = commitState.scanner.port;
 		}
 		if(parameter.getDouble("scanner", "resolution", commitState.scanner.resolution))
 		{

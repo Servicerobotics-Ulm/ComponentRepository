@@ -79,13 +79,11 @@ public:
 			double azimuth;
 			double elevation;
 			unsigned int frequency;
-			std::string ip_address;
 			unsigned int length_unit;
 			unsigned int max_range;
 			unsigned int min_range;
 			bool on_turret;
 			unsigned int opening_angle;
-			unsigned int port;
 			double resolution;
 			double roll;
 			bool verbose;
@@ -99,13 +97,11 @@ public:
 				azimuth = 0;
 				elevation = 0;
 				frequency = 50;
-				ip_address = "192.168.0.1";
 				length_unit = 1;
 				max_range = 20000;
 				min_range = 10;
 				on_turret = false;
 				opening_angle = 270;
-				port = 2111;
 				resolution = 0.5;
 				roll = 0;
 				verbose = false;
@@ -120,13 +116,11 @@ public:
 			inline double getAzimuth() const { return azimuth; }
 			inline double getElevation() const { return elevation; }
 			inline unsigned int getFrequency() const { return frequency; }
-			inline std::string getIp_address() const { return ip_address; }
 			inline unsigned int getLength_unit() const { return length_unit; }
 			inline unsigned int getMax_range() const { return max_range; }
 			inline unsigned int getMin_range() const { return min_range; }
 			inline bool getOn_turret() const { return on_turret; }
 			inline unsigned int getOpening_angle() const { return opening_angle; }
-			inline unsigned int getPort() const { return port; }
 			inline double getResolution() const { return resolution; }
 			inline double getRoll() const { return roll; }
 			inline bool getVerbose() const { return verbose; }
@@ -140,13 +134,11 @@ public:
 				os << "azimuth = " << azimuth << ", ";
 				os << "elevation = " << elevation << ", ";
 				os << "frequency = " << frequency << ", ";
-				os << "ip_address = " << ip_address << ", ";
 				os << "length_unit = " << length_unit << ", ";
 				os << "max_range = " << max_range << ", ";
 				os << "min_range = " << min_range << ", ";
 				os << "on_turret = " << on_turret << ", ";
 				os << "opening_angle = " << opening_angle << ", ";
-				os << "port = " << port << ", ";
 				os << "resolution = " << resolution << ", ";
 				os << "roll = " << roll << ", ";
 				os << "verbose = " << verbose << ", ";
@@ -333,13 +325,11 @@ public:
 			{"azimuth" , getScanner().getAzimuth()},
 			{"elevation" , getScanner().getElevation()},
 			{"frequency" , getScanner().getFrequency()},
-			{"ip_address" , getScanner().getIp_address()},
 			{"length_unit" , getScanner().getLength_unit()},
 			{"max_range" , getScanner().getMax_range()},
 			{"min_range" , getScanner().getMin_range()},
 			{"on_turret" , getScanner().getOn_turret()},
 			{"opening_angle" , getScanner().getOpening_angle()},
-			{"port" , getScanner().getPort()},
 			{"resolution" , getScanner().getResolution()},
 			{"roll" , getScanner().getRoll()},
 			{"verbose" , getScanner().getVerbose()},

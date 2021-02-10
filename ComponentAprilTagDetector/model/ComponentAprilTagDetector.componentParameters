@@ -1,0 +1,16 @@
+ComponentParameter ComponentAprilTagDetector component ComponentAprilTagDetector
+{
+	InternalParameter options{
+		tag_family : String = "tag16h5"
+		tag_size:Double = 0.16;
+		decision_threshold:Double = 50.0;
+		decimate : Double = 1.0
+		sigma: Double = 1.0
+		numThreads:	UInt8 = 1
+		debug:	Boolean = false
+		refine_edges: Boolean = false
+	}
+}
+
+
+

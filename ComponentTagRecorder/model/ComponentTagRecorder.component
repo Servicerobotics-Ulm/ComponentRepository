@@ -1,0 +1,14 @@
+ComponentDefinition ComponentTagRecorder logo "/ComponentTagRecorder/model/logo.png"
+{
+Activity RecorderTask
+	{
+	OperationModeBinding CoordinationPort.active
+	}
+	InputPort MarkerListDetectionServiceIn implements CommTrackingObjects.MarkerListDetectionService {
+	}
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService
+	{
+	PrivateOperationMode active PublicOperationMode CommBasicObjects.BasicModes.Active { activates ( active ) }
+	}
+	ComponentParameters ComponentTagRecorder slave CoordinationPort
+}

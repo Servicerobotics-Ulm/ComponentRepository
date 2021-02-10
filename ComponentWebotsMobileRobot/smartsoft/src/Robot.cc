@@ -50,24 +50,6 @@
 Robot::Robot( )
 : _ignoreOdometryEvent(false)
 {
-
-	//	digitalInputArray.setComId(robotinoCom.id());
-	//	analogInputArray.setComId(robotinoCom.id());
-	//	digitalOutput.setComId(robotinoCom.id());
-	//	relay.setComId(robotinoCom.id());
-	//
-	//	powerOutput.setComId(robotinoCom.id());
-	//
-	//	robotinoOdom.setComId(robotinoCom.id());
-	//	robotinoBumper.setComId(robotinoCom.id());
-	//	robotinoDrive.setComId(robotinoCom.id());
-	//
-	//	robotinoM1.setComId(robotinoCom.id());
-	//	robotinoM2.setComId(robotinoCom.id());
-	//	robotinoM3.setComId(robotinoCom.id());
-	//
-	//	power.setComId(robotinoCom.id());
-
 	// reset position
 	initVariables();
 
@@ -75,22 +57,11 @@ Robot::Robot( )
 	lamdaSigmaD = 50*50/1000.0;
 	lamdaSigmaDeltaAlpha = (5*5/360.0) /180.0 * M_PI;
 	lamdaSigmaDeltaBeta = (2*2/1000.0) /180.0 * M_PI;
-
-	//this->robotinoBumper.setTimoutConfiguration(COMP->getGlobalState().getBumper().getBumperTimeOutSec(),COMP->getGlobalState().getBumper().getBumperTimeOutMSec());
-
-	generateLaserSafetyFieldEvents = COMP->getGlobalState().getLaserSafetyField().getGenerateLaserSafetyFieldEvents();
-	laserSafetyFieldIOBit = 0;
-	laserSafetyFieldTimerId = -1;
-	laserSafetyFieldTimeoutSec = COMP->getGlobalState().getLaserSafetyField().getLaserSafetyfFieldTimeOutSec();
-	laserSafetyFieldTimeoutMsec = COMP->getGlobalState().getLaserSafetyField().getLaserSafetyfFieldTimeOutMSec();
-	laserSafetyFieldLastState = 1;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Robot::~Robot()
 {
-	//this->closeSerial();
-	//rec::robotino::api2::shutdown();
 }
 
 template <typename T,unsigned S>
@@ -98,83 +69,6 @@ inline unsigned arraysize(const T (&v)[S]) { return S; }
 
 void Robot::processEvents()
 {
-
-	//fetch state of digital and analog inputs
-	CommBasicObjects::CommDigitalInputEventState state;
-	SmartACE::SmartGuard posGuard(lockIO);
-	{
-		//todo webots set io values
-//	digitalInputArray.values(digitalInputs);
-//	analogInputArray.values(analogInputs);
-
-	//pass values to the event server!
-
-	for(unsigned int i=0;i<arraysize(digitalInputs);i++){
-		state.getDigitalInputValuesRef().push_back(digitalInputs[i]);
-	}
-	}
-
-	////////////////////////////////////////////////////////////////
-	//robotino laser safety field state evalution
-	//this should be realized within a laser server component
-	//due to firmware issues with the sick s300 laser sever the evaluation of the lasersafety fields
-	//is done using the digital io of the robotino base
-	//This will only work if the laser is configured to switch the io and connected to the digital ios of the robotino base!
-	if(generateLaserSafetyFieldEvents == true){
-
-		int laserSafetyFieldCurrentState = digitalInputs[0];
-
-		if(laserSafetyFieldCurrentState != laserSafetyFieldLastState){
-
-			if(laserSafetyFieldCurrentState == 0){
-				//we need some timeout here. If station is invisible for more than x seconds, we abort this task
-				//COMP->ini.laser.noStationVisibleTimeout
-				if(laserSafetyFieldTimerId == -1){
-					std::cout << "[Robot::processEvents()] laserSafety Event scheduleTimer relative time: " << laserSafetyFieldTimeoutSec << " : " << laserSafetyFieldTimeoutMsec << std::endl;
-
-					std::chrono::seconds sec(laserSafetyFieldTimeoutSec);
-					std::chrono::milliseconds msec(laserSafetyFieldTimeoutMsec);
-					laserSafetyFieldTimerId = COMP->getComponentImpl()->getTimerManager()->scheduleTimer(this,NULL,sec+msec);
-				} else {
-					std::cout<<__FUNCTION__<<":"<<__LINE__<<"ERROR: this should never had happened!"<<std::endl;
-				}
-
-			} else {
-				//abort timer
-				if(laserSafetyFieldTimerId != -1)
-				{
-					std::cout << "[Robot::processEvents()] laserSafety Event cancelTimer!"<< std::endl;
-					COMP->getComponentImpl()->getTimerManager()->cancelTimer(laserSafetyFieldTimerId);
-					laserSafetyFieldTimerId = -1;
-				} else {
-					std::cout<<__FUNCTION__<<":"<<__LINE__<<" ERROR: this should never had happened!"<<std::endl;
-				}
-
-				//send free state immediately
-				CommBasicObjects::CommLaserSafetyEventState state;
-				state.setProtectiveState(CommBasicObjects::SafetyFieldState::FREE);
-				COMP->laserSafetyEventServiceOut->put(state);
-			}
-
-			laserSafetyFieldLastState = laserSafetyFieldCurrentState;
-		} else {
-			//state not changed this is only used for output!
-			if (laserSafetyFieldCurrentState == 0){
-				if(COMP->getGlobalState().getGeneral().getVerbose()){
-					std::cout << "LaserSafety blocked!" << std::endl;
-				}
-				if(laserSafetyFieldTimerId == -1){
-					std::cout << "[Robot::processEvents()] laserSafety Event scheduleTimer relative time: " << laserSafetyFieldTimeoutSec << " : " << laserSafetyFieldTimeoutMsec << std::endl;
-					std::chrono::seconds sec(laserSafetyFieldTimeoutSec);
-					std::chrono::milliseconds msec(laserSafetyFieldTimeoutMsec);
-					laserSafetyFieldTimerId = COMP->getComponentImpl()->getTimerManager()->scheduleTimer(this,NULL, sec+msec);
-				}
-			}
-		}
-	}
-	////////////////////////////////////////////////////////////////
-
-	COMP->digitalInputEventOut->put(state);
 
 }
 
@@ -560,16 +454,10 @@ int Robot::resetPosition()
 	return 0;
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// -PI <= a <= PI
-double Robot::piToPiRad( double a )
-{
-	a += M_PI;
-	bool was_neg = a < 0;
-	a = fmod(a, 2*M_PI);
-	if ( was_neg )
-		a += 2*M_PI;
-	a -= M_PI;
+// convert angle a from   0 <= a < 2*pi  to  -PI < a <= PI
+double Robot::piToPiRad( double a ) {
+	if(a > M_PI)
+		a -= 2*M_PI;
 	return a;
 }
 
@@ -593,42 +481,6 @@ CommBasicObjects::CommBasePose Robot::getBaseRawPosition()
 	return rawPos;
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-double Robot::getBatteryVoltage()
-{
-	return 0.0;//todo webots
-	//return power.voltage();
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-double Robot::getBatteryCurrent()
-{
-	return 0.0;//todo webots
-	//return power.current();
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Robot::getExternalPower()
-{
-	return 0.0;//todo webots
-	//return power.ext_power();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//double Robot::getVx()
-//{
-//	robotinoDriveModel.unproject(&actualVx, &actualVy, &actualOmega, robotinoM1.actualVelocity(),
-//			robotinoM2.actualVelocity(), robotinoM3.actualVelocity());
-//	return (double) actualVx;
-//}
-//
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//double Robot::getVy()
-//{
-//	robotinoDriveModel.unproject(&actualVx, &actualVy, &actualOmega, robotinoM1.actualVelocity(),
-//			robotinoM2.actualVelocity(), robotinoM3.actualVelocity());
-//	return (double) actualVy;
-//}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -698,71 +550,3 @@ void Robot::setParameters( double maxVelX, double maxVelY, double maxRotVel )
 	//printf("set parameters: maxVelX %f, maxVelY %f, maxRotVel %f \n", maxVelX, maxVelY, maxRotVel);
 }
 
-std::vector<bool> Robot::getDigitalInputArray( ) const{
-	SmartACE::SmartGuard posGuard(lockIO);
-	std::vector<bool> out;
-	for(unsigned int i=0;i<8;++i){
-		out.push_back(digitalInputs[i]);
-	}
-	return out;
-}
-
-std::vector<float> Robot::getAnalogInputArray() const{
-	SmartACE::SmartGuard posGuard(lockIO);
-	std::vector<float> out;
-	for(unsigned int i=0;i<8;++i){
-		out.push_back(analogInputs[i]);
-	}
-	return out;
-}
-
-void Robot::setDigitalOutput(unsigned int outputNumber, bool outputValue){
-	//todo webots
-	//digitalOutput.setOutputNumber(outputNumber);
-	//digitalOutput.setValue(outputValue);
-
-}
-
-void Robot::setPowerOutput(float value){
-	//todo webots
-	//powerOutput.setValue(value);
-}
-
-void Robot::setRelay(unsigned int relayNumber, bool state){
-	SmartACE::SmartGuard relayGuard(lockRelay);
-	std::cout<<"Robot::setRelay: "<<relayNumber<<" state : "<<state<<std::endl;
-//todo webots relay
-//	try {
-//		relay.setRelayNumber(relayNumber);
-//		relay.setValue(state);
-//
-//	} catch (rec::robotino::api2::RobotinoException e) {
-//		std::cerr<<"Error setting relay: "<<e.what()<<std::endl;
-//	}
-
-}
-
-void Robot::setAnalogOutput(unsigned int outputNumber, double outputValue){
-	std::cout<<"WARNING: Analog Output is not supported!"<<std::endl;
-}
-
-bool Robot::getBumperState(){
-	return false;//todo webots bumper
-	//return robotinoBumper.getState();
-}
-
-//void Robot::timerExpired(const ACE_Time_Value & absolute_time,const void * arg){
-void Robot::timerExpired(const Smart::TimePoint &abs_time, const void * arg){
-
-	std::cout<<"[Robot:laserSafetyFieldTimerExpired] LaserSafetyField blocked timeout!"<<std::endl;
-
-	COMP->getComponentImpl()->getTimerManager()->cancelTimer(laserSafetyFieldTimerId);
-	laserSafetyFieldTimerId = -1;
-	CommBasicObjects::CommLaserSafetyEventState state;
-	state.setProtectiveState(CommBasicObjects::SafetyFieldState::BLOCKED);
-	COMP->laserSafetyEventServiceOut->put(state);
-
-}
-
-void Robot::timerCancelled(){};
-void Robot::timerDeleted(const void * arg){};

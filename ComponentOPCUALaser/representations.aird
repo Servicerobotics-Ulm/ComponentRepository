@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ComponentParameter="http://www.eclipse.org/smartmdsd/component/ComponentParameter" xmlns:CoordinationExtension="http://www.eclipse.org/smartmdsd/component/CoordinationExtension" xmlns:componentDefinition="http://www.eclipse.org/smartmdsd/component/componentDefinition" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:diagram="http://www.eclipse.org/sirius/diagram/1.1.0" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.3/notation" xmlns:performanceExtension="http://www.eclipse.org/smartmdsd/component/performanceExtension" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xsi:schemaLocation="http://www.eclipse.org/sirius/description/1.1.0 http://www.eclipse.org/sirius/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/style/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description/style">
+  <viewpoint:DAnalysis uid="_6WKEwPGgEemZmsIz3wtBpw" selectedViews="_68jWYPGgEemZmsIz3wtBpw" version="14.3.1.202003261200">
+    <semanticResources>model/ComponentOPCUALaser.component</semanticResources>
+    <semanticResources>model/ComponentOPCUALaser.componentParameters</semanticResources>
+    <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.services</semanticResources>
+    <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.types</semanticResources>
+    <semanticResources>platform:/plugin/org.xtext.base.stateMachine/componentLifecycle/ComponentLifecycle.automaton</semanticResources>
+    <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.modes</semanticResources>
+    <semanticResources>platform:/plugin/org.xtext.service.parameterDefinition/defaultParameterLib/defaultParameterLib.parameters</semanticResources>
+    <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.parameters</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign</semanticResources>
+    <semanticResources>environment:/viewpoint</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.component.componentDefinition/model/componentDefinition.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.base.documentation/model/documentation.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.service.serviceDefinition/model/serviceDefinition.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.service.coordinationPattern/model/coordinationPattern.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.base.stateMachine/model/stateMachine.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.service.componentMode/model/componentMode.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.service.parameterDefinition/model/parameterDefinition.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.base.basicAttributes/model/basicAttributes.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.service.communicationPattern/model/communicationPattern.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.service.communicationObject/model/communicationObject.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.component.componentParameter/model/componentParameter.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.component.coordinationExtension/model/coordinationExtension.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.behavior.skillRealization/model/skillRealization.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.service.skillDefinition/model/skillDefinition.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.component.performanceExtension/model/performanceExtension.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.component.seronetExtension/model/seronetExtension.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.service.roboticMiddleware/model/roboticMiddleware.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.base.mixedport/model/mixedport.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.smartmdsd.ecore.component.nativeInterfaces/model/nativeInterfaces.ecore</semanticResources>
+    <semanticResources>platform:/plugin/org.eclipse.sirius.properties.defaultrules/model/properties.odesign</semanticResources>
+    <ownedViews xmi:type="viewpoint:DView" uid="_68jWYPGgEemZmsIz3wtBpw">
+      <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']"/>
+      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_697PYPGgEemZmsIz3wtBpw" name="ComponentOPCUALaser" repPath="#_69B3gPGgEemZmsIz3wtBpw">
+        <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
+        <target xmi:type="componentDefinition:ComponentDefModel" href="model/ComponentOPCUALaser.component#/"/>
+      </ownedRepresentationDescriptors>
+    </ownedViews>
+  </viewpoint:DAnalysis>
+  <diagram:DSemanticDiagram uid="_69B3gPGgEemZmsIz3wtBpw">
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="_692W4PGgEemZmsIz3wtBpw" source="DANNOTATION_CUSTOMIZATION_KEY">
+      <data xmi:type="diagram:ComputedStyleDescriptionRegistry" uid="_69298PGgEemZmsIz3wtBpw"/>
+    </ownedAnnotationEntries>
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="_6-QmkPGgEemZmsIz3wtBpw" source="GMF_DIAGRAMS">
+      <data xmi:type="notation:Diagram" xmi:id="_6-QmkfGgEemZmsIz3wtBpw" type="Sirius" element="_69B3gPGgEemZmsIz3wtBpw" measurementUnit="Pixel">
+        <children xmi:type="notation:Node" xmi:id="_6-eB8PGgEemZmsIz3wtBpw" type="2002" element="_69lRIPGgEemZmsIz3wtBpw">
+          <children xmi:type="notation:Node" xmi:id="_6-i6cPGgEemZmsIz3wtBpw" type="5006"/>
+          <children xmi:type="notation:Node" xmi:id="_6-kIkPGgEemZmsIz3wtBpw" type="7001">
+            <children xmi:type="notation:Node" xmi:id="_FX0bYPGhEemZmsIz3wtBpw" type="3008" element="_FTet8fGhEemZmsIz3wtBpw">
+              <children xmi:type="notation:Node" xmi:id="_FX0bY_GhEemZmsIz3wtBpw" type="5005"/>
+              <children xmi:type="notation:Node" xmi:id="_FX1CcPGhEemZmsIz3wtBpw" type="7002">
+                <children xmi:type="notation:Node" xmi:id="_FX2Ql_GhEemZmsIz3wtBpw" type="3008" element="_FTfVAfGhEemZmsIz3wtBpw">
+                  <children xmi:type="notation:Node" xmi:id="_FX2QmvGhEemZmsIz3wtBpw" type="5005"/>
+                  <children xmi:type="notation:Node" xmi:id="_FX23oPGhEemZmsIz3wtBpw" type="7002">
+                    <styles xmi:type="notation:SortingStyle" xmi:id="_FX23ofGhEemZmsIz3wtBpw"/>
+                    <styles xmi:type="notation:FilteringStyle" xmi:id="_FX23ovGhEemZmsIz3wtBpw"/>
+                  </children>
+                  <styles xmi:type="notation:ShapeStyle" xmi:id="_FX2QmPGhEemZmsIz3wtBpw" fontName="Sans" fontHeight="8"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FX2QmfGhEemZmsIz3wtBpw" x="27" y="30"/>
+                </children>
+                <styles xmi:type="notation:SortingStyle" xmi:id="_FX1CcfGhEemZmsIz3wtBpw"/>
+                <styles xmi:type="notation:FilteringStyle" xmi:id="_FX1CcvGhEemZmsIz3wtBpw"/>
+              </children>
+              <styles xmi:type="notation:ShapeStyle" xmi:id="_FX0bYfGhEemZmsIz3wtBpw" fontName="Sans" fontHeight="8" bold="true"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FX0bYvGhEemZmsIz3wtBpw" x="131" y="126" width="227"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_FX1Cc_GhEemZmsIz3wtBpw" type="3008" element="_FWwEYPGhEemZmsIz3wtBpw">
+              <children xmi:type="notation:Node" xmi:id="_FX1pgPGhEemZmsIz3wtBpw" type="5005"/>
+              <children xmi:type="notation:Node" xmi:id="_FX1pgfGhEemZmsIz3wtBpw" type="7002">
+                <styles xmi:type="notation:SortingStyle" xmi:id="_FX1pgvGhEemZmsIz3wtBpw"/>
+                <styles xmi:type="notation:FilteringStyle" xmi:id="_FX1pg_GhEemZmsIz3wtBpw"/>
+              </children>
+              <styles xmi:type="notation:ShapeStyle" xmi:id="_FX1CdPGhEemZmsIz3wtBpw" fontName="Sans" fontHeight="8" bold="true"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FX1CdfGhEemZmsIz3wtBpw" x="131" y="42"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_FX1phPGhEemZmsIz3wtBpw" type="3008" element="_FW7qkPGhEemZmsIz3wtBpw">
+              <children xmi:type="notation:Node" xmi:id="_FX1ph_GhEemZmsIz3wtBpw" type="5005"/>
+              <children xmi:type="notation:Node" xmi:id="_FX1piPGhEemZmsIz3wtBpw" type="7002">
+                <styles xmi:type="notation:SortingStyle" xmi:id="_FX1pifGhEemZmsIz3wtBpw"/>
+                <styles xmi:type="notation:FilteringStyle" xmi:id="_FX1pivGhEemZmsIz3wtBpw"/>
+              </children>
+              <styles xmi:type="notation:ShapeStyle" xmi:id="_FX1phfGhEemZmsIz3wtBpw" fontName="Sans" fontHeight="8" bold="true"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FX1phvGhEemZmsIz3wtBpw" x="183" y="251" width="175"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_FX2QkPGhEemZmsIz3wtBpw" type="3008" element="_FXC_UPGhEemZmsIz3wtBpw">
+              <children xmi:type="notation:Node" xmi:id="_FX2Qk_GhEemZmsIz3wtBpw" type="5005"/>
+              <children xmi:type="notation:Node" xmi:id="_FX2QlPGhEemZmsIz3wtBpw" type="7002">
+                <styles xmi:type="notation:SortingStyle" xmi:id="_FX2QlfGhEemZmsIz3wtBpw"/>
+                <styles xmi:type="notation:FilteringStyle" xmi:id="_FX2QlvGhEemZmsIz3wtBpw"/>
+              </children>
+              <styles xmi:type="notation:ShapeStyle" xmi:id="_FX2QkfGhEemZmsIz3wtBpw" fontName="Sans" fontHeight="8" bold="true"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FX2QkvGhEemZmsIz3wtBpw" x="183" y="342"/>
+            </children>
+            <styles xmi:type="notation:SortingStyle" xmi:id="_6-kIkfGgEemZmsIz3wtBpw"/>
+            <styles xmi:type="notation:FilteringStyle" xmi:id="_6-kIkvGgEemZmsIz3wtBpw"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_FXsfkPGhEemZmsIz3wtBpw" type="3012" element="_FTc4wPGhEemZmsIz3wtBpw">
+            <children xmi:type="notation:Node" xmi:id="_FXtGoPGhEemZmsIz3wtBpw" type="5010">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_FXtGofGhEemZmsIz3wtBpw" x="31" y="5"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_FX4FwPGhEemZmsIz3wtBpw" type="3014" element="_FTc4wfGhEemZmsIz3wtBpw">
+              <styles xmi:type="notation:ShapeStyle" xmi:id="_FX4FwfGhEemZmsIz3wtBpw" fontName="Sans"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FX4FwvGhEemZmsIz3wtBpw"/>
+            </children>
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_FXsfkfGhEemZmsIz3wtBpw" fontName="Sans" fontHeight="8"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FXsfkvGhEemZmsIz3wtBpw" x="-22" y="180" width="30" height="30"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_FXwJ8PGhEemZmsIz3wtBpw" type="3012" element="_FTdf0fGhEemZmsIz3wtBpw">
+            <children xmi:type="notation:Node" xmi:id="_FXwJ8_GhEemZmsIz3wtBpw" type="5010">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_FXwJ9PGhEemZmsIz3wtBpw" x="31" y="5"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_FX4Fw_GhEemZmsIz3wtBpw" type="3014" element="_FTdf0vGhEemZmsIz3wtBpw">
+              <styles xmi:type="notation:ShapeStyle" xmi:id="_FX4FxPGhEemZmsIz3wtBpw" fontName="Sans"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FX4FxfGhEemZmsIz3wtBpw"/>
+            </children>
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_FXwJ8fGhEemZmsIz3wtBpw" fontName="Sans" fontHeight="8"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FXwJ8vGhEemZmsIz3wtBpw" x="473" y="180" width="30" height="30"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_FXwxAPGhEemZmsIz3wtBpw" type="3012" element="_FTeG4PGhEemZmsIz3wtBpw">
+            <children xmi:type="notation:Node" xmi:id="_FXwxA_GhEemZmsIz3wtBpw" type="5010">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_FXwxBPGhEemZmsIz3wtBpw" x="31" y="5"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_FX4FxvGhEemZmsIz3wtBpw" type="3014" element="_FTeG4fGhEemZmsIz3wtBpw">
+              <styles xmi:type="notation:ShapeStyle" xmi:id="_FX4s0PGhEemZmsIz3wtBpw" fontName="Sans"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FX4s0fGhEemZmsIz3wtBpw"/>
+            </children>
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_FXwxAfGhEemZmsIz3wtBpw" fontName="Sans" fontHeight="8"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FXwxAvGhEemZmsIz3wtBpw" x="-22" y="72" width="30" height="30"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_FXxYEPGhEemZmsIz3wtBpw" type="3012" element="_FTeG4_GhEemZmsIz3wtBpw">
+            <children xmi:type="notation:Node" xmi:id="_FXxYE_GhEemZmsIz3wtBpw" type="5010">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_FXxYFPGhEemZmsIz3wtBpw" x="31" y="5"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_FX4s0vGhEemZmsIz3wtBpw" type="3005" element="_FTeG5PGhEemZmsIz3wtBpw">
+              <styles xmi:type="notation:ShapeStyle" xmi:id="_FX4s0_GhEemZmsIz3wtBpw" fontName="Sans"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FX4s1PGhEemZmsIz3wtBpw"/>
+            </children>
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_FXxYEfGhEemZmsIz3wtBpw" fontName="Sans" fontHeight="8"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FXxYEvGhEemZmsIz3wtBpw" x="685" y="276" width="30" height="30"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_6-eB8fGgEemZmsIz3wtBpw" fontName="Sans" fontHeight="10" bold="true"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_6-eB8vGgEemZmsIz3wtBpw" x="144" y="72" width="483" height="435"/>
+        </children>
+        <styles xmi:type="notation:DiagramStyle" xmi:id="_6-QmkvGgEemZmsIz3wtBpw"/>
+        <edges xmi:type="notation:Edge" xmi:id="_FX6iAPGhEemZmsIz3wtBpw" type="4001" element="_FXPzoPGhEemZmsIz3wtBpw" source="_FXsfkPGhEemZmsIz3wtBpw" target="_FX0bYPGhEemZmsIz3wtBpw">
+          <children xmi:type="notation:Node" xmi:id="_FX7JEPGhEemZmsIz3wtBpw" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FX7JEfGhEemZmsIz3wtBpw" x="-1" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_FX7wIPGhEemZmsIz3wtBpw" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FX7wIfGhEemZmsIz3wtBpw" x="-3" y="5"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_FX7wIvGhEemZmsIz3wtBpw" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FX7wI_GhEemZmsIz3wtBpw" x="-4" y="6"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_FX6iAfGhEemZmsIz3wtBpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_FX6iAvGhEemZmsIz3wtBpw" fontName="Sans" fontHeight="8"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_FX6iA_GhEemZmsIz3wtBpw" points="[15, -1, -368, 6]$[251, -5, -132, 2]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_FYB2wPGhEemZmsIz3wtBpw" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_FYB2wfGhEemZmsIz3wtBpw" id="(0.5888888888888889,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_FYB2wvGhEemZmsIz3wtBpw" type="4001" element="_FXaLsPGhEemZmsIz3wtBpw" source="_FX0bYPGhEemZmsIz3wtBpw" target="_FXwJ8PGhEemZmsIz3wtBpw">
+          <children xmi:type="notation:Node" xmi:id="_FYCd0PGhEemZmsIz3wtBpw" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FYCd0fGhEemZmsIz3wtBpw" x="-2" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_FYCd0vGhEemZmsIz3wtBpw" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FYCd0_GhEemZmsIz3wtBpw" x="186" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_FYCd1PGhEemZmsIz3wtBpw" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FYCd1fGhEemZmsIz3wtBpw" x="-3" y="7"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_FYB2w_GhEemZmsIz3wtBpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_FYB2xPGhEemZmsIz3wtBpw" fontName="Sans" fontHeight="8"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_FYB2xfGhEemZmsIz3wtBpw" points="[93, 1, -271, -6]$[349, 6, -15, -1]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_FYCd1vGhEemZmsIz3wtBpw" id="(0.5888888888888889,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_FYCd1_GhEemZmsIz3wtBpw" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_FYDE4PGhEemZmsIz3wtBpw" type="4001" element="_FXiHgPGhEemZmsIz3wtBpw" source="_FX0bYPGhEemZmsIz3wtBpw" target="_FX1Cc_GhEemZmsIz3wtBpw">
+          <children xmi:type="notation:Node" xmi:id="_FYDE5PGhEemZmsIz3wtBpw" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FYDE5fGhEemZmsIz3wtBpw" x="-4"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_FYDE5vGhEemZmsIz3wtBpw" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FYDE5_GhEemZmsIz3wtBpw"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_FYDE6PGhEemZmsIz3wtBpw" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FYDE6fGhEemZmsIz3wtBpw" x="-9"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_FYDE4fGhEemZmsIz3wtBpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_FYDE4vGhEemZmsIz3wtBpw" fontName="Sans" fontHeight="8"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_FYDE4_GhEemZmsIz3wtBpw" points="[-2, -6, 0, 16]$[-2, -22, 0, 0]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_FYDE6vGhEemZmsIz3wtBpw" id="(0.5111111111111111,0.05357142857142857)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_FYDE6_GhEemZmsIz3wtBpw" id="(0.5022222222222222,1.0)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_FYDE7PGhEemZmsIz3wtBpw" type="4001" element="_FXjVoPGhEemZmsIz3wtBpw" source="_FXwxAPGhEemZmsIz3wtBpw" target="_FX1Cc_GhEemZmsIz3wtBpw">
+          <children xmi:type="notation:Node" xmi:id="_FYDr8PGhEemZmsIz3wtBpw" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FYDr8fGhEemZmsIz3wtBpw" x="-5" y="-12"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_FYDr8vGhEemZmsIz3wtBpw" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FYDr8_GhEemZmsIz3wtBpw" x="1" y="7"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_FYDr9PGhEemZmsIz3wtBpw" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FYDr9fGhEemZmsIz3wtBpw" y="8"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_FYDE7fGhEemZmsIz3wtBpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_FYDE7vGhEemZmsIz3wtBpw" fontName="Sans" fontHeight="8"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_FYDE7_GhEemZmsIz3wtBpw" points="[15, -1, -348, 4]$[251, -4, -112, 1]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_FYDr9vGhEemZmsIz3wtBpw" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_FYDr9_GhEemZmsIz3wtBpw" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_FYDr-PGhEemZmsIz3wtBpw" type="4001" element="_FXnnEPGhEemZmsIz3wtBpw" source="_FXxYEPGhEemZmsIz3wtBpw" target="_FX1phPGhEemZmsIz3wtBpw">
+          <children xmi:type="notation:Node" xmi:id="_FYETAPGhEemZmsIz3wtBpw" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FYETAfGhEemZmsIz3wtBpw" x="2" y="2"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_FYETAvGhEemZmsIz3wtBpw" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FYETA_GhEemZmsIz3wtBpw" x="-4" y="1"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_FYETBPGhEemZmsIz3wtBpw" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FYETBfGhEemZmsIz3wtBpw" x="-3" y="-1"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_FYDr-fGhEemZmsIz3wtBpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_FYDr-vGhEemZmsIz3wtBpw" fontName="Sans" fontHeight="8"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_FYDr-_GhEemZmsIz3wtBpw" points="[-15, 0, 330, 0]$[-271, 0, 74, 0]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_FYETBvGhEemZmsIz3wtBpw" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_FYETB_GhEemZmsIz3wtBpw" id="(0.5722543352601156,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_FYETCPGhEemZmsIz3wtBpw" type="4001" element="_FXo1MPGhEemZmsIz3wtBpw" source="_FX2QkPGhEemZmsIz3wtBpw" target="_FXxYEPGhEemZmsIz3wtBpw">
+          <children xmi:type="notation:Node" xmi:id="_FYETDPGhEemZmsIz3wtBpw" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FYETDfGhEemZmsIz3wtBpw" x="-4" y="-1"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_FYETDvGhEemZmsIz3wtBpw" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FYETD_GhEemZmsIz3wtBpw" x="-1" y="-2"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_FYETEPGhEemZmsIz3wtBpw" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FYETEfGhEemZmsIz3wtBpw" x="2"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_FYETCfGhEemZmsIz3wtBpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_FYETCvGhEemZmsIz3wtBpw" fontName="Sans" fontHeight="8"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_FYETC_GhEemZmsIz3wtBpw" points="[87, -23, -271, 68]$[343, -88, -15, 3]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_FYE6EPGhEemZmsIz3wtBpw" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_FYE6EfGhEemZmsIz3wtBpw" id="(0.5,0.5)"/>
+        </edges>
+      </data>
+    </ownedAnnotationEntries>
+    <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_69lRIPGgEemZmsIz3wtBpw" name="ComponentOPCUALaser" tooltipText="ComponentDefinition: ComponentOPCUALaser&#xA;">
+      <target xmi:type="componentDefinition:ComponentDefinition" href="model/ComponentOPCUALaser.component#//@component"/>
+      <semanticElements xmi:type="componentDefinition:ComponentDefinition" href="model/ComponentOPCUALaser.component#//@component"/>
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_FTc4wPGhEemZmsIz3wtBpw" name="BaseStateServiceIn" tooltipText="InputPort: BaseStateServiceIn&#xA;" outgoingEdges="_FXPzoPGhEemZmsIz3wtBpw" width="3" height="3" resizeKind="NSEW">
+        <target xmi:type="componentDefinition:InputPort" href="model/ComponentOPCUALaser.component#//@component/@elements.1"/>
+        <semanticElements xmi:type="componentDefinition:InputPort" href="model/ComponentOPCUALaser.component#//@component/@elements.1"/>
+        <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+        <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+        <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_FTc4wfGhEemZmsIz3wtBpw" showIcon="false" id="input">
+          <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']/@style"/>
+        </ownedStyle>
+        <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']"/>
+      </ownedBorderedNodes>
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_FTdf0fGhEemZmsIz3wtBpw" name="LaserServiceOut" tooltipText="OutputPort" incomingEdges="_FXaLsPGhEemZmsIz3wtBpw" width="3" height="3" resizeKind="NSEW">
+        <target xmi:type="componentDefinition:OutputPort" href="model/ComponentOPCUALaser.component#//@component/@elements.2"/>
+        <semanticElements xmi:type="componentDefinition:OutputPort" href="model/ComponentOPCUALaser.component#//@component/@elements.2"/>
+        <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+        <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+        <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_FTdf0vGhEemZmsIz3wtBpw" showIcon="false" id="output">
+          <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='OutputPortNode']/@style"/>
+        </ownedStyle>
+        <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='OutputPortNode']"/>
+      </ownedBorderedNodes>
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_FTeG4PGhEemZmsIz3wtBpw" name="LaserQueryServiceAnsw" tooltipText="AnswerPort" outgoingEdges="_FXjVoPGhEemZmsIz3wtBpw" width="3" height="3" resizeKind="NSEW">
+        <target xmi:type="componentDefinition:AnswerPort" href="model/ComponentOPCUALaser.component#//@component/@elements.3"/>
+        <semanticElements xmi:type="componentDefinition:AnswerPort" href="model/ComponentOPCUALaser.component#//@component/@elements.3"/>
+        <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+        <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+        <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_FTeG4fGhEemZmsIz3wtBpw" showIcon="false" id="answer">
+          <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='AnswerPortNode']/@style"/>
+        </ownedStyle>
+        <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='AnswerPortNode']"/>
+      </ownedBorderedNodes>
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_FTeG4_GhEemZmsIz3wtBpw" name="CoordinationPort" tooltipText="CoordinationSlavePort" outgoingEdges="_FXnnEPGhEemZmsIz3wtBpw" incomingEdges="_FXo1MPGhEemZmsIz3wtBpw" width="-1" height="-1" resizeKind="NSEW">
+        <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+        <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+        <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
+        <ownedStyle xmi:type="diagram:WorkspaceImage" uid="_FTeG5PGhEemZmsIz3wtBpw" showIcon="false" workspacePath="/org.eclipse.smartmdsd.sirius.component.design/icons/CoordinationSlave.png">
+          <description xmi:type="style:WorkspaceImageDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='CoordinationSlaveNode']/@style"/>
+        </ownedStyle>
+        <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='CoordinationSlaveNode']"/>
+        <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentOPCUALaser.component#//@component/@elements.5"/>
+        <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentOPCUALaser.component#//@component/@elements.5"/>
+      </ownedBorderedNodes>
+      <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+      <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+      <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
+      <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_69pikPGgEemZmsIz3wtBpw" labelSize="10" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,245,181">
+        <labelFormat>bold</labelFormat>
+        <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']"/>
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_FTet8fGhEemZmsIz3wtBpw" name="LaserTask" tooltipText="Activity" outgoingEdges="_FXaLsPGhEemZmsIz3wtBpw _FXiHgPGhEemZmsIz3wtBpw" incomingEdges="_FXPzoPGhEemZmsIz3wtBpw">
+        <target xmi:type="componentDefinition:Activity" href="model/ComponentOPCUALaser.component#//@component/@elements.0"/>
+        <semanticElements xmi:type="componentDefinition:Activity" href="model/ComponentOPCUALaser.component#//@component/@elements.0"/>
+        <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+        <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+        <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_FTet8vGhEemZmsIz3wtBpw" borderSize="1" borderSizeComputationExpression="1">
+          <labelFormat>bold</labelFormat>
+          <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@style"/>
+        </ownedStyle>
+        <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']"/>
+        <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_FTfVAfGhEemZmsIz3wtBpw" name="ActivationConstraints" tooltipText="ActivationConstraints" width="9">
+          <target xmi:type="performanceExtension:ActivationConstraints" href="model/ComponentOPCUALaser.component#//@component/@elements.0/@extensions.0"/>
+          <semanticElements xmi:type="performanceExtension:ActivationConstraints" href="model/ComponentOPCUALaser.component#//@component/@elements.0/@extensions.0"/>
+          <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+          <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+          <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
+          <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_FWu2QPGhEemZmsIz3wtBpw" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">
+            <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@subContainerMappings[name='ActivationConstraintsContainer']/@style"/>
+          </ownedStyle>
+          <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ActivityContainer']/@subContainerMappings[name='ActivationConstraintsContainer']"/>
+        </ownedDiagramElements>
+      </ownedDiagramElements>
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_FWwEYPGhEemZmsIz3wtBpw" name="LaserQueryServiceAnswHandler" tooltipText="RequestHandler" incomingEdges="_FXiHgPGhEemZmsIz3wtBpw _FXjVoPGhEemZmsIz3wtBpw">
+        <target xmi:type="componentDefinition:RequestHandler" href="model/ComponentOPCUALaser.component#//@component/@elements.4"/>
+        <semanticElements xmi:type="componentDefinition:RequestHandler" href="model/ComponentOPCUALaser.component#//@component/@elements.4"/>
+        <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+        <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+        <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_FWwrcPGhEemZmsIz3wtBpw" borderSize="1" borderSizeComputationExpression="1">
+          <labelFormat>bold</labelFormat>
+          <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='RequestHandlerContainer']/@style"/>
+        </ownedStyle>
+        <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='RequestHandlerContainer']"/>
+      </ownedDiagramElements>
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_FW7qkPGhEemZmsIz3wtBpw" name="ComponentModes" tooltipText="ComponentModes" incomingEdges="_FXnnEPGhEemZmsIz3wtBpw">
+        <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+        <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+        <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_FXBxMPGhEemZmsIz3wtBpw" iconPath="/org.eclipse.smartmdsd.sirius.component.design/icons/switch2.png" borderSize="1" borderSizeComputationExpression="1">
+          <labelFormat>bold</labelFormat>
+          <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@style"/>
+        </ownedStyle>
+        <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']"/>
+        <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentOPCUALaser.component#//@component/@elements.5"/>
+        <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentOPCUALaser.component#//@component/@elements.5"/>
+      </ownedDiagramElements>
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_FXC_UPGhEemZmsIz3wtBpw" name="ComponentOPCUALaser" tooltipText="ComponentParameters" outgoingEdges="_FXo1MPGhEemZmsIz3wtBpw">
+        <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+        <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+        <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_FXC_UfGhEemZmsIz3wtBpw" borderSize="1" borderSizeComputationExpression="1">
+          <labelFormat>bold</labelFormat>
+          <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentParametersContainer']/@style"/>
+        </ownedStyle>
+        <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentParametersContainer']"/>
+        <target xmi:type="ComponentParameter:ComponentParametersRef" href="model/ComponentOPCUALaser.component#//@component/@elements.6"/>
+        <semanticElements xmi:type="ComponentParameter:ComponentParametersRef" href="model/ComponentOPCUALaser.component#//@component/@elements.6"/>
+      </ownedDiagramElements>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_FXPzoPGhEemZmsIz3wtBpw" sourceNode="_FTc4wPGhEemZmsIz3wtBpw" targetNode="_FTet8fGhEemZmsIz3wtBpw">
+      <target xmi:type="performanceExtension:InputLinkExtension" href="model/ComponentOPCUALaser.component#//@component/@elements.0/@links.0"/>
+      <semanticElements xmi:type="performanceExtension:InputLinkExtension" href="model/ComponentOPCUALaser.component#//@component/@elements.0/@links.0"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_FXXvcPGhEemZmsIz3wtBpw" lineStyle="dash" size="2">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']/@conditionnalStyles.0/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_FXXvcfGhEemZmsIz3wtBpw"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='InputLinkEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_FXaLsPGhEemZmsIz3wtBpw" sourceNode="_FTet8fGhEemZmsIz3wtBpw" targetNode="_FTdf0fGhEemZmsIz3wtBpw">
+      <target xmi:type="componentDefinition:OutputPort" href="model/ComponentOPCUALaser.component#//@component/@elements.2"/>
+      <semanticElements xmi:type="componentDefinition:OutputPort" href="model/ComponentOPCUALaser.component#//@component/@elements.2"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_FXaLsfGhEemZmsIz3wtBpw" size="2">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ActivityOutputEdge']/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_FXaLsvGhEemZmsIz3wtBpw"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ActivityOutputEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_FXiHgPGhEemZmsIz3wtBpw" sourceNode="_FTet8fGhEemZmsIz3wtBpw" targetNode="_FWwEYPGhEemZmsIz3wtBpw">
+      <target xmi:type="componentDefinition:ComponentSubNodeObserver" href="model/ComponentOPCUALaser.component#//@component/@elements.4/@links.0"/>
+      <semanticElements xmi:type="componentDefinition:ComponentSubNodeObserver" href="model/ComponentOPCUALaser.component#//@component/@elements.4/@links.0"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_FXiHgfGhEemZmsIz3wtBpw" size="2">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ObserverEdge']/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_FXiHgvGhEemZmsIz3wtBpw"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ObserverEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_FXjVoPGhEemZmsIz3wtBpw" sourceNode="_FTeG4PGhEemZmsIz3wtBpw" targetNode="_FWwEYPGhEemZmsIz3wtBpw">
+      <target xmi:type="componentDefinition:RequestHandler" href="model/ComponentOPCUALaser.component#//@component/@elements.4"/>
+      <semanticElements xmi:type="componentDefinition:RequestHandler" href="model/ComponentOPCUALaser.component#//@component/@elements.4"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_FXj8sPGhEemZmsIz3wtBpw" targetArrow="OutputClosedArrow" size="2">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='RequestHandlerEdge']/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_FXj8sfGhEemZmsIz3wtBpw" showIcon="false"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='RequestHandlerEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_FXnnEPGhEemZmsIz3wtBpw" sourceNode="_FTeG4_GhEemZmsIz3wtBpw" targetNode="_FW7qkPGhEemZmsIz3wtBpw">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_FXnnEfGhEemZmsIz3wtBpw" size="2">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CoordinationSlaveEdge']/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_FXnnEvGhEemZmsIz3wtBpw"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CoordinationSlaveEdge']"/>
+      <target xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentOPCUALaser.component#//@component/@elements.5"/>
+      <semanticElements xmi:type="CoordinationExtension:CoordinationSlavePort" href="model/ComponentOPCUALaser.component#//@component/@elements.5"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_FXo1MPGhEemZmsIz3wtBpw" sourceNode="_FXC_UPGhEemZmsIz3wtBpw" targetNode="_FTeG4_GhEemZmsIz3wtBpw">
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_FXpcQPGhEemZmsIz3wtBpw" sourceArrow="InputArrow" targetArrow="NoDecoration" size="2">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ParametersEdge']/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_FXpcQfGhEemZmsIz3wtBpw"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ParametersEdge']"/>
+      <target xmi:type="ComponentParameter:ComponentParametersRef" href="model/ComponentOPCUALaser.component#//@component/@elements.6"/>
+    </ownedDiagramElements>
+    <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
+    <filterVariableHistory xmi:type="diagram:FilterVariableHistory" uid="_69LBcPGgEemZmsIz3wtBpw"/>
+    <activatedLayers xmi:type="description_1:Layer" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer"/>
+    <target xmi:type="componentDefinition:ComponentDefModel" href="model/ComponentOPCUALaser.component#/"/>
+  </diagram:DSemanticDiagram>
+</xmi:XMI>

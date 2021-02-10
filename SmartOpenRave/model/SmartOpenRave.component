@@ -1,0 +1,55 @@
+ComponentDefinition SmartOpenRave
+{
+	InputPort PathPlanningRequestIn implements CommManipulatorObjects.SendTrajectoryService {
+	}
+	Activity PathPlanning
+	{
+		InputPortLink PathPlanningRequestIn { oversamplingOk undersamplingOk }
+		DefaultTrigger InputPortTrigger PathPlanningRequestIn
+	}
+	OutputPort SendPathTrajectoryOut implements CommManipulatorObjects.SendTrajectoryService realizedBy PathPlanning {
+	}
+
+	InputPort ManipulatorEventServiceIn implements CommManipulatorObjects.ManipulatorEventService {
+	}
+
+	Activity DemonstrationTask
+	{
+		InputPortLink MobileManipulatorStateServiceIn { oversamplingOk undersamplingOk }
+		InputPortLink GripperStateServiceIn { oversamplingOk undersamplingOk }
+	}
+
+	Activity TaskPlanning
+	{
+//		InputPortLink TaskPlanningRequestIn { oversamplingOk undersamplingOk }
+//		DefaultTrigger InputPortTrigger TaskPlanningRequestIn
+	}
+//	InputPort TaskPlanningRequestIn implements CommManipulationPlannerObjects.SendTaskPlanningService {
+//	}
+	OutputPort SendTaskTrajectoryOut implements CommManipulatorObjects.SendTrajectoryService realizedBy TaskPlanning {
+	}
+	InputPort MobileManipulatorStateServiceIn implements CommManipulatorObjects.MobileManipulatorStateService {
+	}
+	InputPort GripperStateServiceIn implements CommManipulatorObjects.GripperStateService {
+	}
+	InputHandler ManipulatorEventServiceInHandler triggeredFrom ManipulatorEventServiceIn { }
+	Activity EventActivity
+	{
+	}
+	OutputPort EventServiceOut implements CommManipulationPlannerObjects.ManipulationPlannerEventService realizedBy EventActivity {
+	}
+	AnswerPort ObjectQueryServiceAnsw implements CommObjectRecognitionObjects.ObjectQueryService {
+	}
+	RequestHandler ObjectQueryServiceAnswHandler triggeredFrom ObjectQueryServiceAnsw {
+	}
+	RequestPort ObjectQueryServiceReq implements CommObjectRecognitionObjects.ObjectQueryService {
+	}
+	RequestPort MobileManipulatorStateQueryServiceReq implements CommManipulatorObjects.MobileManipulatorStateQueryService {
+	}
+	RequestPort GripperStateQueryServiceReq implements CommManipulatorObjects.GripperStateQueryService {
+	}
+	RequestPort EnvironmentQueryServiceReq implements CommObjectRecognitionObjects.EnvironmentQueryService {
+	}
+	CoordinationSlavePort CoordinationPort implements CommManipulationPlannerObjects.OpenRaveCoordinationService { PrivateOperationMode trajectory PublicOperationMode CommManipulationPlannerObjects.OpenRaveStates.Trajectory { activates ( trajectory ) } PrivateOperationMode demonstration PublicOperationMode CommManipulationPlannerObjects.OpenRaveStates.Demonstration { activates ( demonstration ) } PrivateOperationMode simulation PublicOperationMode CommManipulationPlannerObjects.OpenRaveStates.Simulation { activates ( simulation ) } }
+	ComponentParameters SmartOpenRaveParams slave CoordinationPort
+}

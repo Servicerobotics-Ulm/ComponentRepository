@@ -92,19 +92,9 @@ void WebotsAPITaskCore::updateAllCommObjects()
 
 
 // this method is meant to be used in derived classes
-Smart::StatusCode WebotsAPITaskCore::digitalInputEventOutPut(CommBasicObjects::CommDigitalInputEventState &eventState)
+Smart::StatusCode WebotsAPITaskCore::baseStateServiceOutPut(CommBasicObjects::CommBaseState &baseStateServiceOutDataObject)
 {
-	Smart::StatusCode result = COMP->digitalInputEventOutWrapper->put(eventState);
-	if(useLogging == true) {
-		//FIXME: use logging
-		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
-	}
-	return result;
-}
-// this method is meant to be used in derived classes
-Smart::StatusCode WebotsAPITaskCore::laserSafetyEventServiceOutPut(CommBasicObjects::CommLaserSafetyEventState &eventState)
-{
-	Smart::StatusCode result = COMP->laserSafetyEventServiceOutWrapper->put(eventState);
+	Smart::StatusCode result = COMP->baseStateServiceOutWrapper->put(baseStateServiceOutDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
@@ -115,7 +105,7 @@ Smart::StatusCode WebotsAPITaskCore::laserSafetyEventServiceOutPut(CommBasicObje
 void WebotsAPITaskCore::triggerLogEntry(const int& idOffset)
 {
 	if(useLogging == true) {
-		int logId = taskLoggingId + 2*5 + idOffset;
+		int logId = taskLoggingId + 2*1 + idOffset;
 		//FIXME: use logging
 		//Smart::LOGGER->log(logId, getCurrentUpdateCount(), getPreviousCommObjId());
 	}

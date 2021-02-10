@@ -1,0 +1,25 @@
+ComponentDefinition ComponentRackDetection logo "/ComponentRackDetection/model/logo.png"
+{
+Activity RackDetectionTask
+	{
+	}
+	AnswerPort objectPropertyQueryServer implements CommObjectRecognitionObjects.ObjectQueryService {
+	}
+	RequestHandler ObjectQueryServiceAnswHandler triggeredFrom objectPropertyQueryServer {
+	}
+	AnswerPort environmentQueryServer implements CommObjectRecognitionObjects.EnvironmentQueryService {
+	}
+	RequestHandler EnvironmentQueryServiceAnswHandler triggeredFrom environmentQueryServer {
+	}
+	OutputPort objectEventServer implements CommObjectRecognitionObjects.ObjectEventService realizedBy RackDetectionTask {
+	}
+	CoordinationSlavePort CoordinationPort implements CommObjectRecognitionObjects.ObjectRecognitionCoordinationService
+	{
+		with objectquery realizedBy objectPropertyQueryServer
+		with objectrecognitionevent realizedBy objectEventServer
+		SkillRealizationsRef rackDetection
+	}
+	ComponentParameters ComponentRackDetection slave CoordinationPort
+	RequestPort kinectQueryClient implements DomainVision.RGBDImageQueryService {
+	}
+}

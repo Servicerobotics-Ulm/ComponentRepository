@@ -1,0 +1,100 @@
+{
+	"name": "ComponentRackDetection",
+	"shortDescription": "TODO: add short description for ComponentRackDetection datasheet",
+	"type": "Toolify",
+	"description": "",
+	"purposes": [],
+	"services": [
+	],
+	"mainstates": [
+		"Neutral"
+	],
+	"parameters": [
+		{
+			"name": "BELIEF_THRESHOLD",
+			"nameFQN": "CommObjectRecognitionObjects.ObjectRecognitionParameter.BELIEF_THRESHOLD",
+			"type": "parameter",
+			"description": "",
+			"attributes": [
+				{
+					"name": "threshold",
+					"type": "string",
+					"default": "0.0",
+					"description": ""
+				}
+			]
+		},
+		{
+			"name": "CLOUD",
+			"nameFQN": "CommObjectRecognitionObjects.ObjectRecognitionParameter.CLOUD",
+			"type": "parameter",
+			"description": "",
+			"attributes": [
+				{
+					"name": "id",
+					"type": "string",
+					"default": "0",
+					"description": ""
+				}
+			]
+		},
+		{
+			"name": "CLUSTERING",
+			"nameFQN": "CommObjectRecognitionObjects.ObjectRecognitionParameter.CLUSTERING",
+			"type": "parameter",
+			"description": "",
+			"attributes": [
+				{
+					"name": "doClustering",
+					"type": "string",
+					"default": "true",
+					"description": ""
+				}
+			]
+		},
+		{
+			"name": "ESTIMATEFILLING",
+			"nameFQN": "CommObjectRecognitionObjects.ObjectRecognitionParameter.ESTIMATEFILLING",
+			"type": "parameter",
+			"description": "",
+			"attributes": [
+				{
+					"name": "estimateObjectProperties",
+					"type": "string",
+					"default": "false",
+					"description": ""
+				}
+			]
+		},
+		{
+			"name": "SETOBJECTID",
+			"nameFQN": "CommObjectRecognitionObjects.ObjectRecognitionParameter.SETOBJECTID",
+			"type": "parameter",
+			"description": "",
+			"attributes": [
+				{
+					"name": "id",
+					"type": "string",
+					"default": "0",
+					"description": ""
+				}
+			]
+		}
+	],
+	"triggers": [
+		{
+			"name": "RECOGNIZE",
+			"nameFQN": "CommObjectRecognitionObjects.ObjectRecognitionParameter.RECOGNIZE",
+			"type": "trigger",
+			"description": "",
+			"attributes": [
+				{
+					"name": "viewPointID",
+					"type": "string",
+					"default": "",
+					"description": ""
+				}
+			]
+		}
+	]
+}

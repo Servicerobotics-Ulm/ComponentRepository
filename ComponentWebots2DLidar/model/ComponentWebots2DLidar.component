@@ -1,5 +1,5 @@
 ComponentDefinition ComponentWebots2DLidar {
-
+ 
 Activity LaserTask
 	{
 		InputPortLink BaseStateServiceIn { optional oversamplingOk undersamplingOk }
@@ -8,7 +8,7 @@ Activity LaserTask
 			minActFreq = 33.0 Hz
 			maxActFreq = 40.0 Hz
 		}
-	}
+	} 
 	InputPort BaseStateServiceIn implements CommBasicObjects.BaseStateService {
 	}
 	OutputPort LaserServiceOut implements CommBasicObjects.LaserService realizedBy LaserTask {

@@ -1,0 +1,27 @@
+ComponentDefinition ComponentSlcPacking logo "/ComponentSlcPacking/model/logo.png"
+{
+AnswerPort objectPropertyQueryServer implements CommObjectRecognitionObjects.ObjectQueryService {
+	}
+	RequestHandler ObjectQueryServiceAnswHandler triggeredFrom objectPropertyQueryServer {
+	}
+	AnswerPort environmentQueryServer implements CommObjectRecognitionObjects.EnvironmentQueryService {
+	}
+	RequestHandler EnvironmentQueryServiceAnswHandler triggeredFrom environmentQueryServer {
+	}
+	Activity PackingTask
+	{
+	}
+	Activity CaptureTask
+	{
+	}
+	OutputPort objectEventServer implements CommObjectRecognitionObjects.ObjectEventService realizedBy PackingTask {
+	}
+	CoordinationSlavePort CoordinationPort implements CommObjectRecognitionObjects.ObjectRecognitionCoordinationService
+	{
+	}
+	ComponentParameters ComponentSlcPacking slave CoordinationPort
+	RequestPort rgbdQueryClient implements DomainVision.RGBDImageQueryService {
+	}
+	RequestPort objectPropertyQueryClient implements CommObjectRecognitionObjects.ObjectQueryService {
+	}
+}

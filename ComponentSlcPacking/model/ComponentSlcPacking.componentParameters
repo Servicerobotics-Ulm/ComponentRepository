@@ -1,0 +1,11 @@
+ComponentParameter ComponentSlcPacking component ComponentSlcPacking
+{
+		InternalParameter General{
+		gridSizeInM: Float = 0.005
+		}
+		
+	ParameterSetInstance CommObjectRecognitionObjects.ObjectRecognitionParameter {
+	 	TriggerInstance RECOGNIZE active 	
+	 	TriggerInstance CAPTURE active	 	
+	 }
+}
