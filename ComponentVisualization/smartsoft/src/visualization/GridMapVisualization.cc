@@ -143,8 +143,8 @@ void GridMapVisualization::displayGridMap(const CommNavigationObjects::CommGridM
 	float xmax = (float) (xOffsetMM + xSizeMM) / 1000.0;
 	float ymax = (float) (yOffsetMM + ySizeMM) / 1000.0;
 
-	std::cout << "x : " << xmin << " -- " << xmax << "       y : " << ymin << " -- " << ymax <<std::endl;
-	std::cout << "xSizeCells : "<< xSizeCells << "  ySizeCells : " << ySizeCells <<std::endl;
+	//std::cout << "x : " << xmin << " -- " << xmax << "       y : " << ymin << " -- " << ymax <<std::endl;
+	//std::cout << "xSizeCells : "<< xSizeCells << "  ySizeCells : " << ySizeCells <<std::endl;
 
 	//	The longterm map holds cell values from 0 to 255. Values from 0 to 127
 	//	denote the traversability where 0 is completely free. Values from 128 to 255
@@ -307,8 +307,8 @@ void GridMapVisualization::clear() {
 		} else {
 			//std::cout<<" clear on NULL empty!"<<std::endl;
 		}
-		mrpt::opengl::CText::Ptr gl_txt  = std::dynamic_pointer_cast<opengl::CText>(ptrScene->getByName(identifier + "_text"));
-		gl_txt->setString("map id = " + std::to_string(id));
+		//mrpt::opengl::CText::Ptr gl_txt  = std::dynamic_pointer_cast<opengl::CText>(ptrScene->getByName(identifier + "_text"));
+		//gl_txt->setString("map id = " + std::to_string(id));
 	}
 #else
 	opengl::COpenGLScenePtr &ptrScene = window3D.get3DSceneAndLock();
