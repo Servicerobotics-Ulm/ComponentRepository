@@ -1,0 +1,29 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; IR SERVER
+
+(define-tcb (activateIRServer)
+  (module "IRGenerationModule")
+  (action (
+    (format t "=========================>>> activateIRServer~%")
+    (tcl-state :server 'irserver :state "FetchIR"))))
+
+(define-tcb (activateIRServerFetchAditional)
+  (module "IRGenerationModule")
+  (action (
+    (format t "=========================>>> activateIRServerFetchAditional~%")
+    (tcl-state :server 'irserver :state "FetchAdditionalIR"))))
+
+(define-tcb (activateIRServerFetchAll)
+  (module "IRGenerationModule")
+  (action (
+    (format t "=========================>>> activateIRServerFetchAll~%")
+    (tcl-state :server 'irserver :state "FetchBoth"))))
+
+(define-tcb (deactivateIRServer)
+  (module "IRGenerationModule")
+  (action (
+    (format t "=========================>>> deactivateIRServer~%")
+    (tcl-state :server 'irserver :state "Neutral"))))
+
+;; IR SERVER
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

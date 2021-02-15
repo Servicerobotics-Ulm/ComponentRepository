@@ -1,0 +1,81 @@
+ComponentParameter ComponentRobotinoIRServer component ComponentRobotinoIRServer
+{
+	InternalParameter Settings {		
+	//"IP-adress of the robotino daemon. Depends on where the component is executed."
+		daemonIP: String = "192.168.31.124"
+		minDist: Double =0.04
+		maxDist:Double = 0.4
+		
+		verbose : Boolean = false
+	}	
+	
+	// "Use robotino analog inputs to connect to additional IR sensors"
+	InternalParameter AdditionIRSensors {
+		hasAdditionIRSensors : Boolean = false
+		numberOfSensors : Int16 = 3
+		relayNumber:UInt32 = 0
+		
+		S1_x : Double = 0
+		S1_y : Double = 0
+		S1_z : Double= 0
+		S1_heading: Double = 0
+		
+		S2_x : Double = 0
+		S2_y : Double = 0
+		S2_z : Double= 0
+		S2_heading: Double = 0
+		
+		S3_x : Double = 0
+		S3_y : Double = 0
+		S3_z : Double= 0
+		S3_heading: Double = 0
+	}
+//	CPoint2D point(0.22,0);
+//	double angle = 40.0/180.0*M_PI;
+//	CPose2D pose(0,0,angle);
+//    std::cout<<"alpha: "<<0<< "point: "<<point<<std::endl;
+//	for(unsigned int i= 40;i<330;i+=40)
+//	{
+//		point= pose+point;
+//		std::cout<<"alpha: "<<i<< "point: "<<point<<std::endl;
+//	}
+
+	InternalParameter SensorPoses {
+		S1_x : Double = 0.22
+		S1_y : Double = 0
+		S1_z : Double= 0.045
+		
+		S2_x : Double = 0.16853
+		S2_y: Double = 0.141413
+		S2_z : Double= 0.045
+		
+		S3_x : Double = 0.0382026
+		S3_y: Double = 0.216658
+		S3_z : Double= 0.045	
+		
+		S4_x : Double =-0.11
+		S4_y: Double = 0.190526
+		S4_z : Double= 0.045
+				
+		S5_x : Double =-0.206732
+		S5_y: Double = 0.0752444
+		S5_z : Double= 0.045
+				
+		S6_x : Double = -0.206732
+		S6_y: Double = -0.0752444
+		S6_z : Double= 0.045	
+		
+		S7_x : Double = -0.11
+		S7_y: Double = -0.190526
+		S7_z : Double= 0.045
+				
+		S8_x : Double =0.0382026
+		S8_y:Double = -0.216658
+		S8_z:Double = 0.045
+		
+		S9_x : Double = 0.16853
+		S9_y: Double = -0.141413
+		S9_z:Double= 0.045
+		
+	}
+}

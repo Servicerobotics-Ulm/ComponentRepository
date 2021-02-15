@@ -1,0 +1,25 @@
+ComponentDefinition ComponentRobotinoIRServer logo "/ComponentRobotinoIRServer/model/logo.png"
+{
+Activity IRTask
+	{
+		DefaultTrigger PeriodicTimer 20.0 Hz
+	}
+	InputPort BaseStateServiceIn implements CommBasicObjects.BaseStateService {
+	}
+	OutputPort MobileIRPushOut implements CommBasicObjects.MobileIRPush realizedBy IRTask {
+	}
+	OutputPort AdditionalIRScanPushOut implements CommBasicObjects.MobileIRPush realizedBy IRTask {
+	}
+CoordinationSlavePort CoordinationPort implements CommBasicObjects.IRComponentCoordinationService
+	{
+		PublicOperationMode CommBasicObjects.IRGenModes.FetchAdditionalIR { activates ( fetchAdditionalIR ) } 
+		PublicOperationMode CommBasicObjects.IRGenModes.FetchBoth { activates ( fetchBoth ) } 
+		PublicOperationMode CommBasicObjects.IRGenModes.FetchIR { activates ( fetchIR ) } 
+		PrivateOperationMode fetchAdditionalIR 
+		PrivateOperationMode fetchIR 
+		PrivateOperationMode fetchBoth
+		
+		SkillRealizationsRef IRGenerationModule
+	}
+	ComponentParameters ComponentRobotinoIRServer slave CoordinationPort
+}

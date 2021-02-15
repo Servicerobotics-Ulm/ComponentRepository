@@ -1,0 +1,28 @@
+ComponentDefinition ComponentRobotinoImageServer logo "/ComponentRobotinoImageServer/model/logo.png"
+{
+Activity ImageTask
+	{
+	}
+	Activity robotinoAPITask
+	{
+		DefaultTrigger PeriodicTimer 50.0 Hz
+	}
+	OutputPort RGBImagePushServiceOut implements DomainVision.RGBImagePushService realizedBy ImageTask {
+	}
+	AnswerPort RGBImageQueryServiceAnsw implements DomainVision.RGBImageQueryService {
+	}
+	RequestHandler RGBImageQueryServiceAnswHandler triggeredFrom RGBImageQueryServiceAnsw {
+	}
+	InputPort BaseStateServiceIn implements CommBasicObjects.BaseStateService {
+	}
+	InputPort DevicePoseUpdateServiceIn implements CommBasicObjects.DevicePoseUpdateService {
+	}
+	CoordinationSlavePort CoordinationPort implements DomainVision.VisionCoordinationService
+	{
+		PublicOperationMode DomainVision.ImageProvisionModes.PushImage { activates ( pushimage ) } 
+		PublicOperationMode DomainVision.ImageProvisionModes.QueryImage { activates ( queryimage ) } 
+		PrivateOperationMode pushimage PrivateOperationMode queryimage
+		SkillRealizationsRef CameraModule
+	}
+	ComponentParameters ComponentRobotinoImageServer slave CoordinationPort
+}

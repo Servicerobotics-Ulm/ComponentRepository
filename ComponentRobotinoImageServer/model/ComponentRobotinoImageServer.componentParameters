@@ -1,0 +1,86 @@
+ComponentParameter ComponentRobotinoImageServer component ComponentRobotinoImageServer
+{
+	InternalParameter settings{
+		//"Activate or deactivate debug output of image acquisition. "
+		debug_info:Boolean = false
+	}
+	
+	InternalParameter hardware{
+		//"Device to use by unicap."
+		host:String = "127.0.0.1"
+		
+		//"Activate or deactivate debug output of hardware access."
+		debug_info:Boolean = false
+	}
+	
+	InternalParameter hardware_properties{	
+		//"Image width."
+		width: UInt32 = 800
+		
+		//"Image height."
+		height:UInt32 = 600
+	}
+	
+	InternalParameter push_newest {
+		//"Activate debug output of push newest service."
+		debug_info: Boolean = false
+	}
+	
+	InternalParameter push_timed {
+		//"Activate debug output of push timed service."
+		debug_info: Boolean = false
+	}
+	
+	InternalParameter sensor_pose {
+		//"The x position [mm] of the camera on the robot/ptu."
+		x: Int32 = 0
+		
+		//"The y position [mm] of the camera on the robot/ptu."
+		y: Int32 = 0
+		
+		//"The z position [mm] of the camera on the robot/ptu."
+		z: Int32 = 0
+		
+		//"The azimuth orientation [rad] of the camera on the robot/ptu. "
+		azimuth: Double = 0
+		
+		//"The elevation orientation [rad] of the camera on the robot/ptu. "
+		elevation: Double = 0
+		
+		//"The roll orientation [rad] of the camera on the robot/ptu. "
+		roll: Double = 0
+	}
+	
+	InternalParameter base {
+		//"Flag which indicates if the camera is on a robot."
+		on_base: Boolean = false
+		
+		//"Flag which indicates if the camera is on an actuator/ptu."
+		on_ptu:Boolean = false
+		
+		//"If on_base = false this represents the x position [mm] of the robot."
+		x: Int32 = 0
+		
+		//"If on_base = false this represents the  y position [mm] of the robot."
+		y: Int32 = 0
+		
+		//"If on_base = false this represents the z position [mm] of the robot."
+		z: Int32 = 0
+	
+		azimuth: Double = 0
+		elevation: Double = 0
+		roll: Double = 0
+	}
+	
+	InternalParameter Image {
+		//"Activate debug output of image acquisition. "
+		debug_info:Boolean = false
+		
+		//"Type of image format. Values: GREY, RGB24, RGB32, RGB555, RGB565, UYVY, YUV411P, YUV420P, YUV422, YUV422P, YUYV."
+		smart_format: String = "yuv422"
+		
+		//"Unused."
+		valid_time_in_sec: Float = 1.0
+	}
+	
+}
