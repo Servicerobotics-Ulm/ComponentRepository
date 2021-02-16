@@ -1,0 +1,11 @@
+ComponentParameter ComponentSeq2SeqCom component ComponentSeq2SeqCom
+{
+	InternalParameter Settings {
+		verbose:Boolean = false
+		useDebugTask:Boolean = false
+	}	
+	
+    ParameterSetInstance CommBasicObjects.Seq2SeqComParam {
+    	TriggerInstance Send active
+	}
+}

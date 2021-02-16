@@ -1,0 +1,17 @@
+ComponentDefinition ComponentSeq2SeqCom logo "/ComponentSeq2SeqCom/model/logo.png"
+{
+Activity DebugTask
+	{
+	}
+	InputPort TaskSendIn implements CommBasicObjects.TaskSend {
+	}
+	OutputPort TaskSendOut implements CommBasicObjects.TaskSend realizedBy DebugTask {
+	}
+	OutputPort TaskEventOut implements CommBasicObjects.TaskEvent realizedBy DebugTask {
+	}
+	InputHandler CommandHandler triggeredFrom TaskSendIn activeQueue { }
+CoordinationSlavePort CoordinationPort implements CommBasicObjects.Seq2SeqComCoordinationService
+	{
+	}
+	ComponentParameters ComponentSeq2SeqCom slave CoordinationPort
+}
