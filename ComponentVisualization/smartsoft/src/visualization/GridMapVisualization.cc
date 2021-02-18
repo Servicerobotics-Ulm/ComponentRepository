@@ -57,7 +57,7 @@ GridMapVisualization::GridMapVisualization(CDisplayWindow3D& window3D, const Viz
 	{
 		opengl::CTexturedPlane::Ptr objs = opengl::CTexturedPlane::Create();
 		objs->setName(identifier + "_ltm");
-		objs->setPlaneCorners(0, 0, 0, 0);
+		objs->setPlaneCorners(0, 1, 0, 1);
 		ptrScene->insert(objs);
 
 		if (showAxis) {
@@ -303,7 +303,7 @@ void GridMapVisualization::clear() {
 	{
 		opengl::CTexturedPlane::Ptr ptrPlane = std::dynamic_pointer_cast<opengl::CTexturedPlane>(ptrScene->getByName(identifier + "_ltm"));
 		if(!ptrPlane){
-			ptrPlane->setPlaneCorners(0, 0, 0, 0);
+			ptrPlane->setPlaneCorners(0, 1, 0, 1);
 		} else {
 			//std::cout<<" clear on NULL empty!"<<std::endl;
 		}
