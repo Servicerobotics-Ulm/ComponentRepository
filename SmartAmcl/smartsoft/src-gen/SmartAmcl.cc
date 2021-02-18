@@ -84,16 +84,6 @@ SmartAmcl::SmartAmcl()
 	connections.amclTask.priority = -1;
 	connections.amclTask.cpuAffinity = -1;
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaSmartAmclExtension
-	
-	// initialize members of SmartAmclROS1InterfacesExtension
-	
-	// initialize members of SmartAmclROSExtension
-	
-	// initialize members of SmartAmclRestInterfacesExtension
-	
 }
 
 void SmartAmcl::addPortFactory(const std::string &name, SmartAmclPortFactoryInterface *portFactory)
@@ -218,16 +208,6 @@ void SmartAmcl::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaSmartAmclExtension
-		
-		// initializations of SmartAmclROS1InterfacesExtension
-		
-		// initializations of SmartAmclROSExtension
-		
-		// initializations of SmartAmclRestInterfacesExtension
 		
 		
 		// initialize all registered port-factories
@@ -455,16 +435,6 @@ void SmartAmcl::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaSmartAmclExtension
-	
-	// destruction of SmartAmclROS1InterfacesExtension
-	
-	// destruction of SmartAmclROSExtension
-	
-	// destruction of SmartAmclRestInterfacesExtension
-	
 }
 
 void SmartAmcl::loadParameter(int argc, char *argv[])
@@ -585,16 +555,6 @@ void SmartAmcl::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("AmclTask", "cpuAffinity")) {
 			parameter.getInteger("AmclTask", "cpuAffinity", connections.amclTask.cpuAffinity);
 		}
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaSmartAmclExtension
-		
-		// load parameters for SmartAmclROS1InterfacesExtension
-		
-		// load parameters for SmartAmclROSExtension
-		
-		// load parameters for SmartAmclRestInterfacesExtension
 		
 		
 		// load parameters for all registered component-extensions

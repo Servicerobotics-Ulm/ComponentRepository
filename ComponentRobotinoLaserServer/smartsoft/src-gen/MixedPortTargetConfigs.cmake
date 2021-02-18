@@ -1,11 +1,7 @@
-# target configurations for ComponentRobotinoLaserServerROS1InterfacesExtension
-
 # target configurations for ComponentRobotinoLaserServerROSExtension
 IF(EXISTS ${ROS_DIR})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${ROS_LIBS})
 ENDIF(EXISTS ${ROS_DIR})
-
-# target configurations for ComponentRobotinoLaserServerRestInterfacesExtension
 
 # target configurations for OpcUaBackendComponentGeneratorExtension
 IF(SeRoNetSDK_FOUND)

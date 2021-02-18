@@ -48,8 +48,8 @@
 
 #include <iostream>
 JsonParser::JsonParser(std::string json_file_name) : input_stream(json_file_name){
-	json_string.reserve(2000); //~2k
-	json_string.assign((std::istreambuf_iterator<char>(input_stream)),(std::istreambuf_iterator<char>()));
+
+	input_stream >> json_string;
 	is_parsed = false;
 }
 
@@ -58,47 +58,34 @@ JsonParser::~JsonParser() {
 }
 
 std::vector<CommTrackingObjects::CommDetectedMarker> JsonParser::get_markers_info() {
-	JSONNode node = libjson::parse(json_string);
 	if(!is_parsed)
 	{
-	ParseJSON(node);
-	is_parsed = true;
-	}
-	return marker_list;
-}
+		if (json_string.contains("tags")) {
+			json tags_array = json_string.at("tags");
+			std::cout << "Number of tags present in the json : " <<tags_array.size() <<std::endl;
+			for (int i =0; i< tags_array.size(); ++i) {
 
-void JsonParser::ParseJSON(const JSONNode & n){
-	JSONNode::const_iterator i = n.begin();
-	while (i != n.end()){
+				CommTrackingObjects::CommDetectedMarker current_marker;
+				CommBasicObjects::CommPose3d pose;
 
-		std::string node_name = i -> name();
-		if(i->type() == JSON_ARRAY)
-		{
-			//if (node_name == "tags"){
-			ParseJSON(*i);
-		}else if (node_name == "info" || node_name == "units"){
-			//skip
-		} else {
+				double x = tags_array[i].at("x");
+				double y = tags_array[i].at("y");
+				double z = tags_array[i].at("z");
 
-			CommTrackingObjects::CommDetectedMarker current_marker;
-			CommBasicObjects::CommPose3d pose;
+				pose.set_x(x * 1000.0);
+				pose.set_y(y * 1000.0);
+				pose.set_z(z * 1000.0);
 
-			std::string node_name = i -> name();
-			current_marker.setId(i->at(0).as_int());
+				pose.set_azimuth(tags_array[i].at("yaw"));
+				pose.set_elevation(tags_array[i].at("elevation"));
+				pose.set_roll(tags_array[i].at("roll"));
 
-			pose.set_x(i->at(1).as_float() * 1000);
-			pose.set_y(i->at(2).as_float() * 1000);
-			pose.set_z(i->at(3).as_float() * 1000);
-
-			pose.set_azimuth(i->at(4).as_float());
-			pose.set_elevation(i->at(5).as_float());
-			pose.set_roll(i->at(6).as_float());
-
-			current_marker.setPose(pose);
-			//pose.to_ostream(std::cout);
-			marker_list.push_back(current_marker);
+				current_marker.setPose(pose);
+				marker_list.push_back(current_marker);
+			}
 		}
-		//increment the iterator
-		++i;
+
 	}
+	is_parsed = true;
+	return marker_list;
 }

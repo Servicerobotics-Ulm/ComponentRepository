@@ -18,6 +18,8 @@
 
 #include "aceSmartSoft.hh"
 
+#include "nlohmann/json.hpp"
+
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -305,6 +307,46 @@ public:
 		// External params
 		
 		// Instance params (encapsulated in a wrapper class for each instantiated parameter repository)
+	}
+	
+	std::string getAsJSONString() {
+		nlohmann::json param;
+	
+		param["base"] = nlohmann::json {
+			{"base_a" , getBase().getBase_a()},
+			{"on_base" , getBase().getOn_base()},
+			{"on_ptu" , getBase().getOn_ptu()},
+			{"steer_a" , getBase().getSteer_a()},
+			{"x" , getBase().getX()},
+			{"y" , getBase().getY()},
+			{"z" , getBase().getZ()}
+		};
+		param["hardware_properties"] = nlohmann::json {
+			{"max_distance" , getHardware_properties().getMax_distance()},
+			{"min_distance" , getHardware_properties().getMin_distance()}
+		};
+		param["sensor_pose"] = nlohmann::json {
+			{"azimuth" , getSensor_pose().getAzimuth()},
+			{"elevation" , getSensor_pose().getElevation()},
+			{"roll" , getSensor_pose().getRoll()},
+			{"x" , getSensor_pose().getX()},
+			{"y" , getSensor_pose().getY()},
+			{"z" , getSensor_pose().getZ()}
+		};
+		param["settings"] = nlohmann::json {
+			{"debug_info" , getSettings().getDebug_info()},
+			{"depth_mode" , getSettings().getDepth_mode()},
+			{"high_resolution" , getSettings().getHigh_resolution()},
+			{"pushnewest_color_image" , getSettings().getPushnewest_color_image()},
+			{"pushnewest_depth_image" , getSettings().getPushnewest_depth_image()},
+			{"pushnewest_rgbd_image" , getSettings().getPushnewest_rgbd_image()},
+			{"rgb_mode" , getSettings().getRgb_mode()},
+			{"undistort_image" , getSettings().getUndistort_image()},
+			{"valid_image_time" , getSettings().getValid_image_time()}
+		};
+	
+		
+		return param.dump();
 	}
 };
 

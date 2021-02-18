@@ -43,7 +43,7 @@
 #include <cmath>
 
 #include <mrpt/poses/CPose3D.h>
-#include <mrpt/math.h>
+//#include <mrpt/math.h>
 Logger::Logger() {
 
 	//create filename from current date and time

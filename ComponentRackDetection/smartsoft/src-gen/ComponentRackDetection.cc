@@ -76,16 +76,6 @@ ComponentRackDetection::ComponentRackDetection()
 	connections.rackDetectionTask.priority = -1;
 	connections.rackDetectionTask.cpuAffinity = -1;
 	
-	// initialize members of ComponentRackDetectionROS1InterfacesExtension
-	
-	// initialize members of ComponentRackDetectionROSExtension
-	
-	// initialize members of ComponentRackDetectionRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentRackDetectionExtension
-	
 }
 
 void ComponentRackDetection::addPortFactory(const std::string &name, ComponentRackDetectionPortFactoryInterface *portFactory)
@@ -190,16 +180,6 @@ void ComponentRackDetection::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentRackDetectionROS1InterfacesExtension
-		
-		// initializations of ComponentRackDetectionROSExtension
-		
-		// initializations of ComponentRackDetectionRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentRackDetectionExtension
 		
 		
 		// initialize all registered port-factories
@@ -409,16 +389,6 @@ void ComponentRackDetection::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentRackDetectionROS1InterfacesExtension
-	
-	// destruction of ComponentRackDetectionROSExtension
-	
-	// destruction of ComponentRackDetectionRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentRackDetectionExtension
-	
 }
 
 void ComponentRackDetection::loadParameter(int argc, char *argv[])
@@ -535,16 +505,6 @@ void ComponentRackDetection::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("RackDetectionTask", "cpuAffinity")) {
 			parameter.getInteger("RackDetectionTask", "cpuAffinity", connections.rackDetectionTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentRackDetectionROS1InterfacesExtension
-		
-		// load parameters for ComponentRackDetectionROSExtension
-		
-		// load parameters for ComponentRackDetectionRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentRackDetectionExtension
 		
 		
 		// load parameters for all registered component-extensions

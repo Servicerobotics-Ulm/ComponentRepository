@@ -1,11 +1,7 @@
-# target configurations for ComponentOpenRaveROS1InterfacesExtension
-
 # target configurations for ComponentOpenRaveROSExtension
 IF(EXISTS ${ROS_DIR})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${ROS_LIBS})
 ENDIF(EXISTS ${ROS_DIR})
-
-# target configurations for ComponentOpenRaveRestInterfacesExtension
 
 # target configurations for OpcUaBackendComponentGeneratorExtension
 IF(SeRoNetSDK_FOUND)

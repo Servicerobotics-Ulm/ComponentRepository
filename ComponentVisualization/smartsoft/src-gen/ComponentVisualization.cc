@@ -346,16 +346,6 @@ ComponentVisualization::ComponentVisualization()
 	connections.uSArTask.priority = -1;
 	connections.uSArTask.cpuAffinity = -1;
 	
-	// initialize members of ComponentVisualizationROS1InterfacesExtension
-	
-	// initialize members of ComponentVisualizationROSExtension
-	
-	// initialize members of ComponentVisualizationRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentVisualizationExtension
-	
 }
 
 void ComponentVisualization::addPortFactory(const std::string &name, ComponentVisualizationPortFactoryInterface *portFactory)
@@ -1005,16 +995,6 @@ void ComponentVisualization::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentVisualizationROS1InterfacesExtension
-		
-		// initializations of ComponentVisualizationROSExtension
-		
-		// initializations of ComponentVisualizationRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentVisualizationExtension
 		
 		
 		// initialize all registered port-factories
@@ -1875,16 +1855,6 @@ void ComponentVisualization::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentVisualizationROS1InterfacesExtension
-	
-	// destruction of ComponentVisualizationROSExtension
-	
-	// destruction of ComponentVisualizationRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentVisualizationExtension
-	
 }
 
 void ComponentVisualization::loadParameter(int argc, char *argv[])
@@ -2421,16 +2391,6 @@ void ComponentVisualization::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("USArTask", "cpuAffinity")) {
 			parameter.getInteger("USArTask", "cpuAffinity", connections.uSArTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentVisualizationROS1InterfacesExtension
-		
-		// load parameters for ComponentVisualizationROSExtension
-		
-		// load parameters for ComponentVisualizationRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentVisualizationExtension
 		
 		
 		// load parameters for all registered component-extensions

@@ -1,11 +1,7 @@
-# target configurations for ComponentRackDetectionROS1InterfacesExtension
-
 # target configurations for ComponentRackDetectionROSExtension
 IF(EXISTS ${ROS_DIR})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${ROS_LIBS})
 ENDIF(EXISTS ${ROS_DIR})
-
-# target configurations for ComponentRackDetectionRestInterfacesExtension
 
 # target configurations for OpcUaBackendComponentGeneratorExtension
 IF(SeRoNetSDK_FOUND)

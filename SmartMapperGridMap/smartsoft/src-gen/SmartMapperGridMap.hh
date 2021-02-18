@@ -29,17 +29,9 @@
 class SmartMapperGridMapPortFactoryInterface;
 class SmartMapperGridMapExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaSmartMapperGridMapExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
-
-// includes for SmartMapperGridMapROS1InterfacesExtension
-
-// includes for SmartMapperGridMapROSExtension
-
-// includes for SmartMapperGridMapRestInterfacesExtension
 
 
 // include communication objects
@@ -143,16 +135,6 @@ public:
 	// define request-handlers
 	CurrQueryServerHandler *currQueryServerHandler;
 	LtmQueryServerHandler *ltmQueryServerHandler;
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaSmartMapperGridMapExtension
-	
-	// definitions of SmartMapperGridMapROS1InterfacesExtension
-	
-	// definitions of SmartMapperGridMapROSExtension
-	
-	// definitions of SmartMapperGridMapRestInterfacesExtension
 	
 	
 	// define default slave ports
@@ -291,16 +273,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} laserServiceIn;
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaSmartMapperGridMapExtension
-		
-		// -- parameters for SmartMapperGridMapROS1InterfacesExtension
-		
-		// -- parameters for SmartMapperGridMapROSExtension
-		
-		// -- parameters for SmartMapperGridMapRestInterfacesExtension
 		
 	} connections;
 };

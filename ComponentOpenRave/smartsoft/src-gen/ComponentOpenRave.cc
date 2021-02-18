@@ -160,16 +160,6 @@ ComponentOpenRave::ComponentOpenRave()
 	connections.gripperEventServiceInHandler.prescale = 1;
 	connections.manipulatorEventServiceInHandler.prescale = 1;
 	
-	// initialize members of ComponentOpenRaveROS1InterfacesExtension
-	
-	// initialize members of ComponentOpenRaveROSExtension
-	
-	// initialize members of ComponentOpenRaveRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentOpenRaveExtension
-	
 }
 
 void ComponentOpenRave::addPortFactory(const std::string &name, ComponentOpenRavePortFactoryInterface *portFactory)
@@ -452,16 +442,6 @@ void ComponentOpenRave::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentOpenRaveROS1InterfacesExtension
-		
-		// initializations of ComponentOpenRaveROSExtension
-		
-		// initializations of ComponentOpenRaveRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentOpenRaveExtension
 		
 		
 		// initialize all registered port-factories
@@ -812,16 +792,6 @@ void ComponentOpenRave::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentOpenRaveROS1InterfacesExtension
-	
-	// destruction of ComponentOpenRaveROSExtension
-	
-	// destruction of ComponentOpenRaveRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentOpenRaveExtension
-	
 }
 
 void ComponentOpenRave::loadParameter(int argc, char *argv[])
@@ -1043,16 +1013,6 @@ void ComponentOpenRave::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("ManipulatorEventServiceInHandler", "prescale")) {
 			parameter.getInteger("ManipulatorEventServiceInHandler", "prescale", connections.manipulatorEventServiceInHandler.prescale);
 		}
-		
-		// load parameters for ComponentOpenRaveROS1InterfacesExtension
-		
-		// load parameters for ComponentOpenRaveROSExtension
-		
-		// load parameters for ComponentOpenRaveRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentOpenRaveExtension
 		
 		
 		// load parameters for all registered component-extensions

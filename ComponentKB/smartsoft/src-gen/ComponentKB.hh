@@ -29,14 +29,6 @@
 class ComponentKBPortFactoryInterface;
 class ComponentKBExtension;
 
-// includes for ComponentKBROS1InterfacesExtension
-
-// includes for ComponentKBROSExtension
-
-// includes for ComponentKBRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentKBExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -143,16 +135,6 @@ public:
 	
 	// define request-handlers
 	KbQueryHandler *kbQueryHandler;
-	
-	// definitions of ComponentKBROS1InterfacesExtension
-	
-	// definitions of ComponentKBROSExtension
-	
-	// definitions of ComponentKBRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentKBExtension
 	
 	
 	// define default slave ports
@@ -274,16 +256,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} kbChainedEntriesEventClient;
-		
-		// -- parameters for ComponentKBROS1InterfacesExtension
-		
-		// -- parameters for ComponentKBROSExtension
-		
-		// -- parameters for ComponentKBRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentKBExtension
 		
 	} connections;
 };

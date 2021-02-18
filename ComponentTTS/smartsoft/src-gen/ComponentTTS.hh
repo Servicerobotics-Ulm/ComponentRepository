@@ -29,14 +29,6 @@
 class ComponentTTSPortFactoryInterface;
 class ComponentTTSExtension;
 
-// includes for ComponentTTSROS1InterfacesExtension
-
-// includes for ComponentTTSROSExtension
-
-// includes for ComponentTTSRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentTTSExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -133,16 +125,6 @@ public:
 	
 	// define request-handlers
 	SpeechQueryHandler *speechQueryHandler;
-	
-	// definitions of ComponentTTSROS1InterfacesExtension
-	
-	// definitions of ComponentTTSROSExtension
-	
-	// definitions of ComponentTTSRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentTTSExtension
 	
 	
 	// define default slave ports
@@ -255,16 +237,6 @@ public:
 		} speechSendServiceIn;
 	
 		//--- client port parameter ---
-		
-		// -- parameters for ComponentTTSROS1InterfacesExtension
-		
-		// -- parameters for ComponentTTSROSExtension
-		
-		// -- parameters for ComponentTTSRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentTTSExtension
 		
 	} connections;
 };

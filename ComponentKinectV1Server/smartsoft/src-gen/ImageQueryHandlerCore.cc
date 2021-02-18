@@ -22,8 +22,12 @@ ImageQueryHandlerCore::ImageQueryHandlerCore(IQueryServer* server)
 :	Smart::IInputHandler<std::pair<Smart::QueryIdPtr,CommBasicObjects::CommVoid>>(server)
 ,	server(server)
 {
-	
 }
+
+ImageQueryHandlerCore::~ImageQueryHandlerCore()
+{
+}
+
 
 void ImageQueryHandlerCore::updateAllCommObjects()
 {

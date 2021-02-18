@@ -9,12 +9,11 @@
 
 ## Component Documentation
 <p></p>
-<p> ComponentAmclWithTags implements the Adaptive Monte-Carlo Localization (AMCL) algorithm.
-	Localization is based on a particle filter and a pre-captured grid map of the environment.
-	AMCL maintains a set of possible robot poses and updates this distribution by comparing laser scans against the pre-captured map.
-	AMCL is adaptive because the amount of particles depends on the pose certainty: large number of particles if uncertainty increases and vice versa.
+<p> ComponentAmclWithTags extends the AMCL to use a virtual laser generated from RGBD camera and visual markers to solve the issues concerning the global localization, reducing the uncertainty in pose estimates during tracking and kidnapped robot problem.
 </p>
-<p>	Based on its localization, ComponentAmclWithTags sends position updates to the base server (e.g. SmartPioneerBaseServer).
+<p> For More information :
+</p>
+<p> Nayabrasul Shaik, Matthias Lutz and Christian Schlegel, “2D Localization in Large Areas Using Inexpensive RGBD Camera Augmented With Visual Tags“. In Proc. 25th IEEE International Conference on Emerging Technologies and Factory Automation (ETFA), Vienna, Austria, 2020, pp. 613-619, doi: 10.1109/ETFA46521.2020.9211882.
 </p>
 <p>	GPL-License: includes Code from the Player Project.
 </p>

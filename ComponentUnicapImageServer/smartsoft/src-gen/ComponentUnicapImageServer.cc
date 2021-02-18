@@ -82,16 +82,6 @@ ComponentUnicapImageServer::ComponentUnicapImageServer()
 	connections.imageTask.priority = -1;
 	connections.imageTask.cpuAffinity = -1;
 	
-	// initialize members of ComponentUnicapImageServerROS1InterfacesExtension
-	
-	// initialize members of ComponentUnicapImageServerROSExtension
-	
-	// initialize members of ComponentUnicapImageServerRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentUnicapImageServerExtension
-	
 }
 
 void ComponentUnicapImageServer::addPortFactory(const std::string &name, ComponentUnicapImageServerPortFactoryInterface *portFactory)
@@ -218,16 +208,6 @@ void ComponentUnicapImageServer::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentUnicapImageServerROS1InterfacesExtension
-		
-		// initializations of ComponentUnicapImageServerROSExtension
-		
-		// initializations of ComponentUnicapImageServerRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentUnicapImageServerExtension
 		
 		
 		// initialize all registered port-factories
@@ -448,16 +428,6 @@ void ComponentUnicapImageServer::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentUnicapImageServerROS1InterfacesExtension
-	
-	// destruction of ComponentUnicapImageServerROSExtension
-	
-	// destruction of ComponentUnicapImageServerRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentUnicapImageServerExtension
-	
 }
 
 void ComponentUnicapImageServer::loadParameter(int argc, char *argv[])
@@ -579,16 +549,6 @@ void ComponentUnicapImageServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("ImageTask", "cpuAffinity")) {
 			parameter.getInteger("ImageTask", "cpuAffinity", connections.imageTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentUnicapImageServerROS1InterfacesExtension
-		
-		// load parameters for ComponentUnicapImageServerROSExtension
-		
-		// load parameters for ComponentUnicapImageServerRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentUnicapImageServerExtension
 		
 		
 		// load parameters for all registered component-extensions

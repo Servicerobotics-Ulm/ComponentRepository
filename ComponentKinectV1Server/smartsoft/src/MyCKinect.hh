@@ -35,7 +35,7 @@
 #include <mrpt/gui/CDisplayWindow.h>
 
 #include <mrpt/hwdrivers/link_pragmas.h>
-#include <libfreenect/libfreenect.h>
+#include <libfreenect.h>
 
 // MRPT implements a common interface to Kinect disregarding the
 //  actual underlying library. These macros defined in "mrpt/config.h"

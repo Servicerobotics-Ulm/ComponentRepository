@@ -49,16 +49,6 @@ ComponentTCLSequencer::ComponentTCLSequencer()
 	connections.component.useLogger = false;
 	
 	
-	// initialize members of ComponentTCLSequencerROS1InterfacesExtension
-	
-	// initialize members of ComponentTCLSequencerROSExtension
-	
-	// initialize members of ComponentTCLSequencerRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentTCLSequencerExtension
-	
 }
 
 void ComponentTCLSequencer::addPortFactory(const std::string &name, ComponentTCLSequencerPortFactoryInterface *portFactory)
@@ -131,16 +121,6 @@ void ComponentTCLSequencer::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentTCLSequencerROS1InterfacesExtension
-		
-		// initializations of ComponentTCLSequencerROSExtension
-		
-		// initializations of ComponentTCLSequencerRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentTCLSequencerExtension
 		
 		
 		// initialize all registered port-factories
@@ -302,16 +282,6 @@ void ComponentTCLSequencer::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentTCLSequencerROS1InterfacesExtension
-	
-	// destruction of ComponentTCLSequencerROSExtension
-	
-	// destruction of ComponentTCLSequencerRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentTCLSequencerExtension
-	
 }
 
 void ComponentTCLSequencer::loadParameter(int argc, char *argv[])
@@ -386,16 +356,6 @@ void ComponentTCLSequencer::loadParameter(int argc, char *argv[])
 		
 		
 		
-		
-		// load parameters for ComponentTCLSequencerROS1InterfacesExtension
-		
-		// load parameters for ComponentTCLSequencerROSExtension
-		
-		// load parameters for ComponentTCLSequencerRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentTCLSequencerExtension
 		
 		
 		// load parameters for all registered component-extensions

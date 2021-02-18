@@ -29,14 +29,6 @@
 class ComponentRGBToWSStreamPortFactoryInterface;
 class ComponentRGBToWSStreamExtension;
 
-// includes for ComponentRGBToWSStreamROS1InterfacesExtension
-
-// includes for ComponentRGBToWSStreamROSExtension
-
-// includes for ComponentRGBToWSStreamRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentRGBToWSStreamExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -117,16 +109,6 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
-	
-	// definitions of ComponentRGBToWSStreamROS1InterfacesExtension
-	
-	// definitions of ComponentRGBToWSStreamROSExtension
-	
-	// definitions of ComponentRGBToWSStreamRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentRGBToWSStreamExtension
 	
 	
 	// define default slave ports
@@ -251,16 +233,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} videoImageClient;
-		
-		// -- parameters for ComponentRGBToWSStreamROS1InterfacesExtension
-		
-		// -- parameters for ComponentRGBToWSStreamROSExtension
-		
-		// -- parameters for ComponentRGBToWSStreamRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentRGBToWSStreamExtension
 		
 	} connections;
 };

@@ -29,14 +29,6 @@
 class ComponentOpenRavePortFactoryInterface;
 class ComponentOpenRaveExtension;
 
-// includes for ComponentOpenRaveROS1InterfacesExtension
-
-// includes for ComponentOpenRaveROSExtension
-
-// includes for ComponentOpenRaveRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentOpenRaveExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -195,16 +187,6 @@ public:
 	
 	// define request-handlers
 	ObjectQueryServiceAnswHandler *objectQueryServiceAnswHandler;
-	
-	// definitions of ComponentOpenRaveROS1InterfacesExtension
-	
-	// definitions of ComponentOpenRaveROSExtension
-	
-	// definitions of ComponentOpenRaveRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentOpenRaveExtension
 	
 	
 	// define default slave ports
@@ -433,16 +415,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} sendTrajectoryOut;
-		
-		// -- parameters for ComponentOpenRaveROS1InterfacesExtension
-		
-		// -- parameters for ComponentOpenRaveROSExtension
-		
-		// -- parameters for ComponentOpenRaveRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentOpenRaveExtension
 		
 	} connections;
 };

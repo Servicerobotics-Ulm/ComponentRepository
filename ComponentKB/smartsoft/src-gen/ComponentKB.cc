@@ -76,16 +76,6 @@ ComponentKB::ComponentKB()
 	connections.dummy.cpuAffinity = -1;
 	connections.kbChainedEntriesEventClientHandler.prescale = 1;
 	
-	// initialize members of ComponentKBROS1InterfacesExtension
-	
-	// initialize members of ComponentKBROSExtension
-	
-	// initialize members of ComponentKBRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentKBExtension
-	
 }
 
 void ComponentKB::addPortFactory(const std::string &name, ComponentKBPortFactoryInterface *portFactory)
@@ -191,16 +181,6 @@ void ComponentKB::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentKBROS1InterfacesExtension
-		
-		// initializations of ComponentKBROSExtension
-		
-		// initializations of ComponentKBRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentKBExtension
 		
 		
 		// initialize all registered port-factories
@@ -412,16 +392,6 @@ void ComponentKB::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentKBROS1InterfacesExtension
-	
-	// destruction of ComponentKBROSExtension
-	
-	// destruction of ComponentKBRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentKBExtension
-	
 }
 
 void ComponentKB::loadParameter(int argc, char *argv[])
@@ -536,16 +506,6 @@ void ComponentKB::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("kbChainedEntriesEventClientHandler", "prescale")) {
 			parameter.getInteger("kbChainedEntriesEventClientHandler", "prescale", connections.kbChainedEntriesEventClientHandler.prescale);
 		}
-		
-		// load parameters for ComponentKBROS1InterfacesExtension
-		
-		// load parameters for ComponentKBROSExtension
-		
-		// load parameters for ComponentKBRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentKBExtension
 		
 		
 		// load parameters for all registered component-extensions

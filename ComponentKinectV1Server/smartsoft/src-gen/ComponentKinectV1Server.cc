@@ -32,7 +32,7 @@ ComponentKinectV1Server::ComponentKinectV1Server()
 	
 	// set all pointer members to NULL
 	colorImageQueryHandler = NULL;
-	//componentKinectV1ServerParams = NULL;
+	//coordinationPort = NULL;
 	//coordinationPort = NULL;
 	imageQueryHandler = NULL;
 	imageTask = NULL;
@@ -40,16 +40,21 @@ ComponentKinectV1Server::ComponentKinectV1Server()
 	basePushTimedClient = NULL;
 	basePushTimedClientInputTaskTrigger = NULL;
 	basePushTimedClientUpcallManager = NULL;
+	basePushTimedClientInputCollector = NULL;
 	colorImagePushNewestServer = NULL;
+	colorImagePushNewestServerWrapper = NULL;
 	colorImageQueryServer = NULL;
 	colorImageQueryServerInputTaskTrigger = NULL;
 	depthPushNewestServer = NULL;
+	depthPushNewestServerWrapper = NULL;
 	imagePushNewestServer = NULL;
+	imagePushNewestServerWrapper = NULL;
 	imageQueryServer = NULL;
 	imageQueryServerInputTaskTrigger = NULL;
 	ptuPosePushNewestClient = NULL;
 	ptuPosePushNewestClientInputTaskTrigger = NULL;
 	ptuPosePushNewestClientUpcallManager = NULL;
+	ptuPosePushNewestClientInputCollector = NULL;
 	stateChangeHandler = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
@@ -90,7 +95,11 @@ ComponentKinectV1Server::ComponentKinectV1Server()
 	connections.imageTask.priority = -1;
 	connections.imageTask.cpuAffinity = -1;
 	
+	// initialize members of ComponentKinectV1ServerROS1InterfacesExtension
+	
 	// initialize members of ComponentKinectV1ServerROSExtension
+	
+	// initialize members of ComponentKinectV1ServerRestInterfacesExtension
 	
 	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
@@ -223,7 +232,11 @@ void ComponentKinectV1Server::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
+		// initializations of ComponentKinectV1ServerROS1InterfacesExtension
+		
 		// initializations of ComponentKinectV1ServerROSExtension
+		
+		// initializations of ComponentKinectV1ServerRestInterfacesExtension
 		
 		// initializations of OpcUaBackendComponentGeneratorExtension
 		
@@ -264,10 +277,13 @@ void ComponentKinectV1Server::init(int argc, char *argv[])
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
 		colorImagePushNewestServer = portFactoryRegistry[connections.colorImagePushNewestServer.roboticMiddleware]->createColorImagePushNewestServer(connections.colorImagePushNewestServer.serviceName);
+		colorImagePushNewestServerWrapper = new ColorImagePushNewestServerWrapper(colorImagePushNewestServer);
 		colorImageQueryServer = portFactoryRegistry[connections.colorImageQueryServer.roboticMiddleware]->createColorImageQueryServer(connections.colorImageQueryServer.serviceName);
 		colorImageQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommVideoImage>(colorImageQueryServer);
 		depthPushNewestServer = portFactoryRegistry[connections.depthPushNewestServer.roboticMiddleware]->createDepthPushNewestServer(connections.depthPushNewestServer.serviceName);
+		depthPushNewestServerWrapper = new DepthPushNewestServerWrapper(depthPushNewestServer);
 		imagePushNewestServer = portFactoryRegistry[connections.imagePushNewestServer.roboticMiddleware]->createImagePushNewestServer(connections.imagePushNewestServer.serviceName);
+		imagePushNewestServerWrapper = new ImagePushNewestServerWrapper(imagePushNewestServer);
 		imageQueryServer = portFactoryRegistry[connections.imageQueryServer.roboticMiddleware]->createImageQueryServer(connections.imageQueryServer.serviceName);
 		imageQueryServerInputTaskTrigger = new Smart::QueryServerTaskTrigger<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage>(imageQueryServer);
 		
@@ -276,10 +292,12 @@ void ComponentKinectV1Server::init(int argc, char *argv[])
 		ptuPosePushNewestClient = portFactoryRegistry[connections.ptuPosePushNewestClient.roboticMiddleware]->createPtuPosePushNewestClient();
 		
 		// create InputTaskTriggers and UpcallManagers
-		basePushTimedClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(basePushTimedClient);
-		basePushTimedClientUpcallManager = new BasePushTimedClientUpcallManager(basePushTimedClient);
-		ptuPosePushNewestClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommDevicePoseState>(ptuPosePushNewestClient);
-		ptuPosePushNewestClientUpcallManager = new PtuPosePushNewestClientUpcallManager(ptuPosePushNewestClient);
+		basePushTimedClientInputCollector = new BasePushTimedClientInputCollector(basePushTimedClient);
+		basePushTimedClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(basePushTimedClientInputCollector);
+		basePushTimedClientUpcallManager = new BasePushTimedClientUpcallManager(basePushTimedClientInputCollector);
+		ptuPosePushNewestClientInputCollector = new PtuPosePushNewestClientInputCollector(ptuPosePushNewestClient);
+		ptuPosePushNewestClientInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommDevicePoseState>(ptuPosePushNewestClientInputCollector);
+		ptuPosePushNewestClientUpcallManager = new PtuPosePushNewestClientUpcallManager(ptuPosePushNewestClientInputCollector);
 		
 		// create input-handler
 		
@@ -410,18 +428,23 @@ void ComponentKinectV1Server::fini()
 	// destroy InputTaskTriggers and UpcallManagers
 	delete basePushTimedClientInputTaskTrigger;
 	delete basePushTimedClientUpcallManager;
+	delete basePushTimedClientInputCollector;
 	delete ptuPosePushNewestClientInputTaskTrigger;
 	delete ptuPosePushNewestClientUpcallManager;
+	delete ptuPosePushNewestClientInputCollector;
 
 	// destroy client ports
 	delete basePushTimedClient;
 	delete ptuPosePushNewestClient;
 
 	// destroy server ports
+	delete colorImagePushNewestServerWrapper;
 	delete colorImagePushNewestServer;
 	delete colorImageQueryServer;
 	delete colorImageQueryServerInputTaskTrigger;
+	delete depthPushNewestServerWrapper;
 	delete depthPushNewestServer;
+	delete imagePushNewestServerWrapper;
 	delete imagePushNewestServer;
 	delete imageQueryServer;
 	delete imageQueryServerInputTaskTrigger;
@@ -452,7 +475,11 @@ void ComponentKinectV1Server::fini()
 		portFactory->second->destroy();
 	}
 	
+	// destruction of ComponentKinectV1ServerROS1InterfacesExtension
+	
 	// destruction of ComponentKinectV1ServerROSExtension
+	
+	// destruction of ComponentKinectV1ServerRestInterfacesExtension
 	
 	// destruction of OpcUaBackendComponentGeneratorExtension
 	
@@ -595,7 +622,11 @@ void ComponentKinectV1Server::loadParameter(int argc, char *argv[])
 			parameter.getInteger("ImageTask", "cpuAffinity", connections.imageTask.cpuAffinity);
 		}
 		
+		// load parameters for ComponentKinectV1ServerROS1InterfacesExtension
+		
 		// load parameters for ComponentKinectV1ServerROSExtension
+		
+		// load parameters for ComponentKinectV1ServerRestInterfacesExtension
 		
 		// load parameters for OpcUaBackendComponentGeneratorExtension
 		

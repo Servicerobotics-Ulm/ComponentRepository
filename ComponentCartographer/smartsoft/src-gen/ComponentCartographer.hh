@@ -29,14 +29,6 @@
 class ComponentCartographerPortFactoryInterface;
 class ComponentCartographerExtension;
 
-// includes for ComponentCartographerROS1InterfacesExtension
-
-// includes for ComponentCartographerROSExtension
-
-// includes for ComponentCartographerRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentCartographerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -135,16 +127,6 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
-	
-	// definitions of ComponentCartographerROS1InterfacesExtension
-	
-	// definitions of ComponentCartographerROSExtension
-	
-	// definitions of ComponentCartographerRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentCartographerExtension
 	
 	
 	// define default slave ports
@@ -268,16 +250,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} localized_robot_pose;
-		
-		// -- parameters for ComponentCartographerROS1InterfacesExtension
-		
-		// -- parameters for ComponentCartographerROSExtension
-		
-		// -- parameters for ComponentCartographerRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentCartographerExtension
 		
 	} connections;
 };

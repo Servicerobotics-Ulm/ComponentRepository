@@ -68,8 +68,14 @@
 #include <chrono>
 #include <cmath>
 // We use SDL_image to load the image from disk
+#ifdef WITH_OPENCV_4_2_VERSION
+#include <opencv4/opencv2/highgui.hpp>
+#include <opencv4/opencv2/core.hpp>
+#include <Eigen/Dense>
+#else
 #include <cxcore.h>
 #include <highgui.h>
+#endif
 #include "EulerTransformationMatrices.hh" // from utility
 AmclTask::AmclTask(SmartACE::SmartComponent *comp) 
 :	AmclTaskCore(comp)
@@ -605,6 +611,82 @@ int AmclTask::init(const std::string& mapFilename) {
 	return 0;
 }
 
+#ifdef WITH_OPENCV_4_2_VERSION
+map_t* AmclTask::loadMapFromFile(amcl_map_info_t& map_info) {
+
+	unsigned char* pixels;
+	unsigned char* p;
+	int rowstride, n_channels;
+	int i, j;
+	int k;
+	double occ;
+	int color_sum;
+	double color_avg;
+
+	map_t* map = map_alloc();
+	cv::Mat img;
+
+
+
+
+	// Load the image using SDL.  If we get NULL back, the image load failed.
+	img = cv::imread(map_info.mapfname.c_str(), cv::IMREAD_UNCHANGED);
+	if (img.empty()){
+		std::string errmsg = std::string("failed to open image file \"") +map_info.mapfname + std::string("\"");
+		throw std::runtime_error(errmsg);
+	}
+
+	map->size_x = img.cols;
+	map->size_y = img.rows;
+	map->scale = map_info.resolution;
+	std::cout<<" origin[0]"<<map_info.origin.v[0]<<std::endl;
+	std::cout<<" origin[1]"<<map_info.origin.v[1]<<std::endl;
+	map->origin_x = map_info.origin.v[0] + (map->size_x / 2.0) * map->scale;
+	map->origin_y = map_info.origin.v[1] + (map->size_y / 2.0) * map->scale;
+	map->cells = (map_cell_t*) malloc(sizeof(map_cell_t) * map->size_x * map->size_y);
+
+	// Get values that we'll need to iterate through the pixels
+	rowstride = img.channels()*img.cols;
+	n_channels = img.channels();
+
+	// Copy pixel data into the map structure
+	pixels = (unsigned char*) (img.data);
+
+	for (j = 0; j < img.rows; j++) {
+		for (i = 0; i < img.cols; i++) {
+
+			// Compute mean of RGB for this pixel
+			p = pixels + j * rowstride + i * n_channels;
+			color_sum = 0;
+			for (k = 0; k < n_channels; k++) {
+				color_sum += *(p + (k));
+			}
+			color_avg = color_sum / (double) n_channels;
+
+			// If negate is true, we consider blacker pixels free, and whiter
+			// pixels free.  Otherwise, it's vice versa.
+			if (map_info.negate) {
+				occ = color_avg / 255.0;
+			} else {
+				occ = (255 - color_avg) / 255.0;
+			}
+
+			// Apply thresholds to RGB means to determine occupancy values for
+			// map.  Note that we invert the graphics-ordering of the pixels to
+			// produce a map with cell (0,0) in the lower-left corner.
+			if (occ > map_info.occ_threshold) {
+				map->cells[MAP_IDX(img.cols, i, img.rows - j - 1)].occ_state = +1;
+			} else if (occ < map_info.free_threshold) {
+				map->cells[MAP_IDX(img.cols, i, img.rows - j - 1)].occ_state = -1;
+			} else {
+				map->cells[MAP_IDX(img.cols, i, img.rows - j - 1)].occ_state = 0;
+			}
+		}
+	}
+
+	return map;
+}
+#else
 map_t* AmclTask::loadMapFromFile(amcl_map_info_t& map_info) {
 
 	unsigned char* pixels;
@@ -679,6 +761,7 @@ map_t* AmclTask::loadMapFromFile(amcl_map_info_t& map_info) {
 
 	return map;
 }
+#endif
 
 CommBasicObjects::CommPose3d AmclTask::estimateWeightedRobotPoseFromTags(const CommTrackingObjects::CommDetectedMarkerList& markers_detected,
 					                                             const std::vector<CommTrackingObjects::CommDetectedMarker>& markers_from_map)

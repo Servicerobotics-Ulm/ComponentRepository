@@ -70,16 +70,6 @@ SmartLaserLMS200Server::SmartLaserLMS200Server()
 	connections.laserTask.priority = -1;
 	connections.laserTask.cpuAffinity = -1;
 	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaSmartLaserLMS200ServerExtension
-	
-	// initialize members of SmartLaserLMS200ServerROS1InterfacesExtension
-	
-	// initialize members of SmartLaserLMS200ServerROSExtension
-	
-	// initialize members of SmartLaserLMS200ServerRestInterfacesExtension
-	
 }
 
 void SmartLaserLMS200Server::addPortFactory(const std::string &name, SmartLaserLMS200ServerPortFactoryInterface *portFactory)
@@ -186,16 +176,6 @@ void SmartLaserLMS200Server::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaSmartLaserLMS200ServerExtension
-		
-		// initializations of SmartLaserLMS200ServerROS1InterfacesExtension
-		
-		// initializations of SmartLaserLMS200ServerROSExtension
-		
-		// initializations of SmartLaserLMS200ServerRestInterfacesExtension
 		
 		
 		// initialize all registered port-factories
@@ -386,16 +366,6 @@ void SmartLaserLMS200Server::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaSmartLaserLMS200ServerExtension
-	
-	// destruction of SmartLaserLMS200ServerROS1InterfacesExtension
-	
-	// destruction of SmartLaserLMS200ServerROSExtension
-	
-	// destruction of SmartLaserLMS200ServerRestInterfacesExtension
-	
 }
 
 void SmartLaserLMS200Server::loadParameter(int argc, char *argv[])
@@ -499,16 +469,6 @@ void SmartLaserLMS200Server::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("LaserTask", "cpuAffinity")) {
 			parameter.getInteger("LaserTask", "cpuAffinity", connections.laserTask.cpuAffinity);
 		}
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaSmartLaserLMS200ServerExtension
-		
-		// load parameters for SmartLaserLMS200ServerROS1InterfacesExtension
-		
-		// load parameters for SmartLaserLMS200ServerROSExtension
-		
-		// load parameters for SmartLaserLMS200ServerRestInterfacesExtension
 		
 		
 		// load parameters for all registered component-extensions

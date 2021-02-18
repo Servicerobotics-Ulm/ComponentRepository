@@ -29,17 +29,9 @@
 class SmartPlannerBreadthFirstSearchPortFactoryInterface;
 class SmartPlannerBreadthFirstSearchExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaSmartPlannerBreadthFirstSearchExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
-
-// includes for SmartPlannerBreadthFirstSearchROS1InterfacesExtension
-
-// includes for SmartPlannerBreadthFirstSearchROSExtension
-
-// includes for SmartPlannerBreadthFirstSearchRestInterfacesExtension
 
 
 // include communication objects
@@ -149,16 +141,6 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaSmartPlannerBreadthFirstSearchExtension
-	
-	// definitions of SmartPlannerBreadthFirstSearchROS1InterfacesExtension
-	
-	// definitions of SmartPlannerBreadthFirstSearchROSExtension
-	
-	// definitions of SmartPlannerBreadthFirstSearchRestInterfacesExtension
 	
 	
 	// define default slave ports
@@ -286,16 +268,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} curMapClient;
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaSmartPlannerBreadthFirstSearchExtension
-		
-		// -- parameters for SmartPlannerBreadthFirstSearchROS1InterfacesExtension
-		
-		// -- parameters for SmartPlannerBreadthFirstSearchROSExtension
-		
-		// -- parameters for SmartPlannerBreadthFirstSearchRestInterfacesExtension
 		
 	} connections;
 };

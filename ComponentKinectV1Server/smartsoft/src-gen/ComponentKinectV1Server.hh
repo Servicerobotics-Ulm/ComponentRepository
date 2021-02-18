@@ -29,7 +29,11 @@
 class ComponentKinectV1ServerPortFactoryInterface;
 class ComponentKinectV1ServerExtension;
 
+// includes for ComponentKinectV1ServerROS1InterfacesExtension
+
 // includes for ComponentKinectV1ServerROSExtension
+
+// includes for ComponentKinectV1ServerRestInterfacesExtension
 
 // includes for OpcUaBackendComponentGeneratorExtension
 
@@ -54,14 +58,20 @@ class ComponentKinectV1ServerExtension;
 
 // include tasks
 #include "ImageTask.hh"
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 #include "BasePushTimedClientUpcallManager.hh"
+#include "BasePushTimedClientInputCollector.hh"
 #include "PtuPosePushNewestClientUpcallManager.hh"
+#include "PtuPosePushNewestClientInputCollector.hh"
 
 // include input-handler(s)
 // include request-handler(s)
 #include "ColorImageQueryHandler.hh"
 #include "ImageQueryHandler.hh"
+// output port wrappers
+#include "DepthPushNewestServerWrapper.hh"
+#include "ImagePushNewestServerWrapper.hh"
+#include "ColorImagePushNewestServerWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -121,10 +131,12 @@ public:
 	Smart::IPushClientPattern<CommBasicObjects::CommBaseState> *basePushTimedClient;
 	Smart::InputTaskTrigger<CommBasicObjects::CommBaseState> *basePushTimedClientInputTaskTrigger;
 	BasePushTimedClientUpcallManager *basePushTimedClientUpcallManager;
+	BasePushTimedClientInputCollector *basePushTimedClientInputCollector;
 	// InputPort ptuPosePushNewestClient
 	Smart::IPushClientPattern<CommBasicObjects::CommDevicePoseState> *ptuPosePushNewestClient;
 	Smart::InputTaskTrigger<CommBasicObjects::CommDevicePoseState> *ptuPosePushNewestClientInputTaskTrigger;
 	PtuPosePushNewestClientUpcallManager *ptuPosePushNewestClientUpcallManager;
+	PtuPosePushNewestClientInputCollector *ptuPosePushNewestClientInputCollector;
 	
 	// define request-ports
 	
@@ -132,8 +144,11 @@ public:
 	
 	// define output-ports
 	Smart::IPushServerPattern<DomainVision::CommVideoImage> *colorImagePushNewestServer;
+	ColorImagePushNewestServerWrapper *colorImagePushNewestServerWrapper;
 	Smart::IPushServerPattern<DomainVision::CommDepthImage> *depthPushNewestServer;
+	DepthPushNewestServerWrapper *depthPushNewestServerWrapper;
 	Smart::IPushServerPattern<DomainVision::CommRGBDImage> *imagePushNewestServer;
+	ImagePushNewestServerWrapper *imagePushNewestServerWrapper;
 	
 	// define answer-ports
 	Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> *colorImageQueryServer;
@@ -145,7 +160,11 @@ public:
 	ColorImageQueryHandler *colorImageQueryHandler;
 	ImageQueryHandler *imageQueryHandler;
 	
+	// definitions of ComponentKinectV1ServerROS1InterfacesExtension
+	
 	// definitions of ComponentKinectV1ServerROSExtension
+	
+	// definitions of ComponentKinectV1ServerRestInterfacesExtension
 	
 	// definitions of OpcUaBackendComponentGeneratorExtension
 	
@@ -290,7 +309,11 @@ public:
 			std::string roboticMiddleware;
 		} ptuPosePushNewestClient;
 		
+		// -- parameters for ComponentKinectV1ServerROS1InterfacesExtension
+		
 		// -- parameters for ComponentKinectV1ServerROSExtension
+		
+		// -- parameters for ComponentKinectV1ServerRestInterfacesExtension
 		
 		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		

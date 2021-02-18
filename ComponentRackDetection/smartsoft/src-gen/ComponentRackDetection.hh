@@ -29,14 +29,6 @@
 class ComponentRackDetectionPortFactoryInterface;
 class ComponentRackDetectionExtension;
 
-// includes for ComponentRackDetectionROS1InterfacesExtension
-
-// includes for ComponentRackDetectionROSExtension
-
-// includes for ComponentRackDetectionRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentRackDetectionExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -143,16 +135,6 @@ public:
 	// define request-handlers
 	EnvironmentQueryServiceAnswHandler *environmentQueryServiceAnswHandler;
 	ObjectQueryServiceAnswHandler *objectQueryServiceAnswHandler;
-	
-	// definitions of ComponentRackDetectionROS1InterfacesExtension
-	
-	// definitions of ComponentRackDetectionROSExtension
-	
-	// definitions of ComponentRackDetectionRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentRackDetectionExtension
 	
 	
 	// define default slave ports
@@ -275,16 +257,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} kinectQueryClient;
-		
-		// -- parameters for ComponentRackDetectionROS1InterfacesExtension
-		
-		// -- parameters for ComponentRackDetectionROSExtension
-		
-		// -- parameters for ComponentRackDetectionRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentRackDetectionExtension
 		
 	} connections;
 };

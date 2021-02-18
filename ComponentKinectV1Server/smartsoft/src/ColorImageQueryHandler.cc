@@ -52,7 +52,7 @@
 #include <iostream>
 
 #include "EulerTransformationMatrices.hh"
-ColorImageQueryHandler::ColorImageQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage>* server)
+ColorImageQueryHandler::ColorImageQueryHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage, SmartACE::QueryId>* server)
 :	ColorImageQueryHandlerCore(server)
 {
 	
@@ -64,7 +64,7 @@ ColorImageQueryHandler::~ColorImageQueryHandler()
 }
 
 
-void ColorImageQueryHandler::handleQuery(const QueryId &id, const CommBasicObjects::CommVoid& request)
+void ColorImageQueryHandler::handleQuery(const SmartACE::QueryId &id, const CommBasicObjects::CommVoid& request) 
 {
 	std::cout<<"Query Request ColorImage received.."<<std::endl;
 

@@ -66,16 +66,6 @@ ComponentTTS::ComponentTTS()
 	connections.speechTask.cpuAffinity = -1;
 	connections.speechSendHandler.prescale = 1;
 	
-	// initialize members of ComponentTTSROS1InterfacesExtension
-	
-	// initialize members of ComponentTTSROSExtension
-	
-	// initialize members of ComponentTTSRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentTTSExtension
-	
 }
 
 void ComponentTTS::addPortFactory(const std::string &name, ComponentTTSPortFactoryInterface *portFactory)
@@ -163,16 +153,6 @@ void ComponentTTS::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentTTSROS1InterfacesExtension
-		
-		// initializations of ComponentTTSROSExtension
-		
-		// initializations of ComponentTTSRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentTTSExtension
 		
 		
 		// initialize all registered port-factories
@@ -373,16 +353,6 @@ void ComponentTTS::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentTTSROS1InterfacesExtension
-	
-	// destruction of ComponentTTSROSExtension
-	
-	// destruction of ComponentTTSRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentTTSExtension
-	
 }
 
 void ComponentTTS::loadParameter(int argc, char *argv[])
@@ -489,16 +459,6 @@ void ComponentTTS::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("SpeechSendHandler", "prescale")) {
 			parameter.getInteger("SpeechSendHandler", "prescale", connections.speechSendHandler.prescale);
 		}
-		
-		// load parameters for ComponentTTSROS1InterfacesExtension
-		
-		// load parameters for ComponentTTSROSExtension
-		
-		// load parameters for ComponentTTSRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentTTSExtension
 		
 		
 		// load parameters for all registered component-extensions

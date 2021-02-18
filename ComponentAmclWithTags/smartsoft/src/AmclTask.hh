@@ -65,7 +65,10 @@
 #include "AmclTypes.hh"
 #include <libgen.h>
 #include "JsonParser.hh"
+#ifdef WITH_MRPT_2_0_VERSION
+#elif WITH_MRPT_1_5_VERSION
 #include <mrpt/utils.h>
+#endif
 #include <algorithm>
 #include <mutex>
 #include "Logger.hh"

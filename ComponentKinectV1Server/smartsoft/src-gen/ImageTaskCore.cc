@@ -63,7 +63,8 @@ int ImageTaskCore::execute_protected_region()
 	if(useDefaultState) {
 		Smart::StatusCode status = COMP->stateSlave->acquire("PushImage");
 		if(status != Smart::SMART_OK) {
-			std::cerr << "ImageTaskCore: ERROR acquiring state active: " << status << std::endl;
+			std::cerr << "ImageTaskCore: ERROR acquiring state: " << status << std::endl;
+			usleep(500000);
 			return 0;
 		}
 	}
@@ -104,7 +105,7 @@ void ImageTaskCore::updateAllCommObjects()
 // this method is meant to be used in derived classes
 Smart::StatusCode ImageTaskCore::colorImagePushNewestServerPut(DomainVision::CommVideoImage &colorImagePushNewestServerDataObject)
 {
-	Smart::StatusCode result = COMP->colorImagePushNewestServer->put(colorImagePushNewestServerDataObject);
+	Smart::StatusCode result = COMP->colorImagePushNewestServerWrapper->put(colorImagePushNewestServerDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
@@ -114,7 +115,7 @@ Smart::StatusCode ImageTaskCore::colorImagePushNewestServerPut(DomainVision::Com
 // this method is meant to be used in derived classes
 Smart::StatusCode ImageTaskCore::depthPushNewestServerPut(DomainVision::CommDepthImage &depthPushNewestServerDataObject)
 {
-	Smart::StatusCode result = COMP->depthPushNewestServer->put(depthPushNewestServerDataObject);
+	Smart::StatusCode result = COMP->depthPushNewestServerWrapper->put(depthPushNewestServerDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
@@ -124,7 +125,7 @@ Smart::StatusCode ImageTaskCore::depthPushNewestServerPut(DomainVision::CommDept
 // this method is meant to be used in derived classes
 Smart::StatusCode ImageTaskCore::imagePushNewestServerPut(DomainVision::CommRGBDImage &imagePushNewestServerDataObject)
 {
-	Smart::StatusCode result = COMP->imagePushNewestServer->put(imagePushNewestServerDataObject);
+	Smart::StatusCode result = COMP->imagePushNewestServerWrapper->put(imagePushNewestServerDataObject);
 	if(useLogging == true) {
 		//FIXME: use logging
 		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());

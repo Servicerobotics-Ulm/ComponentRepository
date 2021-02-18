@@ -48,11 +48,12 @@
 #ifndef SMARTSOFT_SRC_JSONPARSER_HH_
 #define SMARTSOFT_SRC_JSONPARSER_HH_
 
-#include "libjson/libjson.h"
 #include <fstream>
 #include <vector>
 #include <CommTrackingObjects/CommDetectedMarker.hh>
 #include <CommTrackingObjects/CommDetectedMarkerList.hh>
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 class JsonParser {
 public:
 	JsonParser(std::string json_file_name);
@@ -60,8 +61,7 @@ public:
 	std::vector<CommTrackingObjects::CommDetectedMarker> get_markers_info();
 private:
 	std::ifstream input_stream;
-	std::string json_string;
-	void ParseJSON(const JSONNode & n);
+	json json_string;
 	std::vector<CommTrackingObjects::CommDetectedMarker> marker_list;
 	bool is_parsed;
 };

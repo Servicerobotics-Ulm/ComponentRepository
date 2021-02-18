@@ -29,14 +29,6 @@
 class ComponentVisualizationPortFactoryInterface;
 class ComponentVisualizationExtension;
 
-// includes for ComponentVisualizationROS1InterfacesExtension
-
-// includes for ComponentVisualizationROSExtension
-
-// includes for ComponentVisualizationRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentVisualizationExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -305,16 +297,6 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
-	
-	// definitions of ComponentVisualizationROS1InterfacesExtension
-	
-	// definitions of ComponentVisualizationROSExtension
-	
-	// definitions of ComponentVisualizationRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentVisualizationExtension
 	
 	
 	// define default slave ports
@@ -818,16 +800,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} ultrasonicPushNewestClient;
-		
-		// -- parameters for ComponentVisualizationROS1InterfacesExtension
-		
-		// -- parameters for ComponentVisualizationROSExtension
-		
-		// -- parameters for ComponentVisualizationRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentVisualizationExtension
 		
 	} connections;
 };

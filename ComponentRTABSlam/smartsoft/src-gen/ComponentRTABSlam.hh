@@ -29,14 +29,6 @@
 class ComponentRTABSlamPortFactoryInterface;
 class ComponentRTABSlamExtension;
 
-// includes for ComponentRTABSlamROS1InterfacesExtension
-
-// includes for ComponentRTABSlamROSExtension
-
-// includes for ComponentRTABSlamRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentRTABSlamExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -137,16 +129,6 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
-	
-	// definitions of ComponentRTABSlamROS1InterfacesExtension
-	
-	// definitions of ComponentRTABSlamROSExtension
-	
-	// definitions of ComponentRTABSlamRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentRTABSlamExtension
 	
 	
 	// define default slave ports
@@ -282,16 +264,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} rgbd_client;
-		
-		// -- parameters for ComponentRTABSlamROS1InterfacesExtension
-		
-		// -- parameters for ComponentRTABSlamROSExtension
-		
-		// -- parameters for ComponentRTABSlamRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentRTABSlamExtension
 		
 	} connections;
 };

@@ -75,16 +75,6 @@ ComponentCartographer::ComponentCartographer()
 	connections.cartographerTask.priority = -1;
 	connections.cartographerTask.cpuAffinity = -1;
 	
-	// initialize members of ComponentCartographerROS1InterfacesExtension
-	
-	// initialize members of ComponentCartographerROSExtension
-	
-	// initialize members of ComponentCartographerRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentCartographerExtension
-	
 }
 
 void ComponentCartographer::addPortFactory(const std::string &name, ComponentCartographerPortFactoryInterface *portFactory)
@@ -209,16 +199,6 @@ void ComponentCartographer::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentCartographerROS1InterfacesExtension
-		
-		// initializations of ComponentCartographerROSExtension
-		
-		// initializations of ComponentCartographerRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentCartographerExtension
 		
 		
 		// initialize all registered port-factories
@@ -428,16 +408,6 @@ void ComponentCartographer::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentCartographerROS1InterfacesExtension
-	
-	// destruction of ComponentCartographerROSExtension
-	
-	// destruction of ComponentCartographerRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentCartographerExtension
-	
 }
 
 void ComponentCartographer::loadParameter(int argc, char *argv[])
@@ -553,16 +523,6 @@ void ComponentCartographer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("CartographerTask", "cpuAffinity")) {
 			parameter.getInteger("CartographerTask", "cpuAffinity", connections.cartographerTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentCartographerROS1InterfacesExtension
-		
-		// load parameters for ComponentCartographerROSExtension
-		
-		// load parameters for ComponentCartographerRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentCartographerExtension
 		
 		
 		// load parameters for all registered component-extensions

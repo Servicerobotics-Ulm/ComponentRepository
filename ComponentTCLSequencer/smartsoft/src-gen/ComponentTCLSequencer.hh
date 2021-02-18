@@ -29,14 +29,6 @@
 class ComponentTCLSequencerPortFactoryInterface;
 class ComponentTCLSequencerExtension;
 
-// includes for ComponentTCLSequencerROS1InterfacesExtension
-
-// includes for ComponentTCLSequencerROSExtension
-
-// includes for ComponentTCLSequencerRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentTCLSequencerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -113,16 +105,6 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
-	
-	// definitions of ComponentTCLSequencerROS1InterfacesExtension
-	
-	// definitions of ComponentTCLSequencerROSExtension
-	
-	// definitions of ComponentTCLSequencerRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentTCLSequencerExtension
 	
 	
 	// define default slave ports
@@ -212,16 +194,6 @@ public:
 		//--- server port parameter ---
 	
 		//--- client port parameter ---
-		
-		// -- parameters for ComponentTCLSequencerROS1InterfacesExtension
-		
-		// -- parameters for ComponentTCLSequencerROSExtension
-		
-		// -- parameters for ComponentTCLSequencerRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentTCLSequencerExtension
 		
 	} connections;
 };

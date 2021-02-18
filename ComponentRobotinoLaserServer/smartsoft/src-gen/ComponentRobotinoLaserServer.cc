@@ -78,16 +78,6 @@ ComponentRobotinoLaserServer::ComponentRobotinoLaserServer()
 	connections.readLaserTask.priority = -1;
 	connections.readLaserTask.cpuAffinity = -1;
 	
-	// initialize members of ComponentRobotinoLaserServerROS1InterfacesExtension
-	
-	// initialize members of ComponentRobotinoLaserServerROSExtension
-	
-	// initialize members of ComponentRobotinoLaserServerRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentRobotinoLaserServerExtension
-	
 }
 
 void ComponentRobotinoLaserServer::addPortFactory(const std::string &name, ComponentRobotinoLaserServerPortFactoryInterface *portFactory)
@@ -194,16 +184,6 @@ void ComponentRobotinoLaserServer::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentRobotinoLaserServerROS1InterfacesExtension
-		
-		// initializations of ComponentRobotinoLaserServerROSExtension
-		
-		// initializations of ComponentRobotinoLaserServerRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentRobotinoLaserServerExtension
 		
 		
 		// initialize all registered port-factories
@@ -417,16 +397,6 @@ void ComponentRobotinoLaserServer::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentRobotinoLaserServerROS1InterfacesExtension
-	
-	// destruction of ComponentRobotinoLaserServerROSExtension
-	
-	// destruction of ComponentRobotinoLaserServerRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentRobotinoLaserServerExtension
-	
 }
 
 void ComponentRobotinoLaserServer::loadParameter(int argc, char *argv[])
@@ -544,16 +514,6 @@ void ComponentRobotinoLaserServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("ReadLaserTask", "cpuAffinity")) {
 			parameter.getInteger("ReadLaserTask", "cpuAffinity", connections.readLaserTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentRobotinoLaserServerROS1InterfacesExtension
-		
-		// load parameters for ComponentRobotinoLaserServerROSExtension
-		
-		// load parameters for ComponentRobotinoLaserServerRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentRobotinoLaserServerExtension
 		
 		
 		// load parameters for all registered component-extensions

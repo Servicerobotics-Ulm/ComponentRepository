@@ -29,17 +29,9 @@
 class SmartAmclPortFactoryInterface;
 class SmartAmclExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaSmartAmclExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
-
-// includes for SmartAmclROS1InterfacesExtension
-
-// includes for SmartAmclROSExtension
-
-// includes for SmartAmclRestInterfacesExtension
 
 
 // include communication objects
@@ -145,16 +137,6 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaSmartAmclExtension
-	
-	// definitions of SmartAmclROS1InterfacesExtension
-	
-	// definitions of SmartAmclROSExtension
-	
-	// definitions of SmartAmclRestInterfacesExtension
 	
 	
 	// define default slave ports
@@ -282,16 +264,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} localizationUpdateServiceOut;
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaSmartAmclExtension
-		
-		// -- parameters for SmartAmclROS1InterfacesExtension
-		
-		// -- parameters for SmartAmclROSExtension
-		
-		// -- parameters for SmartAmclRestInterfacesExtension
 		
 	} connections;
 };

@@ -29,14 +29,6 @@
 class ComponentRobotinoLaserServerPortFactoryInterface;
 class ComponentRobotinoLaserServerExtension;
 
-// includes for ComponentRobotinoLaserServerROS1InterfacesExtension
-
-// includes for ComponentRobotinoLaserServerROSExtension
-
-// includes for ComponentRobotinoLaserServerRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentRobotinoLaserServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -146,16 +138,6 @@ public:
 	
 	// define request-handlers
 	QueryHandler *queryHandler;
-	
-	// definitions of ComponentRobotinoLaserServerROS1InterfacesExtension
-	
-	// definitions of ComponentRobotinoLaserServerROSExtension
-	
-	// definitions of ComponentRobotinoLaserServerRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentRobotinoLaserServerExtension
 	
 	
 	// define default slave ports
@@ -278,16 +260,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} baseTimedClient;
-		
-		// -- parameters for ComponentRobotinoLaserServerROS1InterfacesExtension
-		
-		// -- parameters for ComponentRobotinoLaserServerROSExtension
-		
-		// -- parameters for ComponentRobotinoLaserServerRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentRobotinoLaserServerExtension
 		
 	} connections;
 };

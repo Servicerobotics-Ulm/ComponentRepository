@@ -81,16 +81,6 @@ ComponentRTABSlam::ComponentRTABSlam()
 	connections.mappingThread.priority = -1;
 	connections.mappingThread.cpuAffinity = -1;
 	
-	// initialize members of ComponentRTABSlamROS1InterfacesExtension
-	
-	// initialize members of ComponentRTABSlamROSExtension
-	
-	// initialize members of ComponentRTABSlamRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentRTABSlamExtension
-	
 }
 
 void ComponentRTABSlam::addPortFactory(const std::string &name, ComponentRTABSlamPortFactoryInterface *portFactory)
@@ -231,16 +221,6 @@ void ComponentRTABSlam::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentRTABSlamROS1InterfacesExtension
-		
-		// initializations of ComponentRTABSlamROSExtension
-		
-		// initializations of ComponentRTABSlamRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentRTABSlamExtension
 		
 		
 		// initialize all registered port-factories
@@ -480,16 +460,6 @@ void ComponentRTABSlam::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentRTABSlamROS1InterfacesExtension
-	
-	// destruction of ComponentRTABSlamROSExtension
-	
-	// destruction of ComponentRTABSlamRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentRTABSlamExtension
-	
 }
 
 void ComponentRTABSlam::loadParameter(int argc, char *argv[])
@@ -620,16 +590,6 @@ void ComponentRTABSlam::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("MappingThread", "cpuAffinity")) {
 			parameter.getInteger("MappingThread", "cpuAffinity", connections.mappingThread.cpuAffinity);
 		}
-		
-		// load parameters for ComponentRTABSlamROS1InterfacesExtension
-		
-		// load parameters for ComponentRTABSlamROSExtension
-		
-		// load parameters for ComponentRTABSlamRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentRTABSlamExtension
 		
 		
 		// load parameters for all registered component-extensions

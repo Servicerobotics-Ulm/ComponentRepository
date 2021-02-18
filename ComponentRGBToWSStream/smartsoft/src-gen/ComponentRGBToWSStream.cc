@@ -69,16 +69,6 @@ ComponentRGBToWSStream::ComponentRGBToWSStream()
 	connections.serverTask.priority = -1;
 	connections.serverTask.cpuAffinity = -1;
 	
-	// initialize members of ComponentRGBToWSStreamROS1InterfacesExtension
-	
-	// initialize members of ComponentRGBToWSStreamROSExtension
-	
-	// initialize members of ComponentRGBToWSStreamRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentRGBToWSStreamExtension
-	
 }
 
 void ComponentRGBToWSStream::addPortFactory(const std::string &name, ComponentRGBToWSStreamPortFactoryInterface *portFactory)
@@ -197,16 +187,6 @@ void ComponentRGBToWSStream::init(int argc, char *argv[])
 		// load initial parameters from ini-file (if found)
 		loadParameter(argc, argv);
 		
-		
-		// initializations of ComponentRGBToWSStreamROS1InterfacesExtension
-		
-		// initializations of ComponentRGBToWSStreamROSExtension
-		
-		// initializations of ComponentRGBToWSStreamRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentRGBToWSStreamExtension
 		
 		
 		// initialize all registered port-factories
@@ -431,16 +411,6 @@ void ComponentRGBToWSStream::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentRGBToWSStreamROS1InterfacesExtension
-	
-	// destruction of ComponentRGBToWSStreamROSExtension
-	
-	// destruction of ComponentRGBToWSStreamRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentRGBToWSStreamExtension
-	
 }
 
 void ComponentRGBToWSStream::loadParameter(int argc, char *argv[])
@@ -562,16 +532,6 @@ void ComponentRGBToWSStream::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("ServerTask", "cpuAffinity")) {
 			parameter.getInteger("ServerTask", "cpuAffinity", connections.serverTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentRGBToWSStreamROS1InterfacesExtension
-		
-		// load parameters for ComponentRGBToWSStreamROSExtension
-		
-		// load parameters for ComponentRGBToWSStreamRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentRGBToWSStreamExtension
 		
 		
 		// load parameters for all registered component-extensions
