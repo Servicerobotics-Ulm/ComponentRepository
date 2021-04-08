@@ -1,13 +1,33 @@
 {
 	"name": "ComponentSeq2SeqCom",
 	"shortDescription": "TODO: add short description for ComponentSeq2SeqCom datasheet",
-	"description": "",
-	"class": "component",
 	"type": "Toolify",
+	"description": "",
 	"purposes": ["Example"],
 	"marketName": "ComponentSeq2SeqCom",
 	"supplier": "Servicerobotics Ulm",
 	"homepage": "http://servicerobotik-ulm.de/components",
 	"services": [
+	],
+	"mainstates": [
+		"Neutral"
+	],
+	"parameters": [
+	],
+	"triggers": [
+		{
+			"name": "Send",
+			"nameFQN": "CommBasicObjects.Seq2SeqComParam.Send",
+			"type": "trigger",
+			"description": "",
+			"attributes": [
+				{
+					"name": "message",
+					"type": "string",
+					"default": "",
+					"description": ""
+				}
+			]
+		}
 	]
 }

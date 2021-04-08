@@ -39,6 +39,8 @@ SMART_COMPONENT_AUTOBUILD_DEPENDENCIES()
 ## here you can put all your project-specific compiler configurations          ##
 ## using regular CMake commands (like FIND_PACKAGE, INCLUDE_DIRECTORIES, etc.) ##
 
+# you can add additional external libraries using regular CMake commands, e.g.:
+#FIND_PACKAGE(<SomePackageName>)
 
 ##LIST(APPEND CMAKE_MODULE_PATH /opt/robotino/cmake)
 #FIND_PACKAGE(RobotinoAPI2)
@@ -47,7 +49,7 @@ SMART_COMPONENT_AUTOBUILD_DEPENDENCIES()
 INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_LIST_DIR}/src
   ${CMAKE_CURRENT_LIST_DIR}/src-gen
-  ${CMAKE_CURRENT_LIST_DIR}/src-gen/params  
+  ${CMAKE_CURRENT_LIST_DIR}/src-gen/params
   $ENV{WEBOTS_HOME}/include/controller/cpp
 )
 

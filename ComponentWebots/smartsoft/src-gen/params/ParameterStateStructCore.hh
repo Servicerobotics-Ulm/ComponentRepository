@@ -49,7 +49,7 @@ public:
 		public:
 			// default constructor
 			GeneralType() {
-				WorldPath = "$SMART_PACKAGE_PATH/DataRepository/webots/worlds/world.wbt";
+				WorldPath = "$SMART_ROOT_ACE/repos/DataRepository/webots/worlds/ConveyorBeltIntralogistic.wbt";
 			}
 		
 			/**

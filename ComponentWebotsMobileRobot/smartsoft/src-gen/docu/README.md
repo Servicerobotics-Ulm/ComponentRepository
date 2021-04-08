@@ -103,14 +103,14 @@ If a robot is not like this, add a Transformation node to him:
 <td style="border:1px solid black; padding: 5px;"><b>varianceOfDistancePerMeter</b></td>
 <td style="border:1px solid black; padding: 5px;">Double</td>
 <td style="border:1px solid black; padding: 5px;">0.0025</td>
-<td style="border:1px solid black; padding: 5px;"><p>"e.g. 0.05m * 0.05m / 1m = 0.0025 m (after traveling 1m, distance error has standard deviation of 0.05m)
+<td style="border:1px solid black; padding: 5px;"><p>e.g. 0.05m * 0.05m / 1m = 0.0025 m (after traveling 1m, distance error has standard deviation of 0.05m)
 </p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>varianceOfHeadingPerRadians</b></td>
 <td style="border:1px solid black; padding: 5px;">Double</td>
 <td style="border:1px solid black; padding: 5px;">0.001212</td>
-<td style="border:1px solid black; padding: 5px;"><p>"e.g. (5°*5°)/360° /180°*pi = 0.001212 (after rotating 360 degrees, heading error has standard deviation of 5 degrees)
+<td style="border:1px solid black; padding: 5px;"><p>e.g. (5°*5°)/360° /180°*pi = 0.001212 (after rotating 360 degrees, heading error has standard deviation of 5 degrees)
 </p></td>
 </tr>
 <tr>
@@ -166,21 +166,21 @@ If a robot is not like this, add a Transformation node to him:
 <td style="border:1px solid black; padding: 5px;"><b>heading</b></td>
 <td style="border:1px solid black; padding: 5px;">Double</td>
 <td style="border:1px solid black; padding: 5px;">[90.0, 210.0, 330.0]</td>
-<td style="border:1px solid black; padding: 5px;"><p>the heading of the wheels, for differential drives set these to 0
+<td style="border:1px solid black; padding: 5px;"><p>the heading of the wheels, for differential drives set these to 0 [degrees]
 </p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>maxAcceleration</b></td>
 <td style="border:1px solid black; padding: 5px;">Double</td>
 <td style="border:1px solid black; padding: 5px;">[10.0, 6.0, 40.0]</td>
-<td style="border:1px solid black; padding: 5px;"><p>the max. acceleration (front, sideways, rotation) in m/s or radians/s
+<td style="border:1px solid black; padding: 5px;"><p>the max. acceleration front [m/s], sideways [m/s], rotation [radians/s]
 </p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>keyboardControl</b></td>
 <td style="border:1px solid black; padding: 5px;">Boolean</td>
 <td style="border:1px solid black; padding: 5px;">true</td>
-<td style="border:1px solid black; padding: 5px;"><p>if true, the robot can be moved by arrow or ASDW keys (QE sidways), press space key to stop
+<td style="border:1px solid black; padding: 5px;"><p>if true, the robot can be moved by arrow or WASD keys (QE sidways), press space key to stop
 </p></td>
 </tr>
 </table>
@@ -236,13 +236,8 @@ If a robot is not like this, add a Transformation node to him:
 <td style="border:1px solid black; padding: 5px;"><b>verbose</b></td>
 <td style="border:1px solid black; padding: 5px;">Boolean</td>
 <td style="border:1px solid black; padding: 5px;">false</td>
-<td style="border:1px solid black; padding: 5px;"></td>
-</tr>
-<tr>
-<td style="border:1px solid black; padding: 5px;"><b>hasSignalState</b></td>
-<td style="border:1px solid black; padding: 5px;">Boolean</td>
-<td style="border:1px solid black; padding: 5px;">true</td>
-<td style="border:1px solid black; padding: 5px;"></td>
+<td style="border:1px solid black; padding: 5px;"><p>if set to true, more information is printed in the console
+</p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>useLocalizationEvent</b></td>
@@ -251,16 +246,18 @@ If a robot is not like this, add a Transformation node to him:
 <td style="border:1px solid black; padding: 5px;"></td>
 </tr>
 <tr>
-<td style="border:1px solid black; padding: 5px;"><b>poseFileName</b></td>
-<td style="border:1px solid black; padding: 5px;">String</td>
-<td style="border:1px solid black; padding: 5px;">"/tmp/lastRobotPose.txt"</td>
-<td style="border:1px solid black; padding: 5px;"></td>
-</tr>
-<tr>
 <td style="border:1px solid black; padding: 5px;"><b>writePoseFile</b></td>
 <td style="border:1px solid black; padding: 5px;">Boolean</td>
 <td style="border:1px solid black; padding: 5px;">false</td>
-<td style="border:1px solid black; padding: 5px;"></td>
+<td style="border:1px solid black; padding: 5px;"><p>if set to true, the robot position is read/saved in poseFileName
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>poseFileName</b></td>
+<td style="border:1px solid black; padding: 5px;">String</td>
+<td style="border:1px solid black; padding: 5px;">"/tmp/lastRobotPose.txt"</td>
+<td style="border:1px solid black; padding: 5px;"><p>see writePoseFile
+</p></td>
 </tr>
 </table>
 

@@ -153,6 +153,7 @@ void OpenRave::syncManipulator()
 		for (u_int32_t i = 0; i < manipulatorState.get_manipulator_state().get_joint_count(); ++i)
 		{
 			manipulatorAngles.push_back(manipulatorState.get_manipulator_state().get_joint_angle(i));
+			std::cout << "manipulatorAngles[" << i << "]: " << manipulatorState.get_manipulator_state().get_joint_angle(i) << std::endl;
 		}
 
 		// Move the robot arm in OpenRave to the same position of real robot arm

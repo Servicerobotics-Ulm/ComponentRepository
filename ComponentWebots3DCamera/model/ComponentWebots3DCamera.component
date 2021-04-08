@@ -1,0 +1,50 @@
+ComponentDefinition ComponentWebots3DCamera logo "/ComponentWebots3DCamera/model/logo.png"
+{
+
+	InputPort basePushTimedClient implements CommBasicObjects.BaseStateService {
+	}
+	InputPort ptuPosePushNewestClient implements CommBasicObjects.DevicePoseUpdateService {
+	}
+	Activity ImageTask
+	{
+		InputPortLink basePushTimedClient { oversamplingOk undersamplingOk }
+		InputPortLink ptuPosePushNewestClient { oversamplingOk undersamplingOk }
+		InputPortLink UrPosePushTimedClient { oversamplingOk undersamplingOk }
+		DefaultTrigger PeriodicTimer 30.0 Hz
+	}
+	RequestPort UrPoseQueryClient implements CommManipulatorObjects.MobileManipulatorStateQueryService {
+	}
+	InputPort UrPosePushTimedClient implements CommManipulatorObjects.MobileManipulatorStateService {
+	}
+	OutputPort depthPushNewestServer implements DomainVision.DepthImagePushService realizedBy ImageTask {
+	}
+	AnswerPort imageQueryServer implements DomainVision.RGBDImageQueryService {
+	}
+	RequestHandler ImageQueryHandler triggeredFrom imageQueryServer {
+	}
+	OutputPort RGBDImagePushServiceOut implements DomainVision.RGBDImagePushService realizedBy ImageTask {
+	}
+	OutputPort RGBImagePushServiceOut implements DomainVision.RGBImagePushService realizedBy ImageTask {
+	}
+	AnswerPort colorImageQueryServer implements DomainVision.RGBImageQueryService {
+	}
+	RequestHandler ColorImageQueryHandler triggeredFrom colorImageQueryServer {
+	}
+	
+	CoordinationSlavePort CoordinationPort implements DomainVision.VisionCoordinationService 
+	{ 
+		PublicOperationMode DomainVision.ImageProvisionModes.PushImage 
+		{ 
+			activates ( pushimage )
+		} 
+		PublicOperationMode DomainVision.ImageProvisionModes.QueryImage 
+		{ 	activates ( queryonly ) 
+			
+		} 
+		PrivateOperationMode pushimage 
+		PrivateOperationMode queryonly
+		//SkillRealizationsRef CameraModule
+	}
+	
+	ComponentParameters ComponentWebots3DCameraParams slave CoordinationPort
+}

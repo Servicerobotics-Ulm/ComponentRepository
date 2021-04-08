@@ -1,11 +1,7 @@
-# target configurations for ComponentWebotsMobileRobotROS1InterfacesExtension
-
 # target configurations for ComponentWebotsMobileRobotROSExtension
 IF(EXISTS ${ROS_DIR})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${ROS_LIBS})
 ENDIF(EXISTS ${ROS_DIR})
-
-# target configurations for ComponentWebotsMobileRobotRestInterfacesExtension
 
 # target configurations for OpcUaBackendComponentGeneratorExtension
 IF(SeRoNetSDK_FOUND)

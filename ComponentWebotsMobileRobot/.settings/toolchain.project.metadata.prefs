@@ -4,4 +4,7 @@ ComponentWebotsMobileRobot/MarketName/value/1=Webots mobile robot
 ComponentWebotsMobileRobot/Purpose/value/4=Webots mobile robot
 ComponentWebotsMobileRobot/Supplier/value/2=Servicerobotics Ulm
 ComponentWebotsMobileRobot/shortDescription=\n\nA generic driver for robots in the webots simulator with differential or omnidirectional drive.\n\nHow a new robot can be added to Webots\:\n* Add a new Robot, set its controller to '&lt;extern&gt;'.\n* The robots name must set the same in Webots and here.\n\nThe coordinate system of the robot should be\:\n* x\=front, y\=left (x\=y\=0 is at the turning point of the robot (center between wheels))  \n* z\=up (z\=0 is at floor level)\n\nIf a robot is not like this, add a Transformation node to him\: \n* Add it into children of the robot \n* set DEF 'CoordinateSystem*Abc_def*' in the Transformation node if the robots name would be *Abc def*\n* now move and rotate the Transformation node so its coordinate system is like it should be\n\n\n
+NavigationVelocityServiceIn/Supplier/semanticURI/6=semantic *bold*
+NavigationVelocityServiceIn/Supplier/value/6=\n\n\t\tichag.sowieso *bold* 2\n\n\t\t
+NavigationVelocityServiceIn/TechnologyReadinessLevel/value/5=TRL1
 eclipse.preferences.version=1

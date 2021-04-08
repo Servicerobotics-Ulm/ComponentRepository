@@ -588,10 +588,13 @@ void TriggerHandler::handleCommManipulationPlannerObjects_ManipulationPlannerPar
 	// implement the trigger behavior here. Be aware, if you must use blocking calls here, please set this
 	// trigger as active in the model. For an active trigger an active queue will be generated internally 
 	// (transparent for the usage here). Thus an active trigger will be called within a separate task scope.
+
+
 }
 void TriggerHandler::handleCommManipulationPlannerObjects_ManipulationPlannerParameter_SIMULATION_TEST_IK_ONLY()
 {
 	// implement the trigger behavior here. Be aware, if you must use blocking calls here, please set this
 	// trigger as active in the model. For an active trigger an active queue will be generated internally 
 	// (transparent for the usage here). Thus an active trigger will be called within a separate task scope.
+	OPENRAVE->syncManipulator();
 }

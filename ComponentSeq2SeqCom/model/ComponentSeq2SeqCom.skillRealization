@@ -1,0 +1,10 @@
+SkillRealizationModel {
+	CoordinationModuleRealization seq2seq coordModuleDef CommBasicObjects.Seq2SeqModule uses {
+		CommBasicObjects.Seq2SeqComCoordinationService intsName cs_seq2seq 
+	}
+	{
+		SkillRealization seq2Seq {
+			action ()
+		} 
+	}
+}

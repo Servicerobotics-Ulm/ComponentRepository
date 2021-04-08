@@ -29,14 +29,6 @@
 class ComponentWebotsMobileRobotPortFactoryInterface;
 class ComponentWebotsMobileRobotExtension;
 
-// includes for ComponentWebotsMobileRobotROS1InterfacesExtension
-
-// includes for ComponentWebotsMobileRobotROSExtension
-
-// includes for ComponentWebotsMobileRobotRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentWebotsMobileRobotExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -164,16 +156,6 @@ public:
 	
 	// define request-handlers
 	BaseStateQueryServiceAnswHandler *baseStateQueryServiceAnswHandler;
-	
-	// definitions of ComponentWebotsMobileRobotROS1InterfacesExtension
-	
-	// definitions of ComponentWebotsMobileRobotROSExtension
-	
-	// definitions of ComponentWebotsMobileRobotRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentWebotsMobileRobotExtension
 	
 	
 	// define default slave ports
@@ -309,16 +291,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} localizationEventServiceIn;
-		
-		// -- parameters for ComponentWebotsMobileRobotROS1InterfacesExtension
-		
-		// -- parameters for ComponentWebotsMobileRobotROSExtension
-		
-		// -- parameters for ComponentWebotsMobileRobotRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentWebotsMobileRobotExtension
 		
 	} connections;
 };

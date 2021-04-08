@@ -1,0 +1,19 @@
+SkillRealizationModel {
+	CoordinationModuleRealization mpsModRealization coordModuleDef CommRobotinoObjects.MPSModule uses {
+		CommRobotinoObjects.FestoMPSDockingCoordinationService intsName MPSDOCKING
+		CommRobotinoObjects.ConveyerBeltCoordinationService intsName BELT
+	}
+	{
+		//dummy realization (see *.smartTCL files)
+		SkillRealization manual_load { action ()}
+		SkillRealization manual_unload { action ()}
+		SkillRealization mps_station_dock { action ()}
+		SkillRealization mps_station_fetch_from { action ()}
+		SkillRealization mps_station_load { action ()}
+		SkillRealization mps_station_push_to { action ()}
+		SkillRealization mps_station_undock { action ()}
+		SkillRealization mps_station_unload { action ()}
+		SkillRealization setBeltNeutral { action ()}
+		SkillRealization setDockingNeutral { action ()}		
+	}	
+}

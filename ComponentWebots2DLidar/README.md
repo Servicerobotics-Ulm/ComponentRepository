@@ -14,9 +14,8 @@ The scans are made each Webots timeStep, at the same time (see Time of flight (T
 Note that it is possible to reduce the data size by removing distance values with are not within a min or max distance or by reducing the resolution (angle between two rays) or the opening_angle (angle of all rays in the reduced data set).
 
 How a new lidar can be added to Webots:
-* Add a new Robot, set its controller to '&lt;extern&gt;', its coordinate system should be x=front, y=left, z=up of the lidar rays.
-* The robots name must set the same in Webots and here.
-* Add the lidar in children of the robot, rotate it to match the coordinate system above.
+* Add a new Robot, set its controller to '&lt;extern&gt;', its coordinate system should be x=front, y=left, z=up of the lidar ray origin.
+* give same robot name in webots and in component parameters
 
 example code:
 

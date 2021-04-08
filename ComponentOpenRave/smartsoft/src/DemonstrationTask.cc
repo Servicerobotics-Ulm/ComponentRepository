@@ -112,6 +112,9 @@ int DemonstrationTask::on_execute()
 
 		CommManipulatorObjects::CommMobileManipulatorState mobileManipulatorStateServiceInObject;
 		status = this->mobileManipulatorStateServiceInGetUpdate(mobileManipulatorStateServiceInObject);
+
+		std::cout << "GetUpdate manipulatorState status:" << status << std::endl;
+
 		if(status != Smart::SMART_OK) {
 			std::cerr << status << std::endl;
 			// return 0;
@@ -135,6 +138,7 @@ int DemonstrationTask::on_execute()
 		for (u_int32_t i = 0; i < mobileManipulatorStateServiceInObject.get_manipulator_state().get_joint_count(); ++i)
 		{
 			manipulatorAngles.push_back(mobileManipulatorStateServiceInObject.get_manipulator_state().get_joint_angle(i));
+			std::cout << "manipulatorAngles[" << i << "]: " << mobileManipulatorStateServiceInObject.get_manipulator_state().get_joint_angle(i) << std::endl;
 		}
 
 		// Get gripper angles

@@ -1,0 +1,45 @@
+ComponentDatasheet ComponentWebots3DCamera
+{
+	BaseURI "http://www.servicerobotik-ulm.de"
+	ShortDescription "
+
+A generic driver for a RangeFinder (depth camera) in the Webots simulator.
+
+The scans are made each Webots timeStep, at the same time (see Time of flight (ToF)). measured in ...
+
+How a new RangeFinder can be added to Webots:
+* Add a new Robot, set its controller to '&lt;extern&gt;', its coordinate system should be x=front, y=left, z=up of the RangeFinder.
+* The robots name must set the same in Webots and here.
+* Add the RangeFinder in children of the robot, rotate it to match the coordinate system above.
+
+example code:
+
+```cpp
+CommBasicObjects::CommMobileLaserScan scan;
+if(this->laserServiceInGetUpdate(scan) != Smart::SMART_OK) (some error handling here)
+int count = scan.get_scan_size();
+for (int i = 0; i < count; ++i) {
+	// scan.get_scan_angle is between 0 and 2*pi, 0=front of lidar
+	double angle = scan.get_scan_angle(i) / M_PI * 180;
+	// angle should be between -180 and +180 degrees, 0=front of lidar
+	if( angle > 180 )
+		angle -= 360;
+	double distance = scan.get_scan_distance(i);
+    ...
+}
+```
+
+"
+	DatasheetProperty MarketName {
+		value "Webots 3D Camera"
+	}
+	DatasheetProperty Supplier {
+		value "Servicerobotics Ulm"
+	}
+	DatasheetProperty Homepage {
+		value "https://github.com/Servicerobotics-Ulm/ComponentRepository"
+	}
+	DatasheetProperty Purpose {
+		value "Webots 3D Camera"
+	}
+}

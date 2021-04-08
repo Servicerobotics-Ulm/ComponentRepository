@@ -90,16 +90,6 @@ ComponentWebotsMobileRobot::ComponentWebotsMobileRobot()
 	connections.localizationUpdateServiceInHandler.prescale = 1;
 	connections.navigationVelocityServiceInHandler.prescale = 1;
 	
-	// initialize members of ComponentWebotsMobileRobotROS1InterfacesExtension
-	
-	// initialize members of ComponentWebotsMobileRobotROSExtension
-	
-	// initialize members of ComponentWebotsMobileRobotRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentWebotsMobileRobotExtension
-	
 }
 
 void ComponentWebotsMobileRobot::addPortFactory(const std::string &name, ComponentWebotsMobileRobotPortFactoryInterface *portFactory)
@@ -207,16 +197,6 @@ void ComponentWebotsMobileRobot::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentWebotsMobileRobotROS1InterfacesExtension
-		
-		// initializations of ComponentWebotsMobileRobotROSExtension
-		
-		// initializations of ComponentWebotsMobileRobotRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentWebotsMobileRobotExtension
 		
 		
 		// initialize all registered port-factories
@@ -446,16 +426,6 @@ void ComponentWebotsMobileRobot::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentWebotsMobileRobotROS1InterfacesExtension
-	
-	// destruction of ComponentWebotsMobileRobotROSExtension
-	
-	// destruction of ComponentWebotsMobileRobotRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentWebotsMobileRobotExtension
-	
 }
 
 void ComponentWebotsMobileRobot::loadParameter(int argc, char *argv[])
@@ -586,16 +556,6 @@ void ComponentWebotsMobileRobot::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("NavigationVelocityServiceInHandler", "prescale")) {
 			parameter.getInteger("NavigationVelocityServiceInHandler", "prescale", connections.navigationVelocityServiceInHandler.prescale);
 		}
-		
-		// load parameters for ComponentWebotsMobileRobotROS1InterfacesExtension
-		
-		// load parameters for ComponentWebotsMobileRobotROSExtension
-		
-		// load parameters for ComponentWebotsMobileRobotRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentWebotsMobileRobotExtension
 		
 		
 		// load parameters for all registered component-extensions

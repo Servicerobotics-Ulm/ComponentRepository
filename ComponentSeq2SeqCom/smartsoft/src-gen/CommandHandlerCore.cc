@@ -20,11 +20,46 @@ CommandHandlerCore::CommandHandlerCore(
 	Smart::InputSubject<CommBasicObjects::CommTaskMessage> *subject,
 	const int &prescaleFactor)
 	:	Smart::InputTaskTrigger<CommBasicObjects::CommTaskMessage>(subject, prescaleFactor)
-{  
-	updateStatus = Smart::SMART_NODATA;
+{
+	signalled_to_stop = false;
+	this->start();
 }
 CommandHandlerCore::~CommandHandlerCore()
-{  }
+{  
+	this->stop();
+}
+
+// inputs are pushed to the request_queue
+void CommandHandlerCore::handle_input(const CommBasicObjects::CommTaskMessage &input) {
+	std::unique_lock<std::mutex> scoped_lock(handler_mutex);
+	request_queue.push_back(input);
+	scoped_lock.unlock();
+	
+	handler_cond_var.notify_all();
+}
+// inputs are processed from within the thread, thus implementing an active FIFO request-queue
+int CommandHandlerCore::task_execution() {
+	while(!signalled_to_stop) {
+		std::unique_lock<std::mutex> scoped_lock(handler_mutex);
+		if(request_queue.empty()) {
+			handler_cond_var.wait(scoped_lock);
+			if(signalled_to_stop)
+				return 0;
+		}
+		CommBasicObjects::CommTaskMessage input = request_queue.front();
+		request_queue.pop_front();
+		scoped_lock.unlock();
+		
+		this->updateAllCommObjects();
+		// call the input handler method (which has to be implemented in derived classes)
+		this->on_TaskSendIn(input);
+		// notify all attached interaction observers
+		this->notify_all_interaction_observers();
+		// call implementation of base class
+		Smart::InputTaskTrigger<CommBasicObjects::CommTaskMessage>::handle_input(input);
+	}
+	return 0;
+}
 
 void CommandHandlerCore::updateAllCommObjects() {
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:componentDefinition="http://www.eclipse.org/smartmdsd/component/componentDefinition" xmlns:componentParameter="http://www.eclipse.org/smartmdsd/component/componentParameter" xmlns:coordinationExtension="http://www.eclipse.org/smartmdsd/component/coordinationExtension" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:diagram="http://www.eclipse.org/sirius/diagram/1.1.0" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xsi:schemaLocation="http://www.eclipse.org/sirius/description/1.1.0 http://www.eclipse.org/sirius/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/style/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description/style">
-  <viewpoint:DAnalysis uid="_lRjBUNvmEeqlUZNRrBkq1A" selectedViews="_lYKmsNvmEeqlUZNRrBkq1A" version="14.3.0.201909031200">
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:componentDefinition="http://www.eclipse.org/smartmdsd/component/componentDefinition" xmlns:componentParameter="http://www.eclipse.org/smartmdsd/component/componentParameter" xmlns:coordinationExtension="http://www.eclipse.org/smartmdsd/component/coordinationExtension" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:diagram="http://www.eclipse.org/sirius/diagram/1.1.0" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.3/notation" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xsi:schemaLocation="http://www.eclipse.org/sirius/description/1.1.0 http://www.eclipse.org/sirius/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/style/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description/style">
+  <viewpoint:DAnalysis uid="_lRjBUNvmEeqlUZNRrBkq1A" selectedViews="_lYKmsNvmEeqlUZNRrBkq1A" version="14.3.1.202003261200">
     <semanticResources>model/ComponentSeq2SeqCom.component</semanticResources>
     <semanticResources>model/ComponentSeq2SeqCom.componentDatasheet</semanticResources>
     <semanticResources>model/ComponentSeq2SeqCom.componentParameters</semanticResources>
@@ -10,9 +10,11 @@
     <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.modes</semanticResources>
     <semanticResources>platform:/plugin/org.eclipse.smartmdsd.xtext.service.parameterDefinition/defaultParameterLib/defaultParameterLib.parameters</semanticResources>
     <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.parameters</semanticResources>
+    <semanticResources>model/ComponentSeq2SeqCom.skillRealization</semanticResources>
+    <semanticResources>platform:/resource/CommBasicObjects/model/CommBasicObjects.skills</semanticResources>
     <ownedViews xmi:type="viewpoint:DView" uid="_lYKmsNvmEeqlUZNRrBkq1A">
       <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']"/>
-      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_lYZ3QNvmEeqlUZNRrBkq1A" name="ComponentSeq2SeqCom" repPath="#_lYQtUNvmEeqlUZNRrBkq1A" changeId="6b44732e-cfc8-470d-93cf-e0d6f733a92d">
+      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_lYZ3QNvmEeqlUZNRrBkq1A" name="ComponentSeq2SeqCom" repPath="#_lYQtUNvmEeqlUZNRrBkq1A" changeId="127dea1b-08e2-4614-bc1d-9fb2d7a22ce5">
         <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
         <target xmi:type="componentDefinition:ComponentDefModel" href="model/ComponentSeq2SeqCom.component#/"/>
       </ownedRepresentationDescriptors>
@@ -194,6 +196,22 @@
           <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_IOpA4NvoEeqpGIpwiv4VcA" id="(0.5,0.5)"/>
           <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_IOpA4dvoEeqpGIpwiv4VcA" id="(0.5,0.5)"/>
         </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_sj2N0IcaEeubVpR7c03zgA" type="4001" element="_sj0YoIcaEeubVpR7c03zgA" source="_GvydQNvoEeqpGIpwiv4VcA" target="_5d7bENvmEeqlUZNRrBkq1A">
+          <children xmi:type="notation:Node" xmi:id="_sj2N1IcaEeubVpR7c03zgA" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_sj2N1YcaEeubVpR7c03zgA" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_sj2N1ocaEeubVpR7c03zgA" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_sj2N14caEeubVpR7c03zgA" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_sj2N2IcaEeubVpR7c03zgA" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_sj2N2YcaEeubVpR7c03zgA" y="10"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_sj2N0YcaEeubVpR7c03zgA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_sj2N0ocaEeubVpR7c03zgA" fontName="Ubuntu" fontHeight="8"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_sj2N04caEeubVpR7c03zgA" points="[-15, -5, 432, 123]$[-432, -124, 15, 4]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_sj204IcaEeubVpR7c03zgA" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_sj204YcaEeubVpR7c03zgA" id="(0.5,0.5)"/>
+        </edges>
       </data>
     </ownedAnnotationEntries>
     <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_lYUXsNvmEeqlUZNRrBkq1A" name="ComponentSeq2SeqCom" tooltipText="ComponentDefinition: ComponentSeq2SeqCom&#xA;">
@@ -218,7 +236,7 @@
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMappingImport" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@additionalLayers[name='SeRoNet']/@containerMappings[name='ComponentContainerImport']/@borderedNodeMappings[name='OutputPortNodeImport']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_5d17gNvmEeqlUZNRrBkq1A" name="TaskEventOut" tooltipText="OutputPort" incomingEdges="_5d5l5NvmEeqlUZNRrBkq1A" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_5d17gNvmEeqlUZNRrBkq1A" name="TaskEventOut" tooltipText="OutputPort" incomingEdges="_5d5l5NvmEeqlUZNRrBkq1A _sj0YoIcaEeubVpR7c03zgA" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="componentDefinition:OutputPort" href="model/ComponentSeq2SeqCom.component#//@component/@elements.3"/>
         <semanticElements xmi:type="componentDefinition:OutputPort" href="model/ComponentSeq2SeqCom.component#//@component/@elements.3"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
@@ -229,7 +247,7 @@
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMappingImport" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@additionalLayers[name='SeRoNet']/@containerMappings[name='ComponentContainerImport']/@borderedNodeMappings[name='OutputPortNodeImport']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_GtySINvoEeqpGIpwiv4VcA" name="CoordinationPort" tooltipText="CoordinationSlavePort" outgoingEdges="_GvfiUNvoEeqpGIpwiv4VcA" incomingEdges="_IOkIYNvoEeqpGIpwiv4VcA" width="-1" height="-1" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_GtySINvoEeqpGIpwiv4VcA" name="CoordinationPort" tooltipText="CoordinationSlavePort" outgoingEdges="_GvfiUNvoEeqpGIpwiv4VcA _sj0YoIcaEeubVpR7c03zgA" incomingEdges="_IOkIYNvoEeqpGIpwiv4VcA" width="-1" height="-1" resizeKind="NSEW">
         <target xmi:type="coordinationExtension:CoordinationSlavePort" href="model/ComponentSeq2SeqCom.component#//@component/@elements.5"/>
         <semanticElements xmi:type="coordinationExtension:CoordinationSlavePort" href="model/ComponentSeq2SeqCom.component#//@component/@elements.5"/>
         <ownedStyle xmi:type="diagram:WorkspaceImage" uid="_Gt0HUNvoEeqpGIpwiv4VcA" showIcon="false" workspacePath="/org.eclipse.smartmdsd.sirius.component.design/icons/CoordinationSlave.png">
@@ -340,6 +358,15 @@
         <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_IOkvcdvoEeqpGIpwiv4VcA"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='ParametersEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_sj0YoIcaEeubVpR7c03zgA" sourceNode="_GtySINvoEeqpGIpwiv4VcA" targetNode="_5d17gNvmEeqlUZNRrBkq1A">
+      <target xmi:type="coordinationExtension:CommunicationServiceUsageRealization" href="model/ComponentSeq2SeqCom.component#//@component/@elements.5/@elements.1"/>
+      <semanticElements xmi:type="coordinationExtension:CommunicationServiceUsageRealization" href="model/ComponentSeq2SeqCom.component#//@component/@elements.5/@elements.1"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_sj0YoYcaEeubVpR7c03zgA" targetArrow="NoDecoration" size="2">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CommunicationServiceUsageRealizationEdge']/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_sj0YoocaEeubVpR7c03zgA"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@edgeMappings[name='CommunicationServiceUsageRealizationEdge']"/>
     </ownedDiagramElements>
     <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
     <filterVariableHistory xmi:type="diagram:FilterVariableHistory" uid="_lYQtUdvmEeqlUZNRrBkq1A"/>

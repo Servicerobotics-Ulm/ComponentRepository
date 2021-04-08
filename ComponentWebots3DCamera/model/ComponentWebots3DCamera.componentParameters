@@ -1,0 +1,63 @@
+ComponentParameter ComponentWebots3DCameraParams component ComponentWebots3DCamera
+{
+	InternalParameter webots
+	{
+		/** the webots Camera and RangeFinder device must be in children of an extra robot with this name */
+  		robotName : String = "kinect_v2"
+		/** the name of the Camera device */
+  		cameraName : String = "kinect_v2_color"
+		/** the name of the RangeFinder device */
+  		rangeFinderName : String = "kinect_v2_range"
+	}
+	InternalParameter settings
+	{
+		/** print debug information in console */
+		debug_info : Boolean = true
+		/** turn on RGBDImagePushServiceOut? */
+		pushnewest_rgbd_image : Boolean = false
+		/** turn on RGBImagePushServiceOut? */
+		pushnewest_color_image : Boolean = true
+		/** turn on depthPushNewestServer? */
+		pushnewest_depth_image : Boolean = false
+	}
+	/** camera pose in robot frame */
+	InternalParameter sensor_pose
+	{
+		/** [mm] */
+		x : Double = 90
+		/** [mm] */
+		y : Double = 0
+		/** [mm] */
+		z : Double = 350
+		/** [radians] */
+		azimuth : Double = 1.5707963
+		/** [radians] */
+		elevation : Double = 3.14159265
+		/** [radians] */
+		roll : Double = 1.32
+	}
+	InternalParameter base
+	{
+		/** is Camera mounted on top of an pan-tilt-unit? */
+		on_ptu : Boolean = false
+		/** is Camera mounted on top of an mobile robot? */
+		on_base : Boolean = false
+		/** is Camera mounted on top of an UR5 robot arm? */
+		on_ur : Boolean = false
+		/** stationary Camera only: x coordinate [mm] */
+		x : Int32 = 0
+		/** stationary Camera only: y coordinate [mm] */
+		y : Int32 = 0
+		/** stationary Camera only: z coordinate [mm] */
+		z : Int32 = 0
+		/** stationary Camera only: heading [radians] */
+		base_a : Double = 0
+	}
+    InternalParameter hardware_properties{
+		/** Defines the min distance of the measurements in the depth image[mm]. Values with distances less than this value will be discarded. */
+		min_distance: Double = 500
+		
+		/** Defines the max distance of the measurements in the depth image[mm]. Values with distances greater than this value will be discarded. */
+		max_distance: Double = 4500		
+	}
+}

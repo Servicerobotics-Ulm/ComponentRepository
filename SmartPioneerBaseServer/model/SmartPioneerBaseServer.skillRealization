@@ -1,0 +1,21 @@
+SkillRealizationModel {
+	CoordinationModuleRealization baseInst coordModuleDef CommNavigationObjects.MobileBaseModule
+	uses {	CommNavigationObjects.BaseCoordinationService intsName base} 
+	{
+		//dummy realization (see *.smartTCL files)
+		SkillRealization getBaseCharging
+		{
+			action ( )
+		}
+		
+		SkillRealization getBasePose 
+		{
+			action ()
+		}
+		
+		SkillRealization resetBase
+		{
+			action ()
+		}
+	}
+}

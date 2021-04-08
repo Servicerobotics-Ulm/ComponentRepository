@@ -29,14 +29,6 @@
 class ComponentLaserObstacleAvoidPortFactoryInterface;
 class ComponentLaserObstacleAvoidExtension;
 
-// includes for ComponentLaserObstacleAvoidROS1InterfacesExtension
-
-// includes for ComponentLaserObstacleAvoidROSExtension
-
-// includes for ComponentLaserObstacleAvoidRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentLaserObstacleAvoidExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -119,16 +111,6 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
-	
-	// definitions of ComponentLaserObstacleAvoidROS1InterfacesExtension
-	
-	// definitions of ComponentLaserObstacleAvoidROSExtension
-	
-	// definitions of ComponentLaserObstacleAvoidRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentLaserObstacleAvoidExtension
 	
 	
 	// define default slave ports
@@ -246,16 +228,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} navigationVelocityServiceOut;
-		
-		// -- parameters for ComponentLaserObstacleAvoidROS1InterfacesExtension
-		
-		// -- parameters for ComponentLaserObstacleAvoidROSExtension
-		
-		// -- parameters for ComponentLaserObstacleAvoidRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentLaserObstacleAvoidExtension
 		
 	} connections;
 };

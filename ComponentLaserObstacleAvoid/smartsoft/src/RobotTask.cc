@@ -48,18 +48,12 @@ int RobotTask::on_entry()
 
 int RobotTask::on_execute()
 {
-	// this method is called from an outside loop,
-	// hence, NEVER use an infinite loop (like "while(1)") here inside!!!
-	// also do not use blocking calls which do not result from smartsoft kernel
 
 	Smart::StatusCode status;
 
-	/////////////////////////////////////////////
-	// Get input data and calculate movement
-
-	// get laser scan:
-	CommBasicObjects::CommMobileLaserScan laserScan;
-	status = this->laserServiceInGetUpdate(laserScan);
+	// create a laser communication object and read it from the input port
+	CommBasicObjects::CommMobileLaserScan laserServiceInObject;
+	status = this->laserServiceInGetUpdate(laserServiceInObject);
 
 	if(status != Smart::SMART_OK) {
 		std::cerr << "Getting laser scan failed: " << status << std::endl;
@@ -67,39 +61,33 @@ int RobotTask::on_execute()
 		return 0;
 	}
 
-	std::cout << "Laser scan received." << std::endl;
+	// we got the laser scan and we now call our algorithm
+	// it takes the laser scan as input and calculates translational and rotational velocities
+	double translational_velocity =0;
+	double rotational_velocity    =0;
 
+	SimpleAvoid::runCycle(laserServiceInObject,translational_velocity,rotational_velocity);
 
-	// process scan
-	double velocity = 0.0;
-	double turnrate = 0.0;
-	SimpleAvoid::runCycle(laserScan, velocity, turnrate);
+	// we now fill the communication object for the velocities and
+	// we write the communication object to the output port
+	CommBasicObjects::CommNavigationVelocity comNavVel;
+	Smart::StatusCode status_nav;
 
+	comNavVel.set_vX(translational_velocity, 0.001);
+	comNavVel.set_omega(rotational_velocity);
 
+	std::cout << "translational v : " << translational_velocity	<< std::endl;
+	std::cout << "rotational v    : " << rotational_velocity	<< std::endl;
 
+	status_nav = this->navigationVelocityServiceOutPut(comNavVel);
 
-	/////////////////////////////////////////////
-	// Now Provide result to service port.
-
-	// First fill the communication object
-	CommBasicObjects::CommNavigationVelocity navigationVelocity;
-	navigationVelocity.set_vX(velocity*0.5, 0.001);
-	navigationVelocity.set_omega(turnrate * 0.0575);
-
-	std::cout << "Velocity : " << velocity	<< std::endl;
-	std::cout << "turnrate :" << turnrate	<< std::endl;
-
-	// Provide result to output port, thereby command the robot:
-	status = this->navigationVelocityServiceOutPut(navigationVelocity);
-
-	if(status != Smart::SMART_OK) {
+	if(status_nav != Smart::SMART_OK) {
 		std::cerr << status << std::endl;
-		std::cout << "Error providing navigation velocity: " << status << std::endl;
+		std::cout << "Some Error in the Conection as status is not ok " << std::endl;
 		sleep(1);
 	} else {
-		std::cout << "Sent navigation velocity " << navigationVelocity << std::endl;
+		std::cout << "Updating Velocity " << comNavVel << std::endl;
 	}
-
 
 	return 0;
 }

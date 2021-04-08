@@ -136,10 +136,6 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		// load internal parameters (if any)
 		//
 		// parameter General
-		if(parameter.getBoolean("General", "hasSignalState", commitState.General.hasSignalState))
-		{
-			globalState.General.hasSignalState = commitState.General.hasSignalState;
-		}
 		if(parameter.getString("General", "poseFileName", commitState.General.poseFileName))
 		{
 			globalState.General.poseFileName = commitState.General.poseFileName;

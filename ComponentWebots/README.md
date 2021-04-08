@@ -55,7 +55,7 @@
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>WorldPath</b></td>
 <td style="border:1px solid black; padding: 5px;">String</td>
-<td style="border:1px solid black; padding: 5px;">"$SMART_PACKAGE_PATH/DataRepository/webots/worlds/world.wbt"</td>
+<td style="border:1px solid black; padding: 5px;">"$SMART_ROOT_ACE/repos/DataRepository/webots/worlds/ConveyorBeltIntralogistic.wbt"</td>
 <td style="border:1px solid black; padding: 5px;"></td>
 </tr>
 </table>

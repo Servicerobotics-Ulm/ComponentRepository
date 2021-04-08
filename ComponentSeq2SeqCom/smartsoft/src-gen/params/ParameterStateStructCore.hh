@@ -18,6 +18,8 @@
 
 #include "aceSmartSoft.hh"
 
+#include "nlohmann/json.hpp"
+
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -172,6 +174,20 @@ public:
 		
 		// Instance params (encapsulated in a wrapper class for each instantiated parameter repository)
 		CommBasicObjects.to_ostream(os);
+	}
+	
+	std::string getAsJSONString() {
+		nlohmann::json param;
+	
+		param["Settings"] = nlohmann::json {
+			{"useDebugTask" , getSettings().getUseDebugTask()},
+			{"verbose" , getSettings().getVerbose()}
+		};
+	
+		param["Seq2SeqComParam"] = nlohmann::json {
+		};
+		
+		return param.dump();
 	}
 };
 

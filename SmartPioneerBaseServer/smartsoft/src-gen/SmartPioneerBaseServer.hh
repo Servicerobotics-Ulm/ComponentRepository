@@ -29,17 +29,9 @@
 class SmartPioneerBaseServerPortFactoryInterface;
 class SmartPioneerBaseServerExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaSmartPioneerBaseServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
-
-// includes for SmartPioneerBaseServerROS1InterfacesExtension
-
-// includes for SmartPioneerBaseServerROSExtension
-
-// includes for SmartPioneerBaseServerRestInterfacesExtension
 
 
 // include communication objects
@@ -158,16 +150,6 @@ public:
 	
 	// define request-handlers
 	BaseStateQueryHandler *baseStateQueryHandler;
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaSmartPioneerBaseServerExtension
-	
-	// definitions of SmartPioneerBaseServerROS1InterfacesExtension
-	
-	// definitions of SmartPioneerBaseServerROSExtension
-	
-	// definitions of SmartPioneerBaseServerRestInterfacesExtension
 	
 	
 	// define default slave ports
@@ -295,16 +277,6 @@ public:
 		} navVelIn;
 	
 		//--- client port parameter ---
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaSmartPioneerBaseServerExtension
-		
-		// -- parameters for SmartPioneerBaseServerROS1InterfacesExtension
-		
-		// -- parameters for SmartPioneerBaseServerROSExtension
-		
-		// -- parameters for SmartPioneerBaseServerRestInterfacesExtension
 		
 	} connections;
 };

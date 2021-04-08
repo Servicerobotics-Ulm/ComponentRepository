@@ -14,18 +14,17 @@
 // If you want the toolchain to re-generate this file, please 
 // delete it before running the code generator.
 //--------------------------------------------------------------------------
-//------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 //
-//  Copyright (C) 2020 Thomas Feldmeier
+//  Copyright (C) 2021 Thomas Feldmeier
 //
-//        thomas.feldmeier@thu.de
+//        schlegel@hs-ulm.de
 //
-//        Christian Schlegel (schlegel@hs-ulm.de)
+//        Servicerobotic Ulm
 //        University of Applied Sciences
 //        Prittwitzstr. 10
-//        89075 Ulm (Germany)
-//
-//  This file is part of the "ComponentWebots2DLidar component".
+//        89075 Ulm
+//        Germany
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -40,7 +39,9 @@
 //  You should have received a copy of the GNU Lesser General Public
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+//
 //--------------------------------------------------------------------------
+
 #ifndef _COMPONENTLASERLMS1XXCORE_HH
 #define _COMPONENTLASERLMS1XXCORE_HH
 #include "CommBasicObjects/CommMobileLaserScan.hh"

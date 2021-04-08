@@ -13,6 +13,7 @@ ComponentDefinition SmartPioneerBaseServer {
 		with baseState realizedBy BaseStateQueryServer 
 		with batteryEvent realizedBy BatteryEventServer
 //		with bumperEvent realizedBy 
+        SkillRealizationsRef baseInst
 	}
 
 	

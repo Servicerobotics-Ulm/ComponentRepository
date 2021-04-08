@@ -27,24 +27,28 @@
 
 class CommandHandlerCore
 :	public Smart::InputTaskTrigger<CommBasicObjects::CommTaskMessage>
+,	public SmartACE::Task
 ,	public TaskSendInUpcallInterface
 {
 private:
-	Smart::StatusCode updateStatus;
-	CommBasicObjects::CommTaskMessage lastUpdate;
-	
 	
 	virtual void updateAllCommObjects();
 	
-	// internal input handling method
-	virtual void handle_input(const CommBasicObjects::CommTaskMessage& input) {
-		this->updateAllCommObjects();
-		// call the input handler method (which has to be implemented in derived classes)
-		this->on_TaskSendIn(input);
-		// notify all attached interaction observers
-		this->notify_all_interaction_observers();
-		// call implementation of base class
-		Smart::InputTaskTrigger<CommBasicObjects::CommTaskMessage>::handle_input(input);
+	// implementing active-queue handler
+	std::atomic<bool> signalled_to_stop;
+	std::mutex handler_mutex;
+	std::condition_variable handler_cond_var;
+	std::list<CommBasicObjects::CommTaskMessage> request_queue;
+	// inputs are pushed to the request_queue
+	virtual void handle_input(const CommBasicObjects::CommTaskMessage& input);
+	// inputs are processed from within the thread, thus implementing an active FIFO request-queue
+	virtual int task_execution() override;
+	// override the default stop behavior to also release the active request queue
+	virtual int stop(const bool wait_till_stopped=true) override
+	{
+		signalled_to_stop = true;
+		handler_cond_var.notify_all();
+		return SmartACE::Task::stop();
 	}
 	
 /**

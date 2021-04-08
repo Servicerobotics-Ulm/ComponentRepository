@@ -1,0 +1,95 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; getBasePose
+(realize-tcb (getBasePose => ?x ?y ?yaw)
+	(module "MobileBaseModule")
+	(action (	
+                  (format t "===== getBasePose~%")	
+                  (let ((basepose (tcl-query :server 'base :service 'baseState)))
+                    (format t "got base pose Query ~a~%" basepose)
+                    (tcl-bind-var :name '?x :value (first basepose))
+                    (tcl-bind-var :name '?y :value (second basepose))
+                    (tcl-bind-var :name '?yaw :value (third basepose)))
+                  '(SUCCESS (OK)))))
+                 
+
+;; getBaseCharging
+
+(realize-tcb (getBaseCharging => ?charging)
+	(module "MobileBaseModule")
+	(action (	
+                  (format t "===== getBaseCharging~%")	
+                  (let ((basepose (tcl-query :server 'base :service 'baseState)))
+                    (format t "got base pose Query ~a~%" basepose)
+                    (tcl-bind-var :name '?charging :value (fourth basepose)))
+                  '(SUCCESS (OK)))))
+                  
+;; resetBase
+(realize-tcb (resetBase)
+	(module "MobileBaseModule")
+	(action (	
+                  (format t "===== resetBase~%")	                   
+                  (tcl-param :server 'base :slot 'COMMBASICOBJECTS.BASEPARAMS.BASE_RESET)
+                  '(SUCCESS (OK)))))
+
+;; setPowerOutRelay
+(define-tcb (setPowerOutRelay ?nmbr ?value)
+  (module "MobileBaseModule")
+  (action (	
+    (format t "===== setPowerOutRelay~%")
+    (tcl-param :server 'base :slot 'SET_RELAY :value '(?nmbr ?value))
+    '(SUCCESS (OK)))))
+
+;; monitorBaseBumper
+(realize-tcb (monitorBaseBumper)
+	(module "MobileBaseModule")
+	(action (	
+                  (format t "===== monitorBaseBumper~%")
+                  (tcl-activate-event :name 'evt-basebumper
+                                      :handler 'handler-base-bumper
+                                      :server 'base
+                                      :service 'bumperEvent
+                                      :mode 'continuous))))	
+
+(define-event-handler (handler-base-bumper)
+  (action (
+            (format t "=========================>>> HANDLER BASE BUMPER EVENT ~s ~%~%" (tcl-event-message))
+            (cond
+              ;; PRESSED
+              ((equal (tcl-event-message) "(pressed)")
+                (format t "Base Bumper Pressed! ~%")
+                (tcl-abort)
+                '(SUCCESS (BUMPER PRESSED)))
+              ;; NOTPRESSED
+              ((equal (tcl-event-message) "(notpressed)")
+                (format t "Base Bumper NOT Pressed! ~%"))))))
+
+
+;; setSignalState
+(define-tcb (setSignalState ?state)
+  (module "MobileBaseModule")
+  (action (	
+    (format t "===== setSignalState~%")
+    (cond 
+      ((equal ?state 'IDLE)
+        (tcl-param :server 'base :slot 'COMMBASICOBJECTS.BASEPARAMS.SIGNAL_STATE_IDLE))
+      ((equal ?state 'BUSY)
+        (tcl-param :server 'base :slot 'COMMBASICOBJECTS.BASEPARAMS.SIGNAL_STATE_BUSY))
+      ((equal ?state 'ERROR)
+        (tcl-param :server 'base :slot 'COMMBASICOBJECTS.BASEPARAMS.SIGNAL_STATE_ERROR)))
+    '(SUCCESS (OK)))))
+
+
+;; FUNCTIONS USED FOR THE FLEET
+
+;TODO V3 Port
+
+; (setSignalState "MobileBaseModule" 'BASE 'ERROR)
+(defun setSignalState (module module-inst state)
+  (cond 
+      ((equal state 'IDLE)
+        (tcl-param-direct :module module :module-inst module-inst :server 'base :slot 'COMMBASICOBJECTS.BASEPARAMS.SIGNAL_STATE_IDLE))
+      ((equal state 'BUSY)
+        (tcl-param-direct :module module :module-inst module-inst :server 'base :slot 'COMMBASICOBJECTS.BASEPARAMS.SIGNAL_STATE_BUSY))
+      ((equal state 'ERROR)
+        (tcl-param-direct :module module :module-inst module-inst :server 'base :slot 'COMMBASICOBJECTS.BASEPARAMS.SIGNAL_STATE_ERROR))))
+

@@ -1,0 +1,12 @@
+ComponentParameter ComponentWebotsMpsDocking component ComponentWebotsMpsDocking
+{ 
+    InternalParameter Webots
+	{
+      /** the docking robotino should have an Supervisor with this name inside */
+      robotName : String = "MpsDocking";      
+      /** the DEF names of the docking stations in webots */
+      stationName : String [*] = ["MPS0", "MPS1", "MPS2", "MPS3"];
+      /** dock to stations only if distance to the docking point is less than this value (in meters) */
+      maxDistanceToDockingPoint : Double = 2.0;      
+	}	
+}

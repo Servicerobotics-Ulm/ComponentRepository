@@ -1,9 +1,10 @@
-ComponentDefinition ComponentWebotsMobileRobot {
+ComponentDefinition ComponentWebotsMobileRobot
+{
 	InputPort NavigationVelocityServiceIn implements CommNavigationObjects.NavigationVelocityService {
 	}
 	InputPort LocalizationEventServiceIn implements CommLocalizationObjects.LocalizationEventService {
 	}
-	
+
 	InputHandler NavigationVelocityServiceInHandler triggeredFrom NavigationVelocityServiceIn { }
 
 	AnswerPort BaseStateQueryServiceAnsw implements CommBasicObjects.BaseStateQueryService {
@@ -11,24 +12,25 @@ ComponentDefinition ComponentWebotsMobileRobot {
 	RequestHandler BaseStateQueryServiceAnswHandler triggeredFrom BaseStateQueryServiceAnsw {
 	}
 
-	CoordinationSlavePort CoordinationPort implements CommNavigationObjects.BaseCoordinationService {
+	CoordinationSlavePort CoordinationPort implements CommNavigationObjects.BaseCoordinationService
+	{
 		with baseState realizedBy BaseStateQueryServiceAnsw		
 		PrivateOperationMode eStop 
 		PublicOperationMode CommBasicObjects.RobotBaseModes.emergencyStop {
 			activates (eStop)} 
 		SkillRealizationsRef baseInst
 	}
-	
-	ComponentParameters ComponentWebotsMobileRobotParams slave CoordinationPort 
+
+	ComponentParameters ComponentWebotsMobileRobotParams slave CoordinationPort
 	OutputPort BaseStateServiceOut implements CommBasicObjects.BaseStateService realizedBy WebotsAPITask {
 	}
-	
+
 	InputPort LocalizationUpdateServiceIn implements CommNavigationObjects.LocalizationUpdateService {
 	}
-	InputHandler LocalizationUpdateServiceInHandler triggeredFrom LocalizationUpdateServiceIn { }	
+	InputHandler LocalizationUpdateServiceInHandler triggeredFrom LocalizationUpdateServiceIn { }
 
-Activity WebotsAPITask
+	Activity WebotsAPITask
 	{
 	}
-InputHandler LocalizationEventServiceInHandler triggeredFrom LocalizationEventServiceIn { }
+	InputHandler LocalizationEventServiceInHandler triggeredFrom LocalizationEventServiceIn { }
 }

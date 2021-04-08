@@ -1,0 +1,57 @@
+(define-tcb (moveptu absolute ?pan ?tilt)
+	(module "ptuModule")
+  (action (
+            (format t "===================nayab======>>> tcb-ptu-pose absolute ~d ~d ~%" '?pan '?tilt)
+            (tcl-activate-event :name 'lala 
+                                :handler 'handler-ptu
+                                :server 'ptu_cs 
+                                :service 'ptuevent 
+                                :mode 'continuous)
+            (tcl-state :server 'ptu_cs :state "Move")
+            (tcl-send :server 'ptu_cs 
+                      :service 'ptupose 
+                      :param '(absolute ?pan ?tilt))
+            '(SUCCESS ()))))
+            
+(define-tcb (moveptu test)
+  (module "ptuModule")
+  (format t "moveptu test out of action called !!!!!! ~%")
+  (action (
+  	(format t "moveptu test new called !!!!!! ~%")
+            '(SUCCESS ()))))
+
+(define-tcb (ptuModule-moveptu ?location ?nmbr)
+  (module "ptuModule")
+  (priority 99)
+  (precondition  (equal '(ptu) (first (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a location) (name ?location))) 'obj-recog-poses))))
+  (action (
+            (format t "=========================>>> ptuModule: tcb-ptu-pose ~s ~d ~%" '?location '?nmbr)
+            (let* ((location (tcl-kb-query :key '(is-a name) :value '((is-a location)(name ?location))))
+                   (obj-recog-ptu-poses (second (get-value location 'obj-recog-poses)))
+                   (obj-recog-ptu-pose (nth '?nmbr obj-recog-ptu-poses)))         
+              (tcl-activate-event :name 'lala 
+                                  :handler 'ptuModule-handler-ptu
+                                  :server 'ptu_cs
+                                  :service 'ptuevent 
+                                  :mode 'continuous)
+                                  
+              (tcl-state :server 'ptu_cs :state "Move")
+              (tcl-send :server 'ptu_cs 
+                        :service 'ptupose 
+                        :param `(absolute ,(first obj-recog-ptu-pose) ,(second obj-recog-ptu-pose))))
+            '(SUCCESS ()))))
+
+(define-event-handler (handler-ptu)
+  (module "ptuModule")
+  (action (
+            (format t "=========================>>> ptuModule: HANDLER PTU: ~s ~%~%" (tcl-event-message))
+            (cond                            
+                ((equal (tcl-event-message) "(GOALREACHED)")
+                  (format t "=========================>>> goal reached !!! ~%")   
+                  (tcl-state :server 'ptu_cs :state "Neutral")
+                  (tcl-abort)
+                  )
+                (T
+                  (format t "=========================>>> other event !!! ~%")))
+             )))
+                  

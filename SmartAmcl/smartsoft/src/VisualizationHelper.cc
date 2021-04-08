@@ -292,6 +292,11 @@ void VisualizationHelper::displayLaserScan(
 		return;
 
 	}
+	if (!scan.is_scan_valid()) {
+		std::cout<<"WARNING: [VisualizationHelper] Ignoring visualization of invalid scan..."<<std::endl;
+		return;
+	}
+
 
 #ifdef WITH_OLD_MRPT_VERSION
 	CObservation2DRangeScan s;

@@ -1,0 +1,49 @@
+ComponentDefinition ComponentWebotsPTUServer logo "/ComponentWebotsPTUServer/model/logo.png"
+{
+Activity DevicePoseStateTask
+	{
+	}
+	Activity BaseStateTask
+	{
+	}
+	Activity PtuTask
+	{
+	}
+	CoordinationSlavePort CoordinationPort implements DomainPTU.PTUCoordinationService
+	{
+		PublicOperationMode DomainPTU.PTUStates.Move { activates ( move ) } PrivateOperationMode move 
+		PublicOperationMode DomainPTU.PTUStates.Servo { activates ( servo ) } PrivateOperationMode servo
+		
+		with ptupose realizedBy moveSendServer
+		with ptuevent realizedBy goalEventServer
+		
+		SkillRealizationsRef ptu
+		
+	}
+
+	RequestPort baseStateQueryClient implements CommBasicObjects.BaseStateQueryService {
+	}
+	InputPort baseStateClient implements CommBasicObjects.BaseStateService {
+	}
+	OutputPort devicePoseStateServer implements CommBasicObjects.DevicePoseUpdateService realizedBy DevicePoseStateTask {
+	}
+
+	OutputPort goalEventServer implements DomainPTU.GoalEventService realizedBy PtuTask {
+	}
+	InputPort moveSendServer implements DomainPTU.MovePTUSendService {
+	}
+	ComponentParameters ComponentWebotsPTUServerParams slave CoordinationPort
+
+	InputHandler MoveSendHandler triggeredFrom moveSendServer { }
+AnswerPort moveQueryServer implements DomainPTU.MovePTUQueryService {
+	}
+	RequestHandler MovePTUQueryServiceAnswHandler triggeredFrom moveQueryServer {
+	}
+	AnswerPort stateQueryServer implements DomainPTU.PTUStateQueryService {
+	}
+	RequestHandler PTUStateQueryServiceAnswHandler triggeredFrom stateQueryServer {
+	}
+Activity WebotsTask
+	{
+	}
+}

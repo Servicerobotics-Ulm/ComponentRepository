@@ -72,16 +72,6 @@ ComponentWebots2DLidar::ComponentWebots2DLidar()
 	connections.laserTask.priority = -1;
 	connections.laserTask.cpuAffinity = -1;
 	
-	// initialize members of ComponentWebots2DLidarROS1InterfacesExtension
-	
-	// initialize members of ComponentWebots2DLidarROSExtension
-	
-	// initialize members of ComponentWebots2DLidarRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentWebots2DLidarExtension
-	
 }
 
 void ComponentWebots2DLidar::addPortFactory(const std::string &name, ComponentWebots2DLidarPortFactoryInterface *portFactory)
@@ -188,16 +178,6 @@ void ComponentWebots2DLidar::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentWebots2DLidarROS1InterfacesExtension
-		
-		// initializations of ComponentWebots2DLidarROSExtension
-		
-		// initializations of ComponentWebots2DLidarRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentWebots2DLidarExtension
 		
 		
 		// initialize all registered port-factories
@@ -408,16 +388,6 @@ void ComponentWebots2DLidar::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentWebots2DLidarROS1InterfacesExtension
-	
-	// destruction of ComponentWebots2DLidarROSExtension
-	
-	// destruction of ComponentWebots2DLidarRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentWebots2DLidarExtension
-	
 }
 
 void ComponentWebots2DLidar::loadParameter(int argc, char *argv[])
@@ -530,16 +500,6 @@ void ComponentWebots2DLidar::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("LaserTask", "cpuAffinity")) {
 			parameter.getInteger("LaserTask", "cpuAffinity", connections.laserTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentWebots2DLidarROS1InterfacesExtension
-		
-		// load parameters for ComponentWebots2DLidarROSExtension
-		
-		// load parameters for ComponentWebots2DLidarRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentWebots2DLidarExtension
 		
 		
 		// load parameters for all registered component-extensions

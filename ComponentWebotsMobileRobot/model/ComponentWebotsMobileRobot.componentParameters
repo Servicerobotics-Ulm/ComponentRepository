@@ -1,47 +1,51 @@
-ComponentParameter ComponentWebotsMobileRobotParams component ComponentWebotsMobileRobot 
+ComponentParameter ComponentWebotsMobileRobotParams component ComponentWebotsMobileRobot
 {
-
-  InternalParameter OdometryRandomError{
-    /**  "e.g. 0.05m * 0.05m / 1m = 0.0025 m (after traveling 1m, distance error has standard deviation of 0.05m) */           
-    varianceOfDistancePerMeter: Double = 0.0025
-    /** "e.g. (5°*5°)/360° /180°*pi = 0.001212 (after rotating 360 degrees, heading error has standard deviation of 5 degrees) */
-    varianceOfHeadingPerRadians: Double = 0.001212
-    /** e.g. (2°/180°*pi)^2/1m  = 0.001218 (after traveling 1m, heading error has standard deviation of 2 degrees) */
-    varianceOfHeadingPerMeter: Double = 0.001218
-  }    
-  InternalParameter Webots {
-  	  /** name of robot */
-      robotName : String = "Robotino 3"
-      /** name of motors of wheels */
-      motorName : String[] = ["wheel0_joint", "wheel1_joint", "wheel2_joint"]
-      /** radius of wheels in m */
-      radius : Double[] = [0.063, 0.063, 0.063]
-      /** distance of a wheel to the turning point (center) of the robot */
-      distanceToRobotCentre : Double[] = [-0.1826, -0.1826, -0.1826]
-      /** the heading of the wheels, for differential drives set these to 0 */
-      heading : Double[] = [90.0, 210.0, 330.0]
-      /** the max. acceleration (front, sideways, rotation) in m/s or radians/s */
-      maxAcceleration : Double[] = [10.0, 6.0, 40.0]
-      /** if true, the robot can be moved by arrow or ASDW keys (QE sidways), press space key to stop */
-      keyboardControl : Boolean = true
-  }
-	InternalParameter Robot {
+	InternalParameter OdometryRandomError
+	{
+		/** e.g. 0.05m * 0.05m / 1m = 0.0025 m (after traveling 1m, distance error has standard deviation of 0.05m) */           
+        varianceOfDistancePerMeter : Double = 0.0025
+		/** e.g. (5°*5°)/360° /180°*pi = 0.001212 (after rotating 360 degrees, heading error has standard deviation of 5 degrees) */
+        varianceOfHeadingPerRadians : Double = 0.001212
+		/** e.g. (2°/180°*pi)^2/1m  = 0.001218 (after traveling 1m, heading error has standard deviation of 2 degrees) */
+        varianceOfHeadingPerMeter : Double = 0.001218
+	}
+	InternalParameter Webots
+	{
+		/** name of robot */
+        robotName : String = "Robotino 3"
+		/** name of motors of wheels */
+        motorName : String[] = ["wheel0_joint", "wheel1_joint", "wheel2_joint"]
+		/** radius of wheels in m */
+        radius : Double[] = [0.063, 0.063, 0.063]
+		/** distance of a wheel to the turning point (center) of the robot */
+        distanceToRobotCentre : Double[] = [-0.1826, -0.1826, -0.1826]
+		/** the heading of the wheels, for differential drives set these to 0 [degrees] */
+        heading : Double[] = [90.0, 210.0, 330.0]
+		/** the max. acceleration front [m/s], sideways [m/s], rotation [radians/s] */
+        maxAcceleration : Double[] = [10.0, 6.0, 40.0]
+		/** if true, the robot can be moved by arrow or WASD keys (QE sidways), press space key to stop */
+        keyboardControl : Boolean = true
+	}
+	InternalParameter Robot
+	{
 		/** max. speed (forward) in m/s */
-		maxVelX :  Double = 1.0
-		
+		maxVelX : Double = 1.0
+
 		/** max. speed sideways (left) in m/s (only omnidirection drive as in Robotino3) */
 		maxVelY : Double = 1.0
 
 		/** maximum rotation velocity of robot in radians/s */
-		maxRotVel : Double = 4.0		
+		maxRotVel : Double = 4.0
 	}
 
-	InternalParameter General {
-		verbose: Boolean = false
-		hasSignalState : Boolean = true
-		useLocalizationEvent : Boolean = true
-		
+	InternalParameter General
+	{
+		/** if set to true, more information is printed in the console */
+		verbose : Boolean = false
+		useLocalizationEvent : Boolean = true		
+		/** if set to true, the robot position is read/saved in poseFileName */
+		writePoseFile : Boolean = false
+		/** see writePoseFile */
 		poseFileName : String = "/tmp/lastRobotPose.txt"
-		writePoseFile:Boolean = false
 	}
 }

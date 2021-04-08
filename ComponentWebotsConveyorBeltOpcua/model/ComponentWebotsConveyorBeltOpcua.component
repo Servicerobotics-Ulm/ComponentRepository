@@ -1,0 +1,31 @@
+ComponentDefinition ComponentWebotsConveyorBeltOpcua logo "/ComponentWebotsConveyorBeltOpcua/model/logo.png"
+{
+	OutputPort RobotinoConveyerBeltEventOut implements CommRobotinoObjects.RobotinoConveyerBeltEvent realizedBy WebotsTask {
+	}
+	CoordinationSlavePort CoordinationPort implements CommRobotinoObjects.ConveyerBeltCoordinationService
+	{
+		with loadevent realizedBy RobotinoConveyerBeltEventOut 
+		PublicOperationMode CommRobotinoObjects.ConveyerBeltModes.load { activates ( load ) } 
+		PublicOperationMode CommRobotinoObjects.ConveyerBeltModes.manualload { activates ( manualload ) } 
+		PublicOperationMode CommRobotinoObjects.ConveyerBeltModes.manualunload { activates ( manualunload ) } 
+		PublicOperationMode CommRobotinoObjects.ConveyerBeltModes.signalerror { activates ( signalerror ) } 
+		PublicOperationMode CommRobotinoObjects.ConveyerBeltModes.unload { activates ( unload ) } 
+		PrivateOperationMode signalerror 
+		PrivateOperationMode unload 
+		PrivateOperationMode load 
+		PrivateOperationMode manualunload 
+		PrivateOperationMode manualload
+	}
+	ComponentParameters ComponentWebotsConveyorBeltOpcua slave CoordinationPort
+
+	OpcUaDeviceClient ProductionStation { 
+		deviceURI "opc.tcp://localhost:4840" 
+		opcuaXmlFile "/ComponentWebotsConveyorBeltOpcua/model/ProductionStation.xml"
+	}
+
+	Activity WebotsTask
+	{
+	}
+InputPort TrafficLightsServiceIn implements CommBasicObjects.TrafficLightsService {
+	}
+}

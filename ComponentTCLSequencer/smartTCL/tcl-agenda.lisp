@@ -320,7 +320,8 @@
         (set-value (cdr tmp) value)
         (dolist (i (var-waiting-instances (cdr tmp)))
           (format t "Generate Event for var instance:~s ~%" i)
-          (push `((SYNC-VAR-MOD ,name ,(car i) ) ,value) *SYNC-VAR-EVENTS*))
+          (push `(( coordination-interfaces-type . "SYNC-VAR-MOD")( coordination-interface-instance . "SYNC-VAR-MOD.SYNC-CI")( service-name . ,name)( id . ,(car i))( data . ,value)) *SYNC-VAR-EVENTS*))
+
         (setf (var-waiting-instances (cdr tmp)) nil))
       (T 
         (format t "Error not able to find var:~s~%" name)
@@ -356,8 +357,8 @@
             (T
               
               (let ((waiting-instance-id (set-wait sync-var instance)))
-                (format t "Generated an activated event for the var- waiting-inst-id:~s ~%"waiting-instance-id)
-                (setf event (generate-event *SMARTSOFT* `(SYNC-VAR-MOD ,var-name (nil) continuous) ))
+                (format t "Generated an activated event for the var- waiting-inst-id:~s ~%" waiting-instance-id)
+                (setf event (generate-event *SMARTSOFT* `("SYNC-VAR-MOD" SYNC-VAR-MOD "SYNC-CI" ,var-name ((CONTINUOUS NIL))) ))
 
                 (setf (event-id event) waiting-instance-id)
                 (setf (event-state event) 'activated))
@@ -545,7 +546,7 @@
 (defmethod destroy-event ((instance tcb-execution-class) evt)
   ;(format t "destroy event ~s ~%" evt)
   (cond
-    ((equal (event-module evt) 'SYNC-VAR-MOD)
+    ((equal (event-module evt) "SYNC-VAR-MOD")
       ;(format t "Destory Sync-var module detected!~%")
       (setf (event-state evt) 'deactivated)
       (destroy-event *SMARTSOFT* (list evt)))
@@ -856,7 +857,7 @@
                     
                     (let ((evt-handler  (query-kb *MEMORY* '(is-a name) `((is-a event-handler)(name ,(cdr(assoc (car evt) (tcb-event-handler instance))))))))
                       (cond
-                        ((equal (event-module (cdr evt)) 'SYNC-VAR-MOD)
+                        ((equal (event-module (cdr evt)) "SYNC-VAR-MOD")
                           (format t "Sync Var event handler!~%")
                           (setf evt-handler  (query-kb *MEMORY* '(is-a name) `((is-a sync-var-handler)(name ,(cdr(assoc (car evt) (tcb-event-handler instance)))))))
                            ;(format t "handler-action: ~s ~%" (get-value evt-handler 'action))

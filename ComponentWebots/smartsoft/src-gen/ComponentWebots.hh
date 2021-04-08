@@ -29,14 +29,6 @@
 class ComponentWebotsPortFactoryInterface;
 class ComponentWebotsExtension;
 
-// includes for ComponentWebotsROS1InterfacesExtension
-
-// includes for ComponentWebotsROSExtension
-
-// includes for ComponentWebotsRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentWebotsExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -113,16 +105,6 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
-	
-	// definitions of ComponentWebotsROS1InterfacesExtension
-	
-	// definitions of ComponentWebotsROSExtension
-	
-	// definitions of ComponentWebotsRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentWebotsExtension
 	
 	
 	// define default slave ports
@@ -208,16 +190,6 @@ public:
 		//--- server port parameter ---
 	
 		//--- client port parameter ---
-		
-		// -- parameters for ComponentWebotsROS1InterfacesExtension
-		
-		// -- parameters for ComponentWebotsROSExtension
-		
-		// -- parameters for ComponentWebotsRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentWebotsExtension
 		
 	} connections;
 };

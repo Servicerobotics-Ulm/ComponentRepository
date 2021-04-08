@@ -29,14 +29,6 @@
 class ComponentWebots2DLidarPortFactoryInterface;
 class ComponentWebots2DLidarExtension;
 
-// includes for ComponentWebots2DLidarROS1InterfacesExtension
-
-// includes for ComponentWebots2DLidarROSExtension
-
-// includes for ComponentWebots2DLidarRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentWebots2DLidarExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -136,16 +128,6 @@ public:
 	
 	// define request-handlers
 	LaserQueryServiceAnswHandler *laserQueryServiceAnswHandler;
-	
-	// definitions of ComponentWebots2DLidarROS1InterfacesExtension
-	
-	// definitions of ComponentWebots2DLidarROSExtension
-	
-	// definitions of ComponentWebots2DLidarRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentWebots2DLidarExtension
 	
 	
 	// define default slave ports
@@ -264,16 +246,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} baseStateServiceIn;
-		
-		// -- parameters for ComponentWebots2DLidarROS1InterfacesExtension
-		
-		// -- parameters for ComponentWebots2DLidarROSExtension
-		
-		// -- parameters for ComponentWebots2DLidarRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentWebots2DLidarExtension
 		
 	} connections;
 };

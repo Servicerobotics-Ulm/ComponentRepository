@@ -1,0 +1,7 @@
+ComponentWebots3DCamera/BaseURI/value/0=http\://www.servicerobotik-ulm.de
+ComponentWebots3DCamera/Homepage/value/3=https\://github.com/Servicerobotics-Ulm/ComponentRepository
+ComponentWebots3DCamera/MarketName/value/1=Webots 3D Camera
+ComponentWebots3DCamera/Purpose/value/4=Webots 3D Camera
+ComponentWebots3DCamera/Supplier/value/2=Servicerobotics Ulm
+ComponentWebots3DCamera/shortDescription=\n\nA generic driver for a RangeFinder (depth camera) in the Webots simulator.\n\nThe scans are made each Webots timeStep, at the same time (see Time of flight (ToF)). measured in ...\n\nHow a new RangeFinder can be added to Webots\:\n* Add a new Robot, set its controller to '&lt;extern&gt;', its coordinate system should be x\=front, y\=left, z\=up of the RangeFinder.\n* The robots name must set the same in Webots and here.\n* Add the RangeFinder in children of the robot, rotate it to match the coordinate system above.\n\nexample code\:\n\n```cpp\nCommBasicObjects\:\:CommMobileLaserScan scan;\nif(this->laserServiceInGetUpdate(scan) \!\= Smart\:\:SMART_OK) (some error handling here)\nint count \= scan.get_scan_size();\nfor (int i \= 0; i < count; ++i) {\n\t// scan.get_scan_angle is between 0 and 2*pi, 0\=front of lidar\n\tdouble angle \= scan.get_scan_angle(i) / M_PI * 180;\n\t// angle should be between -180 and +180 degrees, 0\=front of lidar\n\tif( angle > 180 )\n\t\tangle -\= 360;\n\tdouble distance \= scan.get_scan_distance(i);\n    ...\n}\n```\n\n
+eclipse.preferences.version=1

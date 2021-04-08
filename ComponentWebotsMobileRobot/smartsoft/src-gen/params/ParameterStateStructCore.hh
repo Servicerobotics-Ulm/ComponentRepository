@@ -220,7 +220,6 @@ public:
 			/**
 			 * here are the member definitions
 			 */
-			bool hasSignalState;
 			std::string poseFileName;
 			bool useLocalizationEvent;
 			bool verbose;
@@ -229,7 +228,6 @@ public:
 		public:
 			// default constructor
 			GeneralType() {
-				hasSignalState = true;
 				poseFileName = "/tmp/lastRobotPose.txt";
 				useLocalizationEvent = true;
 				verbose = false;
@@ -239,7 +237,6 @@ public:
 			/**
 			 * here are the public getters
 			 */
-			inline bool getHasSignalState() const { return hasSignalState; }
 			inline std::string getPoseFileName() const { return poseFileName; }
 			inline bool getUseLocalizationEvent() const { return useLocalizationEvent; }
 			inline bool getVerbose() const { return verbose; }
@@ -248,7 +245,6 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "General(";
-				os << "hasSignalState = " << hasSignalState << ", ";
 				os << "poseFileName = " << poseFileName << ", ";
 				os << "useLocalizationEvent = " << useLocalizationEvent << ", ";
 				os << "verbose = " << verbose << ", ";
@@ -329,7 +325,6 @@ public:
 		nlohmann::json param;
 	
 		param["General"] = nlohmann::json {
-			{"hasSignalState" , getGeneral().getHasSignalState()},
 			{"poseFileName" , getGeneral().getPoseFileName()},
 			{"useLocalizationEvent" , getGeneral().getUseLocalizationEvent()},
 			{"verbose" , getGeneral().getVerbose()},

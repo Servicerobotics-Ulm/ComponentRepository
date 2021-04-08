@@ -1,0 +1,387 @@
+
+
+; PushJob MPSDocking 2 0 1 DOCK 1 1
+
+
+(define-tcb (setDockingNeutral)
+  (module "MPSModule")
+  (action ( (format t "=========================>>> setDockingNeutral~%")
+            (tcl-state :server 'mpsdocking :state "Neutral"))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; mps docking
+
+
+;;(execute '(MPS.tcb-mps-station-dock 1 1))
+;;(execute '(MPS.tcb-mps-station-undock))
+(define-tcb (tcb-mps-station-dock ?stationid ?beltid)
+  (module "MPSModule")
+  (rules (rule-mps-dock-laser-failed rule-mps-dock-ir-failed rule-mps-dock-ir-success))
+  (abort-action ( (format t "=========================>>> ABORT ACTION tcb-mps-station-dock~%")))
+  (action (
+            (let* ((station (tcl-kb-query :key '(is-a id) :value `((is-a station)(id ?stationid))))
+                   (station-type (tcl-kb-query :key '(is-a name) :value `((is-a station-type)(name ,(get-value station 'type)))))
+                   (station-docking-type (get-value station-type 'docking-type)))
+            (format t "=========================>>> tcb-mps-station-dock stationid: ~a beltid: ~a ~%" ?stationid ?beltid)
+
+
+            (cond
+              ((and (not (null '?stationid)) (null station))
+                (progn (format t "Docking called with invalid station id: ~s --> Return ERROR Docking~%" ?stationid)
+                       '(ERROR (DOCKING FAILED))))
+              (T
+                (format t "DO DOCKING --> SAVE CURRENT POSE FOR UNDOCKING!~%")
+                (format t "DO DOCKING DOCKING TYPE: ~s~%" station-docking-type)
+                (tcl-param :server 'MPSDOCKING :slot 'COMMROBOTINOOBJECTS.ROBOTINODOCKINGPARAMETER.SAVE_BEFORE_DOCKING_POSE)
+
+                ;;THIS IS A SHORTCUT IN CASE NO VALID DOCKING ID IS GIVEN - REMOVE THIS ONCE NOT NECESSARY!
+                (if (and (null '?stationid) (null station-docking-type))
+                  (progn  (format t "Docking Type overwrite use IR Docking~%")
+                          (setf station-docking-type 'LASER-IR)))
+            
+                (cond 
+                  ((equal station-docking-type 'LASER)
+                    (tcl-push-plan :plan `(
+                                      (tcb-mps-station-dock-laser ?stationid ?beltid)
+                                      )))
+                  ((equal station-docking-type 'LASER-IR)
+                    (tcl-push-plan :plan `(
+                                      (tcb-mps-station-dock-laser ?stationid ?beltid)
+                                      ;(IR.activateIRServerFetchAditional) ;;TODO V3
+                                      ;(tcb-mps-station-dock-ir ?stationid)
+                                      ;(IR.deactivateIRServer) ;;TODO V3
+                                      )))
+                  ((equal station-docking-type 'VISION)
+                    (tcl-push-plan :plan `(
+                                      (tcb-mps-station-dock-visual ?stationid)
+                                      )))
+                  (T
+                    (format t "ERROR DOCKING TYPE NOT SET OR UNKONWN THIS SHOULD NOT HAPPEN! type: ~s ~%" station-docking-type )))
+                  '(SUCCESS ())))))))
+
+
+;;(execute '(tcb-mps-station-dock-laser 1 1))
+(define-tcb (tcb-mps-station-dock-laser ?stationid ?beltid)
+  (module "MPSModule")
+  (action (
+            (let* ((station (tcl-kb-query :key '(is-a id) :value `((is-a station)(id ?stationid))))
+                   (station-type (tcl-kb-query :key '(is-a name) :value `((is-a station-type)(name ,(get-value station 'type)))))
+                   (numBelts (get-value station-type 'number-of-belts)))
+              (format t "=========================>>> tcb-mps-station-dock-laser ~a ~a ~%" ?stationid ?beltid)
+              (if (null numBelts)
+                (progn (format t "No Station modelled --> set default numBelts 2~%") 
+                       (setf numBelts 2)))
+              (format t "DO LASER DOCKING ~%")
+              (cond
+                ((and (> ?beltid 0) (not (null numBelts)) (not (null station-type))) ;;ONLY DOCK IF BELT IS VALID (>0) and numBelts is not NILL!
+                  ;(tcl-param :server 'MPSDOCKING :slot 'COMMROBOTINOOBJECTS.ROBOTINODOCKINGPARAMETER.OFFS_LEFT_REF_TO_1BELT_CENT :value (get-value station-type 'offset-left-reflector-to-1stBelt-center))
+                  ;(tcl-param :server 'MPSDOCKING :slot 'COMMROBOTINOOBJECTS.ROBOTINODOCKINGPARAMETER.OFFS_BET_CENTER_O_BELTS :value (get-value station-type 'offset-between-center-of-belts))
+                  ;(tcl-param :server 'MPSDOCKING :slot 'COMMROBOTINOOBJECTS.ROBOTINODOCKINGPARAMETER.MAX_STATION_WIDTH :value (get-value station-type 'max-station-width))
+                  ;(tcl-param :server 'MPSDOCKING :slot 'COMMROBOTINOOBJECTS.ROBOTINODOCKINGPARAMETER.MIN_STATION_WIDTH :value (get-value station-type 'min-station-width))
+                  ;(tcl-param :server 'MPSDOCKING :slot 'COMMROBOTINOOBJECTS.ROBOTINODOCKINGPARAMETER.MAX_REFLECTOR_DIST :value (get-value station-type 'max-reflector-dist))
+                  ;(tcl-param :server 'MPSDOCKING :slot 'COMMROBOTINOOBJECTS.ROBOTINODOCKINGPARAMETER.LASER_DOCKSTOP_DIST :value (get-value station-type 'laser-dock-stop-dist))
+
+                  ;(tcl-param :server 'MPSDOCKING :slot 'COMMROBOTINOOBJECTS.ROBOTINODOCKINGPARAMETER.NUM_BELTS :value numBelts) ;;is not used at the moment!
+                  ;(tcl-param :server 'MPSDOCKING :slot 'COMMROBOTINOOBJECTS.ROBOTINODOCKINGPARAMETER.BELT_ID :value (- ?beltid 1))
+                  ;(tcl-param :server 'MPSDOCKING :slot 'COMMIT)
+                  
+                  (tcl-activate-event :name 'evt-mps-docking
+                                  :handler 'handler-mps-docking 
+                                  :server 'MPSDOCKING
+                                  :service 'dockingevent
+                                  :mode 'continuous)
+                  
+                  (tcl-state :server 'MPSDOCKING :state "LaserDocking")
+                )
+                (T
+                  (format t "INVALID DOCK PARAM beltid: ~a numBelts: ~a ~%" ?beltid numBelts)
+                  '(ERROR (LASER DOCKING))))))))
+
+;;(execute '(tcb-mps-station-dock-ir 1))
+(define-tcb (tcb-mps-station-dock-ir ?stationid)
+  (module "MPSModule")
+  (action (
+            (let* ((station (tcl-kb-query :key '(is-a id) :value `((is-a station)(id ?stationid))))
+                   (station-type (tcl-kb-query :key '(is-a name) :value `((is-a station-type)(name ,(get-value station 'type))))))
+              (format t "=========================>>> tcb-mps-station-dock-ir ~a~%" ?stationid)
+              (cond
+                ((not (null station-type))
+                  (format t "DO IR DOCKING ~%")
+
+                  (tcl-param :server 'MPSDOCKING :slot 'COMMROBOTINOOBJECTS.ROBOTINODOCKINGPARAMETER.IR_DOCK_CENTER_SENSOR_ZERO :value (get-value station-type 'ir-dock-center-sensor-zero))
+                  (tcl-param :server 'MPSDOCKING :slot 'COMMROBOTINOOBJECTS.ROBOTINODOCKINGPARAMETER.IR_DOCK_STOP_DIST_L1 :value (get-value station-type 'ir-dock-stop-dist-l1))
+                  (tcl-param :server 'MPSDOCKING :slot 'COMMROBOTINOOBJECTS.ROBOTINODOCKINGPARAMETER.IR_DOCK_STOP_DIST_L2_MAX :value (get-value station-type 'ir-dock-stop-dist-l2-max))
+                  (tcl-param :server 'MPSDOCKING :slot 'COMMROBOTINOOBJECTS.ROBOTINODOCKINGPARAMETER.IR_DOCK_STOP_DIST_L2_MIN :value (get-value station-type 'ir-dock-stop-dist-l2-min))
+                  (tcl-param :server 'MPSDOCKING :slot 'COMMIT)
+
+                  (tcl-activate-event :name 'evt-mps-docking
+                                      :handler 'handler-mps-docking 
+                                      :server 'mpsdocking
+                                      :service 'dockingevent
+                                      :mode 'continuous)
+
+                  (tcl-state :server 'mpsdocking :state "IrDocking"))
+                (T
+                  (format t "INVALID DOCK PARAM ~%")
+                  '(ERROR (IR DOCKING))))))))
+
+
+(define-rule (rule-mps-dock-laser-failed)
+  (tcb (tcb-mps-station-dock-laser ?stationid ?beltid))
+  (return-value (ERROR (LASER DOCKING)))
+  (action (
+              (format t "=========================>>> RULE: rule-mps-dock-laser-failed (ERROR (LASER DOCKING))  ~%")
+              (tcl-delete-plan)
+              '(ERROR (DOCKING FAILED)))))
+
+(define-rule (rule-mps-dock-ir-failed)
+  (tcb (tcb-mps-station-dock-ir ?stationid))
+  (return-value (ERROR (IR DOCKING)))
+  (action (
+              (format t "=========================>>> RULE: rule-mps-dock-laser-failed (ERROR (IR DOCKING))  ~%")
+              (tcl-delete-plan)
+              '(ERROR (DOCKING FAILED)))))
+
+(define-rule (rule-mps-dock-ir-success)
+  (tcb (tcb-mps-station-dock-ir ?stationid))
+  (return-value (SUCCESS ()))
+  (action (
+              (format t "=========================>>> RULE: rule-mps-dock-ir-success (SUCCESS ())  ~%")
+              '(SUCCESS ()))))
+
+
+(define-event-handler (handler-mps-docking)
+  (action (
+            (format t "=========================>>> HANDLER MPS DOCKING: ~s ~%~%" (tcl-event-message))
+            (cond
+              ;; IR
+              ((equal (tcl-event-message) "(ir docking not done)")
+                (format t "==========>>> IR DOCKING DOCKING START~%" ))
+
+              ((equal (tcl-event-message) "(ir docking done)")
+                (format t "==========>>> IR DOCKING DOCKING DONE~%" )
+                (tcl-state :server 'mpsdocking :state "Neutral")
+                (tcl-abort)
+                '(SUCCESS ()))
+
+              ((equal (tcl-event-message) "(ir docking error)")
+                (format t "==========>>> IR DOCKING DOCKING ERROR~%" )
+                (tcl-state :server 'mpsdocking :state "Neutral")
+                (tcl-abort)
+                '(ERROR (IR DOCKING)))
+
+              ;; UNDOCKING
+              ((equal (tcl-event-message) "(undocking not done)")
+                (format t "==========>>> UNDOCKING DOCKING START~%" ))
+
+              ((equal (tcl-event-message) "(undocking done)")
+                (format t "==========>>> UNDOCKING DOCKING DONE~%" )
+                (tcl-state :server 'mpsdocking :state "Neutral")
+                (tcl-abort)
+                '(SUCCESS ()))
+       
+              ;; LASER
+              ((equal (tcl-event-message) "(laser docking not done)")
+                (format t "==========>>> LASER DOCKING DOCKING START~%" ))
+
+              ((equal (tcl-event-message) "(laser docking done)")
+                (format t "==========>>> LASER DOCKING DOCKING DONE~%" )
+                (tcl-state :server 'mpsdocking :state "Neutral")
+                (tcl-abort)
+                '(SUCCESS ()))
+
+              ((equal (tcl-event-message) "(laser docking error)")
+                (format t "==========>>> LASER DOCKING DOCKING ERROR ~%" )
+                (tcl-state :server 'mpsdocking :state "Neutral")
+                (tcl-abort)
+                '(ERROR (LASER DOCKING)))))))
+
+
+;;(execute '(tcb-mps-station-undock))
+(define-tcb (tcb-mps-station-undock)
+  (module "MPSModule")
+ (rules (rule-mps-undock-success))
+ (abort-action ( (format t "=========================>>> ABORT ACTION tcb-mps-station-dock~%")))
+;; (rules (rule-path-nav-node-not-ok))
+ (action (
+            (format t "=========================>>> tcb-mps-station-undock ~%")
+            (let* ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot)))))
+            (cond
+              ((first (get-value robot 'is-docked))
+               (tcl-push-plan :plan `(
+                                  (tcb-mps-station-undock-mps)
+                                  )))
+              (T
+                (format t "ROBOT IS NOT DOCKED to a MPS station! --> NO undocking is performed~%")
+                '(ERROR (UNDOCKING FAILED))))))))
+                
+
+(define-rule (rule-mps-undock-success)
+  (tcb (tcb-mps-station-undock-mps))
+  (return-value (SUCCESS ()))
+  (action (
+              (format t "=========================>>> RULE: rule-mps-undock-successs (SUCCESS ())  ~%")
+              '(SUCCESS ()))))
+
+
+(define-tcb (tcb-mps-station-undock-mps)
+  (module "MPSModule")
+  (action (
+            (format t "=========================>>> tcb-mps-station-undock-mps ~%")
+            (format t "DO UNDOCKING ~%")
+            (tcl-activate-event :name 'evt-mps-docking
+                                :handler 'handler-mps-docking 
+                                :server 'mpsdocking
+                                :service 'dockingevent
+                                :mode 'continuous)
+            (tcl-state :server 'mpsdocking :state "UnDocking"))))
+            
+            
+(define-tcb (tcb-mps-station-unload-belts ?stationid)
+  (module "MPSModule")
+  (abort-action ( (format t "=========================>>> ABORT ACTION tcb-mps-station-unload-belts~%")
+                  (tcl-state :server 'BELT :state "Neutral")))
+  (action (
+            (format t "=========================>>> tcb-mps-station-unload-belts stationid:~a ~%" ?stationid)
+            (format t "DO UNLOADING ~%")
+            (tcl-activate-event :name 'evt-highlevel
+                                :handler 'handler-mps-loading
+                                :server 'BELT 
+                                :service 'loadevent
+                                :mode 'continuous)
+            (tcl-param :server 'BELT :slot 'COMMROBOTINOOBJECTS.ROBOTINOCONVEYERPARAMETER.SETSTATIONID :value ?stationid)
+            (tcl-param :server 'BELT :slot 'COMMIT)
+            (tcl-state :server 'BELT :state "unload"))))
+            
+
+(define-tcb (tcb-mps-station-load-belts ?stationid)
+  (module "MPSModule")
+  (abort-action ( (format t "=========================>>> ABORT ACTION tcb-mps-station-load-belts ~%")
+                  (tcl-state :server 'BELT :state "Neutral")))
+  (action (
+            (format t "=========================>>> tcb-mps-station-load-belts stationid: ~a~%" ?stationid)
+            (format t "DO LOADING ~%")
+            (tcl-activate-event :name 'evt-belt-loading
+                                :handler 'handler-mps-loading
+                                :server 'BELT 
+                                :service 'loadevent
+                                :mode 'continuous)
+            (tcl-param :server 'BELT :slot 'COMMROBOTINOOBJECTS.ROBOTINOCONVEYERPARAMETER.SETSTATIONID :value ?stationid)
+            (tcl-param :server 'BELT :slot 'COMMIT)
+            (tcl-state :server 'BELT :state "load"))))
+            
+            
+(define-event-handler (handler-mps-loading)
+  (action (
+            (format t "=========================>>> HANDLER MPS LOADING: ~s ~%~%" (tcl-event-message))
+            (cond
+	      ;;LOAD
+              ((equal (tcl-event-message) "(load not done)")
+                (format t "==========>>> load START ~%" ))
+
+              ((equal (tcl-event-message) "(load done)")
+                (format t "==========>>> load DONE SUCCESS ~%" )
+                (tcl-state :server 'BELT :state "Neutral")
+                (tcl-delete-plan)
+                (tcl-abort)
+                '(SUCCESS ()))
+
+              ((equal (tcl-event-message) "(load error no box)")
+                (format t "==========>>> load DONE ERROR ~%" )
+                (tcl-state :server 'BELT :state "Neutral")
+                (tcl-delete-plan)
+                (tcl-abort)
+                '(ERROR (LOAD LOADING)))
+
+              ((equal (tcl-event-message) "(load error box already present)")
+                (tcl-state :server 'BELT :state "Neutral")
+                (tcl-delete-plan)
+                (tcl-abort)
+                '(ERROR (LOAD LOADING)))
+
+              ((equal (tcl-event-message) "(load error no response from station)")
+                (format t "==========>>> load DONE ERROR ~%" )
+                (tcl-state :server 'BELT :state "Neutral")
+                (let ((digitalIn (queryDigitalIO "IOQueryModule" 'IO '())))
+	          (cond 
+	            ((equal (third digitalIn) 1)
+                      ;(update-robot-state :box-loaded 1)
+                    )
+	            ((equal (third digitalIn) 0)
+                      ;(update-robot-state :box-loaded 0)
+                    )))
+                (tcl-delete-plan)
+                (tcl-abort)
+                '(ERROR (LOAD LOADING)))
+
+              ;;UNLOAD
+              ((equal (tcl-event-message) "(unload not done)")
+                (format t "==========>>> unload START ~%" ))
+
+              ((equal (tcl-event-message) "(unload done)")
+                (format t "==========>>> unload DONE SUCCESS ~%" )
+                (tcl-state :server 'BELT :state "Neutral")
+                (tcl-delete-plan)
+                (tcl-abort)
+                '(SUCCESS ()))
+
+              ((equal (tcl-event-message) "(unload error no box)")
+                (format t "==========>>> unload DONE ERROR ~%" )
+                (tcl-state :server 'BELT :state "Neutral")
+                (tcl-delete-plan)
+                (tcl-abort)
+                '(ERROR (UNLOAD LOADING)))
+
+              ((equal (tcl-event-message) "(unload error box still present)")
+                (format t "==========>>> unload DONE ERROR ~%" )
+                (tcl-state :server 'BELT :state "Neutral")
+                (tcl-delete-plan)
+                (tcl-abort)
+                '(ERROR (UNLOAD LOADING)))
+
+              ((equal (tcl-event-message) "(unload error no response from station)")
+                (format t "==========>>> unload DONE ERROR ~%" )
+                (tcl-state :server 'BELT :state "Neutral")
+                (let ((digitalIn (queryDigitalIO "IOQueryModule" 'IO '())))
+	          (cond 
+	            ((equal (third digitalIn) 1)
+                      ;(update-robot-state :box-loaded 1)
+                   )
+	            ((equal (third digitalIn) 0)
+                      ;(update-robot-state :box-loaded 0)
+                    )))
+                (tcl-delete-plan)
+                (tcl-abort)
+                '(ERROR (UNLOAD LOADING)))
+               ))))
+               
+               
+(define-tcb (ab)
+  (module "MPSModule")
+  (action (
+            (format t "=========================>>> ab ~%")
+            (tcl-activate-event :name 'evt-belt-loading
+                                :handler 'handler-test
+                                :server 'BELT 
+                                :service 'loadevent
+                                :mode 'continuous)
+  )
+))
+
+(define-tcb (ad)
+  (module "MPSModule")
+  (action (
+            (format t "=========================>>> ad ~%")
+            (tcl-activate-event :name 'evt-mps-docking
+		                 :handler 'handler-test 
+		                 :server 'MPSDOCKING
+		                 :service 'dockingevent
+		                 :mode 'continuous)
+  )
+))                    
+
+
+
+

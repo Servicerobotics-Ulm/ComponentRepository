@@ -77,7 +77,11 @@ ComponentSeq2SeqCom::ComponentSeq2SeqCom()
 	
 	// initialize members of ComponentSeq2SeqComROS1InterfacesExtension
 	
+	// initialize members of ComponentSeq2SeqComROSExtension
+	
 	// initialize members of ComponentSeq2SeqComRestInterfacesExtension
+	
+	// initialize members of OpcUaBackendComponentGeneratorExtension
 	
 	// initialize members of PlainOpcUaComponentSeq2SeqComExtension
 	
@@ -189,7 +193,11 @@ void ComponentSeq2SeqCom::init(int argc, char *argv[])
 		
 		// initializations of ComponentSeq2SeqComROS1InterfacesExtension
 		
+		// initializations of ComponentSeq2SeqComROSExtension
+		
 		// initializations of ComponentSeq2SeqComRestInterfacesExtension
+		
+		// initializations of OpcUaBackendComponentGeneratorExtension
 		
 		// initializations of PlainOpcUaComponentSeq2SeqComExtension
 		
@@ -403,7 +411,11 @@ void ComponentSeq2SeqCom::fini()
 	
 	// destruction of ComponentSeq2SeqComROS1InterfacesExtension
 	
+	// destruction of ComponentSeq2SeqComROSExtension
+	
 	// destruction of ComponentSeq2SeqComRestInterfacesExtension
+	
+	// destruction of OpcUaBackendComponentGeneratorExtension
 	
 	// destruction of PlainOpcUaComponentSeq2SeqComExtension
 	
@@ -524,7 +536,11 @@ void ComponentSeq2SeqCom::loadParameter(int argc, char *argv[])
 		
 		// load parameters for ComponentSeq2SeqComROS1InterfacesExtension
 		
+		// load parameters for ComponentSeq2SeqComROSExtension
+		
 		// load parameters for ComponentSeq2SeqComRestInterfacesExtension
+		
+		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentSeq2SeqComExtension
 		

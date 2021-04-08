@@ -1,0 +1,325 @@
+{
+	"name": "ComponentWebotsURServer",
+	"shortDescription": "Device driver component for Universal Robots (UR) manipulators",
+	"type": "Toolify",
+	"description": "<p></p><p> The ComponentWebotsURServer component is the device driver component for Universal Robots (UR) manipulators.</p><p> The component enables the usage of UR manipulators (UR3(e),UR5(e),UR10(e),UR16(e)) together with other software components. The component provides services for the usage of the manipulators on different abstraction levels. Programs created with UR Polyscope, primitive movements, as well as individual joint control e.g. moving planned trajectories can be used.</p><p> The component provides skills for all its provided capabilities, enabling an easy and fast development of robotic behavior task. The component provides skills to enable the usage of sub-programs, which can be created by the end-user on the manipulator using the teach-panel.</p><p></p><p></p>",
+	"purposes": ["Driver component for universal robot manipulators"],
+	"supplier": "Toolify Robotics GmbH",
+	"homepage": "TODO",
+	"hardwareRequirement": "The component is able to operate all Universal Robots manipulators (UR3(e),UR5(e),UR10(e),UR16(e)) with a controller software version xxx or newer. The component is further able to work with the simulator provided by Universal Robots.",
+	"services": [
+	],
+	"mainstates": [
+		"Trajectory",
+		"Neutral"
+	],
+	"parameters": [
+		{
+			"name": "COMMIT",
+			"nameFQN": "COMMIT",
+			"type": "parameter",
+			"description": "Commit the current parameter configuration.",
+			"attributes": []
+		}
+	],
+	"triggers": [
+		{
+			"name": "MOVE_LINEAR",
+			"nameFQN": "CommManipulatorObjects.ManipulatorParameter.MOVE_LINEAR",
+			"type": "trigger",
+			"description": "",
+			"attributes": [
+				{
+					"name": "goalX",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "goalY",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "goalZ",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "goalRX",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "goalRY",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "goalRZ",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "acc",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "speed",
+					"type": "string",
+					"default": "",
+					"description": ""
+				}
+			]
+		},
+		{
+			"name": "MOVE_CIRCULAR",
+			"nameFQN": "CommManipulatorObjects.ManipulatorParameter.MOVE_CIRCULAR",
+			"type": "trigger",
+			"description": "",
+			"attributes": [
+				{
+					"name": "viaX",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "viaY",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "viaZ",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "viaRX",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "viaRY",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "viaRZ",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "goalX",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "goalY",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "goalZ",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "goalRX",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "goalRY",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "goalRZ",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "acc",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "speed",
+					"type": "string",
+					"default": "",
+					"description": ""
+				}
+			]
+		},
+		{
+			"name": "SET_PCS",
+			"nameFQN": "CommManipulatorObjects.ManipulatorParameter.SET_PCS",
+			"type": "trigger",
+			"description": "",
+			"attributes": [
+				{
+					"name": "x",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "y",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "z",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "rX",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "rY",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "rZ",
+					"type": "string",
+					"default": "",
+					"description": ""
+				}
+			]
+		},
+		{
+			"name": "CLEAR_PCS",
+			"nameFQN": "CommManipulatorObjects.ManipulatorParameter.CLEAR_PCS",
+			"type": "trigger",
+			"description": "",
+			"attributes": [
+			]
+		},
+		{
+			"name": "SET_TCP",
+			"nameFQN": "CommManipulatorObjects.ManipulatorParameter.SET_TCP",
+			"type": "trigger",
+			"description": "",
+			"attributes": [
+				{
+					"name": "x",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "y",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "z",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "rX",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "rY",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "rZ",
+					"type": "string",
+					"default": "",
+					"description": ""
+				}
+			]
+		},
+		{
+			"name": "MOVE_PATH",
+			"nameFQN": "CommManipulatorObjects.ManipulatorParameter.MOVE_PATH",
+			"type": "trigger",
+			"description": "",
+			"attributes": [
+				{
+					"name": "pathID",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "overwriteSpeed",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "acc",
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				{
+					"name": "speed",
+					"type": "string",
+					"default": "",
+					"description": ""
+				}
+			]
+		},
+		{
+			"name": "LOAD_PROGRAM",
+			"nameFQN": "CommManipulatorObjects.ManipulatorParameter.LOAD_PROGRAM",
+			"type": "trigger",
+			"description": "",
+			"attributes": [
+				{
+					"name": "name",
+					"type": "string",
+					"default": "",
+					"description": ""
+				}
+			]
+		},
+		{
+			"name": "START_PROGRAM",
+			"nameFQN": "CommManipulatorObjects.ManipulatorParameter.START_PROGRAM",
+			"type": "trigger",
+			"description": "",
+			"attributes": [
+			]
+		}
+	]
+}

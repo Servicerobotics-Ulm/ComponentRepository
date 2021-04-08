@@ -1,0 +1,31 @@
+ComponentDefinition ComponentWebotsMpsDocking logo "/ComponentWebotsMpsDocking/model/logo.png"
+{
+Activity DockingTask
+	{
+		InputPortLink LaserServiceIn { optional oversamplingOk undersamplingOk }
+		InputPortLink BaseStateServiceIn { optional oversamplingOk undersamplingOk }
+	}
+	OutputPort NavigationVelocityServiceOut implements CommNavigationObjects.NavigationVelocityService realizedBy DockingTask {
+	}
+	InputPort BaseStateServiceIn implements CommBasicObjects.BaseStateService {
+	}
+	InputPort LaserServiceIn implements CommBasicObjects.LaserService {
+	}
+
+	OutputPort TrafficLightsServiceOut implements CommBasicObjects.TrafficLightsService realizedBy DockingTask {
+	}
+CoordinationSlavePort CoordinationPort implements CommRobotinoObjects.FestoMPSDockingCoordinationService
+	{
+		PrivateOperationMode laserDocking PrivateOperationMode irDocking PublicOperationMode CommRobotinoObjects.FestoMpsDockingStates.IrDocking { activates ( irDocking ) } PrivateOperationMode unDocking PublicOperationMode CommRobotinoObjects.FestoMpsDockingStates.UnDocking { activates ( unDocking ) } PublicOperationMode CommRobotinoObjects.FestoMpsDockingStates.LaserDocking { activates ( laserDocking ) }
+		SkillRealizationsRef mpsModRealization
+		with dockingevent realizedBy RobotDockingEventServiceOut
+	}
+
+	ComponentParameters ComponentWebotsMpsDocking slave CoordinationPort
+	
+	
+	//OutputPort RobotDockingEventServiceOut implements CommNavigationObjects.RobotDockingEventService realizedBy DockingTask {
+	OutputPort RobotDockingEventServiceOut implements CommRobotinoObjects.RobotinoDockingEvent realizedBy DockingTask {
+	
+	}
+}

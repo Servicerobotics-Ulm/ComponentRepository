@@ -45,16 +45,6 @@ ComponentWebots::ComponentWebots()
 	connections.component.useLogger = false;
 	
 	
-	// initialize members of ComponentWebotsROS1InterfacesExtension
-	
-	// initialize members of ComponentWebotsROSExtension
-	
-	// initialize members of ComponentWebotsRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentWebotsExtension
-	
 }
 
 void ComponentWebots::addPortFactory(const std::string &name, ComponentWebotsPortFactoryInterface *portFactory)
@@ -127,16 +117,6 @@ void ComponentWebots::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentWebotsROS1InterfacesExtension
-		
-		// initializations of ComponentWebotsROSExtension
-		
-		// initializations of ComponentWebotsRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentWebotsExtension
 		
 		
 		// initialize all registered port-factories
@@ -290,16 +270,6 @@ void ComponentWebots::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentWebotsROS1InterfacesExtension
-	
-	// destruction of ComponentWebotsROSExtension
-	
-	// destruction of ComponentWebotsRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentWebotsExtension
-	
 }
 
 void ComponentWebots::loadParameter(int argc, char *argv[])
@@ -374,16 +344,6 @@ void ComponentWebots::loadParameter(int argc, char *argv[])
 		
 		
 		
-		
-		// load parameters for ComponentWebotsROS1InterfacesExtension
-		
-		// load parameters for ComponentWebotsROSExtension
-		
-		// load parameters for ComponentWebotsRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentWebotsExtension
 		
 		
 		// load parameters for all registered component-extensions

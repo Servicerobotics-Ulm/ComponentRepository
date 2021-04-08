@@ -10,8 +10,10 @@ Activity DebugTask
 	OutputPort TaskEventOut implements CommBasicObjects.TaskEvent realizedBy DebugTask {
 	}
 	InputHandler CommandHandler triggeredFrom TaskSendIn activeQueue { }
-CoordinationSlavePort CoordinationPort implements CommBasicObjects.Seq2SeqComCoordinationService
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.Seq2SeqComCoordinationService
 	{
+		SkillRealizationsRef seq2seq
+		with taskEvent realizedBy TaskEventOut
 	}
 	ComponentParameters ComponentSeq2SeqCom slave CoordinationPort
 }

@@ -174,6 +174,8 @@ int LaserTask::on_execute()
         if(laser.extract_distance(i) <= max_dist) ++num_valid_points;
       }
       scan.set_scan_size(num_valid_points);
+      const int max_scan_size = 1+  (laser.width*100) / laser.resolution;
+      scan.set_max_scan_size(max_scan_size);
       unsigned int valid_point_index = 0;
       for(unsigned int i=0; i<num_points; ++i)
       {

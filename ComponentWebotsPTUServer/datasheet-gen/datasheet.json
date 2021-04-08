@@ -1,0 +1,244 @@
+{
+	"name": "ComponentWebotsPTUServer",
+	"shortDescription": "
+	
+	PTU = Pan Tilt Unit. A camera can be placed on top of the PTU, and the PTU can rotate left/right/up/down to rotate the camera too.
+	
+	How the PTU is added to an slot of the Larry robot:
+	
+	```
+	Pan {
+	  topSlot [
+	    Robot {
+	      name "PTU"
+	      supervisor TRUE
+	      controller "<extern>"
+	    }
+	    DEF PanRotate Transform {
+	# rotate by changing this 4. value by supervisor
+	      rotation 0 1 0 0
+	      children [
+	        Tilt {
+	          topSlot [
+	            DEF TiltRotate Transform {
+	# rotate by changing this 4. value by supervisor
+	              rotation 0 0 1 0
+	              children [
+	                Transform {
+	                  rotation 0 -1 0 1.5708
+	                  children [
+	                    kinect_v2 {
+	                      controller "<extern>"
+	                      supervisor TRUE
+	                    }
+	                    microphone {
+	                    }
+	                  ]
+	                }
+	              ]
+	            }
+	          ]
+	        }
+	      ]
+	    }
+	  ]
+	}
+	```
+	",
+	"type": "Toolify",
+	"description": "",
+	"purposes": [],
+	"services": [
+	],
+	"mainstates": [
+		"Move",
+		"Servo",
+		"Neutral"
+	],
+	"parameters": [
+		{
+			"name": "ACCELERATION_PAN",
+			"nameFQN": "DomainPTU.PTUParameter.ACCELERATION_PAN",
+			"type": "parameter",
+			"description": "",
+			"attributes": [
+				{
+					"name": "acc",
+					"type": "string",
+					"default": "1.795",
+					"description": ""
+				}
+			]
+		},
+		{
+			"name": "ACCELERATION_TILT",
+			"nameFQN": "DomainPTU.PTUParameter.ACCELERATION_TILT",
+			"type": "parameter",
+			"description": "",
+			"attributes": [
+				{
+					"name": "acc",
+					"type": "string",
+					"default": "1.795",
+					"description": ""
+				}
+			]
+		},
+		{
+			"name": "RESET",
+			"nameFQN": "DomainPTU.PTUParameter.RESET",
+			"type": "parameter",
+			"description": "",
+			"attributes": [
+				{
+					"name": "reset",
+					"type": "string",
+					"default": "false",
+					"description": ""
+				}
+			]
+		},
+		{
+			"name": "SENSOR_OFFSET",
+			"nameFQN": "DomainPTU.PTUParameter.SENSOR_OFFSET",
+			"type": "parameter",
+			"description": "",
+			"attributes": [
+				{
+					"name": "x",
+					"type": "string",
+					"default": "-140",
+					"description": ""
+				},
+				{
+					"name": "y",
+					"type": "string",
+					"default": "-13",
+					"description": ""
+				},
+				{
+					"name": "z",
+					"type": "string",
+					"default": "1097",
+					"description": ""
+				},
+				{
+					"name": "azimuth",
+					"type": "string",
+					"default": "0.0",
+					"description": ""
+				},
+				{
+					"name": "elevation",
+					"type": "string",
+					"default": "0.0",
+					"description": ""
+				},
+				{
+					"name": "roll",
+					"type": "string",
+					"default": "0.0",
+					"description": ""
+				}
+			]
+		},
+		{
+			"name": "SPEED_LIMIT_PAN",
+			"nameFQN": "DomainPTU.PTUParameter.SPEED_LIMIT_PAN",
+			"type": "parameter",
+			"description": "",
+			"attributes": [
+				{
+					"name": "min",
+					"type": "string",
+					"default": "0.028",
+					"description": ""
+				},
+				{
+					"name": "max",
+					"type": "string",
+					"default": "2.604",
+					"description": ""
+				}
+			]
+		},
+		{
+			"name": "SPEED_LIMIT_TILT",
+			"nameFQN": "DomainPTU.PTUParameter.SPEED_LIMIT_TILT",
+			"type": "parameter",
+			"description": "",
+			"attributes": [
+				{
+					"name": "min",
+					"type": "string",
+					"default": "0.028",
+					"description": ""
+				},
+				{
+					"name": "max",
+					"type": "string",
+					"default": "2.604",
+					"description": ""
+				}
+			]
+		},
+		{
+			"name": "SPEED_PAN",
+			"nameFQN": "DomainPTU.PTUParameter.SPEED_PAN",
+			"type": "parameter",
+			"description": "",
+			"attributes": [
+				{
+					"name": "speed",
+					"type": "string",
+					"default": "1.0",
+					"description": ""
+				}
+			]
+		},
+		{
+			"name": "SPEED_TILT",
+			"nameFQN": "DomainPTU.PTUParameter.SPEED_TILT",
+			"type": "parameter",
+			"description": "",
+			"attributes": [
+				{
+					"name": "speed",
+					"type": "string",
+					"default": "1.0",
+					"description": ""
+				}
+			]
+		},
+		{
+			"name": "START_UP_SPEED_PAN",
+			"nameFQN": "DomainPTU.PTUParameter.START_UP_SPEED_PAN",
+			"type": "parameter",
+			"description": "",
+			"attributes": [
+				{
+					"name": "speed",
+					"type": "string",
+					"default": "0.2",
+					"description": ""
+				}
+			]
+		},
+		{
+			"name": "START_UP_SPEED_TILT",
+			"nameFQN": "DomainPTU.PTUParameter.START_UP_SPEED_TILT",
+			"type": "parameter",
+			"description": "",
+			"attributes": [
+				{
+					"name": "speed",
+					"type": "string",
+					"default": "0.2",
+					"description": ""
+				}
+			]
+		}
+	],
+	"triggers": [
+	]
+}

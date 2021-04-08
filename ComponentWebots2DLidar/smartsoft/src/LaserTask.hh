@@ -14,20 +14,18 @@
 // If you want the toolchain to re-generate this file, please 
 // delete it before running the code generator.
 //--------------------------------------------------------------------------
-//------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 //
 //  Copyright (C) 2010 Manuel Wopfner
-//                2020 Thomas Feldmeier
+//                2021 Thomas Feldmeier
 //
-//        wopfner@hs-ulm.de
-//        thomas.feldmeier@thu.de
+//        schlegel@hs-ulm.de
 //
-//        Christian Schlegel (schlegel@hs-ulm.de)
+//        Servicerobotic Ulm
 //        University of Applied Sciences
 //        Prittwitzstr. 10
-//        89075 Ulm (Germany)
-//
-//  This file is part of the "SmartLaserLMS100Server component".
+//        89075 Ulm
+//        Germany
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -42,7 +40,11 @@
 //  You should have received a copy of the GNU Lesser General Public
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+//
 //--------------------------------------------------------------------------
+
+
+
 #ifndef _LASERTASK_HH
 #define _LASERTASK_HH
 
@@ -72,7 +74,7 @@ class LaserTask  : public LaserTaskCore
 {
 
 private:
-    int webotsTimeStep;
+    CommBasicObjects::CommTimeStamp lastTimeStep;
     int horizontalResolution;
     unsigned int numberValidPoints;
     webots::Robot *webotsRobot;
