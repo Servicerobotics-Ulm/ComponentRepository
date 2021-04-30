@@ -283,6 +283,18 @@ int ManagementTask::on_execute()
 				commObject1 = "CommNavigationObjects::CommPlannerGoal";
 				break;
 
+			case port_visual_map:
+				if(disconnect && connected[port_visual_map]){
+					COMP->visualMarkerMapTask->disconnectServices();
+					COMP->visualMarkerMapTask->stop();
+					connected[port_visual_map] = 0;
+					std::cout << display_names[port_visual_map]<<" disconnected." << std::endl;
+				}
+				portType = port_type_name[port_types::port_query_type];
+				commObject1 = "CommBasicObjects::CommVoid";
+				commObject2 = "CommLocalizationObjects::CommVisualLocalizationFeatureMap";
+				break;
+
 			default:  //port_max
 				std::cout << "invalid input!" << std::endl;
 				return 0;
@@ -513,6 +525,14 @@ int ManagementTask::on_execute()
 					COMP->plannerGoalTask->connectServices();
 					COMP->plannerGoalTask->start();
 					connected[port_planner_goal_push_client] = 1;
+					break;
+				case port_visual_map:
+					COMP->connections.visualMarkers.serverName = con[toCon].first;
+					COMP->connections.visualMarkers.serviceName = con[toCon].second;
+					std::cout << "starting VisualLocMapTask " << std::endl;
+					COMP->visualMarkerMapTask->connectServices();
+					COMP->visualMarkerMapTask->start();
+					connected[port_visual_map] = 1;
 					break;
 			}
 		}
