@@ -50,6 +50,8 @@
 #include <DomainVision/CommRGBDImageACE.hh>
 #include <DomainVision/CommVideoImage.hh>
 #include <DomainVision/CommVideoImageACE.hh>
+#include <CommLocalizationObjects/CommVisualLocalizationFeatureMap.hh>
+#include <CommLocalizationObjects/CommVisualLocalizationFeatureMapACE.hh>
 #include <CommBasicObjects/CommVoid.hh>
 #include <CommBasicObjects/CommVoidACE.hh>
 #include <CommTrackingObjects/PersonLostEventState.hh>
@@ -74,6 +76,7 @@ public:
 	virtual Smart::IPushClientPattern<CommLocalizationObjects::CommAmclVisualizationInfo> * createAmclVisualizationInfoIn() = 0;
 	virtual Smart::IPushClientPattern<CommTrackingObjects::CommDetectedMarkerList> * createMarkerListDetectionServiceIn() = 0;
 	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> * createRGBDImageQueryServiceReq() = 0;
+	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, CommLocalizationObjects::CommVisualLocalizationFeatureMap> * createVisualMarkers() = 0;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * createBaseClient() = 0;
 	virtual Smart::IPushClientPattern<CommNavigationObjects::CommGridMap> * createCurPushClient() = 0;
 	virtual Smart::IPushClientPattern<DomainVision::CommDepthImage> * createDepthPushNewestClient() = 0;

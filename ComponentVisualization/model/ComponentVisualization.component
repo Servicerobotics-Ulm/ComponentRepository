@@ -19,6 +19,8 @@ ComponentDefinition ComponentVisualization logo "/ComponentVisualization/model/l
 	}
 	InputPort imagePushNewestClient implements DomainVision.RGBImagePushService {
 	}
+
+	
 	Activity Laser1Task 
 	{
 	}
@@ -92,5 +94,12 @@ InputPort plannerGoalPushClient implements CommNavigationObjects.PlannerGoalServ
 Activity LtmMapTask
 	{
 		DefaultTrigger PeriodicTimer 0.017 Hz
+	}
+	
+	RequestPort VisualMarkers implements CommLocalizationObjects.VisualMarkerMapRequestService {
+	}
+	Activity VisualMarkerMapTask
+	{
+		DefaultTrigger PeriodicTimer 1.0 Hz
 	}
 }

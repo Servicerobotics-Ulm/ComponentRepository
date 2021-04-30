@@ -37,6 +37,7 @@ public:
 	virtual Smart::IPushClientPattern<CommLocalizationObjects::CommAmclVisualizationInfo> * createAmclVisualizationInfoIn() override;
 	virtual Smart::IPushClientPattern<CommTrackingObjects::CommDetectedMarkerList> * createMarkerListDetectionServiceIn() override;
 	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> * createRGBDImageQueryServiceReq() override;
+	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, CommLocalizationObjects::CommVisualLocalizationFeatureMap> * createVisualMarkers() override;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * createBaseClient() override;
 	virtual Smart::IPushClientPattern<CommNavigationObjects::CommGridMap> * createCurPushClient() override;
 	virtual Smart::IPushClientPattern<DomainVision::CommDepthImage> * createDepthPushNewestClient() override;

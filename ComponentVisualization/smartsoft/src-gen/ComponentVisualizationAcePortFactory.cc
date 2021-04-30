@@ -67,6 +67,11 @@ Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDIma
 	return new SmartACE::QueryClient<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage>(componentImpl);
 }
 
+Smart::IQueryClientPattern<CommBasicObjects::CommVoid, CommLocalizationObjects::CommVisualLocalizationFeatureMap> * ComponentVisualizationAcePortFactory::createVisualMarkers()
+{
+	return new SmartACE::QueryClient<CommBasicObjects::CommVoid, CommLocalizationObjects::CommVisualLocalizationFeatureMap>(componentImpl);
+}
+
 Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * ComponentVisualizationAcePortFactory::createBaseClient()
 {
 	return new SmartACE::PushClient<CommBasicObjects::CommBaseState>(componentImpl);

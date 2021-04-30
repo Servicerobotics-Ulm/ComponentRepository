@@ -74,6 +74,9 @@ ComponentVisualization::ComponentVisualization()
 	rGBDTaskTrigger = NULL;
 	uSArTask = NULL;
 	uSArTaskTrigger = NULL;
+	visualMarkerMapTask = NULL;
+	visualMarkerMapTaskTrigger = NULL;
+	visualMarkers = NULL;
 	baseClient = NULL;
 	baseClientInputTaskTrigger = NULL;
 	baseClientUpcallManager = NULL;
@@ -157,6 +160,12 @@ ComponentVisualization::ComponentVisualization()
 	connections.rGBDImageQueryServiceReq.serviceName = "unknown";
 	connections.rGBDImageQueryServiceReq.interval = 1;
 	connections.rGBDImageQueryServiceReq.roboticMiddleware = "ACE_SmartSoft";
+	connections.visualMarkers.initialConnect = false;
+	connections.visualMarkers.wiringName = "VisualMarkers";
+	connections.visualMarkers.serverName = "unknown";
+	connections.visualMarkers.serviceName = "unknown";
+	connections.visualMarkers.interval = 1;
+	connections.visualMarkers.roboticMiddleware = "ACE_SmartSoft";
 	connections.baseClient.initialConnect = false;
 	connections.baseClient.wiringName = "baseClient";
 	connections.baseClient.serverName = "unknown";
@@ -345,6 +354,14 @@ ComponentVisualization::ComponentVisualization()
 	connections.uSArTask.scheduler = "DEFAULT";
 	connections.uSArTask.priority = -1;
 	connections.uSArTask.cpuAffinity = -1;
+	connections.visualMarkerMapTask.minActFreq = 0.0;
+	connections.visualMarkerMapTask.maxActFreq = 0.0;
+	connections.visualMarkerMapTask.trigger = "PeriodicTimer";
+	connections.visualMarkerMapTask.periodicActFreq = 1.0;
+	// scheduling default parameters
+	connections.visualMarkerMapTask.scheduler = "DEFAULT";
+	connections.visualMarkerMapTask.priority = -1;
+	connections.visualMarkerMapTask.cpuAffinity = -1;
 	
 }
 
@@ -422,6 +439,22 @@ Smart::StatusCode ComponentVisualization::connectRGBDImageQueryServiceReq(const 
 	{
 		ACE_OS::sleep(ACE_Time_Value(0,500000));
 		status = COMP->rGBDImageQueryServiceReq->connect(serverName, serviceName);
+	}
+	std::cout << "connected.\n";
+	return status;
+}
+Smart::StatusCode ComponentVisualization::connectVisualMarkers(const std::string &serverName, const std::string &serviceName) {
+	Smart::StatusCode status;
+	
+	if(connections.visualMarkers.initialConnect == false) {
+		return Smart::SMART_OK;
+	}
+	std::cout << "connecting to: " << serverName << "; " << serviceName << std::endl;
+	status = visualMarkers->connect(serverName, serviceName);
+	while(status != Smart::SMART_OK)
+	{
+		ACE_OS::sleep(ACE_Time_Value(0,500000));
+		status = COMP->visualMarkers->connect(serverName, serviceName);
 	}
 	std::cout << "connected.\n";
 	return status;
@@ -693,6 +726,8 @@ Smart::StatusCode ComponentVisualization::connectAndStartAllServices() {
 	if(status != Smart::SMART_OK) return status;
 	status = connectRGBDImageQueryServiceReq(connections.rGBDImageQueryServiceReq.serverName, connections.rGBDImageQueryServiceReq.serviceName);
 	if(status != Smart::SMART_OK) return status;
+	status = connectVisualMarkers(connections.visualMarkers.serverName, connections.visualMarkers.serviceName);
+	if(status != Smart::SMART_OK) return status;
 	status = connectBaseClient(connections.baseClient.serverName, connections.baseClient.serviceName);
 	if(status != Smart::SMART_OK) return status;
 	status = connectCurPushClient(connections.curPushClient.serverName, connections.curPushClient.serviceName);
@@ -954,6 +989,20 @@ void ComponentVisualization::startAllTasks() {
 	} else {
 		uSArTask->start();
 	}
+	// start task VisualMarkerMapTask
+	if(connections.visualMarkerMapTask.scheduler != "DEFAULT") {
+		ACE_Sched_Params visualMarkerMapTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
+		if(connections.visualMarkerMapTask.scheduler == "FIFO") {
+			visualMarkerMapTask_SchedParams.policy(ACE_SCHED_FIFO);
+			visualMarkerMapTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+		} else if(connections.visualMarkerMapTask.scheduler == "RR") {
+			visualMarkerMapTask_SchedParams.policy(ACE_SCHED_RR);
+			visualMarkerMapTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+		}
+		visualMarkerMapTask->start(visualMarkerMapTask_SchedParams, connections.visualMarkerMapTask.cpuAffinity);
+	} else {
+		visualMarkerMapTask->start();
+	}
 }
 
 /**
@@ -1035,6 +1084,7 @@ void ComponentVisualization::init(int argc, char *argv[])
 		amclVisualizationInfoIn = portFactoryRegistry[connections.amclVisualizationInfoIn.roboticMiddleware]->createAmclVisualizationInfoIn();
 		markerListDetectionServiceIn = portFactoryRegistry[connections.markerListDetectionServiceIn.roboticMiddleware]->createMarkerListDetectionServiceIn();
 		rGBDImageQueryServiceReq = portFactoryRegistry[connections.rGBDImageQueryServiceReq.roboticMiddleware]->createRGBDImageQueryServiceReq();
+		visualMarkers = portFactoryRegistry[connections.visualMarkers.roboticMiddleware]->createVisualMarkers();
 		baseClient = portFactoryRegistry[connections.baseClient.roboticMiddleware]->createBaseClient();
 		curPushClient = portFactoryRegistry[connections.curPushClient.roboticMiddleware]->createCurPushClient();
 		depthPushNewestClient = portFactoryRegistry[connections.depthPushNewestClient.roboticMiddleware]->createDepthPushNewestClient();
@@ -1124,6 +1174,10 @@ void ComponentVisualization::init(int argc, char *argv[])
 		if(connections.rGBDImageQueryServiceReq.roboticMiddleware == "ACE_SmartSoft") {
 			//FIXME: this must also work with other implementations
 			dynamic_cast<SmartACE::QueryClient<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage>*>(rGBDImageQueryServiceReq)->add(wiringSlave, connections.rGBDImageQueryServiceReq.wiringName);
+		}
+		if(connections.visualMarkers.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::QueryClient<CommBasicObjects::CommVoid, CommLocalizationObjects::CommVisualLocalizationFeatureMap>*>(visualMarkers)->add(wiringSlave, connections.visualMarkers.wiringName);
 		}
 		if(connections.baseClient.roboticMiddleware == "ACE_SmartSoft") {
 			//FIXME: this must also work with other implementations
@@ -1603,6 +1657,44 @@ void ComponentVisualization::init(int argc, char *argv[])
 			}
 		} 
 		
+		// create Task VisualMarkerMapTask
+		visualMarkerMapTask = new VisualMarkerMapTask(component);
+		// configure input-links
+		// configure task-trigger (if task is configurable)
+		if(connections.visualMarkerMapTask.trigger == "PeriodicTimer") {
+			// create PeriodicTimerTrigger
+			int microseconds = 1000*1000 / connections.visualMarkerMapTask.periodicActFreq;
+			if(microseconds > 0) {
+				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
+				triggerPtr->attach(visualMarkerMapTask);
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				// store trigger in class member
+				visualMarkerMapTaskTrigger = triggerPtr;
+			} else {
+				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task VisualMarkerMapTask" << std::endl;
+			}
+		} else if(connections.visualMarkerMapTask.trigger == "DataTriggered") {
+			visualMarkerMapTaskTrigger = getInputTaskTriggerFromString(connections.visualMarkerMapTask.inPortRef);
+			if(visualMarkerMapTaskTrigger != NULL) {
+				visualMarkerMapTaskTrigger->attach(visualMarkerMapTask, connections.visualMarkerMapTask.prescale);
+			} else {
+				std::cerr << "ERROR: could not set-up InPort " << connections.visualMarkerMapTask.inPortRef << " as activation source for Task VisualMarkerMapTask" << std::endl;
+			}
+		} else
+		{
+			// setup default task-trigger as PeriodicTimer
+			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
+			int microseconds = 1000*1000 / 1.0;
+			if(microseconds > 0) {
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				triggerPtr->attach(visualMarkerMapTask);
+				// store trigger in class member
+				visualMarkerMapTaskTrigger = triggerPtr;
+			} else {
+				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task VisualMarkerMapTask" << std::endl;
+			}
+		}
+		
 		
 		// link observers with subjects
 	} catch (const std::exception &ex) {
@@ -1759,6 +1851,12 @@ void ComponentVisualization::fini()
 		uSArTaskTrigger->detach(uSArTask);
 		delete uSArTask;
 	}
+	// unlink all UpcallManagers
+	// unlink the TaskTrigger
+	if(visualMarkerMapTaskTrigger != NULL){
+		visualMarkerMapTaskTrigger->detach(visualMarkerMapTask);
+		delete visualMarkerMapTask;
+	}
 
 	// destroy all input-handler
 
@@ -1813,6 +1911,7 @@ void ComponentVisualization::fini()
 	delete amclVisualizationInfoIn;
 	delete markerListDetectionServiceIn;
 	delete rGBDImageQueryServiceReq;
+	delete visualMarkers;
 	delete baseClient;
 	delete curPushClient;
 	delete depthPushNewestClient;
@@ -1952,6 +2051,14 @@ void ComponentVisualization::loadParameter(int argc, char *argv[])
 		parameter.getString("RGBDImageQueryServiceReq", "wiringName", connections.rGBDImageQueryServiceReq.wiringName);
 		if(parameter.checkIfParameterExists("RGBDImageQueryServiceReq", "roboticMiddleware")) {
 			parameter.getString("RGBDImageQueryServiceReq", "roboticMiddleware", connections.rGBDImageQueryServiceReq.roboticMiddleware);
+		}
+		// load parameters for client VisualMarkers
+		parameter.getBoolean("VisualMarkers", "initialConnect", connections.visualMarkers.initialConnect);
+		parameter.getString("VisualMarkers", "serviceName", connections.visualMarkers.serviceName);
+		parameter.getString("VisualMarkers", "serverName", connections.visualMarkers.serverName);
+		parameter.getString("VisualMarkers", "wiringName", connections.visualMarkers.wiringName);
+		if(parameter.checkIfParameterExists("VisualMarkers", "roboticMiddleware")) {
+			parameter.getString("VisualMarkers", "roboticMiddleware", connections.visualMarkers.roboticMiddleware);
 		}
 		// load parameters for client baseClient
 		parameter.getBoolean("baseClient", "initialConnect", connections.baseClient.initialConnect);
@@ -2390,6 +2497,25 @@ void ComponentVisualization::loadParameter(int argc, char *argv[])
 		}
 		if(parameter.checkIfParameterExists("USArTask", "cpuAffinity")) {
 			parameter.getInteger("USArTask", "cpuAffinity", connections.uSArTask.cpuAffinity);
+		}
+		// load parameters for task VisualMarkerMapTask
+		parameter.getDouble("VisualMarkerMapTask", "minActFreqHz", connections.visualMarkerMapTask.minActFreq);
+		parameter.getDouble("VisualMarkerMapTask", "maxActFreqHz", connections.visualMarkerMapTask.maxActFreq);
+		parameter.getString("VisualMarkerMapTask", "triggerType", connections.visualMarkerMapTask.trigger);
+		if(connections.visualMarkerMapTask.trigger == "PeriodicTimer") {
+			parameter.getDouble("VisualMarkerMapTask", "periodicActFreqHz", connections.visualMarkerMapTask.periodicActFreq);
+		} else if(connections.visualMarkerMapTask.trigger == "DataTriggered") {
+			parameter.getString("VisualMarkerMapTask", "inPortRef", connections.visualMarkerMapTask.inPortRef);
+			parameter.getInteger("VisualMarkerMapTask", "prescale", connections.visualMarkerMapTask.prescale);
+		}
+		if(parameter.checkIfParameterExists("VisualMarkerMapTask", "scheduler")) {
+			parameter.getString("VisualMarkerMapTask", "scheduler", connections.visualMarkerMapTask.scheduler);
+		}
+		if(parameter.checkIfParameterExists("VisualMarkerMapTask", "priority")) {
+			parameter.getInteger("VisualMarkerMapTask", "priority", connections.visualMarkerMapTask.priority);
+		}
+		if(parameter.checkIfParameterExists("VisualMarkerMapTask", "cpuAffinity")) {
+			parameter.getInteger("VisualMarkerMapTask", "cpuAffinity", connections.visualMarkerMapTask.cpuAffinity);
 		}
 		
 		

@@ -67,6 +67,8 @@ class ComponentVisualizationExtension;
 #include <DomainVision/CommRGBDImageACE.hh>
 #include <DomainVision/CommVideoImage.hh>
 #include <DomainVision/CommVideoImageACE.hh>
+#include <CommLocalizationObjects/CommVisualLocalizationFeatureMap.hh>
+#include <CommLocalizationObjects/CommVisualLocalizationFeatureMapACE.hh>
 #include <CommBasicObjects/CommVoid.hh>
 #include <CommBasicObjects/CommVoidACE.hh>
 #include <CommTrackingObjects/PersonLostEventState.hh>
@@ -89,6 +91,7 @@ class ComponentVisualizationExtension;
 #include "PlannerGoalTask.hh"
 #include "RGBDTask.hh"
 #include "USArTask.hh"
+#include "VisualMarkerMapTask.hh"
 // include UpcallManagers and InputCollectors
 #include "AmclVisualizationInfoInUpcallManager.hh"
 #include "AmclVisualizationInfoInInputCollector.hh"
@@ -207,6 +210,8 @@ public:
 	RGBDTask *rGBDTask;
 	Smart::TaskTriggerSubject* uSArTaskTrigger;
 	USArTask *uSArTask;
+	Smart::TaskTriggerSubject* visualMarkerMapTaskTrigger;
+	VisualMarkerMapTask *visualMarkerMapTask;
 	
 	// define input-ports
 	// InputPort AmclVisualizationInfoIn
@@ -287,6 +292,7 @@ public:
 	
 	// define request-ports
 	Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> *rGBDImageQueryServiceReq;
+	Smart::IQueryClientPattern<CommBasicObjects::CommVoid, CommLocalizationObjects::CommVisualLocalizationFeatureMap> *visualMarkers;
 	Smart::IQueryClientPattern<CommNavigationObjects::CommGridMapRequest, CommNavigationObjects::CommGridMap> *ltmQueryClient;
 	Smart::IQueryClientPattern<CommTrackingObjects::CommPersonId, CommTrackingObjects::CommDetectedPerson> *personDetectionQueryClient;
 	
@@ -349,6 +355,7 @@ public:
 	Smart::StatusCode connectAmclVisualizationInfoIn(const std::string &serverName, const std::string &serviceName);
 	Smart::StatusCode connectMarkerListDetectionServiceIn(const std::string &serverName, const std::string &serviceName);
 	Smart::StatusCode connectRGBDImageQueryServiceReq(const std::string &serverName, const std::string &serviceName);
+	Smart::StatusCode connectVisualMarkers(const std::string &serverName, const std::string &serviceName);
 	Smart::StatusCode connectBaseClient(const std::string &serverName, const std::string &serviceName);
 	Smart::StatusCode connectCurPushClient(const std::string &serverName, const std::string &serviceName);
 	Smart::StatusCode connectDepthPushNewestClient(const std::string &serverName, const std::string &serviceName);
@@ -650,6 +657,22 @@ public:
 			int priority;
 			int cpuAffinity;
 		} uSArTask;
+		struct VisualMarkerMapTask_struct {
+			double minActFreq;
+			double maxActFreq;
+			std::string trigger;
+			// only one of the following two params is 
+			// actually used at run-time according 
+			// to the system config model
+			double periodicActFreq;
+			// or
+			std::string inPortRef;
+			int prescale;
+			// scheduling parameters
+			std::string scheduler;
+			int priority;
+			int cpuAffinity;
+		} visualMarkerMapTask;
 		
 		//--- upcall parameter ---
 		
@@ -680,6 +703,14 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} rGBDImageQueryServiceReq;
+		struct VisualMarkers_struct {
+			bool initialConnect;
+			std::string serverName;
+			std::string serviceName;
+			std::string wiringName;
+			long interval;
+			std::string roboticMiddleware;
+		} visualMarkers;
 		struct BaseClient_struct {
 			bool initialConnect;
 			std::string serverName;

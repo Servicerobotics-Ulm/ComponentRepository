@@ -274,6 +274,24 @@ maxActFreqHz 0.0
 # priority 0
 # cpuAffinity 0
 
+[VisualMarkerMapTask]
+minActFreqHz 0.0
+maxActFreqHz 0.0
+# setup default trigger as PeriodicTimer
+triggerType PeriodicTimer
+periodicActFreqHz 1.0
+# other trigger-types are:
+#triggerType PeriodicTimer
+#periodicActFreqHz 0.0
+# or alternatively:
+#triggerType DataTriggered
+#inPortRef <InPortName>
+#prescale 1
+# optional scheduling parameters
+# scheduler FIFO
+# priority 0
+# cpuAffinity 0
+
 ##########################
 # InputHandler parameters
 
@@ -304,6 +322,14 @@ initialConnect false
 serverName unknown
 serviceName unknown
 wiringName RGBDImageQueryServiceReq
+interval 1
+roboticMiddleware ACE_SmartSoft
+
+[VisualMarkers]
+initialConnect false
+serverName unknown
+serviceName unknown
+wiringName VisualMarkers
 interval 1
 roboticMiddleware ACE_SmartSoft
 

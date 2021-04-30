@@ -13,5 +13,17 @@
 // Please do not modify this file. It will be re-generated
 // running the code generator.
 //--------------------------------------------------------------------------
+#ifndef _VISUALMARKERMAPTASK_OBSERVER_INTERFACE_HH
+#define _VISUALMARKERMAPTASK_OBSERVER_INTERFACE_HH
 
-// Generated with SmartMDSD Toolchain Version 3.14.0.qualifier
+// forward declaration
+class VisualMarkerMapTask;
+
+class VisualMarkerMapTaskObserverInterface {
+public:
+	virtual ~VisualMarkerMapTaskObserverInterface() {  }
+
+	virtual void on_update_from(const VisualMarkerMapTask *subject) = 0;
+};
+
+#endif
