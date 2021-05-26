@@ -101,7 +101,6 @@ void Robot::update(double newxpos, double newypos, double newalpha, double vx, d
 	
 	if(false == this->_ignoreOdometryEvent)
 	{
-		//todo webots set velocity
 		robotVel.set_vX(vx,1);
 		robotVel.set_vY(vy,1);
 		robotVel.set_WZ_base(omega);

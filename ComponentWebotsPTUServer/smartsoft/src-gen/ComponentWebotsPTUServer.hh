@@ -29,14 +29,6 @@
 class ComponentWebotsPTUServerPortFactoryInterface;
 class ComponentWebotsPTUServerExtension;
 
-// includes for ComponentWebotsPTUServerROS1InterfacesExtension
-
-// includes for ComponentWebotsPTUServerROSExtension
-
-// includes for ComponentWebotsPTUServerRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentWebotsPTUServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -175,16 +167,6 @@ public:
 	// define request-handlers
 	MovePTUQueryServiceAnswHandler *movePTUQueryServiceAnswHandler;
 	PTUStateQueryServiceAnswHandler *pTUStateQueryServiceAnswHandler;
-	
-	// definitions of ComponentWebotsPTUServerROS1InterfacesExtension
-	
-	// definitions of ComponentWebotsPTUServerROSExtension
-	
-	// definitions of ComponentWebotsPTUServerRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentWebotsPTUServerExtension
 	
 	
 	// define default slave ports
@@ -375,16 +357,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} baseStateQueryClient;
-		
-		// -- parameters for ComponentWebotsPTUServerROS1InterfacesExtension
-		
-		// -- parameters for ComponentWebotsPTUServerROSExtension
-		
-		// -- parameters for ComponentWebotsPTUServerRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentWebotsPTUServerExtension
 		
 	} connections;
 };

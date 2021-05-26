@@ -1,24 +1,19 @@
 ComponentParameter ComponentWebotsPTUServerParams component ComponentWebotsPTUServer
 {
-	InternalParameter webots
-	{
-		/** the webots Camera and RangeFinder device must be in children of an extra robot with this name */
+	InternalParameter webots {
+		/** the PTU must be in children of an extra robot with this name, controller "&lt;extern&gt;" and supervisor TRUE */
   		robotName : String = "PTU"
 	}
-	ParameterSetInstance DomainPTU.PTUParameter
-	{
+	ParameterSetInstance DomainPTU.PTUParameter {
 		ParameterInstance ACCELERATION_PAN {
 			acc = 1.795
 		}
-
 		ParameterInstance ACCELERATION_TILT{
 			acc = 1.795
 		}
-
 		ParameterInstance RESET {
 			reset = false
 		}
-
 		ParameterInstance SENSOR_OFFSET {
 			x = -140
 			y = -13
@@ -27,48 +22,44 @@ ComponentParameter ComponentWebotsPTUServerParams component ComponentWebotsPTUSe
 			elevation = 0.0
 			roll = 0.0
 		}
-
 		ParameterInstance SPEED_LIMIT_PAN {
 			min = 0.028
 			max = 2.604
 		}
-
 		ParameterInstance SPEED_LIMIT_TILT {
 			min = 0.028
 			max = 2.604
 		}
-
 		ParameterInstance SPEED_PAN {
 			speed = 1.0
 		}
-
 		ParameterInstance SPEED_TILT {
 			speed = 1.0
 		}
-
 		ParameterInstance START_UP_SPEED_PAN {
 			speed = 0.2
 		}
-
 		ParameterInstance START_UP_SPEED_TILT {
 			speed = 0.2
 		}
 	}
-
-	InternalParameter PTU
-	{
+	InternalParameter PTU {
 		device : String = "/dev/ptu"
 		verbose : Boolean = false
+		/** position relative to mobile robot [mm] */
 		x : Int32 = 0
+		/** position relative to mobile robot [mm] */ 
 		y : Int32 = 0
+		/** position relative to mobile robot [mm] */
 		z : Int32 = 0
+		/** counterclockwise horizontal rotation relative to mobile robot [radians] */
 		azimuth : Double = 0
+		/** rotation down/up relative to mobile robot [radians] */
 		elevation : Double = 0
+		/** rotation around front direction relative to mobile robot [radians] */
 		roll : Double = 0
 	}
-
-	InternalParameter Base
-	{
+	InternalParameter Base {
 		on_base : Boolean = true
 		x : Int32 = 0
 		y : Int32 = 0
@@ -77,5 +68,4 @@ ComponentParameter ComponentWebotsPTUServerParams component ComponentWebotsPTUSe
 		steer_a : Double = 0
 		turret_a : Double = 0
 	}
-
 }

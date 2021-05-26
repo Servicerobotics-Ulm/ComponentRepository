@@ -1,23 +1,26 @@
-ComponentDefinition ComponentWebots2DLidar {
- 
-Activity LaserTask
-	{
+ComponentDefinition ComponentWebots2DLidar { 
+	Activity LaserTask {
 		InputPortLink BaseStateServiceIn { optional oversamplingOk undersamplingOk }
-		ActivationConstraints {
-			configurable = true
-			minActFreq = 33.0 Hz
-			maxActFreq = 40.0 Hz
-		}
 	} 
+    /** Reads periodically the position etc. of the robot which has this laser: CommBasicObjects::CommBaseState
+     * 
+     * Connect to port <a href="../ComponentWebotsMobileRobot#BaseStateServiceOut">BaseStateServiceOut of ComponentWebotsMobileRobot</a>      
+     */	
 	InputPort BaseStateServiceIn implements CommBasicObjects.BaseStateService {
 	}
+	/** Writes periodically the laser scans: CommBasicObjects::CommMobileLaserScan
+	*/
 	OutputPort LaserServiceOut implements CommBasicObjects.LaserService realizedBy LaserTask {
 	}
+	/** Writes on request the latest laser scan: CommBasicObjects::CommMobileLaserScan
+	*/
 	AnswerPort LaserQueryServiceAnsw implements CommBasicObjects.LaserQueryService {
 	}
 	RequestHandler LaserQueryServiceAnswHandler triggeredFrom LaserQueryServiceAnsw {
 		Observe LaserTask
 	}
-	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService { }
+	/** DefaultCoordinationService
+	*/
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService { }	 
 	ComponentParameters ComponentWebots2DLidarParams slave CoordinationPort
 }

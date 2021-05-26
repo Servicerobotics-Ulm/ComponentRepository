@@ -21,9 +21,34 @@ bool ManipulatorEventServiceOutEventTestHandler::testEvent(
 	CommManipulatorObjects::CommManipulatorEventResult &r,
 	const CommManipulatorObjects::CommManipulatorEventState &s
 ) throw() {
-	// fire all events (without filtering) in the default implementation
-	// implement your own (specific) event-filtering code using the event-parameter as input
-	// true means that the current event will be fired to the according client
-	// false means that the current event is ignored (it will not be communicated to the according client)
-	return true;
+
+	std::cout << "testEvent handler" << std::endl;
+
+	bool result = false;
+
+	CommManipulatorObjects::ManipulatorEvent oldState, newState;
+
+	oldState = p.get_event();
+	newState = s.getEvent();
+
+	if (oldState == newState)
+	{
+		// no state change --> no event
+		result = false;
+	} else
+	{
+
+		std::cout << "[EventTestHandler] SEND Event: " << newState.to_string() << std::endl;
+
+		// memorize new state (state change) for currently tested event
+		// each activated event has its own parameter
+		p.set_event(newState);
+		// set result
+		r.set_event(newState);
+		result = true;
+	}
+
+	// true --> send event
+	// false --> don't send event
+   	return result;
 }

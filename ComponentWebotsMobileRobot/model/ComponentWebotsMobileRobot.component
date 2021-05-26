@@ -1,36 +1,29 @@
 ComponentDefinition ComponentWebotsMobileRobot
 {
-	InputPort NavigationVelocityServiceIn implements CommNavigationObjects.NavigationVelocityService {
-	}
-	InputPort LocalizationEventServiceIn implements CommLocalizationObjects.LocalizationEventService {
-	}
-
+	/** Reads periodically translational and rotational velocity commands: CommBasicObjects.CommNavigationVelocity */
+	InputPort NavigationVelocityServiceIn implements CommNavigationObjects.NavigationVelocityService { }
 	InputHandler NavigationVelocityServiceInHandler triggeredFrom NavigationVelocityServiceIn { }
-
-	AnswerPort BaseStateQueryServiceAnsw implements CommBasicObjects.BaseStateQueryService {
-	}
-	RequestHandler BaseStateQueryServiceAnswHandler triggeredFrom BaseStateQueryServiceAnsw {
-	}
-
-	CoordinationSlavePort CoordinationPort implements CommNavigationObjects.BaseCoordinationService
-	{
+	/** Reads periodically updated position and orientation of the robot in the world: CommBasicObjects.CommBasePositionUpdate */		
+	InputPort LocalizationUpdateServiceIn implements CommNavigationObjects.LocalizationUpdateService { }
+	InputHandler LocalizationUpdateServiceInHandler triggeredFrom LocalizationUpdateServiceIn { }
+	/** Reads events from localization: CommLocalizationObjects:LocalizationEventType */			
+	InputPort LocalizationEventServiceIn implements CommLocalizationObjects.LocalizationEventService { }
+	InputHandler LocalizationEventServiceInHandler triggeredFrom LocalizationEventServiceIn { } 
+	/** Writes periodically the position etc.: CommBasicObjects.CommBaseState */
+	OutputPort BaseStateServiceOut implements CommBasicObjects.BaseStateService realizedBy WebotsAPITask { }	
+	/** Writes on request the position etc.: CommBasicObjects.CommBaseState */	
+	AnswerPort BaseStateQueryServiceAnsw implements CommBasicObjects.BaseStateQueryService { }
+	RequestHandler BaseStateQueryServiceAnswHandler triggeredFrom BaseStateQueryServiceAnsw { }	
+	
+	/** CommNavigationObjects.BaseCoordinationService */
+	CoordinationSlavePort CoordinationPort implements CommNavigationObjects.BaseCoordinationService {
 		with baseState realizedBy BaseStateQueryServiceAnsw		
 		PrivateOperationMode eStop 
 		PublicOperationMode CommBasicObjects.RobotBaseModes.emergencyStop {
 			activates (eStop)} 
 		SkillRealizationsRef baseInst
 	}
-
 	ComponentParameters ComponentWebotsMobileRobotParams slave CoordinationPort
-	OutputPort BaseStateServiceOut implements CommBasicObjects.BaseStateService realizedBy WebotsAPITask {
-	}
 
-	InputPort LocalizationUpdateServiceIn implements CommNavigationObjects.LocalizationUpdateService {
-	}
-	InputHandler LocalizationUpdateServiceInHandler triggeredFrom LocalizationUpdateServiceIn { }
-
-	Activity WebotsAPITask
-	{
-	}
-	InputHandler LocalizationEventServiceInHandler triggeredFrom LocalizationEventServiceIn { }
+	Activity WebotsAPITask { }
 }

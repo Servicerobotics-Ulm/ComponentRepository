@@ -5,21 +5,37 @@
 
 <img src="model/ComponentWebotsURServerComponentDefinition.jpg" alt="ComponentWebotsURServer-ComponentImage" width="1000">
 
-*Component Short Description:* Device driver component for Universal Robots (UR) manipulators
+*Component Short Description:* 
 
-## Component Documentation
-<p></p>
-<p> The ComponentWebotsURServer component is the device driver component for Universal Robots (UR) manipulators.
-</p>
-<p> The component enables the usage of UR manipulators (UR3(e),UR5(e),UR10(e),UR16(e)) together with other software components.
- The component provides services for the usage of the manipulators on different abstraction levels.
- Programs created with UR Polyscope, primitive movements, as well as individual joint control e.g. moving planned trajectories can be used.
-</p>
-<p> The component provides skills for all its provided capabilities, enabling an easy and fast development of robotic behavior task.
- The component provides skills to enable the usage of sub-programs, which can be created by the end-user on the manipulator using the teach-panel.
-</p>
-<p></p>
-<p></p>
+The robot arm UR5e in the webots simulator.
+
+This component needs [OpenRave todo:add link to install instructions]() to be installed first.
+
+### Example program:
+
+```
+CommManipulatorObjects::CommManipulatorTrajectory trajectory;
+// do these calls in this order only
+// 1. only JOINT_ANGLES is possible, POSE_TCP not
+trajectory.setFlag(CommManipulatorObjects::ManipulatorTrajectoryFlag::JOINT_ANGLES);
+// 2. set number of points in trajectory
+trajectory.set_trajectory_size(1);
+// 3. set number of values of each point in the trajectory. must be 6 for the UR5e (6 motors)
+trajectory.set_joint_count(6);
+// 4. set points:
+// time to move to point 0 is 0.3 seconds
+trajectory.set_joint_time(0, 0.3);
+// point 0, set all 6 motor rotations [radians]
+trajectory.set_joint_angle(0, 0, 0.+231);
+trajectory.set_joint_angle(0, 1, 0.-215);
+trajectory.set_joint_angle(0, 2, 0.-541);
+trajectory.set_joint_angle(0, 3, 0.+374);
+trajectory.set_joint_angle(0, 4, 0.-121);
+trajectory.set_joint_angle(0, 5, 0.+084);
+COMP -> sendTrajectoryServiceOut -> send(trajectory);
+```
+
+
 
 ## Component-Datasheet Properties
 
@@ -31,23 +47,23 @@
 <th style="border:1px solid black; padding: 5px;"><i>Property Description</i></th>
 </tr>
 <tr>
+<td style="border:1px solid black; padding: 5px;">MarketName</td>
+<td style="border:1px solid black; padding: 5px;">ComponentWebotsURServer</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
 <td style="border:1px solid black; padding: 5px;">Supplier</td>
-<td style="border:1px solid black; padding: 5px;">Toolify Robotics GmbH</td>
+<td style="border:1px solid black; padding: 5px;">Servicerobotics Ulm</td>
 <td style="border:1px solid black; padding: 5px;"></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;">Homepage</td>
-<td style="border:1px solid black; padding: 5px;">TODO</td>
+<td style="border:1px solid black; padding: 5px;">https://wiki.servicerobotik-ulm.de/directory:collection</td>
 <td style="border:1px solid black; padding: 5px;"></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;">Purpose</td>
-<td style="border:1px solid black; padding: 5px;">Driver component for universal robot manipulators</td>
-<td style="border:1px solid black; padding: 5px;"></td>
-</tr>
-<tr>
-<td style="border:1px solid black; padding: 5px;">HardwareRequirement</td>
-<td style="border:1px solid black; padding: 5px;">The component is able to operate all Universal Robots manipulators (UR3(e),UR5(e),UR10(e),UR16(e)) with a controller software version xxx or newer. The component is further able to work with the simulator provided by Universal Robots.</td>
+<td style="border:1px solid black; padding: 5px;">The robot arm UR5e in the webots simulator.</td>
 <td style="border:1px solid black; padding: 5px;"></td>
 </tr>
 </table>
@@ -57,26 +73,36 @@
 ### trajectorySendServer
 
 *Documentation:*
+<p>Reads periodically a movement trajectory: CommManipulatorObjects.CommManipulatorTrajectory
+</p>
 
 
 ### posePushServer
 
 *Documentation:*
+<p>Writes periodically position etc. : CommManipulatorObjects.CommMobileManipulatorState
+</p>
 
 
 ### poseQueryServer
 
 *Documentation:*
+<p>Writes on request position etc. : CommManipulatorObjects.CommMobileManipulatorState
+</p>
 
 
 ### manipulatorEventServiceOut
 
 *Documentation:*
+<p>Sends an event: CommManipulatorObjects:ManipulatorEvent
+</p>
 
 
 ### baseStateServiceIn
 
 *Documentation:*
+<p>Reads periodically position etc. of an mobile robot: CommBasicObjects.CommBaseState
+</p>
 
 
 ### ioQueryServer

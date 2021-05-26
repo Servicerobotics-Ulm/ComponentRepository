@@ -7,31 +7,39 @@
 
 *Component Short Description:* 
 
-A generic driver for a RangeFinder (depth camera) in the Webots simulator.
+Universal Camera and RangeFinder (depth camera) device in the Webots simulator, delivering both color images and range images.
 
-The scans are made each Webots timeStep, at the same time (see Time of flight (ToF)). measured in ...
+The images are made each Webots timeStep, at the same time. Range distances are measured in meters (see Time of Flight (ToF)).
 
-How a new RangeFinder can be added to Webots:
-* Add a new Robot, set its controller to '&lt;extern&gt;', its coordinate system should be x=front, y=left, z=up of the RangeFinder.
-* The robots name must set the same in Webots and here.
-* Add the RangeFinder in children of the robot, rotate it to match the coordinate system above.
+How a new Camera can be added to Webots:
+* Add a new Robot, set its controller to '&lt;extern&gt;' and supervisor TRUE
+* Add the Camera and RangeFinder in children of the robot
+* give same names in webots and in parameter <a href="#internal-parameter-webots">'webots'</a>
 
-example code:
+Example:
 
-```cpp
-CommBasicObjects::CommMobileLaserScan scan;
-if(this->laserServiceInGetUpdate(scan) != Smart::SMART_OK) (some error handling here)
-int count = scan.get_scan_size();
-for (int i = 0; i < count; ++i) {
-	// scan.get_scan_angle is between 0 and 2*pi, 0=front of lidar
-	double angle = scan.get_scan_angle(i) / M_PI * 180;
-	// angle should be between -180 and +180 degrees, 0=front of lidar
-	if( angle > 180 )
-		angle -= 360;
-	double distance = scan.get_scan_distance(i);
-    ...
+```
+Robot {
+  name "exampleRobot"
+  controller "<extern>"
+  supervisor TRUE
+  children [
+    Camera {
+      name "exampleCamera"
+    }
+    RangeFinder {
+      name "exampleRangeFinder"
+    }
+  ]
 }
 ```
+
+other similar Components:
+
+- [ComponentKinectV1Server](../ComponentKinectV1Server)
+- [ComponentKinectV2Server](../ComponentKinectV2Server)
+- [ComponentRealSenseV2Server](../ComponentRealSenseV2Server)
+- [SmartGazeboCameraServer](../SmartGazeboCameraServer)
 
 
 
@@ -45,23 +53,18 @@ for (int i = 0; i < count; ++i) {
 <th style="border:1px solid black; padding: 5px;"><i>Property Description</i></th>
 </tr>
 <tr>
-<td style="border:1px solid black; padding: 5px;">MarketName</td>
-<td style="border:1px solid black; padding: 5px;">Webots 3D Camera</td>
-<td style="border:1px solid black; padding: 5px;"></td>
-</tr>
-<tr>
 <td style="border:1px solid black; padding: 5px;">Supplier</td>
 <td style="border:1px solid black; padding: 5px;">Servicerobotics Ulm</td>
 <td style="border:1px solid black; padding: 5px;"></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;">Homepage</td>
-<td style="border:1px solid black; padding: 5px;">https://github.com/Servicerobotics-Ulm/ComponentRepository</td>
+<td style="border:1px solid black; padding: 5px;">https://wiki.servicerobotik-ulm.de/directory:collection</td>
 <td style="border:1px solid black; padding: 5px;"></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;">Purpose</td>
-<td style="border:1px solid black; padding: 5px;">Webots 3D Camera</td>
+<td style="border:1px solid black; padding: 5px;">Universal RangeFinder (depth camera) device in the Webots simulator.</td>
 <td style="border:1px solid black; padding: 5px;"></td>
 </tr>
 </table>
@@ -71,46 +74,77 @@ for (int i = 0; i < count; ++i) {
 ### basePushTimedClient
 
 *Documentation:*
+<p>Reads periodically the position etc. of the robot (if the camera is mounted on it): CommBasicObjects::CommBaseState
+</p>
+<p> Connect to port <a href="../ComponentWebotsMobileRobot#BaseStateServiceOut">BaseStateServiceOut of ComponentWebotsMobileRobot</a>
+</p>
+<p></p>
 
 
 ### ptuPosePushNewestClient
 
 *Documentation:*
-
-
-### UrPoseQueryClient
-
-*Documentation:*
+<p>Reads periodically the position etc. of the Pan-Tilt-Unit (if the camera is mounted on it): CommBasicObjects::CommBaseState
+</p>
+<p> Connect to port <a href="../ComponentWebotsPTUServer#DevicePoseStateServer">DevicePoseStateServer of ComponentWebotsPTUServer</a>
+</p>
+<p></p>
 
 
 ### UrPosePushTimedClient
 
 *Documentation:*
+<p>Reads peridically the robot arm position (if the camera is mounted on it): CommManipulatorObjects.CommMobileManipulatorState
+</p>
+<p></p>
 
 
-### depthPushNewestServer
-
-*Documentation:*
-
-
-### imageQueryServer
+### UrPoseQueryClient
 
 *Documentation:*
-
-
-### RGBDImagePushServiceOut
-
-*Documentation:*
+<p>Reads on request the robot arm position (if the camera is mounted on it): CommManipulatorObjects.CommMobileManipulatorState
+</p>
+<p></p>
 
 
 ### RGBImagePushServiceOut
 
 *Documentation:*
+<p>Writes peridically the color image: DomainVision.CommRGBDImage
+</p>
+<p></p>
+
+
+### depthPushNewestServer
+
+*Documentation:*
+<p>Writes peridically the range image: DomainVision.CommDepthImage
+</p>
+<p></p>
+
+
+### RGBDImagePushServiceOut
+
+*Documentation:*
+<p>Writes peridically the color image and range image: DomainVision.CommRGBDImage
+</p>
+<p></p>
 
 
 ### colorImageQueryServer
 
 *Documentation:*
+<p>Writes on request the color image: DomainVision.CommVideoImage
+</p>
+<p></p>
+
+
+### imageQueryServer
+
+*Documentation:*
+<p>Writes on request color image and range image: DomainVision.CommRGBDImage
+</p>
+<p></p>
 
 
 
@@ -197,8 +231,14 @@ for (int i = 0; i < count; ++i) {
 ### Internal Parameter: sensor_pose
 
 *Documentation:*
-<p>camera pose in robot frame
+<p>camera position and orientation relative to (see <a href="#internal-parameter-base">parameter base</a>):
+ <ul>
+ <li>on_base = true: center point between wheels axis of an moving robot</li>
+ <li>on_ptu = true : tilt axis of pan-tilt-unit</li>
+ <li>on_ur = true : end point of robot arm = TCP = Tool Center Point</li>
+ </ul>
 </p>
+<p></p>
 
 <table style="border-collapse:collapse;">
 <caption><i>Table:</i> Internal Parameter <b>sensor_pose</b></caption>
@@ -212,42 +252,42 @@ for (int i = 0; i < count; ++i) {
 <td style="border:1px solid black; padding: 5px;"><b>x</b></td>
 <td style="border:1px solid black; padding: 5px;">Double</td>
 <td style="border:1px solid black; padding: 5px;">90</td>
-<td style="border:1px solid black; padding: 5px;"><p>[mm]
+<td style="border:1px solid black; padding: 5px;"><p>front [mm]
 </p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>y</b></td>
 <td style="border:1px solid black; padding: 5px;">Double</td>
 <td style="border:1px solid black; padding: 5px;">0</td>
-<td style="border:1px solid black; padding: 5px;"><p>[mm]
+<td style="border:1px solid black; padding: 5px;"><p>left [mm]
 </p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>z</b></td>
 <td style="border:1px solid black; padding: 5px;">Double</td>
 <td style="border:1px solid black; padding: 5px;">350</td>
-<td style="border:1px solid black; padding: 5px;"><p>[mm]
+<td style="border:1px solid black; padding: 5px;"><p>up [mm]
 </p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>azimuth</b></td>
 <td style="border:1px solid black; padding: 5px;">Double</td>
 <td style="border:1px solid black; padding: 5px;">1.5707963</td>
-<td style="border:1px solid black; padding: 5px;"><p>[radians]
+<td style="border:1px solid black; padding: 5px;"><p>rotate left(+)/right(-) [radians]
 </p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>elevation</b></td>
 <td style="border:1px solid black; padding: 5px;">Double</td>
 <td style="border:1px solid black; padding: 5px;">3.14159265</td>
-<td style="border:1px solid black; padding: 5px;"><p>[radians]
+<td style="border:1px solid black; padding: 5px;"><p>rotate down(+)/up(-) [radians]
 </p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>roll</b></td>
 <td style="border:1px solid black; padding: 5px;">Double</td>
 <td style="border:1px solid black; padding: 5px;">1.32</td>
-<td style="border:1px solid black; padding: 5px;"><p>[radians]
+<td style="border:1px solid black; padding: 5px;"><p>rotate around front direction counterclockwise [radians]
 </p></td>
 </tr>
 </table>
@@ -265,17 +305,17 @@ for (int i = 0; i < count; ++i) {
 <th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
 </tr>
 <tr>
-<td style="border:1px solid black; padding: 5px;"><b>on_ptu</b></td>
-<td style="border:1px solid black; padding: 5px;">Boolean</td>
-<td style="border:1px solid black; padding: 5px;">false</td>
-<td style="border:1px solid black; padding: 5px;"><p>is Camera mounted on top of an pan-tilt-unit?
-</p></td>
-</tr>
-<tr>
 <td style="border:1px solid black; padding: 5px;"><b>on_base</b></td>
 <td style="border:1px solid black; padding: 5px;">Boolean</td>
 <td style="border:1px solid black; padding: 5px;">false</td>
 <td style="border:1px solid black; padding: 5px;"><p>is Camera mounted on top of an mobile robot?
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>on_ptu</b></td>
+<td style="border:1px solid black; padding: 5px;">Boolean</td>
+<td style="border:1px solid black; padding: 5px;">false</td>
+<td style="border:1px solid black; padding: 5px;"><p>is Camera mounted on top of an pan-tilt-unit?
 </p></td>
 </tr>
 <tr>
@@ -289,7 +329,7 @@ for (int i = 0; i < count; ++i) {
 <td style="border:1px solid black; padding: 5px;"><b>x</b></td>
 <td style="border:1px solid black; padding: 5px;">Int32</td>
 <td style="border:1px solid black; padding: 5px;">0</td>
-<td style="border:1px solid black; padding: 5px;"><p>stationary Camera only: x coordinate [mm]
+<td style="border:1px solid black; padding: 5px;"><p>stationary Camera only: x coordinate (on_ptu and on_base and on_ur are false) [mm]
 </p></td>
 </tr>
 <tr>
@@ -310,7 +350,7 @@ for (int i = 0; i < count; ++i) {
 <td style="border:1px solid black; padding: 5px;"><b>base_a</b></td>
 <td style="border:1px solid black; padding: 5px;">Double</td>
 <td style="border:1px solid black; padding: 5px;">0</td>
-<td style="border:1px solid black; padding: 5px;"><p>stationary Camera only: heading [radians]
+<td style="border:1px solid black; padding: 5px;"><p>stationary Camera only: horizontal heading [radians]
 </p></td>
 </tr>
 </table>
@@ -331,14 +371,14 @@ for (int i = 0; i < count; ++i) {
 <td style="border:1px solid black; padding: 5px;"><b>min_distance</b></td>
 <td style="border:1px solid black; padding: 5px;">Double</td>
 <td style="border:1px solid black; padding: 5px;">500</td>
-<td style="border:1px solid black; padding: 5px;"><p>Defines the min distance of the measurements in the depth image[mm]. Values with distances less than this value will be discarded.
+<td style="border:1px solid black; padding: 5px;"><p>Defines the minimal distance in the range image. Values less than this value will be discarded. [mm]
 </p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>max_distance</b></td>
 <td style="border:1px solid black; padding: 5px;">Double</td>
 <td style="border:1px solid black; padding: 5px;">4500</td>
-<td style="border:1px solid black; padding: 5px;"><p>Defines the max distance of the measurements in the depth image[mm]. Values with distances greater than this value will be discarded.
+<td style="border:1px solid black; padding: 5px;"><p>Defines the maximal distance in in the range image. Values greater than this value will be discarded. [mm]
 </p></td>
 </tr>
 </table>

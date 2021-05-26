@@ -66,6 +66,7 @@ WebotsAPITask::~WebotsAPITask() {
 
 int WebotsAPITask::on_entry() {
 	ParameterStateStructCore::WebotsType p = COMP->getParameters().getWebots();
+
 	webotsRobotName = p.getRobotName();
 	char environment[256] = "WEBOTS_ROBOT_NAME=";
 	putenv(strcat(environment, webotsRobotName.c_str()));
@@ -76,6 +77,7 @@ int WebotsAPITask::on_entry() {
 		std::cout << "not found, fatal error" << std::endl;
 		return 1;
 	}
+    std::cout << " \033[0;32mConnected\033[0m" << std::endl;
 
 	webotsKeyboard = webotsRobot->getKeyboard();
 	webotsKeyboard->enable(webotsRobot->getBasicTimeStep());
@@ -107,6 +109,7 @@ int WebotsAPITask::on_entry() {
 	i = 0;
 	for (auto const it : p.getHeading())
 		webotsMotors[i++].heading = it;
+
 	return 0;
 }
 
@@ -152,6 +155,14 @@ std::string space2underscore(std::string text) {
 	return text;
 }
 
+void changeSpeedLevel(double &value, double diff) {
+    value += diff;
+    if(value > 1)
+        value = 1;
+    if(value < -1)
+        value = -1;
+}
+
 // this task is used as an webots controller, see webotsRobot->step(timeStep) below.
 // webots controller is synchronized by webots, so SmartSoft should NOT set a timer of frequency how often this function is called.
 int WebotsAPITask::on_execute() {
@@ -165,6 +176,8 @@ int WebotsAPITask::on_execute() {
 	Pose2D sum = zeroPose;
 	Pose2D sumSq = zeroPose;
 	int nrSummands = 0;
+	double keySpeedLevels = 0.0;
+	double kxLevel, kyLevel, komegaLevel;
 
 	// used for acceleration, see also targetSpeed[3] from .hh
 	// {x, y, angular}
@@ -337,18 +350,44 @@ int WebotsAPITask::on_execute() {
 				ky = 1;
 			if (key == 'E')
 				ky = -1;
-			if (key == ' ')
-				kspace = 1;
+			if (key == ' ') {
+				kxLevel = 0;
+				kyLevel = 0;
+				komegaLevel = 0;
+			}
+			if (key == 'Y')
+			    keySpeedLevels = 0.0;
+			if (key == 'X')
+			    keySpeedLevels = webotsRobot->getBasicTimeStep() / 2000.0; // reach max speed in 2000 ms
+			if (key == 'C')
+                keySpeedLevels = 1;
 		}
-
 		// start lock
 		{
 			std::lock_guard<std::mutex> guard(mutex_targetSpeed);
-			if(COMP->getParameters().getWebots().getKeyboardControl() && (kx || ky || komega || kspace) ) {
-				targetSpeed[0] = kx;
-				targetSpeed[1] = ky;
-				targetSpeed[2] = komega * 1.2;
-			}
+			if(COMP->getParameters().getWebots().getKeyboardControl() && keySpeedLevels!=0.0) {
+                if(keySpeedLevels == 1.0) {
+                    kxLevel = kx;
+                    kyLevel = ky;
+                    komegaLevel = komega;
+                } else {
+                    changeSpeedLevel(kxLevel, kx*keySpeedLevels);
+                    changeSpeedLevel(kyLevel, ky*keySpeedLevels);
+                    changeSpeedLevel(komegaLevel, komega*keySpeedLevels);
+                }
+                targetSpeed[0] = kxLevel * COMP->getParameters().getRobot().getMaxVelX();
+                targetSpeed[1] = kyLevel * COMP->getParameters().getRobot().getMaxVelY();
+                targetSpeed[2] = komegaLevel * COMP->getParameters().getRobot().getMaxRotVel();
+            }
+            ParameterStateStructCore::RobotType paramRobot = COMP->getParameters().getRobot();
+            double speedLimit[] {paramRobot.getMaxVelX(),
+                paramRobot.getMaxVelY(),
+                paramRobot.getMaxRotVel()};
+            for (int i = 3; i--;)
+                if(targetSpeed[i] > speedLimit[i])
+                    targetSpeed[i] = speedLimit[i];
+                else if(targetSpeed[i] < -speedLimit[i])
+                    targetSpeed[i] = -speedLimit[i];
 			double maxSteps = 0;
 			for (int i = 3; i--;) {
 				double stepsNeeded = abs(targetSpeed[i] - actualSpeed[i])
@@ -361,13 +400,29 @@ int WebotsAPITask::on_execute() {
 			for (int i = 3; i--;)
 				actualSpeed[i] += (targetSpeed[i] - actualSpeed[i]) / maxSteps;
 		} // end lock
-		for (auto &i : webotsMotors)
-			i.motor->setVelocity(
-					actualSpeed[0] * cos(i.heading / 180 * M_PI) / i.radius
-							+ actualSpeed[1] * sin(i.heading / 180 * M_PI)
-									/ i.radius
-							+ actualSpeed[2] * i.distanceToRobotCentre
-									/ i.radius);
+
+        // mecanum wheels:
+        // double v1 = 1/webotsMotors[0].radius*(actualSpeed[0] - actualSpeed[1] - (lx+ly)*actualSpeed[2]);
+        // double v2 = 1/webotsMotors[1].radius*(actualSpeed[0] + actualSpeed[1] + (lx+ly)*actualSpeed[2]);
+        // double v3 = 1/webotsMotors[2].radius*(actualSpeed[0] + actualSpeed[1] - (lx+ly)*actualSpeed[2]);
+        // double v4 = 1/webotsMotors[3].radius*(actualSpeed[0] - actualSpeed[1] + (lx+ly)*actualSpeed[2]);
+		if(webotsMotors.size()==4) {
+		    for(int i=0; i<4; i++) {
+		        webotsMotors[i].motor->setVelocity(
+		            (actualSpeed[0]
+		             + actualSpeed[1] * ( (i==1 || i==2) ? 1 : -1)
+		             + actualSpeed[2] * ( (i==1 || i==3) ? 1 : -1) * webotsMotors[i].distanceToRobotCentre)
+		            / webotsMotors[i].radius);
+		    }
+		} else {
+			for (auto &i : webotsMotors){
+				i.motor->setVelocity(
+                    (actualSpeed[0] * cos(i.heading / 180 * M_PI)
+                    + actualSpeed[1] * sin(i.heading / 180 * M_PI)
+                    + actualSpeed[2] * i.distanceToRobotCentre)
+                    / i.radius);
+			}
+		}
 
 		/////////////////////////
 		// baseStateServiceOut //
@@ -403,7 +458,6 @@ int WebotsAPITask::on_execute() {
 					<< Smart::StatusCodeConversion(status) << ")" << std::endl;
 		}
 	}
-	delete webotsRobot;
 	return 1;  // if webots simulation stops, quit this task too
 }
 

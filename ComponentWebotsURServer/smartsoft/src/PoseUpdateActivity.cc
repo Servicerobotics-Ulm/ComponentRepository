@@ -53,6 +53,10 @@
 #include <webots/DistanceSensor.hpp>
 #include <webots/Connector.hpp>
 #include <webots/Keyboard.hpp>
+#include <webots/utils/AnsiCodes.hpp>
+
+#include <armadillo.hh>
+#include <EulerTransformationMatrices.hh>
 
 using namespace webots;
 
@@ -99,6 +103,7 @@ void PoseUpdateActivity::on_baseStateServiceIn(const CommBasicObjects::CommBaseS
 }
 
 void PoseUpdateActivity::getMobileManipulatorState(CommManipulatorObjects::CommMobileManipulatorState &mobileState) {
+
     ParameterStateStruct params = COMP->getParameters();
     CommManipulatorObjects::CommManipulatorState state;
     {
@@ -108,13 +113,14 @@ void PoseUpdateActivity::getMobileManipulatorState(CommManipulatorObjects::CommM
             params.getManipulator().getZ(), params.getManipulator().getAzimuth(),
             params.getManipulator().getElevation(), params.getManipulator().getRoll());
         state.set_joint_count(nrJoints);
-        for (int i = 0; i < nrJoints; ++i) {
-            state.set_joint_angle(i, jointPosition[i]);
+        if (jointValid) {
+            for (int i = 0; i < nrJoints; ++i) {
+                state.set_joint_angle(i, jointPosition[i]);
+            }
+            state.set_pose_TCP_manipulator(tcpPositionRelative[0], tcpPositionRelative[1], tcpPositionRelative[2], tcpAzimuth, tcpElevation, tcpRoll, 1.0);
         }
+        state.set_valid(jointValid);
     }
-    // todo:
-    // state.set_pose_TCP_manipulator(x, y, z, yaw, pitch, roll, 1.0);
-    state.set_valid(true);
     mobileState.set_manipulator_state(state);
     CommBasicObjects::CommBaseState baseState;
     if (params.getBase().getOn_base()) {
@@ -146,6 +152,34 @@ void PoseUpdateActivity::setGoalReached(bool reached) {
     std::cout << (reached ? "GOAL_REACHED" : "GOAL_NOT_REACHED") << std::endl;
 }
 
+std::array<double, 3> PoseUpdateActivity::webots2smartPosition(const double *d) {
+    if (isNUE) {
+        std::array<double, 3> position = { d[0], -d[2], d[1] };
+        return position;
+    } else {
+        std::array<double, 3> position = { d[0], d[1], d[2] };
+        return position;
+    }
+}
+
+std::array<double, 9> PoseUpdateActivity::webots2smartOrientation(const double *d) {
+    if (isNUE) {
+        std::array<double, 9> orientation = { d[0], d[1], d[2], -d[6], -d[7], -d[8], d[3], d[4], d[5] };
+        return orientation;
+    } else {
+        std::array<double, 9> orientation = { d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8] };
+        return orientation;
+    }
+}
+
+std::array<double, 3> PoseUpdateActivity::multiplyTransposeMatrixToVector(std::array<double, 9> m, std::array<double, 3> v) {
+  std::array<double, 3> result = { m[0] * v[0] + m[3] * v[1] + m[6] * v[2],
+    m[1] * v[0] + m[4] * v[1] + m[7] * v[2],
+    m[2] * v[0] + m[5] * v[1] + m[8] * v[2]};
+  return result;
+}
+
+
 int PoseUpdateActivity::on_execute() {
     ParameterStateStruct params = COMP->getParameters();
     CommBasicObjects::CommBasePose default_base_position;
@@ -167,14 +201,15 @@ int PoseUpdateActivity::on_execute() {
         return -1;
     }
     std::cout << "Robot '" << name << "'" << std::endl;
+    isNUE = robot->getRoot()->getField("children")->getMFNode(0)->getField("coordinateSystem")->getSFString() == "NUE";
 
 // *********** VacuumGripper *********
-    DistanceSensor* distanceSensor = robot->getDistanceSensor("VacuumGripperDistanceSensor");
+    DistanceSensor *distanceSensor = robot->getDistanceSensor("VacuumGripperDistanceSensor");
     distanceSensor->enable(robot->getBasicTimeStep());
 
-    Connector* connector = robot->getConnector("VacuumGripperConnectorName");
+    Connector *connector = robot->getConnector("VacuumGripperConnectorName");
     connector->enablePresence(robot->getBasicTimeStep());
-    Keyboard* keyboard = robot->getKeyboard();
+    Keyboard *keyboard = robot->getKeyboard();
     keyboard->enable(robot->getBasicTimeStep());
 
 // *********** joints *************
@@ -197,10 +232,12 @@ int PoseUpdateActivity::on_execute() {
     // do one timeStep to get data from sensors
     // todo: use supervisor to read position without time delay
     robot->step(robot->getBasicTimeStep());
+    // set trajectory to actual position (prevent special case of empty trajectory)
     for (int i = 0; i < nrJoints; i++) {
         firstPosition.jointTargetPosition[i] = jointSensor[i]->getValue();
         std::cout << " first" << i << ":" << firstPosition.jointTargetPosition[i];
     }
+
     {
         std::unique_lock<std::mutex> lock(jointMutex);
         trajectory.insert(trajectory.begin(), firstPosition);
@@ -210,24 +247,62 @@ int PoseUpdateActivity::on_execute() {
     while (robot->step(robot->getBasicTimeStep()) != -1) {
         // TODO: remove (debug only)
         int key = keyboard->getKey();
-        if(key=='0' || key=='1') {
-          std::cout << "key=" << key << " presence=" << connector->getPresence() << "distance=" << distanceSensor->getValue() << std::endl;
-          if(key=='0')
-            connector->unlock();
-          else
-            connector->lock();
+        if (key == '0' || key == '1') {
+            std::cout << "key=" << key << " presence=" << connector->getPresence() << "distance="
+                << distanceSensor->getValue() << std::endl;
+            if (key == '0')
+                connector->unlock();
+            else
+                connector->lock();
         }
 
         Program program = newProgram;
-        if (program == prNeutral)
-            continue;
-        if(isVacuumOn)
-            connector->unlock();
-        else if(distanceSensor->getValue())
+        // read jointPosition, calculate new jointTargetPosition based on time
         { // start mutex
             std::unique_lock<std::mutex> lock(jointMutex);
             for (int i = 0; i < nrJoints; i++)
                 jointPosition[i] = jointSensor[i]->getValue();
+            jointValid = true;
+            // transform position and orientation of TCP (tool center point = end point vacuum gripper = connector)
+            // from world coordinate system to robot coordinate system
+            // https://www.cyberbotics.com/doc/reference/supervisor?tab-language=c++#wb_supervisor_node_get_position
+            // p = position in node coordinate system
+            // p' = position in world coordinate system
+            // p' = node.getOrientation * p + node.getPosition
+            // p' - node.getPosition = node.getOrientation * p
+            // transpose(node.getOrientation) * (p' - node.getPosition) = transpose(node.getOrientation) * node.getOrientation * p
+            // transpose(node.getOrientation) * (p' - node.getPosition) = p
+            // p = transpose(node.getOrientation) * (p' - node.getPosition)
+            // (p=TCP, node=robot)
+            const double* _data = robot->getSelf()->getPosition();
+            std::array<double, 3> robotPosition = webots2smartPosition(robot->getSelf()->getPosition());
+            std::array<double, 9> robotOrientation = webots2smartOrientation(robot->getSelf()->getOrientation());
+            std::array<double, 3> tcpPosition = webots2smartPosition(robot->getFromDevice(distanceSensor)->getPosition());
+            std::array<double, 9> tcpOrientation = webots2smartOrientation(robot->getFromDevice(distanceSensor)->getOrientation());
+            std::array<double, 3> relativePosition = { tcpPosition[0] - robotPosition[0], tcpPosition[1] - robotPosition[1],
+                tcpPosition[2] - robotPosition[2] };
+            tcpPositionRelative = multiplyTransposeMatrixToVector(robotOrientation, relativePosition);
+            // transform orientation of TCP from world coordinate system to robot coordinate system:
+            // do the same as transform position, but with xaxis/yaxis/zaxis vector instead of position vector
+            std::array<double, 3> tcpXaxis = { tcpOrientation[0], tcpOrientation[3], tcpOrientation[6] };
+            tcpXaxis = multiplyTransposeMatrixToVector(robotOrientation, tcpXaxis);
+            std::array<double, 3> tcpYaxis = { tcpOrientation[1], tcpOrientation[4], tcpOrientation[7] };
+            tcpYaxis = multiplyTransposeMatrixToVector(robotOrientation, tcpYaxis);
+            std::array<double, 3> tcpZaxis = { tcpOrientation[2], tcpOrientation[5], tcpOrientation[8] };
+            tcpZaxis = multiplyTransposeMatrixToVector(robotOrientation, tcpZaxis);
+            arma::mat m;
+            m.set_size(3, 3);
+            m(0, 0) = tcpXaxis[0]; m(0, 1) = tcpYaxis[0]; m(0, 2) = tcpZaxis[0];
+            m(1, 0) = tcpXaxis[1]; m(1, 1) = tcpYaxis[1]; m(1, 2) = tcpZaxis[1];
+            m(2, 0) = tcpXaxis[2]; m(2, 1) = tcpYaxis[2]; m(2, 2) = tcpZaxis[2];
+            EulerTransformationMatrices::zyx_from_matrix(m, tcpAzimuth, tcpElevation, tcpRoll);
+            std::cout << "robotPos " << robotPosition[0] << " " << robotPosition[1] << " " << robotPosition[2] <<
+                " tcpPos " << tcpPosition[0] << " " << tcpPosition[1] << " " << tcpPosition[2] <<
+                " tcpPosRel " << tcpPositionRelative[0] << " " << tcpPositionRelative[1] << " " << tcpPositionRelative[2] << " "
+                " tcpOrient " << tcpAzimuth << " " << tcpElevation << " " << tcpRoll << std::endl;
+
+            if (program == prNeutral)
+                continue;
             timeSpend += robot->getBasicTimeStep() / 1000.0;
             if (trajectory.size() > 1)
                 setGoalReached(false);
@@ -259,6 +334,14 @@ int PoseUpdateActivity::on_execute() {
         } // end mutex
         for (int i = 0; i < nrJoints; i++)
             jointMotor[i]->setPosition(jointTargetPosition[i]);
+
+        // distance sensor is at 0.001m in front of vacuum gripper
+        // only grip if distance from vacuum gripper to box is less then 0.01m
+        if (isVacuumOn && distanceSensor->getValue() < 0.099)
+            connector->lock();
+        if (!isVacuumOn)
+            connector->unlock();
+
         /*
          if (params.getManipulator().getVerbose()) {
          std::cout << "program=" << program;

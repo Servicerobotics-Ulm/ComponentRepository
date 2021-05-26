@@ -68,25 +68,24 @@ DetectionTask::DetectionTask(SmartACE::SmartComponent *comp)
 :	DetectionTaskCore(comp)
 {
 
-	_x_detection_distance_min =
-			COMP->getGlobalState().getGeneral().getX_detection_distance_min() / 1000;
-			_x_detection_distance_max = COMP->getGlobalState().getGeneral().getX_detection_distance_max() / 1000;
-			_y_detection_distance_min = COMP->getGlobalState().getGeneral().getY_detection_distance_min() / 1000;
-			_y_detection_distance_max = COMP->getGlobalState().getGeneral().getY_detection_distance_max() / 1000;
-			_z_detection_distance_min = COMP->getGlobalState().getGeneral().getZ_detection_distance_min() / 1000;
-			_z_detection_distance_max = COMP->getGlobalState().getGeneral().getZ_detection_distance_max() / 1000;
+	_x_detection_distance_min = COMP->getGlobalState().getGeneral().getX_detection_distance_min() / 1000;
+	_x_detection_distance_max = COMP->getGlobalState().getGeneral().getX_detection_distance_max() / 1000;
+	_y_detection_distance_min = COMP->getGlobalState().getGeneral().getY_detection_distance_min() / 1000;
+	_y_detection_distance_max = COMP->getGlobalState().getGeneral().getY_detection_distance_max() / 1000;
+	_z_detection_distance_min = COMP->getGlobalState().getGeneral().getZ_detection_distance_min() / 1000;
+	_z_detection_distance_max = COMP->getGlobalState().getGeneral().getZ_detection_distance_max() / 1000;
 
-			_send_obstacle_mesh = COMP->getGlobalState().getGeneral().getSend_obstacle_mesh();
+	_send_obstacle_mesh = COMP->getGlobalState().getGeneral().getSend_obstacle_mesh();
 
-			_use_hsv = COMP->getGlobalState().getGeneral().getUse_hsv();
+	_use_hsv = COMP->getGlobalState().getGeneral().getUse_hsv();
 
-			// Values for IBU Fiebersaft as default
-			COMP->searched_obj_type = "RATIOPHARM-IBU";
+	// Values for IBU Fiebersaft as default
+	COMP->searched_obj_type = "RATIOPHARM-IBU";
 
-			_length_deviation_factor = 0.1;
-			_max_box_cosine = 0.2;
+	_length_deviation_factor = 0.1;
+	_max_box_cosine = 0.2;
 
-			_pointManipulator = PointManipulation();
+	_pointManipulator = PointManipulation();
 
 }
 DetectionTask::~DetectionTask() 
@@ -98,18 +97,12 @@ DetectionTask::~DetectionTask()
 
 int DetectionTask::on_entry()
 {
-	// do initialization procedures here, which are called once, each time the task is started
-	// it is possible to return != 0 (e.g. when initialization fails) then the task is not executed further
 	setEnvId();
 	// TODO: Only for testing
 	return 0;
 }
 int DetectionTask::on_execute()
 {
-	// this method is called from an outside loop,
-	// hence, NEVER use an infinite loop (like "while(1)") here inside!!!
-	// also do not use blocking calls which do not result from smartsoft kernel
-
 	COMP->start_recognition.acquire();
 	cout << "[DetectionTask] Starting box detection..." << endl;
 	cout << "[DetectionTask] Box distance x from " << _x_detection_distance_min << " m to " << _x_detection_distance_max << " m"<< endl;
@@ -159,36 +152,15 @@ int DetectionTask::on_execute()
 
 	_deleted_boxes.clear();
 
-	//_pointManipulator = PointManipulation(rgbd_image.getSensor_pose(), current_depth_image.getIntrinsic_mCopy(), current_video_image.getIntrinsic_mCopy(), current_depth_image.getExtrinsic_mCopy(), &current_depth_image, &current_video_image);
-	_pointManipulator.setMembers(rgbd_image.getSensor_pose(), current_depth_image.getIntrinsic_mCopy(), current_video_image.getIntrinsic_mCopy(), current_depth_image.getExtrinsic_mCopy(), &current_depth_image, &current_video_image);
+	_pointManipulator.setMembers(rgbd_image.getSensor_pose(),
+			                     current_depth_image.getIntrinsic_mCopy(), current_video_image.getIntrinsic_mCopy(),
+								 current_depth_image.getExtrinsic_mCopy(), &current_depth_image, &current_video_image);
 	std::cout << "====> Sensor Pose: \n"<< rgbd_image.getSensor_pose() << std::endl;
 
 	vHelper.setPointManipulator(_pointManipulator);
 
+	cv::Mat rgb_matrix = cv::Mat((int)current_video_image.getParameter().height, (int)current_video_image.getParameter().width, CV_8UC3, const_cast< unsigned char*>(current_video_image.get_data()));
 
-	// create CV matrix of depth data in 8 bit (1 channel) for container detection
-//	cv::Mat depth_matrix(kinect_image.get_distance_height(),kinect_image.get_distance_width(), CV_8UC1);
-//	for (uint32_t r = 0; r < kinect_image.get_distance_height(); r++) {
-//		for (uint32_t c = 0; c < kinect_image.get_distance_width(); c++) {
-//
-//			const float* pixel = kinect_image.get_depth_image() + (r * kinect_image.get_distance_width() + c);
-//			depth_matrix.at<uint8_t>(r,c)= uint8_t (pixel[0] *100);
-//		}
-//	}
-
-	//show RGB image before detection
-	//vHelper.show_rgb(&current_video_image);
-	cv::Mat rgb_matrix = cv::Mat((int)rgbd_image.getColor_image().getParameter().height, (int)rgbd_image.getColor_image().getParameter().width, CV_8UC3, const_cast< unsigned char*>(rgbd_image.getColor_image().get_data()));
-
-	//flip image horizontally
-	//cv::Mat tmp_image_mat(rgb_matrix.rows, rgb_matrix.cols, CV_8UC3, rgb_matrix.data);
-	//flip(tmp_image_mat, rgb_matrix, 0);
-
-//	pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_ptr (COMP->point_cloud.makeShared());
-//	_pointManipulator.createColoredPointCloud(cloud_ptr, &current_video_image, &current_depth_image);
-//	COMP->point_cloud.points.clear();
-//	COMP->point_cloud.points = cloud_ptr->points;
-	//COMP->point_cloud = _pointManipulator.createColoredPointCloud(&current_video_image, &current_depth_image);
 	COMP->point_cloud = _pointManipulator.createColoredPointCloud(&current_video_image, false);
 
 	vector<Box> boxes;
@@ -204,7 +176,6 @@ int DetectionTask::on_execute()
 
 		//DETECTION
 		stopwatch.Tic();
-		//findContainer(depth_matrix, boxes);
 		findRectangles(rgb_matrix, boxes, tmp_length_deviation_factor + 0.2 , tmp_max_box_cosine);
 		double detection_time = stopwatch.Tac();
 		cout << "[DetectionTask] Detection time: " << detection_time << "s" << endl;
@@ -215,7 +186,6 @@ int DetectionTask::on_execute()
 		vHelper.show_box_image(&tmp_current_video_image, boxes);
 		//STOP;
 
-
 		stopwatch.Tic();
 		if(_send_obstacle_mesh) {
 			createPointClouds(&current_video_image, boxes, COMP->point_cloud.makeShared());
@@ -224,7 +194,6 @@ int DetectionTask::on_execute()
 		}
 		double create_pc_time = stopwatch.Tac();
 		cout << "[DetectionTask] Point cloud creation time: " << create_pc_time << "s" << endl;
-
 
 		int box_counter2 = boxes.size();
 		eraseEmptyRectangles(boxes);
@@ -304,8 +273,6 @@ int DetectionTask::on_execute()
 		return 0;
 	}
 
-//nAYAB UNCOMMENT START
-
 	int box_counter5 = boxes.size();
 	eraseNanPoses(boxes);
 	cout << "[DetectionTask] eraseFarRectangles deleted " << box_counter5 - boxes.size() << " candidates" << endl;
@@ -317,19 +284,9 @@ int DetectionTask::on_execute()
 	eraseWrongShelfLevelBoxes(boxes);
 	cout << "[DetectionTask] eraseWrongShelfLevelBoxes deleted " << box_counter6 - boxes.size() << " candidates" << endl;
 
-//nAYAB UNCOMMENT end
+
 	setObjectIds(boxes);
-
-	//cout << "[DetectionTask] Sorting boxes for vacuum grasping..." << endl;
-	//stopwatch.Tic();
-	//sortBoxesForVacuumGripper(boxes);
-	//double sort_time = stopwatch.Tac();
-	//cout << "[DetectionTask] Box sorting time: " << sort_time << "s" << endl;
-
 	rearrangePose(boxes);
-
-	//setEnvId();
-
 	setDetectedObjects(boxes);
 
 	if(_send_obstacle_mesh) {
@@ -361,66 +318,6 @@ int DetectionTask::on_execute()
 
 	double global_detection_time = global_stopwatch.Tac();
 	cout << "[DetectionTask] Complete detection time: " << global_detection_time << "s" << endl;
-
-
-
-/////////////
-// find surface cloud corner points
-//	for(int i = 0; i<boxes.size(); i++){
-//		mrpt::math::TPoint3D box_midpoint(boxes[i].getSurfacePose().x(), boxes[i].getSurfacePose().y(), boxes[i].getSurfacePose().z());
-//
-//		//sort points by distance to surface midpoint
-//		std::sort(boxes[i].getPointCloud()->points.begin(), boxes[i].getPointCloud()->points.end(),
-//			          [&box_midpoint](pcl::PointXYZRGB a, pcl::PointXYZRGB b) {
-//							mrpt::math::TPoint3D tmp_point_a(a.x, a.y, a.z);
-//							mrpt::math::TPoint3D tmp_point_b(b.x, b.y, b.z);
-//							double dist_a = box_midpoint.distanceTo(tmp_point_a);
-//							double dist_b = box_midpoint.distanceTo(tmp_point_b);
-//
-//							if(tmp_point_a.x == 0.0 || tmp_point_a.y == 0.0 || tmp_point_a.z == 0.0 ){return false;}
-//							if(tmp_point_b.x == 0.0 || tmp_point_b.y == 0.0 || tmp_point_b.z == 0.0 ){return true;}
-//
-//							return dist_a > dist_b;
-//						});
-//
-//
-//		vector<int> corner_point_idxs{0};
-//		//corner points must have min distance of the shortest side of the object
-//		double min_corner_dist = _searched_obj.sides[2] * 0.7;
-//
-//		for(int j = 0; j<boxes[i].getPointCloud()->size(); j++){
-//			mrpt::math::TPoint3D tmp_point(boxes[i].getPointCloud()->points[j].x, boxes[i].getPointCloud()->points[j].y, boxes[i].getPointCloud()->points[j].z);
-//			bool too_close = false;
-//
-//			for(int k = 0; k<corner_point_idxs.size(); k++){
-//				mrpt::math::TPoint3D tmp_corner_point(boxes[i].getPointCloud()->points[corner_point_idxs[k]].x, boxes[i].getPointCloud()->points[corner_point_idxs[k]].y, boxes[i].getPointCloud()->points[corner_point_idxs[k]].z) ;
-//				double tmp_dist = tmp_point.distanceTo(tmp_corner_point);
-//
-//				//if current point is close to the last one it is probably
-//				//in the same corner, so try the next one
-//				if(tmp_dist < min_corner_dist){
-//					too_close = true;
-//					break;
-//				}
-//			}
-//
-//			if(!too_close){
-//				corner_point_idxs.push_back(j);
-//				if (corner_point_idxs.size() == 4){
-//					j = boxes[i].getPointCloud()->size();
-//				}
-//			}
-//
-//		}
-//
-//		for(int c = 0; c<corner_point_idxs.size(); c++ ){
-//			boxes[i].getPointCloud()->points[corner_point_idxs[c]].r = 250;
-//			boxes[i].getPointCloud()->points[corner_point_idxs[c]].g = 0;
-//			boxes[i].getPointCloud()->points[corner_point_idxs[c]].b = 0;
-//			cout << "Corner point: " << corner_point_idxs[c] << " , " << boxes[i].getPointCloud()->points[corner_point_idxs[c]] << endl;
-//		}
-//	}
-///////////////
 
 	if (_DO_TEST) {
 		for (std::list<ConcreteObject>::const_iterator iter = COMP->concreteObjects.begin(); iter != COMP->concreteObjects.end(); iter++) {
@@ -2257,13 +2154,7 @@ void DetectionTask::rearrangePose(vector<Box>& boxes){
 
 		pose.setYawPitchRoll(pose.yaw(),pose.pitch(), init_roll);
 
-		// Timo - 20.04
-		//---------------
-		// new:	
 		mrpt::math::TPoint3D point_on_pose_z = mrpt::math::TPoint3D(pose.asTPose()) + mrpt::math::TPoint3D(mrpt::poses::CPose3D(mrpt::poses::CPoint3D(0.0, 0.0, 0.07)).asTPose());
-		// old:
-		// mrpt::math::TPoint3D point_on_pose_z = pose +  mrpt::poses::CPoint3D(0.0, 0.0, 0.07);
-		//---------------
 
 		pcl::PointXYZRGB point_on_pose_z_pcl(255, 0, 0);
 		point_on_pose_z_pcl.x = point_on_pose_z.x;

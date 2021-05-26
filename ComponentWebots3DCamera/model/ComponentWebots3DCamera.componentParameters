@@ -20,44 +20,50 @@ ComponentParameter ComponentWebots3DCameraParams component ComponentWebots3DCame
 		/** turn on depthPushNewestServer? */
 		pushnewest_depth_image : Boolean = false
 	}
-	/** camera pose in robot frame */
+	/** camera position and orientation relative to (see <a href="#internal-parameter-base">parameter base</a>):
+	 * <ul>
+	 * <li>on_base = true: center point between wheels axis of an moving robot</li>	
+	 * <li>on_ptu = true : tilt axis of pan-tilt-unit</li>
+	 * <li>on_ur = true : end point of robot arm = TCP = Tool Center Point</li>
+	 * </ul>
+	 */
 	InternalParameter sensor_pose
 	{
-		/** [mm] */
+		/** front [mm] */
 		x : Double = 90
-		/** [mm] */
+		/** left [mm] */
 		y : Double = 0
-		/** [mm] */
+		/** up [mm] */
 		z : Double = 350
-		/** [radians] */
+		/** rotate left(+)/right(-) [radians] */
 		azimuth : Double = 1.5707963
-		/** [radians] */
+		/** rotate down(+)/up(-) [radians] */
 		elevation : Double = 3.14159265
-		/** [radians] */
+		/** rotate around front direction counterclockwise [radians] */
 		roll : Double = 1.32
 	}
 	InternalParameter base
 	{
+		/** is Camera mounted on top of an mobile robot? */
+		on_base : Boolean = false		
 		/** is Camera mounted on top of an pan-tilt-unit? */
 		on_ptu : Boolean = false
-		/** is Camera mounted on top of an mobile robot? */
-		on_base : Boolean = false
 		/** is Camera mounted on top of an UR5 robot arm? */
 		on_ur : Boolean = false
-		/** stationary Camera only: x coordinate [mm] */
+		/** stationary Camera only: x coordinate (on_ptu and on_base and on_ur are false) [mm]*/
 		x : Int32 = 0
 		/** stationary Camera only: y coordinate [mm] */
 		y : Int32 = 0
 		/** stationary Camera only: z coordinate [mm] */
 		z : Int32 = 0
-		/** stationary Camera only: heading [radians] */
+		/** stationary Camera only: horizontal heading [radians] */
 		base_a : Double = 0
 	}
-    InternalParameter hardware_properties{
-		/** Defines the min distance of the measurements in the depth image[mm]. Values with distances less than this value will be discarded. */
+    InternalParameter hardware_properties {
+		/** Defines the minimal distance in the range image. Values less than this value will be discarded. [mm]*/
 		min_distance: Double = 500
 		
-		/** Defines the max distance of the measurements in the depth image[mm]. Values with distances greater than this value will be discarded. */
+		/** Defines the maximal distance in in the range image. Values greater than this value will be discarded. [mm]*/
 		max_distance: Double = 4500		
 	}
 }

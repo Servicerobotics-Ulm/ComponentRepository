@@ -7,48 +7,33 @@
 
 *Component Short Description:* 
 
-PTU = Pan Tilt Unit. A camera can be placed on top of the PTU, and the PTU can rotate left/right/up/down to rotate the camera too.
+PTU = Pan Tilt Unit to rotate a camera in the webots simulator. 
 
-How the PTU is added to an slot of the Larry robot:
+pan = rotate left/right, tilt = rotate up/down. The keys JL rotate left/right, the keys IK rotate up/down. (click in webots graphics window first)
+
+ComponentMode:
+- **servo**: PTU can move
+- **move**: PTU can move and sends data with position and sends event if target position is reached
+ 
+### Example program:
 
 ```
-Pan {
-  topSlot [
-    Robot {
-      name "PTU"
-      supervisor TRUE
-      controller "<extern>"
-    }
-    DEF PanRotate Transform {
-# rotate by changing this 4. value by supervisor
-      rotation 0 1 0 0
-      children [
-        Tilt {
-          topSlot [
-            DEF TiltRotate Transform {
-# rotate by changing this 4. value by supervisor
-              rotation 0 0 1 0
-              children [
-                Transform {
-                  rotation 0 -1 0 1.5708
-                  children [
-                    kinect_v2 {
-                      controller "<extern>"
-                      supervisor TRUE
-                    }
-                    microphone {
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
+DomainPTU::CommPTUMoveRequest data;
+// positive=left negative=right [radians]
+data.setPan(pan);
+// positive=down negative=up [radians]
+data.setTilt(tilt);
+// move modes:
+// PAN_RELATIVE TILT_RELATIVE PAN_TILT_RELATIVE
+// PAN_ABSOLUTE TILT_ABSOLUTE PAN_TILT_ABSOLUTE
+data.set_move_mode(DomainPTU::PTUMoveFlag::PAN_TILT_ABSOLUTE);
+COMP -> movePTUSendServiceOut->send(data);
 ```
+### other similar components:
+
+- [ComponentPTUServer](../ComponentPTUServer)
+- [ComponentGazeboCameraControl](../ComponentGazeboCameraControl)
+
 
 
 ## Component-Datasheet Properties
@@ -60,6 +45,26 @@ Pan {
 <th style="border:1px solid black; padding: 5px;"><i>Property Value</i></th>
 <th style="border:1px solid black; padding: 5px;"><i>Property Description</i></th>
 </tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">MarketName</td>
+<td style="border:1px solid black; padding: 5px;">ComponentWebotsPTUServer</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Supplier</td>
+<td style="border:1px solid black; padding: 5px;">Servicerobotics Ulm</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Homepage</td>
+<td style="border:1px solid black; padding: 5px;">https://wiki.servicerobotik-ulm.de/directory:collection</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;">Purpose</td>
+<td style="border:1px solid black; padding: 5px;">PTU = Pan Tilt Unit to rotate a camera in the webots simulator.</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
 </table>
 
 ## Component Ports
@@ -67,31 +72,46 @@ Pan {
 ### baseStateQueryClient
 
 *Documentation:*
+<p>Reads on request the position etc. of the mobile robot: CommBasicObjects.CommBaseState
+</p>
 
 
 ### baseStateClient
 
 *Documentation:*
+<p>Reads periodically the position etc. of the mobile robot: CommBasicObjects.CommBaseState
+</p>
 
 
 ### devicePoseStateServer
 
 *Documentation:*
+<p>writes periodically the position and orientation of the PTU: CommBasicObjects.CommDevicePoseState
+</p>
 
 
 ### goalEventServer
 
 *Documentation:*
+<p>Sends an event: DomainPTU.PTUMoveStatus
+</p>
 
 
 ### moveSendServer
 
 *Documentation:*
+<p>Reads periodically movement commands: DomainPTU.CommPTUMoveRequest
+</p>
 
 
 ### moveQueryServer
 
 *Documentation:*
+<p>request: DomainPTU::CommPTUMoveRequest
+</p>
+<p> answer: DomainPTU.CommPTUMoveResponse
+</p>
+<p></p>
 
 
 ### stateQueryServer
@@ -119,7 +139,7 @@ Pan {
 <td style="border:1px solid black; padding: 5px;"><b>robotName</b></td>
 <td style="border:1px solid black; padding: 5px;">String</td>
 <td style="border:1px solid black; padding: 5px;">"PTU"</td>
-<td style="border:1px solid black; padding: 5px;"><p>the webots Camera and RangeFinder device must be in children of an extra robot with this name
+<td style="border:1px solid black; padding: 5px;"><p>the PTU must be in children of an extra robot with this name, controller "&lt;extern&gt;" and supervisor TRUE
 </p></td>
 </tr>
 </table>
@@ -396,37 +416,43 @@ Pan {
 <td style="border:1px solid black; padding: 5px;"><b>x</b></td>
 <td style="border:1px solid black; padding: 5px;">Int32</td>
 <td style="border:1px solid black; padding: 5px;">0</td>
-<td style="border:1px solid black; padding: 5px;"></td>
+<td style="border:1px solid black; padding: 5px;"><p>position relative to mobile robot [mm]
+</p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>y</b></td>
 <td style="border:1px solid black; padding: 5px;">Int32</td>
 <td style="border:1px solid black; padding: 5px;">0</td>
-<td style="border:1px solid black; padding: 5px;"></td>
+<td style="border:1px solid black; padding: 5px;"><p>position relative to mobile robot [mm]
+</p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>z</b></td>
 <td style="border:1px solid black; padding: 5px;">Int32</td>
 <td style="border:1px solid black; padding: 5px;">0</td>
-<td style="border:1px solid black; padding: 5px;"></td>
+<td style="border:1px solid black; padding: 5px;"><p>position relative to mobile robot [mm]
+</p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>azimuth</b></td>
 <td style="border:1px solid black; padding: 5px;">Double</td>
 <td style="border:1px solid black; padding: 5px;">0</td>
-<td style="border:1px solid black; padding: 5px;"></td>
+<td style="border:1px solid black; padding: 5px;"><p>counterclockwise horizontal rotation relative to mobile robot [radians]
+</p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>elevation</b></td>
 <td style="border:1px solid black; padding: 5px;">Double</td>
 <td style="border:1px solid black; padding: 5px;">0</td>
-<td style="border:1px solid black; padding: 5px;"></td>
+<td style="border:1px solid black; padding: 5px;"><p>rotation down/up relative to mobile robot [radians]
+</p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>roll</b></td>
 <td style="border:1px solid black; padding: 5px;">Double</td>
 <td style="border:1px solid black; padding: 5px;">0</td>
-<td style="border:1px solid black; padding: 5px;"></td>
+<td style="border:1px solid black; padding: 5px;"><p>rotation around front direction relative to mobile robot [radians]
+</p></td>
 </tr>
 </table>
 

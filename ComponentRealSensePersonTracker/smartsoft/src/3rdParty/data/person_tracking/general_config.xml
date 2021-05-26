@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<PersonTracking>
+  <GeneralConfiguration>
+    <Timers enabled="false" path="C:\temp\HM_measures_level.csv" />
+    <ImageDump enabled="false" directory="D:\temp\dumps" dump_interval="1" color_raw="false" color_jpeg="false" depth_raw="false" depth_jpeg="false" left_raw="false" right_raw="false" color_platform_camera_jpeg="false" color_platform_camera_raw="false" />
+    <RecognitionModule backgorundWorkersLimit="1" limitByHardware="true" />
+    <DepthImageScale enabled="false" targetDpethResolutionWidth="320"/>
+    <PlatformCamera mirrorImage="false" usePlatformCameraColorByDefault="false" learnResolutionsInPlatformMode="true" platformProjectionType="Sizes" platformCameraWidth="1920" platformCameraHeight="1080" internalColorWidth="1920" internalColorHeight="1080" centerA="5.9822" centerB="-4.1290" centerC="4.5304" centerD="-3.2767" rotationMatrix="1,0,0,0,1,0,0,0,1" translationMatrix="0,-87.5,0" focalLengthX="3.4291150e+03f" focalLengthY="3.4291150e+03f" principalPointCx="1.9963845e+03f" principalPointCy="1.5393187e+03f" />
+    <!-- 
+      platformProjectionType="Center"
+      platformProjectionType="Sizes"
+      platformProjectionType="Intrinsics"
+      -->
+    <Logger level="20000" />
+    <!-- Debug/Info/Warn/Error  10000/20000/30000/40000 -->
+  </GeneralConfiguration>
+</PersonTracking>

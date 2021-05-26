@@ -29,14 +29,6 @@
 class ComponentWebotsConveyorBeltOpcuaPortFactoryInterface;
 class ComponentWebotsConveyorBeltOpcuaExtension;
 
-// includes for ComponentWebotsConveyorBeltOpcuaROS1InterfacesExtension
-
-// includes for ComponentWebotsConveyorBeltOpcuaROSExtension
-
-// includes for ComponentWebotsConveyorBeltOpcuaRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentWebotsConveyorBeltOpcuaExtension
 // include plain OPC UA device clients
 #include "OpcUaProductionStation.hh"
@@ -136,14 +128,6 @@ public:
 	// define answer-ports
 	
 	// define request-handlers
-	
-	// definitions of ComponentWebotsConveyorBeltOpcuaROS1InterfacesExtension
-	
-	// definitions of ComponentWebotsConveyorBeltOpcuaROSExtension
-	
-	// definitions of ComponentWebotsConveyorBeltOpcuaRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
 	
 	// definitions of PlainOpcUaComponentWebotsConveyorBeltOpcuaExtension
 	OPCUA::ProductionStation *productionStation;
@@ -261,14 +245,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} trafficLightsServiceIn;
-		
-		// -- parameters for ComponentWebotsConveyorBeltOpcuaROS1InterfacesExtension
-		
-		// -- parameters for ComponentWebotsConveyorBeltOpcuaROSExtension
-		
-		// -- parameters for ComponentWebotsConveyorBeltOpcuaRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// -- parameters for PlainOpcUaComponentWebotsConveyorBeltOpcuaExtension
 		struct ProductionStation_struct {

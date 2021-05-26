@@ -1,49 +1,38 @@
 ComponentDefinition ComponentWebotsPTUServer logo "/ComponentWebotsPTUServer/model/logo.png"
 {
-Activity DevicePoseStateTask
-	{
-	}
-	Activity BaseStateTask
-	{
-	}
-	Activity PtuTask
-	{
-	}
-	CoordinationSlavePort CoordinationPort implements DomainPTU.PTUCoordinationService
-	{
+	Activity DevicePoseStateTask { }
+	Activity BaseStateTask { }
+	Activity PtuTask { }
+	/** DomainPTU.PTUCoordinationService */
+	CoordinationSlavePort CoordinationPort implements DomainPTU.PTUCoordinationService {
 		PublicOperationMode DomainPTU.PTUStates.Move { activates ( move ) } PrivateOperationMode move 
-		PublicOperationMode DomainPTU.PTUStates.Servo { activates ( servo ) } PrivateOperationMode servo
-		
+		PublicOperationMode DomainPTU.PTUStates.Servo { activates ( servo ) } PrivateOperationMode servo		
 		with ptupose realizedBy moveSendServer
-		with ptuevent realizedBy goalEventServer
-		
-		SkillRealizationsRef ptu
-		
+		with ptuevent realizedBy goalEventServer		
+		SkillRealizationsRef ptu		
 	}
-
-	RequestPort baseStateQueryClient implements CommBasicObjects.BaseStateQueryService {
-	}
-	InputPort baseStateClient implements CommBasicObjects.BaseStateService {
-	}
-	OutputPort devicePoseStateServer implements CommBasicObjects.DevicePoseUpdateService realizedBy DevicePoseStateTask {
-	}
-
-	OutputPort goalEventServer implements DomainPTU.GoalEventService realizedBy PtuTask {
-	}
-	InputPort moveSendServer implements DomainPTU.MovePTUSendService {
-	}
+    /** Reads on request the position etc. of the mobile robot: CommBasicObjects.CommBaseState */
+	RequestPort baseStateQueryClient implements CommBasicObjects.BaseStateQueryService { }
+	/** Reads periodically the position etc. of the mobile robot: CommBasicObjects.CommBaseState */
+	InputPort baseStateClient implements CommBasicObjects.BaseStateService { }
+	/** Writes periodically the position and orientation of the PTU: CommBasicObjects.CommDevicePoseState */	
+	OutputPort devicePoseStateServer implements CommBasicObjects.DevicePoseUpdateService realizedBy DevicePoseStateTask { }
+	/** Sends an event: DomainPTU.PTUMoveStatus */ 
+	OutputPort goalEventServer implements DomainPTU.GoalEventService realizedBy PtuTask { }
+	/** Reads periodically movement commands: DomainPTU.CommPTUMoveRequest */
+	InputPort moveSendServer implements DomainPTU.MovePTUSendService { }
+	
 	ComponentParameters ComponentWebotsPTUServerParams slave CoordinationPort
 
 	InputHandler MoveSendHandler triggeredFrom moveSendServer { }
-AnswerPort moveQueryServer implements DomainPTU.MovePTUQueryService {
-	}
-	RequestHandler MovePTUQueryServiceAnswHandler triggeredFrom moveQueryServer {
-	}
-	AnswerPort stateQueryServer implements DomainPTU.PTUStateQueryService {
-	}
-	RequestHandler PTUStateQueryServiceAnswHandler triggeredFrom stateQueryServer {
-	}
-Activity WebotsTask
-	{
-	}
+	/** request: DomainPTU.CommPTUMoveRequest
+	 * 
+	 * answer: DomainPTU.CommPTUMoveResponse
+	 */
+	AnswerPort moveQueryServer implements DomainPTU.MovePTUQueryService { }
+	RequestHandler MovePTUQueryServiceAnswHandler triggeredFrom moveQueryServer { }
+	/** Writes on request:  DomainPTU.CommMobilePTUState */
+	AnswerPort stateQueryServer implements DomainPTU.PTUStateQueryService { }
+	RequestHandler PTUStateQueryServiceAnswHandler triggeredFrom stateQueryServer { }
+	Activity WebotsTask { }
 }

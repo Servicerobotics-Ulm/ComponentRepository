@@ -15,23 +15,18 @@
 # delete it before running the code generator.
 #--------------------------------------------------------------------------
 
-CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.5)
 
-# find the SmartSoft CMake Macros (version 2 that uses CMake v3)
-FIND_FILE(SMART_MACROS SmartMacros2.cmake PATHS $ENV{SMART_ROOT_ACE}/CMakeMacros /opt/smartSoftAce/CMakeMacros/)
-INCLUDE(${SMART_MACROS})
+PROJECT(ComponentWebots2DLidar)
+
+# find SmartSoft package
+FIND_PACKAGE(AceSmartSoft 3.4 PATHS $ENV{SMART_ROOT_ACE} PATH_SUFFIXES modules)
 
 # Create and configure a CMake project for a CommunicationObject
 SMART_COMPONENT_PROJECT()
 
-# find SmartSoft package
-#FIND_SMARTSOFT(3.0)
-#FIXME: generalize this
-FIND_PACKAGE(AceSmartSoft PATHS $ENV{SMART_ROOT_ACE})
-
 # generte doxygen documentation
-# move down below ADD_EXECUTABLE
-# SMART_COMPONENT_GENERATE_DOC()
+SMART_COMPONENT_GENERATE_DOC()
 
 # automatically build CommunicationObject dependencies
 SMART_COMPONENT_AUTOBUILD_DEPENDENCIES()
@@ -40,11 +35,10 @@ SMART_COMPONENT_AUTOBUILD_DEPENDENCIES()
 ## here you can put all your project-specific compiler configurations          ##
 ## using regular CMake commands (like FIND_PACKAGE, INCLUDE_DIRECTORIES, etc.) ##
 
-#LIST(APPEND CMAKE_MODULE_PATH /usr/local/robotino/api2/cmake)
 
 # you can add additional external libraries using regular CMake commands, e.g.:
+#FIND_PACKAGE(<SomePackageName>)
 
-#FIND_PACKAGE(Armadillo 1.0.0)
 
 SMART_ADD_UTILITY(Armadillo 1.0.0)
 
@@ -52,18 +46,14 @@ SMART_ADD_UTILITY(Armadillo 1.0.0)
 
 #message( robotino_userlibs ${ARMADILLO_LIBRARIES})
 
-
-link_directories($ENV{WEBOTS_HOME}/lib)
-set(WEBOTS ${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_SHARED_LIBRARY_PREFIX}CppController${CMAKE_SHARED_LIBRARY_SUFFIX})
-
 # these are the regular includes (add your own includes, if needed)
 INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_LIST_DIR}/src
   ${CMAKE_CURRENT_LIST_DIR}/src-gen
-  ${CMAKE_CURRENT_LIST_DIR}/src-gen/params  
-  $ENV{WEBOTS_HOME}/include/controller/cpp
-  
+  ${CMAKE_CURRENT_LIST_DIR}/src-gen/params
 )
+INCLUDE_DIRECTORIES($ENV{WEBOTS_HOME}/include/controller/cpp)
+
 
 # collect the toolchain-generated source-files
 FILE(GLOB_RECURSE SRC ${CMAKE_CURRENT_LIST_DIR}/src/*.cc)
@@ -74,14 +64,11 @@ FILE(GLOB_RECURSE SRC_GEN_PARAMS ${CMAKE_CURRENT_LIST_DIR}/src-gen/params/*.cc)
 #FILE(GLOB_RECURSE USER_SRC ${CMAKE_CURRENT_LIST_DIR}/src/<your-sources>)
 
 # create the executable using collected source-files
-ADD_EXECUTABLE(${PROJECT_NAME} ${SRC} ${SRC_GEN} ${SRC_GEN_PARAMS}) # add ${USER_SRC} (if needed)
-SMART_COMPONENT_GENERATE_DOC()
+ADD_EXECUTABLE(${PROJECT_NAME} ${SRC} ${SRC_GEN} ${SRC_GEN_PARAMS} ${FURTHER_SRCS}) # add ${USER_SRC} (if needed)
 
 # link your external libraries here (if there are any)
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${ARMADILLO_LIBRARIES})
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} $ENV{WEBOTS_HOME}/lib/controller/libController.so)
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} $ENV{WEBOTS_HOME}/lib/controller/libCppController.so)
-# TARGET_LINK_LIBRARIES(${PROJECT_NAME} -ljsoncpp)
 
 #INSTALL(FILES ${PROJECT_SOURCE_DIR}/src-gen/${PROJECT_NAME}.ini.template DESTINATION etc)
 

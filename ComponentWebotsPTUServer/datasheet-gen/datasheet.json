@@ -2,52 +2,40 @@
 	"name": "ComponentWebotsPTUServer",
 	"shortDescription": "
 	
-	PTU = Pan Tilt Unit. A camera can be placed on top of the PTU, and the PTU can rotate left/right/up/down to rotate the camera too.
+	PTU = Pan Tilt Unit to rotate a camera in the webots simulator. 
 	
-	How the PTU is added to an slot of the Larry robot:
+	pan = rotate left/right, tilt = rotate up/down. The keys JL rotate left/right, the keys IK rotate up/down. (click in webots graphics window first)
+	
+	ComponentMode:
+	- **servo**: PTU can move
+	- **move**: PTU can move and sends data with position and sends event if target position is reached
+	 
+	### Example program:
 	
 	```
-	Pan {
-	  topSlot [
-	    Robot {
-	      name "PTU"
-	      supervisor TRUE
-	      controller "<extern>"
-	    }
-	    DEF PanRotate Transform {
-	# rotate by changing this 4. value by supervisor
-	      rotation 0 1 0 0
-	      children [
-	        Tilt {
-	          topSlot [
-	            DEF TiltRotate Transform {
-	# rotate by changing this 4. value by supervisor
-	              rotation 0 0 1 0
-	              children [
-	                Transform {
-	                  rotation 0 -1 0 1.5708
-	                  children [
-	                    kinect_v2 {
-	                      controller "<extern>"
-	                      supervisor TRUE
-	                    }
-	                    microphone {
-	                    }
-	                  ]
-	                }
-	              ]
-	            }
-	          ]
-	        }
-	      ]
-	    }
-	  ]
-	}
+	DomainPTU::CommPTUMoveRequest data;
+	// positive=left negative=right [radians]
+	data.setPan(pan);
+	// positive=down negative=up [radians]
+	data.setTilt(tilt);
+	// move modes:
+	// PAN_RELATIVE TILT_RELATIVE PAN_TILT_RELATIVE
+	// PAN_ABSOLUTE TILT_ABSOLUTE PAN_TILT_ABSOLUTE
+	data.set_move_mode(DomainPTU::PTUMoveFlag::PAN_TILT_ABSOLUTE);
+	COMP -> movePTUSendServiceOut->send(data);
 	```
+	### other similar components:
+	
+	- [ComponentPTUServer](../ComponentPTUServer)
+	- [ComponentGazeboCameraControl](../ComponentGazeboCameraControl)
+	
 	",
 	"type": "Toolify",
 	"description": "",
-	"purposes": [],
+	"purposes": ["PTU = Pan Tilt Unit to rotate a camera in the webots simulator."],
+	"marketName": "ComponentWebotsPTUServer",
+	"supplier": "Servicerobotics Ulm",
+	"homepage": "https://wiki.servicerobotik-ulm.de/directory:collection",
 	"services": [
 	],
 	"mainstates": [
@@ -69,7 +57,8 @@
 					"description": ""
 				}
 			]
-		},
+		}
+		,
 		{
 			"name": "ACCELERATION_TILT",
 			"nameFQN": "DomainPTU.PTUParameter.ACCELERATION_TILT",
@@ -83,7 +72,8 @@
 					"description": ""
 				}
 			]
-		},
+		}
+		,
 		{
 			"name": "RESET",
 			"nameFQN": "DomainPTU.PTUParameter.RESET",
@@ -97,7 +87,8 @@
 					"description": ""
 				}
 			]
-		},
+		}
+		,
 		{
 			"name": "SENSOR_OFFSET",
 			"nameFQN": "DomainPTU.PTUParameter.SENSOR_OFFSET",
@@ -141,7 +132,8 @@
 					"description": ""
 				}
 			]
-		},
+		}
+		,
 		{
 			"name": "SPEED_LIMIT_PAN",
 			"nameFQN": "DomainPTU.PTUParameter.SPEED_LIMIT_PAN",
@@ -161,7 +153,8 @@
 					"description": ""
 				}
 			]
-		},
+		}
+		,
 		{
 			"name": "SPEED_LIMIT_TILT",
 			"nameFQN": "DomainPTU.PTUParameter.SPEED_LIMIT_TILT",
@@ -181,7 +174,8 @@
 					"description": ""
 				}
 			]
-		},
+		}
+		,
 		{
 			"name": "SPEED_PAN",
 			"nameFQN": "DomainPTU.PTUParameter.SPEED_PAN",
@@ -195,7 +189,8 @@
 					"description": ""
 				}
 			]
-		},
+		}
+		,
 		{
 			"name": "SPEED_TILT",
 			"nameFQN": "DomainPTU.PTUParameter.SPEED_TILT",
@@ -209,7 +204,8 @@
 					"description": ""
 				}
 			]
-		},
+		}
+		,
 		{
 			"name": "START_UP_SPEED_PAN",
 			"nameFQN": "DomainPTU.PTUParameter.START_UP_SPEED_PAN",
@@ -223,7 +219,8 @@
 					"description": ""
 				}
 			]
-		},
+		}
+		,
 		{
 			"name": "START_UP_SPEED_TILT",
 			"nameFQN": "DomainPTU.PTUParameter.START_UP_SPEED_TILT",
@@ -237,6 +234,14 @@
 					"description": ""
 				}
 			]
+		}
+		,
+		{
+			"name": "COMMIT",
+			"nameFQN": "COMMIT",
+			"type": "parameter",
+			"description": "Commit the current parameter configuration.",
+			"attributes": []
 		}
 	],
 	"triggers": [

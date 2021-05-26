@@ -34,10 +34,6 @@
 #include "DetectionTaskCore.hh"
 #include <DomainVision/CommRGBDImage.hh>
 
-//#include <mrpt/utils.h>
-//#include <mrpt/poses.h>
-//#include <mrpt/math.h>
-
 #include <opencv2/opencv.hpp>
 
 #include <pcl/point_cloud.h>
@@ -50,9 +46,9 @@
 
 // every searched box can have three different sides
 struct SearchedObject{
-		float sides[3]; //object side length in meter. [0] = longest side, [2] = shortest side
-		std::string object_type; // is set by trigger ADDOBJECT, all other data comes from database
-		float shelf_level_height[2]; //height from ground in meter [0] = min value , [1] = max value
+		float sides[3];                //object side length in meter. [0] = longest side, [2] = shortest side
+		std::string object_type;       // is set by trigger ADDOBJECT, all other data comes from database
+		float shelf_level_height[2];   //height from ground in meter [0] = min value , [1] = max value
 	};
 
 class DetectionTask  : public DetectionTaskCore

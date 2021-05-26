@@ -1,31 +1,28 @@
-ComponentDefinition ComponentWebotsMpsDocking logo "/ComponentWebotsMpsDocking/model/logo.png"
-{
-Activity DockingTask
-	{
-		InputPortLink LaserServiceIn { optional oversamplingOk undersamplingOk }
-		InputPortLink BaseStateServiceIn { optional oversamplingOk undersamplingOk }
-	}
-	OutputPort NavigationVelocityServiceOut implements CommNavigationObjects.NavigationVelocityService realizedBy DockingTask {
-	}
-	InputPort BaseStateServiceIn implements CommBasicObjects.BaseStateService {
-	}
-	InputPort LaserServiceIn implements CommBasicObjects.LaserService {
-	}
-
-	OutputPort TrafficLightsServiceOut implements CommBasicObjects.TrafficLightsService realizedBy DockingTask {
-	}
-CoordinationSlavePort CoordinationPort implements CommRobotinoObjects.FestoMPSDockingCoordinationService
-	{
-		PrivateOperationMode laserDocking PrivateOperationMode irDocking PublicOperationMode CommRobotinoObjects.FestoMpsDockingStates.IrDocking { activates ( irDocking ) } PrivateOperationMode unDocking PublicOperationMode CommRobotinoObjects.FestoMpsDockingStates.UnDocking { activates ( unDocking ) } PublicOperationMode CommRobotinoObjects.FestoMpsDockingStates.LaserDocking { activates ( laserDocking ) }
+ComponentDefinition ComponentWebotsMpsDocking logo "/ComponentWebotsMpsDocking/model/logo.png" {
+	/** Reads periodically laser scans: CommBasicObjects.CommMobileLaserScan */
+	InputPort LaserServiceIn implements CommBasicObjects.LaserService {}
+	/** Reads periodically the position etc. of an mobile robot: CommBasicObjects.CommBaseState */	
+	InputPort BaseStateServiceIn implements CommBasicObjects.BaseStateService {}
+	/** Writes periodically the translational and rotational velocity of an mobile robot: CommBasicObjects.CommNavigationVelocity  */	
+	OutputPort NavigationVelocityServiceOut implements CommNavigationObjects.NavigationVelocityService realizedBy DockingTask {}
+	/** Writes periodically to turn off/on red/yellow/green lights on the mobile robot: CommBasicObjects.CommTrafficLights */	
+	OutputPort TrafficLightsServiceOut implements CommBasicObjects.TrafficLightsService realizedBy DockingTask {}
+	OutputPort RobotDockingEventServiceOut implements CommRobotinoObjects.RobotinoDockingEvent realizedBy DockingTask {}			
+    /** CommRobotinoObjects.FestoMPSDockingCoordinationService */
+	CoordinationSlavePort CoordinationPort implements CommRobotinoObjects.FestoMPSDockingCoordinationService {
+		PublicOperationMode CommRobotinoObjects.FestoMpsDockingStates.IrDocking { activates ( irDocking ) } 
+		PublicOperationMode CommRobotinoObjects.FestoMpsDockingStates.UnDocking { activates ( unDocking ) } 
+		PublicOperationMode CommRobotinoObjects.FestoMpsDockingStates.LaserDocking { activates ( laserDocking ) }		
+		PrivateOperationMode laserDocking 
+		PrivateOperationMode irDocking
+		PrivateOperationMode unDocking 		 
 		SkillRealizationsRef mpsModRealization
 		with dockingevent realizedBy RobotDockingEventServiceOut
 	}
-
 	ComponentParameters ComponentWebotsMpsDocking slave CoordinationPort
-	
-	
-	//OutputPort RobotDockingEventServiceOut implements CommNavigationObjects.RobotDockingEventService realizedBy DockingTask {
-	OutputPort RobotDockingEventServiceOut implements CommRobotinoObjects.RobotinoDockingEvent realizedBy DockingTask {
-	
+
+	Activity DockingTask {
+		InputPortLink LaserServiceIn { optional oversamplingOk undersamplingOk }
+		InputPortLink BaseStateServiceIn { optional oversamplingOk undersamplingOk }
 	}
 }

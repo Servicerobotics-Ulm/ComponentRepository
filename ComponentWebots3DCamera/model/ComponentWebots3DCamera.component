@@ -1,50 +1,68 @@
-ComponentDefinition ComponentWebots3DCamera logo "/ComponentWebots3DCamera/model/logo.png"
-{
-
+ComponentDefinition ComponentWebots3DCamera logo "/ComponentWebots3DCamera/model/logo.png" {
+	/** Reads periodically the position etc. of the robot (if the camera is mounted on it): CommBasicObjects::CommBaseState
+	 * 
+     * Connect to port <a href="../ComponentWebotsMobileRobot#BaseStateServiceOut">BaseStateServiceOut of ComponentWebotsMobileRobot</a>      
+     */	
 	InputPort basePushTimedClient implements CommBasicObjects.BaseStateService {
 	}
+	/** Reads periodically the position etc. of the Pan-Tilt-Unit (if the camera is mounted on it): CommBasicObjects::CommBaseState
+	 *  
+     * Connect to port <a href="../ComponentWebotsPTUServer#DevicePoseStateServer">DevicePoseStateServer of ComponentWebotsPTUServer</a>      
+     */
 	InputPort ptuPosePushNewestClient implements CommBasicObjects.DevicePoseUpdateService {
 	}
-	Activity ImageTask
-	{
-		InputPortLink basePushTimedClient { oversamplingOk undersamplingOk }
-		InputPortLink ptuPosePushNewestClient { oversamplingOk undersamplingOk }
-		InputPortLink UrPosePushTimedClient { oversamplingOk undersamplingOk }
-		DefaultTrigger PeriodicTimer 30.0 Hz
-	}
-	RequestPort UrPoseQueryClient implements CommManipulatorObjects.MobileManipulatorStateQueryService {
-	}
+	/** Reads peridically the robot arm position (if the camera is mounted on it): CommManipulatorObjects.CommMobileManipulatorState 
+	 */	
 	InputPort UrPosePushTimedClient implements CommManipulatorObjects.MobileManipulatorStateService {
 	}
+    /** Reads on request the robot arm position (if the camera is mounted on it): CommManipulatorObjects.CommMobileManipulatorState 
+	 */
+	RequestPort UrPoseQueryClient implements CommManipulatorObjects.MobileManipulatorStateQueryService {
+	}
+	/** Writes peridically the color image: DomainVision.CommRGBDImage 
+	 */	
+	OutputPort RGBImagePushServiceOut implements DomainVision.RGBImagePushService realizedBy ImageTask {
+	}	
+	/** Writes peridically the range image: DomainVision.CommDepthImage
+	 */
 	OutputPort depthPushNewestServer implements DomainVision.DepthImagePushService realizedBy ImageTask {
 	}
-	AnswerPort imageQueryServer implements DomainVision.RGBDImageQueryService {
-	}
-	RequestHandler ImageQueryHandler triggeredFrom imageQueryServer {
-	}
+	/** Writes peridically the color image and range image: DomainVision.CommRGBDImage
+	 */
 	OutputPort RGBDImagePushServiceOut implements DomainVision.RGBDImagePushService realizedBy ImageTask {
 	}
-	OutputPort RGBImagePushServiceOut implements DomainVision.RGBImagePushService realizedBy ImageTask {
-	}
+	/** Writes on request the color image: DomainVision.CommVideoImage
+	 */
 	AnswerPort colorImageQueryServer implements DomainVision.RGBImageQueryService {
 	}
 	RequestHandler ColorImageQueryHandler triggeredFrom colorImageQueryServer {
 	}
-	
-	CoordinationSlavePort CoordinationPort implements DomainVision.VisionCoordinationService 
-	{ 
-		PublicOperationMode DomainVision.ImageProvisionModes.PushImage 
-		{ 
+	/** Writes on request color image and range image: DomainVision.CommRGBDImage  
+	 */	
+	AnswerPort imageQueryServer implements DomainVision.RGBDImageQueryService {
+	}
+	RequestHandler ImageQueryHandler triggeredFrom imageQueryServer {
+	}
+
+	Activity ImageTask {
+		InputPortLink basePushTimedClient { oversamplingOk undersamplingOk }
+		InputPortLink ptuPosePushNewestClient { oversamplingOk undersamplingOk }
+		InputPortLink UrPosePushTimedClient { oversamplingOk undersamplingOk }
+	}
+	/** DomainVision.VisionCoordinationService
+	 */
+	CoordinationSlavePort CoordinationPort implements DomainVision.VisionCoordinationService
+	{
+		PublicOperationMode DomainVision.ImageProvisionModes.PushImage { 
 			activates ( pushimage )
 		} 
-		PublicOperationMode DomainVision.ImageProvisionModes.QueryImage 
-		{ 	activates ( queryonly ) 
-			
+		PublicOperationMode DomainVision.ImageProvisionModes.QueryImage { 	
+			activates ( queryonly ) 			
 		} 
 		PrivateOperationMode pushimage 
 		PrivateOperationMode queryonly
-		//SkillRealizationsRef CameraModule
+	// SkillRealizationsRef CameraModule
 	}
-	
+
 	ComponentParameters ComponentWebots3DCameraParams slave CoordinationPort
 }

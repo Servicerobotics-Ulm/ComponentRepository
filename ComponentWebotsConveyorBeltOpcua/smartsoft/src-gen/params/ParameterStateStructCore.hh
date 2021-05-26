@@ -86,7 +86,6 @@ public:
 				stationName.push_back("MPS1");
 				stationName.push_back("MPS2");
 				stationName.push_back("MPS3");
-				stationName.push_back("");
 				stationUrl.push_back("opc.tcp://localhost:4840");
 				stationUrl.push_back("opc.tcp://localhost:4841");
 				stationUrl.push_back("opc.tcp://localhost:4842");
@@ -105,7 +104,6 @@ public:
 				std::list<std::string>::const_iterator stationNameIt;
 				for(stationNameIt=stationName.begin(); stationNameIt!=stationName.end(); stationNameIt++)
 				{
-				os << "stationName = " << *stationNameIt << ", ";
 				os << "stationName = " << *stationNameIt << ", ";
 				os << "stationName = " << *stationNameIt << ", ";
 				os << "stationName = " << *stationNameIt << ", ";

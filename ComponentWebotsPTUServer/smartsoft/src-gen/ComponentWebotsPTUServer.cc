@@ -122,16 +122,6 @@ ComponentWebotsPTUServer::ComponentWebotsPTUServer()
 	connections.webotsTask.cpuAffinity = -1;
 	connections.moveSendHandler.prescale = 1;
 	
-	// initialize members of ComponentWebotsPTUServerROS1InterfacesExtension
-	
-	// initialize members of ComponentWebotsPTUServerROSExtension
-	
-	// initialize members of ComponentWebotsPTUServerRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentWebotsPTUServerExtension
-	
 }
 
 void ComponentWebotsPTUServer::addPortFactory(const std::string &name, ComponentWebotsPTUServerPortFactoryInterface *portFactory)
@@ -299,16 +289,6 @@ void ComponentWebotsPTUServer::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentWebotsPTUServerROS1InterfacesExtension
-		
-		// initializations of ComponentWebotsPTUServerROSExtension
-		
-		// initializations of ComponentWebotsPTUServerRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentWebotsPTUServerExtension
 		
 		
 		// initialize all registered port-factories
@@ -639,16 +619,6 @@ void ComponentWebotsPTUServer::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentWebotsPTUServerROS1InterfacesExtension
-	
-	// destruction of ComponentWebotsPTUServerROSExtension
-	
-	// destruction of ComponentWebotsPTUServerRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentWebotsPTUServerExtension
-	
 }
 
 void ComponentWebotsPTUServer::loadParameter(int argc, char *argv[])
@@ -844,16 +814,6 @@ void ComponentWebotsPTUServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("MoveSendHandler", "prescale")) {
 			parameter.getInteger("MoveSendHandler", "prescale", connections.moveSendHandler.prescale);
 		}
-		
-		// load parameters for ComponentWebotsPTUServerROS1InterfacesExtension
-		
-		// load parameters for ComponentWebotsPTUServerROSExtension
-		
-		// load parameters for ComponentWebotsPTUServerRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentWebotsPTUServerExtension
 		
 		
 		// load parameters for all registered component-extensions

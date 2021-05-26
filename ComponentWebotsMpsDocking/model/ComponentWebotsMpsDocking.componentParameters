@@ -2,7 +2,7 @@ ComponentParameter ComponentWebotsMpsDocking component ComponentWebotsMpsDocking
 { 
     InternalParameter Webots
 	{
-      /** the docking robotino should have an Supervisor with this name inside */
+      /** add an extra robot with this name and controller "<extern>" and supervisor TRUE */
       robotName : String = "MpsDocking";      
       /** the DEF names of the docking stations in webots */
       stationName : String [*] = ["MPS0", "MPS1", "MPS2", "MPS3"];

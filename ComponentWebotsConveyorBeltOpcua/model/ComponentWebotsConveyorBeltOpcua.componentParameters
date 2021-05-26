@@ -2,10 +2,9 @@ ComponentParameter ComponentWebotsConveyorBeltOpcua component ComponentWebotsCon
 {
 	InternalParameter webots
 	{
-		/** the webots conveyor belt must be a children of an extra robot with this name */
+		/** the webots conveyor belt device must be a children of an extra robot with this name */
   		robotName : String = "RobotinoConveyorBelt"
 	}
-
 	ParameterSetInstance CommRobotinoObjects.RobotinoConveyerParameter
 	{  
 		ParameterInstance SetStationID {
@@ -14,20 +13,22 @@ ComponentParameter ComponentWebotsConveyorBeltOpcua component ComponentWebotsCon
 	}
 	InternalParameter ProductionStations
 	{
-		/** the names of the OPC UA servers */
-		stationName : String [*] = ["MPS0", "MPS1", "MPS2", "MPS3", ""];
-		/** the urls of the OPC UA servers, e.g. "opc.tcp://localhost:4840", (port 4840 is reserved for OPC UA),
-		 *  or "PASSIVE_STATION" for an roller conveyor without server"
+		/** names of the production stations */
+		stationName : String [*] = ["MPS0", "MPS1", "MPS2", "MPS3"];
+		/** <ol>
+		 * <li>active station with conveyor belt: url of its OPC UA server, e.g. "opc.tcp://localhost:4840", (port 4840 is reserved for OPC UA)</li>
+		 * <li>passive station with roller conveyor: "PASSIVE_STATION"</li>
+		 * </ol>  
 		 */
 		stationUrl : String [*] = ["opc.tcp://localhost:4840", "opc.tcp://localhost:4841", "opc.tcp://localhost:4842", "PASSIVE_STATION"];
 	}
 
 	InternalParameter Robot
 	{
-		/** timeout for conveyor belt on robotino and production station for loading or unloading, in seconds */
+		/** stop with error if load/unload to an active station takes more than this time [seconds] */
 		belt_time_out_sec : UInt32 = 10
 
-		/** timeout for unloading to PASSIVE_STATION */
+		/** stop with error if load/unload to an passive station takes more than this time [seconds] */
 		ignore_station_communication_unload_time_sec : Int32 = 4
 	}
 }

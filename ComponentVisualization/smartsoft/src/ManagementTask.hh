@@ -68,7 +68,7 @@ private:
 			"Depth_image_push_client",
 			"MarkerDetectionList_client",
 			"ParticleFilterInfo_client",
-			"PlannerGoal_client"
+			"PlannerGoal_client",
 			"VisualLocalizationMap_client"
 	};
 

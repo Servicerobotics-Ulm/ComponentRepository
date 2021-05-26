@@ -5,7 +5,31 @@
 
 <img src="model/ComponentWebotsMpsDockingComponentDefinition.jpg" alt="ComponentWebotsMpsDocking-ComponentImage" width="1000">
 
-*Component Short Description:* A short description for the ComponentWebotsMpsDocking datasheet
+*Component Short Description:* 
+
+ComponentWebotsMpsDocking moves (docks) the mobile robot very precisely and closely to an production station.
+
+After that the transfer of an stacking container between the mobile robot and the production station is done by [ComponentWebotsConveyorBeltOpcua](../ComponentWebotsConveyorBeltOpcua).
+
+There is a demo to see this component in action: start SystemWebotsNavMpsDockingOPCUA, go to the window with 'ComponentTCLSequencer' and enter a number.
+
+First, the robot is moved to an area in front of the production station by the system. Only than docking is possible.
+
+Commands are given by setting the ComponentMode:
+- **laserDocking** or **irDocking** docks the mobile robot to the production station
+- **unDocking**: the robot moves backwards from the production station to some distance
+
+Docking:
+- if the distance to the production station is bigger than parameter *maxDistanceToDockingPoint*, send event LASER_DOCKING_ERROR and stop with an error
+- send event LASER_DOCKING_NOT_DONE
+- rotate the robot to match the orientation of the production station
+- move the robot very close in front of the production station
+- send event LASER_DOCKING_DONE
+
+Meaning of the signal lights (on the mobile robot):
+- **red**: an error occured
+- **yellow**: warning, robot is moving (light is flashing)
+- **green**: not used
 
 
 ## Component-Datasheet Properties
@@ -18,42 +42,55 @@
 <th style="border:1px solid black; padding: 5px;"><i>Property Description</i></th>
 </tr>
 <tr>
+<td style="border:1px solid black; padding: 5px;">MarketName</td>
+<td style="border:1px solid black; padding: 5px;">ComponentWebotsMpsDocking</td>
+<td style="border:1px solid black; padding: 5px;"></td>
+</tr>
+<tr>
 <td style="border:1px solid black; padding: 5px;">Supplier</td>
-<td style="border:1px solid black; padding: 5px;">No supplier specified</td>
+<td style="border:1px solid black; padding: 5px;">Servicerobotics Ulm</td>
 <td style="border:1px solid black; padding: 5px;"></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;">Homepage</td>
-<td style="border:1px solid black; padding: 5px;">http://www.example.com</td>
+<td style="border:1px solid black; padding: 5px;">https://wiki.servicerobotik-ulm.de/directory:collection</td>
 <td style="border:1px solid black; padding: 5px;"></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;">Purpose</td>
-<td style="border:1px solid black; padding: 5px;">Example</td>
+<td style="border:1px solid black; padding: 5px;">moves (docks) the mobile robot very precisely and closely to an production station</td>
 <td style="border:1px solid black; padding: 5px;"></td>
 </tr>
 </table>
 
 ## Component Ports
 
-### NavigationVelocityServiceOut
+### LaserServiceIn
 
 *Documentation:*
+<p>Reads periodically laser scans: CommBasicObjects.CommMobileLaserScan
+</p>
 
 
 ### BaseStateServiceIn
 
 *Documentation:*
+<p>Reads periodically the position etc. of an mobile robot: CommBasicObjects.CommBaseState
+</p>
 
 
-### LaserServiceIn
+### NavigationVelocityServiceOut
 
 *Documentation:*
+<p>Writes periodically the translational and rotational velocity of an mobile robot: CommBasicObjects.CommNavigationVelocity
+</p>
 
 
 ### TrafficLightsServiceOut
 
 *Documentation:*
+<p>Writes periodically to turn off/on red/yellow/green lights on the mobile robot: CommBasicObjects.CommTrafficLights
+</p>
 
 
 ### RobotDockingEventServiceOut
@@ -81,7 +118,7 @@
 <td style="border:1px solid black; padding: 5px;"><b>robotName</b></td>
 <td style="border:1px solid black; padding: 5px;">String</td>
 <td style="border:1px solid black; padding: 5px;">"MpsDocking"</td>
-<td style="border:1px solid black; padding: 5px;"><p>the docking robotino should have an Supervisor with this name inside
+<td style="border:1px solid black; padding: 5px;"><p>add an extra robot with this name and controller "<extern>" and supervisor TRUE
 </p></td>
 </tr>
 <tr>

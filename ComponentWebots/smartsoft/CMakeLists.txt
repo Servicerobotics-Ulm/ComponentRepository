@@ -15,17 +15,15 @@
 # delete it before running the code generator.
 #--------------------------------------------------------------------------
 
-CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.5)
 
-# find the SmartSoft CMake Macros (version 2 that uses CMake v3)
-FIND_FILE(SMART_MACROS SmartMacros2.cmake PATHS $ENV{SMART_ROOT_ACE}/CMakeMacros /opt/smartSoftAce/CMakeMacros/)
-INCLUDE(${SMART_MACROS})
+PROJECT(ComponentWebots)
+
+# find SmartSoft package
+FIND_PACKAGE(AceSmartSoft 3.4 PATHS $ENV{SMART_ROOT_ACE} PATH_SUFFIXES modules)
 
 # Create and configure a CMake project for a CommunicationObject
 SMART_COMPONENT_PROJECT()
-
-# find SmartSoft package
-FIND_PACKAGE(AceSmartSoft PATHS $ENV{SMART_ROOT_ACE} $ENV{SMART_ROOT_ACE}/modules)
 
 # generte doxygen documentation
 SMART_COMPONENT_GENERATE_DOC()

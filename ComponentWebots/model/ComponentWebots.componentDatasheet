@@ -1,14 +1,114 @@
 ComponentDatasheet ComponentWebots
 {
 	BaseURI "http://www.servicerobotik-ulm.de"
-	ShortDescription "A short description for the ComponentWebots datasheet"
+	ShortDescription "
+
+This component starts the [Webots](https://cyberbotics.com) simulator.
+ 
+If another webots simulator is already running, this component will ask to end it first before starting the new one, because two simulations could make the computer very slow.
+ 
+Edit the system model *.systemParam file to change which world file is loaded by webots in this system.
+
+Example:
+
+```
+    ComponentParameterInstance ComponentWebots refinesParamStruct ComponentWebots {
+        ParameterRefinement General{
+            WorldPath = \"/the/path/to/my/folder/MyWorldName.wbt\"
+        }
+    }
+```
+
+#### How to install Webots in Linux (Ubuntu 20.04)
+
+if webots was already installed, deinstall the old version first:
+
+```
+sudo dpkg -r webots
+```
+
+go to [https://github.com/cyberbotics/webots/releases](https://github.com/cyberbotics/webots/releases)
+
+click on 'Nightly Build', download webots_2021a-rev1_amd64.deb into your Downloads-folder, then do:
+
+```
+sudo apt install ~/Downloads/webots_2021a-rev1_amd64.deb
+```
+
+Add to your ~/.profile:
+
+```
+export WEBOTS_HOME=/usr/local/webots
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$WEBOTS_HOME/lib/controller
+```
+
+#### Add Webots library and include path to an component project
+
+Add to component's smartsoft/CMakeLists.txt the following lines:
+
+```
+INCLUDE_DIRECTORIES($ENV{WEBOTS_HOME}/include/controller/cpp)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} $ENV{WEBOTS_HOME}/lib/controller/libCppController.so)
+```
+
+Then do:
+- right click on Component in Project Explorer
+- properties
+- expand 'C/C++ General'
+- Paths and Symbols
+- includes
+- GNU C++
+- Add...<br>
+  <code>${WEBOTS_HOME}/include/controller/cpp</code>
+- rebuild index (e.g. by closing and opening this project)
+
+#### Other Webots components
+
+- [ComponentWebotsMobileRobot](../ComponentWebotsMobileRobot)
+- [ComponentWebots2DLidar](../ComponentWebots2DLidar)
+- [ComponentWebots3DCamera](../ComponentWebots3DCamera)
+- [ComponentWebotsURServer](../ComponentWebotsURServer)
+- [ComponentWebotsPTUServer](../ComponentWebotsPTUServer)
+- [ComponentWebotsConveyorBeltOpcua](../ComponentWebotsConveyorBeltOpcua)
+- [ComponentWebotsMpsDocking](../ComponentWebotsMpsDocking)
+
+#### Webots in the Virtual machine
+
+It is best to start the virtual machine with VMWare Player in Windows. [[1]](https://www.cyberbotics.com/doc/guide/general-bugs#virtualization)
+It was tested with VMWare Workstation Player 15 (both non-commercial and PRO version).
+
+You need at least 8 MB Ram and a good graphics card on your computer.
+In the settings of the virtual machine, give it at least 4 GB Ram, 512 MB graphics memory and turn on graphics card acceleration. OpenGl is required by webots to run fast.
+
+If your computer has not a very good graphics card, webots may run slowly in the virtual machine. The simulation speed should be near to '1.00x' at the top of the webots window. If it is below, you can speed things up: 
+* webots window, at the left side is the Scene Tree, first entry is WorldInfo, double click on it, it expands, now click on basicTimeStep, double the value from 32 to 64 or again to 128. This will speed up the simulation but makes it less accurate as changes are done less frequently. [[2]](https://cyberbotics.com/doc/guide/the-scene-tree) [[3]](https://www.cyberbotics.com/doc/reference/glossary)
+* you can reduce here the value FPS too (frames per second, how often graphics is done)
+* turn off/on graphics rendering by pressing the cube button or pressing CTRL+4
+
+##### Shared Folders
+
+If you want to share files among virtual machine and the host computer, enable the shared folders [[5]](https://www.vmware.com/support/ws5/doc/ws_running_shared_folders.html). If it does not work, execute this command in the virtual machine (don't add this to an login-script):
+
+
+```
+sudo vmhgfs-fuse .host:/ /mnt/hgfs/ -o allow_other -o uid=1000
+```
+
+##### Gazebo in the virtual machine
+
+If you want to start Gazebo directly from the virtual machine's console, do the following line first:
+
+```
+export SVGA_VGPU10=0
+```
+"
 	DatasheetProperty Supplier {
-		value "No supplier specified"
+		value "Servicerobotics Ulm"
 	}
 	DatasheetProperty Homepage {
-		value "http://www.example.com"
+		value "https://wiki.servicerobotik-ulm.de/directory:collection"
 	}
 	DatasheetProperty Purpose {
-		value "Example"
+		value "Start the Webots simulator."
 	}
 }

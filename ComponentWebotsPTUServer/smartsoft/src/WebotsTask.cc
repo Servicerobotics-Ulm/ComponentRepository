@@ -50,6 +50,7 @@
 #include <webots/Supervisor.hpp>
 #include <webots/Motor.hpp>
 #include <webots/PositionSensor.hpp>
+#include <webots/Keyboard.hpp>
 
 using namespace webots;
 
@@ -97,7 +98,7 @@ WebotsTask::PTUStatus WebotsTask::moveTiltOff(double tilt) {
 }
 WebotsTask::PTUStatus WebotsTask::movePanTilt(double pan, double tilt) {
     std::cout << "move to pan " << pan << " tilt " << tilt << std::endl;
-    PTUStatus status = PTUStatus::GOAL_REACHED;
+    PTUStatus status;
     if (newProgram == prNeutral)
         status == PTUStatus::HALTED;
     else if (pan < panMinStop || pan > panMaxStop)
@@ -106,17 +107,22 @@ WebotsTask::PTUStatus WebotsTask::movePanTilt(double pan, double tilt) {
         status = PTUStatus::TILT_OUT_OF_RANGE;
     else {
         std::unique_lock<std::mutex> lock(posReachedMutex);
+        posReached = false;
         panTargetPosition = pan;
         tiltTargetPosition = tilt;
         if (newProgram == prMove) {
+            std::cout << "start wait to reach goal position" << std::endl;
             waitTillPosReached.wait(lock, [this] {
                 return posReached;
             });
-        }
+            std::cout << "end wait to reach goal position" << std::endl;
+            status = PTUStatus::GOAL_REACHED;
+            std::cout << "GOAL_REACHED" << std::endl;
+        } else
+            status = PTUStatus::GOAL_NOT_REACHED;
     }
     if (status != PTUStatus::GOAL_REACHED /* && COMP->getGlobalState().getPTU().getVerbose() */)
         std::cout << ">> PTU Error: " << status << "\n";
-    std::cout << "WebotsTask.cc" << __LINE__ << ":" << status << std::endl;
     return status;
 }
 
@@ -138,6 +144,9 @@ int WebotsTask::on_execute() {
     panMaxStop = 2.77;
     tiltMinStop = -0.820305;
     tiltMaxStop = 0.541052;
+
+    Keyboard *webotsKeyboard = robot->getKeyboard();
+    webotsKeyboard->enable(robot->getBasicTimeStep());
 
     /*
 // *********** pan *************
@@ -174,8 +183,9 @@ int WebotsTask::on_execute() {
     while (robot->step(robot->getBasicTimeStep()) != -1) {
         Program program = newProgram;
         std::cout << "program=" << program << " pan=" << panPosition << " tilt=" << tiltPosition << std::endl;
-        if (program == prNeutral)
-            continue;
+//        if (program == prNeutral)
+//            continue;
+        int key = webotsKeyboard->getKey();
         {
             std::unique_lock<std::mutex> lock(posReachedMutex);
 
@@ -184,16 +194,30 @@ int WebotsTask::on_execute() {
             panPosition = panSensor->getValue();
             tiltPosition = tiltSensor->getValue();
 */
-
-            // todo: change these to parameters or args from robot
-            std::cout << panTargetPosition << " " << tiltTargetPosition << std::endl;
-            const double panRotation[4] = {0, 1, 0, panTargetPosition};
-            robot->getFromDef("PanRotate")->getField("rotation")->setSFRotation(panRotation);
-            const double tiltRotation[4] = {0, 0, 1, tiltTargetPosition};
-            robot->getFromDef("TiltRotate")->getField("rotation")->setSFRotation(tiltRotation);
-            panPosition = panTargetPosition;
-            tiltPosition = tiltTargetPosition;
+            double speed = 2.0; // max speed of pan/tilt rotation [radians/s]
+            double maxDiff = speed * robot->getBasicTimeStep() / 1000.0;
+            if(key=='J')
+                panTargetPosition += maxDiff;
+            if(key=='L')
+                panTargetPosition -= maxDiff;
+            if(key=='I')
+                tiltTargetPosition += maxDiff;
+            if(key=='K')
+                tiltTargetPosition -= maxDiff;
+            double diff = panTargetPosition - panPosition;
+            if(std::abs(diff) > maxDiff)
+                diff = diff > 0 ? maxDiff : -maxDiff;
+            panPosition = panPosition + diff;
+            diff = tiltTargetPosition - tiltPosition;
+            if(std::abs(diff) > maxDiff)
+                diff = diff > 0 ? maxDiff : -maxDiff;
+            tiltPosition = tiltPosition + diff;
             posReached = abs(panPosition - panTargetPosition) < 0.002 && abs(tiltPosition - tiltTargetPosition) < 0.002;
+            // todo: change these to parameters or args from robot
+            const double panRotation[4] = {0, 1, 0, panPosition};
+            robot->getFromDef("PanRotate")->getField("rotation")->setSFRotation(panRotation);
+            const double tiltRotation[4] = {0, 0, -1, tiltPosition};
+            robot->getFromDef("TiltRotate")->getField("rotation")->setSFRotation(tiltRotation);
         }
         if (posReached)
             waitTillPosReached.notify_all();

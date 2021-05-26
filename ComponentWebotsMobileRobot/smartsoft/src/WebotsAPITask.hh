@@ -55,6 +55,8 @@
 #include <webots/Keyboard.hpp>
 #include <vector>
 
+#include "ParameterStateStruct.hh"
+
 #define SECOND_TO_MILLISECONDS 1000.0  // conversion factor
 
 struct Pose2D{

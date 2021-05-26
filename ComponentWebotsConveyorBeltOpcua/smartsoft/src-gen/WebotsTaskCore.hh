@@ -19,6 +19,7 @@
 #include "aceSmartSoft.hh"
 
 // include upcall interface
+#include "TrafficLightsServiceInUpcallInterface.hh"
 
 // include communication-objects for output ports
 #include <CommRobotinoObjects/CommRobotinoConveyerBeltEventParameter.hh>
@@ -32,6 +33,7 @@
 class WebotsTaskCore
 :	public SmartACE::ManagedTask
 ,	public Smart::TaskTriggerSubject
+,	public TrafficLightsServiceInUpcallInterface
 {
 private:
 	bool useDefaultState; 
@@ -39,6 +41,8 @@ private:
 	int taskLoggingId;
 	unsigned int currentUpdateCount;
 	
+	Smart::StatusCode trafficLightsServiceInStatus;
+	CommBasicObjects::CommTrafficLights trafficLightsServiceInObject;
 	
 	
 protected:
@@ -51,6 +55,18 @@ protected:
 	void triggerLogEntry(const int& idOffset);
 	
 	
+	// overload and implement this method in derived classes to immediately get all incoming updates from TrafficLightsServiceIn (as soon as they arrive)
+	virtual void on_TrafficLightsServiceIn(const CommBasicObjects::CommTrafficLights &input) {
+		// no-op
+	}
+	
+	// this method can be safely used from the thread in derived classes
+	inline Smart::StatusCode trafficLightsServiceInGetUpdate(CommBasicObjects::CommTrafficLights &trafficLightsServiceInObject) const
+	{
+		// copy local object buffer and return the last status code
+		trafficLightsServiceInObject = this->trafficLightsServiceInObject;
+		return trafficLightsServiceInStatus;
+	}
 	
 	// this method is meant to be used in derived classes
 	Smart::StatusCode robotinoConveyerBeltEventOutPut(CommRobotinoObjects::RobotinoConveyerBeltEventState &eventState);

@@ -65,9 +65,9 @@ class ComponentWebots3DCameraExtension;
 #include "ColorImageQueryHandler.hh"
 #include "ImageQueryHandler.hh"
 // output port wrappers
+#include "RGBImagePushServiceOutWrapper.hh"
 #include "DepthPushNewestServerWrapper.hh"
 #include "RGBDImagePushServiceOutWrapper.hh"
-#include "RGBImagePushServiceOutWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"

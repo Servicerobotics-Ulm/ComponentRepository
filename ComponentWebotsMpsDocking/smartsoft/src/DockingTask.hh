@@ -61,8 +61,6 @@ private:
     webots::Supervisor *robot;
 
     Pose2D getNodePose(webots::Node *node);
-    //void sendEvent(CommNavigationObjects::DockingEventType event);
-    void sendEvent(CommRobotinoObjects::RobotinoDockingEventType event);
 
 public:
 	DockingTask(SmartACE::SmartComponent *comp);
@@ -71,6 +69,7 @@ public:
 	virtual int on_entry();
 	virtual int on_execute();
 	virtual int on_exit();
+	void sendEvent(CommRobotinoObjects::RobotinoDockingEventType event);
 	void handleEnterState(std::string substate);
 };
 

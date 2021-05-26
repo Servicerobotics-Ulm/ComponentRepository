@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<PersonTracking>
+	<AlgoChain>
+    <Detection>
+      <ObjectProposal/>
+      <BlobDetector/>
+      <PersonDetector/>
+      <Tracker/>
+      <OcclusionDetector/>
+      <DepthTracker/>
+      <OpticFlowEstimator/>
+      <PersonColorMatcher/>
+      <OrientationDetector algoName="SVMOrientation">
+        <!--PersonOrientation or SVMOrientation-->
+      </OrientationDetector>
+     </Detection>
+
+    <Skeleton>
+    </Skeleton>
+
+    <Pose>
+    </Pose>
+    <Face>
+      <Pose algoName="PoseFrom2DLM" />
+      <!-- PoseFrom2DLM or PoseILC -->
+    </Face>
+  </AlgoChain>
+  
+  <Services>
+    <Detection />
+    <BodiesFacesFinder />
+    <Landmarks />
+  </Services>
+  
+</PersonTracking>
+

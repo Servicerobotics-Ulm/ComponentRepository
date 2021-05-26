@@ -17,7 +17,7 @@
 #include "ComponentRackDetectionCore.hh"
 
 // constructor
-ComponentRackDetectionCore::ComponentRackDetectionCore()
+ComponentRackDetectionCore::ComponentRackDetectionCore() : start_recognition(0)
 {
 	std::cout << "constructor ComponentRackDetectionCore\n";
 }

@@ -65,8 +65,8 @@ ComponentWebots2DLidar::ComponentWebots2DLidar()
 	connections.baseStateServiceIn.serviceName = "unknown";
 	connections.baseStateServiceIn.interval = 1;
 	connections.baseStateServiceIn.roboticMiddleware = "ACE_SmartSoft";
-	connections.laserTask.minActFreq = 33.0;
-	connections.laserTask.maxActFreq = 40.0;
+	connections.laserTask.minActFreq = 0.0;
+	connections.laserTask.maxActFreq = 0.0;
 	// scheduling default parameters
 	connections.laserTask.scheduler = "DEFAULT";
 	connections.laserTask.priority = -1;

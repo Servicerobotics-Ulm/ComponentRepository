@@ -29,6 +29,8 @@ WebotsTaskCore::WebotsTaskCore(Smart::IComponent *comp, const bool &useDefaultSt
 ,	useLogging(false)
 ,	taskLoggingId(0)
 ,	currentUpdateCount(0)
+,	trafficLightsServiceInStatus(Smart::SMART_DISCONNECTED)
+,	trafficLightsServiceInObject()
 {
 }
 
@@ -87,6 +89,7 @@ int WebotsTaskCore::execute_protected_region()
 
 void WebotsTaskCore::updateAllCommObjects()
 {
+	trafficLightsServiceInStatus = COMP->trafficLightsServiceInInputTaskTrigger->getUpdate(trafficLightsServiceInObject);
 	
 }
 

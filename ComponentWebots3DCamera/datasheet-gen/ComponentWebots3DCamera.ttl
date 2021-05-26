@@ -53,63 +53,69 @@ t3:ComponentWebots3DCamera a robmosys:ComponentDefinition;
 	# Abstract. 1-sentence, very brief, description about this component.
 	t1:shortDescription "
 	
-	A generic driver for a RangeFinder (depth camera) in the Webots simulator.
+	Universal Camera and RangeFinder (depth camera) device in the Webots simulator, delivering both color images and range images.
 	
-	The scans are made each Webots timeStep, at the same time (see Time of flight (ToF)). measured in ...
+	The images are made each Webots timeStep, at the same time. Range distances are measured in meters (see Time of Flight (ToF)).
 	
-	How a new RangeFinder can be added to Webots:
-	* Add a new Robot, set its controller to '&lt;extern&gt;', its coordinate system should be x=front, y=left, z=up of the RangeFinder.
-	* The robots name must set the same in Webots and here.
-	* Add the RangeFinder in children of the robot, rotate it to match the coordinate system above.
+	How a new Camera can be added to Webots:
+	* Add a new Robot, set its controller to '&lt;extern&gt;' and supervisor TRUE
+	* Add the Camera and RangeFinder in children of the robot
+	* give same names in webots and in parameter <a href="#internal-parameter-webots">'webots'</a>
 	
-	example code:
+	Example:
 	
-	```cpp
-	CommBasicObjects::CommMobileLaserScan scan;
-	if(this->laserServiceInGetUpdate(scan) != Smart::SMART_OK) (some error handling here)
-	int count = scan.get_scan_size();
-	for (int i = 0; i < count; ++i) {
-		// scan.get_scan_angle is between 0 and 2*pi, 0=front of lidar
-		double angle = scan.get_scan_angle(i) / M_PI * 180;
-		// angle should be between -180 and +180 degrees, 0=front of lidar
-		if( angle > 180 )
-			angle -= 360;
-		double distance = scan.get_scan_distance(i);
-	    ...
+	```
+	Robot {
+	  name "exampleRobot"
+	  controller "<extern>"
+	  supervisor TRUE
+	  children [
+	    Camera {
+	      name "exampleCamera"
+	    }
+	    RangeFinder {
+	      name "exampleRangeFinder"
+	    }
+	  ]
 	}
 	```
+	
+	other similar Components:
+	
+	- [ComponentKinectV1Server](../ComponentKinectV1Server)
+	- [ComponentKinectV2Server](../ComponentKinectV2Server)
+	- [ComponentRealSenseV2Server](../ComponentRealSenseV2Server)
+	- [SmartGazeboCameraServer](../SmartGazeboCameraServer)
 	
 	";
 
 	
-	# DatasheetProperty MarketName
-	t1:marketNameDescription "Webots 3D Camera";
 	# DatasheetProperty Supplier
 	t1:supplierDescription "Servicerobotics Ulm";
 	# The webpage with additional information about this component
-	t1:homepage "https://github.com/Servicerobotics-Ulm/ComponentRepository"^^xsd:anyURI;
+	t1:homepage "https://wiki.servicerobotik-ulm.de/directory:collection"^^xsd:anyURI;
 	# DatasheetProperty Purpose
-	t1:purposeDescription "Webots 3D Camera";
+	t1:purposeDescription "Universal RangeFinder (depth camera) device in the Webots simulator.";
 
 	# Services this component provides or requires
 	# ComponentPort basePushTimedClient
 	t1:requiredService t3:ComponentWebots3DCamera_basePushTimedClient;
 	# ComponentPort ptuPosePushNewestClient
 	t1:requiredService t3:ComponentWebots3DCamera_ptuPosePushNewestClient;
-	# ComponentPort UrPoseQueryClient
-	t1:requiredService t3:ComponentWebots3DCamera_UrPoseQueryClient;
 	# ComponentPort UrPosePushTimedClient
 	t1:requiredService t3:ComponentWebots3DCamera_UrPosePushTimedClient;
-	# ComponentPort depthPushNewestServer
-	t1:providedService t3:ComponentWebots3DCamera_depthPushNewestServer;
-	# ComponentPort imageQueryServer
-	t1:providedService t3:ComponentWebots3DCamera_imageQueryServer;
-	# ComponentPort RGBDImagePushServiceOut
-	t1:providedService t3:ComponentWebots3DCamera_RGBDImagePushServiceOut;
+	# ComponentPort UrPoseQueryClient
+	t1:requiredService t3:ComponentWebots3DCamera_UrPoseQueryClient;
 	# ComponentPort RGBImagePushServiceOut
 	t1:providedService t3:ComponentWebots3DCamera_RGBImagePushServiceOut;
+	# ComponentPort depthPushNewestServer
+	t1:providedService t3:ComponentWebots3DCamera_depthPushNewestServer;
+	# ComponentPort RGBDImagePushServiceOut
+	t1:providedService t3:ComponentWebots3DCamera_RGBDImagePushServiceOut;
 	# ComponentPort colorImageQueryServer
 	t1:providedService t3:ComponentWebots3DCamera_colorImageQueryServer;
+	# ComponentPort imageQueryServer
+	t1:providedService t3:ComponentWebots3DCamera_imageQueryServer;
 .
 
 # a service definition usage. Here: provided service
@@ -134,16 +140,6 @@ t3:ComponentWebots3DCamera_ptuPosePushNewestClient
 
 # a service definition usage. Here: provided service
 # see https://robmosys.eu/wiki/modeling:metamodels:component
-t3:ComponentWebots3DCamera_UrPoseQueryClient 
-	rdf:type CommManipulatorObjects:MobileManipulatorStateQueryService ;
-	# name of this service definition as from the model
-	rdfs:label "UrPoseQueryClient";
-
-
-.
-
-# a service definition usage. Here: provided service
-# see https://robmosys.eu/wiki/modeling:metamodels:component
 t3:ComponentWebots3DCamera_UrPosePushTimedClient 
 	rdf:type CommManipulatorObjects:MobileManipulatorStateService ;
 	# name of this service definition as from the model
@@ -154,30 +150,10 @@ t3:ComponentWebots3DCamera_UrPosePushTimedClient
 
 # a service definition usage. Here: provided service
 # see https://robmosys.eu/wiki/modeling:metamodels:component
-t3:ComponentWebots3DCamera_depthPushNewestServer 
-	rdf:type DomainVision:DepthImagePushService ;
+t3:ComponentWebots3DCamera_UrPoseQueryClient 
+	rdf:type CommManipulatorObjects:MobileManipulatorStateQueryService ;
 	# name of this service definition as from the model
-	rdfs:label "depthPushNewestServer";
-
-
-.
-
-# a service definition usage. Here: provided service
-# see https://robmosys.eu/wiki/modeling:metamodels:component
-t3:ComponentWebots3DCamera_imageQueryServer 
-	rdf:type DomainVision:RGBDImageQueryService ;
-	# name of this service definition as from the model
-	rdfs:label "imageQueryServer";
-
-
-.
-
-# a service definition usage. Here: provided service
-# see https://robmosys.eu/wiki/modeling:metamodels:component
-t3:ComponentWebots3DCamera_RGBDImagePushServiceOut 
-	rdf:type DomainVision:RGBDImagePushService ;
-	# name of this service definition as from the model
-	rdfs:label "RGBDImagePushServiceOut";
+	rdfs:label "UrPoseQueryClient";
 
 
 .
@@ -194,10 +170,40 @@ t3:ComponentWebots3DCamera_RGBImagePushServiceOut
 
 # a service definition usage. Here: provided service
 # see https://robmosys.eu/wiki/modeling:metamodels:component
+t3:ComponentWebots3DCamera_depthPushNewestServer 
+	rdf:type DomainVision:DepthImagePushService ;
+	# name of this service definition as from the model
+	rdfs:label "depthPushNewestServer";
+
+
+.
+
+# a service definition usage. Here: provided service
+# see https://robmosys.eu/wiki/modeling:metamodels:component
+t3:ComponentWebots3DCamera_RGBDImagePushServiceOut 
+	rdf:type DomainVision:RGBDImagePushService ;
+	# name of this service definition as from the model
+	rdfs:label "RGBDImagePushServiceOut";
+
+
+.
+
+# a service definition usage. Here: provided service
+# see https://robmosys.eu/wiki/modeling:metamodels:component
 t3:ComponentWebots3DCamera_colorImageQueryServer 
 	rdf:type DomainVision:RGBImageQueryService ;
 	# name of this service definition as from the model
 	rdfs:label "colorImageQueryServer";
+
+
+.
+
+# a service definition usage. Here: provided service
+# see https://robmosys.eu/wiki/modeling:metamodels:component
+t3:ComponentWebots3DCamera_imageQueryServer 
+	rdf:type DomainVision:RGBDImageQueryService ;
+	# name of this service definition as from the model
+	rdfs:label "imageQueryServer";
 
 
 .

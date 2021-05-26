@@ -17,7 +17,7 @@
 #include "ComponentKinectBoxDetectionCore.hh"
 
 // constructor
-ComponentKinectBoxDetectionCore::ComponentKinectBoxDetectionCore()
+ComponentKinectBoxDetectionCore::ComponentKinectBoxDetectionCore() : start_recognition(0)
 {
 	std::cout << "constructor ComponentKinectBoxDetectionCore\n";
 }

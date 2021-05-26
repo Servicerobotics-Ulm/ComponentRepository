@@ -53,21 +53,130 @@ t3:ComponentWebotsMobileRobot a robmosys:ComponentDefinition;
 	# Abstract. 1-sentence, very brief, description about this component.
 	t1:shortDescription "
 	
-	A generic driver for robots in the webots simulator with differential or omnidirectional drive.
+	ComponentWebotsMobileRobot moves an mobile robot in the Webots simulator, with 2 differential wheels or 3 omni wheels or 4 mecanum wheels.
 	
-	How a new robot can be added to Webots:
-	* Add a new Robot, set its controller to '&lt;extern&gt;'.
-	* The robots name must set the same in Webots and here.
-	
-	The coordinate system of the robot should be:
+	The robots coordinate system should be like this:
 	* x=front, y=left (x=y=0 is at the turning point of the robot (center between wheels))  
 	* z=up (z=0 is at floor level)
 	
-	If a robot is not like this, add a Transformation node to him: 
-	* Add it into children of the robot 
-	* set DEF 'CoordinateSystem*Abc_def*' in the Transformation node if the robots name would be *Abc def*
-	* now move and rotate the Transformation node so its coordinate system is like it should be
+	Set the robots controller, supervisor, name and the coordinate system like the following example:  
 	
+	```
+	TiagoIron {
+	  controller "&lt;extern&gt;"
+	  supervisor TRUE
+	  name "Tiago example"
+	  lidarSlot [
+	    DEF CoordinateSystemTiago_example Transform {
+	      translation 0 -0.0913 0.202
+	      rotation -0.5773492691885823 0.5773502691890485 0.5773512691895147 2.09439
+	    }
+	    ...
+	  ]
+	}
+	```
+	
+	### Example for 2 differential wheels:
+	
+	distanceToRobotCentre is negative for left wheel, positive for the right
+	
+	heading is 0 for all wheels
+	
+	the second value for maxAcceleration is 0 (robot cannot move sideways)
+	
+	```
+	  ParameterRefinement Webots { 
+	      robotName = "Pioneer 3-DX"
+	      motorName = ["left wheel", "right wheel"]
+	      radius = [0.0975, 0.0975]
+	      distanceToRobotCentre = [-0.165, 0.165]
+	      heading = [0, 0]
+	      maxAcceleration = [1.0, 0.0, 15.0]
+	  }
+	```
+	
+	### Example for 3 omni wheels:
+	
+	If clockwise rotation of the robot is done by clockwise rotation of the wheel, distanceToRobotCentre is positive, else negative.
+	
+	heading is the orientation of the wheels relative to the front direction of the robot [degrees] 
+	
+	```
+	  ParameterRefinement Webots { 
+	      robotName = "Robotino 3"
+	      motorName = ["wheel0_joint", "wheel1_joint", "wheel2_joint"]
+	      radius = [0.063, 0.063, 0.063]
+	      distanceToRobotCentre = [-0.1826, -0.1826, -0.1826]
+	      heading = [90.0, 210.0, 330.0]
+	      maxAcceleration = [3.0, 3.0, 20.0]
+	  }
+	```
+	
+	Don't forget to add contactProperties in the world for the wheels to work: e.g. [Robotino](https://www.cyberbotics.com/doc/guide/robotino3#sample) 
+	
+	### Example for 4 mecanum wheels:
+	
+	distanceToRobotCentre = x-offset + y-offset of wheel relative to robot center = 0.228m + 0.158m = 0.386m
+	
+	motorName must be in this order: front left, front right, back left, back right
+	
+	```
+	ParameterRefinement Webots { 
+		robotName = "youBot"
+		motorName = ["wheel2", "wheel1", "wheel4", "wheel3"]
+		radius = [0.05, 0.05, 0.05, 0.05]
+		distanceToRobotCentre = [0.386, 0.386, 0.386, 0.386]
+		heading = [0, 0, 0, 0]
+		maxAcceleration = [2.0, 2.0, 8.0]
+		keyboardControl = true	
+	}
+	```
+	
+	The mecanum wheels must have an angle of 45 degrees (0.785398 radians) between the small wheels and the big wheel.
+	
+	Add this to Worldinfo:
+	
+	```
+	  contactProperties [
+	    ContactProperties {
+	      material1 "InteriorWheelMat"
+	      coulombFriction [
+	        0, 2, 0
+	      ]
+	      frictionRotation -0.785398 0
+	      bounce 0
+	    }
+	    ContactProperties {
+	      material1 "ExteriorWheelMat"
+	      coulombFriction [
+	        0, 2, 0
+	      ]
+	      frictionRotation 0.785398 0
+	      bounce 0
+	    }
+	  ] 
+	```
+	
+	### Example program: 
+	
+	```cpp
+	CommBasicObjects::CommNavigationVelocity navigationVelocity;
+	// vx: velocity front direction [mm/s]
+	// vy: velocity left direction [mm/s]
+	// omega: counterclockwise rotation [radians/s] 
+	navigationVelocity.setVX(vx).setVY(vy).setOmega(omega);
+	// set target movement speed of mobile robot
+	COMP->navigationVelocityServiceOut->send(navigationVelocity);
+	
+	
+	
+	```
+	
+	### other similar components:
+	- [ComponentRMPBaseServer](../ComponentRMPBaseServer)
+	- [ComponentRobotinoBaseServer](../ComponentRobotinoBaseServer)
+	- [SmartPioneerBaseServer](../SmartPioneerBaseServer)
+	- [SmartGazeboBaseServer](../SmartGazeboBaseServer)
 	
 	";
 
@@ -77,21 +186,21 @@ t3:ComponentWebotsMobileRobot a robmosys:ComponentDefinition;
 	# DatasheetProperty Supplier
 	t1:supplierDescription "Servicerobotics Ulm";
 	# The webpage with additional information about this component
-	t1:homepage "http://servicerobotik-ulm.de/components"^^xsd:anyURI;
+	t1:homepage "https://wiki.servicerobotik-ulm.de/directory:collection"^^xsd:anyURI;
 	# DatasheetProperty Purpose
-	t1:purposeDescription "Webots mobile robot";
+	t1:purposeDescription "Universal mobile robot in the Webots simulator, with 2 differential wheels or 3 omni wheels or 4 mecanum wheels";
 
 	# Services this component provides or requires
 	# ComponentPort NavigationVelocityServiceIn
 	t1:providedService t3:ComponentWebotsMobileRobot_NavigationVelocityServiceIn;
-	# ComponentPort LocalizationEventServiceIn
-	t1:requiredService t3:ComponentWebotsMobileRobot_LocalizationEventServiceIn;
-	# ComponentPort BaseStateQueryServiceAnsw
-	t1:providedService t3:ComponentWebotsMobileRobot_BaseStateQueryServiceAnsw;
-	# ComponentPort BaseStateServiceOut
-	t1:providedService t3:ComponentWebotsMobileRobot_BaseStateServiceOut;
 	# ComponentPort LocalizationUpdateServiceIn
 	t1:providedService t3:ComponentWebotsMobileRobot_LocalizationUpdateServiceIn;
+	# ComponentPort LocalizationEventServiceIn
+	t1:requiredService t3:ComponentWebotsMobileRobot_LocalizationEventServiceIn;
+	# ComponentPort BaseStateServiceOut
+	t1:providedService t3:ComponentWebotsMobileRobot_BaseStateServiceOut;
+	# ComponentPort BaseStateQueryServiceAnsw
+	t1:providedService t3:ComponentWebotsMobileRobot_BaseStateQueryServiceAnsw;
 .
 
 # a service definition usage. Here: provided service
@@ -100,6 +209,16 @@ t3:ComponentWebotsMobileRobot_NavigationVelocityServiceIn
 	rdf:type CommNavigationObjects:NavigationVelocityService ;
 	# name of this service definition as from the model
 	rdfs:label "NavigationVelocityServiceIn";
+
+
+.
+
+# a service definition usage. Here: provided service
+# see https://robmosys.eu/wiki/modeling:metamodels:component
+t3:ComponentWebotsMobileRobot_LocalizationUpdateServiceIn 
+	rdf:type CommNavigationObjects:LocalizationUpdateService ;
+	# name of this service definition as from the model
+	rdfs:label "LocalizationUpdateServiceIn";
 
 
 .
@@ -116,16 +235,6 @@ t3:ComponentWebotsMobileRobot_LocalizationEventServiceIn
 
 # a service definition usage. Here: provided service
 # see https://robmosys.eu/wiki/modeling:metamodels:component
-t3:ComponentWebotsMobileRobot_BaseStateQueryServiceAnsw 
-	rdf:type CommBasicObjects:BaseStateQueryService ;
-	# name of this service definition as from the model
-	rdfs:label "BaseStateQueryServiceAnsw";
-
-
-.
-
-# a service definition usage. Here: provided service
-# see https://robmosys.eu/wiki/modeling:metamodels:component
 t3:ComponentWebotsMobileRobot_BaseStateServiceOut 
 	rdf:type CommBasicObjects:BaseStateService ;
 	# name of this service definition as from the model
@@ -136,10 +245,10 @@ t3:ComponentWebotsMobileRobot_BaseStateServiceOut
 
 # a service definition usage. Here: provided service
 # see https://robmosys.eu/wiki/modeling:metamodels:component
-t3:ComponentWebotsMobileRobot_LocalizationUpdateServiceIn 
-	rdf:type CommNavigationObjects:LocalizationUpdateService ;
+t3:ComponentWebotsMobileRobot_BaseStateQueryServiceAnsw 
+	rdf:type CommBasicObjects:BaseStateQueryService ;
 	# name of this service definition as from the model
-	rdfs:label "LocalizationUpdateServiceIn";
+	rdfs:label "BaseStateQueryServiceAnsw";
 
 
 .

@@ -1,11 +1,37 @@
 {
 	"name": "ComponentWebotsMpsDocking",
-	"shortDescription": "A short description for the ComponentWebotsMpsDocking datasheet",
+	"shortDescription": "
+	
+	ComponentWebotsMpsDocking moves (docks) the mobile robot very precisely and closely to an production station.
+	
+	After that the transfer of an stacking container between the mobile robot and the production station is done by [ComponentWebotsConveyorBeltOpcua](../ComponentWebotsConveyorBeltOpcua).
+	
+	There is a demo to see this component in action: start SystemWebotsNavMpsDockingOPCUA, go to the window with 'ComponentTCLSequencer' and enter a number.
+	
+	First, the robot is moved to an area in front of the production station by the system. Only than docking is possible.
+	
+	Commands are given by setting the ComponentMode:
+	- **laserDocking** or **irDocking** docks the mobile robot to the production station
+	- **unDocking**: the robot moves backwards from the production station to some distance
+	
+	Docking:
+	- if the distance to the production station is bigger than parameter *maxDistanceToDockingPoint*, send event LASER_DOCKING_ERROR and stop with an error
+	- send event LASER_DOCKING_NOT_DONE
+	- rotate the robot to match the orientation of the production station
+	- move the robot very close in front of the production station
+	- send event LASER_DOCKING_DONE
+	
+	Meaning of the signal lights (on the mobile robot):
+	- **red**: an error occured
+	- **yellow**: warning, robot is moving (light is flashing)
+	- **green**: not used
+	",
 	"type": "Toolify",
 	"description": "",
-	"purposes": ["Example"],
-	"supplier": "No supplier specified",
-	"homepage": "http://www.example.com",
+	"purposes": ["moves (docks) the mobile robot very precisely and closely to an production station"],
+	"marketName": "ComponentWebotsMpsDocking",
+	"supplier": "Servicerobotics Ulm",
+	"homepage": "https://wiki.servicerobotik-ulm.de/directory:collection",
 	"services": [
 	],
 	"mainstates": [
@@ -15,6 +41,13 @@
 		"Neutral"
 	],
 	"parameters": [
+		{
+			"name": "COMMIT",
+			"nameFQN": "COMMIT",
+			"type": "parameter",
+			"description": "Commit the current parameter configuration.",
+			"attributes": []
+		}
 	],
 	"triggers": [
 	]

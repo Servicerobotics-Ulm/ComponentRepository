@@ -91,16 +91,6 @@ ComponentWebotsMpsDocking::ComponentWebotsMpsDocking()
 	connections.dockingTask.priority = -1;
 	connections.dockingTask.cpuAffinity = -1;
 	
-	// initialize members of ComponentWebotsMpsDockingROS1InterfacesExtension
-	
-	// initialize members of ComponentWebotsMpsDockingROSExtension
-	
-	// initialize members of ComponentWebotsMpsDockingRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentWebotsMpsDockingExtension
-	
 }
 
 void ComponentWebotsMpsDocking::addPortFactory(const std::string &name, ComponentWebotsMpsDockingPortFactoryInterface *portFactory)
@@ -245,16 +235,6 @@ void ComponentWebotsMpsDocking::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentWebotsMpsDockingROS1InterfacesExtension
-		
-		// initializations of ComponentWebotsMpsDockingROSExtension
-		
-		// initializations of ComponentWebotsMpsDockingRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentWebotsMpsDockingExtension
 		
 		
 		// initialize all registered port-factories
@@ -489,16 +469,6 @@ void ComponentWebotsMpsDocking::fini()
 		portFactory->second->destroy();
 	}
 	
-	// destruction of ComponentWebotsMpsDockingROS1InterfacesExtension
-	
-	// destruction of ComponentWebotsMpsDockingROSExtension
-	
-	// destruction of ComponentWebotsMpsDockingRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentWebotsMpsDockingExtension
-	
 }
 
 void ComponentWebotsMpsDocking::loadParameter(int argc, char *argv[])
@@ -628,16 +598,6 @@ void ComponentWebotsMpsDocking::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("DockingTask", "cpuAffinity")) {
 			parameter.getInteger("DockingTask", "cpuAffinity", connections.dockingTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentWebotsMpsDockingROS1InterfacesExtension
-		
-		// load parameters for ComponentWebotsMpsDockingROSExtension
-		
-		// load parameters for ComponentWebotsMpsDockingRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentWebotsMpsDockingExtension
 		
 		
 		// load parameters for all registered component-extensions

@@ -32,18 +32,13 @@ void MoveSendHandler::on_moveSendServer(const DomainPTU::CommPTUMoveRequest &inp
 {
 	DomainPTU::PTUGoalEventState eventState;
 
-	std::cout << __LINE__ << std::endl;
 	if (Smart::SMART_OK == COMP->stateSlave->tryAcquire("nonneutral"))
 	{
-
-		std::cout << __LINE__ << std::endl;
 		if(Smart::SMART_OK == COMP->stateSlave->tryAcquire("move")) {
 			eventState.set_state(DomainPTU::PTUMoveStatus::GOAL_NOT_REACHED);
 			 COMP->goalEventServer->put(eventState);
-			 std::cout << __LINE__ << std::endl;
 		COMP->stateSlave->release("move");
 		}
-		std::cout << __LINE__ << std::endl;
 		COMP->ptuTask->setGoal(input);
 
 		COMP->stateSlave->release("nonneutral");

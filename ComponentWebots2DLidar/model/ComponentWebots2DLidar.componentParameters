@@ -5,46 +5,54 @@ InternalParameter webots{
   robotName : String = "Lidar"
 }  
 InternalParameter scanner{
-	/** more debug information if set to true */
+	/** true: print more debug information */
 	verbose: Boolean = false
 	on_turret: Boolean = false
-	/** position of the lidar relative to the robot in mm */
+	/** position of the lidar relative to the robot [mm]*/
 	x: Int32 = 0
-	/** position of the lidar relative to the robot in mm */
+	/** position of the lidar relative to the robot [mm]*/
 	y: Int32 = 0
-	/** position of the lidar relative to the robot in mm */
+	/** position of the lidar relative to the robot [mm]*/
 	z: Int32 = 0
-	/** position of the lidar relative to the robot in radians */
+	/** position of the lidar relative to the robot [radians]*/
 	azimuth: Double = 0
-	/** position of the lidar relative to the robot in radians */
+	/** position of the lidar relative to the robot [radians]*/
 	elevation: Double = 0
-	/** position of the lidar relative to the robot in radians */
+	/** position of the lidar relative to the robot [radians]*/
 	roll: Double = 0
-	/** if one laser scan distance value is less than this, it is removed from the scan, unit mm. may differ from webots minRange */ 
+	/** if one laser scan distance value is less than this, it is removed from the scan. may differ from webots minRange. [mm]*/ 
 	min_range: UInt32 = 10
-	/** if one laser scan distance value is more than this, it is removed from the scan, unit mm. may differ from webots maxRange */
+	/** if one laser scan distance value is more than this, it is removed from the scan. may differ from webots maxRange. [mm]*/
 	max_range: UInt32 = 20000
-	/** only the lidar rays within this angle are kept in a scan, unit degrees, may be less than webots fieldOfView */
+	/** only the lidar rays within this angle are kept in a scan, may be less than webots fieldOfView. [degrees]*/
 	opening_angle: UInt32 = 270
-	/** unit degrees, the angle between two lidar rays, should be set to webots fieldOfView/Pi*180/(horizontalResolution-1) */
+	/** the angle between two lidar rays, should be set to webots fieldOfView/Pi*180/(horizontalResolution-1) [degrees]*/
 	resolution: Double = 0.5
-	/** the length unit of distances (values are 16 bit only, so length_unit=1 means a max. distance of 65535 mm) */
+	/** the length unit of distances (values are 16 bit only, so length_unit=1 means the biggest number for distance can be 65535mm) [mm]*/
 	length_unit: UInt32 = 1
-	/** not used yet, a webots lidar updates every WorldInfo.basicTimeStep ms (see webots timeStep) */
+	/** not used yet, a webots lidar scans every WorldInfo.basicTimeStep ms (see webots timeStep) */
 	frequency: UInt32 = 50
 }
 InternalParameter base_manipulator{
-	/** if set to false, the baseState is not added to the scan data object */
+	/** <ul><li>true: lidar is mounted on top of an moving robot</li><li>false: lidar has a fixed position in the world, set by the x/y/z/base_a parameters</li></ul> */
 	on_base: Boolean = true
+	/** x-coordinate of fixed lidar position in world if <b>on_base</b> is false [mm]*/
 	x: Int32 = 0
-	y: Int32 = 0
-	z: Int32 = 0
-	base_a: Double = 0
-	steer_a: Double = 0 
-	turret_a: Double = 0
+	/** y-coordinate [mm]*/ 
+	y: Int32 = 0 
+	/** z-coordinate [mm]*/
+	z: Int32 = 0 
+	/** azimuth (horizontal rotation) of fixed lidar position in world if <b>on_base</b> is false [radians]*/
+	base_a: Double = 0 
+	/** not used */
+	steer_a: Double = 0
+	/** not used */  
+	turret_a: Double = 0 
 }
 InternalParameter services{
+	/** turn off/on the port <a href="#LaserServiceOut">LaserServiceOut</a> */
 	activate_push_newest: Boolean = true
+	/** not used */
 	active_push_timed: Boolean = true
 }
 }

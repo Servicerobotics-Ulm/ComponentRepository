@@ -1,0 +1,16 @@
+ComponentParameter ComponentRealSensePersonTrackerParams component ComponentRealSensePersonTracker {
+InternalParameter Settings {
+	withDebugWindow : Boolean = false
+	display_depth_image : Boolean = false
+	pt_data : String = "./data"
+	}
+	
+ExtendedTrigger  PersonTofollow passive{
+	id_to_follow : Int16 
+}
+	
+ ParameterSetInstance CommTrackingObjects.TrackingParam{
+		TriggerInstance FOLLOW_RESET passive
+		TriggerInstance SET_MAX_COV passive		
+	}
+}

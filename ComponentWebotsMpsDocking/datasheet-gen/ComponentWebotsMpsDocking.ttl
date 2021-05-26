@@ -51,23 +51,50 @@ t3:ComponentWebotsMpsDocking a robmosys:ComponentDefinition;
 	rdfs:label "ComponentWebotsMpsDocking";
 
 	# Abstract. 1-sentence, very brief, description about this component.
-	t1:shortDescription "A short description for the ComponentWebotsMpsDocking datasheet";
+	t1:shortDescription "
+	
+	ComponentWebotsMpsDocking moves (docks) the mobile robot very precisely and closely to an production station.
+	
+	After that the transfer of an stacking container between the mobile robot and the production station is done by [ComponentWebotsConveyorBeltOpcua](../ComponentWebotsConveyorBeltOpcua).
+	
+	There is a demo to see this component in action: start SystemWebotsNavMpsDockingOPCUA, go to the window with 'ComponentTCLSequencer' and enter a number.
+	
+	First, the robot is moved to an area in front of the production station by the system. Only than docking is possible.
+	
+	Commands are given by setting the ComponentMode:
+	- **laserDocking** or **irDocking** docks the mobile robot to the production station
+	- **unDocking**: the robot moves backwards from the production station to some distance
+	
+	Docking:
+	- if the distance to the production station is bigger than parameter *maxDistanceToDockingPoint*, send event LASER_DOCKING_ERROR and stop with an error
+	- send event LASER_DOCKING_NOT_DONE
+	- rotate the robot to match the orientation of the production station
+	- move the robot very close in front of the production station
+	- send event LASER_DOCKING_DONE
+	
+	Meaning of the signal lights (on the mobile robot):
+	- **red**: an error occured
+	- **yellow**: warning, robot is moving (light is flashing)
+	- **green**: not used
+	";
 
 	
+	# DatasheetProperty MarketName
+	t1:marketNameDescription "ComponentWebotsMpsDocking";
 	# DatasheetProperty Supplier
-	t1:supplierDescription "No supplier specified";
+	t1:supplierDescription "Servicerobotics Ulm";
 	# The webpage with additional information about this component
-	t1:homepage "http://www.example.com"^^xsd:anyURI;
+	t1:homepage "https://wiki.servicerobotik-ulm.de/directory:collection"^^xsd:anyURI;
 	# DatasheetProperty Purpose
-	t1:purposeDescription "Example";
+	t1:purposeDescription "moves (docks) the mobile robot very precisely and closely to an production station";
 
 	# Services this component provides or requires
-	# ComponentPort NavigationVelocityServiceOut
-	t1:requiredService t3:ComponentWebotsMpsDocking_NavigationVelocityServiceOut;
-	# ComponentPort BaseStateServiceIn
-	t1:requiredService t3:ComponentWebotsMpsDocking_BaseStateServiceIn;
 	# ComponentPort LaserServiceIn
 	t1:requiredService t3:ComponentWebotsMpsDocking_LaserServiceIn;
+	# ComponentPort BaseStateServiceIn
+	t1:requiredService t3:ComponentWebotsMpsDocking_BaseStateServiceIn;
+	# ComponentPort NavigationVelocityServiceOut
+	t1:requiredService t3:ComponentWebotsMpsDocking_NavigationVelocityServiceOut;
 	# ComponentPort TrafficLightsServiceOut
 	t1:providedService t3:ComponentWebotsMpsDocking_TrafficLightsServiceOut;
 	# ComponentPort RobotDockingEventServiceOut
@@ -76,10 +103,10 @@ t3:ComponentWebotsMpsDocking a robmosys:ComponentDefinition;
 
 # a service definition usage. Here: provided service
 # see https://robmosys.eu/wiki/modeling:metamodels:component
-t3:ComponentWebotsMpsDocking_NavigationVelocityServiceOut 
-	rdf:type CommNavigationObjects:NavigationVelocityService ;
+t3:ComponentWebotsMpsDocking_LaserServiceIn 
+	rdf:type CommBasicObjects:LaserService ;
 	# name of this service definition as from the model
-	rdfs:label "NavigationVelocityServiceOut";
+	rdfs:label "LaserServiceIn";
 
 
 .
@@ -96,10 +123,10 @@ t3:ComponentWebotsMpsDocking_BaseStateServiceIn
 
 # a service definition usage. Here: provided service
 # see https://robmosys.eu/wiki/modeling:metamodels:component
-t3:ComponentWebotsMpsDocking_LaserServiceIn 
-	rdf:type CommBasicObjects:LaserService ;
+t3:ComponentWebotsMpsDocking_NavigationVelocityServiceOut 
+	rdf:type CommNavigationObjects:NavigationVelocityService ;
 	# name of this service definition as from the model
-	rdfs:label "LaserServiceIn";
+	rdfs:label "NavigationVelocityServiceOut";
 
 
 .

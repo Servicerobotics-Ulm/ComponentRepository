@@ -107,8 +107,6 @@ ComponentWebots3DCamera::ComponentWebots3DCamera()
 	connections.ptuPosePushNewestClient.roboticMiddleware = "ACE_SmartSoft";
 	connections.imageTask.minActFreq = 0.0;
 	connections.imageTask.maxActFreq = 0.0;
-	connections.imageTask.trigger = "PeriodicTimer";
-	connections.imageTask.periodicActFreq = 30.0;
 	// scheduling default parameters
 	connections.imageTask.scheduler = "DEFAULT";
 	connections.imageTask.priority = -1;
@@ -407,20 +405,7 @@ void ComponentWebots3DCamera::init(int argc, char *argv[])
 			} else {
 				std::cerr << "ERROR: could not set-up InPort " << connections.imageTask.inPortRef << " as activation source for Task ImageTask" << std::endl;
 			}
-		} else
-		{
-			// setup default task-trigger as PeriodicTimer
-			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-			int microseconds = 1000*1000 / 30.0;
-			if(microseconds > 0) {
-				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
-				triggerPtr->attach(imageTask);
-				// store trigger in class member
-				imageTaskTrigger = triggerPtr;
-			} else {
-				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task ImageTask" << std::endl;
-			}
-		}
+		} 
 		
 		
 		// link observers with subjects

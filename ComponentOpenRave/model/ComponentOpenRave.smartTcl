@@ -102,17 +102,33 @@
           )
   )
 )
+
+(define-tcb (clearOR)
+  (module "manipulationPlannerModule")
+  (action (
+            (format t "=========================>>> clearOR ~%")
+            (tcl-param :server 'cs_trajPlanning :slot 'COMMMANIPULATIONPLANNEROBJECTS.MANIPULATIONPLANNERPARAMETER.ENV_CLEAR)
+          )
+  )
+)
                               
 ;; TODO: Handler OpenRave??
 (define-tcb (gotoAnglesOR ?angles)
   (module "manipulationPlannerModule")
   (action (
             (format t "=========================>>> gotoAnglesOR ~s ~%" '?angles)
-            (tcl-activate-event :name 'evt-traj
-                                :handler 'handler-grasping  
+            (tcl-activate-event :name 'evt-manipulator
+                                :handler 'handler-manipulator  
                                 :server 'cs_trajExecution
                                 :service 'manipulatorevent 
                                 :mode 'continuous)
+
+            (tcl-activate-event :name 'evt-planner
+                                :handler 'handler-planner
+                                :server 'cs_trajPlanning
+                                :service 'plannerevent
+                                :mode 'continuous)
+
             (tcl-state :server 'cs_trajExecution :state "Trajectory")
             (tcl-state :server 'cs_trajPlanning :state "Trajectory")
             
@@ -143,17 +159,17 @@
             (tcl-state :server 'cs_trajExecution :state "Trajectory")
             (tcl-state :server 'cs_trajPlanning :state "Trajectory")
 
-            (tcl-activate-event :name 'evt-traj 
-                                      :handler 'handler-grasping 
+            (tcl-activate-event :name 'evt-manipulator
+                                      :handler 'handler-manipulator  
                                       :server 'cs_trajExecution 
                                       :service 'manipulatorevent 
                                       :mode 'continuous)
             
-            ; (tcl-activate-event :name 'evt-grasp-openrave
-            ;                           :handler 'handler-manipulator-pose-openrave
-            ;                           :server 'cs_trajPlanning
-            ;                           :service 'trajectoryevent
-            ;                           :mode 'continuous)
+            (tcl-activate-event :name 'evt-planner
+                                      :handler 'handler-planner
+                                      :server 'cs_trajPlanning
+                                      :service 'plannerevent
+                                      :mode 'continuous)
 
             (tcl-param :server 'cs_trajPlanning :slot 'COMMMANIPULATIONPLANNEROBJECTS.MANIPULATIONPLANNERPARAMETER.PLAN_PATH_TARGET_TCP_POSE :value '?tcp)
 
@@ -176,33 +192,34 @@
             '(ERROR (NO PATH)))))
 
 
- (define-event-handler (handler-manipulator-pose-openrave)
+ (define-event-handler (handler-planner)
   (action (
-            (format t "=========================>>> HANDLER MANIPULATOR POSE OPENRAVE ~s ~%~%" (tcl-event-message))
+            (format t "=========================>>> HANDLER PLANNER ~s ~%~%" (tcl-event-message))
             (cond
-                ((equal (first (tcl-event-message)) '(PATH FOUND))
-                  (format t "=========================>>> PATH FOUND !!! ~%"))
+                ((equal (tcl-event-message) "(PATH FOUND)")
+                  (format t "=========================>>> PATH FOUND !!! ~%")
+                  )
 
-                ((equal (first (tcl-event-message)) '(PLANNING PATH))
+                ((equal (tcl-event-message) "(PLANNING PATH)")
                   (format t "=========================>>> PLANNING_PATH !!! ~%"))
               
-                ((equal (first (tcl-event-message)) '(NO IK SOLUTION FOUND))
+                ((equal (tcl-event-message) "(NO IK SOLUTION FOUND)")
                   (format t "=========================>>> NO IK SOLUTION FOUND !!! ~%")
-                  (tcl-state :server 'openrave :state "Neutral")
-                  (let* ((obj (tcl-kb-query :key '(is-a status) :value '((is-a object)(status IN_GRIPPER))))
-                         (obj-id (get-value obj 'id)))
-                    (cond
-                      ((not (null obj))
-                        (tcl-param :server 'openrave :slot 'OPENRAVE_RELEASEOBJ :value obj-id)
-                        (tcl-kb-update :key '(is-a id) 
-                          :value `(
-                                    (is-a OBJECT)
-                                    (id obj-id)
-                                    (status NOT_GRASPABLE)))))) 
+                  ;(tcl-state :server 'openrave :state "Neutral")
+                  ;(let* ((obj (tcl-kb-query :key '(is-a status) :value '((is-a object)(status IN_GRIPPER))))
+                  ;       (obj-id (get-value obj 'id)))
+                  ;  (cond
+                  ;    ((not (null obj))
+                  ;      (tcl-param :server 'openrave :slot 'OPENRAVE_RELEASEOBJ :value obj-id)
+                  ;      (tcl-kb-update :key '(is-a id) 
+                  ;        :value `(
+                  ;                  (is-a OBJECT)
+                  ;                  (id obj-id)
+                  ;                  (status NOT_GRASPABLE)))))) 
                   (tcl-abort)
                   '(ERROR (NO PATH)))
               
-                ((equal (first (tcl-event-message)) '(NO PATH FOUND))
+                ((equal (tcl-event-message) "(NO PATH FOUND)")
                   (format t "=========================>>> NO PATH FOUND !!! ~%")   
                   (tcl-state :server 'openrave :state "Neutral")
                   (let* ((obj (tcl-kb-query :key '(is-a status) :value '((is-a object)(status IN_GRIPPER))))
@@ -224,7 +241,7 @@
   (action (
             (format t "=========================>>> gotoAnglesUR ~s ~%" '?angles)
             (tcl-activate-event :name 'evt-traj
-                                :handler 'handler-grasping 
+                                :handler 'handler-manipulator
                                 :server 'cs_trajExecution 
                                 :service 'manipulatorevent 
                                 :mode 'continuous)
@@ -241,7 +258,7 @@
   (action (
             (format t "=========================>>> gotoAnglesUR ~s with time : ~s ~%" '?angles ?time)
             (tcl-activate-event :name 'evt-traj
-                                :handler 'handler-grasping 
+                                :handler 'handler-manipulator
                                 :server 'cs_trajExecution
                                 :service 'manipulatorevent 
                                 :mode 'continuous)
@@ -260,7 +277,7 @@
             (tcl-state :server 'cs_trajPlanning :state "Demonstration") ;openrave automatically updates the tcp pose
             
             (tcl-activate-event :name 'evt-traj
-                                :handler 'handler-grasping  
+                                :handler 'handler-manipulator 
                                 :server 'cs_trajExecution 
                                 :service 'manipulatorevent 
                                 :mode 'continuous)
@@ -280,6 +297,8 @@
   ;))
 )
 
+
+
 (define-tcb (gotoTCPURRel ?tcp-relative)
   (module "manipulationPlannerModule")
   (action ((format t "=========================>>> gotoTCPURRel~%" '?tcp-relative)
@@ -298,7 +317,25 @@
   ))
 )
 
-(define-event-handler (handler-grasping)
+(define-tcb (gotoTCPORRel ?tcp-relative)
+  (module "manipulationPlannerModule")
+  (action ((format t "=========================>>> gotoTCPORRel~%" '?tcp-relative)
+             
+           (let ((tcp nil))
+              (setf tcp (rest (assoc 'pose (first (rest (tcl-query :server 'cs_trajExecution :service 'manipulatorstate))))))
+              (format t "TCP pose query: ~s ~%" tcp)
+              (format t "TCP relative: ~s ~%" '?tcp-relative)
+              ;;TODO this only use a translation tranformation the relative angles are ignored!!
+              (setf tcp (append (transformPoseToPoint (first tcp) (second tcp) (third tcp) (fourth tcp) (fifth tcp) (sixth tcp) (first '?tcp-relative) (second '?tcp-relative) (third '?tcp-relative)) `(,(fourth tcp),(fifth tcp),(sixth tcp))))
+              (format t "new TCP pose: ~s ~%" tcp)
+              (tcl-push-plan :plan `((gotoTCPOR ,tcp)))
+            )
+
+            '(SUCCESS ())      
+  ))
+)
+
+(define-event-handler (handler-manipulator)
   (module "manipulationPlannerModule")
   (action (
             (format t "=========================>>> HANDLER GRASPING ~s ~%~%" (tcl-event-message))
@@ -351,6 +388,18 @@
     (let ((tcp nil))
       (setf tcp (rest (assoc 'pose (first (rest (tcl-query :server 'cs_trajExecution :service 'manipulatorstate))))))
         (format t "TCP: ~s ~%" tcp)
+    )
+
+  ))
+)
+
+(define-tcb (showAngles)
+  (module "manipulationPlannerModule")
+  (action (
+
+    (let ((tcp nil))
+      (setf angles (rest (assoc 'angles (first (rest (tcl-query :server 'cs_trajExecution :service 'manipulatorstate))))))
+        (format t "Angles: ~s ~%" angles)
     )
 
   ))

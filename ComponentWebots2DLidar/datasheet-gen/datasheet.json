@@ -2,40 +2,69 @@
 	"name": "ComponentWebots2DLidar",
 	"shortDescription": "
 	
-	ComponentWebots2DLidar connects to an lidar (laser scanner) in the webots simulator, measuring distances with laser rays.
+	ComponentWebots2DLidar connects to an lidar (laser scanner) in the Webots simulator, measuring horizontal distances with laser rays.
 	 
-	The scans are made each Webots timeStep, at the same time (see Time of flight (ToF)). The rays are ordered horizontal from right to left. Distances are in measured in mm.
+	The laser scans are made each Webots timeStep, at the same time (see Time of flight (ToF)). The laser rays are ordered horizontal from right to left. Distances are in measured in mm.
 	
-	Note that it is possible to reduce the data size by removing distance values with are not within a min or max distance or by reducing the resolution (angle between two rays) or the opening_angle (angle of all rays in the reduced data set).
+	Note that it is possible to reduce the data size by changing the minimal or maximal range or by reducing the resolution (angle between two rays) or the opening_angle (angle of all rays in the reduced data set).
+	
+	Webots can display the laser rays: Menu 'View' 'Optional Rendering' 'Show Lidar Point Cloud' or press the key CTRL+F8. Webots displays only these rays which are hitting obstacles within minimal or maximal range.
 	
 	How a new lidar can be added to Webots:
-	* Add a new Robot, set its controller to '&lt;extern&gt;', its coordinate system should be x=front, y=left, z=up of the lidar ray origin.
-	* give same robot name in webots and in component parameters
+	* Add a new Robot node for this lidar, set its controller to '&lt;extern&gt;', its coordinate system should be x=front, y=left, z=up of the lidar ray origin.
+	* give same robot name in webots and in parameter <a href="#internal-parameter-webots">'webots'</a> 'robotName'
 	
-	example code:
+	Example:
+	  
+	```
+	Robot {
+	  children [
+	    Lidar {
+	    }
+	  ]
+	  name "exampleRobot"
+	  controller "<extern>"
+	}
+	```
+	
+	Example from ComponentLaserObstacleAvoid:
 	
 	```cpp
 	CommBasicObjects::CommMobileLaserScan scan;
-	if(this->laserServiceInGetUpdate(scan) != Smart::SMART_OK) (some error handling here)
+	status = this->laserServiceInGetUpdate(scan);
+	if(status != Smart::SMART_OK) {
+	    std::cout << "laser error " << status << std::endl;
+		return 0;
+	}
 	int count = scan.get_scan_size();
 	for (int i = 0; i < count; ++i) {
-		// scan.get_scan_angle is between 0 and 2*pi, 0=front of lidar
-		double angle = scan.get_scan_angle(i) / M_PI * 180;
-		// angle should be between -180 and +180 degrees, 0=front of lidar
-		if( angle > 180 )
-			angle -= 360;
-		double distance = scan.get_scan_distance(i);
+	    // scan.get_scan_distance(i) returns the distance in mm
+	    double distance = scan.get_scan_distance(i);
+	    // scan.get_scan_angle returns an angle between 0 and 2*pi, angle 0 means front of lidar, counterclockwise
+	    double angle = scan.get_scan_angle(i);
+	    // this ray hits an obstacle at this position relative of lidar:  x mm to front and y mm to left
+	    double x = distance * cos(angle);
+	    double y = distance * sin(angle);
 	    ...
 	}
 	```
-	  
+	
+	other similar Components:
+	
+	- [ComponentLaserHokuyoURGServer](../ComponentLaserHokuyoURGServer)
+	- [ComponentLaserLMS1xx](../ComponentLaserLMS1xx)
+	- [SmartLaserLMS200Server](../SmartLaserLMS200Server)
+	- [ComponentLaserS300Server](../ComponentLaserS300Server)
+	- [ComponentOPCUALaser](../ComponentOPCUALaser)
+	- [ComponentRobotinoLaserServer](../ComponentRobotinoLaserServer)
+	- [SmartGazeboBaseServer](../SmartGazeboBaseServer)
 	",
 	"type": "Toolify",
 	"description": "",
-	"purposes": ["Example"],
+	"purposes": ["universal horizontal laser device in Webots simulator"],
 	"marketName": "ComponentWebots2DLidar",
 	"supplier": "Servicerobotics Ulm",
-	"homepage": "http://servicerobotik-ulm.de/components",
+	"homepage": "https://wiki.servicerobotik-ulm.de/directory:collection",
 	"services": [
 	],
 	"mainstates": [

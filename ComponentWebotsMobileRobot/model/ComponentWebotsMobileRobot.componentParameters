@@ -23,9 +23,15 @@ ComponentParameter ComponentWebotsMobileRobotParams component ComponentWebotsMob
         heading : Double[] = [90.0, 210.0, 330.0]
 		/** the max. acceleration front [m/s], sideways [m/s], rotation [radians/s] */
         maxAcceleration : Double[] = [10.0, 6.0, 40.0]
-		/** if true, the robot can be moved by arrow or WASD keys (QE sidways), press space key to stop */
-        keyboardControl : Boolean = true
+		/** if true, the following keys are enabled:
+		 * <ul><li>Y key: robot moves itself (no keyboard movement, default).</li>
+		 * <li>X key: accelerate robot by arrow or WASD keys (QE sideways, press space to stop).</li>
+		 * <li>C key: move robot by arrow or WASD keys (QE sideways).</li></ul>
+		 */
+        keyboardControl : Boolean = true    
 	}
+	
+	
 	InternalParameter Robot
 	{
 		/** max. speed (forward) in m/s */

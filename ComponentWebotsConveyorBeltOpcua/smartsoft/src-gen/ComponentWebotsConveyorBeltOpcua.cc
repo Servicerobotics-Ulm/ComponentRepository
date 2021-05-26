@@ -70,16 +70,6 @@ ComponentWebotsConveyorBeltOpcua::ComponentWebotsConveyorBeltOpcua()
 	connections.webotsTask.priority = -1;
 	connections.webotsTask.cpuAffinity = -1;
 	
-	// initialize members of ComponentWebotsConveyorBeltOpcuaROS1InterfacesExtension
-	
-	// initialize members of ComponentWebotsConveyorBeltOpcuaROSExtension
-	
-	// initialize members of ComponentWebotsConveyorBeltOpcuaRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentWebotsConveyorBeltOpcuaExtension
-	
 }
 
 void ComponentWebotsConveyorBeltOpcua::addPortFactory(const std::string &name, ComponentWebotsConveyorBeltOpcuaPortFactoryInterface *portFactory)
@@ -187,16 +177,6 @@ void ComponentWebotsConveyorBeltOpcua::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of ComponentWebotsConveyorBeltOpcuaROS1InterfacesExtension
-		
-		// initializations of ComponentWebotsConveyorBeltOpcuaROSExtension
-		
-		// initializations of ComponentWebotsConveyorBeltOpcuaRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentWebotsConveyorBeltOpcuaExtension
-		
 		
 		// initialize all registered port-factories
 		for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
@@ -252,10 +232,10 @@ void ComponentWebotsConveyorBeltOpcua::init(int argc, char *argv[])
 		stateChangeHandler = new SmartStateChangeHandler();
 		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
 		if (stateSlave->defineStates("load" ,"load") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion load.load" << std::endl;
+		if (stateSlave->defineStates("unload" ,"unload") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion unload.unload" << std::endl;
 		if (stateSlave->defineStates("manualload" ,"manualload") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion manualload.manualload" << std::endl;
 		if (stateSlave->defineStates("manualunload" ,"manualunload") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion manualunload.manualunload" << std::endl;
 		if (stateSlave->defineStates("signalerror" ,"signalerror") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion signalerror.signalerror" << std::endl;
-		if (stateSlave->defineStates("unload" ,"unload") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion unload.unload" << std::endl;
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -276,6 +256,7 @@ void ComponentWebotsConveyorBeltOpcua::init(int argc, char *argv[])
 		// create Task WebotsTask
 		webotsTask = new WebotsTask(component);
 		// configure input-links
+		trafficLightsServiceInUpcallManager->attach(webotsTask);
 		// configure task-trigger (if task is configurable)
 		if(connections.webotsTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
@@ -359,6 +340,7 @@ void ComponentWebotsConveyorBeltOpcua::fini()
 	
 	// destroy all task instances
 	// unlink all UpcallManagers
+	trafficLightsServiceInUpcallManager->detach(webotsTask);
 	// unlink the TaskTrigger
 	if(webotsTaskTrigger != NULL){
 		webotsTaskTrigger->detach(webotsTask);
@@ -403,16 +385,6 @@ void ComponentWebotsConveyorBeltOpcua::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentWebotsConveyorBeltOpcuaROS1InterfacesExtension
-	
-	// destruction of ComponentWebotsConveyorBeltOpcuaROSExtension
-	
-	// destruction of ComponentWebotsConveyorBeltOpcuaRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentWebotsConveyorBeltOpcuaExtension
 	
 }
 
@@ -521,14 +493,6 @@ void ComponentWebotsConveyorBeltOpcua::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("WebotsTask", "cpuAffinity")) {
 			parameter.getInteger("WebotsTask", "cpuAffinity", connections.webotsTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentWebotsConveyorBeltOpcuaROS1InterfacesExtension
-		
-		// load parameters for ComponentWebotsConveyorBeltOpcuaROSExtension
-		
-		// load parameters for ComponentWebotsConveyorBeltOpcuaRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
 		
 		// load parameters for PlainOpcUaComponentWebotsConveyorBeltOpcuaExtension
 		// load parameteters for OpcUaDeviceClient ProductionStation

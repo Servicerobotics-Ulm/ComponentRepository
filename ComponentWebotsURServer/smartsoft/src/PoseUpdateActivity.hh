@@ -62,13 +62,20 @@ private:
         double time;
         double jointTargetPosition[nrJoints];
     };
+    bool isNUE; // is the webots world coordinate system NorthUpEast?
 
     std::mutex jointMutex; // the following variables are protected by this mutex
-    double jointPosition[nrJoints] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    double jointPosition[nrJoints];
+    bool jointValid = false;
     std::vector<Trajectory> trajectory;
+    double tcpAzimuth, tcpElevation, tcpRoll;
+    std::array<double, 3> tcpPositionRelative;
 
     virtual void on_baseStateServiceIn(const CommBasicObjects::CommBaseState &input);
     void setGoalReached(bool reached);
+    std::array<double, 3> webots2smartPosition(const double *d);
+    std::array<double, 9> webots2smartOrientation(const double *d);
+    std::array<double, 3> multiplyTransposeMatrixToVector(std::array<double, 9> m, std::array<double, 3> v);
 
 public:
 	PoseUpdateActivity(SmartACE::SmartComponent *comp);

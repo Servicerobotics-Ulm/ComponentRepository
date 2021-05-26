@@ -71,10 +71,8 @@ void DockingTask::handleEnterState(std::string substate) {
     newProgram = prNeutral;
 }
 
-//void DockingTask::sendEvent(CommNavigationObjects::DockingEventType event) {
 void DockingTask::sendEvent(CommRobotinoObjects::RobotinoDockingEventType event) {
   std::cout << "XXX sendEvent " << event << std::endl;
-  //CommNavigationObjects::CommDockingEventState eventState;
   CommRobotinoObjects::RobotinoDockingEventState eventState;
   eventState.setNewState(event);
   COMP->robotDockingEventServiceOut->put(eventState);
@@ -139,11 +137,9 @@ int DockingTask::on_execute() {
             std::cerr << "in webots is no ProductionStation with DEF '" << i << "' (and DEF DockingPoint inside proto)"
                 << std::endl;
             if (program == prDocking) {
-              //sendEvent(CommNavigationObjects::DockingEventType::DOCKING_ERROR);
               sendEvent(CommRobotinoObjects::RobotinoDockingEventType::LASER_DOCKING_ERROR);
             }
             else {
-              //sendEvent(CommNavigationObjects::DockingEventType::UN_DOCKING_ERROR);
             	sendEvent(CommRobotinoObjects::RobotinoDockingEventType::UN_DOCKING_ERROR);
             }
            return 1; // stop thread
@@ -164,13 +160,15 @@ int DockingTask::on_execute() {
         if (bestDocking == NULL) {
           isError = true;
           std::cout << "no station found within " << minDistance << "m" << std::endl;
-          //sendEvent(CommNavigationObjects::DockingEventType::DOCKING_ERROR);
           sendEvent(CommRobotinoObjects::RobotinoDockingEventType::LASER_DOCKING_ERROR);
           program = prNeutral;
         } else {
           Pose2D poseDocking = getNodePose(bestDocking);
           Pose2D pose2 = getNodePose(bestStation);
-          //                             poseDocking
+          // station center point and docking point are directly read from webots
+          // the undocking point is calculated based on them:
+
+          //            old pose2        poseDocking          new pose2
           // station center point      docking point    undocking point
           //                |                  |                  |
           //                X------------------X------------------X
@@ -182,11 +180,9 @@ int DockingTask::on_execute() {
           poseDocking.heading = pose2.heading;
           if (program == prDocking) {
             targetPose = poseDocking;
-            //sendEvent(CommNavigationObjects::DockingEventType::DOCKING_NOT_DONE);
             sendEvent(CommRobotinoObjects::RobotinoDockingEventType::LASER_DOCKING_NOT_DONE);
           } else {
             targetPose = pose2;
-            //sendEvent(CommNavigationObjects::DockingEventType::UN_DOCKING_NOT_DONE);
             sendEvent(CommRobotinoObjects::RobotinoDockingEventType::UN_DOCKING_NOT_DONE);
           }
         }
@@ -244,11 +240,9 @@ int DockingTask::on_execute() {
     if (programCounter == 8) {
       if (program == prDocking) {
     	  std::cout << "********************************************" << std::endl;
-        //sendEvent(CommNavigationObjects::DockingEventType::DOCKING_DONE);
     	sendEvent(CommRobotinoObjects::RobotinoDockingEventType::LASER_DOCKING_DONE);
       }
       if (program == prUndocking) {
-        //sendEvent(CommNavigationObjects::DockingEventType::UN_DOCKING_DONE);
     	  sendEvent(CommRobotinoObjects::RobotinoDockingEventType::UN_DOCKING_DONE);
       }
       blink = false;

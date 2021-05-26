@@ -56,6 +56,14 @@
    )
 )
 
+(define-tcb (setNeutral)
+   (module "objRecognitionModule")
+   (action (
+	(tcl-state :server 'cs_camera :state "Neutral")
+       )
+   )
+)
+
 ;; If the moveptu block is not executed at least one time before executing this block the Camera 
 ;; component will get no valid ptu state => ptu component sends its state (pushNewest) for the first time only after it was moved (see DevicePoseStateTask)
 (define-tcb (detectRack => ?envId ?objs)
