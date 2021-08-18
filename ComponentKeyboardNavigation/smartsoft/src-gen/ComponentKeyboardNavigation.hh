@@ -29,14 +29,6 @@
 class ComponentKeyboardNavigationPortFactoryInterface;
 class ComponentKeyboardNavigationExtension;
 
-// includes for ComponentKeyboardNavigationROS1InterfacesExtension
-
-// includes for ComponentKeyboardNavigationROSExtension
-
-// includes for ComponentKeyboardNavigationRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentKeyboardNavigationExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -62,6 +54,8 @@ class ComponentKeyboardNavigationExtension;
 #include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP ComponentKeyboardNavigation::instance()
 
@@ -122,19 +116,10 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of ComponentKeyboardNavigationROS1InterfacesExtension
-	
-	// definitions of ComponentKeyboardNavigationROSExtension
-	
-	// definitions of ComponentKeyboardNavigationRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentKeyboardNavigationExtension
-	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	ParamUpdateHandler paramHandler;
@@ -241,16 +226,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} navVelSendClient;
-		
-		// -- parameters for ComponentKeyboardNavigationROS1InterfacesExtension
-		
-		// -- parameters for ComponentKeyboardNavigationROSExtension
-		
-		// -- parameters for ComponentKeyboardNavigationRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentKeyboardNavigationExtension
 		
 	} connections;
 };

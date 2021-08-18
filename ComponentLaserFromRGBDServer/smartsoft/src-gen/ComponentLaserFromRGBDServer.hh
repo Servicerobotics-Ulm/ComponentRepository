@@ -29,14 +29,6 @@
 class ComponentLaserFromRGBDServerPortFactoryInterface;
 class ComponentLaserFromRGBDServerExtension;
 
-// includes for ComponentLaserFromRGBDServerROS1InterfacesExtension
-
-// includes for ComponentLaserFromRGBDServerROSExtension
-
-// includes for ComponentLaserFromRGBDServerRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentLaserFromRGBDServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -70,6 +62,8 @@ class ComponentLaserFromRGBDServerExtension;
 #include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP ComponentLaserFromRGBDServer::instance()
 
@@ -140,19 +134,10 @@ public:
 	// define request-handlers
 	LaserQueryHandler *laserQueryHandler;
 	
-	// definitions of ComponentLaserFromRGBDServerROS1InterfacesExtension
-	
-	// definitions of ComponentLaserFromRGBDServerROSExtension
-	
-	// definitions of ComponentLaserFromRGBDServerRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentLaserFromRGBDServerExtension
-	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	ParamUpdateHandler paramHandler;
@@ -283,16 +268,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} rgbdClient;
-		
-		// -- parameters for ComponentLaserFromRGBDServerROS1InterfacesExtension
-		
-		// -- parameters for ComponentLaserFromRGBDServerROSExtension
-		
-		// -- parameters for ComponentLaserFromRGBDServerRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentLaserFromRGBDServerExtension
 		
 	} connections;
 };

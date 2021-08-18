@@ -141,14 +141,30 @@
                 (T
                   nil)))))))
     
-    ;; take first one
+    ;; with the co concept multiple matching (signature) tcbs could be in the list
     (cond
       ((not (null tcb-match-list))
-        ;;(setf tcb-selected (first (first (sort tcb-match-list #'(lambda (tcb-1 tcb-2) (> (get-value tcb-1 'priority) (get-value tcb-2 'priority))))))) ;; just take first one
-        ;(format t "tcb-match-list: ~s ~%" tcb-match-list)
-        (setf tcb-selected (first (first (reverse tcb-match-list)))) ;; just take first one
-        (setf (slot-value instance 'env-vars) (third (first tcb-match-list))))
-      
+        (if *DEDBUG-CI* (format t "tcb-match-list: ~s ~%" tcb-match-list))
+
+        ; only select those which is in the matching module type (select by the instance name)
+        (let* ((module-type (get-value (query-kb *MEMORY* '(is-a inst-name) `((is-a coordination-module) (inst-name ,tcb-module-inst))) 'type))
+               (tcb-filtered-list (remove-if #'(lambda (x) (not (equal (get-value (first x) 'module) module-type))) tcb-match-list)))
+
+               (if *DEDBUG-CI* (format t "tcb-filtered-list (module matched): ~s ~%" tcb-filtered-list))
+
+               (cond 
+                 ((not (null tcb-filtered-list))
+                   ;; now just take the first one, the order should still be sorted by priority from above
+                   (setf tcb-selected (first (first (reverse tcb-filtered-list)))) ;; just take first one
+                   (setf (slot-value instance 'env-vars) (third (first tcb-filtered-list))))
+
+                 (T
+                   ; tcb not matching tcb found in the instance
+                   (format t "ERROR no tcb found in module:~a module-ints:~a~%" module-type tcb-module-inst)
+                   ; fallback use the matching tcb even if not in the correct module
+                   (setf tcb-selected (first (first (reverse tcb-match-list)))) ;; just take first one
+                   (setf (slot-value instance 'env-vars) (third (first tcb-match-list)))))))
+
       (T
         ;; be sure that tcb is set to nil whether no tcb matched
         (setf tcb-selected nil)))
@@ -480,12 +496,9 @@
     ;;filter all special events not belonging to external stuff!
     (cond
       ((equal server 'TIMER)
-       (setf event (communication *SMARTSOFT* (list 'special 'special server 'event 'generate (list 'TIMER 'TIMER server service (append (list mode) param))))))
+       (setf event (communication *SMARTSOFT* (list 'special 'special server 'event 'generate (list 'TIMER 'TIMER server service mode param)))))
       (T ;;all other stuff uses the regular event generation methods
-       (setf event (communication *SMARTSOFT* (list 'special 'special server 'event 'generate (list module module-inst server service 
-         (append (list mode) (if (atom param )
-                               (list param) 
-                               param))))))))
+       (setf event (communication *SMARTSOFT* (list 'special 'special server 'event 'generate (list module module-inst server service mode param))))))
     (cond
       ((null (communication *SMARTSOFT* (list 'special 'special server 'event 'activate (list event))))
        (format t "Error activating Event -->destroy it~%")

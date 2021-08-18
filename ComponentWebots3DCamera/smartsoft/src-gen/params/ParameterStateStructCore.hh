@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -66,9 +67,9 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "webots(";
-				os << "cameraName = " << cameraName << ", ";
-				os << "rangeFinderName = " << rangeFinderName << ", ";
-				os << "robotName = " << robotName << ", ";
+				os << "cameraName = " << cameraName; os << ", ";
+				os << "rangeFinderName = " << rangeFinderName; os << ", ";
+				os << "robotName = " << robotName;
 				os << ")\n";
 			}
 			
@@ -109,10 +110,10 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "settings(";
-				os << "debug_info = " << debug_info << ", ";
-				os << "pushnewest_color_image = " << pushnewest_color_image << ", ";
-				os << "pushnewest_depth_image = " << pushnewest_depth_image << ", ";
-				os << "pushnewest_rgbd_image = " << pushnewest_rgbd_image << ", ";
+				os << "debug_info = " << debug_info; os << ", ";
+				os << "pushnewest_color_image = " << pushnewest_color_image; os << ", ";
+				os << "pushnewest_depth_image = " << pushnewest_depth_image; os << ", ";
+				os << "pushnewest_rgbd_image = " << pushnewest_rgbd_image;
 				os << ")\n";
 			}
 			
@@ -159,12 +160,12 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "sensor_pose(";
-				os << "azimuth = " << azimuth << ", ";
-				os << "elevation = " << elevation << ", ";
-				os << "roll = " << roll << ", ";
-				os << "x = " << x << ", ";
-				os << "y = " << y << ", ";
-				os << "z = " << z << ", ";
+				os << "azimuth = " << azimuth; os << ", ";
+				os << "elevation = " << elevation; os << ", ";
+				os << "roll = " << roll; os << ", ";
+				os << "x = " << x; os << ", ";
+				os << "y = " << y; os << ", ";
+				os << "z = " << z;
 				os << ")\n";
 			}
 			
@@ -214,13 +215,13 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "base(";
-				os << "base_a = " << base_a << ", ";
-				os << "on_base = " << on_base << ", ";
-				os << "on_ptu = " << on_ptu << ", ";
-				os << "on_ur = " << on_ur << ", ";
-				os << "x = " << x << ", ";
-				os << "y = " << y << ", ";
-				os << "z = " << z << ", ";
+				os << "base_a = " << base_a; os << ", ";
+				os << "on_base = " << on_base; os << ", ";
+				os << "on_ptu = " << on_ptu; os << ", ";
+				os << "on_ur = " << on_ur; os << ", ";
+				os << "x = " << x; os << ", ";
+				os << "y = " << y; os << ", ";
+				os << "z = " << z;
 				os << ")\n";
 			}
 			
@@ -255,8 +256,8 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "hardware_properties(";
-				os << "max_distance = " << max_distance << ", ";
-				os << "min_distance = " << min_distance << ", ";
+				os << "max_distance = " << max_distance; os << ", ";
+				os << "min_distance = " << min_distance;
 				os << ")\n";
 			}
 			

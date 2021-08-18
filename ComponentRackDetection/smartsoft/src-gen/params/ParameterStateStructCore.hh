@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -117,26 +118,26 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "General(";
-				os << "init_relative_obj_pose_x = " << init_relative_obj_pose_x << ", ";
-				os << "init_relative_obj_pose_y = " << init_relative_obj_pose_y << ", ";
-				os << "init_relative_obj_pose_z = " << init_relative_obj_pose_z << ", ";
-				os << "max_detection_score = " << max_detection_score << ", ";
-				os << "model_path = " << model_path << ", ";
-				os << "obj_depth = " << obj_depth << ", ";
-				os << "obj_height = " << obj_height << ", ";
-				os << "obj_types = " << obj_types << ", ";
-				os << "obj_width = " << obj_width << ", ";
-				os << "rack_dimension_max_x = " << rack_dimension_max_x << ", ";
-				os << "rack_dimension_max_y = " << rack_dimension_max_y << ", ";
-				os << "rack_dimension_max_z = " << rack_dimension_max_z << ", ";
-				os << "rack_dimension_min_x = " << rack_dimension_min_x << ", ";
-				os << "rack_dimension_min_y = " << rack_dimension_min_y << ", ";
-				os << "rack_dimension_min_z = " << rack_dimension_min_z << ", ";
-				os << "relative_obj_pose_pitch = " << relative_obj_pose_pitch << ", ";
-				os << "relative_obj_pose_x = " << relative_obj_pose_x << ", ";
-				os << "relative_obj_pose_y = " << relative_obj_pose_y << ", ";
-				os << "relative_obj_pose_z = " << relative_obj_pose_z << ", ";
-				os << "send_obstacle_mesh = " << send_obstacle_mesh << ", ";
+				os << "init_relative_obj_pose_x = " << init_relative_obj_pose_x; os << ", ";
+				os << "init_relative_obj_pose_y = " << init_relative_obj_pose_y; os << ", ";
+				os << "init_relative_obj_pose_z = " << init_relative_obj_pose_z; os << ", ";
+				os << "max_detection_score = " << max_detection_score; os << ", ";
+				os << "model_path = " << model_path; os << ", ";
+				os << "obj_depth = " << obj_depth; os << ", ";
+				os << "obj_height = " << obj_height; os << ", ";
+				os << "obj_types = " << obj_types; os << ", ";
+				os << "obj_width = " << obj_width; os << ", ";
+				os << "rack_dimension_max_x = " << rack_dimension_max_x; os << ", ";
+				os << "rack_dimension_max_y = " << rack_dimension_max_y; os << ", ";
+				os << "rack_dimension_max_z = " << rack_dimension_max_z; os << ", ";
+				os << "rack_dimension_min_x = " << rack_dimension_min_x; os << ", ";
+				os << "rack_dimension_min_y = " << rack_dimension_min_y; os << ", ";
+				os << "rack_dimension_min_z = " << rack_dimension_min_z; os << ", ";
+				os << "relative_obj_pose_pitch = " << relative_obj_pose_pitch; os << ", ";
+				os << "relative_obj_pose_x = " << relative_obj_pose_x; os << ", ";
+				os << "relative_obj_pose_y = " << relative_obj_pose_y; os << ", ";
+				os << "relative_obj_pose_z = " << relative_obj_pose_z; os << ", ";
+				os << "send_obstacle_mesh = " << send_obstacle_mesh;
 				os << ")\n";
 			}
 			
@@ -189,14 +190,14 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "ModelCreation(";
-				os << "capture_model = " << capture_model << ", ";
-				os << "create_model = " << create_model << ", ";
-				os << "load_model_path = " << load_model_path << ", ";
-				os << "save_model_path = " << save_model_path << ", ";
-				os << "theta = " << theta << ", ";
-				os << "transformation_x = " << transformation_x << ", ";
-				os << "transformation_y = " << transformation_y << ", ";
-				os << "transformation_z = " << transformation_z << ", ";
+				os << "capture_model = " << capture_model; os << ", ";
+				os << "create_model = " << create_model; os << ", ";
+				os << "load_model_path = " << load_model_path; os << ", ";
+				os << "save_model_path = " << save_model_path; os << ", ";
+				os << "theta = " << theta; os << ", ";
+				os << "transformation_x = " << transformation_x; os << ", ";
+				os << "transformation_y = " << transformation_y; os << ", ";
+				os << "transformation_z = " << transformation_z;
 				os << ")\n";
 			}
 			
@@ -250,7 +251,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tBELIEF_THRESHOLD(";
-						os << "threshold = " << threshold << ", ";
+						os << "threshold = " << threshold;
 						os << ")\n";
 					}
 					
@@ -282,7 +283,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tCLOUD(";
-						os << "id = " << id << ", ";
+						os << "id = " << id;
 						os << ")\n";
 					}
 					
@@ -314,7 +315,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tCLUSTERING(";
-						os << "doClustering = " << doClustering << ", ";
+						os << "doClustering = " << doClustering;
 						os << ")\n";
 					}
 					
@@ -346,7 +347,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tESTIMATEFILLING(";
-						os << "estimateObjectProperties = " << estimateObjectProperties << ", ";
+						os << "estimateObjectProperties = " << estimateObjectProperties;
 						os << ")\n";
 					}
 					
@@ -378,7 +379,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tSETOBJECTID(";
-						os << "id = " << id << ", ";
+						os << "id = " << id;
 						os << ")\n";
 					}
 					

@@ -39,7 +39,7 @@ ComponentRobotinoConveyerBeltServer_OPCUA::ComponentRobotinoConveyerBeltServer_O
 	commIOValuesQueryServiceReq = NULL;
 	commPowerOutputSendOut = NULL;
 	commPowerOutputSendOutWrapper = NULL;
-	//coordinationPort = NULL;
+	//componentRobotinoConveyerBeltServer_OPCUA = NULL;
 	//coordinationPort = NULL;
 	digitalInputEventHandler = NULL;
 	loadTask = NULL;
@@ -57,6 +57,7 @@ ComponentRobotinoConveyerBeltServer_OPCUA::ComponentRobotinoConveyerBeltServer_O
 	unLoadTask = NULL;
 	unLoadTaskTrigger = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -124,12 +125,6 @@ ComponentRobotinoConveyerBeltServer_OPCUA::ComponentRobotinoConveyerBeltServer_O
 	connections.unLoadTask.priority = -1;
 	connections.unLoadTask.cpuAffinity = -1;
 	connections.digitalInputEventHandler.prescale = 1;
-	
-	// initialize members of ComponentRobotinoConveyerBeltServer_OPCUAROS1InterfacesExtension
-	
-	// initialize members of ComponentRobotinoConveyerBeltServer_OPCUARestInterfacesExtension
-	
-	// initialize members of PlainOpcUaComponentRobotinoConveyerBeltServer_OPCUAExtension
 	
 }
 
@@ -236,10 +231,18 @@ void ComponentRobotinoConveyerBeltServer_OPCUA::startAllTasks() {
 		ACE_Sched_Params loadTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.loadTask.scheduler == "FIFO") {
 			loadTask_SchedParams.policy(ACE_SCHED_FIFO);
-			loadTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				loadTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				loadTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.loadTask.scheduler == "RR") {
 			loadTask_SchedParams.policy(ACE_SCHED_RR);
-			loadTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				loadTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				loadTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		loadTask->start(loadTask_SchedParams, connections.loadTask.cpuAffinity);
 	} else {
@@ -250,10 +253,18 @@ void ComponentRobotinoConveyerBeltServer_OPCUA::startAllTasks() {
 		ACE_Sched_Params manualLoadTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.manualLoadTask.scheduler == "FIFO") {
 			manualLoadTask_SchedParams.policy(ACE_SCHED_FIFO);
-			manualLoadTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				manualLoadTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				manualLoadTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.manualLoadTask.scheduler == "RR") {
 			manualLoadTask_SchedParams.policy(ACE_SCHED_RR);
-			manualLoadTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				manualLoadTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				manualLoadTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		manualLoadTask->start(manualLoadTask_SchedParams, connections.manualLoadTask.cpuAffinity);
 	} else {
@@ -264,10 +275,18 @@ void ComponentRobotinoConveyerBeltServer_OPCUA::startAllTasks() {
 		ACE_Sched_Params manualUnLoadTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.manualUnLoadTask.scheduler == "FIFO") {
 			manualUnLoadTask_SchedParams.policy(ACE_SCHED_FIFO);
-			manualUnLoadTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				manualUnLoadTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				manualUnLoadTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.manualUnLoadTask.scheduler == "RR") {
 			manualUnLoadTask_SchedParams.policy(ACE_SCHED_RR);
-			manualUnLoadTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				manualUnLoadTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				manualUnLoadTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		manualUnLoadTask->start(manualUnLoadTask_SchedParams, connections.manualUnLoadTask.cpuAffinity);
 	} else {
@@ -278,10 +297,18 @@ void ComponentRobotinoConveyerBeltServer_OPCUA::startAllTasks() {
 		ACE_Sched_Params signalErrorTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.signalErrorTask.scheduler == "FIFO") {
 			signalErrorTask_SchedParams.policy(ACE_SCHED_FIFO);
-			signalErrorTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				signalErrorTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				signalErrorTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.signalErrorTask.scheduler == "RR") {
 			signalErrorTask_SchedParams.policy(ACE_SCHED_RR);
-			signalErrorTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				signalErrorTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				signalErrorTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		signalErrorTask->start(signalErrorTask_SchedParams, connections.signalErrorTask.cpuAffinity);
 	} else {
@@ -292,10 +319,18 @@ void ComponentRobotinoConveyerBeltServer_OPCUA::startAllTasks() {
 		ACE_Sched_Params unLoadTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.unLoadTask.scheduler == "FIFO") {
 			unLoadTask_SchedParams.policy(ACE_SCHED_FIFO);
-			unLoadTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				unLoadTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				unLoadTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.unLoadTask.scheduler == "RR") {
 			unLoadTask_SchedParams.policy(ACE_SCHED_RR);
-			unLoadTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				unLoadTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				unLoadTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		unLoadTask->start(unLoadTask_SchedParams, connections.unLoadTask.cpuAffinity);
 	} else {
@@ -328,12 +363,6 @@ void ComponentRobotinoConveyerBeltServer_OPCUA::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentRobotinoConveyerBeltServer_OPCUAROS1InterfacesExtension
-		
-		// initializations of ComponentRobotinoConveyerBeltServer_OPCUARestInterfacesExtension
-		
-		// initializations of PlainOpcUaComponentRobotinoConveyerBeltServer_OPCUAExtension
 		
 		
 		// initialize all registered port-factories
@@ -392,7 +421,8 @@ void ComponentRobotinoConveyerBeltServer_OPCUA::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		if (stateSlave->defineStates("load" ,"load") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion load.load" << std::endl;
 		if (stateSlave->defineStates("manualload" ,"manualload") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion manualload.manualload" << std::endl;
 		if (stateSlave->defineStates("manualunload" ,"manualunload") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion manualunload.manualunload" << std::endl;
@@ -429,7 +459,7 @@ void ComponentRobotinoConveyerBeltServer_OPCUA::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.loadTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.loadTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.loadTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(loadTask);
@@ -454,7 +484,7 @@ void ComponentRobotinoConveyerBeltServer_OPCUA::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.manualLoadTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.manualLoadTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.manualLoadTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(manualLoadTask);
@@ -475,7 +505,7 @@ void ComponentRobotinoConveyerBeltServer_OPCUA::init(int argc, char *argv[])
 		{
 			// setup default task-trigger as PeriodicTimer
 			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-			int microseconds = 1000*1000 / 10.0;
+			int microseconds = (int)(1000.0*1000.0 / 10.0);
 			if(microseconds > 0) {
 				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				triggerPtr->attach(manualLoadTask);
@@ -492,7 +522,7 @@ void ComponentRobotinoConveyerBeltServer_OPCUA::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.manualUnLoadTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.manualUnLoadTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.manualUnLoadTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(manualUnLoadTask);
@@ -513,7 +543,7 @@ void ComponentRobotinoConveyerBeltServer_OPCUA::init(int argc, char *argv[])
 		{
 			// setup default task-trigger as PeriodicTimer
 			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-			int microseconds = 1000*1000 / 10.0;
+			int microseconds = (int)(1000.0*1000.0 / 10.0);
 			if(microseconds > 0) {
 				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				triggerPtr->attach(manualUnLoadTask);
@@ -530,7 +560,7 @@ void ComponentRobotinoConveyerBeltServer_OPCUA::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.signalErrorTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.signalErrorTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.signalErrorTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(signalErrorTask);
@@ -551,7 +581,7 @@ void ComponentRobotinoConveyerBeltServer_OPCUA::init(int argc, char *argv[])
 		{
 			// setup default task-trigger as PeriodicTimer
 			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-			int microseconds = 1000*1000 / 2.0;
+			int microseconds = (int)(1000.0*1000.0 / 2.0);
 			if(microseconds > 0) {
 				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				triggerPtr->attach(signalErrorTask);
@@ -568,7 +598,7 @@ void ComponentRobotinoConveyerBeltServer_OPCUA::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.unLoadTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.unLoadTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.unLoadTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(unLoadTask);
@@ -692,15 +722,17 @@ void ComponentRobotinoConveyerBeltServer_OPCUA::fini()
 	delete commPowerOutputSendOutWrapper;
 	delete commPowerOutputSendOut;
 
+	// destroy request-handlers
+
 	// destroy server ports
 	delete robotinoConveyerBeltEventOutWrapper;
 	delete robotinoConveyerBeltEventOut;
+	
 	// destroy event-test handlers (if needed)
 	robotinoConveyerBeltEventOutEventTestHandler;
 	
-	// destroy request-handlers
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -720,12 +752,6 @@ void ComponentRobotinoConveyerBeltServer_OPCUA::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentRobotinoConveyerBeltServer_OPCUAROS1InterfacesExtension
-	
-	// destruction of ComponentRobotinoConveyerBeltServer_OPCUARestInterfacesExtension
-	
-	// destruction of PlainOpcUaComponentRobotinoConveyerBeltServer_OPCUAExtension
 	
 }
 
@@ -928,10 +954,6 @@ void ComponentRobotinoConveyerBeltServer_OPCUA::loadParameter(int argc, char *ar
 		if(parameter.checkIfParameterExists("DigitalInputEventHandler", "prescale")) {
 			parameter.getInteger("DigitalInputEventHandler", "prescale", connections.digitalInputEventHandler.prescale);
 		}
-		
-		// load parameters for ComponentRobotinoConveyerBeltServer_OPCUAROS1InterfacesExtension
-		
-		// load parameters for ComponentRobotinoConveyerBeltServer_OPCUARestInterfacesExtension
 		
 		// load parameters for PlainOpcUaComponentRobotinoConveyerBeltServer_OPCUAExtension
 		// load parameteters for OpcUaDeviceClient ProductionStation

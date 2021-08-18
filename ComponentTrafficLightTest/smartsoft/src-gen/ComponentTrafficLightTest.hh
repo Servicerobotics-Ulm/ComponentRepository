@@ -29,14 +29,6 @@
 class ComponentTrafficLightTestPortFactoryInterface;
 class ComponentTrafficLightTestExtension;
 
-// includes for ComponentTrafficLightTestROS1InterfacesExtension
-
-// includes for ComponentTrafficLightTestROSExtension
-
-// includes for ComponentTrafficLightTestRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentTrafficLightTestExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -60,6 +52,8 @@ class ComponentTrafficLightTestExtension;
 
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP ComponentTrafficLightTest::instance()
 
@@ -111,19 +105,10 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of ComponentTrafficLightTestROS1InterfacesExtension
-	
-	// definitions of ComponentTrafficLightTestROSExtension
-	
-	// definitions of ComponentTrafficLightTestRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentTrafficLightTestExtension
-	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	
@@ -228,16 +213,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} trafficLightServiceOut;
-		
-		// -- parameters for ComponentTrafficLightTestROS1InterfacesExtension
-		
-		// -- parameters for ComponentTrafficLightTestROSExtension
-		
-		// -- parameters for ComponentTrafficLightTestRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentTrafficLightTestExtension
 		
 	} connections;
 };

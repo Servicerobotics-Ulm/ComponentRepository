@@ -36,7 +36,7 @@
 
 class GridMapVisualization: public AbstractVisualization {
 public:
-	enum class MapType{ LTM_MAP, CURRENT_MAP};
+	enum class MapType{ LTM_MAP, CURRENT_MAP, PLANNER_MAP};
 	struct VizConfig{
 		std::string identifier;
 		bool showAxis;

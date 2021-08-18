@@ -1,0 +1,72 @@
+ComponentParameter ComponentPTUServerParams component ComponentPTUServer {
+	ParameterSetInstance DomainPTU.PTUParameter {
+		ParameterInstance ACCELERATION_PAN {
+			acc = 1.795
+		}
+		
+		ParameterInstance ACCELERATION_TILT{
+			acc = 1.795
+		}
+		
+		ParameterInstance RESET {
+			reset = false
+		}
+		
+		ParameterInstance SENSOR_OFFSET {
+			x = -140
+			y = -13
+			z = 1097
+			azimuth = 0.0
+			elevation = 0.0
+			roll = 0.0
+		}
+		
+		ParameterInstance SPEED_LIMIT_PAN {
+			min = 0.028
+			max = 2.604
+		}
+		
+		ParameterInstance SPEED_LIMIT_TILT {
+			min = 0.028
+			max = 2.604
+		}
+		
+		ParameterInstance SPEED_PAN {
+			speed = 1.0
+		}
+		
+		ParameterInstance SPEED_TILT {
+			speed = 1.0
+		}
+		
+		ParameterInstance START_UP_SPEED_PAN {
+			speed = 0.2
+		}
+		
+		ParameterInstance START_UP_SPEED_TILT {
+			speed = 0.2
+		}
+	}
+	
+	InternalParameter PTU {
+		device : String = "/dev/ptu"
+		verbose : Boolean = false
+		x: Int32 = 0
+		y: Int32 = 0
+		z: Int32 = 0
+		azimuth: Double = 0
+		elevation: Double = 0
+		roll: Double = 0
+	}
+	
+	InternalParameter Base {
+		on_base : Boolean = true
+		x: Int32 = 0
+		y: Int32 = 0
+		z: Int32 = 0
+		base_a : Double = 0
+		steer_a : Double = 0
+		turret_a : Double = 0
+	}
+	
+}

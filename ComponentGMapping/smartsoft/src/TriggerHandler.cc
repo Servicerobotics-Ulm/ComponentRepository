@@ -107,7 +107,7 @@ void TriggerHandler::handleCommLocalizationObjects_SlamParameter_SAVEMAP(const s
 		double origin_y = origin.y;
 		double origin_z = 0.0;
 
-		bool negate = false;
+		int negate = 0;
 		double occupied_thresh = 0.65;
 		double free_thresh = 0.196;
 

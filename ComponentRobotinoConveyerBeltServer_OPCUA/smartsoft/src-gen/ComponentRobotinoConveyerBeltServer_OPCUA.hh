@@ -29,10 +29,6 @@
 class ComponentRobotinoConveyerBeltServer_OPCUAPortFactoryInterface;
 class ComponentRobotinoConveyerBeltServer_OPCUAExtension;
 
-// includes for ComponentRobotinoConveyerBeltServer_OPCUAROS1InterfacesExtension
-
-// includes for ComponentRobotinoConveyerBeltServer_OPCUARestInterfacesExtension
-
 // includes for PlainOpcUaComponentRobotinoConveyerBeltServer_OPCUAExtension
 // include plain OPC UA device clients
 #include "OpcUaProductionStation.hh"
@@ -81,6 +77,8 @@ class ComponentRobotinoConveyerBeltServer_OPCUAExtension;
 #include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP ComponentRobotinoConveyerBeltServer_OPCUA::instance()
 
@@ -159,16 +157,13 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of ComponentRobotinoConveyerBeltServer_OPCUAROS1InterfacesExtension
-	
-	// definitions of ComponentRobotinoConveyerBeltServer_OPCUARestInterfacesExtension
-	
 	// definitions of PlainOpcUaComponentRobotinoConveyerBeltServer_OPCUAExtension
 	OPCUA::ProductionStation *productionStation;
 	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	ParamUpdateHandler paramHandler;
@@ -364,10 +359,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} commPowerOutputSendOut;
-		
-		// -- parameters for ComponentRobotinoConveyerBeltServer_OPCUAROS1InterfacesExtension
-		
-		// -- parameters for ComponentRobotinoConveyerBeltServer_OPCUARestInterfacesExtension
 		
 		// -- parameters for PlainOpcUaComponentRobotinoConveyerBeltServer_OPCUAExtension
 		struct ProductionStation_struct {

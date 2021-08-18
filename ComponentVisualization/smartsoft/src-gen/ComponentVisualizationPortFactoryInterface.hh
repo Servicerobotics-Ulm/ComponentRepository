@@ -89,6 +89,7 @@ public:
 	virtual Smart::IEventClientPattern<CommTrackingObjects::CommPersonLostEventParameter, CommTrackingObjects::CommPersonDetectionEventResult> * createPersonDetectionEventClient() = 0;
 	virtual Smart::IQueryClientPattern<CommTrackingObjects::CommPersonId, CommTrackingObjects::CommDetectedPerson> * createPersonDetectionQueryClient() = 0;
 	virtual Smart::IPushClientPattern<CommNavigationObjects::CommPlannerGoal> * createPlannerGoalPushClient() = 0;
+	virtual Smart::IPushClientPattern<CommNavigationObjects::CommGridMap> * createPlannerWavefrontGridMap() = 0;
 	virtual Smart::IPushClientPattern<DomainVision::CommRGBDImage> * createRgbdPushNewestClient() = 0;
 	virtual Smart::IPushClientPattern<DomainVision::CommDepthImage> * createRgbdQueryClient() = 0;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileUltrasonicScan> * createUltrasonicPushNewestClient() = 0;

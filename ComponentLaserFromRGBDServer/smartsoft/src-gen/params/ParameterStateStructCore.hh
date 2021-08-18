@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -81,14 +82,14 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "scanner(";
-				os << "azimuth = " << azimuth << ", ";
-				os << "elevation = " << elevation << ", ";
-				os << "on_turret = " << on_turret << ", ";
-				os << "roll = " << roll << ", ";
-				os << "verbose = " << verbose << ", ";
-				os << "x = " << x << ", ";
-				os << "y = " << y << ", ";
-				os << "z = " << z << ", ";
+				os << "azimuth = " << azimuth; os << ", ";
+				os << "elevation = " << elevation; os << ", ";
+				os << "on_turret = " << on_turret; os << ", ";
+				os << "roll = " << roll; os << ", ";
+				os << "verbose = " << verbose; os << ", ";
+				os << "x = " << x; os << ", ";
+				os << "y = " << y; os << ", ";
+				os << "z = " << z;
 				os << ")\n";
 			}
 			
@@ -141,14 +142,14 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "laser_generator(";
-				os << "angle_resolution = " << angle_resolution << ", ";
-				os << "floor_threshold_distance = " << floor_threshold_distance << ", ";
-				os << "generationPeriodMilliSec = " << generationPeriodMilliSec << ", ";
-				os << "generationPeriodSec = " << generationPeriodSec << ", ";
-				os << "max_range = " << max_range << ", ";
-				os << "min_range = " << min_range << ", ";
-				os << "rgbd_source = " << rgbd_source << ", ";
-				os << "vertical_fov = " << vertical_fov << ", ";
+				os << "angle_resolution = " << angle_resolution; os << ", ";
+				os << "floor_threshold_distance = " << floor_threshold_distance; os << ", ";
+				os << "generationPeriodMilliSec = " << generationPeriodMilliSec; os << ", ";
+				os << "generationPeriodSec = " << generationPeriodSec; os << ", ";
+				os << "max_range = " << max_range; os << ", ";
+				os << "min_range = " << min_range; os << ", ";
+				os << "rgbd_source = " << rgbd_source; os << ", ";
+				os << "vertical_fov = " << vertical_fov;
 				os << ")\n";
 			}
 			
@@ -198,13 +199,13 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "base_manipulator(";
-				os << "base_a = " << base_a << ", ";
-				os << "on_base = " << on_base << ", ";
-				os << "steer_a = " << steer_a << ", ";
-				os << "turret_a = " << turret_a << ", ";
-				os << "x = " << x << ", ";
-				os << "y = " << y << ", ";
-				os << "z = " << z << ", ";
+				os << "base_a = " << base_a; os << ", ";
+				os << "on_base = " << on_base; os << ", ";
+				os << "steer_a = " << steer_a; os << ", ";
+				os << "turret_a = " << turret_a; os << ", ";
+				os << "x = " << x; os << ", ";
+				os << "y = " << y; os << ", ";
+				os << "z = " << z;
 				os << ")\n";
 			}
 			

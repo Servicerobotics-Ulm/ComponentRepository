@@ -48,6 +48,7 @@ public:
 	virtual Smart::IPushClientPattern<CommLocalizationObjects::CommAmclVisualizationInfo> * createAmclVisualizationInfoIn() override;
 	virtual Smart::IPushClientPattern<CommTrackingObjects::CommDetectedMarkerList> * createMarkerListDetectionServiceIn() override;
 	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> * createRGBDImageQueryServiceReq() override;
+	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, CommLocalizationObjects::CommVisualLocalizationFeatureMap> * createVisualMarkers() override;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * createBaseClient() override;
 	virtual Smart::IPushClientPattern<CommNavigationObjects::CommGridMap> * createCurPushClient() override;
 	virtual Smart::IPushClientPattern<DomainVision::CommDepthImage> * createDepthPushNewestClient() override;
@@ -60,6 +61,7 @@ public:
 	virtual Smart::IEventClientPattern<CommTrackingObjects::CommPersonLostEventParameter, CommTrackingObjects::CommPersonDetectionEventResult> * createPersonDetectionEventClient() override;
 	virtual Smart::IQueryClientPattern<CommTrackingObjects::CommPersonId, CommTrackingObjects::CommDetectedPerson> * createPersonDetectionQueryClient() override;
 	virtual Smart::IPushClientPattern<CommNavigationObjects::CommPlannerGoal> * createPlannerGoalPushClient() override;
+	virtual Smart::IPushClientPattern<CommNavigationObjects::CommGridMap> * createPlannerWavefrontGridMap() override;
 	virtual Smart::IPushClientPattern<DomainVision::CommRGBDImage> * createRgbdPushNewestClient() override;
 	virtual Smart::IPushClientPattern<DomainVision::CommDepthImage> * createRgbdQueryClient() override;
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommMobileUltrasonicScan> * createUltrasonicPushNewestClient() override;

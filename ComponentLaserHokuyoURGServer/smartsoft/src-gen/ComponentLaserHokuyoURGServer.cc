@@ -31,7 +31,7 @@ ComponentLaserHokuyoURGServer::ComponentLaserHokuyoURGServer()
 	std::cout << "constructor of ComponentLaserHokuyoURGServer\n";
 	
 	// set all pointer members to NULL
-	//coordinationPort = NULL;
+	//componentLaserHokuyoURGServer = NULL;
 	//coordinationPort = NULL;
 	laserTask = NULL;
 	laserTaskTrigger = NULL;
@@ -51,6 +51,7 @@ ComponentLaserHokuyoURGServer::ComponentLaserHokuyoURGServer()
 	manipulatorTimedClientUpcallManager = NULL;
 	manipulatorTimedClientInputCollector = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -91,16 +92,6 @@ ComponentLaserHokuyoURGServer::ComponentLaserHokuyoURGServer()
 	connections.watchDogTask.scheduler = "DEFAULT";
 	connections.watchDogTask.priority = -1;
 	connections.watchDogTask.cpuAffinity = -1;
-	
-	// initialize members of ComponentLaserHokuyoURGServerROS1InterfacesExtension
-	
-	// initialize members of ComponentLaserHokuyoURGServerROSExtension
-	
-	// initialize members of ComponentLaserHokuyoURGServerRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentLaserHokuyoURGServerExtension
 	
 }
 
@@ -191,10 +182,18 @@ void ComponentLaserHokuyoURGServer::startAllTasks() {
 		ACE_Sched_Params laserTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.laserTask.scheduler == "FIFO") {
 			laserTask_SchedParams.policy(ACE_SCHED_FIFO);
-			laserTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				laserTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				laserTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.laserTask.scheduler == "RR") {
 			laserTask_SchedParams.policy(ACE_SCHED_RR);
-			laserTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				laserTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				laserTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		laserTask->start(laserTask_SchedParams, connections.laserTask.cpuAffinity);
 	} else {
@@ -205,10 +204,18 @@ void ComponentLaserHokuyoURGServer::startAllTasks() {
 		ACE_Sched_Params watchDogTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.watchDogTask.scheduler == "FIFO") {
 			watchDogTask_SchedParams.policy(ACE_SCHED_FIFO);
-			watchDogTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				watchDogTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				watchDogTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.watchDogTask.scheduler == "RR") {
 			watchDogTask_SchedParams.policy(ACE_SCHED_RR);
-			watchDogTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				watchDogTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				watchDogTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		watchDogTask->start(watchDogTask_SchedParams, connections.watchDogTask.cpuAffinity);
 	} else {
@@ -242,16 +249,6 @@ void ComponentLaserHokuyoURGServer::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentLaserHokuyoURGServerROS1InterfacesExtension
-		
-		// initializations of ComponentLaserHokuyoURGServerROSExtension
-		
-		// initializations of ComponentLaserHokuyoURGServerRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentLaserHokuyoURGServerExtension
 		
 		
 		// initialize all registered port-factories
@@ -311,7 +308,8 @@ void ComponentLaserHokuyoURGServer::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -339,7 +337,7 @@ void ComponentLaserHokuyoURGServer::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.laserTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.laserTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.laserTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(laserTask);
@@ -364,7 +362,7 @@ void ComponentLaserHokuyoURGServer::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.watchDogTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.watchDogTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.watchDogTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(watchDogTask);
@@ -385,7 +383,7 @@ void ComponentLaserHokuyoURGServer::init(int argc, char *argv[])
 		{
 			// setup default task-trigger as PeriodicTimer
 			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-			int microseconds = 1000*1000 / 1.0;
+			int microseconds = (int)(1000.0*1000.0 / 1.0);
 			if(microseconds > 0) {
 				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				triggerPtr->attach(watchDogTask);
@@ -483,17 +481,19 @@ void ComponentLaserHokuyoURGServer::fini()
 	delete baseTimedClient;
 	delete manipulatorTimedClient;
 
+	// destroy request-handlers
+	delete laserQueryServerHandler;
+
 	// destroy server ports
 	delete laserPushNewestServerWrapper;
 	delete laserPushNewestServer;
-	delete laserQueryServer;
 	delete laserQueryServerInputTaskTrigger;
+	delete laserQueryServer;
+	
 	// destroy event-test handlers (if needed)
 	
-	// destroy request-handlers
-	delete laserQueryServerHandler;
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -513,16 +513,6 @@ void ComponentLaserHokuyoURGServer::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentLaserHokuyoURGServerROS1InterfacesExtension
-	
-	// destruction of ComponentLaserHokuyoURGServerROSExtension
-	
-	// destruction of ComponentLaserHokuyoURGServerRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentLaserHokuyoURGServerExtension
 	
 }
 
@@ -664,16 +654,6 @@ void ComponentLaserHokuyoURGServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("WatchDogTask", "cpuAffinity")) {
 			parameter.getInteger("WatchDogTask", "cpuAffinity", connections.watchDogTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentLaserHokuyoURGServerROS1InterfacesExtension
-		
-		// load parameters for ComponentLaserHokuyoURGServerROSExtension
-		
-		// load parameters for ComponentLaserHokuyoURGServerRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentLaserHokuyoURGServerExtension
 		
 		
 		// load parameters for all registered component-extensions

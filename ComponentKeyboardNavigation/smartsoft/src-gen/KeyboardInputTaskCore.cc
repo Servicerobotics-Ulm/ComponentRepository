@@ -36,6 +36,20 @@ KeyboardInputTaskCore::~KeyboardInputTaskCore()
 {
 }
 
+int KeyboardInputTaskCore::start() {
+	this->resetTrigger();
+	return SmartACE::Task::start();
+}
+
+int KeyboardInputTaskCore::start(const ACE_Sched_Params &sched_params, const int &cpuAffinity) {
+	return SmartACE::Task::start(sched_params, cpuAffinity);
+}
+
+int KeyboardInputTaskCore::stop(const bool wait_till_stopped) {
+	this->cancelTrigger();
+	return SmartACE::Task::stop(wait_till_stopped);
+}
+
 
 void KeyboardInputTaskCore::notify_all_interaction_observers() {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);

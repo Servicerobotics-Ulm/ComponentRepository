@@ -883,6 +883,106 @@
             (return)))))
     result))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; approachRoom
+;;
+;; Description : functionality is same as 'approachLocation' but here the goal is defined by line segments.
+;;
+;; TODO : rules are missing for unknown-room
+;;
+(define-tcb (approachRoom ?input-room-name)
+  (module "NavigationModule")
+  ;(rules (rule-unknown-location rule-location-success rule-robot-blocked rule-abort-job-error-ack))
+  (priority 99)
+  (abort-action (
+                  (tcl-state :server 'cdl :state "Neutral")
+                  (tcl-state :server 'mapper :state "Neutral")
+                  (tcl-state :server 'planner :state "Neutral")))
+  (plan (
+          (tcb-move-robot 'approach-room ?input-room-name))))
+
+(realize-tcb  (tcb-move-robot 'approach-room ?input-room-name)
+  (module "NavigationModule")
+  (action (
+            (format t "=========================>>> tcb-move-robot 'approach-room ~s ~%" '?input-room-name)
+            (let* ((lineSegments (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a room) (name ?input-room-name))) 'line-segments))
+                   (robot-current-room-name (get-value (tcl-kb-query :key '(is-a)  :value '((is-a robot))) 'current-room))
+                   (robot-room (tcl-kb-query :key '(is-a name) :value `((is-a room)(name ,robot-current-room-name))))
+                   (velocity-travelling (get-value (tcl-kb-query :key '(is-a)  :value '((is-a robot))) 'velocity-travelling))
+                   (goalid nil))
+              (cond
+                ;; room unknown
+                ((null lineSegments)
+                  (format t "------------------------------------------------------------------------------------------------------~%")
+                  (format t "                        ERROR :: ~s HAS NO DEFINED POLYGON STRUCTURE~%" '?input-room-name)
+                  (format t "------------------------------------------------------------------------------------------------------~%")
+                  '(ERROR (UNKNOWN ROOM)))
+                ;; room known
+
+
+                (T
+                  (tcl-activate-event :name 'evt-cdlgoal
+                                      :handler 'handler-cdl
+                                      :server 'cdl
+                                      :service 'goalEvent
+                                      :mode 'continuous)
+
+                  (tcl-activate-event :name 'evt-cdlblocked
+                                      :handler 'handler-cdl-blocked
+                                      :server 'cdl
+                                      :service 'blockedEvent
+                                      :mode 'continuous)
+
+                  (tcl-kb-update :key '(is-a name) :value '((is-a counter)(name no-path-counter)(count 0)))
+
+                  (tcl-activate-event :name 'evt-planner
+                                      :handler 'handler-planner-approach-halt
+                                      :server 'planner
+                                      :service 'plannerEvent
+                                      :mode 'continuous)
+                  ;; read - increment - store goalid
+                  (setf goalid (get-value (tcl-kb-query :key '(is-a) :value '((is-a robot))) 'goalid))
+                  (setf goalid (+ goalid 1))
+                  (format t "GoalID: ~s~%" goalid)
+                  (tcl-kb-update :key '(is-a) :value `((is-a robot)(goalid ,goalid)))
+
+                  (tcl-state :server 'planner :state "Neutral")
+                  (tcl-state :server 'mapper  :state "Neutral")
+                  ;; cdl
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ID :value goalid)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.LOOKUPTABLE  :value 'DEFAULT)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SAFETYCL :value 200)
+                  (format t "timo-transvel ~s ~%" (first velocity-travelling))
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.TRANSVEL :value (first velocity-travelling))
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ROTVEL :value (second velocity-travelling))
+                  ;(tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.APPROACHDIST :value dist)
+                  (tcl-param :server 'cdl :slot 'COMMIT)
+
+                  ;; mapper
+                  (tcl-param :server 'mapper :slot 'CommNavigationObjects.MapperParams.CURPARAMETER
+                             :value (append (get-value robot-room 'size)
+                                            (get-value robot-room 'offset)
+                                            (list goalid)))
+                  (tcl-param :server 'mapper :slot 'CommNavigationObjects.MapperParams.CURLOADLTM)
+                  (tcl-param :server 'mapper :slot 'COMMIT)
+                  ;; planner
+                  (tcl-param :server 'planner :slot 'CommNavigationObjects.PlannerParams.ID :value goalid)
+                  (tcl-param :server 'planner :slot 'CommNavigationObjects.PlannerParams.DELETEGOAL)
+
+                  ;(tcl-param :server 'planner :slot 'CommNavigationObjects.PlannerParams.SETDESTINATIONCIRCLE :value `(,(first pose) ,(second pose) ,dist))
+                   (loop for segment in lineSegments
+			do (tcl-param :server 'planner :slot 'CommNavigationObjects.PlannerParams.SETDESTINATIONLINE :value `(,(nth 0 segment) ,(nth 1 segment) ,(nth 2 segment) ,(nth 3 segment))))
+                  (tcl-param :server 'planner :slot 'COMMIT)
+
+                  (tcl-state :server 'planner :state "PathPlanning")
+                  ;;(tcl-state :server 'mapper :state "BuildBothMaps")
+                  (tcl-state :server 'mapper :state "BuildCurrMap")
+;;TODO V3
+                 ; (update-robot-state :sub-state "FREE-NAV")
+                  '(SUCCESS ())))))))
+
+
 ;; NAVIGATION
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-

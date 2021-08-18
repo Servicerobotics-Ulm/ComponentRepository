@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -60,7 +61,7 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "webots(";
-				os << "robotName = " << robotName << ", ";
+				os << "robotName = " << robotName;
 				os << ")\n";
 			}
 			
@@ -101,22 +102,24 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "ProductionStations(";
-				std::list<std::string>::const_iterator stationNameIt;
-				for(stationNameIt=stationName.begin(); stationNameIt!=stationName.end(); stationNameIt++)
+				os << "stationName = [";
+				for(auto stationNameIt = stationName.begin(); stationNameIt != stationName.end(); stationNameIt++)
 				{
-				os << "stationName = " << *stationNameIt << ", ";
-				os << "stationName = " << *stationNameIt << ", ";
-				os << "stationName = " << *stationNameIt << ", ";
-				os << "stationName = " << *stationNameIt << ", ";
+					if(stationNameIt != stationName.begin()) {
+						os << ", ";
+					}
+					os << *stationNameIt;
 				}
-				std::list<std::string>::const_iterator stationUrlIt;
-				for(stationUrlIt=stationUrl.begin(); stationUrlIt!=stationUrl.end(); stationUrlIt++)
+				os << "]"; os << ", ";
+				os << "stationUrl = [";
+				for(auto stationUrlIt = stationUrl.begin(); stationUrlIt != stationUrl.end(); stationUrlIt++)
 				{
-				os << "stationUrl = " << *stationUrlIt << ", ";
-				os << "stationUrl = " << *stationUrlIt << ", ";
-				os << "stationUrl = " << *stationUrlIt << ", ";
-				os << "stationUrl = " << *stationUrlIt << ", ";
+					if(stationUrlIt != stationUrl.begin()) {
+						os << ", ";
+					}
+					os << *stationUrlIt;
 				}
+				os << "]";
 				os << ")\n";
 			}
 			
@@ -151,8 +154,8 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Robot(";
-				os << "belt_time_out_sec = " << belt_time_out_sec << ", ";
-				os << "ignore_station_communication_unload_time_sec = " << ignore_station_communication_unload_time_sec << ", ";
+				os << "belt_time_out_sec = " << belt_time_out_sec; os << ", ";
+				os << "ignore_station_communication_unload_time_sec = " << ignore_station_communication_unload_time_sec;
 				os << ")\n";
 			}
 			
@@ -206,7 +209,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tSetStationID(";
-						os << "id = " << id << ", ";
+						os << "id = " << id;
 						os << ")\n";
 					}
 					

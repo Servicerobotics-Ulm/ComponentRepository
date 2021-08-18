@@ -51,4 +51,6 @@ ComponentDefinition SmartPlannerBreadthFirstSearch {
 	OutputPort PlannerEventServer implements CommNavigationObjects.PlannerEventService realizedBy PlannerTask { }
 	
 	ComponentParameters SmartPlannerParams slave CoordinationPort;
+OutputPort CurrGridMapPushServiceOut implements CommNavigationObjects.CurrGridMapPushService realizedBy PlannerTask {
+	}
 }

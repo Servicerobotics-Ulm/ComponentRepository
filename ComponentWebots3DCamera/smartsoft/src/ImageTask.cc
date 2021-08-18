@@ -49,24 +49,13 @@
 #include <webots/Supervisor.hpp>
 #include <webots/Camera.hpp>
 #include <webots/RangeFinder.hpp>
+#include "EulerTransformationMatrices.hh"
 
 using namespace std;
 using namespace webots;
 
-#include "EulerTransformationMatrices.hh"
-/*
- #include <sstream>
- #include <iomanip>
- #include <thread>
- #include <algorithm>
- #include <map>
- #include <memory>
- #include <vector>
- #include <iostream>
- */
-
 ImageTask::ImageTask(SmartACE::SmartComponent *comp) :
-        ImageTaskCore(comp) {
+    ImageTaskCore(comp) {
 }
 ImageTask::~ImageTask() {
 }
@@ -75,9 +64,19 @@ ImageTask::~ImageTask() {
 void ImageTask::handleEnterState(const std::string &substate) {
     if (substate == "pushimage")
         newProgram = prPushImage;
-    else if (substate == "queryonly")
+    else if (substate == "queryonly") {
         newProgram = prQueryOnly;
+        COMP->NewestImageMutex.acquire();
+        COMP->newestImage = NULL;
+        COMP->NewestImageMutex.release();
+    }
     else if (substate == "neutral")
+        newProgram = prNeutral;
+}
+
+// called from SmartStateChangeHandler.cc
+void ImageTask::handleQuitState(const std::string &substate) {
+    if (substate == "nonneutral")
         newProgram = prNeutral;
 }
 
@@ -142,7 +141,7 @@ int ImageTask::on_execute() {
     double minRange = rangeFinder->getMinRange();
     double maxRange = rangeFinder->getMaxRange();
     cout << "RangeFinder '" << name << "' width " << width2 << " height " << height2 << " fieldOfView " << fieldOfView2
-            << " minRange " << minRange << " maxRange " << maxRange << endl;
+        << " minRange " << minRange << " maxRange " << maxRange << endl;
     arma::mat intrinsic2 = arma::zeros(4, 4);
     intrinsic2(0, 0) = width2 / 2.0 / tan(fieldOfView2 / 2.0);
     intrinsic2(1, 1) = width2 / 2.0 / tan(fieldOfView2 / 2.0);
@@ -157,30 +156,29 @@ int ImageTask::on_execute() {
     depthImage.set_intrinsic(intrinsic2);
     depthImage.set_extrinsic(extrinsics);
     depthImage.setWidth(width2).setHeight(height2).setFormat(DomainVision::DepthFormatType::FLOAT).setPixel_size(32).setIs_valid(
-            true).setDistortion_model(DomainVision::ImageDistortionModel::NONE);
+        true).setDistortion_model(DomainVision::ImageDistortionModel::NONE);
 
     DomainVision::CommRGBDImage *image = new DomainVision::CommRGBDImage;
     image->setColor_image(colorImage);
     image->setDepth_image(depthImage);
     int seqCount = 0;
     bool isCameraOn = false;
+    Program program = Program::prNeutral;
+    // todo: parameter for time between two pushed images
+    //       (using robot->getBasicTimeStep() can be very slow)
     while (robot->step(robot->getBasicTimeStep()) != -1) {
         Program program = newProgram;
-        bool wasCameraOn = isCameraOn;
-        isCameraOn = (program == prPushImage) || (program == prQueryOnly);
-        if (isCameraOn && !wasCameraOn) {
-            camera->enable(robot->getBasicTimeStep());
-            rangeFinder->enable(robot->getBasicTimeStep());
-        }
-        if (!isCameraOn && wasCameraOn) {
-            camera->disable();
-            rangeFinder->disable();
-        }
-        // webots generates an image only one timestep after enabling the device
-        if (!isCameraOn || !wasCameraOn) {
-            std::unique_lock<std::mutex> lock(newestImageMutex);
-            newestImage = NULL;
-        } else { // generate newestImage
+        if (program == Program::prPushImage || (program == Program::prQueryOnly && isQueryImage)) {
+            if (!isCameraOn) {
+                isCameraOn = true;
+                std::cout << "Enabling Camera" << std::endl;
+                camera->enable(robot->getBasicTimeStep());
+                rangeFinder->enable(robot->getBasicTimeStep());
+                //wait one timeStep to get the valid image
+                if (robot->step(robot->getBasicTimeStep()) == -1)
+                    break;
+            }
+            // generate newestImage
             const unsigned char *bgraData = camera->getImage();
             for (int i = 0; i < width * height; i++) {
                 colorData[i * 3] = bgraData[i * 4 + 2];
@@ -196,13 +194,11 @@ int ImageTask::on_execute() {
             depthImage.setMin_distcance(params.getHardware_properties().getMin_distance());
             depthImage.setMax_distcance(params.getHardware_properties().getMax_distance());
             depthImage.set_distances(depthData, width2, height2);
-
             CommBasicObjects::CommBaseState base_state;
             arma::mat sensorMat;
             EulerTransformationMatrices::create_zyx_matrix(params.getSensor_pose().getX(),
-                    params.getSensor_pose().getY(), params.getSensor_pose().getZ(),
-                    params.getSensor_pose().getAzimuth(), params.getSensor_pose().getElevation(),
-                    params.getSensor_pose().getRoll(), sensorMat);
+                params.getSensor_pose().getY(), params.getSensor_pose().getZ(), params.getSensor_pose().getAzimuth(),
+                params.getSensor_pose().getElevation(), params.getSensor_pose().getRoll(), sensorMat);
             image->setIs_valid(true);
             if (params.getBase().getOn_ptu()) {
                 CommBasicObjects::CommDevicePoseState devicePoseState;
@@ -220,7 +216,7 @@ int ImageTask::on_execute() {
                 }
                 double x, y, z, azimuth, elevation, roll;
                 mobileManipulatorState.getManipulator_state().get_pose_TCP_robot(x, y, z, azimuth, elevation, roll,
-                        0.001);
+                    0.001);
                 CommBasicObjects::CommPose3d tcpPose(x, y, z, azimuth, elevation, roll, 0.001);
                 sensorMat = tcpPose.getHomogeneousMatrix() * sensorMat;
             }
@@ -247,10 +243,9 @@ int ImageTask::on_execute() {
             colorImage.set_base_state(base_state);
             image->setColor_image(colorImage);
             image->setDepth_image(depthImage);
-            {
-                std::unique_lock<std::mutex> lock(newestImageMutex);
-                newestImage = image;
-            }
+            COMP->NewestImageMutex.acquire();
+            COMP->newestImage = image;
+            COMP->NewestImageMutex.release();
             if (params.getSettings().getPushnewest_rgbd_image()) {
                 COMP->rGBDImagePushServiceOut->put(*image);
             }
@@ -262,8 +257,13 @@ int ImageTask::on_execute() {
             }
             if (params.getSettings().getDebug_info()) {
                 std::cout << "[Image Task] Current RGBD frame number =" << image->getSeq_count() << " is "
-                        << (image->getIs_valid() ? "valid" : "invalid") << "\n";
+                    << (image->getIs_valid() ? "valid" : "invalid") << ", program = " << program << "\n";
             }
+        } else if (isCameraOn) {
+            isCameraOn = false;
+            std::cout << "Disabling Camera" << std::endl;
+            camera->disable();
+            rangeFinder->disable();
         }
     }
     delete robot;

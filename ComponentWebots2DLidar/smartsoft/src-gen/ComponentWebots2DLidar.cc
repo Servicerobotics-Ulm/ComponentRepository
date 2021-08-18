@@ -35,7 +35,7 @@ ComponentWebots2DLidar::ComponentWebots2DLidar()
 	baseStateServiceInInputTaskTrigger = NULL;
 	baseStateServiceInUpcallManager = NULL;
 	baseStateServiceInInputCollector = NULL;
-	//coordinationPort = NULL;
+	//componentWebots2DLidarParams = NULL;
 	//coordinationPort = NULL;
 	laserQueryServiceAnsw = NULL;
 	laserQueryServiceAnswInputTaskTrigger = NULL;
@@ -45,6 +45,7 @@ ComponentWebots2DLidar::ComponentWebots2DLidar()
 	laserTask = NULL;
 	laserTaskTrigger = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -142,10 +143,18 @@ void ComponentWebots2DLidar::startAllTasks() {
 		ACE_Sched_Params laserTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.laserTask.scheduler == "FIFO") {
 			laserTask_SchedParams.policy(ACE_SCHED_FIFO);
-			laserTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				laserTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				laserTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.laserTask.scheduler == "RR") {
 			laserTask_SchedParams.policy(ACE_SCHED_RR);
-			laserTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				laserTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				laserTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		laserTask->start(laserTask_SchedParams, connections.laserTask.cpuAffinity);
 	} else {
@@ -233,7 +242,8 @@ void ComponentWebots2DLidar::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -258,7 +268,7 @@ void ComponentWebots2DLidar::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.laserTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.laserTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.laserTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(laserTask);
@@ -357,17 +367,19 @@ void ComponentWebots2DLidar::fini()
 	// destroy client ports
 	delete baseStateServiceIn;
 
-	// destroy server ports
-	delete laserQueryServiceAnsw;
-	delete laserQueryServiceAnswInputTaskTrigger;
-	delete laserServiceOutWrapper;
-	delete laserServiceOut;
-	// destroy event-test handlers (if needed)
-	
 	// destroy request-handlers
 	delete laserQueryServiceAnswHandler;
+
+	// destroy server ports
+	delete laserQueryServiceAnswInputTaskTrigger;
+	delete laserQueryServiceAnsw;
+	delete laserServiceOutWrapper;
+	delete laserServiceOut;
+	
+	// destroy event-test handlers (if needed)
 	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	

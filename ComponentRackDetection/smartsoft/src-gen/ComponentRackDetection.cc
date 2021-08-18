@@ -32,7 +32,7 @@ ComponentRackDetection::ComponentRackDetection()
 	std::cout << "constructor of ComponentRackDetection\n";
 	
 	// set all pointer members to NULL
-	//coordinationPort = NULL;
+	//componentRackDetection = NULL;
 	//coordinationPort = NULL;
 	environmentQueryServiceAnswHandler = NULL;
 	objectQueryServiceAnswHandler = NULL;
@@ -47,6 +47,7 @@ ComponentRackDetection::ComponentRackDetection()
 	objectPropertyQueryServer = NULL;
 	objectPropertyQueryServerInputTaskTrigger = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -145,10 +146,18 @@ void ComponentRackDetection::startAllTasks() {
 		ACE_Sched_Params rackDetectionTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.rackDetectionTask.scheduler == "FIFO") {
 			rackDetectionTask_SchedParams.policy(ACE_SCHED_FIFO);
-			rackDetectionTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				rackDetectionTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				rackDetectionTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.rackDetectionTask.scheduler == "RR") {
 			rackDetectionTask_SchedParams.policy(ACE_SCHED_RR);
-			rackDetectionTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				rackDetectionTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				rackDetectionTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		rackDetectionTask->start(rackDetectionTask_SchedParams, connections.rackDetectionTask.cpuAffinity);
 	} else {
@@ -237,7 +246,8 @@ void ComponentRackDetection::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -261,7 +271,7 @@ void ComponentRackDetection::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.rackDetectionTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.rackDetectionTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.rackDetectionTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(rackDetectionTask);
@@ -354,21 +364,23 @@ void ComponentRackDetection::fini()
 	// destroy client ports
 	delete kinectQueryClient;
 
-	// destroy server ports
-	delete environmentQueryServer;
-	delete environmentQueryServerInputTaskTrigger;
-	delete objectEventServerWrapper;
-	delete objectEventServer;
-	delete objectPropertyQueryServer;
-	delete objectPropertyQueryServerInputTaskTrigger;
-	// destroy event-test handlers (if needed)
-	objectEventServerEventTestHandler;
-	
 	// destroy request-handlers
 	delete environmentQueryServiceAnswHandler;
 	delete objectQueryServiceAnswHandler;
+
+	// destroy server ports
+	delete environmentQueryServerInputTaskTrigger;
+	delete environmentQueryServer;
+	delete objectEventServerWrapper;
+	delete objectEventServer;
+	delete objectPropertyQueryServerInputTaskTrigger;
+	delete objectPropertyQueryServer;
+	
+	// destroy event-test handlers (if needed)
+	objectEventServerEventTestHandler;
 	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	

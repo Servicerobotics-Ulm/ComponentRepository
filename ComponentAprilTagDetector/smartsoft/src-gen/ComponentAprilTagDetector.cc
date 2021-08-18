@@ -32,7 +32,7 @@ ComponentAprilTagDetector::ComponentAprilTagDetector()
 	std::cout << "constructor of ComponentAprilTagDetector\n";
 	
 	// set all pointer members to NULL
-	//coordinationPort = NULL;
+	//componentAprilTagDetector = NULL;
 	//coordinationPort = NULL;
 	detectorTask = NULL;
 	detectorTaskTrigger = NULL;
@@ -48,6 +48,7 @@ ComponentAprilTagDetector::ComponentAprilTagDetector()
 	rGBImagePushServiceOut = NULL;
 	rGBImagePushServiceOutWrapper = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -76,16 +77,6 @@ ComponentAprilTagDetector::ComponentAprilTagDetector()
 	connections.detectorTask.scheduler = "DEFAULT";
 	connections.detectorTask.priority = -1;
 	connections.detectorTask.cpuAffinity = -1;
-	
-	// initialize members of ComponentAprilTagDetectorROS1InterfacesExtension
-	
-	// initialize members of ComponentAprilTagDetectorROSExtension
-	
-	// initialize members of ComponentAprilTagDetectorRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentAprilTagDetectorExtension
 	
 }
 
@@ -157,10 +148,18 @@ void ComponentAprilTagDetector::startAllTasks() {
 		ACE_Sched_Params detectorTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.detectorTask.scheduler == "FIFO") {
 			detectorTask_SchedParams.policy(ACE_SCHED_FIFO);
-			detectorTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				detectorTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				detectorTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.detectorTask.scheduler == "RR") {
 			detectorTask_SchedParams.policy(ACE_SCHED_RR);
-			detectorTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				detectorTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				detectorTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		detectorTask->start(detectorTask_SchedParams, connections.detectorTask.cpuAffinity);
 	} else {
@@ -193,16 +192,6 @@ void ComponentAprilTagDetector::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentAprilTagDetectorROS1InterfacesExtension
-		
-		// initializations of ComponentAprilTagDetectorROSExtension
-		
-		// initializations of ComponentAprilTagDetectorRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentAprilTagDetectorExtension
 		
 		
 		// initialize all registered port-factories
@@ -261,7 +250,8 @@ void ComponentAprilTagDetector::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		if (stateSlave->defineStates("Active" ,"active") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion Active.active" << std::endl;
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
@@ -286,7 +276,7 @@ void ComponentAprilTagDetector::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.detectorTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.detectorTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.detectorTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(detectorTask);
@@ -382,6 +372,8 @@ void ComponentAprilTagDetector::fini()
 	// destroy client ports
 	delete rGBImagePushServiceIn;
 
+	// destroy request-handlers
+
 	// destroy server ports
 	delete markerListDetectionServiceOutWrapper;
 	delete markerListDetectionServiceOut;
@@ -389,12 +381,12 @@ void ComponentAprilTagDetector::fini()
 	delete markerListEventServiceOut;
 	delete rGBImagePushServiceOutWrapper;
 	delete rGBImagePushServiceOut;
+	
 	// destroy event-test handlers (if needed)
 	markerListEventServiceOutEventTestHandler;
 	
-	// destroy request-handlers
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -414,16 +406,6 @@ void ComponentAprilTagDetector::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentAprilTagDetectorROS1InterfacesExtension
-	
-	// destruction of ComponentAprilTagDetectorROSExtension
-	
-	// destruction of ComponentAprilTagDetectorRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentAprilTagDetectorExtension
 	
 }
 
@@ -542,16 +524,6 @@ void ComponentAprilTagDetector::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("DetectorTask", "cpuAffinity")) {
 			parameter.getInteger("DetectorTask", "cpuAffinity", connections.detectorTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentAprilTagDetectorROS1InterfacesExtension
-		
-		// load parameters for ComponentAprilTagDetectorROSExtension
-		
-		// load parameters for ComponentAprilTagDetectorRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentAprilTagDetectorExtension
 		
 		
 		// load parameters for all registered component-extensions

@@ -37,11 +37,12 @@ SmartPlannerBreadthFirstSearch::SmartPlannerBreadthFirstSearch()
 	baseStateClientUpcallManager = NULL;
 	baseStateClientInputCollector = NULL;
 	//coordinationPort = NULL;
-	//coordinationPort = NULL;
 	curMapClient = NULL;
 	curMapClientInputTaskTrigger = NULL;
 	curMapClientUpcallManager = NULL;
 	curMapClientInputCollector = NULL;
+	currGridMapPushServiceOut = NULL;
+	currGridMapPushServiceOutWrapper = NULL;
 	plannerEventServer = NULL;
 	plannerEventServerWrapper = NULL;
 	plannerEventServerEventTestHandler = nullptr; 
@@ -49,7 +50,9 @@ SmartPlannerBreadthFirstSearch::SmartPlannerBreadthFirstSearch()
 	plannerGoalServerWrapper = NULL;
 	plannerTask = NULL;
 	plannerTaskTrigger = NULL;
+	//smartPlannerParams = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -60,6 +63,8 @@ SmartPlannerBreadthFirstSearch::SmartPlannerBreadthFirstSearch()
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
+	connections.currGridMapPushServiceOut.serviceName = "CurrGridMapPushServiceOut";
+	connections.currGridMapPushServiceOut.roboticMiddleware = "ACE_SmartSoft";
 	connections.plannerEventServer.serviceName = "PlannerEventServer";
 	connections.plannerEventServer.roboticMiddleware = "ACE_SmartSoft";
 	connections.plannerGoalServer.serviceName = "PlannerGoalServer";
@@ -174,10 +179,18 @@ void SmartPlannerBreadthFirstSearch::startAllTasks() {
 		ACE_Sched_Params plannerTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.plannerTask.scheduler == "FIFO") {
 			plannerTask_SchedParams.policy(ACE_SCHED_FIFO);
-			plannerTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				plannerTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				plannerTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.plannerTask.scheduler == "RR") {
 			plannerTask_SchedParams.policy(ACE_SCHED_RR);
-			plannerTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				plannerTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				plannerTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		plannerTask->start(plannerTask_SchedParams, connections.plannerTask.cpuAffinity);
 	} else {
@@ -247,6 +260,8 @@ void SmartPlannerBreadthFirstSearch::init(int argc, char *argv[])
 		
 		// create server ports
 		// TODO: set minCycleTime from Ini-file
+		currGridMapPushServiceOut = portFactoryRegistry[connections.currGridMapPushServiceOut.roboticMiddleware]->createCurrGridMapPushServiceOut(connections.currGridMapPushServiceOut.serviceName);
+		currGridMapPushServiceOutWrapper = new CurrGridMapPushServiceOutWrapper(currGridMapPushServiceOut);
 		plannerEventServerEventTestHandler = std::make_shared<PlannerEventServerEventTestHandler>();
 		plannerEventServer = portFactoryRegistry[connections.plannerEventServer.roboticMiddleware]->createPlannerEventServer(connections.plannerEventServer.serviceName, plannerEventServerEventTestHandler);
 		plannerEventServerWrapper = new PlannerEventServerWrapper(plannerEventServer);
@@ -271,7 +286,8 @@ void SmartPlannerBreadthFirstSearch::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		if (stateSlave->defineStates("PathPlanning" ,"pathplanning") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion PathPlanning.pathplanning" << std::endl;
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
@@ -302,7 +318,7 @@ void SmartPlannerBreadthFirstSearch::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.plannerTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.plannerTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.plannerTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(plannerTask);
@@ -323,7 +339,7 @@ void SmartPlannerBreadthFirstSearch::init(int argc, char *argv[])
 		{
 			// setup default task-trigger as PeriodicTimer
 			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-			int microseconds = 1000*1000 / 4.0;
+			int microseconds = (int)(1000.0*1000.0 / 4.0);
 			if(microseconds > 0) {
 				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				triggerPtr->attach(plannerTask);
@@ -417,17 +433,21 @@ void SmartPlannerBreadthFirstSearch::fini()
 	delete baseStateClient;
 	delete curMapClient;
 
+	// destroy request-handlers
+
 	// destroy server ports
+	delete currGridMapPushServiceOutWrapper;
+	delete currGridMapPushServiceOut;
 	delete plannerEventServerWrapper;
 	delete plannerEventServer;
 	delete plannerGoalServerWrapper;
 	delete plannerGoalServer;
+	
 	// destroy event-test handlers (if needed)
 	plannerEventServerEventTestHandler;
 	
-	// destroy request-handlers
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -539,6 +559,11 @@ void SmartPlannerBreadthFirstSearch::loadParameter(int argc, char *argv[])
 			parameter.getString("CurMapClient", "roboticMiddleware", connections.curMapClient.roboticMiddleware);
 		}
 		
+		// load parameters for server CurrGridMapPushServiceOut
+		parameter.getString("CurrGridMapPushServiceOut", "serviceName", connections.currGridMapPushServiceOut.serviceName);
+		if(parameter.checkIfParameterExists("CurrGridMapPushServiceOut", "roboticMiddleware")) {
+			parameter.getString("CurrGridMapPushServiceOut", "roboticMiddleware", connections.currGridMapPushServiceOut.roboticMiddleware);
+		}
 		// load parameters for server PlannerEventServer
 		parameter.getString("PlannerEventServer", "serviceName", connections.plannerEventServer.serviceName);
 		if(parameter.checkIfParameterExists("PlannerEventServer", "roboticMiddleware")) {

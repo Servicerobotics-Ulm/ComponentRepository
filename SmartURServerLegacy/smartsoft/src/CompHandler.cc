@@ -47,9 +47,9 @@
 
 // include communication objects
 #include <CommBasicObjects/CommBaseState.hh>
-#include <CommRobotinoObjects/CommDigitalInputEventParameter.hh>
-#include <CommRobotinoObjects/CommDigitalInputEventResult.hh>
-#include <CommRobotinoObjects/CommDigitalInputEventState.hh>
+#include <CommBasicObjects/CommDigitalInputEventParameter.hh>
+#include <CommBasicObjects/CommDigitalInputEventResult.hh>
+#include <CommBasicObjects/CommDigitalInputEventState.hh>
 #include <CommManipulatorObjects/CommManipulatorEventParameter.hh>
 #include <CommManipulatorObjects/CommManipulatorEventResult.hh>
 #include <CommManipulatorObjects/CommManipulatorEventState.hh>
@@ -57,7 +57,6 @@
 #include <CommManipulatorObjects/CommManipulatorRequestScan3d.hh>
 #include <CommManipulatorObjects/CommManipulatorTrajectory.hh>
 #include <CommManipulatorObjects/CommMobileManipulatorState.hh>
-#include <CommRobotinoObjects/CommRobotinoIOValues.hh>
 #include <CommManipulatorObjects/CommScanEventState.hh>
 #include <CommBasicObjects/CommVoid.hh>
 

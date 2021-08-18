@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -60,7 +61,7 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "webots(";
-				os << "robotName = " << robotName << ", ";
+				os << "robotName = " << robotName;
 				os << ")\n";
 			}
 			
@@ -113,14 +114,14 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "PTU(";
-				os << "azimuth = " << azimuth << ", ";
-				os << "device = " << device << ", ";
-				os << "elevation = " << elevation << ", ";
-				os << "roll = " << roll << ", ";
-				os << "verbose = " << verbose << ", ";
-				os << "x = " << x << ", ";
-				os << "y = " << y << ", ";
-				os << "z = " << z << ", ";
+				os << "azimuth = " << azimuth; os << ", ";
+				os << "device = " << device; os << ", ";
+				os << "elevation = " << elevation; os << ", ";
+				os << "roll = " << roll; os << ", ";
+				os << "verbose = " << verbose; os << ", ";
+				os << "x = " << x; os << ", ";
+				os << "y = " << y; os << ", ";
+				os << "z = " << z;
 				os << ")\n";
 			}
 			
@@ -170,13 +171,13 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Base(";
-				os << "base_a = " << base_a << ", ";
-				os << "on_base = " << on_base << ", ";
-				os << "steer_a = " << steer_a << ", ";
-				os << "turret_a = " << turret_a << ", ";
-				os << "x = " << x << ", ";
-				os << "y = " << y << ", ";
-				os << "z = " << z << ", ";
+				os << "base_a = " << base_a; os << ", ";
+				os << "on_base = " << on_base; os << ", ";
+				os << "steer_a = " << steer_a; os << ", ";
+				os << "turret_a = " << turret_a; os << ", ";
+				os << "x = " << x; os << ", ";
+				os << "y = " << y; os << ", ";
+				os << "z = " << z;
 				os << ")\n";
 			}
 			
@@ -230,7 +231,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tACCELERATION_PAN(";
-						os << "acc = " << acc << ", ";
+						os << "acc = " << acc;
 						os << ")\n";
 					}
 					
@@ -262,7 +263,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tACCELERATION_TILT(";
-						os << "acc = " << acc << ", ";
+						os << "acc = " << acc;
 						os << ")\n";
 					}
 					
@@ -294,7 +295,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tRESET(";
-						os << "reset = " << reset << ", ";
+						os << "reset = " << reset;
 						os << ")\n";
 					}
 					
@@ -341,12 +342,12 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tSENSOR_OFFSET(";
-						os << "azimuth = " << azimuth << ", ";
-						os << "elevation = " << elevation << ", ";
-						os << "roll = " << roll << ", ";
-						os << "x = " << x << ", ";
-						os << "y = " << y << ", ";
-						os << "z = " << z << ", ";
+						os << "azimuth = " << azimuth; os << ", ";
+						os << "elevation = " << elevation; os << ", ";
+						os << "roll = " << roll; os << ", ";
+						os << "x = " << x; os << ", ";
+						os << "y = " << y; os << ", ";
+						os << "z = " << z;
 						os << ")\n";
 					}
 					
@@ -381,8 +382,8 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tSPEED_LIMIT_PAN(";
-						os << "max = " << max << ", ";
-						os << "min = " << min << ", ";
+						os << "max = " << max; os << ", ";
+						os << "min = " << min;
 						os << ")\n";
 					}
 					
@@ -417,8 +418,8 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tSPEED_LIMIT_TILT(";
-						os << "max = " << max << ", ";
-						os << "min = " << min << ", ";
+						os << "max = " << max; os << ", ";
+						os << "min = " << min;
 						os << ")\n";
 					}
 					
@@ -450,7 +451,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tSPEED_PAN(";
-						os << "speed = " << speed << ", ";
+						os << "speed = " << speed;
 						os << ")\n";
 					}
 					
@@ -482,7 +483,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tSPEED_TILT(";
-						os << "speed = " << speed << ", ";
+						os << "speed = " << speed;
 						os << ")\n";
 					}
 					
@@ -514,7 +515,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tSTART_UP_SPEED_PAN(";
-						os << "speed = " << speed << ", ";
+						os << "speed = " << speed;
 						os << ")\n";
 					}
 					
@@ -546,7 +547,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tSTART_UP_SPEED_TILT(";
-						os << "speed = " << speed << ", ";
+						os << "speed = " << speed;
 						os << ")\n";
 					}
 					

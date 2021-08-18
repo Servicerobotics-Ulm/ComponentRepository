@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -96,19 +97,19 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Services(";
-				os << "show_base = " << show_base << ", ";
-				os << "show_cur_map = " << show_cur_map << ", ";
-				os << "show_ir = " << show_ir << ", ";
-				os << "show_kinect_image = " << show_kinect_image << ", ";
-				os << "show_laser_1 = " << show_laser_1 << ", ";
-				os << "show_laser_2 = " << show_laser_2 << ", ";
-				os << "show_laser_3 = " << show_laser_3 << ", ";
-				os << "show_ltm = " << show_ltm << ", ";
-				os << "show_person_detection = " << show_person_detection << ", ";
-				os << "show_tof_image = " << show_tof_image << ", ";
-				os << "show_trajectory = " << show_trajectory << ", ";
-				os << "show_ultrasonic_point_cloud = " << show_ultrasonic_point_cloud << ", ";
-				os << "simple_laser_visualization = " << simple_laser_visualization << ", ";
+				os << "show_base = " << show_base; os << ", ";
+				os << "show_cur_map = " << show_cur_map; os << ", ";
+				os << "show_ir = " << show_ir; os << ", ";
+				os << "show_kinect_image = " << show_kinect_image; os << ", ";
+				os << "show_laser_1 = " << show_laser_1; os << ", ";
+				os << "show_laser_2 = " << show_laser_2; os << ", ";
+				os << "show_laser_3 = " << show_laser_3; os << ", ";
+				os << "show_ltm = " << show_ltm; os << ", ";
+				os << "show_person_detection = " << show_person_detection; os << ", ";
+				os << "show_tof_image = " << show_tof_image; os << ", ";
+				os << "show_trajectory = " << show_trajectory; os << ", ";
+				os << "show_ultrasonic_point_cloud = " << show_ultrasonic_point_cloud; os << ", ";
+				os << "simple_laser_visualization = " << simple_laser_visualization;
 				os << ")\n";
 			}
 			
@@ -140,7 +141,7 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Settings(";
-				os << "verbose = " << verbose << ", ";
+				os << "verbose = " << verbose;
 				os << ")\n";
 			}
 			

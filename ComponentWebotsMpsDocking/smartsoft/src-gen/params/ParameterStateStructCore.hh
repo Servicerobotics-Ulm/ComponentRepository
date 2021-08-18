@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -69,16 +70,17 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Webots(";
-				os << "maxDistanceToDockingPoint = " << maxDistanceToDockingPoint << ", ";
-				os << "robotName = " << robotName << ", ";
-				std::list<std::string>::const_iterator stationNameIt;
-				for(stationNameIt=stationName.begin(); stationNameIt!=stationName.end(); stationNameIt++)
+				os << "maxDistanceToDockingPoint = " << maxDistanceToDockingPoint; os << ", ";
+				os << "robotName = " << robotName; os << ", ";
+				os << "stationName = [";
+				for(auto stationNameIt = stationName.begin(); stationNameIt != stationName.end(); stationNameIt++)
 				{
-				os << "stationName = " << *stationNameIt << ", ";
-				os << "stationName = " << *stationNameIt << ", ";
-				os << "stationName = " << *stationNameIt << ", ";
-				os << "stationName = " << *stationNameIt << ", ";
+					if(stationNameIt != stationName.begin()) {
+						os << ", ";
+					}
+					os << *stationNameIt;
 				}
+				os << "]";
 				os << ")\n";
 			}
 			

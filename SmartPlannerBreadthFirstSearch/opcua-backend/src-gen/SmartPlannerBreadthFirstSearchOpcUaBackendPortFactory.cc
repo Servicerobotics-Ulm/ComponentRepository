@@ -73,6 +73,11 @@ Smart::IPushClientPattern<CommNavigationObjects::CommGridMap> * SmartPlannerBrea
 }
 
 
+Smart::IPushServerPattern<CommNavigationObjects::CommGridMap> * SmartPlannerBreadthFirstSearchOpcUaBackendPortFactory::createCurrGridMapPushServiceOut(const std::string &serviceName)
+{
+	return new SeRoNet::OPCUA::Server::PushServer<CommNavigationObjects::CommGridMap>(componentImpl, serviceName);
+}
+
 Smart::IEventServerPattern<CommNavigationObjects::CommPlannerEventParameter, CommNavigationObjects::CommPlannerEventResult, CommNavigationObjects::PlannerEventState> * SmartPlannerBreadthFirstSearchOpcUaBackendPortFactory::createPlannerEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommNavigationObjects::CommPlannerEventParameter, CommNavigationObjects::CommPlannerEventResult, CommNavigationObjects::PlannerEventState>> plannerEventServerEventTestHandler)
 {
 	return new SeRoNet::OPCUA::Server::EventServer<CommNavigationObjects::CommPlannerEventParameter, CommNavigationObjects::CommPlannerEventResult, CommNavigationObjects::PlannerEventState>(componentImpl, serviceName, plannerEventServerEventTestHandler);

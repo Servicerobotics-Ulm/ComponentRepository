@@ -40,7 +40,6 @@ SmartCdlServer::SmartCdlServer()
 	cdlTask = NULL;
 	cdlTaskTrigger = NULL;
 	//coordinationPort = NULL;
-	//coordinationPort = NULL;
 	goalEventServer = NULL;
 	goalEventServerWrapper = NULL;
 	goalEventServerEventTestHandler = nullptr; 
@@ -73,11 +72,13 @@ SmartCdlServer::SmartCdlServer()
 	robotBlockedEventServer = NULL;
 	robotBlockedEventServerWrapper = NULL;
 	robotBlockedEventServerEventTestHandler = nullptr; 
+	//smartCdlServerParams = NULL;
 	trackingClient = NULL;
 	trackingClientInputTaskTrigger = NULL;
 	trackingClientUpcallManager = NULL;
 	trackingClientInputCollector = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -150,16 +151,6 @@ SmartCdlServer::SmartCdlServer()
 	connections.cdlTask.scheduler = "DEFAULT";
 	connections.cdlTask.priority = -1;
 	connections.cdlTask.cpuAffinity = -1;
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaSmartCdlServerExtension
-	
-	// initialize members of SmartCdlServerROS1InterfacesExtension
-	
-	// initialize members of SmartCdlServerROSExtension
-	
-	// initialize members of SmartCdlServerRestInterfacesExtension
 	
 }
 
@@ -363,10 +354,18 @@ void SmartCdlServer::startAllTasks() {
 		ACE_Sched_Params cdlTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.cdlTask.scheduler == "FIFO") {
 			cdlTask_SchedParams.policy(ACE_SCHED_FIFO);
-			cdlTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				cdlTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				cdlTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.cdlTask.scheduler == "RR") {
 			cdlTask_SchedParams.policy(ACE_SCHED_RR);
-			cdlTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				cdlTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				cdlTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		cdlTask->start(cdlTask_SchedParams, connections.cdlTask.cpuAffinity);
 	} else {
@@ -406,16 +405,6 @@ void SmartCdlServer::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaSmartCdlServerExtension
-		
-		// initializations of SmartCdlServerROS1InterfacesExtension
-		
-		// initializations of SmartCdlServerROSExtension
-		
-		// initializations of SmartCdlServerRestInterfacesExtension
 		
 		
 		// initialize all registered port-factories
@@ -504,7 +493,8 @@ void SmartCdlServer::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		if (stateSlave->defineStates("MoveRobot" ,"moveRobot") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion MoveRobot.moveRobot" << std::endl;
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
@@ -565,7 +555,7 @@ void SmartCdlServer::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.cdlTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.cdlTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.cdlTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(cdlTask);
@@ -586,7 +576,7 @@ void SmartCdlServer::init(int argc, char *argv[])
 		{
 			// setup default task-trigger as PeriodicTimer
 			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-			int microseconds = 1000*1000 / 20.0;
+			int microseconds = (int)(1000.0*1000.0 / 20.0);
 			if(microseconds > 0) {
 				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				triggerPtr->attach(cdlTask);
@@ -711,19 +701,21 @@ void SmartCdlServer::fini()
 	delete plannerClient;
 	delete trackingClient;
 
+	// destroy request-handlers
+
 	// destroy server ports
 	delete goalEventServerWrapper;
 	delete goalEventServer;
 	delete navVelSendServer;
 	delete robotBlockedEventServerWrapper;
 	delete robotBlockedEventServer;
+	
 	// destroy event-test handlers (if needed)
 	goalEventServerEventTestHandler;
 	robotBlockedEventServerEventTestHandler;
 	
-	// destroy request-handlers
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -743,16 +735,6 @@ void SmartCdlServer::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaSmartCdlServerExtension
-	
-	// destruction of SmartCdlServerROS1InterfacesExtension
-	
-	// destruction of SmartCdlServerROSExtension
-	
-	// destruction of SmartCdlServerRestInterfacesExtension
 	
 }
 
@@ -933,16 +915,6 @@ void SmartCdlServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("CdlTask", "cpuAffinity")) {
 			parameter.getInteger("CdlTask", "cpuAffinity", connections.cdlTask.cpuAffinity);
 		}
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaSmartCdlServerExtension
-		
-		// load parameters for SmartCdlServerROS1InterfacesExtension
-		
-		// load parameters for SmartCdlServerROSExtension
-		
-		// load parameters for SmartCdlServerRestInterfacesExtension
 		
 		
 		// load parameters for all registered component-extensions

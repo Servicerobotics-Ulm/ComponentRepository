@@ -36,6 +36,20 @@ OdomTaskCore::~OdomTaskCore()
 {
 }
 
+int OdomTaskCore::start() {
+	this->resetTrigger();
+	return SmartACE::Task::start();
+}
+
+int OdomTaskCore::start(const ACE_Sched_Params &sched_params, const int &cpuAffinity) {
+	return SmartACE::Task::start(sched_params, cpuAffinity);
+}
+
+int OdomTaskCore::stop(const bool wait_till_stopped) {
+	this->cancelTrigger();
+	return SmartACE::Task::stop(wait_till_stopped);
+}
+
 
 void OdomTaskCore::notify_all_interaction_observers() {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);

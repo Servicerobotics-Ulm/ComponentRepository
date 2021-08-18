@@ -61,9 +61,7 @@ private:
     std::atomic<Program> newProgram {prNeutral}; // indirectly set by another thread (SmartStateChangeHandler)
 
 public:
-    std::mutex newestImageMutex;
-    DomainVision::CommRGBDImage* newestImage {NULL};
-
+    bool isQueryImage;
 	ImageTask(SmartACE::SmartComponent *comp);
 	virtual ~ImageTask();
 	
@@ -71,7 +69,7 @@ public:
 	virtual int on_execute();
 	virtual int on_exit();
     void handleEnterState(const std::string &substate);
-    void handleQuery2(std::function<void(DomainVision::CommRGBDImage*)> doAnswer);
+    void handleQuitState(const std::string & substate);
 };
 
 #endif

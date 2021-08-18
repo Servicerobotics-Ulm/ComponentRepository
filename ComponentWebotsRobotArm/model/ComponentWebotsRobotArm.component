@@ -1,0 +1,53 @@
+ComponentDefinition ComponentWebotsRobotArm 
+{
+	/** Reads periodically a movement trajectory: CommManipulatorObjects.CommManipulatorTrajectory */
+	InputPort trajectorySendServer implements CommManipulatorObjects.SendTrajectoryService {
+	}
+	Activity PoseUpdateActivity
+	{
+		InputPortLink baseStateServiceIn { oversamplingOk undersamplingOk }
+	}
+	/** Writes periodically position etc. : CommManipulatorObjects.CommMobileManipulatorState */
+	OutputPort posePushServer implements CommManipulatorObjects.MobileManipulatorStateService realizedBy PoseUpdateActivity {
+	}
+	/** Writes on request position etc. : CommManipulatorObjects.CommMobileManipulatorState */
+	AnswerPort poseQueryServer implements CommManipulatorObjects.MobileManipulatorStateQueryService {
+	}
+	RequestHandler PoseQueryServerHandler triggeredFrom poseQueryServer {
+	}
+	/** Sends an event: CommManipulatorObjects:ManipulatorEvent */
+	OutputPort manipulatorEventServiceOut implements CommManipulatorObjects.ManipulatorEventService realizedBy PoseUpdateActivity {
+	}	
+	InputHandler TrajectorySendServerHandler triggeredFrom trajectorySendServer { 
+	}
+	/** Reads periodically position etc. of an mobile robot: CommBasicObjects.CommBaseState */
+	InputPort baseStateServiceIn implements CommBasicObjects.BaseStateService {
+	}	
+	AnswerPort ioQueryServer implements CommBasicObjects.CommIOValuesQueryService {
+	}
+	RequestHandler IoQueryServerHandler triggeredFrom ioQueryServer {
+	}
+	OutputPort ioEventServer implements CommBasicObjects.CommDigitalInputEvent realizedBy PoseUpdateActivity {
+	}
+	AnswerPort programQuery implements CommManipulatorObjects.MobileManipulatorProgramQueryService {
+	}
+	RequestHandler programQueryHandler triggeredFrom programQuery {
+	}	
+    /** CommManipulatorObjects.ManipulatorCoordinationService */
+	CoordinationSlavePort CoordinationPort implements CommManipulatorObjects.ManipulatorCoordinationService {
+		
+		with manipulatorevent realizedBy manipulatorEventServiceOut
+		with manipulatorstate realizedBy poseQueryServer
+		with trajectory realizedBy trajectorySendServer
+		with ioevent realizedBy ioEventServer
+		with ioquery realizedBy ioQueryServer
+		with manipulatorprograms realizedBy programQuery
+		
+		PrivateOperationMode trajectory;
+		
+		PublicOperationMode CommManipulatorObjects.ManipulatorStates.Trajectory {
+			activates ( trajectory )
+		}
+	}
+	ComponentParameters ComponentWebotsRobotArmParams slave CoordinationPort
+}

@@ -29,14 +29,6 @@
 class ComponentRobotinoBaseServerPortFactoryInterface;
 class ComponentRobotinoBaseServerExtension;
 
-// includes for ComponentRobotinoBaseServerROS1InterfacesExtension
-
-// includes for ComponentRobotinoBaseServerROSExtension
-
-// includes for ComponentRobotinoBaseServerRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentRobotinoBaseServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -115,6 +107,8 @@ class ComponentRobotinoBaseServerExtension;
 #include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP ComponentRobotinoBaseServer::instance()
 
@@ -218,19 +212,10 @@ public:
 	BaseStateQueryServiceAnswHandler *baseStateQueryServiceAnswHandler;
 	RobotinoIOValuesQueryServiceAnswHandler *robotinoIOValuesQueryServiceAnswHandler;
 	
-	// definitions of ComponentRobotinoBaseServerROS1InterfacesExtension
-	
-	// definitions of ComponentRobotinoBaseServerROSExtension
-	
-	// definitions of ComponentRobotinoBaseServerRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentRobotinoBaseServerExtension
-	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	ParamUpdateHandler paramHandler;
@@ -417,16 +402,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} localizationEventServiceIn;
-		
-		// -- parameters for ComponentRobotinoBaseServerROS1InterfacesExtension
-		
-		// -- parameters for ComponentRobotinoBaseServerROSExtension
-		
-		// -- parameters for ComponentRobotinoBaseServerRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentRobotinoBaseServerExtension
 		
 	} connections;
 };

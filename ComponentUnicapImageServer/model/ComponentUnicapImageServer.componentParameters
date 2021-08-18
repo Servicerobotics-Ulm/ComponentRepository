@@ -69,7 +69,8 @@ ComponentParameter ComponentUnicapImageServerParams component ComponentUnicapIma
 		autoflag_shutter: Boolean = false
 		
 		//@doc"Internal Unicap parameter. e.g. 'Y(Mono)' or 'YUV 4:2:2 (YUYV) ( YUYV )'"
-		format: String ="YUV 4:2:2 (YUYV) ( YUYV )"
+		//format: String ="YUV 4:2:2 (YUYV) ( YUYV )"
+		format: String ="YUYV 4:2:2 ( YUYV )"
 		
 		//@doc"Image width."
 		width: UInt32 = 640

@@ -45,7 +45,7 @@
 // ---------------------------------------------------------
 
 
-std::string switchComponentLifeCycleEvents(const std::string& moduleInst, const std::string& compnameTypename, const std::string& compname, const std::string& service, const std::string& inString)
+std::string switchComponentLifeCycleEvents(const std::string& moduleInst, const std::string& compnameTypename, const std::string& compname, const std::string& service, const std::string& parameter, const std::string& eventMode)
 {
 	std::ostringstream outString;
 	outString << "(error (unknown error))";
@@ -66,7 +66,7 @@ std::string switchComponentLifeCycleEvents(const std::string& moduleInst, const 
 		char *pointer = (char *)NULL;
 		char *param1  = (char *)NULL;
 
-		pointer = input = strdup(inString.c_str());
+		pointer = input = strdup(parameter.c_str());
 		do
 		{
 			param1 = strsep(&input,LISP_SEPARATOR);

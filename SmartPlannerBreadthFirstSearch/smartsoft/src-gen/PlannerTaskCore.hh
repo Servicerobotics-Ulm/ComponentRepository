@@ -23,6 +23,7 @@
 #include "CurMapClientUpcallInterface.hh"
 
 // include communication-objects for output ports
+#include <CommNavigationObjects/CommGridMap.hh>
 #include <CommNavigationObjects/CommPlannerEventParameter.hh>
 #include <CommNavigationObjects/CommPlannerEventResult.hh>
 #include <CommNavigationObjects/PlannerEventState.hh>
@@ -86,6 +87,8 @@ protected:
 	}
 	
 	// this method is meant to be used in derived classes
+	Smart::StatusCode currGridMapPushServiceOutPut(CommNavigationObjects::CommGridMap &currGridMapPushServiceOutDataObject);
+	// this method is meant to be used in derived classes
 	Smart::StatusCode plannerEventServerPut(CommNavigationObjects::PlannerEventState &eventState);
 	// this method is meant to be used in derived classes
 	Smart::StatusCode plannerGoalServerPut(CommNavigationObjects::CommPlannerGoal &plannerGoalServerDataObject);
@@ -124,5 +127,9 @@ public:
 		return currentUpdateCount;
 	}
 	
+	
+	virtual int start() override;
+	virtual int start(const ACE_Sched_Params &sched_params, const int &cpuAffinity=-1) override;
+	virtual int stop(const bool wait_till_stopped=true) override;
 };
 #endif

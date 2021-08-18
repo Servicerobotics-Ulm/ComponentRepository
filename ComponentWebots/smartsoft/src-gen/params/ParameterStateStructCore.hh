@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -60,7 +61,7 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "General(";
-				os << "WorldPath = " << WorldPath << ", ";
+				os << "WorldPath = " << WorldPath;
 				os << ")\n";
 			}
 			

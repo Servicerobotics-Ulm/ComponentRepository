@@ -52,6 +52,22 @@ CdlTaskCore::~CdlTaskCore()
 {
 }
 
+int CdlTaskCore::start() {
+	this->resetTrigger();
+	COMP->stateActivityManager->attach(this, "moveRobot");
+	return SmartACE::Task::start();
+}
+
+int CdlTaskCore::start(const ACE_Sched_Params &sched_params, const int &cpuAffinity) {
+	return SmartACE::Task::start(sched_params, cpuAffinity);
+}
+
+int CdlTaskCore::stop(const bool wait_till_stopped) {
+	COMP->stateActivityManager->detach(this, "moveRobot");
+	this->cancelTrigger();
+	return SmartACE::Task::stop(wait_till_stopped);
+}
+
 
 void CdlTaskCore::notify_all_interaction_observers() {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
@@ -77,8 +93,11 @@ void CdlTaskCore::detach_interaction_observer(CdlTaskObserverInterface *observer
 int CdlTaskCore::execute_protected_region()
 {
 	if(useDefaultState) {
-		Smart::StatusCode status = COMP->stateSlave->acquire("moveRobot");
-		if(status != Smart::SMART_OK) {
+		Smart::StatusCode status = COMP->stateActivityManager->acquire("moveRobot", this);
+		if(status == Smart::SMART_CANCELLED) {
+			std::cout << "state canceled -> stop activity CdlTask" << std::endl;
+			return -1;
+		} else if(status != Smart::SMART_OK) {
 			std::cerr << "CdlTaskCore: ERROR acquiring state: " << status << std::endl;
 			usleep(500000);
 			return 0;
@@ -106,7 +125,7 @@ int CdlTaskCore::execute_protected_region()
 	currentUpdateCount++;
 	
 	if(useDefaultState) {
-		COMP->stateSlave->release("moveRobot");
+		COMP->stateActivityManager->release("moveRobot");
 	}
 	return retval;
 }

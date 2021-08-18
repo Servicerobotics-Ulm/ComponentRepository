@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -108,23 +109,23 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "scanner(";
-				os << "azimuth = " << azimuth << ", ";
-				os << "baudrate = " << baudrate << ", ";
-				os << "device = " << device << ", ";
-				os << "elevation = " << elevation << ", ";
-				os << "frequency = " << frequency << ", ";
-				os << "length_unit = " << length_unit << ", ";
-				os << "max_range = " << max_range << ", ";
-				os << "min_range = " << min_range << ", ";
-				os << "on_turret = " << on_turret << ", ";
-				os << "opening_angle = " << opening_angle << ", ";
-				os << "resolution = " << resolution << ", ";
-				os << "roll = " << roll << ", ";
-				os << "telgrm_v103 = " << telgrm_v103 << ", ";
-				os << "verbose = " << verbose << ", ";
-				os << "x = " << x << ", ";
-				os << "y = " << y << ", ";
-				os << "z = " << z << ", ";
+				os << "azimuth = " << azimuth; os << ", ";
+				os << "baudrate = " << baudrate; os << ", ";
+				os << "device = " << device; os << ", ";
+				os << "elevation = " << elevation; os << ", ";
+				os << "frequency = " << frequency; os << ", ";
+				os << "length_unit = " << length_unit; os << ", ";
+				os << "max_range = " << max_range; os << ", ";
+				os << "min_range = " << min_range; os << ", ";
+				os << "on_turret = " << on_turret; os << ", ";
+				os << "opening_angle = " << opening_angle; os << ", ";
+				os << "resolution = " << resolution; os << ", ";
+				os << "roll = " << roll; os << ", ";
+				os << "telgrm_v103 = " << telgrm_v103; os << ", ";
+				os << "verbose = " << verbose; os << ", ";
+				os << "x = " << x; os << ", ";
+				os << "y = " << y; os << ", ";
+				os << "z = " << z;
 				os << ")\n";
 			}
 			
@@ -165,10 +166,10 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "safetyEvents(";
-				os << "laserSafetyBit = " << laserSafetyBit << ", ";
-				os << "laserSafetyFieldTimeOutMSec = " << laserSafetyFieldTimeOutMSec << ", ";
-				os << "laserSafetyFieldTimeOutSec = " << laserSafetyFieldTimeOutSec << ", ";
-				os << "safetyEventsFromIO = " << safetyEventsFromIO << ", ";
+				os << "laserSafetyBit = " << laserSafetyBit; os << ", ";
+				os << "laserSafetyFieldTimeOutMSec = " << laserSafetyFieldTimeOutMSec; os << ", ";
+				os << "laserSafetyFieldTimeOutSec = " << laserSafetyFieldTimeOutSec; os << ", ";
+				os << "safetyEventsFromIO = " << safetyEventsFromIO;
 				os << ")\n";
 			}
 			
@@ -218,13 +219,13 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "base_manipulator(";
-				os << "base_a = " << base_a << ", ";
-				os << "on_base = " << on_base << ", ";
-				os << "steer_a = " << steer_a << ", ";
-				os << "turret_a = " << turret_a << ", ";
-				os << "x = " << x << ", ";
-				os << "y = " << y << ", ";
-				os << "z = " << z << ", ";
+				os << "base_a = " << base_a; os << ", ";
+				os << "on_base = " << on_base; os << ", ";
+				os << "steer_a = " << steer_a; os << ", ";
+				os << "turret_a = " << turret_a; os << ", ";
+				os << "x = " << x; os << ", ";
+				os << "y = " << y; os << ", ";
+				os << "z = " << z;
 				os << ")\n";
 			}
 			
@@ -259,8 +260,8 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "services(";
-				os << "activate_push_newest = " << activate_push_newest << ", ";
-				os << "activate_push_timed = " << activate_push_timed << ", ";
+				os << "activate_push_newest = " << activate_push_newest; os << ", ";
+				os << "activate_push_timed = " << activate_push_timed;
 				os << ")\n";
 			}
 			

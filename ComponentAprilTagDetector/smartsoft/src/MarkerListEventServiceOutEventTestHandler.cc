@@ -51,20 +51,31 @@ bool MarkerListEventServiceOutEventTestHandler::testEvent(
 	// false means that the current event is ignored (it will not be communicated to the according client)
 	bool result = false;
 
-		std::vector<unsigned int> requested_tag_ids= p.getTag_idsRef();
-		std::vector<CommTrackingObjects::CommDetectedMarker> markers_found = s.getMarkersCopy();
+		CommTrackingObjects::CommDetectedMarkerList requested_markers = p.getMarkers();
+		CommTrackingObjects::CommDetectedMarkerList markers_found = s.getMarkers();
 		CommTrackingObjects::CommDetectedMarkerList selected_markers;
 
+		std::vector<unsigned int> requested_tag_ids;
 
-		for(CommTrackingObjects::CommDetectedMarker current_marker : markers_found)
+		for(int i=0; i< requested_markers.getMarkersSize();++i)
 		{
+			CommTrackingObjects::CommDetectedMarker current_marker = requested_markers.getMarkersElemAtPos(i);
+			//unsigned int current_marker_id = requested_markers.getMarkersElemAtPos(i).getId();
+			requested_tag_ids.push_back(current_marker.getId());
+		}
+
+
+		for(int i=0; i< markers_found.getMarkersSize();++i)
+		{
+			CommTrackingObjects::CommDetectedMarker current_marker = requested_markers.getMarkersElemAtPos(i);
 			if(std::find(requested_tag_ids.begin(), requested_tag_ids.end(), current_marker.getId()) != requested_tag_ids.end()) {
 				selected_markers.add_CommDetectedMarker(current_marker);
 			}
 		}
+
 		if(selected_markers.getMarkersSize()>0)
 		{
-			r.set_CommDetectedMarkerList(selected_markers);
+			r.setMarkers(selected_markers);
 			result = true;
 		}
 

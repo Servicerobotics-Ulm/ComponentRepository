@@ -36,6 +36,22 @@ LaserTaskCore::~LaserTaskCore()
 {
 }
 
+int LaserTaskCore::start() {
+	this->resetTrigger();
+	COMP->stateActivityManager->attach(this, "GenerateLaser");
+	return SmartACE::Task::start();
+}
+
+int LaserTaskCore::start(const ACE_Sched_Params &sched_params, const int &cpuAffinity) {
+	return SmartACE::Task::start(sched_params, cpuAffinity);
+}
+
+int LaserTaskCore::stop(const bool wait_till_stopped) {
+	COMP->stateActivityManager->detach(this, "GenerateLaser");
+	this->cancelTrigger();
+	return SmartACE::Task::stop(wait_till_stopped);
+}
+
 
 void LaserTaskCore::notify_all_interaction_observers() {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
@@ -61,8 +77,11 @@ void LaserTaskCore::detach_interaction_observer(LaserTaskObserverInterface *obse
 int LaserTaskCore::execute_protected_region()
 {
 	if(useDefaultState) {
-		Smart::StatusCode status = COMP->stateSlave->acquire("GenerateLaser");
-		if(status != Smart::SMART_OK) {
+		Smart::StatusCode status = COMP->stateActivityManager->acquire("GenerateLaser", this);
+		if(status == Smart::SMART_CANCELLED) {
+			std::cout << "state canceled -> stop activity LaserTask" << std::endl;
+			return -1;
+		} else if(status != Smart::SMART_OK) {
 			std::cerr << "LaserTaskCore: ERROR acquiring state: " << status << std::endl;
 			usleep(500000);
 			return 0;
@@ -90,7 +109,7 @@ int LaserTaskCore::execute_protected_region()
 	currentUpdateCount++;
 	
 	if(useDefaultState) {
-		COMP->stateSlave->release("GenerateLaser");
+		COMP->stateActivityManager->release("GenerateLaser");
 	}
 	return retval;
 }

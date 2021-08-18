@@ -32,7 +32,7 @@ Robot {
 }
 ```
 
-Example from ComponentLaserObstacleAvoid:
+Example program:
 
 ```cpp
 CommBasicObjects::CommMobileLaserScan scan;
@@ -54,7 +54,7 @@ for (int i = 0; i < count; ++i) {
 }
 ```
 
-other similar Components:
+other similar components:
 
 - [ComponentLaserHokuyoURGServer](../ComponentLaserHokuyoURGServer)
 - [ComponentLaserLMS1xx](../ComponentLaserLMS1xx)

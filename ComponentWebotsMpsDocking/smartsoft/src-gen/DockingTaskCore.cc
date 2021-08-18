@@ -40,6 +40,20 @@ DockingTaskCore::~DockingTaskCore()
 {
 }
 
+int DockingTaskCore::start() {
+	this->resetTrigger();
+	return SmartACE::Task::start();
+}
+
+int DockingTaskCore::start(const ACE_Sched_Params &sched_params, const int &cpuAffinity) {
+	return SmartACE::Task::start(sched_params, cpuAffinity);
+}
+
+int DockingTaskCore::stop(const bool wait_till_stopped) {
+	this->cancelTrigger();
+	return SmartACE::Task::stop(wait_till_stopped);
+}
+
 
 void DockingTaskCore::notify_all_interaction_observers() {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);

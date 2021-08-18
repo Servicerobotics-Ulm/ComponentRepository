@@ -29,14 +29,6 @@
 class ComponentSkillInterfacePortFactoryInterface;
 class ComponentSkillInterfaceExtension;
 
-// includes for ComponentSkillInterfaceROS1InterfacesExtension
-
-// includes for ComponentSkillInterfaceROSExtension
-
-// includes for ComponentSkillInterfaceRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentSkillInterfaceExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -64,6 +56,8 @@ class ComponentSkillInterfaceExtension;
 #include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP ComponentSkillInterface::instance()
 
@@ -125,19 +119,10 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of ComponentSkillInterfaceROS1InterfacesExtension
-	
-	// definitions of ComponentSkillInterfaceROSExtension
-	
-	// definitions of ComponentSkillInterfaceRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentSkillInterfaceExtension
-	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	ParamUpdateHandler paramHandler;
@@ -260,16 +245,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} kBQueryClient;
-		
-		// -- parameters for ComponentSkillInterfaceROS1InterfacesExtension
-		
-		// -- parameters for ComponentSkillInterfaceROSExtension
-		
-		// -- parameters for ComponentSkillInterfaceRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentSkillInterfaceExtension
 		
 	} connections;
 };

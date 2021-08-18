@@ -39,7 +39,7 @@ SMART_COMPONENT_AUTOBUILD_DEPENDENCIES()
 ## using regular CMake commands (like FIND_PACKAGE, INCLUDE_DIRECTORIES, etc.) ##
 
 # you can add additional external libraries using regular CMake commands, e.g.:
-FIND_PACKAGE(OpenCV REQUIRED)
+FIND_PACKAGE(OpenCV 4 REQUIRED)
 IF(OpenCV_VERSION VERSION_LESS 4.2.0)
   add_definitions(-DWITH_OLD_OPENCV_VERSION)
 ELSE()

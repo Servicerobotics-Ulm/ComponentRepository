@@ -145,7 +145,7 @@ void PoseVisualization::displayPose(const CommBasicObjects::CommPose3d& pose,  c
 
 	//round off values to 2 decimals for label
 	double pose_x = std::ceil(pose.get_x(1.0) * 100.0-0.55555) / 100.0;
-	double pose_y = std::ceil(pose.get_x(1.0) * 100.0-0.55555) / 100.0;
+	double pose_y = std::ceil(pose.get_y(1.0) * 100.0-0.55555) / 100.0;
 	double pose_azimuth = std::ceil((pose.get_azimuth()*180/M_PI) * 100.0-0.55555) / 100.0;
 
 

@@ -29,14 +29,6 @@
 class ComponentQtRobotConsolePortFactoryInterface;
 class ComponentQtRobotConsoleExtension;
 
-// includes for ComponentQtRobotConsoleROS1InterfacesExtension
-
-// includes for ComponentQtRobotConsoleROSExtension
-
-// includes for ComponentQtRobotConsoleRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentQtRobotConsoleExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -57,6 +49,8 @@ class ComponentQtRobotConsoleExtension;
 
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP ComponentQtRobotConsole::instance()
 
@@ -106,19 +100,10 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of ComponentQtRobotConsoleROS1InterfacesExtension
-	
-	// definitions of ComponentQtRobotConsoleROSExtension
-	
-	// definitions of ComponentQtRobotConsoleRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentQtRobotConsoleExtension
-	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	
@@ -218,16 +203,6 @@ public:
 		//--- server port parameter ---
 	
 		//--- client port parameter ---
-		
-		// -- parameters for ComponentQtRobotConsoleROS1InterfacesExtension
-		
-		// -- parameters for ComponentQtRobotConsoleROSExtension
-		
-		// -- parameters for ComponentQtRobotConsoleRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentQtRobotConsoleExtension
 		
 	} connections;
 };

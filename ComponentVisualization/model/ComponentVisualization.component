@@ -100,4 +100,9 @@ Activity LtmMapTask
 	{
 		DefaultTrigger PeriodicTimer 1.0 Hz
 	}
+InputPort plannerWavefrontGridMap implements CommNavigationObjects.CurrGridMapPushService {
+	}
+	Activity PlannerGridTask
+	{
+	}
 }

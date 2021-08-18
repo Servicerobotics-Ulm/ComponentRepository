@@ -38,6 +38,22 @@ AmclTaskCore::~AmclTaskCore()
 {
 }
 
+int AmclTaskCore::start() {
+	this->resetTrigger();
+	COMP->stateActivityManager->attach(this, "active");
+	return SmartACE::Task::start();
+}
+
+int AmclTaskCore::start(const ACE_Sched_Params &sched_params, const int &cpuAffinity) {
+	return SmartACE::Task::start(sched_params, cpuAffinity);
+}
+
+int AmclTaskCore::stop(const bool wait_till_stopped) {
+	COMP->stateActivityManager->detach(this, "active");
+	this->cancelTrigger();
+	return SmartACE::Task::stop(wait_till_stopped);
+}
+
 
 void AmclTaskCore::notify_all_interaction_observers() {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
@@ -63,8 +79,11 @@ void AmclTaskCore::detach_interaction_observer(AmclTaskObserverInterface *observ
 int AmclTaskCore::execute_protected_region()
 {
 	if(useDefaultState) {
-		Smart::StatusCode status = COMP->stateSlave->acquire("active");
-		if(status != Smart::SMART_OK) {
+		Smart::StatusCode status = COMP->stateActivityManager->acquire("active", this);
+		if(status == Smart::SMART_CANCELLED) {
+			std::cout << "state canceled -> stop activity AmclTask" << std::endl;
+			return -1;
+		} else if(status != Smart::SMART_OK) {
 			std::cerr << "AmclTaskCore: ERROR acquiring state: " << status << std::endl;
 			usleep(500000);
 			return 0;
@@ -92,7 +111,7 @@ int AmclTaskCore::execute_protected_region()
 	currentUpdateCount++;
 	
 	if(useDefaultState) {
-		COMP->stateSlave->release("active");
+		COMP->stateActivityManager->release("active");
 	}
 	return retval;
 }

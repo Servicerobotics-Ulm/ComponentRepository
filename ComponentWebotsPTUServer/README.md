@@ -86,7 +86,7 @@ COMP -> movePTUSendServiceOut->send(data);
 ### devicePoseStateServer
 
 *Documentation:*
-<p>writes periodically the position and orientation of the PTU: CommBasicObjects.CommDevicePoseState
+<p>Writes periodically the position and orientation of the PTU: CommBasicObjects.CommDevicePoseState
 </p>
 
 
@@ -107,7 +107,7 @@ COMP -> movePTUSendServiceOut->send(data);
 ### moveQueryServer
 
 *Documentation:*
-<p>request: DomainPTU::CommPTUMoveRequest
+<p>request: DomainPTU.CommPTUMoveRequest
 </p>
 <p> answer: DomainPTU.CommPTUMoveResponse
 </p>
@@ -117,6 +117,8 @@ COMP -> movePTUSendServiceOut->send(data);
 ### stateQueryServer
 
 *Documentation:*
+<p>Writes on request:  DomainPTU.CommMobilePTUState
+</p>
 
 
 

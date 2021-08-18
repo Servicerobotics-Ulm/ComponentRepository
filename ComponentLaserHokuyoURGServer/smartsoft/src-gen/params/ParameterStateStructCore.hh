@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -90,17 +91,17 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Scanner(";
-				os << "azimuth = " << azimuth << ", ";
-				os << "device = " << device << ", ";
-				os << "elevation = " << elevation << ", ";
-				os << "max_range = " << max_range << ", ";
-				os << "min_range = " << min_range << ", ";
-				os << "opening_angle = " << opening_angle << ", ";
-				os << "roll = " << roll << ", ";
-				os << "verbose = " << verbose << ", ";
-				os << "x = " << x << ", ";
-				os << "y = " << y << ", ";
-				os << "z = " << z << ", ";
+				os << "azimuth = " << azimuth; os << ", ";
+				os << "device = " << device; os << ", ";
+				os << "elevation = " << elevation; os << ", ";
+				os << "max_range = " << max_range; os << ", ";
+				os << "min_range = " << min_range; os << ", ";
+				os << "opening_angle = " << opening_angle; os << ", ";
+				os << "roll = " << roll; os << ", ";
+				os << "verbose = " << verbose; os << ", ";
+				os << "x = " << x; os << ", ";
+				os << "y = " << y; os << ", ";
+				os << "z = " << z;
 				os << ")\n";
 			}
 			
@@ -153,14 +154,14 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Base_manipulator(";
-				os << "base_azimuth = " << base_azimuth << ", ";
-				os << "base_elevation = " << base_elevation << ", ";
-				os << "base_roll = " << base_roll << ", ";
-				os << "on_base = " << on_base << ", ";
-				os << "on_manipulator = " << on_manipulator << ", ";
-				os << "x = " << x << ", ";
-				os << "y = " << y << ", ";
-				os << "z = " << z << ", ";
+				os << "base_azimuth = " << base_azimuth; os << ", ";
+				os << "base_elevation = " << base_elevation; os << ", ";
+				os << "base_roll = " << base_roll; os << ", ";
+				os << "on_base = " << on_base; os << ", ";
+				os << "on_manipulator = " << on_manipulator; os << ", ";
+				os << "x = " << x; os << ", ";
+				os << "y = " << y; os << ", ";
+				os << "z = " << z;
 				os << ")\n";
 			}
 			
@@ -195,8 +196,8 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Services(";
-				os << "activate_push_newest = " << activate_push_newest << ", ";
-				os << "activate_push_timed = " << activate_push_timed << ", ";
+				os << "activate_push_newest = " << activate_push_newest; os << ", ";
+				os << "activate_push_timed = " << activate_push_timed;
 				os << ")\n";
 			}
 			

@@ -29,14 +29,6 @@
 class ComponentWebInterfaceComissioningPortFactoryInterface;
 class ComponentWebInterfaceComissioningExtension;
 
-// includes for ComponentWebInterfaceComissioningROS1InterfacesExtension
-
-// includes for ComponentWebInterfaceComissioningROSExtension
-
-// includes for ComponentWebInterfaceComissioningRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentWebInterfaceComissioningExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -66,6 +58,8 @@ class ComponentWebInterfaceComissioningExtension;
 #include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP ComponentWebInterfaceComissioning::instance()
 
@@ -135,19 +129,10 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of ComponentWebInterfaceComissioningROS1InterfacesExtension
-	
-	// definitions of ComponentWebInterfaceComissioningROSExtension
-	
-	// definitions of ComponentWebInterfaceComissioningRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentWebInterfaceComissioningExtension
-	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	ParamUpdateHandler paramHandler;
@@ -272,16 +257,6 @@ public:
 		} sequencerSendServer;
 	
 		//--- client port parameter ---
-		
-		// -- parameters for ComponentWebInterfaceComissioningROS1InterfacesExtension
-		
-		// -- parameters for ComponentWebInterfaceComissioningROSExtension
-		
-		// -- parameters for ComponentWebInterfaceComissioningRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentWebInterfaceComissioningExtension
 		
 	} connections;
 };

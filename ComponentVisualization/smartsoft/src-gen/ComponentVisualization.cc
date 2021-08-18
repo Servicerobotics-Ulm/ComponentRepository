@@ -39,7 +39,7 @@ ComponentVisualization::ComponentVisualization()
 	amclVizTaskTrigger = NULL;
 	baseTask = NULL;
 	baseTaskTrigger = NULL;
-	//coordinationPort = NULL;
+	//componentVisualizationParams = NULL;
 	//coordinationPort = NULL;
 	curMapTask = NULL;
 	curMapTaskTrigger = NULL;
@@ -69,6 +69,8 @@ ComponentVisualization::ComponentVisualization()
 	personDetectionTaskTrigger = NULL;
 	plannerGoalTask = NULL;
 	plannerGoalTaskTrigger = NULL;
+	plannerGridTask = NULL;
+	plannerGridTaskTrigger = NULL;
 	rGBDImageQueryServiceReq = NULL;
 	rGBDTask = NULL;
 	rGBDTaskTrigger = NULL;
@@ -119,6 +121,10 @@ ComponentVisualization::ComponentVisualization()
 	plannerGoalPushClientInputTaskTrigger = NULL;
 	plannerGoalPushClientUpcallManager = NULL;
 	plannerGoalPushClientInputCollector = NULL;
+	plannerWavefrontGridMap = NULL;
+	plannerWavefrontGridMapInputTaskTrigger = NULL;
+	plannerWavefrontGridMapUpcallManager = NULL;
+	plannerWavefrontGridMapInputCollector = NULL;
 	rgbdPushNewestClient = NULL;
 	rgbdPushNewestClientInputTaskTrigger = NULL;
 	rgbdPushNewestClientUpcallManager = NULL;
@@ -132,6 +138,7 @@ ComponentVisualization::ComponentVisualization()
 	ultrasonicPushNewestClientUpcallManager = NULL;
 	ultrasonicPushNewestClientInputCollector = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -238,6 +245,12 @@ ComponentVisualization::ComponentVisualization()
 	connections.plannerGoalPushClient.serviceName = "unknown";
 	connections.plannerGoalPushClient.interval = 1;
 	connections.plannerGoalPushClient.roboticMiddleware = "ACE_SmartSoft";
+	connections.plannerWavefrontGridMap.initialConnect = false;
+	connections.plannerWavefrontGridMap.wiringName = "plannerWavefrontGridMap";
+	connections.plannerWavefrontGridMap.serverName = "unknown";
+	connections.plannerWavefrontGridMap.serviceName = "unknown";
+	connections.plannerWavefrontGridMap.interval = 1;
+	connections.plannerWavefrontGridMap.roboticMiddleware = "ACE_SmartSoft";
 	connections.rgbdPushNewestClient.initialConnect = false;
 	connections.rgbdPushNewestClient.wiringName = "rgbdPushNewestClient";
 	connections.rgbdPushNewestClient.serverName = "unknown";
@@ -342,6 +355,12 @@ ComponentVisualization::ComponentVisualization()
 	connections.plannerGoalTask.scheduler = "DEFAULT";
 	connections.plannerGoalTask.priority = -1;
 	connections.plannerGoalTask.cpuAffinity = -1;
+	connections.plannerGridTask.minActFreq = 0.0;
+	connections.plannerGridTask.maxActFreq = 0.0;
+	// scheduling default parameters
+	connections.plannerGridTask.scheduler = "DEFAULT";
+	connections.plannerGridTask.priority = -1;
+	connections.plannerGridTask.cpuAffinity = -1;
 	connections.rGBDTask.minActFreq = 0.0;
 	connections.rGBDTask.maxActFreq = 0.0;
 	// scheduling default parameters
@@ -660,6 +679,23 @@ Smart::StatusCode ComponentVisualization::connectPlannerGoalPushClient(const std
 	plannerGoalPushClient->subscribe(connections.plannerGoalPushClient.interval);
 	return status;
 }
+Smart::StatusCode ComponentVisualization::connectPlannerWavefrontGridMap(const std::string &serverName, const std::string &serviceName) {
+	Smart::StatusCode status;
+	
+	if(connections.plannerWavefrontGridMap.initialConnect == false) {
+		return Smart::SMART_OK;
+	}
+	std::cout << "connecting to: " << serverName << "; " << serviceName << std::endl;
+	status = plannerWavefrontGridMap->connect(serverName, serviceName);
+	while(status != Smart::SMART_OK)
+	{
+		ACE_OS::sleep(ACE_Time_Value(0,500000));
+		status = COMP->plannerWavefrontGridMap->connect(serverName, serviceName);
+	}
+	std::cout << "connected.\n";
+	plannerWavefrontGridMap->subscribe(connections.plannerWavefrontGridMap.interval);
+	return status;
+}
 Smart::StatusCode ComponentVisualization::connectRgbdPushNewestClient(const std::string &serverName, const std::string &serviceName) {
 	Smart::StatusCode status;
 	
@@ -752,6 +788,8 @@ Smart::StatusCode ComponentVisualization::connectAndStartAllServices() {
 	if(status != Smart::SMART_OK) return status;
 	status = connectPlannerGoalPushClient(connections.plannerGoalPushClient.serverName, connections.plannerGoalPushClient.serviceName);
 	if(status != Smart::SMART_OK) return status;
+	status = connectPlannerWavefrontGridMap(connections.plannerWavefrontGridMap.serverName, connections.plannerWavefrontGridMap.serviceName);
+	if(status != Smart::SMART_OK) return status;
 	status = connectRgbdPushNewestClient(connections.rgbdPushNewestClient.serverName, connections.rgbdPushNewestClient.serviceName);
 	if(status != Smart::SMART_OK) return status;
 	status = connectRgbdQueryClient(connections.rgbdQueryClient.serverName, connections.rgbdQueryClient.serviceName);
@@ -770,10 +808,18 @@ void ComponentVisualization::startAllTasks() {
 		ACE_Sched_Params amclVizTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.amclVizTask.scheduler == "FIFO") {
 			amclVizTask_SchedParams.policy(ACE_SCHED_FIFO);
-			amclVizTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				amclVizTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				amclVizTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.amclVizTask.scheduler == "RR") {
 			amclVizTask_SchedParams.policy(ACE_SCHED_RR);
-			amclVizTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				amclVizTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				amclVizTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		amclVizTask->start(amclVizTask_SchedParams, connections.amclVizTask.cpuAffinity);
 	} else {
@@ -784,10 +830,18 @@ void ComponentVisualization::startAllTasks() {
 		ACE_Sched_Params baseTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.baseTask.scheduler == "FIFO") {
 			baseTask_SchedParams.policy(ACE_SCHED_FIFO);
-			baseTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				baseTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				baseTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.baseTask.scheduler == "RR") {
 			baseTask_SchedParams.policy(ACE_SCHED_RR);
-			baseTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				baseTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				baseTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		baseTask->start(baseTask_SchedParams, connections.baseTask.cpuAffinity);
 	} else {
@@ -798,10 +852,18 @@ void ComponentVisualization::startAllTasks() {
 		ACE_Sched_Params curMapTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.curMapTask.scheduler == "FIFO") {
 			curMapTask_SchedParams.policy(ACE_SCHED_FIFO);
-			curMapTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				curMapTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				curMapTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.curMapTask.scheduler == "RR") {
 			curMapTask_SchedParams.policy(ACE_SCHED_RR);
-			curMapTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				curMapTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				curMapTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		curMapTask->start(curMapTask_SchedParams, connections.curMapTask.cpuAffinity);
 	} else {
@@ -812,10 +874,18 @@ void ComponentVisualization::startAllTasks() {
 		ACE_Sched_Params depthTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.depthTask.scheduler == "FIFO") {
 			depthTask_SchedParams.policy(ACE_SCHED_FIFO);
-			depthTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				depthTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				depthTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.depthTask.scheduler == "RR") {
 			depthTask_SchedParams.policy(ACE_SCHED_RR);
-			depthTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				depthTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				depthTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		depthTask->start(depthTask_SchedParams, connections.depthTask.cpuAffinity);
 	} else {
@@ -826,10 +896,18 @@ void ComponentVisualization::startAllTasks() {
 		ACE_Sched_Params iRTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.iRTask.scheduler == "FIFO") {
 			iRTask_SchedParams.policy(ACE_SCHED_FIFO);
-			iRTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				iRTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				iRTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.iRTask.scheduler == "RR") {
 			iRTask_SchedParams.policy(ACE_SCHED_RR);
-			iRTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				iRTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				iRTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		iRTask->start(iRTask_SchedParams, connections.iRTask.cpuAffinity);
 	} else {
@@ -840,10 +918,18 @@ void ComponentVisualization::startAllTasks() {
 		ACE_Sched_Params imageTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.imageTask.scheduler == "FIFO") {
 			imageTask_SchedParams.policy(ACE_SCHED_FIFO);
-			imageTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				imageTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				imageTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.imageTask.scheduler == "RR") {
 			imageTask_SchedParams.policy(ACE_SCHED_RR);
-			imageTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				imageTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				imageTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		imageTask->start(imageTask_SchedParams, connections.imageTask.cpuAffinity);
 	} else {
@@ -854,10 +940,18 @@ void ComponentVisualization::startAllTasks() {
 		ACE_Sched_Params laser1Task_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.laser1Task.scheduler == "FIFO") {
 			laser1Task_SchedParams.policy(ACE_SCHED_FIFO);
-			laser1Task_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				laser1Task_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				laser1Task_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.laser1Task.scheduler == "RR") {
 			laser1Task_SchedParams.policy(ACE_SCHED_RR);
-			laser1Task_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				laser1Task_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				laser1Task_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		laser1Task->start(laser1Task_SchedParams, connections.laser1Task.cpuAffinity);
 	} else {
@@ -868,10 +962,18 @@ void ComponentVisualization::startAllTasks() {
 		ACE_Sched_Params laser2Task_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.laser2Task.scheduler == "FIFO") {
 			laser2Task_SchedParams.policy(ACE_SCHED_FIFO);
-			laser2Task_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				laser2Task_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				laser2Task_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.laser2Task.scheduler == "RR") {
 			laser2Task_SchedParams.policy(ACE_SCHED_RR);
-			laser2Task_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				laser2Task_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				laser2Task_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		laser2Task->start(laser2Task_SchedParams, connections.laser2Task.cpuAffinity);
 	} else {
@@ -882,10 +984,18 @@ void ComponentVisualization::startAllTasks() {
 		ACE_Sched_Params laser3Task_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.laser3Task.scheduler == "FIFO") {
 			laser3Task_SchedParams.policy(ACE_SCHED_FIFO);
-			laser3Task_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				laser3Task_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				laser3Task_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.laser3Task.scheduler == "RR") {
 			laser3Task_SchedParams.policy(ACE_SCHED_RR);
-			laser3Task_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				laser3Task_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				laser3Task_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		laser3Task->start(laser3Task_SchedParams, connections.laser3Task.cpuAffinity);
 	} else {
@@ -896,10 +1006,18 @@ void ComponentVisualization::startAllTasks() {
 		ACE_Sched_Params ltmMapTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.ltmMapTask.scheduler == "FIFO") {
 			ltmMapTask_SchedParams.policy(ACE_SCHED_FIFO);
-			ltmMapTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				ltmMapTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				ltmMapTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.ltmMapTask.scheduler == "RR") {
 			ltmMapTask_SchedParams.policy(ACE_SCHED_RR);
-			ltmMapTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				ltmMapTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				ltmMapTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		ltmMapTask->start(ltmMapTask_SchedParams, connections.ltmMapTask.cpuAffinity);
 	} else {
@@ -910,10 +1028,18 @@ void ComponentVisualization::startAllTasks() {
 		ACE_Sched_Params managementTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.managementTask.scheduler == "FIFO") {
 			managementTask_SchedParams.policy(ACE_SCHED_FIFO);
-			managementTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				managementTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				managementTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.managementTask.scheduler == "RR") {
 			managementTask_SchedParams.policy(ACE_SCHED_RR);
-			managementTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				managementTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				managementTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		managementTask->start(managementTask_SchedParams, connections.managementTask.cpuAffinity);
 	} else {
@@ -924,10 +1050,18 @@ void ComponentVisualization::startAllTasks() {
 		ACE_Sched_Params markerListTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.markerListTask.scheduler == "FIFO") {
 			markerListTask_SchedParams.policy(ACE_SCHED_FIFO);
-			markerListTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				markerListTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				markerListTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.markerListTask.scheduler == "RR") {
 			markerListTask_SchedParams.policy(ACE_SCHED_RR);
-			markerListTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				markerListTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				markerListTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		markerListTask->start(markerListTask_SchedParams, connections.markerListTask.cpuAffinity);
 	} else {
@@ -938,10 +1072,18 @@ void ComponentVisualization::startAllTasks() {
 		ACE_Sched_Params personDetectionTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.personDetectionTask.scheduler == "FIFO") {
 			personDetectionTask_SchedParams.policy(ACE_SCHED_FIFO);
-			personDetectionTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				personDetectionTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				personDetectionTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.personDetectionTask.scheduler == "RR") {
 			personDetectionTask_SchedParams.policy(ACE_SCHED_RR);
-			personDetectionTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				personDetectionTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				personDetectionTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		personDetectionTask->start(personDetectionTask_SchedParams, connections.personDetectionTask.cpuAffinity);
 	} else {
@@ -952,24 +1094,62 @@ void ComponentVisualization::startAllTasks() {
 		ACE_Sched_Params plannerGoalTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.plannerGoalTask.scheduler == "FIFO") {
 			plannerGoalTask_SchedParams.policy(ACE_SCHED_FIFO);
-			plannerGoalTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				plannerGoalTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				plannerGoalTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.plannerGoalTask.scheduler == "RR") {
 			plannerGoalTask_SchedParams.policy(ACE_SCHED_RR);
-			plannerGoalTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				plannerGoalTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				plannerGoalTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		plannerGoalTask->start(plannerGoalTask_SchedParams, connections.plannerGoalTask.cpuAffinity);
 	} else {
 		plannerGoalTask->start();
+	}
+	// start task PlannerGridTask
+	if(connections.plannerGridTask.scheduler != "DEFAULT") {
+		ACE_Sched_Params plannerGridTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
+		if(connections.plannerGridTask.scheduler == "FIFO") {
+			plannerGridTask_SchedParams.policy(ACE_SCHED_FIFO);
+			#if defined(ACE_HAS_PTHREADS)
+				plannerGridTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				plannerGridTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
+		} else if(connections.plannerGridTask.scheduler == "RR") {
+			plannerGridTask_SchedParams.policy(ACE_SCHED_RR);
+			#if defined(ACE_HAS_PTHREADS)
+				plannerGridTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				plannerGridTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
+		}
+		plannerGridTask->start(plannerGridTask_SchedParams, connections.plannerGridTask.cpuAffinity);
+	} else {
+		plannerGridTask->start();
 	}
 	// start task RGBDTask
 	if(connections.rGBDTask.scheduler != "DEFAULT") {
 		ACE_Sched_Params rGBDTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.rGBDTask.scheduler == "FIFO") {
 			rGBDTask_SchedParams.policy(ACE_SCHED_FIFO);
-			rGBDTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				rGBDTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				rGBDTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.rGBDTask.scheduler == "RR") {
 			rGBDTask_SchedParams.policy(ACE_SCHED_RR);
-			rGBDTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				rGBDTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				rGBDTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		rGBDTask->start(rGBDTask_SchedParams, connections.rGBDTask.cpuAffinity);
 	} else {
@@ -980,10 +1160,18 @@ void ComponentVisualization::startAllTasks() {
 		ACE_Sched_Params uSArTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.uSArTask.scheduler == "FIFO") {
 			uSArTask_SchedParams.policy(ACE_SCHED_FIFO);
-			uSArTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				uSArTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				uSArTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.uSArTask.scheduler == "RR") {
 			uSArTask_SchedParams.policy(ACE_SCHED_RR);
-			uSArTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				uSArTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				uSArTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		uSArTask->start(uSArTask_SchedParams, connections.uSArTask.cpuAffinity);
 	} else {
@@ -994,10 +1182,18 @@ void ComponentVisualization::startAllTasks() {
 		ACE_Sched_Params visualMarkerMapTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.visualMarkerMapTask.scheduler == "FIFO") {
 			visualMarkerMapTask_SchedParams.policy(ACE_SCHED_FIFO);
-			visualMarkerMapTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				visualMarkerMapTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				visualMarkerMapTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.visualMarkerMapTask.scheduler == "RR") {
 			visualMarkerMapTask_SchedParams.policy(ACE_SCHED_RR);
-			visualMarkerMapTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				visualMarkerMapTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				visualMarkerMapTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		visualMarkerMapTask->start(visualMarkerMapTask_SchedParams, connections.visualMarkerMapTask.cpuAffinity);
 	} else {
@@ -1026,6 +1222,7 @@ Smart::TaskTriggerSubject* ComponentVisualization::getInputTaskTriggerFromString
 	if(client == "laserClient3") return laserClient3InputTaskTrigger;
 	if(client == "personDetectionEventClient") return personDetectionEventClientInputTaskTrigger;
 	if(client == "plannerGoalPushClient") return plannerGoalPushClientInputTaskTrigger;
+	if(client == "plannerWavefrontGridMap") return plannerWavefrontGridMapInputTaskTrigger;
 	if(client == "rgbdPushNewestClient") return rgbdPushNewestClientInputTaskTrigger;
 	if(client == "rgbdQueryClient") return rgbdQueryClientInputTaskTrigger;
 	if(client == "ultrasonicPushNewestClient") return ultrasonicPushNewestClientInputTaskTrigger;
@@ -1097,6 +1294,7 @@ void ComponentVisualization::init(int argc, char *argv[])
 		personDetectionEventClient = portFactoryRegistry[connections.personDetectionEventClient.roboticMiddleware]->createPersonDetectionEventClient();
 		personDetectionQueryClient = portFactoryRegistry[connections.personDetectionQueryClient.roboticMiddleware]->createPersonDetectionQueryClient();
 		plannerGoalPushClient = portFactoryRegistry[connections.plannerGoalPushClient.roboticMiddleware]->createPlannerGoalPushClient();
+		plannerWavefrontGridMap = portFactoryRegistry[connections.plannerWavefrontGridMap.roboticMiddleware]->createPlannerWavefrontGridMap();
 		rgbdPushNewestClient = portFactoryRegistry[connections.rgbdPushNewestClient.roboticMiddleware]->createRgbdPushNewestClient();
 		rgbdQueryClient = portFactoryRegistry[connections.rgbdQueryClient.roboticMiddleware]->createRgbdQueryClient();
 		ultrasonicPushNewestClient = portFactoryRegistry[connections.ultrasonicPushNewestClient.roboticMiddleware]->createUltrasonicPushNewestClient();
@@ -1138,6 +1336,9 @@ void ComponentVisualization::init(int argc, char *argv[])
 		plannerGoalPushClientInputCollector = new PlannerGoalPushClientInputCollector(plannerGoalPushClient);
 		plannerGoalPushClientInputTaskTrigger = new Smart::InputTaskTrigger<CommNavigationObjects::CommPlannerGoal>(plannerGoalPushClientInputCollector);
 		plannerGoalPushClientUpcallManager = new PlannerGoalPushClientUpcallManager(plannerGoalPushClientInputCollector);
+		plannerWavefrontGridMapInputCollector = new PlannerWavefrontGridMapInputCollector(plannerWavefrontGridMap);
+		plannerWavefrontGridMapInputTaskTrigger = new Smart::InputTaskTrigger<CommNavigationObjects::CommGridMap>(plannerWavefrontGridMapInputCollector);
+		plannerWavefrontGridMapUpcallManager = new PlannerWavefrontGridMapUpcallManager(plannerWavefrontGridMapInputCollector);
 		rgbdPushNewestClientInputCollector = new RgbdPushNewestClientInputCollector(rgbdPushNewestClient);
 		rgbdPushNewestClientInputTaskTrigger = new Smart::InputTaskTrigger<DomainVision::CommRGBDImage>(rgbdPushNewestClientInputCollector);
 		rgbdPushNewestClientUpcallManager = new RgbdPushNewestClientUpcallManager(rgbdPushNewestClientInputCollector);
@@ -1154,7 +1355,8 @@ void ComponentVisualization::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -1227,6 +1429,10 @@ void ComponentVisualization::init(int argc, char *argv[])
 			//FIXME: this must also work with other implementations
 			dynamic_cast<SmartACE::PushClient<CommNavigationObjects::CommPlannerGoal>*>(plannerGoalPushClient)->add(wiringSlave, connections.plannerGoalPushClient.wiringName);
 		}
+		if(connections.plannerWavefrontGridMap.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::PushClient<CommNavigationObjects::CommGridMap>*>(plannerWavefrontGridMap)->add(wiringSlave, connections.plannerWavefrontGridMap.wiringName);
+		}
 		if(connections.rgbdPushNewestClient.roboticMiddleware == "ACE_SmartSoft") {
 			//FIXME: this must also work with other implementations
 			dynamic_cast<SmartACE::PushClient<DomainVision::CommRGBDImage>*>(rgbdPushNewestClient)->add(wiringSlave, connections.rgbdPushNewestClient.wiringName);
@@ -1250,7 +1456,7 @@ void ComponentVisualization::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.amclVizTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.amclVizTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.amclVizTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(amclVizTask);
@@ -1275,7 +1481,7 @@ void ComponentVisualization::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.baseTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.baseTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.baseTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(baseTask);
@@ -1300,7 +1506,7 @@ void ComponentVisualization::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.curMapTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.curMapTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.curMapTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(curMapTask);
@@ -1325,7 +1531,7 @@ void ComponentVisualization::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.depthTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.depthTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.depthTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(depthTask);
@@ -1350,7 +1556,7 @@ void ComponentVisualization::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.iRTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.iRTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.iRTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(iRTask);
@@ -1375,7 +1581,7 @@ void ComponentVisualization::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.imageTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.imageTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.imageTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(imageTask);
@@ -1400,7 +1606,7 @@ void ComponentVisualization::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.laser1Task.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.laser1Task.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.laser1Task.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(laser1Task);
@@ -1425,7 +1631,7 @@ void ComponentVisualization::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.laser2Task.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.laser2Task.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.laser2Task.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(laser2Task);
@@ -1450,7 +1656,7 @@ void ComponentVisualization::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.laser3Task.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.laser3Task.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.laser3Task.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(laser3Task);
@@ -1475,7 +1681,7 @@ void ComponentVisualization::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.ltmMapTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.ltmMapTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.ltmMapTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(ltmMapTask);
@@ -1496,7 +1702,7 @@ void ComponentVisualization::init(int argc, char *argv[])
 		{
 			// setup default task-trigger as PeriodicTimer
 			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-			int microseconds = 1000*1000 / 0.017;
+			int microseconds = (int)(1000.0*1000.0 / 0.017);
 			if(microseconds > 0) {
 				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				triggerPtr->attach(ltmMapTask);
@@ -1513,7 +1719,7 @@ void ComponentVisualization::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.managementTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.managementTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.managementTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(managementTask);
@@ -1538,7 +1744,7 @@ void ComponentVisualization::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.markerListTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.markerListTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.markerListTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(markerListTask);
@@ -1563,7 +1769,7 @@ void ComponentVisualization::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.personDetectionTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.personDetectionTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.personDetectionTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(personDetectionTask);
@@ -1588,7 +1794,7 @@ void ComponentVisualization::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.plannerGoalTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.plannerGoalTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.plannerGoalTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(plannerGoalTask);
@@ -1607,13 +1813,38 @@ void ComponentVisualization::init(int argc, char *argv[])
 			}
 		} 
 		
+		// create Task PlannerGridTask
+		plannerGridTask = new PlannerGridTask(component);
+		// configure input-links
+		// configure task-trigger (if task is configurable)
+		if(connections.plannerGridTask.trigger == "PeriodicTimer") {
+			// create PeriodicTimerTrigger
+			int microseconds = (int)(1000.0*1000.0 / connections.plannerGridTask.periodicActFreq);
+			if(microseconds > 0) {
+				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
+				triggerPtr->attach(plannerGridTask);
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				// store trigger in class member
+				plannerGridTaskTrigger = triggerPtr;
+			} else {
+				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task PlannerGridTask" << std::endl;
+			}
+		} else if(connections.plannerGridTask.trigger == "DataTriggered") {
+			plannerGridTaskTrigger = getInputTaskTriggerFromString(connections.plannerGridTask.inPortRef);
+			if(plannerGridTaskTrigger != NULL) {
+				plannerGridTaskTrigger->attach(plannerGridTask, connections.plannerGridTask.prescale);
+			} else {
+				std::cerr << "ERROR: could not set-up InPort " << connections.plannerGridTask.inPortRef << " as activation source for Task PlannerGridTask" << std::endl;
+			}
+		} 
+		
 		// create Task RGBDTask
 		rGBDTask = new RGBDTask(component);
 		// configure input-links
 		// configure task-trigger (if task is configurable)
 		if(connections.rGBDTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.rGBDTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.rGBDTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(rGBDTask);
@@ -1638,7 +1869,7 @@ void ComponentVisualization::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.uSArTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.uSArTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.uSArTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(uSArTask);
@@ -1663,7 +1894,7 @@ void ComponentVisualization::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.visualMarkerMapTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.visualMarkerMapTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.visualMarkerMapTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(visualMarkerMapTask);
@@ -1684,7 +1915,7 @@ void ComponentVisualization::init(int argc, char *argv[])
 		{
 			// setup default task-trigger as PeriodicTimer
 			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-			int microseconds = 1000*1000 / 1.0;
+			int microseconds = (int)(1000.0*1000.0 / 1.0);
 			if(microseconds > 0) {
 				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				triggerPtr->attach(visualMarkerMapTask);
@@ -1841,6 +2072,12 @@ void ComponentVisualization::fini()
 	}
 	// unlink all UpcallManagers
 	// unlink the TaskTrigger
+	if(plannerGridTaskTrigger != NULL){
+		plannerGridTaskTrigger->detach(plannerGridTask);
+		delete plannerGridTask;
+	}
+	// unlink all UpcallManagers
+	// unlink the TaskTrigger
 	if(rGBDTaskTrigger != NULL){
 		rGBDTaskTrigger->detach(rGBDTask);
 		delete rGBDTask;
@@ -1897,6 +2134,9 @@ void ComponentVisualization::fini()
 	delete plannerGoalPushClientInputTaskTrigger;
 	delete plannerGoalPushClientUpcallManager;
 	delete plannerGoalPushClientInputCollector;
+	delete plannerWavefrontGridMapInputTaskTrigger;
+	delete plannerWavefrontGridMapUpcallManager;
+	delete plannerWavefrontGridMapInputCollector;
 	delete rgbdPushNewestClientInputTaskTrigger;
 	delete rgbdPushNewestClientUpcallManager;
 	delete rgbdPushNewestClientInputCollector;
@@ -1924,16 +2164,19 @@ void ComponentVisualization::fini()
 	delete personDetectionEventClient;
 	delete personDetectionQueryClient;
 	delete plannerGoalPushClient;
+	delete plannerWavefrontGridMap;
 	delete rgbdPushNewestClient;
 	delete rgbdQueryClient;
 	delete ultrasonicPushNewestClient;
 
+	// destroy request-handlers
+
 	// destroy server ports
+	
 	// destroy event-test handlers (if needed)
 	
-	// destroy request-handlers
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -2164,6 +2407,15 @@ void ComponentVisualization::loadParameter(int argc, char *argv[])
 		parameter.getInteger("plannerGoalPushClient", "interval", connections.plannerGoalPushClient.interval);
 		if(parameter.checkIfParameterExists("plannerGoalPushClient", "roboticMiddleware")) {
 			parameter.getString("plannerGoalPushClient", "roboticMiddleware", connections.plannerGoalPushClient.roboticMiddleware);
+		}
+		// load parameters for client plannerWavefrontGridMap
+		parameter.getBoolean("plannerWavefrontGridMap", "initialConnect", connections.plannerWavefrontGridMap.initialConnect);
+		parameter.getString("plannerWavefrontGridMap", "serviceName", connections.plannerWavefrontGridMap.serviceName);
+		parameter.getString("plannerWavefrontGridMap", "serverName", connections.plannerWavefrontGridMap.serverName);
+		parameter.getString("plannerWavefrontGridMap", "wiringName", connections.plannerWavefrontGridMap.wiringName);
+		parameter.getInteger("plannerWavefrontGridMap", "interval", connections.plannerWavefrontGridMap.interval);
+		if(parameter.checkIfParameterExists("plannerWavefrontGridMap", "roboticMiddleware")) {
+			parameter.getString("plannerWavefrontGridMap", "roboticMiddleware", connections.plannerWavefrontGridMap.roboticMiddleware);
 		}
 		// load parameters for client rgbdPushNewestClient
 		parameter.getBoolean("rgbdPushNewestClient", "initialConnect", connections.rgbdPushNewestClient.initialConnect);
@@ -2459,6 +2711,25 @@ void ComponentVisualization::loadParameter(int argc, char *argv[])
 		}
 		if(parameter.checkIfParameterExists("PlannerGoalTask", "cpuAffinity")) {
 			parameter.getInteger("PlannerGoalTask", "cpuAffinity", connections.plannerGoalTask.cpuAffinity);
+		}
+		// load parameters for task PlannerGridTask
+		parameter.getDouble("PlannerGridTask", "minActFreqHz", connections.plannerGridTask.minActFreq);
+		parameter.getDouble("PlannerGridTask", "maxActFreqHz", connections.plannerGridTask.maxActFreq);
+		parameter.getString("PlannerGridTask", "triggerType", connections.plannerGridTask.trigger);
+		if(connections.plannerGridTask.trigger == "PeriodicTimer") {
+			parameter.getDouble("PlannerGridTask", "periodicActFreqHz", connections.plannerGridTask.periodicActFreq);
+		} else if(connections.plannerGridTask.trigger == "DataTriggered") {
+			parameter.getString("PlannerGridTask", "inPortRef", connections.plannerGridTask.inPortRef);
+			parameter.getInteger("PlannerGridTask", "prescale", connections.plannerGridTask.prescale);
+		}
+		if(parameter.checkIfParameterExists("PlannerGridTask", "scheduler")) {
+			parameter.getString("PlannerGridTask", "scheduler", connections.plannerGridTask.scheduler);
+		}
+		if(parameter.checkIfParameterExists("PlannerGridTask", "priority")) {
+			parameter.getInteger("PlannerGridTask", "priority", connections.plannerGridTask.priority);
+		}
+		if(parameter.checkIfParameterExists("PlannerGridTask", "cpuAffinity")) {
+			parameter.getInteger("PlannerGridTask", "cpuAffinity", connections.plannerGridTask.cpuAffinity);
 		}
 		// load parameters for task RGBDTask
 		parameter.getDouble("RGBDTask", "minActFreqHz", connections.rGBDTask.minActFreq);

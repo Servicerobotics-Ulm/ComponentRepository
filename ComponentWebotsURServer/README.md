@@ -35,6 +35,12 @@ trajectory.set_joint_angle(0, 5, 0.+084);
 COMP -> sendTrajectoryServiceOut -> send(trajectory);
 ```
 
+### other similar components:
+
+- [SmartURServer](../SmartURServer)
+- [SmartURServerLegacy](../SmartURServerLegacy)
+- [SmartGazeboManipulatorServer](../SmartGazeboManipulatorServer)
+
 
 
 ## Component-Datasheet Properties

@@ -43,13 +43,15 @@ add_definitions(${PCL_DEFINITIONS})
 
 # you can add additional external libraries using regular CMake commands, e.g.:
 find_package(MRPT REQUIRED opengl gui)
-find_package(OpenCV REQUIRED)
+find_package(OpenCV 4 REQUIRED)
 find_package(VTK REQUIRED)
 find_package(PCL REQUIRED )
 SMART_ADD_UTILITY(OpenCVHelpers 1.0.0)
 
-message("mrpt" ${MRPT_DIR})
-message("pcl" ${PCL_INCLUDE_DIRS})
+message("-- OpenCV version" ${OpenCV_VERSION})
+message("-- MRPT version" ${MRPT_VERSION})
+message("-- PCL version" ${PCL_VERSION})
+message("-- VTK version" ${VTK_VERSION})
 
 INCLUDE(${CMAKE_CURRENT_LIST_DIR}/src-gen/MixedPortIncludes.cmake)
 

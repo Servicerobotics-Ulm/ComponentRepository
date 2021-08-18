@@ -32,7 +32,6 @@ SmartMapperGridMap::SmartMapperGridMap()
 	
 	// set all pointer members to NULL
 	//coordinationPort = NULL;
-	//coordinationPort = NULL;
 	curMapTask = NULL;
 	curMapTaskTrigger = NULL;
 	currMapOut = NULL;
@@ -49,7 +48,9 @@ SmartMapperGridMap::SmartMapperGridMap()
 	ltmQueryServer = NULL;
 	ltmQueryServerInputTaskTrigger = NULL;
 	ltmQueryServerHandler = NULL;
+	//smartMapperGridMapParams = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -157,10 +158,18 @@ void SmartMapperGridMap::startAllTasks() {
 		ACE_Sched_Params curMapTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.curMapTask.scheduler == "FIFO") {
 			curMapTask_SchedParams.policy(ACE_SCHED_FIFO);
-			curMapTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				curMapTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				curMapTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.curMapTask.scheduler == "RR") {
 			curMapTask_SchedParams.policy(ACE_SCHED_RR);
-			curMapTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				curMapTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				curMapTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		curMapTask->start(curMapTask_SchedParams, connections.curMapTask.cpuAffinity);
 	} else {
@@ -171,10 +180,18 @@ void SmartMapperGridMap::startAllTasks() {
 		ACE_Sched_Params ltmMapTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.ltmMapTask.scheduler == "FIFO") {
 			ltmMapTask_SchedParams.policy(ACE_SCHED_FIFO);
-			ltmMapTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				ltmMapTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				ltmMapTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.ltmMapTask.scheduler == "RR") {
 			ltmMapTask_SchedParams.policy(ACE_SCHED_RR);
-			ltmMapTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				ltmMapTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				ltmMapTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		ltmMapTask->start(ltmMapTask_SchedParams, connections.ltmMapTask.cpuAffinity);
 	} else {
@@ -265,7 +282,8 @@ void SmartMapperGridMap::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		if (stateSlave->defineStates("BuildCurrMap" ,"currMap") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion BuildCurrMap.currMap" << std::endl;
 		if (stateSlave->defineStates("BuildLtmMap" ,"ltmMap") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion BuildLtmMap.ltmMap" << std::endl;
 		if (stateSlave->defineStates("BuildBothMaps" ,"currMap") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion BuildBothMaps.currMap" << std::endl;
@@ -294,7 +312,7 @@ void SmartMapperGridMap::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.curMapTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.curMapTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.curMapTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(curMapTask);
@@ -320,7 +338,7 @@ void SmartMapperGridMap::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.ltmMapTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.ltmMapTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.ltmMapTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(ltmMapTask);
@@ -341,7 +359,7 @@ void SmartMapperGridMap::init(int argc, char *argv[])
 		{
 			// setup default task-trigger as PeriodicTimer
 			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-			int microseconds = 1000*1000 / 2.0;
+			int microseconds = (int)(1000.0*1000.0 / 2.0);
 			if(microseconds > 0) {
 				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				triggerPtr->attach(ltmMapTask);
@@ -441,20 +459,22 @@ void SmartMapperGridMap::fini()
 	// destroy client ports
 	delete laserServiceIn;
 
-	// destroy server ports
-	delete currMapOutWrapper;
-	delete currMapOut;
-	delete currQueryServer;
-	delete currQueryServerInputTaskTrigger;
-	delete ltmQueryServer;
-	delete ltmQueryServerInputTaskTrigger;
-	// destroy event-test handlers (if needed)
-	
 	// destroy request-handlers
 	delete currQueryServerHandler;
 	delete ltmQueryServerHandler;
+
+	// destroy server ports
+	delete currMapOutWrapper;
+	delete currMapOut;
+	delete currQueryServerInputTaskTrigger;
+	delete currQueryServer;
+	delete ltmQueryServerInputTaskTrigger;
+	delete ltmQueryServer;
+	
+	// destroy event-test handlers (if needed)
 	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	

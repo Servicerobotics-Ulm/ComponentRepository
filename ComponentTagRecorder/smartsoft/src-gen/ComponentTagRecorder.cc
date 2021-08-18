@@ -31,7 +31,7 @@ ComponentTagRecorder::ComponentTagRecorder()
 	std::cout << "constructor of ComponentTagRecorder\n";
 	
 	// set all pointer members to NULL
-	//coordinationPort = NULL;
+	//componentTagRecorder = NULL;
 	//coordinationPort = NULL;
 	markerListDetectionServiceIn = NULL;
 	markerListDetectionServiceInInputTaskTrigger = NULL;
@@ -40,6 +40,7 @@ ComponentTagRecorder::ComponentTagRecorder()
 	recorderTask = NULL;
 	recorderTaskTrigger = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -62,16 +63,6 @@ ComponentTagRecorder::ComponentTagRecorder()
 	connections.recorderTask.scheduler = "DEFAULT";
 	connections.recorderTask.priority = -1;
 	connections.recorderTask.cpuAffinity = -1;
-	
-	// initialize members of ComponentTagRecorderROS1InterfacesExtension
-	
-	// initialize members of ComponentTagRecorderROSExtension
-	
-	// initialize members of ComponentTagRecorderRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentTagRecorderExtension
 	
 }
 
@@ -143,10 +134,18 @@ void ComponentTagRecorder::startAllTasks() {
 		ACE_Sched_Params recorderTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.recorderTask.scheduler == "FIFO") {
 			recorderTask_SchedParams.policy(ACE_SCHED_FIFO);
-			recorderTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				recorderTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				recorderTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.recorderTask.scheduler == "RR") {
 			recorderTask_SchedParams.policy(ACE_SCHED_RR);
-			recorderTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				recorderTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				recorderTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		recorderTask->start(recorderTask_SchedParams, connections.recorderTask.cpuAffinity);
 	} else {
@@ -179,16 +178,6 @@ void ComponentTagRecorder::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentTagRecorderROS1InterfacesExtension
-		
-		// initializations of ComponentTagRecorderROSExtension
-		
-		// initializations of ComponentTagRecorderRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentTagRecorderExtension
 		
 		
 		// initialize all registered port-factories
@@ -239,7 +228,8 @@ void ComponentTagRecorder::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		if (stateSlave->defineStates("Active" ,"active") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion Active.active" << std::endl;
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
@@ -264,7 +254,7 @@ void ComponentTagRecorder::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.recorderTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.recorderTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.recorderTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(recorderTask);
@@ -360,12 +350,14 @@ void ComponentTagRecorder::fini()
 	// destroy client ports
 	delete markerListDetectionServiceIn;
 
+	// destroy request-handlers
+
 	// destroy server ports
+	
 	// destroy event-test handlers (if needed)
 	
-	// destroy request-handlers
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -385,16 +377,6 @@ void ComponentTagRecorder::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentTagRecorderROS1InterfacesExtension
-	
-	// destruction of ComponentTagRecorderROSExtension
-	
-	// destruction of ComponentTagRecorderRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentTagRecorderExtension
 	
 }
 
@@ -498,16 +480,6 @@ void ComponentTagRecorder::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("RecorderTask", "cpuAffinity")) {
 			parameter.getInteger("RecorderTask", "cpuAffinity", connections.recorderTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentTagRecorderROS1InterfacesExtension
-		
-		// load parameters for ComponentTagRecorderROSExtension
-		
-		// load parameters for ComponentTagRecorderRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentTagRecorderExtension
 		
 		
 		// load parameters for all registered component-extensions

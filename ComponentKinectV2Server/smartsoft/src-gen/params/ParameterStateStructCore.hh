@@ -18,6 +18,9 @@
 
 #include "aceSmartSoft.hh"
 
+#include "nlohmann/json.hpp"
+
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -67,10 +70,10 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "settings(";
-				os << "debug_info = " << debug_info << ", ";
-				os << "high_resolution = " << high_resolution << ", ";
-				os << "undistort_image = " << undistort_image << ", ";
-				os << "valid_image_time = " << valid_image_time << ", ";
+				os << "debug_info = " << debug_info; os << ", ";
+				os << "high_resolution = " << high_resolution; os << ", ";
+				os << "undistort_image = " << undistort_image; os << ", ";
+				os << "valid_image_time = " << valid_image_time;
 				os << ")\n";
 			}
 			
@@ -117,12 +120,12 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "sensor_pose(";
-				os << "azimuth = " << azimuth << ", ";
-				os << "elevation = " << elevation << ", ";
-				os << "roll = " << roll << ", ";
-				os << "x = " << x << ", ";
-				os << "y = " << y << ", ";
-				os << "z = " << z << ", ";
+				os << "azimuth = " << azimuth; os << ", ";
+				os << "elevation = " << elevation; os << ", ";
+				os << "roll = " << roll; os << ", ";
+				os << "x = " << x; os << ", ";
+				os << "y = " << y; os << ", ";
+				os << "z = " << z;
 				os << ")\n";
 			}
 			
@@ -172,13 +175,13 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "base(";
-				os << "base_a = " << base_a << ", ";
-				os << "on_base = " << on_base << ", ";
-				os << "on_ptu = " << on_ptu << ", ";
-				os << "steer_a = " << steer_a << ", ";
-				os << "x = " << x << ", ";
-				os << "y = " << y << ", ";
-				os << "z = " << z << ", ";
+				os << "base_a = " << base_a; os << ", ";
+				os << "on_base = " << on_base; os << ", ";
+				os << "on_ptu = " << on_ptu; os << ", ";
+				os << "steer_a = " << steer_a; os << ", ";
+				os << "x = " << x; os << ", ";
+				os << "y = " << y; os << ", ";
+				os << "z = " << z;
 				os << ")\n";
 			}
 			
@@ -213,8 +216,8 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "hardware_properties(";
-				os << "max_distance = " << max_distance << ", ";
-				os << "min_distance = " << min_distance << ", ";
+				os << "max_distance = " << max_distance; os << ", ";
+				os << "min_distance = " << min_distance;
 				os << ")\n";
 			}
 			
@@ -285,6 +288,41 @@ public:
 		// External params
 		
 		// Instance params (encapsulated in a wrapper class for each instantiated parameter repository)
+	}
+	
+	std::string getAsJSONString() {
+		nlohmann::json param;
+	
+		param["base"] = nlohmann::json {
+			{"base_a" , getBase().getBase_a()},
+			{"on_base" , getBase().getOn_base()},
+			{"on_ptu" , getBase().getOn_ptu()},
+			{"steer_a" , getBase().getSteer_a()},
+			{"x" , getBase().getX()},
+			{"y" , getBase().getY()},
+			{"z" , getBase().getZ()}
+		};
+		param["hardware_properties"] = nlohmann::json {
+			{"max_distance" , getHardware_properties().getMax_distance()},
+			{"min_distance" , getHardware_properties().getMin_distance()}
+		};
+		param["sensor_pose"] = nlohmann::json {
+			{"azimuth" , getSensor_pose().getAzimuth()},
+			{"elevation" , getSensor_pose().getElevation()},
+			{"roll" , getSensor_pose().getRoll()},
+			{"x" , getSensor_pose().getX()},
+			{"y" , getSensor_pose().getY()},
+			{"z" , getSensor_pose().getZ()}
+		};
+		param["settings"] = nlohmann::json {
+			{"debug_info" , getSettings().getDebug_info()},
+			{"high_resolution" , getSettings().getHigh_resolution()},
+			{"undistort_image" , getSettings().getUndistort_image()},
+			{"valid_image_time" , getSettings().getValid_image_time()}
+		};
+	
+		
+		return param.dump();
 	}
 };
 

@@ -18,6 +18,7 @@
 		
 #include "aceSmartSoft.hh"
 
+
 #include <CommBasicObjects/CommFileReadAnswer.hh>
 #include <CommBasicObjects/CommFileReadRequest.hh>
 
@@ -31,9 +32,10 @@ class FileReadQueryAnswHandlerCore
 ,	public Smart::TaskTriggerSubject
 {
 private:
-virtual void handle_input(const std::pair<Smart::QueryIdPtr,CommBasicObjects::CommFileReadRequest> &input) override {
-	this->handleQuery(input.first, input.second);
-}
+	// inputs are directly propagated to the implementation (passive handler)
+	virtual void handle_input(const std::pair<Smart::QueryIdPtr,CommBasicObjects::CommFileReadRequest> &input) override {
+		this->handleQuery(input.first, input.second);
+	}
 
 
 	virtual void updateAllCommObjects();
@@ -56,7 +58,7 @@ public:
 	using IQueryServer = Smart::IQueryServerPattern<CommBasicObjects::CommFileReadRequest, CommBasicObjects::CommFileReadAnswer>;
 	using QueryId = Smart::QueryIdPtr;
 	FileReadQueryAnswHandlerCore(IQueryServer *server);
-	virtual ~FileReadQueryAnswHandlerCore() = default;
+	virtual ~FileReadQueryAnswHandlerCore();
 	
 protected:
 	IQueryServer *server;

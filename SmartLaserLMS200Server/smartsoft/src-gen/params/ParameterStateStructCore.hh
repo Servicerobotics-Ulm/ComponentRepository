@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -87,16 +88,16 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Laser(";
-				os << "azimuth = " << azimuth << ", ";
-				os << "baudrate = " << baudrate << ", ";
-				os << "device = " << device << ", ";
-				os << "length_unit = " << length_unit << ", ";
-				os << "resolution = " << resolution << ", ";
-				os << "sick_type = " << sick_type << ", ";
-				os << "verbose = " << verbose << ", ";
-				os << "x = " << x << ", ";
-				os << "y = " << y << ", ";
-				os << "z = " << z << ", ";
+				os << "azimuth = " << azimuth; os << ", ";
+				os << "baudrate = " << baudrate; os << ", ";
+				os << "device = " << device; os << ", ";
+				os << "length_unit = " << length_unit; os << ", ";
+				os << "resolution = " << resolution; os << ", ";
+				os << "sick_type = " << sick_type; os << ", ";
+				os << "verbose = " << verbose; os << ", ";
+				os << "x = " << x; os << ", ";
+				os << "y = " << y; os << ", ";
+				os << "z = " << z;
 				os << ")\n";
 			}
 			
@@ -140,11 +141,11 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Base(";
-				os << "base_a = " << base_a << ", ";
-				os << "subscribe = " << subscribe << ", ";
-				os << "x = " << x << ", ";
-				os << "y = " << y << ", ";
-				os << "z = " << z << ", ";
+				os << "base_a = " << base_a; os << ", ";
+				os << "subscribe = " << subscribe; os << ", ";
+				os << "x = " << x; os << ", ";
+				os << "y = " << y; os << ", ";
+				os << "z = " << z;
 				os << ")\n";
 			}
 			

@@ -31,13 +31,14 @@ ComponentKeyboardNavigation::ComponentKeyboardNavigation()
 	std::cout << "constructor of ComponentKeyboardNavigation\n";
 	
 	// set all pointer members to NULL
-	//coordinationPort = NULL;
+	//componentKeyboardNavigationParams = NULL;
 	//coordinationPort = NULL;
 	keyboardInputTask = NULL;
 	keyboardInputTaskTrigger = NULL;
 	navVelSendClient = NULL;
 	navVelSendClientWrapper = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -62,16 +63,6 @@ ComponentKeyboardNavigation::ComponentKeyboardNavigation()
 	connections.keyboardInputTask.scheduler = "DEFAULT";
 	connections.keyboardInputTask.priority = -1;
 	connections.keyboardInputTask.cpuAffinity = -1;
-	
-	// initialize members of ComponentKeyboardNavigationROS1InterfacesExtension
-	
-	// initialize members of ComponentKeyboardNavigationROSExtension
-	
-	// initialize members of ComponentKeyboardNavigationRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentKeyboardNavigationExtension
 	
 }
 
@@ -142,10 +133,18 @@ void ComponentKeyboardNavigation::startAllTasks() {
 		ACE_Sched_Params keyboardInputTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.keyboardInputTask.scheduler == "FIFO") {
 			keyboardInputTask_SchedParams.policy(ACE_SCHED_FIFO);
-			keyboardInputTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				keyboardInputTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				keyboardInputTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.keyboardInputTask.scheduler == "RR") {
 			keyboardInputTask_SchedParams.policy(ACE_SCHED_RR);
-			keyboardInputTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				keyboardInputTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				keyboardInputTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		keyboardInputTask->start(keyboardInputTask_SchedParams, connections.keyboardInputTask.cpuAffinity);
 	} else {
@@ -177,16 +176,6 @@ void ComponentKeyboardNavigation::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentKeyboardNavigationROS1InterfacesExtension
-		
-		// initializations of ComponentKeyboardNavigationROSExtension
-		
-		// initializations of ComponentKeyboardNavigationRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentKeyboardNavigationExtension
 		
 		
 		// initialize all registered port-factories
@@ -235,7 +224,8 @@ void ComponentKeyboardNavigation::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -259,7 +249,7 @@ void ComponentKeyboardNavigation::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.keyboardInputTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.keyboardInputTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.keyboardInputTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(keyboardInputTask);
@@ -280,7 +270,7 @@ void ComponentKeyboardNavigation::init(int argc, char *argv[])
 		{
 			// setup default task-trigger as PeriodicTimer
 			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-			int microseconds = 1000*1000 / 2.0;
+			int microseconds = (int)(1000.0*1000.0 / 2.0);
 			if(microseconds > 0) {
 				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				triggerPtr->attach(keyboardInputTask);
@@ -366,12 +356,14 @@ void ComponentKeyboardNavigation::fini()
 	delete navVelSendClientWrapper;
 	delete navVelSendClient;
 
+	// destroy request-handlers
+
 	// destroy server ports
+	
 	// destroy event-test handlers (if needed)
 	
-	// destroy request-handlers
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -391,16 +383,6 @@ void ComponentKeyboardNavigation::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentKeyboardNavigationROS1InterfacesExtension
-	
-	// destruction of ComponentKeyboardNavigationROSExtension
-	
-	// destruction of ComponentKeyboardNavigationRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentKeyboardNavigationExtension
 	
 }
 
@@ -503,16 +485,6 @@ void ComponentKeyboardNavigation::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("KeyboardInputTask", "cpuAffinity")) {
 			parameter.getInteger("KeyboardInputTask", "cpuAffinity", connections.keyboardInputTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentKeyboardNavigationROS1InterfacesExtension
-		
-		// load parameters for ComponentKeyboardNavigationROSExtension
-		
-		// load parameters for ComponentKeyboardNavigationRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentKeyboardNavigationExtension
 		
 		
 		// load parameters for all registered component-extensions

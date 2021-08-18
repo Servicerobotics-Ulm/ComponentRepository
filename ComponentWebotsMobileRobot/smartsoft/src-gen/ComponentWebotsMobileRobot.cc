@@ -36,7 +36,7 @@ ComponentWebotsMobileRobot::ComponentWebotsMobileRobot()
 	baseStateQueryServiceAnswHandler = NULL;
 	baseStateServiceOut = NULL;
 	baseStateServiceOutWrapper = NULL;
-	//coordinationPort = NULL;
+	//componentWebotsMobileRobotParams = NULL;
 	//coordinationPort = NULL;
 	localizationEventServiceIn = NULL;
 	localizationEventServiceInInputTaskTrigger = NULL;
@@ -56,6 +56,7 @@ ComponentWebotsMobileRobot::ComponentWebotsMobileRobot()
 	webotsAPITask = NULL;
 	webotsAPITaskTrigger = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -159,10 +160,18 @@ void ComponentWebotsMobileRobot::startAllTasks() {
 		ACE_Sched_Params webotsAPITask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.webotsAPITask.scheduler == "FIFO") {
 			webotsAPITask_SchedParams.policy(ACE_SCHED_FIFO);
-			webotsAPITask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				webotsAPITask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				webotsAPITask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.webotsAPITask.scheduler == "RR") {
 			webotsAPITask_SchedParams.policy(ACE_SCHED_RR);
-			webotsAPITask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				webotsAPITask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				webotsAPITask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		webotsAPITask->start(webotsAPITask_SchedParams, connections.webotsAPITask.cpuAffinity);
 	} else {
@@ -263,7 +272,8 @@ void ComponentWebotsMobileRobot::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		if (stateSlave->defineStates("emergencyStop" ,"eStop") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion emergencyStop.eStop" << std::endl;
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
@@ -288,7 +298,7 @@ void ComponentWebotsMobileRobot::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.webotsAPITask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.webotsAPITask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.webotsAPITask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(webotsAPITask);
@@ -393,19 +403,21 @@ void ComponentWebotsMobileRobot::fini()
 	// destroy client ports
 	delete localizationEventServiceIn;
 
+	// destroy request-handlers
+	delete baseStateQueryServiceAnswHandler;
+
 	// destroy server ports
-	delete baseStateQueryServiceAnsw;
 	delete baseStateQueryServiceAnswInputTaskTrigger;
+	delete baseStateQueryServiceAnsw;
 	delete baseStateServiceOutWrapper;
 	delete baseStateServiceOut;
 	delete localizationUpdateServiceIn;
 	delete navigationVelocityServiceIn;
+	
 	// destroy event-test handlers (if needed)
 	
-	// destroy request-handlers
-	delete baseStateQueryServiceAnswHandler;
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	

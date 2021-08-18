@@ -17,7 +17,6 @@
 
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 # find the SmartSoft CMake Macros (version 2 that uses CMake v3)
 FIND_FILE(SMART_MACROS SmartMacros2.cmake PATHS $ENV{SMART_ROOT_ACE}/CMakeMacros /opt/smartSoftAce/CMakeMacros/)

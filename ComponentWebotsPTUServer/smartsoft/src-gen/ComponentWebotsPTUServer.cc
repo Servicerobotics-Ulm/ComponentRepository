@@ -34,7 +34,7 @@ ComponentWebotsPTUServer::ComponentWebotsPTUServer()
 	// set all pointer members to NULL
 	baseStateTask = NULL;
 	baseStateTaskTrigger = NULL;
-	//coordinationPort = NULL;
+	//componentWebotsPTUServerParams = NULL;
 	//coordinationPort = NULL;
 	devicePoseStateTask = NULL;
 	devicePoseStateTaskTrigger = NULL;
@@ -64,6 +64,7 @@ ComponentWebotsPTUServer::ComponentWebotsPTUServer()
 	stateQueryServer = NULL;
 	stateQueryServerInputTaskTrigger = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -210,10 +211,18 @@ void ComponentWebotsPTUServer::startAllTasks() {
 		ACE_Sched_Params baseStateTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.baseStateTask.scheduler == "FIFO") {
 			baseStateTask_SchedParams.policy(ACE_SCHED_FIFO);
-			baseStateTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				baseStateTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				baseStateTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.baseStateTask.scheduler == "RR") {
 			baseStateTask_SchedParams.policy(ACE_SCHED_RR);
-			baseStateTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				baseStateTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				baseStateTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		baseStateTask->start(baseStateTask_SchedParams, connections.baseStateTask.cpuAffinity);
 	} else {
@@ -224,10 +233,18 @@ void ComponentWebotsPTUServer::startAllTasks() {
 		ACE_Sched_Params devicePoseStateTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.devicePoseStateTask.scheduler == "FIFO") {
 			devicePoseStateTask_SchedParams.policy(ACE_SCHED_FIFO);
-			devicePoseStateTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				devicePoseStateTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				devicePoseStateTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.devicePoseStateTask.scheduler == "RR") {
 			devicePoseStateTask_SchedParams.policy(ACE_SCHED_RR);
-			devicePoseStateTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				devicePoseStateTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				devicePoseStateTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		devicePoseStateTask->start(devicePoseStateTask_SchedParams, connections.devicePoseStateTask.cpuAffinity);
 	} else {
@@ -238,10 +255,18 @@ void ComponentWebotsPTUServer::startAllTasks() {
 		ACE_Sched_Params ptuTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.ptuTask.scheduler == "FIFO") {
 			ptuTask_SchedParams.policy(ACE_SCHED_FIFO);
-			ptuTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				ptuTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				ptuTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.ptuTask.scheduler == "RR") {
 			ptuTask_SchedParams.policy(ACE_SCHED_RR);
-			ptuTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				ptuTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				ptuTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		ptuTask->start(ptuTask_SchedParams, connections.ptuTask.cpuAffinity);
 	} else {
@@ -252,10 +277,18 @@ void ComponentWebotsPTUServer::startAllTasks() {
 		ACE_Sched_Params webotsTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.webotsTask.scheduler == "FIFO") {
 			webotsTask_SchedParams.policy(ACE_SCHED_FIFO);
-			webotsTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				webotsTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				webotsTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.webotsTask.scheduler == "RR") {
 			webotsTask_SchedParams.policy(ACE_SCHED_RR);
-			webotsTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				webotsTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				webotsTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		webotsTask->start(webotsTask_SchedParams, connections.webotsTask.cpuAffinity);
 	} else {
@@ -357,7 +390,8 @@ void ComponentWebotsPTUServer::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		if (stateSlave->defineStates("Move" ,"move") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion Move.move" << std::endl;
 		if (stateSlave->defineStates("Servo" ,"servo") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion Servo.servo" << std::endl;
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
@@ -387,7 +421,7 @@ void ComponentWebotsPTUServer::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.baseStateTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.baseStateTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.baseStateTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(baseStateTask);
@@ -412,7 +446,7 @@ void ComponentWebotsPTUServer::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.devicePoseStateTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.devicePoseStateTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.devicePoseStateTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(devicePoseStateTask);
@@ -437,7 +471,7 @@ void ComponentWebotsPTUServer::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.ptuTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.ptuTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.ptuTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(ptuTask);
@@ -462,7 +496,7 @@ void ComponentWebotsPTUServer::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.webotsTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.webotsTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.webotsTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(webotsTask);
@@ -581,24 +615,26 @@ void ComponentWebotsPTUServer::fini()
 	delete baseStateClient;
 	delete baseStateQueryClient;
 
+	// destroy request-handlers
+	delete movePTUQueryServiceAnswHandler;
+	delete pTUStateQueryServiceAnswHandler;
+
 	// destroy server ports
 	delete devicePoseStateServerWrapper;
 	delete devicePoseStateServer;
 	delete goalEventServerWrapper;
 	delete goalEventServer;
-	delete moveQueryServer;
 	delete moveQueryServerInputTaskTrigger;
+	delete moveQueryServer;
 	delete moveSendServer;
-	delete stateQueryServer;
 	delete stateQueryServerInputTaskTrigger;
+	delete stateQueryServer;
+	
 	// destroy event-test handlers (if needed)
 	goalEventServerEventTestHandler;
 	
-	// destroy request-handlers
-	delete movePTUQueryServiceAnswHandler;
-	delete pTUStateQueryServiceAnswHandler;
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	

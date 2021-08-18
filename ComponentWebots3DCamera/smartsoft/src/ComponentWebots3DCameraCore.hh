@@ -19,6 +19,8 @@
 	
 #include "aceSmartSoft.hh"
 #include <iostream>
+#include "DomainVision/CommRGBDImage.hh"
+
 
 class ComponentWebots3DCameraCore
 {
@@ -26,6 +28,9 @@ private:
 
 public:
 	ComponentWebots3DCameraCore();
+
+    SmartACE::SmartMutex NewestImageMutex;
+    DomainVision::CommRGBDImage* newestImage;
 };
 	
 #endif

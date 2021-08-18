@@ -17,10 +17,6 @@
 
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
 
-set(CMAKE_CXX_STANDARD 11)
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -g")
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=leak -g")
-
 option(PUBLISH_2D_IMAGE_WITH_MARKER_DRAWN "Draw Markers on 2D Image" ON)
 # find the SmartSoft CMake Macros (version 2 that uses CMake v3)
 FIND_FILE(SMART_MACROS SmartMacros2.cmake PATHS $ENV{SMART_ROOT_ACE}/CMakeMacros /opt/smartSoftAce/CMakeMacros/)

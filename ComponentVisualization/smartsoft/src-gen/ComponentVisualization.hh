@@ -89,6 +89,7 @@ class ComponentVisualizationExtension;
 #include "MarkerListTask.hh"
 #include "PersonDetectionTask.hh"
 #include "PlannerGoalTask.hh"
+#include "PlannerGridTask.hh"
 #include "RGBDTask.hh"
 #include "USArTask.hh"
 #include "VisualMarkerMapTask.hh"
@@ -117,6 +118,8 @@ class ComponentVisualizationExtension;
 #include "PersonDetectionEventClientInputCollector.hh"
 #include "PlannerGoalPushClientUpcallManager.hh"
 #include "PlannerGoalPushClientInputCollector.hh"
+#include "PlannerWavefrontGridMapUpcallManager.hh"
+#include "PlannerWavefrontGridMapInputCollector.hh"
 #include "RgbdPushNewestClientUpcallManager.hh"
 #include "RgbdPushNewestClientInputCollector.hh"
 #include "RgbdQueryClientUpcallManager.hh"
@@ -135,6 +138,8 @@ class ComponentVisualizationExtension;
 #include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP ComponentVisualization::instance()
 
@@ -206,6 +211,8 @@ public:
 	PersonDetectionTask *personDetectionTask;
 	Smart::TaskTriggerSubject* plannerGoalTaskTrigger;
 	PlannerGoalTask *plannerGoalTask;
+	Smart::TaskTriggerSubject* plannerGridTaskTrigger;
+	PlannerGridTask *plannerGridTask;
 	Smart::TaskTriggerSubject* rGBDTaskTrigger;
 	RGBDTask *rGBDTask;
 	Smart::TaskTriggerSubject* uSArTaskTrigger;
@@ -274,6 +281,11 @@ public:
 	Smart::InputTaskTrigger<CommNavigationObjects::CommPlannerGoal> *plannerGoalPushClientInputTaskTrigger;
 	PlannerGoalPushClientUpcallManager *plannerGoalPushClientUpcallManager;
 	PlannerGoalPushClientInputCollector *plannerGoalPushClientInputCollector;
+	// InputPort plannerWavefrontGridMap
+	Smart::IPushClientPattern<CommNavigationObjects::CommGridMap> *plannerWavefrontGridMap;
+	Smart::InputTaskTrigger<CommNavigationObjects::CommGridMap> *plannerWavefrontGridMapInputTaskTrigger;
+	PlannerWavefrontGridMapUpcallManager *plannerWavefrontGridMapUpcallManager;
+	PlannerWavefrontGridMapInputCollector *plannerWavefrontGridMapInputCollector;
 	// InputPort rgbdPushNewestClient
 	Smart::IPushClientPattern<DomainVision::CommRGBDImage> *rgbdPushNewestClient;
 	Smart::InputTaskTrigger<DomainVision::CommRGBDImage> *rgbdPushNewestClientInputTaskTrigger;
@@ -307,6 +319,7 @@ public:
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	ParamUpdateHandler paramHandler;
@@ -368,6 +381,7 @@ public:
 	Smart::StatusCode connectPersonDetectionEventClient(const std::string &serverName, const std::string &serviceName);
 	Smart::StatusCode connectPersonDetectionQueryClient(const std::string &serverName, const std::string &serviceName);
 	Smart::StatusCode connectPlannerGoalPushClient(const std::string &serverName, const std::string &serviceName);
+	Smart::StatusCode connectPlannerWavefrontGridMap(const std::string &serverName, const std::string &serviceName);
 	Smart::StatusCode connectRgbdPushNewestClient(const std::string &serverName, const std::string &serviceName);
 	Smart::StatusCode connectRgbdQueryClient(const std::string &serverName, const std::string &serviceName);
 	Smart::StatusCode connectUltrasonicPushNewestClient(const std::string &serverName, const std::string &serviceName);
@@ -625,6 +639,22 @@ public:
 			int priority;
 			int cpuAffinity;
 		} plannerGoalTask;
+		struct PlannerGridTask_struct {
+			double minActFreq;
+			double maxActFreq;
+			std::string trigger;
+			// only one of the following two params is 
+			// actually used at run-time according 
+			// to the system config model
+			double periodicActFreq;
+			// or
+			std::string inPortRef;
+			int prescale;
+			// scheduling parameters
+			std::string scheduler;
+			int priority;
+			int cpuAffinity;
+		} plannerGridTask;
 		struct RGBDTask_struct {
 			double minActFreq;
 			double maxActFreq;
@@ -807,6 +837,14 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} plannerGoalPushClient;
+		struct PlannerWavefrontGridMap_struct {
+			bool initialConnect;
+			std::string serverName;
+			std::string serviceName;
+			std::string wiringName;
+			long interval;
+			std::string roboticMiddleware;
+		} plannerWavefrontGridMap;
 		struct RgbdPushNewestClient_struct {
 			bool initialConnect;
 			std::string serverName;

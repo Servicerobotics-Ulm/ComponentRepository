@@ -31,7 +31,7 @@ ComponentGMapping::ComponentGMapping()
 	std::cout << "constructor of ComponentGMapping\n";
 	
 	// set all pointer members to NULL
-	//coordinationPort = NULL;
+	//componentGMappingParams = NULL;
 	//coordinationPort = NULL;
 	gMappingTask = NULL;
 	gMappingTaskTrigger = NULL;
@@ -44,6 +44,7 @@ ComponentGMapping::ComponentGMapping()
 	newestMapPushServer = NULL;
 	newestMapPushServerWrapper = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -74,16 +75,6 @@ ComponentGMapping::ComponentGMapping()
 	connections.gMappingTask.scheduler = "DEFAULT";
 	connections.gMappingTask.priority = -1;
 	connections.gMappingTask.cpuAffinity = -1;
-	
-	// initialize members of ComponentGMappingROS1InterfacesExtension
-	
-	// initialize members of ComponentGMappingROSExtension
-	
-	// initialize members of ComponentGMappingRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentGMappingExtension
 	
 }
 
@@ -173,10 +164,18 @@ void ComponentGMapping::startAllTasks() {
 		ACE_Sched_Params gMappingTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.gMappingTask.scheduler == "FIFO") {
 			gMappingTask_SchedParams.policy(ACE_SCHED_FIFO);
-			gMappingTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				gMappingTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				gMappingTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.gMappingTask.scheduler == "RR") {
 			gMappingTask_SchedParams.policy(ACE_SCHED_RR);
-			gMappingTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				gMappingTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				gMappingTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		gMappingTask->start(gMappingTask_SchedParams, connections.gMappingTask.cpuAffinity);
 	} else {
@@ -209,16 +208,6 @@ void ComponentGMapping::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentGMappingROS1InterfacesExtension
-		
-		// initializations of ComponentGMappingROSExtension
-		
-		// initializations of ComponentGMappingRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentGMappingExtension
 		
 		
 		// initialize all registered port-factories
@@ -273,7 +262,8 @@ void ComponentGMapping::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		if (stateSlave->defineStates("Mapping" ,"active") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion Mapping.active" << std::endl;
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
@@ -302,7 +292,7 @@ void ComponentGMapping::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.gMappingTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.gMappingTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.gMappingTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(gMappingTask);
@@ -400,14 +390,16 @@ void ComponentGMapping::fini()
 	delete basePositionUpdateClient;
 	delete laserClient;
 
+	// destroy request-handlers
+
 	// destroy server ports
 	delete newestMapPushServerWrapper;
 	delete newestMapPushServer;
+	
 	// destroy event-test handlers (if needed)
 	
-	// destroy request-handlers
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -427,16 +419,6 @@ void ComponentGMapping::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentGMappingROS1InterfacesExtension
-	
-	// destruction of ComponentGMappingROSExtension
-	
-	// destruction of ComponentGMappingRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentGMappingExtension
 	
 }
 
@@ -553,16 +535,6 @@ void ComponentGMapping::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("GMappingTask", "cpuAffinity")) {
 			parameter.getInteger("GMappingTask", "cpuAffinity", connections.gMappingTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentGMappingROS1InterfacesExtension
-		
-		// load parameters for ComponentGMappingROSExtension
-		
-		// load parameters for ComponentGMappingRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentGMappingExtension
 		
 		
 		// load parameters for all registered component-extensions

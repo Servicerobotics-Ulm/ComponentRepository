@@ -47,7 +47,6 @@ SmartGazeboBaseServer::SmartGazeboBaseServer()
 	bumperEventServiceOutWrapper = NULL;
 	bumperEventServiceOutEventTestHandler = nullptr; 
 	//coordinationPort = NULL;
-	//coordinationPort = NULL;
 	laserServiceOut = NULL;
 	laserServiceOutWrapper = NULL;
 	laserTask = NULL;
@@ -63,8 +62,10 @@ SmartGazeboBaseServer::SmartGazeboBaseServer()
 	navVelServiceInInputCollector = NULL;
 	pollForGazeboConnection = NULL;
 	pollForGazeboConnectionTrigger = NULL;
+	//smartGazeboBaseServerParams = NULL;
 	velocityInpuHandler = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -109,16 +110,6 @@ SmartGazeboBaseServer::SmartGazeboBaseServer()
 	connections.pollForGazeboConnection.cpuAffinity = -1;
 	connections.localizationUpdateHandler.prescale = 1;
 	connections.velocityInpuHandler.prescale = 1;
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaSmartGazeboBaseServerExtension
-	
-	// initialize members of SmartGazeboBaseServerROS1InterfacesExtension
-	
-	// initialize members of SmartGazeboBaseServerROSExtension
-	
-	// initialize members of SmartGazeboBaseServerRestInterfacesExtension
 	
 }
 
@@ -171,10 +162,18 @@ void SmartGazeboBaseServer::startAllTasks() {
 		ACE_Sched_Params baseStateTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.baseStateTask.scheduler == "FIFO") {
 			baseStateTask_SchedParams.policy(ACE_SCHED_FIFO);
-			baseStateTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				baseStateTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				baseStateTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.baseStateTask.scheduler == "RR") {
 			baseStateTask_SchedParams.policy(ACE_SCHED_RR);
-			baseStateTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				baseStateTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				baseStateTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		baseStateTask->start(baseStateTask_SchedParams, connections.baseStateTask.cpuAffinity);
 	} else {
@@ -185,10 +184,18 @@ void SmartGazeboBaseServer::startAllTasks() {
 		ACE_Sched_Params laserTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.laserTask.scheduler == "FIFO") {
 			laserTask_SchedParams.policy(ACE_SCHED_FIFO);
-			laserTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				laserTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				laserTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.laserTask.scheduler == "RR") {
 			laserTask_SchedParams.policy(ACE_SCHED_RR);
-			laserTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				laserTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				laserTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		laserTask->start(laserTask_SchedParams, connections.laserTask.cpuAffinity);
 	} else {
@@ -199,10 +206,18 @@ void SmartGazeboBaseServer::startAllTasks() {
 		ACE_Sched_Params pollForGazeboConnection_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.pollForGazeboConnection.scheduler == "FIFO") {
 			pollForGazeboConnection_SchedParams.policy(ACE_SCHED_FIFO);
-			pollForGazeboConnection_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				pollForGazeboConnection_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				pollForGazeboConnection_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.pollForGazeboConnection.scheduler == "RR") {
 			pollForGazeboConnection_SchedParams.policy(ACE_SCHED_RR);
-			pollForGazeboConnection_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				pollForGazeboConnection_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				pollForGazeboConnection_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		pollForGazeboConnection->start(pollForGazeboConnection_SchedParams, connections.pollForGazeboConnection.cpuAffinity);
 	} else {
@@ -236,16 +251,6 @@ void SmartGazeboBaseServer::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaSmartGazeboBaseServerExtension
-		
-		// initializations of SmartGazeboBaseServerROS1InterfacesExtension
-		
-		// initializations of SmartGazeboBaseServerROSExtension
-		
-		// initializations of SmartGazeboBaseServerRestInterfacesExtension
 		
 		
 		// initialize all registered port-factories
@@ -317,7 +322,8 @@ void SmartGazeboBaseServer::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -337,7 +343,7 @@ void SmartGazeboBaseServer::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.baseStateTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.baseStateTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.baseStateTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(baseStateTask);
@@ -358,7 +364,7 @@ void SmartGazeboBaseServer::init(int argc, char *argv[])
 		{
 			// setup default task-trigger as PeriodicTimer
 			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-			int microseconds = 1000*1000 / 20.0;
+			int microseconds = (int)(1000.0*1000.0 / 20.0);
 			if(microseconds > 0) {
 				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				triggerPtr->attach(baseStateTask);
@@ -380,7 +386,7 @@ void SmartGazeboBaseServer::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.pollForGazeboConnection.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.pollForGazeboConnection.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.pollForGazeboConnection.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(pollForGazeboConnection);
@@ -496,9 +502,12 @@ void SmartGazeboBaseServer::fini()
 
 	// destroy client ports
 
+	// destroy request-handlers
+	delete baseStateQueryHandler;
+
 	// destroy server ports
-	delete baseSatateQueryAnsw;
 	delete baseSatateQueryAnswInputTaskTrigger;
+	delete baseSatateQueryAnsw;
 	delete baseStateServiceOutWrapper;
 	delete baseStateServiceOut;
 	delete batteryEventServiceOutWrapper;
@@ -509,14 +518,13 @@ void SmartGazeboBaseServer::fini()
 	delete laserServiceOut;
 	delete localizationUpdateServiceIn;
 	delete navVelServiceIn;
+	
 	// destroy event-test handlers (if needed)
 	batteryEventServiceOutEventTestHandler;
 	bumperEventServiceOutEventTestHandler;
 	
-	// destroy request-handlers
-	delete baseStateQueryHandler;
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -536,16 +544,6 @@ void SmartGazeboBaseServer::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaSmartGazeboBaseServerExtension
-	
-	// destruction of SmartGazeboBaseServerROS1InterfacesExtension
-	
-	// destruction of SmartGazeboBaseServerROSExtension
-	
-	// destruction of SmartGazeboBaseServerRestInterfacesExtension
 	
 }
 
@@ -710,16 +708,6 @@ void SmartGazeboBaseServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("VelocityInpuHandler", "prescale")) {
 			parameter.getInteger("VelocityInpuHandler", "prescale", connections.velocityInpuHandler.prescale);
 		}
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaSmartGazeboBaseServerExtension
-		
-		// load parameters for SmartGazeboBaseServerROS1InterfacesExtension
-		
-		// load parameters for SmartGazeboBaseServerROSExtension
-		
-		// load parameters for SmartGazeboBaseServerRestInterfacesExtension
 		
 		
 		// load parameters for all registered component-extensions

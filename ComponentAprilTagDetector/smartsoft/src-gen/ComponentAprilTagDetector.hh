@@ -29,14 +29,6 @@
 class ComponentAprilTagDetectorPortFactoryInterface;
 class ComponentAprilTagDetectorExtension;
 
-// includes for ComponentAprilTagDetectorROS1InterfacesExtension
-
-// includes for ComponentAprilTagDetectorROSExtension
-
-// includes for ComponentAprilTagDetectorRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentAprilTagDetectorExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -74,6 +66,8 @@ class ComponentAprilTagDetectorExtension;
 #include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP ComponentAprilTagDetector::instance()
 
@@ -144,19 +138,10 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of ComponentAprilTagDetectorROS1InterfacesExtension
-	
-	// definitions of ComponentAprilTagDetectorROSExtension
-	
-	// definitions of ComponentAprilTagDetectorRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentAprilTagDetectorExtension
-	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	ParamUpdateHandler paramHandler;
@@ -275,16 +260,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} rGBImagePushServiceIn;
-		
-		// -- parameters for ComponentAprilTagDetectorROS1InterfacesExtension
-		
-		// -- parameters for ComponentAprilTagDetectorROSExtension
-		
-		// -- parameters for ComponentAprilTagDetectorRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentAprilTagDetectorExtension
 		
 	} connections;
 };

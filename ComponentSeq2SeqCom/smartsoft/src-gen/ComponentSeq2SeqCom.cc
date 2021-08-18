@@ -33,7 +33,7 @@ ComponentSeq2SeqCom::ComponentSeq2SeqCom()
 	
 	// set all pointer members to NULL
 	commandHandler = NULL;
-	//coordinationPort = NULL;
+	//componentSeq2SeqCom = NULL;
 	//coordinationPort = NULL;
 	debugTask = NULL;
 	debugTaskTrigger = NULL;
@@ -47,6 +47,7 @@ ComponentSeq2SeqCom::ComponentSeq2SeqCom()
 	taskSendOut = NULL;
 	taskSendOutWrapper = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -74,16 +75,6 @@ ComponentSeq2SeqCom::ComponentSeq2SeqCom()
 	connections.debugTask.priority = -1;
 	connections.debugTask.cpuAffinity = -1;
 	connections.commandHandler.prescale = 1;
-	
-	// initialize members of ComponentSeq2SeqComROS1InterfacesExtension
-	
-	// initialize members of ComponentSeq2SeqComROSExtension
-	
-	// initialize members of ComponentSeq2SeqComRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentSeq2SeqComExtension
 	
 }
 
@@ -154,10 +145,18 @@ void ComponentSeq2SeqCom::startAllTasks() {
 		ACE_Sched_Params debugTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.debugTask.scheduler == "FIFO") {
 			debugTask_SchedParams.policy(ACE_SCHED_FIFO);
-			debugTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				debugTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				debugTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.debugTask.scheduler == "RR") {
 			debugTask_SchedParams.policy(ACE_SCHED_RR);
-			debugTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				debugTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				debugTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		debugTask->start(debugTask_SchedParams, connections.debugTask.cpuAffinity);
 	} else {
@@ -190,16 +189,6 @@ void ComponentSeq2SeqCom::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentSeq2SeqComROS1InterfacesExtension
-		
-		// initializations of ComponentSeq2SeqComROSExtension
-		
-		// initializations of ComponentSeq2SeqComRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentSeq2SeqComExtension
 		
 		
 		// initialize all registered port-factories
@@ -257,7 +246,8 @@ void ComponentSeq2SeqCom::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -281,7 +271,7 @@ void ComponentSeq2SeqCom::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.debugTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.debugTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.debugTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(debugTask);
@@ -379,16 +369,18 @@ void ComponentSeq2SeqCom::fini()
 	delete taskSendOutWrapper;
 	delete taskSendOut;
 
+	// destroy request-handlers
+
 	// destroy server ports
 	delete taskEventOutWrapper;
 	delete taskEventOut;
 	delete taskSendIn;
+	
 	// destroy event-test handlers (if needed)
 	taskEventOutEventTestHandler;
 	
-	// destroy request-handlers
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -408,16 +400,6 @@ void ComponentSeq2SeqCom::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentSeq2SeqComROS1InterfacesExtension
-	
-	// destruction of ComponentSeq2SeqComROSExtension
-	
-	// destruction of ComponentSeq2SeqComRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentSeq2SeqComExtension
 	
 }
 
@@ -533,16 +515,6 @@ void ComponentSeq2SeqCom::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("CommandHandler", "prescale")) {
 			parameter.getInteger("CommandHandler", "prescale", connections.commandHandler.prescale);
 		}
-		
-		// load parameters for ComponentSeq2SeqComROS1InterfacesExtension
-		
-		// load parameters for ComponentSeq2SeqComROSExtension
-		
-		// load parameters for ComponentSeq2SeqComRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentSeq2SeqComExtension
 		
 		
 		// load parameters for all registered component-extensions

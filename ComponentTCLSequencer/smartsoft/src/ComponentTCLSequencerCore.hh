@@ -73,7 +73,7 @@ private:
 public:
 	ComponentTCLSequencerCore();
 
-	typedef std::string (*switchCiFunction_t)(const std::string&, const std::string&, const std::string&, const std::string&, const std::string&);
+	typedef std::string (*switchCiFunction_t)(const std::string&, const std::string&, const std::string&, const std::string&, const std::string&, const std::string&);
 	typedef int (*initCiFunction_t)(SmartACE::SmartComponent *, const std::string&, const std::map< std::string , CiConnection, ciLessLibC> &);
 	typedef int (*finiCiFunction_t)(const std::string&);
 

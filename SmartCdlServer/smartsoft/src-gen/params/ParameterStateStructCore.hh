@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -84,15 +85,15 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "PathNav(";
-				os << "pathNavPredictedGoalPose_controll1_dist = " << pathNavPredictedGoalPose_controll1_dist << ", ";
-				os << "pathNavPredictedGoalPose_controll1_speed = " << pathNavPredictedGoalPose_controll1_speed << ", ";
-				os << "pathNavPredictedGoalPose_controll2_dist = " << pathNavPredictedGoalPose_controll2_dist << ", ";
-				os << "pathNavPredictedGoalPose_controll2_speed = " << pathNavPredictedGoalPose_controll2_speed << ", ";
-				os << "pathNavPredictedGoalPose_controll3_dist = " << pathNavPredictedGoalPose_controll3_dist << ", ";
-				os << "pathNavPredictedGoalPose_controll3_speed = " << pathNavPredictedGoalPose_controll3_speed << ", ";
-				os << "pathNavPredictedGoalPose_minDist = " << pathNavPredictedGoalPose_minDist << ", ";
-				os << "pathNavRecover_max_dist = " << pathNavRecover_max_dist << ", ";
-				os << "robotBlocked_event_timeout = " << robotBlocked_event_timeout << ", ";
+				os << "pathNavPredictedGoalPose_controll1_dist = " << pathNavPredictedGoalPose_controll1_dist; os << ", ";
+				os << "pathNavPredictedGoalPose_controll1_speed = " << pathNavPredictedGoalPose_controll1_speed; os << ", ";
+				os << "pathNavPredictedGoalPose_controll2_dist = " << pathNavPredictedGoalPose_controll2_dist; os << ", ";
+				os << "pathNavPredictedGoalPose_controll2_speed = " << pathNavPredictedGoalPose_controll2_speed; os << ", ";
+				os << "pathNavPredictedGoalPose_controll3_dist = " << pathNavPredictedGoalPose_controll3_dist; os << ", ";
+				os << "pathNavPredictedGoalPose_controll3_speed = " << pathNavPredictedGoalPose_controll3_speed; os << ", ";
+				os << "pathNavPredictedGoalPose_minDist = " << pathNavPredictedGoalPose_minDist; os << ", ";
+				os << "pathNavRecover_max_dist = " << pathNavRecover_max_dist; os << ", ";
+				os << "robotBlocked_event_timeout = " << robotBlocked_event_timeout;
 				os << ")\n";
 			}
 			
@@ -178,25 +179,25 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Cdl(";
-				os << "accel_default_file = " << accel_default_file << ", ";
-				os << "accel_second_file = " << accel_second_file << ", ";
-				os << "contour_default_file = " << contour_default_file << ", ";
-				os << "contour_second_file = " << contour_second_file << ", ";
-				os << "curvature_default_file = " << curvature_default_file << ", ";
-				os << "curvature_second_file = " << curvature_second_file << ", ";
-				os << "dataDir = " << dataDir << ", ";
-				os << "delta_t_calc = " << delta_t_calc << ", ";
-				os << "delta_t_trigger = " << delta_t_trigger << ", ";
-				os << "followHysteresis = " << followHysteresis << ", ";
-				os << "freeBehaviorDist = " << freeBehaviorDist << ", ";
-				os << "freeBehaviorDist_second = " << freeBehaviorDist_second << ", ";
-				os << "lookup_default_file = " << lookup_default_file << ", ";
-				os << "lookup_default_file_compressed = " << lookup_default_file_compressed << ", ";
-				os << "lookup_second_file = " << lookup_second_file << ", ";
-				os << "lookup_second_file_compressed = " << lookup_second_file_compressed << ", ";
-				os << "rotation_acc = " << rotation_acc << ", ";
-				os << "translation_acc = " << translation_acc << ", ";
-				os << "use_obstacle_history = " << use_obstacle_history << ", ";
+				os << "accel_default_file = " << accel_default_file; os << ", ";
+				os << "accel_second_file = " << accel_second_file; os << ", ";
+				os << "contour_default_file = " << contour_default_file; os << ", ";
+				os << "contour_second_file = " << contour_second_file; os << ", ";
+				os << "curvature_default_file = " << curvature_default_file; os << ", ";
+				os << "curvature_second_file = " << curvature_second_file; os << ", ";
+				os << "dataDir = " << dataDir; os << ", ";
+				os << "delta_t_calc = " << delta_t_calc; os << ", ";
+				os << "delta_t_trigger = " << delta_t_trigger; os << ", ";
+				os << "followHysteresis = " << followHysteresis; os << ", ";
+				os << "freeBehaviorDist = " << freeBehaviorDist; os << ", ";
+				os << "freeBehaviorDist_second = " << freeBehaviorDist_second; os << ", ";
+				os << "lookup_default_file = " << lookup_default_file; os << ", ";
+				os << "lookup_default_file_compressed = " << lookup_default_file_compressed; os << ", ";
+				os << "lookup_second_file = " << lookup_second_file; os << ", ";
+				os << "lookup_second_file_compressed = " << lookup_second_file_compressed; os << ", ";
+				os << "rotation_acc = " << rotation_acc; os << ", ";
+				os << "translation_acc = " << translation_acc; os << ", ";
+				os << "use_obstacle_history = " << use_obstacle_history;
 				os << ")\n";
 			}
 			
@@ -252,15 +253,15 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "CdlRotate(";
-				os << "error = " << error << ", ";
-				os << "rotDev1 = " << rotDev1 << ", ";
-				os << "rotDev2 = " << rotDev2 << ", ";
-				os << "rotDev3 = " << rotDev3 << ", ";
-				os << "rotDev4 = " << rotDev4 << ", ";
-				os << "rotSpeed1 = " << rotSpeed1 << ", ";
-				os << "rotSpeed2 = " << rotSpeed2 << ", ";
-				os << "rotSpeed3 = " << rotSpeed3 << ", ";
-				os << "rotSpeed4 = " << rotSpeed4 << ", ";
+				os << "error = " << error; os << ", ";
+				os << "rotDev1 = " << rotDev1; os << ", ";
+				os << "rotDev2 = " << rotDev2; os << ", ";
+				os << "rotDev3 = " << rotDev3; os << ", ";
+				os << "rotDev4 = " << rotDev4; os << ", ";
+				os << "rotSpeed1 = " << rotSpeed1; os << ", ";
+				os << "rotSpeed2 = " << rotSpeed2; os << ", ";
+				os << "rotSpeed3 = " << rotSpeed3; os << ", ";
+				os << "rotSpeed4 = " << rotSpeed4;
 				os << ")\n";
 			}
 			
@@ -307,12 +308,12 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Server(";
-				os << "baseClientInit = " << baseClientInit << ", ";
-				os << "irClientInit = " << irClientInit << ", ";
-				os << "laserClient2Init = " << laserClient2Init << ", ";
-				os << "pathNavInit = " << pathNavInit << ", ";
-				os << "plannerInit = " << plannerInit << ", ";
-				os << "trackerInit = " << trackerInit << ", ";
+				os << "baseClientInit = " << baseClientInit; os << ", ";
+				os << "irClientInit = " << irClientInit; os << ", ";
+				os << "laserClient2Init = " << laserClient2Init; os << ", ";
+				os << "pathNavInit = " << pathNavInit; os << ", ";
+				os << "plannerInit = " << plannerInit; os << ", ";
+				os << "trackerInit = " << trackerInit;
 				os << ")\n";
 			}
 			
@@ -366,7 +367,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tAPPROACHDIST(";
-						os << "approachDistance = " << approachDistance << ", ";
+						os << "approachDistance = " << approachDistance;
 						os << ")\n";
 					}
 					
@@ -481,7 +482,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tFREEBEHAVIOR(";
-						os << "free = " << free << ", ";
+						os << "free = " << free;
 						os << ")\n";
 					}
 					
@@ -632,7 +633,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tGOALMODE(";
-						os << "gm = " << gm << ", ";
+						os << "gm = " << gm;
 						os << ")\n";
 					}
 					
@@ -670,9 +671,9 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tGOALREGION(";
-						os << "goalA = " << goalA << ", ";
-						os << "goalX = " << goalX << ", ";
-						os << "goalY = " << goalY << ", ";
+						os << "goalA = " << goalA; os << ", ";
+						os << "goalX = " << goalX; os << ", ";
+						os << "goalY = " << goalY;
 						os << ")\n";
 					}
 					
@@ -704,7 +705,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tID(";
-						os << "id = " << id << ", ";
+						os << "id = " << id;
 						os << ")\n";
 					}
 					
@@ -819,7 +820,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tLOOKUPTABLE(";
-						os << "lt = " << lt << ", ";
+						os << "lt = " << lt;
 						os << ")\n";
 					}
 					
@@ -934,7 +935,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tPATHNAVFREEBEHAVIOR(";
-						os << "free = " << free << ", ";
+						os << "free = " << free;
 						os << ")\n";
 					}
 					
@@ -969,8 +970,8 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tROTVEL(";
-						os << "wmax = " << wmax << ", ";
-						os << "wmin = " << wmin << ", ";
+						os << "wmax = " << wmax; os << ", ";
+						os << "wmin = " << wmin;
 						os << ")\n";
 					}
 					
@@ -1002,7 +1003,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tSAFETYCL(";
-						os << "safetyClearance = " << safetyClearance << ", ";
+						os << "safetyClearance = " << safetyClearance;
 						os << ")\n";
 					}
 					
@@ -1037,8 +1038,8 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tTRANSVEL(";
-						os << "vmax = " << vmax << ", ";
-						os << "vmin = " << vmin << ", ";
+						os << "vmax = " << vmax; os << ", ";
+						os << "vmin = " << vmin;
 						os << ")\n";
 					}
 					

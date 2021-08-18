@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -157,12 +158,12 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Settings(";
-				os << "communicationType = " << communicationType << ", ";
-				os << "ip = " << ip << ", ";
-				os << "port = " << port << ", ";
-				os << "socket_timeout_s = " << socket_timeout_s << ", ";
-				os << "use_socket_timeout = " << use_socket_timeout << ", ";
-				os << "verbose = " << verbose << ", ";
+				os << "communicationType = " << communicationType; os << ", ";
+				os << "ip = " << ip; os << ", ";
+				os << "port = " << port; os << ", ";
+				os << "socket_timeout_s = " << socket_timeout_s; os << ", ";
+				os << "use_socket_timeout = " << use_socket_timeout; os << ", ";
+				os << "verbose = " << verbose;
 				os << ")\n";
 			}
 			

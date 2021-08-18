@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -69,10 +70,10 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Robot(";
-				os << "daemonIP = " << daemonIP << ", ";
-				os << "maxRotVel = " << maxRotVel << ", ";
-				os << "maxVelX = " << maxVelX << ", ";
-				os << "maxVelY = " << maxVelY << ", ";
+				os << "daemonIP = " << daemonIP; os << ", ";
+				os << "maxRotVel = " << maxRotVel; os << ", ";
+				os << "maxVelX = " << maxVelX; os << ", ";
+				os << "maxVelY = " << maxVelY;
 				os << ")\n";
 			}
 			
@@ -107,8 +108,8 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Bumper(";
-				os << "bumperTimeOutMSec = " << bumperTimeOutMSec << ", ";
-				os << "bumperTimeOutSec = " << bumperTimeOutSec << ", ";
+				os << "bumperTimeOutMSec = " << bumperTimeOutMSec; os << ", ";
+				os << "bumperTimeOutSec = " << bumperTimeOutSec;
 				os << ")\n";
 			}
 			
@@ -152,11 +153,11 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "General(";
-				os << "hasSignalState = " << hasSignalState << ", ";
-				os << "poseFileName = " << poseFileName << ", ";
-				os << "useLocalizationEvent = " << useLocalizationEvent << ", ";
-				os << "verbose = " << verbose << ", ";
-				os << "writePoseFile = " << writePoseFile << ", ";
+				os << "hasSignalState = " << hasSignalState; os << ", ";
+				os << "poseFileName = " << poseFileName; os << ", ";
+				os << "useLocalizationEvent = " << useLocalizationEvent; os << ", ";
+				os << "verbose = " << verbose; os << ", ";
+				os << "writePoseFile = " << writePoseFile;
 				os << ")\n";
 			}
 			

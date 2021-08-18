@@ -36,6 +36,20 @@ Laser3TaskCore::~Laser3TaskCore()
 {
 }
 
+int Laser3TaskCore::start() {
+	this->resetTrigger();
+	return SmartACE::Task::start();
+}
+
+int Laser3TaskCore::start(const ACE_Sched_Params &sched_params, const int &cpuAffinity) {
+	return SmartACE::Task::start(sched_params, cpuAffinity);
+}
+
+int Laser3TaskCore::stop(const bool wait_till_stopped) {
+	this->cancelTrigger();
+	return SmartACE::Task::stop(wait_till_stopped);
+}
+
 
 void Laser3TaskCore::notify_all_interaction_observers() {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);

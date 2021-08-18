@@ -1,0 +1,26 @@
+ComponentDefinition SmartFestoFleetCom logo "/SmartFestoFleetCom/model/logo.png"
+{
+Activity ReadCommandTask
+	{
+	}
+	Activity StatusSerialTask
+	{
+		DefaultTrigger PeriodicTimer 2.0 Hz
+	}
+	Activity CommandResultTask
+	{
+	InputPortLink TaskResultIn { oversamplingOk undersamplingOk }
+	}
+	CoordinationSlavePort CoordinationPort implements DomainRobotFleet.FleetCommunicationCoordinationService
+	{
+	}
+	ComponentParameters SmartFestoFleetCom slave CoordinationPort
+	OutputPort TaskEventOut implements CommBasicObjects.TaskEvent realizedBy ReadCommandTask {
+	}
+	InputPort TaskResultIn implements CommBasicObjects.TaskResult {
+	}
+	RequestPort kbQueryClient implements CommBasicObjects.CommKBQuery {
+	}
+	InputPort LaserSafetyEventServiceIn implements CommBasicObjects.LaserSafetyEventService {
+	}
+}

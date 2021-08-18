@@ -29,14 +29,6 @@
 class ComponentSlcPackingPortFactoryInterface;
 class ComponentSlcPackingExtension;
 
-// includes for ComponentSlcPackingROS1InterfacesExtension
-
-// includes for ComponentSlcPackingROSExtension
-
-// includes for ComponentSlcPackingRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentSlcPackingExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -77,6 +69,8 @@ class ComponentSlcPackingExtension;
 #include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP ComponentSlcPacking::instance()
 
@@ -148,19 +142,10 @@ public:
 	EnvironmentQueryServiceAnswHandler *environmentQueryServiceAnswHandler;
 	ObjectQueryServiceAnswHandler *objectQueryServiceAnswHandler;
 	
-	// definitions of ComponentSlcPackingROS1InterfacesExtension
-	
-	// definitions of ComponentSlcPackingROSExtension
-	
-	// definitions of ComponentSlcPackingRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentSlcPackingExtension
-	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	ParamUpdateHandler paramHandler;
@@ -304,16 +289,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} rgbdQueryClient;
-		
-		// -- parameters for ComponentSlcPackingROS1InterfacesExtension
-		
-		// -- parameters for ComponentSlcPackingROSExtension
-		
-		// -- parameters for ComponentSlcPackingRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentSlcPackingExtension
 		
 	} connections;
 };

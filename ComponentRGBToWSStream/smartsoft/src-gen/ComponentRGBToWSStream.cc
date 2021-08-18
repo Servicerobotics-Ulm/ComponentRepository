@@ -41,6 +41,7 @@ ComponentRGBToWSStream::ComponentRGBToWSStream()
 	videoImageClientUpcallManager = NULL;
 	videoImageClientInputCollector = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	
@@ -139,10 +140,18 @@ void ComponentRGBToWSStream::startAllTasks() {
 		ACE_Sched_Params cameraTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.cameraTask.scheduler == "FIFO") {
 			cameraTask_SchedParams.policy(ACE_SCHED_FIFO);
-			cameraTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				cameraTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				cameraTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.cameraTask.scheduler == "RR") {
 			cameraTask_SchedParams.policy(ACE_SCHED_RR);
-			cameraTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				cameraTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				cameraTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		cameraTask->start(cameraTask_SchedParams, connections.cameraTask.cpuAffinity);
 	} else {
@@ -153,10 +162,18 @@ void ComponentRGBToWSStream::startAllTasks() {
 		ACE_Sched_Params serverTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.serverTask.scheduler == "FIFO") {
 			serverTask_SchedParams.policy(ACE_SCHED_FIFO);
-			serverTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				serverTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				serverTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.serverTask.scheduler == "RR") {
 			serverTask_SchedParams.policy(ACE_SCHED_RR);
-			serverTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				serverTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				serverTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		serverTask->start(serverTask_SchedParams, connections.serverTask.cpuAffinity);
 	} else {
@@ -237,7 +254,8 @@ void ComponentRGBToWSStream::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -259,7 +277,7 @@ void ComponentRGBToWSStream::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.cameraTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.cameraTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.cameraTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(cameraTask);
@@ -284,7 +302,7 @@ void ComponentRGBToWSStream::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.serverTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.serverTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.serverTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(serverTask);
@@ -386,12 +404,14 @@ void ComponentRGBToWSStream::fini()
 	// destroy client ports
 	delete videoImageClient;
 
+	// destroy request-handlers
+
 	// destroy server ports
+	
 	// destroy event-test handlers (if needed)
 	
-	// destroy request-handlers
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	

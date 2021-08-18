@@ -34,7 +34,7 @@ Robot {
 }
 ```
 
-other similar Components:
+other similar components:
 
 - [ComponentKinectV1Server](../ComponentKinectV1Server)
 - [ComponentKinectV2Server](../ComponentKinectV2Server)
@@ -94,7 +94,7 @@ other similar Components:
 ### UrPosePushTimedClient
 
 *Documentation:*
-<p>Reads peridically the robot arm position (if the camera is mounted on it): CommManipulatorObjects.CommMobileManipulatorState
+<p>Reads periodically the robot arm position (if the camera is mounted on it): CommManipulatorObjects.CommMobileManipulatorState
 </p>
 <p></p>
 
@@ -110,7 +110,7 @@ other similar Components:
 ### RGBImagePushServiceOut
 
 *Documentation:*
-<p>Writes peridically the color image: DomainVision.CommRGBDImage
+<p>Writes periodically the color image: DomainVision.CommRGBDImage
 </p>
 <p></p>
 
@@ -118,7 +118,7 @@ other similar Components:
 ### depthPushNewestServer
 
 *Documentation:*
-<p>Writes peridically the range image: DomainVision.CommDepthImage
+<p>Writes periodically the range image: DomainVision.CommDepthImage
 </p>
 <p></p>
 
@@ -126,7 +126,7 @@ other similar Components:
 ### RGBDImagePushServiceOut
 
 *Documentation:*
-<p>Writes peridically the color image and range image: DomainVision.CommRGBDImage
+<p>Writes periodically the color image and range image: DomainVision.CommRGBDImage
 </p>
 <p></p>
 

@@ -29,14 +29,6 @@
 class ComponentSeq2SeqComPortFactoryInterface;
 class ComponentSeq2SeqComExtension;
 
-// includes for ComponentSeq2SeqComROS1InterfacesExtension
-
-// includes for ComponentSeq2SeqComROSExtension
-
-// includes for ComponentSeq2SeqComRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentSeq2SeqComExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -68,6 +60,8 @@ class ComponentSeq2SeqComExtension;
 #include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP ComponentSeq2SeqCom::instance()
 
@@ -137,19 +131,10 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of ComponentSeq2SeqComROS1InterfacesExtension
-	
-	// definitions of ComponentSeq2SeqComROSExtension
-	
-	// definitions of ComponentSeq2SeqComRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentSeq2SeqComExtension
-	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	ParamUpdateHandler paramHandler;
@@ -267,16 +252,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} taskSendOut;
-		
-		// -- parameters for ComponentSeq2SeqComROS1InterfacesExtension
-		
-		// -- parameters for ComponentSeq2SeqComROSExtension
-		
-		// -- parameters for ComponentSeq2SeqComRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentSeq2SeqComExtension
 		
 	} connections;
 };

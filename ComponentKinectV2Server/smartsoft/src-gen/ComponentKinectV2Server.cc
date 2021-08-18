@@ -32,7 +32,7 @@ ComponentKinectV2Server::ComponentKinectV2Server()
 	
 	// set all pointer members to NULL
 	colorImageQueryHandler = NULL;
-	//coordinationPort = NULL;
+	//componentKinectV2ServerParams = NULL;
 	//coordinationPort = NULL;
 	imageQueryHandler = NULL;
 	imageTask = NULL;
@@ -56,6 +56,7 @@ ComponentKinectV2Server::ComponentKinectV2Server()
 	ptuPosePushNewestClientUpcallManager = NULL;
 	ptuPosePushNewestClientInputCollector = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -94,12 +95,6 @@ ComponentKinectV2Server::ComponentKinectV2Server()
 	connections.imageTask.scheduler = "DEFAULT";
 	connections.imageTask.priority = -1;
 	connections.imageTask.cpuAffinity = -1;
-	
-	// initialize members of ComponentKinectV2ServerROS1InterfacesExtension
-	
-	// initialize members of ComponentKinectV2ServerRestInterfacesExtension
-	
-	// initialize members of PlainOpcUaComponentKinectV2ServerExtension
 	
 }
 
@@ -190,10 +185,18 @@ void ComponentKinectV2Server::startAllTasks() {
 		ACE_Sched_Params imageTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.imageTask.scheduler == "FIFO") {
 			imageTask_SchedParams.policy(ACE_SCHED_FIFO);
-			imageTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				imageTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				imageTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.imageTask.scheduler == "RR") {
 			imageTask_SchedParams.policy(ACE_SCHED_RR);
-			imageTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				imageTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				imageTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		imageTask->start(imageTask_SchedParams, connections.imageTask.cpuAffinity);
 	} else {
@@ -227,12 +230,6 @@ void ComponentKinectV2Server::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentKinectV2ServerROS1InterfacesExtension
-		
-		// initializations of ComponentKinectV2ServerRestInterfacesExtension
-		
-		// initializations of PlainOpcUaComponentKinectV2ServerExtension
 		
 		
 		// initialize all registered port-factories
@@ -299,7 +296,8 @@ void ComponentKinectV2Server::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		if (stateSlave->defineStates("PushImage" ,"pushimage") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion PushImage.pushimage" << std::endl;
 		if (stateSlave->defineStates("QueryImage" ,"queryimage") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion QueryImage.queryimage" << std::endl;
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
@@ -329,7 +327,7 @@ void ComponentKinectV2Server::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.imageTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.imageTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.imageTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(imageTask);
@@ -429,24 +427,26 @@ void ComponentKinectV2Server::fini()
 	delete basePushTimedClient;
 	delete ptuPosePushNewestClient;
 
+	// destroy request-handlers
+	delete colorImageQueryHandler;
+	delete imageQueryHandler;
+
 	// destroy server ports
 	delete rGBDImageQueryServiceOutWrapper;
 	delete rGBDImageQueryServiceOut;
 	delete rGBImagePushServiceOutWrapper;
 	delete rGBImagePushServiceOut;
-	delete colorImageQueryServer;
 	delete colorImageQueryServerInputTaskTrigger;
+	delete colorImageQueryServer;
 	delete depthImagePushServiceOutWrapper;
 	delete depthImagePushServiceOut;
-	delete imageQueryV2Server;
 	delete imageQueryV2ServerInputTaskTrigger;
+	delete imageQueryV2Server;
+	
 	// destroy event-test handlers (if needed)
 	
-	// destroy request-handlers
-	delete colorImageQueryHandler;
-	delete imageQueryHandler;
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -466,12 +466,6 @@ void ComponentKinectV2Server::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentKinectV2ServerROS1InterfacesExtension
-	
-	// destruction of ComponentKinectV2ServerRestInterfacesExtension
-	
-	// destruction of PlainOpcUaComponentKinectV2ServerExtension
 	
 }
 
@@ -609,12 +603,6 @@ void ComponentKinectV2Server::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("ImageTask", "cpuAffinity")) {
 			parameter.getInteger("ImageTask", "cpuAffinity", connections.imageTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentKinectV2ServerROS1InterfacesExtension
-		
-		// load parameters for ComponentKinectV2ServerRestInterfacesExtension
-		
-		// load parameters for PlainOpcUaComponentKinectV2ServerExtension
 		
 		
 		// load parameters for all registered component-extensions

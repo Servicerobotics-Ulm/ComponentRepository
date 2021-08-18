@@ -32,7 +32,7 @@ ComponentWebInterfaceComissioning::ComponentWebInterfaceComissioning()
 	std::cout << "constructor of ComponentWebInterfaceComissioning\n";
 	
 	// set all pointer members to NULL
-	//coordinationPort = NULL;
+	//componentWebInterfaceComissioning = NULL;
 	//coordinationPort = NULL;
 	dataTask = NULL;
 	dataTaskTrigger = NULL;
@@ -47,6 +47,7 @@ ComponentWebInterfaceComissioning::ComponentWebInterfaceComissioning()
 	sequencerSendServerUpcallManager = NULL;
 	sequencerSendServerInputCollector = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -74,16 +75,6 @@ ComponentWebInterfaceComissioning::ComponentWebInterfaceComissioning()
 	connections.workerTask.priority = -1;
 	connections.workerTask.cpuAffinity = -1;
 	connections.sendHandler.prescale = 1;
-	
-	// initialize members of ComponentWebInterfaceComissioningROS1InterfacesExtension
-	
-	// initialize members of ComponentWebInterfaceComissioningROSExtension
-	
-	// initialize members of ComponentWebInterfaceComissioningRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentWebInterfaceComissioningExtension
 	
 }
 
@@ -136,10 +127,18 @@ void ComponentWebInterfaceComissioning::startAllTasks() {
 		ACE_Sched_Params dataTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.dataTask.scheduler == "FIFO") {
 			dataTask_SchedParams.policy(ACE_SCHED_FIFO);
-			dataTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				dataTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				dataTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.dataTask.scheduler == "RR") {
 			dataTask_SchedParams.policy(ACE_SCHED_RR);
-			dataTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				dataTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				dataTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		dataTask->start(dataTask_SchedParams, connections.dataTask.cpuAffinity);
 	} else {
@@ -150,10 +149,18 @@ void ComponentWebInterfaceComissioning::startAllTasks() {
 		ACE_Sched_Params workerTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.workerTask.scheduler == "FIFO") {
 			workerTask_SchedParams.policy(ACE_SCHED_FIFO);
-			workerTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				workerTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				workerTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.workerTask.scheduler == "RR") {
 			workerTask_SchedParams.policy(ACE_SCHED_RR);
-			workerTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				workerTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				workerTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		workerTask->start(workerTask_SchedParams, connections.workerTask.cpuAffinity);
 	} else {
@@ -186,16 +193,6 @@ void ComponentWebInterfaceComissioning::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentWebInterfaceComissioningROS1InterfacesExtension
-		
-		// initializations of ComponentWebInterfaceComissioningROSExtension
-		
-		// initializations of ComponentWebInterfaceComissioningRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentWebInterfaceComissioningExtension
 		
 		
 		// initialize all registered port-factories
@@ -251,7 +248,8 @@ void ComponentWebInterfaceComissioning::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -271,7 +269,7 @@ void ComponentWebInterfaceComissioning::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.dataTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.dataTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.dataTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(dataTask);
@@ -296,7 +294,7 @@ void ComponentWebInterfaceComissioning::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.workerTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.workerTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.workerTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(workerTask);
@@ -398,16 +396,18 @@ void ComponentWebInterfaceComissioning::fini()
 
 	// destroy client ports
 
+	// destroy request-handlers
+
 	// destroy server ports
 	delete sequencerEventServerWrapper;
 	delete sequencerEventServer;
 	delete sequencerSendServer;
+	
 	// destroy event-test handlers (if needed)
 	sequencerEventServerEventTestHandler;
 	
-	// destroy request-handlers
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -427,16 +427,6 @@ void ComponentWebInterfaceComissioning::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentWebInterfaceComissioningROS1InterfacesExtension
-	
-	// destruction of ComponentWebInterfaceComissioningROSExtension
-	
-	// destruction of ComponentWebInterfaceComissioningRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentWebInterfaceComissioningExtension
 	
 }
 
@@ -563,16 +553,6 @@ void ComponentWebInterfaceComissioning::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("SendHandler", "prescale")) {
 			parameter.getInteger("SendHandler", "prescale", connections.sendHandler.prescale);
 		}
-		
-		// load parameters for ComponentWebInterfaceComissioningROS1InterfacesExtension
-		
-		// load parameters for ComponentWebInterfaceComissioningROSExtension
-		
-		// load parameters for ComponentWebInterfaceComissioningRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentWebInterfaceComissioningExtension
 		
 		
 		// load parameters for all registered component-extensions

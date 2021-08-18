@@ -31,7 +31,7 @@ ComponentUnicapImageServer::ComponentUnicapImageServer()
 	std::cout << "constructor of ComponentUnicapImageServer\n";
 	
 	// set all pointer members to NULL
-	//coordinationPort = NULL;
+	//componentUnicapImageServerParams = NULL;
 	//coordinationPort = NULL;
 	imageQueryHandler = NULL;
 	imageTask = NULL;
@@ -49,6 +49,7 @@ ComponentUnicapImageServer::ComponentUnicapImageServer()
 	ptuPushTimedClientUpcallManager = NULL;
 	ptuPushTimedClientInputCollector = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -171,10 +172,18 @@ void ComponentUnicapImageServer::startAllTasks() {
 		ACE_Sched_Params imageTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.imageTask.scheduler == "FIFO") {
 			imageTask_SchedParams.policy(ACE_SCHED_FIFO);
-			imageTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				imageTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				imageTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.imageTask.scheduler == "RR") {
 			imageTask_SchedParams.policy(ACE_SCHED_RR);
-			imageTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				imageTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				imageTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		imageTask->start(imageTask_SchedParams, connections.imageTask.cpuAffinity);
 	} else {
@@ -267,7 +276,8 @@ void ComponentUnicapImageServer::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		if (stateSlave->defineStates("PushImage" ,"PushImage") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion PushImage.PushImage" << std::endl;
 		if (stateSlave->defineStates("QueryImage" ,"QueryImage") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion QueryImage.QueryImage" << std::endl;
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
@@ -297,7 +307,7 @@ void ComponentUnicapImageServer::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.imageTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.imageTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.imageTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(imageTask);
@@ -397,17 +407,19 @@ void ComponentUnicapImageServer::fini()
 	delete basePushTimedClient;
 	delete ptuPushTimedClient;
 
+	// destroy request-handlers
+	delete imageQueryHandler;
+
 	// destroy server ports
 	delete imagePushNewestServerWrapper;
 	delete imagePushNewestServer;
-	delete imageQueryServer;
 	delete imageQueryServerInputTaskTrigger;
+	delete imageQueryServer;
+	
 	// destroy event-test handlers (if needed)
 	
-	// destroy request-handlers
-	delete imageQueryHandler;
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	

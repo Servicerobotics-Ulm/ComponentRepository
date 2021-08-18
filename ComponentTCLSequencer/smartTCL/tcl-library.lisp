@@ -54,6 +54,28 @@
       (format t "  sync-vars      : ~s ~%" (get-value tcb 'sync-variables)))))
 
 
+(defun show-tcb ( tcb)
+
+(format t "~%--------------------------------~%")
+      (format t "name             : ~s ~%" (get-value tcb 'name))
+      (format t "  module         : ~a ~%" (get-value tcb 'module))
+      (format t "  module-inst    : ~a ~%" (get-value tcb 'module-inst))
+      (format t "  highlevel-flag : ~a ~%" (get-value tcb 'highlevel-flag))
+      (format t "  avail-flag     : ~s ~%" (get-value tcb 'avail-flag))
+      (format t "  priority       : ~s ~%" (get-value tcb 'priority))
+      (format t "  in-vars        : ~s ~%" (get-value tcb 'in-vars))
+      (format t "  out-vars       : ~s ~%" (get-value tcb 'out-vars))
+      (format t "  in-out         : ~s ~%" (get-value tcb 'in-out))
+      (format t "  precondition   : ~s ~%" (get-value tcb 'precondition))
+      (format t "  action         : ~s ~%" (get-value tcb 'action))
+      (format t "  abort-action   : ~s ~%" (get-value tcb 'abort-action))
+      (format t "  plan           : ~s ~%" (get-value tcb 'plan))
+      (format t "  rules          : ~s ~%" (get-value tcb 'rules))
+      (format t "  sync-vars      : ~s ~%" (get-value tcb 'sync-variables)))
+
+
+
+
 (defun show-tcl-event-handler ()
   (let ((tcb-list     (query-kb-all *MEMORY* '(is-a) '((is-a event-handler)))))
     (dolist (tcb tcb-list)
@@ -94,7 +116,8 @@
           (setf priority (second priority))))
       
       ;; add TCB to KB --> SIGNATURE name in-vars out-vars precondition priority !!!!!!!!!!!!
-      (update-kb *MEMORY* '(is-a name in-vars out-vars precondition priority)
+      ;; - the concept of the coordination modules requires the module as namespace to avoid name conflicts
+      (update-kb *MEMORY* '(is-a name in-vars out-vars precondition priority module)
         `( (is-a tcb)
            (name ,name)
            (avail-flag ,t)
@@ -134,7 +157,8 @@
           (setf priority (second priority))))
       
       ;; add TCB to KB --> SIGNATURE name in-vars out-vars precondition priority !!!!!!!!!!!!
-      (update-kb *MEMORY* '(is-a name in-vars out-vars precondition priority)
+      ;; - the concept of the coordination modules requires the module as namespace to avoid name conflicts
+      (update-kb *MEMORY* '(is-a name in-vars out-vars precondition priority module)
         `( (is-a tcb)
            (name ,name)
            (avail-flag ,t)
@@ -214,7 +238,8 @@
           (setf priority (second priority))))
       
       ;; add TCB to KB --> SIGNATURE name in-vars out-vars precondition priority !!!!!!!!!!!!
-      (update-kb *MEMORY* '(is-a name in-vars out-vars precondition priority)
+      ;; - the concept of the coordination modules requires the module as namespace to avoid name conflicts
+      (update-kb *MEMORY* '(is-a name in-vars out-vars precondition priority module)
         `( (is-a tcb)
            (name ,name)
            (avail-flag ,t)

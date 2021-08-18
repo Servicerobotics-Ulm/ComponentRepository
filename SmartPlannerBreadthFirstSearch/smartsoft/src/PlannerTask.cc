@@ -476,8 +476,8 @@ int PlannerTask::on_execute()
 	 myFile2.close();
 	 ////////////////////////////////////////////////////////
    #endif
-
-	// it is possible to return != 0 (e.g. when the task detects errors), then the outer loop breaks and the task stops
+	 //publish map containing the wavefront for visualization purpose
+	 COMP->currGridMapPushServiceOut->put(*plannerMap);
 	return 0;
 }
 int PlannerTask::on_exit()

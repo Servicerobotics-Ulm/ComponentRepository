@@ -77,8 +77,8 @@ ZAFH Servicerobotik Ulm, Germany
   (if *DEBUG-LI* (format t "name:~s element:~s~%" name element))
   (equal-symbol-string (cdr (assoc 'INST-NAME element)) name))
 
-
-(defun sendCommand (mod-type mod-inst ci-inst-name svc service prm)
+;; the argument event-mode is only used for activation of events
+(defun sendCommand (mod-type mod-inst ci-inst-name svc service prm event-mode)
   (if *DEBUG-LI* (format t "~%~%SEND COMMAND START~%"))
   (if *DEBUG-LI* (format t "mod-type: ~s~%" mod-type))
   (if *DEBUG-LI* (format t "mod-inst: ~s~%" mod-inst))
@@ -86,6 +86,7 @@ ZAFH Servicerobotik Ulm, Germany
   (if *DEBUG-LI* (format t "svc: ~s~%" svc))
   (if *DEBUG-LI* (format t "service: ~s~%" service))
   (if *DEBUG-LI* (format t "prm: ~s~%" prm))
+  (if *DEBUG-LI* (format t "event-mode: ~s~%" event-mode))
 
   ;;TODO REMOVE COMP_TYPE
   (let ((comp-type nil)
@@ -124,9 +125,10 @@ ZAFH Servicerobotik Ulm, Germany
                                         (compType_str (format nil "~a" comp-type))
                                         (compInstace_str (format nil "~a" ci-comp-inst))
                                         (service_str (format nil "~a" service))
-                                        (param_str (format nil "~s" prm)))
+                                        (param_str (format nil "~s" prm))
+                                        (eventMode_str (format nil "~a" event-mode)))
   ;;TODO REMOVE COMP_TYPE
-              (let ((ptr (command ciType_str ciInstance_str compType_str compInstace_str service_str param_str))
+              (let ((ptr (command ciType_str ciInstance_str compType_str compInstace_str service_str param_str eventMode_str))
                     (result nil))
                 (setf result (cffi:foreign-string-to-lisp ptr))
                 (cffi:foreign-free ptr)
@@ -134,8 +136,8 @@ ZAFH Servicerobotik Ulm, Germany
               result))))))
 
 
-(defun interface (mod mod-inst comp svc mth prm)
-  (read-from-string (sendCommand mod mod-inst comp svc mth prm)))
+(defun interface (mod mod-inst comp svc mth prm &optional (event-mode nil))
+  (read-from-string (sendCommand mod mod-inst comp svc mth prm event-mode)))
 
 ;;
 ;; USER INTERFACE
@@ -207,14 +209,14 @@ ZAFH Servicerobotik Ulm, Germany
    (result              :accessor smartsoft-result              :initform nil)))
 
 (defmethod generate-event ((instance smartsoft) parameter)
- ; (format t "generate-event ~s~%" parameter)
+;  (format t "generate-event ~s~%" parameter)
   (let* ((mod (first  parameter))
          (mod-inst (second  parameter))
          (ci-inst-name (third  parameter))
          (ci-type nil)
          (svc (fourth parameter))
-         (prm (fifth  parameter))
-         (mde (first  prm))
+         (mde (fifth  parameter))
+         (prm (sixth  parameter))
          (module (query-kb *MEMORY* '(is-a type inst-name) `((is-a coordination-module) (type ,mod) (inst-name ,mod-inst))))
          (tmp nil))
   
@@ -351,20 +353,18 @@ ZAFH Servicerobotik Ulm, Germany
                       (event-mod-inst (second  prm))
                       (event-comp (third prm))
                       (event-svc (fourth prm))
-                      (event-mde (fifth  prm)))
+                      (event-mde (fifth prm))
+                      (event-param (sixth prm)))
                     ;; generate event
-                    (setq result (generate-event instance (list event-mod event-mod-inst event-comp event-svc (list event-mde))))))
+                    (setq result (generate-event instance (list event-mod event-mod-inst event-comp event-svc event-mde event-param)))))
 
              ;; special - event - activate
              ( (and (equal mod 'special)
                     (equal svc 'event)
                     (equal mth 'activate))
-               (let ( (event-inst (first prm))
-                      (event-prm  (rest  prm)))
+               (let ( (event-inst (first prm)))
                     ;; activate event
-                    (if *DEBUG-LI* (format t "Event mode: ~a ~%" (event-mode event-inst)))
-                    (if *DEBUG-LI* (format t "Event prm: ~a ~%" event-prm))
-                    (setq result (activate event-inst (list (event-mode event-inst) event-prm)))
+                    (setq result (activate event-inst))
                     (if *DEBUG-LI* (format t "Event past activate: ~%"))
                     (if *DEBUG-LI* (format t "=================================~%"))
                     (if *DEBUG-LI* (show event-inst))
@@ -893,7 +893,7 @@ and adds the configuration to the kb"
 
 
 (cffi:defcfun "delay" :void (x :int ))
-(cffi:defcfun "command" :pointer (ciType :string) (ciInstance :string) (compType :string) (compInstace :string) (service :string) (param :string))
+(cffi:defcfun "command" :pointer (ciType :string) (ciInstance :string) (compType :string) (compInstace :string) (service :string) (param :string) (eventMode :string))
 (cffi:defcfun "initialize" :int (paramFile :string))
 (cffi:defcfun "loadcoordinationinterface" :pointer (ciName :string) (ciPath :string))
 (cffi:defcfun "instantiateci" :pointer (ciName :string) (ciInstanceName :string) (componentInstanceName :string) (serviceNameMap :string))

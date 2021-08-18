@@ -29,10 +29,6 @@
 class ComponentFileProviderPortFactoryInterface;
 class ComponentFileProviderExtension;
 
-// includes for ComponentFileProviderROSExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentFileProviderExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -49,12 +45,13 @@ class ComponentFileProviderExtension;
 #include <CommBasicObjects/CommFileWriteRequestACE.hh>
 
 // include tasks
-// include UpcallManagers
+// include UpcallManagers and InputCollectors
 
 // include input-handler(s)
 // include request-handler(s)
 #include "FileReadQueryAnswHandler.hh"
 #include "FileWriteQueryAnswHandler.hh"
+// output port wrappers
 
 // include handler
 #include "CompHandler.hh"
@@ -63,6 +60,8 @@ class ComponentFileProviderExtension;
 #include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP ComponentFileProvider::instance()
 
@@ -125,15 +124,10 @@ public:
 	FileReadQueryAnswHandler *fileReadQueryAnswHandler;
 	FileWriteQueryAnswHandler *fileWriteQueryAnswHandler;
 	
-	// definitions of ComponentFileProviderROSExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentFileProviderExtension
-	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	ParamUpdateHandler paramHandler;
@@ -223,12 +217,6 @@ public:
 		} fileWriteQueryAnsw;
 	
 		//--- client port parameter ---
-		
-		// -- parameters for ComponentFileProviderROSExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentFileProviderExtension
 		
 	} connections;
 };

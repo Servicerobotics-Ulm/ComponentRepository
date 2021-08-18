@@ -90,5 +90,9 @@ public:
 		return currentUpdateCount;
 	}
 	
+	
+	virtual int start() override;
+	virtual int start(const ACE_Sched_Params &sched_params, const int &cpuAffinity=-1) override;
+	virtual int stop(const bool wait_till_stopped=true) override;
 };
 #endif

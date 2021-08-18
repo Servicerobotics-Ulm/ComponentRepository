@@ -18,6 +18,9 @@
 
 #include "aceSmartSoft.hh"
 
+#include "nlohmann/json.hpp"
+
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -63,14 +66,16 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "OPCUAstatic(";
-				os << "object_name = " << object_name << ", ";
-				std::list<std::string>::const_iterator server_addressIt;
-				for(server_addressIt=server_address.begin(); server_addressIt!=server_address.end(); server_addressIt++)
+				os << "object_name = " << object_name; os << ", ";
+				os << "server_address = [";
+				for(auto server_addressIt = server_address.begin(); server_addressIt != server_address.end(); server_addressIt++)
 				{
-				os << "server_address = " << *server_addressIt << ", ";
-				os << "server_address = " << *server_addressIt << ", ";
-				os << "server_address = " << *server_addressIt << ", ";
+					if(server_addressIt != server_address.begin()) {
+						os << ", ";
+					}
+					os << *server_addressIt;
 				}
+				os << "]";
 				os << ")\n";
 			}
 			
@@ -162,27 +167,27 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Robot(";
-				os << "FallingEdge_PW_Load_mSec = " << FallingEdge_PW_Load_mSec << ", ";
-				os << "FallingEdge_PW_Unload_mSec = " << FallingEdge_PW_Unload_mSec << ", ";
-				os << "LoadProcess_TimeOutSec = " << LoadProcess_TimeOutSec << ", ";
-				os << "NoOf_FallingEdge_Load = " << NoOf_FallingEdge_Load << ", ";
-				os << "NoOf_FallingEdge_Unload = " << NoOf_FallingEdge_Unload << ", ";
-				os << "UnloadProcess_TimeOutSec = " << UnloadProcess_TimeOutSec << ", ";
-				os << "ack_pressed_din = " << ack_pressed_din << ", ";
-				os << "belt_time_out_sec = " << belt_time_out_sec << ", ";
-				os << "box_present_din = " << box_present_din << ", ";
-				os << "dock_complete_dout = " << dock_complete_dout << ", ";
-				os << "ignore_station_communication = " << ignore_station_communication << ", ";
-				os << "ignore_station_communication_unload_time_sec = " << ignore_station_communication_unload_time_sec << ", ";
-				os << "load_motor_direction = " << load_motor_direction << ", ";
-				os << "manual_load_dout = " << manual_load_dout << ", ";
-				os << "signal_error_dout = " << signal_error_dout << ", ";
-				os << "signal_loading_dout = " << signal_loading_dout << ", ";
-				os << "signal_unloading_dout = " << signal_unloading_dout << ", ";
-				os << "station_communication_delay_sec = " << station_communication_delay_sec << ", ";
-				os << "station_communication_delay_usec = " << station_communication_delay_usec << ", ";
-				os << "trans_read_din = " << trans_read_din << ", ";
-				os << "unload_motor_direction = " << unload_motor_direction << ", ";
+				os << "FallingEdge_PW_Load_mSec = " << FallingEdge_PW_Load_mSec; os << ", ";
+				os << "FallingEdge_PW_Unload_mSec = " << FallingEdge_PW_Unload_mSec; os << ", ";
+				os << "LoadProcess_TimeOutSec = " << LoadProcess_TimeOutSec; os << ", ";
+				os << "NoOf_FallingEdge_Load = " << NoOf_FallingEdge_Load; os << ", ";
+				os << "NoOf_FallingEdge_Unload = " << NoOf_FallingEdge_Unload; os << ", ";
+				os << "UnloadProcess_TimeOutSec = " << UnloadProcess_TimeOutSec; os << ", ";
+				os << "ack_pressed_din = " << ack_pressed_din; os << ", ";
+				os << "belt_time_out_sec = " << belt_time_out_sec; os << ", ";
+				os << "box_present_din = " << box_present_din; os << ", ";
+				os << "dock_complete_dout = " << dock_complete_dout; os << ", ";
+				os << "ignore_station_communication = " << ignore_station_communication; os << ", ";
+				os << "ignore_station_communication_unload_time_sec = " << ignore_station_communication_unload_time_sec; os << ", ";
+				os << "load_motor_direction = " << load_motor_direction; os << ", ";
+				os << "manual_load_dout = " << manual_load_dout; os << ", ";
+				os << "signal_error_dout = " << signal_error_dout; os << ", ";
+				os << "signal_loading_dout = " << signal_loading_dout; os << ", ";
+				os << "signal_unloading_dout = " << signal_unloading_dout; os << ", ";
+				os << "station_communication_delay_sec = " << station_communication_delay_sec; os << ", ";
+				os << "station_communication_delay_usec = " << station_communication_delay_usec; os << ", ";
+				os << "trans_read_din = " << trans_read_din; os << ", ";
+				os << "unload_motor_direction = " << unload_motor_direction;
 				os << ")\n";
 			}
 			
@@ -236,7 +241,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tSetStationID(";
-						os << "id = " << id << ", ";
+						os << "id = " << id;
 						os << ")\n";
 					}
 					
@@ -332,6 +337,46 @@ public:
 		
 		// Instance params (encapsulated in a wrapper class for each instantiated parameter repository)
 		CommRobotinoObjects.to_ostream(os);
+	}
+	
+	std::string getAsJSONString() {
+		nlohmann::json param;
+	
+		param["OPCUAstatic"] = nlohmann::json {
+			{"object_name" , getOPCUAstatic().getObject_name()},
+			{"server_address" , getOPCUAstatic().getServer_address()}
+		};
+		param["Robot"] = nlohmann::json {
+			{"FallingEdge_PW_Load_mSec" , getRobot().getFallingEdge_PW_Load_mSec()},
+			{"FallingEdge_PW_Unload_mSec" , getRobot().getFallingEdge_PW_Unload_mSec()},
+			{"LoadProcess_TimeOutSec" , getRobot().getLoadProcess_TimeOutSec()},
+			{"NoOf_FallingEdge_Load" , getRobot().getNoOf_FallingEdge_Load()},
+			{"NoOf_FallingEdge_Unload" , getRobot().getNoOf_FallingEdge_Unload()},
+			{"UnloadProcess_TimeOutSec" , getRobot().getUnloadProcess_TimeOutSec()},
+			{"ack_pressed_din" , getRobot().getAck_pressed_din()},
+			{"belt_time_out_sec" , getRobot().getBelt_time_out_sec()},
+			{"box_present_din" , getRobot().getBox_present_din()},
+			{"dock_complete_dout" , getRobot().getDock_complete_dout()},
+			{"ignore_station_communication" , getRobot().getIgnore_station_communication()},
+			{"ignore_station_communication_unload_time_sec" , getRobot().getIgnore_station_communication_unload_time_sec()},
+			{"load_motor_direction" , getRobot().getLoad_motor_direction()},
+			{"manual_load_dout" , getRobot().getManual_load_dout()},
+			{"signal_error_dout" , getRobot().getSignal_error_dout()},
+			{"signal_loading_dout" , getRobot().getSignal_loading_dout()},
+			{"signal_unloading_dout" , getRobot().getSignal_unloading_dout()},
+			{"station_communication_delay_sec" , getRobot().getStation_communication_delay_sec()},
+			{"station_communication_delay_usec" , getRobot().getStation_communication_delay_usec()},
+			{"trans_read_din" , getRobot().getTrans_read_din()},
+			{"unload_motor_direction" , getRobot().getUnload_motor_direction()}
+		};
+	
+		param["RobotinoConveyerParameter"] = nlohmann::json {
+			{ "SetStationID", {
+				{"id" , getCommRobotinoObjects().getRobotinoConveyerParameter().getSetStationID().getId()}
+			}}
+		};
+		
+		return param.dump();
 	}
 };
 

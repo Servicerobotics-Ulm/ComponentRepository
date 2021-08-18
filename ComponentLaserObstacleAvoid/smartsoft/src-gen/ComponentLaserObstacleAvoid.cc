@@ -40,6 +40,7 @@ ComponentLaserObstacleAvoid::ComponentLaserObstacleAvoid()
 	robotTask = NULL;
 	robotTaskTrigger = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	
@@ -158,10 +159,18 @@ void ComponentLaserObstacleAvoid::startAllTasks() {
 		ACE_Sched_Params robotTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.robotTask.scheduler == "FIFO") {
 			robotTask_SchedParams.policy(ACE_SCHED_FIFO);
-			robotTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				robotTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				robotTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.robotTask.scheduler == "RR") {
 			robotTask_SchedParams.policy(ACE_SCHED_RR);
-			robotTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				robotTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				robotTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		robotTask->start(robotTask_SchedParams, connections.robotTask.cpuAffinity);
 	} else {
@@ -244,7 +253,8 @@ void ComponentLaserObstacleAvoid::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -271,7 +281,7 @@ void ComponentLaserObstacleAvoid::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.robotTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.robotTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.robotTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(robotTask);
@@ -292,7 +302,7 @@ void ComponentLaserObstacleAvoid::init(int argc, char *argv[])
 		{
 			// setup default task-trigger as PeriodicTimer
 			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-			int microseconds = 1000*1000 / 10.0;
+			int microseconds = (int)(1000.0*1000.0 / 10.0);
 			if(microseconds > 0) {
 				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				triggerPtr->attach(robotTask);
@@ -383,12 +393,14 @@ void ComponentLaserObstacleAvoid::fini()
 	delete navigationVelocityServiceOutWrapper;
 	delete navigationVelocityServiceOut;
 
+	// destroy request-handlers
+
 	// destroy server ports
+	
 	// destroy event-test handlers (if needed)
 	
-	// destroy request-handlers
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	

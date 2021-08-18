@@ -295,6 +295,17 @@ int ManagementTask::on_execute()
 				commObject2 = "CommLocalizationObjects::CommVisualLocalizationFeatureMap";
 				break;
 
+			case port_planner_wavefront_grid_push_client:
+				if(disconnect && connected[port_planner_wavefront_grid_push_client]){
+					COMP->plannerGridTask->disconnectServices();
+					COMP->plannerGridTask->stop();
+					connected[port_planner_wavefront_grid_push_client] = 0;
+					std::cout << display_names[port_planner_wavefront_grid_push_client]<<" disconnected." << std::endl;
+				}
+				portType = port_type_name[port_types::port_push_type];
+				commObject1 = "CommNavigationObjects::CommGridMap";
+				break;
+
 			default:  //port_max
 				std::cout << "invalid input!" << std::endl;
 				return 0;
@@ -526,13 +537,13 @@ int ManagementTask::on_execute()
 					COMP->plannerGoalTask->start();
 					connected[port_planner_goal_push_client] = 1;
 					break;
-				case port_visual_map:
-					COMP->connections.visualMarkers.serverName = con[toCon].first;
-					COMP->connections.visualMarkers.serviceName = con[toCon].second;
-					std::cout << "starting VisualLocMapTask " << std::endl;
-					COMP->visualMarkerMapTask->connectServices();
-					COMP->visualMarkerMapTask->start();
-					connected[port_visual_map] = 1;
+				case port_planner_wavefront_grid_push_client:
+					COMP->connections.plannerWavefrontGridMap.serverName = con[toCon].first;
+					COMP->connections.plannerWavefrontGridMap.serviceName = con[toCon].second;
+					std::cout << "starting PlannerGridtask" << std::endl;
+					COMP->plannerGridTask->connectServices();
+					COMP->plannerGridTask->start();
+					connected[port_planner_wavefront_grid_push_client] = 1;
 					break;
 			}
 		}

@@ -31,7 +31,7 @@ ComponentSkillInterface::ComponentSkillInterface()
 	std::cout << "constructor of ComponentSkillInterface\n";
 	
 	// set all pointer members to NULL
-	//coordinationPort = NULL;
+	//componentSkillInterfaceParams = NULL;
 	//coordinationPort = NULL;
 	skillExecutionTask = NULL;
 	skillExecutionTaskTrigger = NULL;
@@ -39,6 +39,7 @@ ComponentSkillInterface::ComponentSkillInterface()
 	communicationTaskTrigger = NULL;
 	kBQueryClient = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -67,16 +68,6 @@ ComponentSkillInterface::ComponentSkillInterface()
 	connections.communicationTask.scheduler = "DEFAULT";
 	connections.communicationTask.priority = -1;
 	connections.communicationTask.cpuAffinity = -1;
-	
-	// initialize members of ComponentSkillInterfaceROS1InterfacesExtension
-	
-	// initialize members of ComponentSkillInterfaceROSExtension
-	
-	// initialize members of ComponentSkillInterfaceRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentSkillInterfaceExtension
 	
 }
 
@@ -147,10 +138,18 @@ void ComponentSkillInterface::startAllTasks() {
 		ACE_Sched_Params skillExecutionTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.skillExecutionTask.scheduler == "FIFO") {
 			skillExecutionTask_SchedParams.policy(ACE_SCHED_FIFO);
-			skillExecutionTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				skillExecutionTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				skillExecutionTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.skillExecutionTask.scheduler == "RR") {
 			skillExecutionTask_SchedParams.policy(ACE_SCHED_RR);
-			skillExecutionTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				skillExecutionTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				skillExecutionTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		skillExecutionTask->start(skillExecutionTask_SchedParams, connections.skillExecutionTask.cpuAffinity);
 	} else {
@@ -161,10 +160,18 @@ void ComponentSkillInterface::startAllTasks() {
 		ACE_Sched_Params communicationTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.communicationTask.scheduler == "FIFO") {
 			communicationTask_SchedParams.policy(ACE_SCHED_FIFO);
-			communicationTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				communicationTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				communicationTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.communicationTask.scheduler == "RR") {
 			communicationTask_SchedParams.policy(ACE_SCHED_RR);
-			communicationTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				communicationTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				communicationTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		communicationTask->start(communicationTask_SchedParams, connections.communicationTask.cpuAffinity);
 	} else {
@@ -196,16 +203,6 @@ void ComponentSkillInterface::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentSkillInterfaceROS1InterfacesExtension
-		
-		// initializations of ComponentSkillInterfaceROSExtension
-		
-		// initializations of ComponentSkillInterfaceRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentSkillInterfaceExtension
 		
 		
 		// initialize all registered port-factories
@@ -253,7 +250,8 @@ void ComponentSkillInterface::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -277,7 +275,7 @@ void ComponentSkillInterface::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.skillExecutionTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.skillExecutionTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.skillExecutionTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(skillExecutionTask);
@@ -302,7 +300,7 @@ void ComponentSkillInterface::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.communicationTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.communicationTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.communicationTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(communicationTask);
@@ -401,12 +399,14 @@ void ComponentSkillInterface::fini()
 	// destroy client ports
 	delete kBQueryClient;
 
+	// destroy request-handlers
+
 	// destroy server ports
+	
 	// destroy event-test handlers (if needed)
 	
-	// destroy request-handlers
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -426,16 +426,6 @@ void ComponentSkillInterface::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentSkillInterfaceROS1InterfacesExtension
-	
-	// destruction of ComponentSkillInterfaceROSExtension
-	
-	// destruction of ComponentSkillInterfaceRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentSkillInterfaceExtension
 	
 }
 
@@ -557,16 +547,6 @@ void ComponentSkillInterface::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("communicationTask", "cpuAffinity")) {
 			parameter.getInteger("communicationTask", "cpuAffinity", connections.communicationTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentSkillInterfaceROS1InterfacesExtension
-		
-		// load parameters for ComponentSkillInterfaceROSExtension
-		
-		// load parameters for ComponentSkillInterfaceRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentSkillInterfaceExtension
 		
 		
 		// load parameters for all registered component-extensions

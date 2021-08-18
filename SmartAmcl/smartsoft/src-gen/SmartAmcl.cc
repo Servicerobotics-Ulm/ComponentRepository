@@ -37,7 +37,6 @@ SmartAmcl::SmartAmcl()
 	amclVisualizationInfoOut = NULL;
 	amclVisualizationInfoOutWrapper = NULL;
 	//coordinationPort = NULL;
-	//coordinationPort = NULL;
 	laserServiceIn = NULL;
 	laserServiceInInputTaskTrigger = NULL;
 	laserServiceInUpcallManager = NULL;
@@ -47,7 +46,9 @@ SmartAmcl::SmartAmcl()
 	localizationEventServiceOutEventTestHandler = nullptr; 
 	localizationUpdateServiceOut = NULL;
 	localizationUpdateServiceOutWrapper = NULL;
+	//smartAmclParams = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -172,10 +173,18 @@ void SmartAmcl::startAllTasks() {
 		ACE_Sched_Params amclTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.amclTask.scheduler == "FIFO") {
 			amclTask_SchedParams.policy(ACE_SCHED_FIFO);
-			amclTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				amclTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				amclTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.amclTask.scheduler == "RR") {
 			amclTask_SchedParams.policy(ACE_SCHED_RR);
-			amclTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				amclTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				amclTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		amclTask->start(amclTask_SchedParams, connections.amclTask.cpuAffinity);
 	} else {
@@ -266,7 +275,8 @@ void SmartAmcl::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		if (stateSlave->defineStates("Active" ,"active") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion Active.active" << std::endl;
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
@@ -296,7 +306,7 @@ void SmartAmcl::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.amclTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.amclTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.amclTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(amclTask);
@@ -404,17 +414,19 @@ void SmartAmcl::fini()
 	delete localizationUpdateServiceOutWrapper;
 	delete localizationUpdateServiceOut;
 
+	// destroy request-handlers
+
 	// destroy server ports
 	delete amclVisualizationInfoOutWrapper;
 	delete amclVisualizationInfoOut;
 	delete localizationEventServiceOutWrapper;
 	delete localizationEventServiceOut;
+	
 	// destroy event-test handlers (if needed)
 	localizationEventServiceOutEventTestHandler;
 	
-	// destroy request-handlers
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	

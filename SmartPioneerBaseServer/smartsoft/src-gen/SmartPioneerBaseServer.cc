@@ -41,7 +41,6 @@ SmartPioneerBaseServer::SmartPioneerBaseServer()
 	batteryEventServerWrapper = NULL;
 	batteryEventServerEventTestHandler = nullptr; 
 	//coordinationPort = NULL;
-	//coordinationPort = NULL;
 	localizationUpdate = NULL;
 	localizationUpdateInputTaskTrigger = NULL;
 	localizationUpdateUpcallManager = NULL;
@@ -54,7 +53,9 @@ SmartPioneerBaseServer::SmartPioneerBaseServer()
 	poseUpdateTaskTrigger = NULL;
 	robotTask = NULL;
 	robotTaskTrigger = NULL;
+	//smartPioneerBaseServerParams = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -139,10 +140,18 @@ void SmartPioneerBaseServer::startAllTasks() {
 		ACE_Sched_Params poseUpdateTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.poseUpdateTask.scheduler == "FIFO") {
 			poseUpdateTask_SchedParams.policy(ACE_SCHED_FIFO);
-			poseUpdateTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				poseUpdateTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				poseUpdateTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.poseUpdateTask.scheduler == "RR") {
 			poseUpdateTask_SchedParams.policy(ACE_SCHED_RR);
-			poseUpdateTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				poseUpdateTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				poseUpdateTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		poseUpdateTask->start(poseUpdateTask_SchedParams, connections.poseUpdateTask.cpuAffinity);
 	} else {
@@ -153,10 +162,18 @@ void SmartPioneerBaseServer::startAllTasks() {
 		ACE_Sched_Params robotTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.robotTask.scheduler == "FIFO") {
 			robotTask_SchedParams.policy(ACE_SCHED_FIFO);
-			robotTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				robotTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				robotTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.robotTask.scheduler == "RR") {
 			robotTask_SchedParams.policy(ACE_SCHED_RR);
-			robotTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				robotTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				robotTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		robotTask->start(robotTask_SchedParams, connections.robotTask.cpuAffinity);
 	} else {
@@ -253,7 +270,8 @@ void SmartPioneerBaseServer::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -273,7 +291,7 @@ void SmartPioneerBaseServer::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.poseUpdateTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.poseUpdateTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.poseUpdateTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(poseUpdateTask);
@@ -294,7 +312,7 @@ void SmartPioneerBaseServer::init(int argc, char *argv[])
 		{
 			// setup default task-trigger as PeriodicTimer
 			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-			int microseconds = 1000*1000 / 10.0;
+			int microseconds = (int)(1000.0*1000.0 / 10.0);
 			if(microseconds > 0) {
 				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				triggerPtr->attach(poseUpdateTask);
@@ -403,22 +421,24 @@ void SmartPioneerBaseServer::fini()
 
 	// destroy client ports
 
+	// destroy request-handlers
+	delete baseStateQueryHandler;
+
 	// destroy server ports
 	delete basePositionOutWrapper;
 	delete basePositionOut;
-	delete baseStateQueryServer;
 	delete baseStateQueryServerInputTaskTrigger;
+	delete baseStateQueryServer;
 	delete batteryEventServerWrapper;
 	delete batteryEventServer;
 	delete localizationUpdate;
 	delete navVelIn;
+	
 	// destroy event-test handlers (if needed)
 	batteryEventServerEventTestHandler;
 	
-	// destroy request-handlers
-	delete baseStateQueryHandler;
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	

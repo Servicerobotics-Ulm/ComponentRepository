@@ -11,7 +11,7 @@ ComponentDefinition ComponentWebots3DCamera logo "/ComponentWebots3DCamera/model
      */
 	InputPort ptuPosePushNewestClient implements CommBasicObjects.DevicePoseUpdateService {
 	}
-	/** Reads peridically the robot arm position (if the camera is mounted on it): CommManipulatorObjects.CommMobileManipulatorState 
+	/** Reads periodically the robot arm position (if the camera is mounted on it): CommManipulatorObjects.CommMobileManipulatorState 
 	 */	
 	InputPort UrPosePushTimedClient implements CommManipulatorObjects.MobileManipulatorStateService {
 	}
@@ -19,15 +19,15 @@ ComponentDefinition ComponentWebots3DCamera logo "/ComponentWebots3DCamera/model
 	 */
 	RequestPort UrPoseQueryClient implements CommManipulatorObjects.MobileManipulatorStateQueryService {
 	}
-	/** Writes peridically the color image: DomainVision.CommRGBDImage 
+	/** Writes periodically the color image: DomainVision.CommRGBDImage 
 	 */	
 	OutputPort RGBImagePushServiceOut implements DomainVision.RGBImagePushService realizedBy ImageTask {
 	}	
-	/** Writes peridically the range image: DomainVision.CommDepthImage
+	/** Writes periodically the range image: DomainVision.CommDepthImage
 	 */
 	OutputPort depthPushNewestServer implements DomainVision.DepthImagePushService realizedBy ImageTask {
 	}
-	/** Writes peridically the color image and range image: DomainVision.CommRGBDImage
+	/** Writes periodically the color image and range image: DomainVision.CommRGBDImage
 	 */
 	OutputPort RGBDImagePushServiceOut implements DomainVision.RGBDImagePushService realizedBy ImageTask {
 	}

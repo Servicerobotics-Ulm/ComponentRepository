@@ -1,0 +1,28 @@
+ComponentParameter SmartFestoFleetCom component SmartFestoFleetCom 
+{
+	ParameterSetInstance DomainRobotFleet.FleetManagerParameter {
+		TriggerInstance ADDROBOT active
+		TriggerInstance RMROBOT active
+	}
+	InternalParameter Settings {
+		ip:String = "0.0.0.0"
+		port: String = "20021"
+		pushCyclicSystemState: Boolean = true
+		robotname:String = "1"
+		
+		use_socket_timeout :Boolean = true
+		// "timeout in sec, do not use small values (<2 sec), risk of loosing data, due to client side closed connection! "
+		socket_timeout_s :UInt32 = 5
+		
+		basePortsSubcriptionInterval:UInt16 = 1
+		
+		verbose:Boolean = false
+	}
+	
+InternalParameter RobotinoIO {
+	laser_WarningFieldDIn:Int16 =1
+	laser_SafteyFieldDIn:Int16 =0
+	conveyerBelt_BoxPresentDIn:Int16 =2
+}
+}
+

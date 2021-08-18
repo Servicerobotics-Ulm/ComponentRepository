@@ -36,6 +36,20 @@ USArTaskCore::~USArTaskCore()
 {
 }
 
+int USArTaskCore::start() {
+	this->resetTrigger();
+	return SmartACE::Task::start();
+}
+
+int USArTaskCore::start(const ACE_Sched_Params &sched_params, const int &cpuAffinity) {
+	return SmartACE::Task::start(sched_params, cpuAffinity);
+}
+
+int USArTaskCore::stop(const bool wait_till_stopped) {
+	this->cancelTrigger();
+	return SmartACE::Task::stop(wait_till_stopped);
+}
+
 
 void USArTaskCore::notify_all_interaction_observers() {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);

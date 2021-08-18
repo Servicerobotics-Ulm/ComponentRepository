@@ -31,14 +31,15 @@ ComponentTTSClient::ComponentTTSClient()
 	std::cout << "constructor of ComponentTTSClient\n";
 	
 	// set all pointer members to NULL
+	//componentTTSClientParams = NULL;
 	consoleTask = NULL;
 	consoleTaskTrigger = NULL;
-	//coordinationPort = NULL;
 	//coordinationPort = NULL;
 	speechQueryServiceReq = NULL;
 	speechSendServiceOut = NULL;
 	speechSendServiceOutWrapper = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -67,16 +68,6 @@ ComponentTTSClient::ComponentTTSClient()
 	connections.consoleTask.scheduler = "DEFAULT";
 	connections.consoleTask.priority = -1;
 	connections.consoleTask.cpuAffinity = -1;
-	
-	// initialize members of ComponentTTSClientROS1InterfacesExtension
-	
-	// initialize members of ComponentTTSClientROSExtension
-	
-	// initialize members of ComponentTTSClientRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentTTSClientExtension
 	
 }
 
@@ -165,10 +156,18 @@ void ComponentTTSClient::startAllTasks() {
 		ACE_Sched_Params consoleTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.consoleTask.scheduler == "FIFO") {
 			consoleTask_SchedParams.policy(ACE_SCHED_FIFO);
-			consoleTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				consoleTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				consoleTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.consoleTask.scheduler == "RR") {
 			consoleTask_SchedParams.policy(ACE_SCHED_RR);
-			consoleTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				consoleTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				consoleTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		consoleTask->start(consoleTask_SchedParams, connections.consoleTask.cpuAffinity);
 	} else {
@@ -200,16 +199,6 @@ void ComponentTTSClient::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentTTSClientROS1InterfacesExtension
-		
-		// initializations of ComponentTTSClientROSExtension
-		
-		// initializations of ComponentTTSClientRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentTTSClientExtension
 		
 		
 		// initialize all registered port-factories
@@ -259,7 +248,8 @@ void ComponentTTSClient::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -287,7 +277,7 @@ void ComponentTTSClient::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.consoleTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.consoleTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.consoleTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(consoleTask);
@@ -382,12 +372,14 @@ void ComponentTTSClient::fini()
 	delete speechSendServiceOutWrapper;
 	delete speechSendServiceOut;
 
+	// destroy request-handlers
+
 	// destroy server ports
+	
 	// destroy event-test handlers (if needed)
 	
-	// destroy request-handlers
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -407,16 +399,6 @@ void ComponentTTSClient::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentTTSClientROS1InterfacesExtension
-	
-	// destruction of ComponentTTSClientROSExtension
-	
-	// destruction of ComponentTTSClientRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentTTSClientExtension
 	
 }
 
@@ -527,16 +509,6 @@ void ComponentTTSClient::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("ConsoleTask", "cpuAffinity")) {
 			parameter.getInteger("ConsoleTask", "cpuAffinity", connections.consoleTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentTTSClientROS1InterfacesExtension
-		
-		// load parameters for ComponentTTSClientROSExtension
-		
-		// load parameters for ComponentTTSClientRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentTTSClientExtension
 		
 		
 		// load parameters for all registered component-extensions

@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -60,7 +61,7 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "General(";
-				os << "gridSizeInM = " << gridSizeInM << ", ";
+				os << "gridSizeInM = " << gridSizeInM;
 				os << ")\n";
 			}
 			
@@ -114,7 +115,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tBELIEF_THRESHOLD(";
-						os << "threshold = " << threshold << ", ";
+						os << "threshold = " << threshold;
 						os << ")\n";
 					}
 					
@@ -146,7 +147,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tCLOUD(";
-						os << "id = " << id << ", ";
+						os << "id = " << id;
 						os << ")\n";
 					}
 					
@@ -178,7 +179,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tCLUSTERING(";
-						os << "doClustering = " << doClustering << ", ";
+						os << "doClustering = " << doClustering;
 						os << ")\n";
 					}
 					
@@ -210,7 +211,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tESTIMATEFILLING(";
-						os << "estimateObjectProperties = " << estimateObjectProperties << ", ";
+						os << "estimateObjectProperties = " << estimateObjectProperties;
 						os << ")\n";
 					}
 					
@@ -242,7 +243,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tSETOBJECTID(";
-						os << "id = " << id << ", ";
+						os << "id = " << id;
 						os << ")\n";
 					}
 					

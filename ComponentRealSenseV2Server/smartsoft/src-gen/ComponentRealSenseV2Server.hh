@@ -29,14 +29,6 @@
 class ComponentRealSenseV2ServerPortFactoryInterface;
 class ComponentRealSenseV2ServerExtension;
 
-// includes for ComponentRealSenseV2ServerROS1InterfacesExtension
-
-// includes for ComponentRealSenseV2ServerROSExtension
-
-// includes for ComponentRealSenseV2ServerRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentRealSenseV2ServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -84,6 +76,8 @@ class ComponentRealSenseV2ServerExtension;
 #include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP ComponentRealSenseV2Server::instance()
 
@@ -170,19 +164,10 @@ public:
 	ColorImageQueryHandler *colorImageQueryHandler;
 	ImageQueryHandler *imageQueryHandler;
 	
-	// definitions of ComponentRealSenseV2ServerROS1InterfacesExtension
-	
-	// definitions of ComponentRealSenseV2ServerROSExtension
-	
-	// definitions of ComponentRealSenseV2ServerRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentRealSenseV2ServerExtension
-	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	ParamUpdateHandler paramHandler;
@@ -336,16 +321,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} ptuPosePushNewestClient;
-		
-		// -- parameters for ComponentRealSenseV2ServerROS1InterfacesExtension
-		
-		// -- parameters for ComponentRealSenseV2ServerROSExtension
-		
-		// -- parameters for ComponentRealSenseV2ServerRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentRealSenseV2ServerExtension
 		
 	} connections;
 };

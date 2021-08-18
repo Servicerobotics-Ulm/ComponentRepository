@@ -37,6 +37,7 @@ public:
 	virtual Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * createBaseStateClient() override;
 	virtual Smart::IPushClientPattern<CommNavigationObjects::CommGridMap> * createCurMapClient() override;
 	
+	virtual Smart::IPushServerPattern<CommNavigationObjects::CommGridMap> * createCurrGridMapPushServiceOut(const std::string &serviceName) override;
 	virtual Smart::IEventServerPattern<CommNavigationObjects::CommPlannerEventParameter, CommNavigationObjects::CommPlannerEventResult, CommNavigationObjects::PlannerEventState> * createPlannerEventServer(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommNavigationObjects::CommPlannerEventParameter, CommNavigationObjects::CommPlannerEventResult, CommNavigationObjects::PlannerEventState>> plannerEventServerEventTestHandler) override;
 	virtual Smart::IPushServerPattern<CommNavigationObjects::CommPlannerGoal> * createPlannerGoalServer(const std::string &serviceName) override;
 	

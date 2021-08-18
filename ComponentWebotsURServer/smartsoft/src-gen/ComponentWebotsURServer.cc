@@ -33,7 +33,7 @@ ComponentWebotsURServer::ComponentWebotsURServer()
 	std::cout << "constructor of ComponentWebotsURServer\n";
 	
 	// set all pointer members to NULL
-	//coordinationPort = NULL;
+	//componentWebotsURServerParams = NULL;
 	//coordinationPort = NULL;
 	ioQueryServerHandler = NULL;
 	poseQueryServerHandler = NULL;
@@ -64,6 +64,7 @@ ComponentWebotsURServer::ComponentWebotsURServer()
 	trajectorySendServerUpcallManager = NULL;
 	trajectorySendServerInputCollector = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -172,10 +173,18 @@ void ComponentWebotsURServer::startAllTasks() {
 		ACE_Sched_Params poseUpdateActivity_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.poseUpdateActivity.scheduler == "FIFO") {
 			poseUpdateActivity_SchedParams.policy(ACE_SCHED_FIFO);
-			poseUpdateActivity_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				poseUpdateActivity_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				poseUpdateActivity_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.poseUpdateActivity.scheduler == "RR") {
 			poseUpdateActivity_SchedParams.policy(ACE_SCHED_RR);
-			poseUpdateActivity_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				poseUpdateActivity_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				poseUpdateActivity_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		poseUpdateActivity->start(poseUpdateActivity_SchedParams, connections.poseUpdateActivity.cpuAffinity);
 	} else {
@@ -283,7 +292,8 @@ void ComponentWebotsURServer::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		if (stateSlave->defineStates("Trajectory" ,"trajectory") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion Trajectory.trajectory" << std::endl;
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
@@ -309,7 +319,7 @@ void ComponentWebotsURServer::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.poseUpdateActivity.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.poseUpdateActivity.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.poseUpdateActivity.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(poseUpdateActivity);
@@ -410,30 +420,32 @@ void ComponentWebotsURServer::fini()
 	// destroy client ports
 	delete baseStateServiceIn;
 
-	// destroy server ports
-	delete ioEventServerWrapper;
-	delete ioEventServer;
-	delete ioQueryServer;
-	delete ioQueryServerInputTaskTrigger;
-	delete manipulatorEventServiceOutWrapper;
-	delete manipulatorEventServiceOut;
-	delete posePushServerWrapper;
-	delete posePushServer;
-	delete poseQueryServer;
-	delete poseQueryServerInputTaskTrigger;
-	delete programQuery;
-	delete programQueryInputTaskTrigger;
-	delete trajectorySendServer;
-	// destroy event-test handlers (if needed)
-	ioEventServerEventTestHandler;
-	manipulatorEventServiceOutEventTestHandler;
-	
 	// destroy request-handlers
 	delete ioQueryServerHandler;
 	delete poseQueryServerHandler;
 	delete programQueryHandler;
+
+	// destroy server ports
+	delete ioEventServerWrapper;
+	delete ioEventServer;
+	delete ioQueryServerInputTaskTrigger;
+	delete ioQueryServer;
+	delete manipulatorEventServiceOutWrapper;
+	delete manipulatorEventServiceOut;
+	delete posePushServerWrapper;
+	delete posePushServer;
+	delete poseQueryServerInputTaskTrigger;
+	delete poseQueryServer;
+	delete programQueryInputTaskTrigger;
+	delete programQuery;
+	delete trajectorySendServer;
+	
+	// destroy event-test handlers (if needed)
+	ioEventServerEventTestHandler;
+	manipulatorEventServiceOutEventTestHandler;
 	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	

@@ -31,7 +31,7 @@ ComponentTTS::ComponentTTS()
 	std::cout << "constructor of ComponentTTS\n";
 	
 	// set all pointer members to NULL
-	//coordinationPort = NULL;
+	//componentTTSParams = NULL;
 	//coordinationPort = NULL;
 	speechQueryHandler = NULL;
 	speechQueryServiceAnsw = NULL;
@@ -44,6 +44,7 @@ ComponentTTS::ComponentTTS()
 	speechTask = NULL;
 	speechTaskTrigger = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -117,10 +118,18 @@ void ComponentTTS::startAllTasks() {
 		ACE_Sched_Params speechTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.speechTask.scheduler == "FIFO") {
 			speechTask_SchedParams.policy(ACE_SCHED_FIFO);
-			speechTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				speechTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				speechTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.speechTask.scheduler == "RR") {
 			speechTask_SchedParams.policy(ACE_SCHED_RR);
-			speechTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				speechTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				speechTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		speechTask->start(speechTask_SchedParams, connections.speechTask.cpuAffinity);
 	} else {
@@ -207,7 +216,8 @@ void ComponentTTS::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -227,7 +237,7 @@ void ComponentTTS::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.speechTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.speechTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.speechTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(speechTask);
@@ -323,16 +333,18 @@ void ComponentTTS::fini()
 
 	// destroy client ports
 
-	// destroy server ports
-	delete speechQueryServiceAnsw;
-	delete speechQueryServiceAnswInputTaskTrigger;
-	delete speechSendServiceIn;
-	// destroy event-test handlers (if needed)
-	
 	// destroy request-handlers
 	delete speechQueryHandler;
+
+	// destroy server ports
+	delete speechQueryServiceAnswInputTaskTrigger;
+	delete speechQueryServiceAnsw;
+	delete speechSendServiceIn;
+	
+	// destroy event-test handlers (if needed)
 	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	

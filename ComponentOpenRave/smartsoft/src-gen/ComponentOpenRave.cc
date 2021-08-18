@@ -32,7 +32,7 @@ ComponentOpenRave::ComponentOpenRave()
 	std::cout << "constructor of ComponentOpenRave\n";
 	
 	// set all pointer members to NULL
-	//coordinationPort = NULL;
+	//componentOpenRaveParams = NULL;
 	//coordinationPort = NULL;
 	demonstrationTask = NULL;
 	demonstrationTaskTrigger = NULL;
@@ -71,6 +71,7 @@ ComponentOpenRave::ComponentOpenRave()
 	trajectorySampling = NULL;
 	trajectorySamplingTrigger = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -375,10 +376,18 @@ void ComponentOpenRave::startAllTasks() {
 		ACE_Sched_Params demonstrationTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.demonstrationTask.scheduler == "FIFO") {
 			demonstrationTask_SchedParams.policy(ACE_SCHED_FIFO);
-			demonstrationTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				demonstrationTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				demonstrationTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.demonstrationTask.scheduler == "RR") {
 			demonstrationTask_SchedParams.policy(ACE_SCHED_RR);
-			demonstrationTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				demonstrationTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				demonstrationTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		demonstrationTask->start(demonstrationTask_SchedParams, connections.demonstrationTask.cpuAffinity);
 	} else {
@@ -389,10 +398,18 @@ void ComponentOpenRave::startAllTasks() {
 		ACE_Sched_Params eventActivity_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.eventActivity.scheduler == "FIFO") {
 			eventActivity_SchedParams.policy(ACE_SCHED_FIFO);
-			eventActivity_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				eventActivity_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				eventActivity_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.eventActivity.scheduler == "RR") {
 			eventActivity_SchedParams.policy(ACE_SCHED_RR);
-			eventActivity_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				eventActivity_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				eventActivity_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		eventActivity->start(eventActivity_SchedParams, connections.eventActivity.cpuAffinity);
 	} else {
@@ -403,10 +420,18 @@ void ComponentOpenRave::startAllTasks() {
 		ACE_Sched_Params trajectorySampling_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.trajectorySampling.scheduler == "FIFO") {
 			trajectorySampling_SchedParams.policy(ACE_SCHED_FIFO);
-			trajectorySampling_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				trajectorySampling_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				trajectorySampling_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.trajectorySampling.scheduler == "RR") {
 			trajectorySampling_SchedParams.policy(ACE_SCHED_RR);
-			trajectorySampling_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				trajectorySampling_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				trajectorySampling_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		trajectorySampling->start(trajectorySampling_SchedParams, connections.trajectorySampling.cpuAffinity);
 	} else {
@@ -519,7 +544,8 @@ void ComponentOpenRave::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		if (stateSlave->defineStates("Trajectory" ,"trajectory") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion Trajectory.trajectory" << std::endl;
 		if (stateSlave->defineStates("Demonstration" ,"demonstration") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion Demonstration.demonstration" << std::endl;
 		if (stateSlave->defineStates("Simulation" ,"simulation") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion Simulation.simulation" << std::endl;
@@ -580,7 +606,7 @@ void ComponentOpenRave::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.demonstrationTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.demonstrationTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.demonstrationTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(demonstrationTask);
@@ -605,7 +631,7 @@ void ComponentOpenRave::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.eventActivity.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.eventActivity.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.eventActivity.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(eventActivity);
@@ -630,7 +656,7 @@ void ComponentOpenRave::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.trajectorySampling.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.trajectorySampling.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.trajectorySampling.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(trajectorySampling);
@@ -760,18 +786,20 @@ void ComponentOpenRave::fini()
 	delete sendTrajectoryOutWrapper;
 	delete sendTrajectoryOut;
 
+	// destroy request-handlers
+	delete objectQueryServiceAnswHandler;
+
 	// destroy server ports
-	delete objectQueryServiceAnsw;
 	delete objectQueryServiceAnswInputTaskTrigger;
+	delete objectQueryServiceAnsw;
 	delete planningEventServiceOutWrapper;
 	delete planningEventServiceOut;
+	
 	// destroy event-test handlers (if needed)
 	planningEventServiceOutEventTestHandler;
 	
-	// destroy request-handlers
-	delete objectQueryServiceAnswHandler;
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	

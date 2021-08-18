@@ -31,7 +31,7 @@ ComponentLaserFromRGBDServer::ComponentLaserFromRGBDServer()
 	std::cout << "constructor of ComponentLaserFromRGBDServer\n";
 	
 	// set all pointer members to NULL
-	//coordinationPort = NULL;
+	//componentLaserFromRGBDServerParams = NULL;
 	//coordinationPort = NULL;
 	laserQueryHandler = NULL;
 	laserServiceOut = NULL;
@@ -47,6 +47,7 @@ ComponentLaserFromRGBDServer::ComponentLaserFromRGBDServer()
 	rgbdClientUpcallManager = NULL;
 	rgbdClientInputCollector = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -81,16 +82,6 @@ ComponentLaserFromRGBDServer::ComponentLaserFromRGBDServer()
 	connections.visTask.scheduler = "DEFAULT";
 	connections.visTask.priority = -1;
 	connections.visTask.cpuAffinity = -1;
-	
-	// initialize members of ComponentLaserFromRGBDServerROS1InterfacesExtension
-	
-	// initialize members of ComponentLaserFromRGBDServerROSExtension
-	
-	// initialize members of ComponentLaserFromRGBDServerRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentLaserFromRGBDServerExtension
 	
 }
 
@@ -162,10 +153,18 @@ void ComponentLaserFromRGBDServer::startAllTasks() {
 		ACE_Sched_Params laserTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.laserTask.scheduler == "FIFO") {
 			laserTask_SchedParams.policy(ACE_SCHED_FIFO);
-			laserTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				laserTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				laserTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.laserTask.scheduler == "RR") {
 			laserTask_SchedParams.policy(ACE_SCHED_RR);
-			laserTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				laserTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				laserTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		laserTask->start(laserTask_SchedParams, connections.laserTask.cpuAffinity);
 	} else {
@@ -176,10 +175,18 @@ void ComponentLaserFromRGBDServer::startAllTasks() {
 		ACE_Sched_Params visTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.visTask.scheduler == "FIFO") {
 			visTask_SchedParams.policy(ACE_SCHED_FIFO);
-			visTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				visTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				visTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.visTask.scheduler == "RR") {
 			visTask_SchedParams.policy(ACE_SCHED_RR);
-			visTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				visTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				visTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		visTask->start(visTask_SchedParams, connections.visTask.cpuAffinity);
 	} else {
@@ -212,16 +219,6 @@ void ComponentLaserFromRGBDServer::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentLaserFromRGBDServerROS1InterfacesExtension
-		
-		// initializations of ComponentLaserFromRGBDServerROSExtension
-		
-		// initializations of ComponentLaserFromRGBDServerRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentLaserFromRGBDServerExtension
 		
 		
 		// initialize all registered port-factories
@@ -277,7 +274,8 @@ void ComponentLaserFromRGBDServer::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		if (stateSlave->defineStates("GenerateLaser" ,"GenerateLaser") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion GenerateLaser.GenerateLaser" << std::endl;
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
@@ -302,7 +300,7 @@ void ComponentLaserFromRGBDServer::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.laserTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.laserTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.laserTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(laserTask);
@@ -323,7 +321,7 @@ void ComponentLaserFromRGBDServer::init(int argc, char *argv[])
 		{
 			// setup default task-trigger as PeriodicTimer
 			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-			int microseconds = 1000*1000 / 5.0;
+			int microseconds = (int)(1000.0*1000.0 / 5.0);
 			if(microseconds > 0) {
 				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				triggerPtr->attach(laserTask);
@@ -340,7 +338,7 @@ void ComponentLaserFromRGBDServer::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.visTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.visTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.visTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(visTask);
@@ -442,17 +440,19 @@ void ComponentLaserFromRGBDServer::fini()
 	// destroy client ports
 	delete rgbdClient;
 
+	// destroy request-handlers
+	delete laserQueryHandler;
+
 	// destroy server ports
 	delete laserServiceOutWrapper;
 	delete laserServiceOut;
-	delete laserQueryServer;
 	delete laserQueryServerInputTaskTrigger;
+	delete laserQueryServer;
+	
 	// destroy event-test handlers (if needed)
 	
-	// destroy request-handlers
-	delete laserQueryHandler;
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -472,16 +472,6 @@ void ComponentLaserFromRGBDServer::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentLaserFromRGBDServerROS1InterfacesExtension
-	
-	// destruction of ComponentLaserFromRGBDServerROSExtension
-	
-	// destruction of ComponentLaserFromRGBDServerRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentLaserFromRGBDServerExtension
 	
 }
 
@@ -614,16 +604,6 @@ void ComponentLaserFromRGBDServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("VisTask", "cpuAffinity")) {
 			parameter.getInteger("VisTask", "cpuAffinity", connections.visTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentLaserFromRGBDServerROS1InterfacesExtension
-		
-		// load parameters for ComponentLaserFromRGBDServerROSExtension
-		
-		// load parameters for ComponentLaserFromRGBDServerRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentLaserFromRGBDServerExtension
 		
 		
 		// load parameters for all registered component-extensions

@@ -34,7 +34,7 @@ ComponentAmclWithTags::ComponentAmclWithTags()
 	// set all pointer members to NULL
 	amclTask = NULL;
 	amclTaskTrigger = NULL;
-	//coordinationPort = NULL;
+	//componentAmclWithTagsParams = NULL;
 	//coordinationPort = NULL;
 	laserServiceIn = NULL;
 	laserServiceInInputTaskTrigger = NULL;
@@ -50,6 +50,7 @@ ComponentAmclWithTags::ComponentAmclWithTags()
 	markerListDetectionServiceInUpcallManager = NULL;
 	markerListDetectionServiceInInputCollector = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -89,16 +90,6 @@ ComponentAmclWithTags::ComponentAmclWithTags()
 	connections.amclTask.scheduler = "DEFAULT";
 	connections.amclTask.priority = -1;
 	connections.amclTask.cpuAffinity = -1;
-	
-	// initialize members of ComponentAmclWithTagsROS1InterfacesExtension
-	
-	// initialize members of ComponentAmclWithTagsROSExtension
-	
-	// initialize members of ComponentAmclWithTagsRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentAmclWithTagsExtension
 	
 }
 
@@ -207,10 +198,18 @@ void ComponentAmclWithTags::startAllTasks() {
 		ACE_Sched_Params amclTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.amclTask.scheduler == "FIFO") {
 			amclTask_SchedParams.policy(ACE_SCHED_FIFO);
-			amclTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				amclTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				amclTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.amclTask.scheduler == "RR") {
 			amclTask_SchedParams.policy(ACE_SCHED_RR);
-			amclTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				amclTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				amclTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		amclTask->start(amclTask_SchedParams, connections.amclTask.cpuAffinity);
 	} else {
@@ -244,16 +243,6 @@ void ComponentAmclWithTags::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentAmclWithTagsROS1InterfacesExtension
-		
-		// initializations of ComponentAmclWithTagsROSExtension
-		
-		// initializations of ComponentAmclWithTagsRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentAmclWithTagsExtension
 		
 		
 		// initialize all registered port-factories
@@ -314,7 +303,8 @@ void ComponentAmclWithTags::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		if (stateSlave->defineStates("Active" ,"active") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion Active.active" << std::endl;
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
@@ -348,7 +338,7 @@ void ComponentAmclWithTags::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.amclTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.amclTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.amclTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(amclTask);
@@ -460,15 +450,17 @@ void ComponentAmclWithTags::fini()
 	delete localizationUpdateServiceOut;
 	delete markerListDetectionServiceIn;
 
+	// destroy request-handlers
+
 	// destroy server ports
 	delete localizationEventServiceOutWrapper;
 	delete localizationEventServiceOut;
+	
 	// destroy event-test handlers (if needed)
 	localizationEventServiceOutEventTestHandler;
 	
-	// destroy request-handlers
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -488,16 +480,6 @@ void ComponentAmclWithTags::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentAmclWithTagsROS1InterfacesExtension
-	
-	// destruction of ComponentAmclWithTagsROSExtension
-	
-	// destruction of ComponentAmclWithTagsRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentAmclWithTagsExtension
 	
 }
 
@@ -623,16 +605,6 @@ void ComponentAmclWithTags::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("AmclTask", "cpuAffinity")) {
 			parameter.getInteger("AmclTask", "cpuAffinity", connections.amclTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentAmclWithTagsROS1InterfacesExtension
-		
-		// load parameters for ComponentAmclWithTagsROSExtension
-		
-		// load parameters for ComponentAmclWithTagsRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentAmclWithTagsExtension
 		
 		
 		// load parameters for all registered component-extensions

@@ -37,11 +37,12 @@ ComponentFileMover::ComponentFileMover()
 	commFileMoveEventOutEventTestHandler = nullptr; 
 	commFileReadQueryReq = NULL;
 	commFileWriteQueryReq = NULL;
-	//coordinationPort = NULL;
+	//componentFileMoverParams = NULL;
 	//coordinationPort = NULL;
 	dummy = NULL;
 	dummyTrigger = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -72,16 +73,6 @@ ComponentFileMover::ComponentFileMover()
 	connections.dummy.scheduler = "DEFAULT";
 	connections.dummy.priority = -1;
 	connections.dummy.cpuAffinity = -1;
-	
-	// initialize members of ComponentFileMoverROS1InterfacesExtension
-	
-	// initialize members of ComponentFileMoverROSExtension
-	
-	// initialize members of ComponentFileMoverRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentFileMoverExtension
 	
 }
 
@@ -170,10 +161,18 @@ void ComponentFileMover::startAllTasks() {
 		ACE_Sched_Params dummy_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.dummy.scheduler == "FIFO") {
 			dummy_SchedParams.policy(ACE_SCHED_FIFO);
-			dummy_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				dummy_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				dummy_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.dummy.scheduler == "RR") {
 			dummy_SchedParams.policy(ACE_SCHED_RR);
-			dummy_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				dummy_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				dummy_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		dummy->start(dummy_SchedParams, connections.dummy.cpuAffinity);
 	} else {
@@ -205,16 +204,6 @@ void ComponentFileMover::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentFileMoverROS1InterfacesExtension
-		
-		// initializations of ComponentFileMoverROSExtension
-		
-		// initializations of ComponentFileMoverRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentFileMoverExtension
 		
 		
 		// initialize all registered port-factories
@@ -267,7 +256,8 @@ void ComponentFileMover::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -295,7 +285,7 @@ void ComponentFileMover::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.dummy.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.dummy.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.dummy.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(dummy);
@@ -389,15 +379,17 @@ void ComponentFileMover::fini()
 	delete commFileReadQueryReq;
 	delete commFileWriteQueryReq;
 
+	// destroy request-handlers
+
 	// destroy server ports
 	delete commFileMoveEventOutWrapper;
 	delete commFileMoveEventOut;
+	
 	// destroy event-test handlers (if needed)
 	commFileMoveEventOutEventTestHandler;
 	
-	// destroy request-handlers
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -417,16 +409,6 @@ void ComponentFileMover::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentFileMoverROS1InterfacesExtension
-	
-	// destruction of ComponentFileMoverROSExtension
-	
-	// destruction of ComponentFileMoverRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentFileMoverExtension
 	
 }
 
@@ -542,16 +524,6 @@ void ComponentFileMover::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("Dummy", "cpuAffinity")) {
 			parameter.getInteger("Dummy", "cpuAffinity", connections.dummy.cpuAffinity);
 		}
-		
-		// load parameters for ComponentFileMoverROS1InterfacesExtension
-		
-		// load parameters for ComponentFileMoverROSExtension
-		
-		// load parameters for ComponentFileMoverRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentFileMoverExtension
 		
 		
 		// load parameters for all registered component-extensions

@@ -35,6 +35,7 @@ SmartRobotConsole::SmartRobotConsole()
 	consoleTaskTrigger = NULL;
 	//coordinationMaster = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	stateMaster = NULL;
@@ -53,16 +54,6 @@ SmartRobotConsole::SmartRobotConsole()
 	connections.consoleTask.scheduler = "DEFAULT";
 	connections.consoleTask.priority = -1;
 	connections.consoleTask.cpuAffinity = -1;
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaSmartRobotConsoleExtension
-	
-	// initialize members of SmartRobotConsoleROS1InterfacesExtension
-	
-	// initialize members of SmartRobotConsoleROSExtension
-	
-	// initialize members of SmartRobotConsoleRestInterfacesExtension
 	
 }
 
@@ -115,10 +106,18 @@ void SmartRobotConsole::startAllTasks() {
 		ACE_Sched_Params consoleTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.consoleTask.scheduler == "FIFO") {
 			consoleTask_SchedParams.policy(ACE_SCHED_FIFO);
-			consoleTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				consoleTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				consoleTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.consoleTask.scheduler == "RR") {
 			consoleTask_SchedParams.policy(ACE_SCHED_RR);
-			consoleTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				consoleTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				consoleTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		consoleTask->start(consoleTask_SchedParams, connections.consoleTask.cpuAffinity);
 	} else {
@@ -148,16 +147,6 @@ void SmartRobotConsole::init(int argc, char *argv[])
 		// load initial parameters from ini-file (if found)
 		loadParameter(argc, argv);
 		
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaSmartRobotConsoleExtension
-		
-		// initializations of SmartRobotConsoleROS1InterfacesExtension
-		
-		// initializations of SmartRobotConsoleROSExtension
-		
-		// initializations of SmartRobotConsoleRestInterfacesExtension
 		
 		
 		// initialize all registered port-factories
@@ -204,7 +193,8 @@ void SmartRobotConsole::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -226,7 +216,7 @@ void SmartRobotConsole::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.consoleTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.consoleTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.consoleTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(consoleTask);
@@ -318,12 +308,14 @@ void SmartRobotConsole::fini()
 
 	// destroy client ports
 
+	// destroy request-handlers
+
 	// destroy server ports
+	
 	// destroy event-test handlers (if needed)
 	
-	// destroy request-handlers
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -346,16 +338,6 @@ void SmartRobotConsole::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaSmartRobotConsoleExtension
-	
-	// destruction of SmartRobotConsoleROS1InterfacesExtension
-	
-	// destruction of SmartRobotConsoleROSExtension
-	
-	// destruction of SmartRobotConsoleRestInterfacesExtension
 	
 }
 
@@ -450,16 +432,6 @@ void SmartRobotConsole::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("ConsoleTask", "cpuAffinity")) {
 			parameter.getInteger("ConsoleTask", "cpuAffinity", connections.consoleTask.cpuAffinity);
 		}
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaSmartRobotConsoleExtension
-		
-		// load parameters for SmartRobotConsoleROS1InterfacesExtension
-		
-		// load parameters for SmartRobotConsoleROSExtension
-		
-		// load parameters for SmartRobotConsoleRestInterfacesExtension
 		
 		
 		// load parameters for all registered component-extensions

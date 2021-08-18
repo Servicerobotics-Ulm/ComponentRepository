@@ -29,14 +29,6 @@
 class ComponentTTSClientPortFactoryInterface;
 class ComponentTTSClientExtension;
 
-// includes for ComponentTTSClientROS1InterfacesExtension
-
-// includes for ComponentTTSClientROSExtension
-
-// includes for ComponentTTSClientRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentTTSClientExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -64,6 +56,8 @@ class ComponentTTSClientExtension;
 #include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP ComponentTTSClient::instance()
 
@@ -125,19 +119,10 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of ComponentTTSClientROS1InterfacesExtension
-	
-	// definitions of ComponentTTSClientROSExtension
-	
-	// definitions of ComponentTTSClientRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentTTSClientExtension
-	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	ParamUpdateHandler paramHandler;
@@ -253,16 +238,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} speechSendServiceOut;
-		
-		// -- parameters for ComponentTTSClientROS1InterfacesExtension
-		
-		// -- parameters for ComponentTTSClientROSExtension
-		
-		// -- parameters for ComponentTTSClientRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentTTSClientExtension
 		
 	} connections;
 };

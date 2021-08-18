@@ -32,7 +32,7 @@ ComponentWebotsConveyorBeltOpcua::ComponentWebotsConveyorBeltOpcua()
 	std::cout << "constructor of ComponentWebotsConveyorBeltOpcua\n";
 	
 	// set all pointer members to NULL
-	//coordinationPort = NULL;
+	//componentWebotsConveyorBeltOpcua = NULL;
 	//coordinationPort = NULL;
 	productionStation = NULL;
 	robotinoConveyerBeltEventOut = NULL;
@@ -45,6 +45,7 @@ ComponentWebotsConveyorBeltOpcua::ComponentWebotsConveyorBeltOpcua()
 	webotsTask = NULL;
 	webotsTaskTrigger = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -140,10 +141,18 @@ void ComponentWebotsConveyorBeltOpcua::startAllTasks() {
 		ACE_Sched_Params webotsTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.webotsTask.scheduler == "FIFO") {
 			webotsTask_SchedParams.policy(ACE_SCHED_FIFO);
-			webotsTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				webotsTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				webotsTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.webotsTask.scheduler == "RR") {
 			webotsTask_SchedParams.policy(ACE_SCHED_RR);
-			webotsTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				webotsTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				webotsTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		webotsTask->start(webotsTask_SchedParams, connections.webotsTask.cpuAffinity);
 	} else {
@@ -230,7 +239,8 @@ void ComponentWebotsConveyorBeltOpcua::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		if (stateSlave->defineStates("load" ,"load") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion load.load" << std::endl;
 		if (stateSlave->defineStates("unload" ,"unload") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion unload.unload" << std::endl;
 		if (stateSlave->defineStates("manualload" ,"manualload") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion manualload.manualload" << std::endl;
@@ -260,7 +270,7 @@ void ComponentWebotsConveyorBeltOpcua::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.webotsTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.webotsTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.webotsTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(webotsTask);
@@ -357,15 +367,17 @@ void ComponentWebotsConveyorBeltOpcua::fini()
 	// destroy client ports
 	delete trafficLightsServiceIn;
 
+	// destroy request-handlers
+
 	// destroy server ports
 	delete robotinoConveyerBeltEventOutWrapper;
 	delete robotinoConveyerBeltEventOut;
+	
 	// destroy event-test handlers (if needed)
 	robotinoConveyerBeltEventOutEventTestHandler;
 	
-	// destroy request-handlers
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	

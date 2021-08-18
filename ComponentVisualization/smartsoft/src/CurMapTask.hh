@@ -51,6 +51,17 @@
 #include "visualization/GridMapVisualization.hh"
 #include "CommNavigationObjects/CommGridMap.hh"
 
+// --------------------------------------------------------------------
+// Values for the actual map
+// 0-127    denote traversability with 0 completely free
+// 128-255  special values
+// --------------------------------------------------------------------
+#define MAPPER_FREE          0
+#define MAPPER_OBSTACLE      128
+#define MAPPER_GROWING       129
+#define MAPPER_UNDELETABLE   130
+#define MAPPER_UNKNOWN 		 205
+
 class CurMapTask  : public CurMapTaskCore
 {
 private:

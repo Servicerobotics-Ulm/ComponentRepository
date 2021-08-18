@@ -36,6 +36,20 @@ Laser2TaskCore::~Laser2TaskCore()
 {
 }
 
+int Laser2TaskCore::start() {
+	this->resetTrigger();
+	return SmartACE::Task::start();
+}
+
+int Laser2TaskCore::start(const ACE_Sched_Params &sched_params, const int &cpuAffinity) {
+	return SmartACE::Task::start(sched_params, cpuAffinity);
+}
+
+int Laser2TaskCore::stop(const bool wait_till_stopped) {
+	this->cancelTrigger();
+	return SmartACE::Task::stop(wait_till_stopped);
+}
+
 
 void Laser2TaskCore::notify_all_interaction_observers() {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);

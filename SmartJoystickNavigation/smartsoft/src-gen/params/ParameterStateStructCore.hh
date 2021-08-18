@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -63,8 +64,8 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Settings(";
-				os << "max_steering = " << max_steering << ", ";
-				os << "max_velocity = " << max_velocity << ", ";
+				os << "max_steering = " << max_steering; os << ", ";
+				os << "max_velocity = " << max_velocity;
 				os << ")\n";
 			}
 			

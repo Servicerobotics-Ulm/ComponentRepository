@@ -1,0 +1,197 @@
+# baseURI: http://www.servicerobotik-ulm.de/ComponentsAndSystems#ComponentWebotsRobotArm
+# imports: http://robmosys.eu/rdf/composition-structures
+# imports: http://seronet-projekt.de/models/t2#Navigation
+
+# imports: http://www.servicerobotik-ulm.de/DomainModels/CommBasicObjects
+# imports: http://www.servicerobotik-ulm.de/DomainModels/CommManipulatorObjects
+
+#######################################
+# Technical Data Sheet
+# for a SeRoNet Software Component as 
+# exported by the SmartMDSD Toolchain
+#
+# erste Zeile des .ttl muss enthalten: "# ComponentID: <id uri>"
+# This file will be placed in:
+# <componentName>/datasheet-gen/<componentName>.ttl
+#######################################
+
+# all generated files use these prefixes
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix t1: <http://seronet-projekt.de/models/t1#> .
+@prefix spdx: <http://spdx.org/rdf/terms#> .
+@prefix spdx-lic: <http://spdx.org/licenses/> .
+
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# TODO past “Durchstich”: exactly identify which elements belong to SeRoNet and which belong to RobMoSys
+@prefix robmosys: <http://robmosys.eu/rdf/composition-structures#> .
+
+# these namespaces can be different in generated files
+@prefix t3: <http://www.servicerobotik-ulm.de/ComponentsAndSystems#> .
+
+@prefix CommBasicObjects: <http://www.servicerobotik-ulm.de/DomainModels/CommBasicObjects#> .
+@prefix CommManipulatorObjects: <http://www.servicerobotik-ulm.de/DomainModels/CommManipulatorObjects#> .
+
+##### Software Component ComponentWebotsRobotArm
+# see https://robmosys.eu/wiki/modeling:metamodels:component
+t3:ComponentWebotsRobotArm a robmosys:ComponentDefinition;
+	a owl:Ontology ;
+	owl:imports <http://robmosys.eu/rdf/composition-structures> ;
+	owl:imports <http://www.servicerobotik-ulm.de/DomainModels/CommBasicObjects> ;
+	owl:imports <http://www.servicerobotik-ulm.de/DomainModels/CommManipulatorObjects> ;
+	
+	# Human readable name of this component
+	# Equals with the project name
+	rdfs:label "ComponentWebotsRobotArm";
+
+	# Abstract. 1-sentence, very brief, description about this component.
+	t1:shortDescription "
+	
+	A robot arm (manipulator) in the webots simulator.
+	
+	This component needs [OpenRave todo:add link to install instructions]() to be installed first.
+	
+	### Example program:
+	
+	```
+	CommManipulatorObjects::CommManipulatorTrajectory trajectory;
+	// do these calls in this order only
+	// 1. only JOINT_ANGLES is possible, POSE_TCP not
+	trajectory.setFlag(CommManipulatorObjects::ManipulatorTrajectoryFlag::JOINT_ANGLES);
+	// 2. set number of points in trajectory
+	trajectory.set_trajectory_size(1);
+	// 3. set number of values of each point in the trajectory. must be 6 for the UR5e (6 motors)
+	trajectory.set_joint_count(6);
+	// 4. set points:
+	// time to move to point 0 is 0.3 seconds
+	trajectory.set_joint_time(0, 0.3);
+	// point 0, set all 6 motor rotations [radians]
+	trajectory.set_joint_angle(0, 0, 0.+231);
+	trajectory.set_joint_angle(0, 1, 0.-215);
+	trajectory.set_joint_angle(0, 2, 0.-541);
+	trajectory.set_joint_angle(0, 3, 0.+374);
+	trajectory.set_joint_angle(0, 4, 0.-121);
+	trajectory.set_joint_angle(0, 5, 0.+084);
+	COMP -> sendTrajectoryServiceOut -> send(trajectory);
+	```
+	
+	### other similar components:
+	
+	- [SmartURServer](../SmartURServer)
+	- [SmartURServerLegacy](../SmartURServerLegacy)
+	- [SmartGazeboManipulatorServer](../SmartGazeboManipulatorServer)
+	
+	";
+
+	
+	# DatasheetProperty MarketName
+	t1:marketNameDescription "ComponentWebotsRobotArm";
+	# DatasheetProperty Supplier
+	t1:supplierDescription "Servicerobotics Ulm";
+	# The webpage with additional information about this component
+	t1:homepage "https://wiki.servicerobotik-ulm.de/directory:collection"^^xsd:anyURI;
+	# DatasheetProperty Purpose
+	t1:purposeDescription "The robot arm UR5e in the webots simulator.";
+
+	# Services this component provides or requires
+	# ComponentPort trajectorySendServer
+	t1:providedService t3:ComponentWebotsRobotArm_trajectorySendServer;
+	# ComponentPort posePushServer
+	t1:providedService t3:ComponentWebotsRobotArm_posePushServer;
+	# ComponentPort poseQueryServer
+	t1:providedService t3:ComponentWebotsRobotArm_poseQueryServer;
+	# ComponentPort manipulatorEventServiceOut
+	t1:providedService t3:ComponentWebotsRobotArm_manipulatorEventServiceOut;
+	# ComponentPort baseStateServiceIn
+	t1:requiredService t3:ComponentWebotsRobotArm_baseStateServiceIn;
+	# ComponentPort ioQueryServer
+	t1:providedService t3:ComponentWebotsRobotArm_ioQueryServer;
+	# ComponentPort ioEventServer
+	t1:providedService t3:ComponentWebotsRobotArm_ioEventServer;
+	# ComponentPort programQuery
+	t1:providedService t3:ComponentWebotsRobotArm_programQuery;
+.
+
+# a service definition usage. Here: provided service
+# see https://robmosys.eu/wiki/modeling:metamodels:component
+t3:ComponentWebotsRobotArm_trajectorySendServer 
+	rdf:type CommManipulatorObjects:SendTrajectoryService ;
+	# name of this service definition as from the model
+	rdfs:label "trajectorySendServer";
+
+
+.
+
+# a service definition usage. Here: provided service
+# see https://robmosys.eu/wiki/modeling:metamodels:component
+t3:ComponentWebotsRobotArm_posePushServer 
+	rdf:type CommManipulatorObjects:MobileManipulatorStateService ;
+	# name of this service definition as from the model
+	rdfs:label "posePushServer";
+
+
+.
+
+# a service definition usage. Here: provided service
+# see https://robmosys.eu/wiki/modeling:metamodels:component
+t3:ComponentWebotsRobotArm_poseQueryServer 
+	rdf:type CommManipulatorObjects:MobileManipulatorStateQueryService ;
+	# name of this service definition as from the model
+	rdfs:label "poseQueryServer";
+
+
+.
+
+# a service definition usage. Here: provided service
+# see https://robmosys.eu/wiki/modeling:metamodels:component
+t3:ComponentWebotsRobotArm_manipulatorEventServiceOut 
+	rdf:type CommManipulatorObjects:ManipulatorEventService ;
+	# name of this service definition as from the model
+	rdfs:label "manipulatorEventServiceOut";
+
+
+.
+
+# a service definition usage. Here: provided service
+# see https://robmosys.eu/wiki/modeling:metamodels:component
+t3:ComponentWebotsRobotArm_baseStateServiceIn 
+	rdf:type CommBasicObjects:BaseStateService ;
+	# name of this service definition as from the model
+	rdfs:label "baseStateServiceIn";
+
+
+.
+
+# a service definition usage. Here: provided service
+# see https://robmosys.eu/wiki/modeling:metamodels:component
+t3:ComponentWebotsRobotArm_ioQueryServer 
+	rdf:type CommBasicObjects:CommIOValuesQueryService ;
+	# name of this service definition as from the model
+	rdfs:label "ioQueryServer";
+
+
+.
+
+# a service definition usage. Here: provided service
+# see https://robmosys.eu/wiki/modeling:metamodels:component
+t3:ComponentWebotsRobotArm_ioEventServer 
+	rdf:type CommBasicObjects:CommDigitalInputEvent ;
+	# name of this service definition as from the model
+	rdfs:label "ioEventServer";
+
+
+.
+
+# a service definition usage. Here: provided service
+# see https://robmosys.eu/wiki/modeling:metamodels:component
+t3:ComponentWebotsRobotArm_programQuery 
+	rdf:type CommManipulatorObjects:MobileManipulatorProgramQueryService ;
+	# name of this service definition as from the model
+	rdfs:label "programQuery";
+
+
+.
+

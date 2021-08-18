@@ -29,14 +29,6 @@
 class ComponentLaserS300ServerPortFactoryInterface;
 class ComponentLaserS300ServerExtension;
 
-// includes for ComponentLaserS300ServerROS1InterfacesExtension
-
-// includes for ComponentLaserS300ServerROSExtension
-
-// includes for ComponentLaserS300ServerRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentLaserS300ServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -81,6 +73,8 @@ class ComponentLaserS300ServerExtension;
 #include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP ComponentLaserS300Server::instance()
 
@@ -159,19 +153,10 @@ public:
 	// define request-handlers
 	LaserQueryServiceAnswHandler *laserQueryServiceAnswHandler;
 	
-	// definitions of ComponentLaserS300ServerROS1InterfacesExtension
-	
-	// definitions of ComponentLaserS300ServerROSExtension
-	
-	// definitions of ComponentLaserS300ServerRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentLaserS300ServerExtension
-	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	ParamUpdateHandler paramHandler;
@@ -315,16 +300,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} baseTimedClient;
-		
-		// -- parameters for ComponentLaserS300ServerROS1InterfacesExtension
-		
-		// -- parameters for ComponentLaserS300ServerROSExtension
-		
-		// -- parameters for ComponentLaserS300ServerRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentLaserS300ServerExtension
 		
 	} connections;
 };

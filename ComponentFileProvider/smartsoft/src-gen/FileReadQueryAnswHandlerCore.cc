@@ -22,8 +22,12 @@ FileReadQueryAnswHandlerCore::FileReadQueryAnswHandlerCore(IQueryServer* server)
 :	Smart::IInputHandler<std::pair<Smart::QueryIdPtr,CommBasicObjects::CommFileReadRequest>>(server)
 ,	server(server)
 {
-	
 }
+
+FileReadQueryAnswHandlerCore::~FileReadQueryAnswHandlerCore()
+{
+}
+
 
 void FileReadQueryAnswHandlerCore::updateAllCommObjects()
 {

@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -84,15 +85,15 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Filter(";
-				os << "kld_err = " << kld_err << ", ";
-				os << "kld_z = " << kld_z << ", ";
-				os << "max_particles = " << max_particles << ", ";
-				os << "min_particles = " << min_particles << ", ";
-				os << "recovery_alpha_fast = " << recovery_alpha_fast << ", ";
-				os << "recovery_alpha_slow = " << recovery_alpha_slow << ", ";
-				os << "resample_interval = " << resample_interval << ", ";
-				os << "update_min_alpha = " << update_min_alpha << ", ";
-				os << "update_min_d = " << update_min_d << ", ";
+				os << "kld_err = " << kld_err; os << ", ";
+				os << "kld_z = " << kld_z; os << ", ";
+				os << "max_particles = " << max_particles; os << ", ";
+				os << "min_particles = " << min_particles; os << ", ";
+				os << "recovery_alpha_fast = " << recovery_alpha_fast; os << ", ";
+				os << "recovery_alpha_slow = " << recovery_alpha_slow; os << ", ";
+				os << "resample_interval = " << resample_interval; os << ", ";
+				os << "update_min_alpha = " << update_min_alpha; os << ", ";
+				os << "update_min_d = " << update_min_d;
 				os << ")\n";
 			}
 			
@@ -148,15 +149,15 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Laser(";
-				os << "lambda_short = " << lambda_short << ", ";
-				os << "laser_likelihood_max_dist = " << laser_likelihood_max_dist << ", ";
-				os << "laser_model_type = " << laser_model_type << ", ";
-				os << "max_beams = " << max_beams << ", ";
-				os << "sigma_hit = " << sigma_hit << ", ";
-				os << "z_hit = " << z_hit << ", ";
-				os << "z_max = " << z_max << ", ";
-				os << "z_rand = " << z_rand << ", ";
-				os << "z_short = " << z_short << ", ";
+				os << "lambda_short = " << lambda_short; os << ", ";
+				os << "laser_likelihood_max_dist = " << laser_likelihood_max_dist; os << ", ";
+				os << "laser_model_type = " << laser_model_type; os << ", ";
+				os << "max_beams = " << max_beams; os << ", ";
+				os << "sigma_hit = " << sigma_hit; os << ", ";
+				os << "z_hit = " << z_hit; os << ", ";
+				os << "z_max = " << z_max; os << ", ";
+				os << "z_rand = " << z_rand; os << ", ";
+				os << "z_short = " << z_short;
 				os << ")\n";
 			}
 			
@@ -203,12 +204,12 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Odometry(";
-				os << "alpha1 = " << alpha1 << ", ";
-				os << "alpha2 = " << alpha2 << ", ";
-				os << "alpha3 = " << alpha3 << ", ";
-				os << "alpha4 = " << alpha4 << ", ";
-				os << "alpha5 = " << alpha5 << ", ";
-				os << "odom_model_type = " << odom_model_type << ", ";
+				os << "alpha1 = " << alpha1; os << ", ";
+				os << "alpha2 = " << alpha2; os << ", ";
+				os << "alpha3 = " << alpha3; os << ", ";
+				os << "alpha4 = " << alpha4; os << ", ";
+				os << "alpha5 = " << alpha5; os << ", ";
+				os << "odom_model_type = " << odom_model_type;
 				os << ")\n";
 			}
 			
@@ -243,8 +244,8 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "VisualTag(";
-				os << "distance_variance = " << distance_variance << ", ";
-				os << "orientation_variance = " << orientation_variance << ", ";
+				os << "distance_variance = " << distance_variance; os << ", ";
+				os << "orientation_variance = " << orientation_variance;
 				os << ")\n";
 			}
 			
@@ -409,22 +410,22 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "General(";
-				os << "connect_services = " << connect_services << ", ";
-				os << "enable_visualization = " << enable_visualization << ", ";
-				os << "initPoseFileName = " << initPoseFileName << ", ";
-				os << "initalizationType = " << initalizationType << ", ";
-				os << "initial_a = " << initial_a << ", ";
-				os << "initial_cov_aa = " << initial_cov_aa << ", ";
-				os << "initial_cov_xx = " << initial_cov_xx << ", ";
-				os << "initial_cov_yy = " << initial_cov_yy << ", ";
-				os << "initial_x = " << initial_x << ", ";
-				os << "initial_y = " << initial_y << ", ";
-				os << "lostEventMaxEigValueSum = " << lostEventMaxEigValueSum << ", ";
-				os << "lostEventMaxHypothese = " << lostEventMaxHypothese << ", ";
-				os << "sensors_to_use = " << sensors_to_use << ", ";
-				os << "tag_file = " << tag_file << ", ";
-				os << "verbose = " << verbose << ", ";
-				os << "yaml_file = " << yaml_file << ", ";
+				os << "connect_services = " << connect_services; os << ", ";
+				os << "enable_visualization = " << enable_visualization; os << ", ";
+				os << "initPoseFileName = " << initPoseFileName; os << ", ";
+				os << "initalizationType = " << initalizationType; os << ", ";
+				os << "initial_a = " << initial_a; os << ", ";
+				os << "initial_cov_aa = " << initial_cov_aa; os << ", ";
+				os << "initial_cov_xx = " << initial_cov_xx; os << ", ";
+				os << "initial_cov_yy = " << initial_cov_yy; os << ", ";
+				os << "initial_x = " << initial_x; os << ", ";
+				os << "initial_y = " << initial_y; os << ", ";
+				os << "lostEventMaxEigValueSum = " << lostEventMaxEigValueSum; os << ", ";
+				os << "lostEventMaxHypothese = " << lostEventMaxHypothese; os << ", ";
+				os << "sensors_to_use = " << sensors_to_use; os << ", ";
+				os << "tag_file = " << tag_file; os << ", ";
+				os << "verbose = " << verbose; os << ", ";
+				os << "yaml_file = " << yaml_file;
 				os << ")\n";
 			}
 			

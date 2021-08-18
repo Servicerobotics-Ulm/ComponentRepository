@@ -45,7 +45,7 @@ ComponentRobotinoBaseServer::ComponentRobotinoBaseServer()
 	bumperEventServiceOut = NULL;
 	bumperEventServiceOutWrapper = NULL;
 	bumperEventServiceOutEventTestHandler = nullptr; 
-	//coordinationPort = NULL;
+	//componentRobotinoBaseServerParams = NULL;
 	//coordinationPort = NULL;
 	digitalInputEventOut = NULL;
 	digitalInputEventOutWrapper = NULL;
@@ -80,6 +80,7 @@ ComponentRobotinoBaseServer::ComponentRobotinoBaseServer()
 	robotinoAPITask = NULL;
 	robotinoAPITaskTrigger = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -140,16 +141,6 @@ ComponentRobotinoBaseServer::ComponentRobotinoBaseServer()
 	connections.localizationUpdateServiceInHandler.prescale = 1;
 	connections.navigationVelocityServiceInHandler.prescale = 1;
 	connections.powerOutputSendInHandler.prescale = 1;
-	
-	// initialize members of ComponentRobotinoBaseServerROS1InterfacesExtension
-	
-	// initialize members of ComponentRobotinoBaseServerROSExtension
-	
-	// initialize members of ComponentRobotinoBaseServerRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentRobotinoBaseServerExtension
 	
 }
 
@@ -220,10 +211,18 @@ void ComponentRobotinoBaseServer::startAllTasks() {
 		ACE_Sched_Params odomTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.odomTask.scheduler == "FIFO") {
 			odomTask_SchedParams.policy(ACE_SCHED_FIFO);
-			odomTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				odomTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				odomTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.odomTask.scheduler == "RR") {
 			odomTask_SchedParams.policy(ACE_SCHED_RR);
-			odomTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				odomTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				odomTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		odomTask->start(odomTask_SchedParams, connections.odomTask.cpuAffinity);
 	} else {
@@ -234,10 +233,18 @@ void ComponentRobotinoBaseServer::startAllTasks() {
 		ACE_Sched_Params signalStateTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.signalStateTask.scheduler == "FIFO") {
 			signalStateTask_SchedParams.policy(ACE_SCHED_FIFO);
-			signalStateTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				signalStateTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				signalStateTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.signalStateTask.scheduler == "RR") {
 			signalStateTask_SchedParams.policy(ACE_SCHED_RR);
-			signalStateTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				signalStateTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				signalStateTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		signalStateTask->start(signalStateTask_SchedParams, connections.signalStateTask.cpuAffinity);
 	} else {
@@ -248,10 +255,18 @@ void ComponentRobotinoBaseServer::startAllTasks() {
 		ACE_Sched_Params robotinoAPITask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.robotinoAPITask.scheduler == "FIFO") {
 			robotinoAPITask_SchedParams.policy(ACE_SCHED_FIFO);
-			robotinoAPITask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				robotinoAPITask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				robotinoAPITask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.robotinoAPITask.scheduler == "RR") {
 			robotinoAPITask_SchedParams.policy(ACE_SCHED_RR);
-			robotinoAPITask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				robotinoAPITask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				robotinoAPITask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		robotinoAPITask->start(robotinoAPITask_SchedParams, connections.robotinoAPITask.cpuAffinity);
 	} else {
@@ -287,16 +302,6 @@ void ComponentRobotinoBaseServer::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentRobotinoBaseServerROS1InterfacesExtension
-		
-		// initializations of ComponentRobotinoBaseServerROSExtension
-		
-		// initializations of ComponentRobotinoBaseServerRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentRobotinoBaseServerExtension
 		
 		
 		// initialize all registered port-factories
@@ -383,7 +388,8 @@ void ComponentRobotinoBaseServer::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		if (stateSlave->defineStates("emergencyStop" ,"eStop") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion emergencyStop.eStop" << std::endl;
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
@@ -408,7 +414,7 @@ void ComponentRobotinoBaseServer::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.odomTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.odomTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.odomTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(odomTask);
@@ -429,7 +435,7 @@ void ComponentRobotinoBaseServer::init(int argc, char *argv[])
 		{
 			// setup default task-trigger as PeriodicTimer
 			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-			int microseconds = 1000*1000 / 50.0;
+			int microseconds = (int)(1000.0*1000.0 / 50.0);
 			if(microseconds > 0) {
 				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				triggerPtr->attach(odomTask);
@@ -446,7 +452,7 @@ void ComponentRobotinoBaseServer::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.signalStateTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.signalStateTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.signalStateTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(signalStateTask);
@@ -467,7 +473,7 @@ void ComponentRobotinoBaseServer::init(int argc, char *argv[])
 		{
 			// setup default task-trigger as PeriodicTimer
 			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-			int microseconds = 1000*1000 / 2.0;
+			int microseconds = (int)(1000.0*1000.0 / 2.0);
 			if(microseconds > 0) {
 				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				triggerPtr->attach(signalStateTask);
@@ -484,7 +490,7 @@ void ComponentRobotinoBaseServer::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.robotinoAPITask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.robotinoAPITask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.robotinoAPITask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(robotinoAPITask);
@@ -605,9 +611,13 @@ void ComponentRobotinoBaseServer::fini()
 	// destroy client ports
 	delete localizationEventServiceIn;
 
+	// destroy request-handlers
+	delete baseStateQueryServiceAnswHandler;
+	delete robotinoIOValuesQueryServiceAnswHandler;
+
 	// destroy server ports
-	delete baseStateQueryServiceAnsw;
 	delete baseStateQueryServiceAnswInputTaskTrigger;
+	delete baseStateQueryServiceAnsw;
 	delete baseStateServiceOutWrapper;
 	delete baseStateServiceOut;
 	delete batteryEventServiceOutWrapper;
@@ -619,18 +629,16 @@ void ComponentRobotinoBaseServer::fini()
 	delete localizationUpdateServiceIn;
 	delete navigationVelocityServiceIn;
 	delete powerOutputSendIn;
-	delete robotinoIOValuesQueryServiceAnsw;
 	delete robotinoIOValuesQueryServiceAnswInputTaskTrigger;
+	delete robotinoIOValuesQueryServiceAnsw;
+	
 	// destroy event-test handlers (if needed)
 	batteryEventServiceOutEventTestHandler;
 	bumperEventServiceOutEventTestHandler;
 	digitalInputEventOutEventTestHandler;
 	
-	// destroy request-handlers
-	delete baseStateQueryServiceAnswHandler;
-	delete robotinoIOValuesQueryServiceAnswHandler;
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -650,16 +658,6 @@ void ComponentRobotinoBaseServer::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentRobotinoBaseServerROS1InterfacesExtension
-	
-	// destruction of ComponentRobotinoBaseServerROSExtension
-	
-	// destruction of ComponentRobotinoBaseServerRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentRobotinoBaseServerExtension
 	
 }
 
@@ -857,16 +855,6 @@ void ComponentRobotinoBaseServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("PowerOutputSendInHandler", "prescale")) {
 			parameter.getInteger("PowerOutputSendInHandler", "prescale", connections.powerOutputSendInHandler.prescale);
 		}
-		
-		// load parameters for ComponentRobotinoBaseServerROS1InterfacesExtension
-		
-		// load parameters for ComponentRobotinoBaseServerROSExtension
-		
-		// load parameters for ComponentRobotinoBaseServerRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentRobotinoBaseServerExtension
 		
 		
 		// load parameters for all registered component-extensions

@@ -13,7 +13,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; mps docking
 
-
 ;;(execute '(MPS.tcb-mps-station-dock 1 1))
 ;;(execute '(MPS.tcb-mps-station-undock))
 (define-tcb (tcb-mps-station-dock ?stationid ?beltid)
@@ -256,12 +255,12 @@
             (tcl-state :server 'BELT :state "unload"))))
             
 
-(define-tcb (tcb-mps-station-load-belts ?stationid)
+(define-tcb (tcb-mps-station-load ?stationid)
   (module "MPSModule")
-  (abort-action ( (format t "=========================>>> ABORT ACTION tcb-mps-station-load-belts ~%")
+  (abort-action ( (format t "=========================>>> ABORT ACTION tcb-mps-station-load ~%")
                   (tcl-state :server 'BELT :state "Neutral")))
   (action (
-            (format t "=========================>>> tcb-mps-station-load-belts stationid: ~a~%" ?stationid)
+            (format t "=========================>>> tcb-mps-station-load stationid: ~a~%" ?stationid)
             (format t "DO LOADING ~%")
             (tcl-activate-event :name 'evt-belt-loading
                                 :handler 'handler-mps-loading
@@ -380,7 +379,17 @@
 		                 :service 'dockingevent
 		                 :mode 'continuous)
   )
-))                    
+))
+
+(define-tcb (tcb-manual-load)
+  (module "MPSModule")
+  (action (
+    (format t "=========================>>> Press any key...~%")
+    (read)
+    (update-robot-state :box-loaded 1)
+    '(SUCCESS ())
+  ))
+)                    
 
 
 

@@ -29,14 +29,6 @@
 class ComponentGMappingPortFactoryInterface;
 class ComponentGMappingExtension;
 
-// includes for ComponentGMappingROS1InterfacesExtension
-
-// includes for ComponentGMappingROSExtension
-
-// includes for ComponentGMappingRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentGMappingExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -69,6 +61,8 @@ class ComponentGMappingExtension;
 #include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP ComponentGMapping::instance()
 
@@ -136,19 +130,10 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of ComponentGMappingROS1InterfacesExtension
-	
-	// definitions of ComponentGMappingROSExtension
-	
-	// definitions of ComponentGMappingRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentGMappingExtension
-	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	ParamUpdateHandler paramHandler;
@@ -268,16 +253,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} laserClient;
-		
-		// -- parameters for ComponentGMappingROS1InterfacesExtension
-		
-		// -- parameters for ComponentGMappingROSExtension
-		
-		// -- parameters for ComponentGMappingRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentGMappingExtension
 		
 	} connections;
 };

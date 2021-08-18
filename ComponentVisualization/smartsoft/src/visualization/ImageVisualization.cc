@@ -1,8 +1,9 @@
 #include "ImageVisualization.hh"
 
 #ifdef WITH_MRPT_2_0_VERSION
-	#include <opencv4/opencv2/core.hpp>
+#include <opencv4/opencv2/core.hpp>
 #include <opencv4/opencv2/core/core_c.h>
+#include <opencv4/opencv2/imgproc.hpp>
 #include "OpenCVHelpers/OpenCVHelpers.hh"
 #else
 	#include <cv.h>
@@ -123,13 +124,66 @@ void ImageVisualization::displayImage(DomainVision::CommVideoImage& image) {
 	cvReleaseImage(&currentImage);
 #endif
 }
-
-void ImageVisualization::displayDepthImage(DomainVision::CommDepthImage& image) {
 #ifdef WITH_MRPT_2_0_VERSION
-	mrpt::img::CImage depthImage(image.getWidth(), image.getHeight());
-#else
+void ImageVisualization::displayDepthImage(DomainVision::CommDepthImage& image) {
+
+	DomainVision::DepthFormatType depth_format = image.getFormat();
+	unsigned int image_height = image.getHeight();
+	unsigned int image_width  = image.getWidth();
+	std::stringstream str_dimension;
+	str_dimension << "Depth Image : "<< image.getWidth()<<" x "<<image.getHeight();
+
+	if(depth_format==DomainVision::DepthFormatType::UINT16)
+	{
+		const uint16_t* depth_data_uint16 = image.get_distances_uint16();
+		cv::Mat original_depth_image(cv::Size(image_width, image_height), CV_16UC1, (void*)depth_data_uint16, cv::Mat::AUTO_STEP);
+
+		//convert to CV_8UC1 format, opencv supports  equalization, colormap only for CV_8UC1, CV_8UC3
+		cv::Mat reduced_depth_image;
+		cv::convertScaleAbs(original_depth_image, reduced_depth_image, 0.03);
+
+		//histogram equalization
+		cv::Mat equalized_depth_image;
+		cv::equalizeHist( reduced_depth_image, equalized_depth_image );
+
+		//apply colormap
+		cv::Mat colormapped_depth_image;
+		cv::applyColorMap(equalized_depth_image, colormapped_depth_image,  cv::ColormapTypes::COLORMAP_JET);
+
+		mrpt::img::CImage depthImage(colormapped_depth_image, mrpt::img::SHALLOW_COPY);
+		m_image_window->showImage(depthImage);
+
+	}else if (depth_format==DomainVision::DepthFormatType::FLOAT)
+	{
+		const float* depth_data_float = image.get_distances_float();
+
+		cv::Mat original_depth_image(cv::Size(image_width, image_height), CV_32FC1, (void*)depth_data_float, cv::Mat::AUTO_STEP);
+
+		//convert to CV_8UC1 format, opencv supports  equalization, colormap only for CV_8UC1, CV_8UC3
+		cv::Mat reduced_depth_image;
+		cv::convertScaleAbs(original_depth_image, reduced_depth_image);
+
+		//histogram equalization
+		cv::Mat equalized_depth_image;
+		cv::equalizeHist( reduced_depth_image, equalized_depth_image );
+
+		//apply colormap
+		cv::Mat colormapped_depth_image;
+		cv::applyColorMap(equalized_depth_image, colormapped_depth_image,  cv::ColormapTypes::COLORMAP_JET);
+		mrpt::img::CImage depthImage(colormapped_depth_image, mrpt::img::SHALLOW_COPY);
+		m_image_window->showImage(depthImage);
+	}else
+	{
+		std::cout << "Only UINT16, FLOAT depth image formats supported." <<std::endl;
+	}
+
+	m_image_window->setWindowTitle(str_dimension.str());
+
+}
+#else // WITH_MRPT_2_0_VERSION displayDepthImage
+void ImageVisualization::displayDepthImage(DomainVision::CommDepthImage& image) {
 	mrpt::utils::CImage depthImage(image.getWidth(), image.getHeight());
-#endif
+
 	IplImage* currentImage = NULL;
 
 	DomainVision::DepthFormatType depth_format = image.getFormat();
@@ -137,6 +191,8 @@ void ImageVisualization::displayDepthImage(DomainVision::CommDepthImage& image) 
 	if(depth_format==DomainVision::DepthFormatType::UINT16)
 	{
 		const uint16_t* depth_data_uint16;
+		image.getMax_distcance();
+		const double max_depth = 10000.0; // Millimeters
 		depth_data_uint16 = image.get_distances_uint16();
 		for (uint32_t i = 0; i < image.getHeight(); i++)
 		{
@@ -144,20 +200,13 @@ void ImageVisualization::displayDepthImage(DomainVision::CommDepthImage& image) 
 			{
 				const uint16_t pixel_uint16 = *(depth_data_uint16 + i * image.getWidth() + j);
 				const float pixel = pixel_uint16/1000.0;
-
 				uint8_t r = pixel / 8* 255 ;
 				uint8_t g = pixel / 8* 255 ;
 				uint8_t b = pixel / 8* 255 ;
-#ifdef WITH_MRPT_2_0_VERSION
-				mrpt::img::TColor color(r, g, b);
-#else
 				mrpt::utils::TColor color(r, g, b);
-#endif
 				depthImage.setPixel(j, i, color);
 			}
 		}
-
-
 	}else if (depth_format==DomainVision::DepthFormatType::FLOAT)
 	{
 		const float* depth_data_float;
@@ -172,12 +221,7 @@ void ImageVisualization::displayDepthImage(DomainVision::CommDepthImage& image) 
 				uint8_t r = pixel[0] / 8* 255 ;
 				uint8_t g = pixel[0] / 8* 255 ;
 				uint8_t b = pixel[0] / 8* 255 ;
-
-#ifdef WITH_MRPT_2_0_VERSION
-				mrpt::img::TColor color(r, g, b);
-#else
 				mrpt::utils::TColor color(r, g, b);
-#endif
 				depthImage.setPixel(j, i, color);
 			}
 		}
@@ -194,6 +238,7 @@ void ImageVisualization::displayDepthImage(DomainVision::CommDepthImage& image) 
 	m_image_window->setWindowTitle(str_dimension.str());
 	cvReleaseImage(&currentImage);
 }
+#endif // WITH_MRPT_2_0_VERSION displayDepthImage
 void ImageVisualization::clear() {
 
 }

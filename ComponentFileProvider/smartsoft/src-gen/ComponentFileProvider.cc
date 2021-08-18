@@ -40,6 +40,7 @@ ComponentFileProvider::ComponentFileProvider()
 	fileWriteQueryAnswInputTaskTrigger = NULL;
 	fileWriteQueryAnswHandler = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -54,12 +55,6 @@ ComponentFileProvider::ComponentFileProvider()
 	connections.fileReadQueryAnsw.roboticMiddleware = "ACE_SmartSoft";
 	connections.fileWriteQueryAnsw.serviceName = "FileWriteQueryAnsw";
 	connections.fileWriteQueryAnsw.roboticMiddleware = "ACE_SmartSoft";
-	
-	// initialize members of ComponentFileProviderROSExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentFileProviderExtension
 	
 }
 
@@ -134,12 +129,6 @@ void ComponentFileProvider::init(int argc, char *argv[])
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
 		
-		// initializations of ComponentFileProviderROSExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentFileProviderExtension
-		
 		
 		// initialize all registered port-factories
 		for(auto portFactory = portFactoryRegistry.begin(); portFactory != portFactoryRegistry.end(); portFactory++) 
@@ -191,7 +180,8 @@ void ComponentFileProvider::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -272,18 +262,20 @@ void ComponentFileProvider::fini()
 
 	// destroy client ports
 
-	// destroy server ports
-	delete fileReadQueryAnsw;
-	delete fileReadQueryAnswInputTaskTrigger;
-	delete fileWriteQueryAnsw;
-	delete fileWriteQueryAnswInputTaskTrigger;
-	// destroy event-test handlers (if needed)
-	
 	// destroy request-handlers
 	delete fileReadQueryAnswHandler;
 	delete fileWriteQueryAnswHandler;
+
+	// destroy server ports
+	delete fileReadQueryAnswInputTaskTrigger;
+	delete fileReadQueryAnsw;
+	delete fileWriteQueryAnswInputTaskTrigger;
+	delete fileWriteQueryAnsw;
+	
+	// destroy event-test handlers (if needed)
 	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -303,12 +295,6 @@ void ComponentFileProvider::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentFileProviderROSExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentFileProviderExtension
 	
 }
 
@@ -394,12 +380,6 @@ void ComponentFileProvider::loadParameter(int argc, char *argv[])
 			parameter.getString("FileWriteQueryAnsw", "roboticMiddleware", connections.fileWriteQueryAnsw.roboticMiddleware);
 		}
 		
-		
-		// load parameters for ComponentFileProviderROSExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentFileProviderExtension
 		
 		
 		// load parameters for all registered component-extensions

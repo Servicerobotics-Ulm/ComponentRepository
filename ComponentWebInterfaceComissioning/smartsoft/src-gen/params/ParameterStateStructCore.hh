@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -102,21 +103,21 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Settings(";
-				os << "apacheServerPort = " << apacheServerPort << ", ";
-				os << "map = " << map << ", ";
-				os << "orientation = " << orientation << ", ";
-				os << "rotation = " << rotation << ", ";
-				os << "scale = " << scale << ", ";
-				os << "useAuthentication = " << useAuthentication << ", ";
-				os << "useDestinationRequest = " << useDestinationRequest << ", ";
-				os << "useImuData = " << useImuData << ", ";
-				os << "useLocationRequestor = " << useLocationRequestor << ", ";
-				os << "useNavigationInstructions = " << useNavigationInstructions << ", ";
-				os << "useRasterMapRequestor = " << useRasterMapRequestor << ", ";
-				os << "workerServerPort = " << workerServerPort << ", ";
-				os << "wwwRoot = " << wwwRoot << ", ";
-				os << "xOffset = " << xOffset << ", ";
-				os << "yOffset = " << yOffset << ", ";
+				os << "apacheServerPort = " << apacheServerPort; os << ", ";
+				os << "map = " << map; os << ", ";
+				os << "orientation = " << orientation; os << ", ";
+				os << "rotation = " << rotation; os << ", ";
+				os << "scale = " << scale; os << ", ";
+				os << "useAuthentication = " << useAuthentication; os << ", ";
+				os << "useDestinationRequest = " << useDestinationRequest; os << ", ";
+				os << "useImuData = " << useImuData; os << ", ";
+				os << "useLocationRequestor = " << useLocationRequestor; os << ", ";
+				os << "useNavigationInstructions = " << useNavigationInstructions; os << ", ";
+				os << "useRasterMapRequestor = " << useRasterMapRequestor; os << ", ";
+				os << "workerServerPort = " << workerServerPort; os << ", ";
+				os << "wwwRoot = " << wwwRoot; os << ", ";
+				os << "xOffset = " << xOffset; os << ", ";
+				os << "yOffset = " << yOffset;
 				os << ")\n";
 			}
 			

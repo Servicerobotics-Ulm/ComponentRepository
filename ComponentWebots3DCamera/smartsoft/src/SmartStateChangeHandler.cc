@@ -28,4 +28,5 @@ void SmartStateChangeHandler::handleEnterState(const std::string & substate) thr
 // Called when a substate is left
 void SmartStateChangeHandler::handleQuitState(const std::string & substate) throw()
 {
+	COMP->imageTask->handleQuitState(substate);
 }

@@ -36,7 +36,7 @@ ComponentWebotsMpsDocking::ComponentWebotsMpsDocking()
 	baseStateServiceInInputTaskTrigger = NULL;
 	baseStateServiceInUpcallManager = NULL;
 	baseStateServiceInInputCollector = NULL;
-	//coordinationPort = NULL;
+	//componentWebotsMpsDocking = NULL;
 	//coordinationPort = NULL;
 	dockingTask = NULL;
 	dockingTaskTrigger = NULL;
@@ -52,6 +52,7 @@ ComponentWebotsMpsDocking::ComponentWebotsMpsDocking()
 	trafficLightsServiceOut = NULL;
 	trafficLightsServiceOutWrapper = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -198,10 +199,18 @@ void ComponentWebotsMpsDocking::startAllTasks() {
 		ACE_Sched_Params dockingTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.dockingTask.scheduler == "FIFO") {
 			dockingTask_SchedParams.policy(ACE_SCHED_FIFO);
-			dockingTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				dockingTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				dockingTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.dockingTask.scheduler == "RR") {
 			dockingTask_SchedParams.policy(ACE_SCHED_RR);
-			dockingTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				dockingTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				dockingTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		dockingTask->start(dockingTask_SchedParams, connections.dockingTask.cpuAffinity);
 	} else {
@@ -297,7 +306,8 @@ void ComponentWebotsMpsDocking::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		if (stateSlave->defineStates("IrDocking" ,"irDocking") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion IrDocking.irDocking" << std::endl;
 		if (stateSlave->defineStates("UnDocking" ,"unDocking") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion UnDocking.unDocking" << std::endl;
 		if (stateSlave->defineStates("LaserDocking" ,"laserDocking") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion LaserDocking.laserDocking" << std::endl;
@@ -334,7 +344,7 @@ void ComponentWebotsMpsDocking::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.dockingTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.dockingTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.dockingTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(dockingTask);
@@ -438,17 +448,19 @@ void ComponentWebotsMpsDocking::fini()
 	delete navigationVelocityServiceOutWrapper;
 	delete navigationVelocityServiceOut;
 
+	// destroy request-handlers
+
 	// destroy server ports
 	delete robotDockingEventServiceOutWrapper;
 	delete robotDockingEventServiceOut;
 	delete trafficLightsServiceOutWrapper;
 	delete trafficLightsServiceOut;
+	
 	// destroy event-test handlers (if needed)
 	robotDockingEventServiceOutEventTestHandler;
 	
-	// destroy request-handlers
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	

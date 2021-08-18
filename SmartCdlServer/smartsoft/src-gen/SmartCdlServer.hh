@@ -29,17 +29,9 @@
 class SmartCdlServerPortFactoryInterface;
 class SmartCdlServerExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaSmartCdlServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
-
-// includes for SmartCdlServerROS1InterfacesExtension
-
-// includes for SmartCdlServerROSExtension
-
-// includes for SmartCdlServerRestInterfacesExtension
 
 
 // include communication objects
@@ -104,6 +96,8 @@ class SmartCdlServerExtension;
 #include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP SmartCdlServer::instance()
 
@@ -210,19 +204,10 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaSmartCdlServerExtension
-	
-	// definitions of SmartCdlServerROS1InterfacesExtension
-	
-	// definitions of SmartCdlServerROSExtension
-	
-	// definitions of SmartCdlServerRestInterfacesExtension
-	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	ParamUpdateHandler paramHandler;
@@ -404,16 +389,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} trackingClient;
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaSmartCdlServerExtension
-		
-		// -- parameters for SmartCdlServerROS1InterfacesExtension
-		
-		// -- parameters for SmartCdlServerROSExtension
-		
-		// -- parameters for SmartCdlServerRestInterfacesExtension
 		
 	} connections;
 };

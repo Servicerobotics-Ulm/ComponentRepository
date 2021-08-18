@@ -27,6 +27,7 @@
 // --------------------------------------------------------------------------
 
 #include "GridMapVisualization.hh"
+#include "PlannerGridTask.hh"
 
 #include <mrpt/opengl.h>
 #include <mrpt/opengl/CAxis.h>
@@ -143,8 +144,12 @@ void GridMapVisualization::displayGridMap(const CommNavigationObjects::CommGridM
 	float xmax = (float) (xOffsetMM + xSizeMM) / 1000.0;
 	float ymax = (float) (yOffsetMM + ySizeMM) / 1000.0;
 
-	//std::cout << "x : " << xmin << " -- " << xmax << "       y : " << ymin << " -- " << ymax <<std::endl;
+	//std::cout << "id : "<< (int)id <<std::endl;
+	//std::cout << "x : " << xmin << " : " << xmax << "       y : " << ymin << " : " << ymax <<std::endl;
 	//std::cout << "xSizeCells : "<< xSizeCells << "  ySizeCells : " << ySizeCells <<std::endl;
+	//std::cout << "cellSizeMM : "<< cellSizeMM <<std::endl;
+	//std::cout << "xOffsetCells : "<< xOffsetCells << "  yOffsetCells : " << yOffsetCells <<std::endl;
+
 
 	//	The longterm map holds cell values from 0 to 255. Values from 0 to 127
 	//	denote the traversability where 0 is completely free. Values from 128 to 255
@@ -177,43 +182,54 @@ void GridMapVisualization::displayGridMap(const CommNavigationObjects::CommGridM
 
 			uint8_t cell = map.get_cells(i, j);
 #ifdef WITH_MRPT_2_0_VERSION
-			if(mapType == MapType::LTM_MAP)
+
+			//map is a current map or LTM map from mapper component
+			if(mapType == MapType::LTM_MAP || mapType == MapType::CURRENT_MAP)
 			{
-			//*imgTrans(i, j) = 0xff;
 			imgTrans->setPixel(i, j, img::TColor::white());
-			}else if(mapType == MapType::CURRENT_MAP) {
-			 //*imgTrans(i, j) = 0xff;
-			 imgTrans->setPixel(i, j, img::TColor::white());
-			}
-			//imgColor.setPixel(i, j, img::TColor(cell, cell, cell));
-			if (cell < 127) {
-				//free
-				//uint8_t cell255 = 254 - (cell * 2);
-				//imgColor.setPixel(i, j, img::TColor(cell255, cell255, cell255));
+			if (cell >=0 && cell <=127) {
+				//free cell
 				imgColor->setPixel(i, j, img::TColor::white());
-
-			//	if (activateTransparency) {
-			//		*imgTrans(i, j) = 255 - cell255;
-			//	}
-
-			} else if (cell == 128) {
-				// obstacle
+			} else if (cell == MAPPER_OBSTACLE) {
 				imgColor->setPixel(i, j, img::TColor::black());
-			} else if (cell == 129) {
-				// obstacle growing
+			} else if (cell == MAPPER_GROWING) {
 				imgColor->setPixel(i, j, img::TColor::blue());
-			} else if (cell == 130) {
-				//undeletable grids
+			} else if (cell == MAPPER_UNDELETABLE) {
 				imgColor->setPixel(i, j, img::TColor::red());
-			} else if (cell == 205) {
-				//unkown grids
+			} else if (cell == MAPPER_UNKNOWN) {
 				imgColor->setPixel(i, j, img::TColor::gray());
-
-				//making unknown cells from current map, 100 transparent
-				if(mapType == MapType::CURRENT_MAP) {
-					//*imgTrans(i, j) = 0xff;
-					imgTrans->setPixel(i, j, img::TColor::white());
+			}else{
+				std::cout << (int)cell <<", ";
+			}
+			}else if(mapType == MapType::PLANNER_MAP) // map from planner containing the wavefront
+			{
+				if(cell >=8 && cell <=15){ // path planned by planner
+					imgColor->setPixel(i, j, img::TColor(64, 128, 128));
 				}
+				else if (cell == PLANNER_OBSTACLE) {
+					imgColor->setPixel(i, j, img::TColor::black());
+				} else if (cell == PLANNER_GROWING){
+					imgColor->setPixel(i, j, img::TColor(64, 64, 64));
+				}else if (cell == PLANNER_GOAL){
+					imgColor->setPixel(i, j, img::TColor::blue());
+				}else if (cell == PLANNER_START){
+					imgColor->setPixel(i, j, img::TColor::green());
+				}else if (cell == PLANNER_FREE){
+					imgColor->setPixel(i, j, img::TColor::white());
+				}else if (cell == PLANNER_NORTH){
+					imgColor->setPixel(i, j, img::TColor(128, 64, 64));
+				}else if (cell == PLANNER_WEST){
+					imgColor->setPixel(i, j, img::TColor(128, 96, 96));
+				}else if (cell == PLANNER_SOUTH){
+					imgColor->setPixel(i, j, img::TColor(128, 160, 160));
+				}else if (cell == PLANNER_EAST){
+					imgColor->setPixel(i, j, img::TColor(128, 192, 192));
+				}else if (cell == 99){// special value: planner default
+					imgColor->setPixel(i, j, img::TColor(64, 128, 128));
+				}else{
+					std::cout << (int)cell << ",";
+				}
+				imgTrans->setPixel(i, j, img::TColor::white());
 			}
 #else
 			*imgTrans(i, j) = 255;
@@ -250,6 +266,10 @@ void GridMapVisualization::displayGridMap(const CommNavigationObjects::CommGridM
 	opengl::COpenGLScene::Ptr &ptrScene = window3D.get3DSceneAndLock();
 	{
 		opengl::CTexturedPlane::Ptr ptrPlane = std::dynamic_pointer_cast<opengl::CTexturedPlane>(ptrScene->getByName(identifier + "_ltm"));
+
+
+		if((xmin !=0 && xmax !=0)&&(ymin !=0 && ymax !=0))
+		{
 		ptrPlane->setPlaneCorners(xmin, xmax, ymin, ymax);
 
         // assign new current map
@@ -262,8 +282,11 @@ void GridMapVisualization::displayGridMap(const CommNavigationObjects::CommGridM
 		}
 
 		mrpt::opengl::CText::Ptr gl_txt  = std::dynamic_pointer_cast<opengl::CText>(ptrScene->getByName(identifier + "_text"));
-		gl_txt->setString("map id = " + std::to_string(id));
+		gl_txt->setString(identifier+ " id = " + std::to_string(id));
 		gl_txt->setLocation(0.0, 0.0, 1.0);
+		}else{
+			std::cout << "Grid visualization skipped, xmin, xmax, ymin, ymax = " << xmin << ", " << xmax << ", " << ymin << ", " << ymax << std::endl;
+		}
 
 	}
 #else

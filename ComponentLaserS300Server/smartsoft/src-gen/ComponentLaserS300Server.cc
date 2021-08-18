@@ -36,7 +36,7 @@ ComponentLaserS300Server::ComponentLaserS300Server()
 	commIOForkingServiceInInputTaskTrigger = NULL;
 	commIOForkingServiceInUpcallManager = NULL;
 	commIOForkingServiceInInputCollector = NULL;
-	//coordinationPort = NULL;
+	//componentLaserS300ServerParams = NULL;
 	//coordinationPort = NULL;
 	laserQueryServiceAnswHandler = NULL;
 	laserSafetyTask = NULL;
@@ -55,6 +55,7 @@ ComponentLaserS300Server::ComponentLaserS300Server()
 	safetyfieldEventServerWrapper = NULL;
 	safetyfieldEventServerEventTestHandler = nullptr; 
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -98,16 +99,6 @@ ComponentLaserS300Server::ComponentLaserS300Server()
 	connections.laserTask.scheduler = "DEFAULT";
 	connections.laserTask.priority = -1;
 	connections.laserTask.cpuAffinity = -1;
-	
-	// initialize members of ComponentLaserS300ServerROS1InterfacesExtension
-	
-	// initialize members of ComponentLaserS300ServerROSExtension
-	
-	// initialize members of ComponentLaserS300ServerRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentLaserS300ServerExtension
 	
 }
 
@@ -198,10 +189,18 @@ void ComponentLaserS300Server::startAllTasks() {
 		ACE_Sched_Params laserSafetyTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.laserSafetyTask.scheduler == "FIFO") {
 			laserSafetyTask_SchedParams.policy(ACE_SCHED_FIFO);
-			laserSafetyTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				laserSafetyTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				laserSafetyTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.laserSafetyTask.scheduler == "RR") {
 			laserSafetyTask_SchedParams.policy(ACE_SCHED_RR);
-			laserSafetyTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				laserSafetyTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				laserSafetyTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		laserSafetyTask->start(laserSafetyTask_SchedParams, connections.laserSafetyTask.cpuAffinity);
 	} else {
@@ -212,10 +211,18 @@ void ComponentLaserS300Server::startAllTasks() {
 		ACE_Sched_Params laserTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.laserTask.scheduler == "FIFO") {
 			laserTask_SchedParams.policy(ACE_SCHED_FIFO);
-			laserTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				laserTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				laserTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.laserTask.scheduler == "RR") {
 			laserTask_SchedParams.policy(ACE_SCHED_RR);
-			laserTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				laserTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				laserTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		laserTask->start(laserTask_SchedParams, connections.laserTask.cpuAffinity);
 	} else {
@@ -249,16 +256,6 @@ void ComponentLaserS300Server::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentLaserS300ServerROS1InterfacesExtension
-		
-		// initializations of ComponentLaserS300ServerROSExtension
-		
-		// initializations of ComponentLaserS300ServerRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentLaserS300ServerExtension
 		
 		
 		// initialize all registered port-factories
@@ -322,7 +319,8 @@ void ComponentLaserS300Server::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -351,7 +349,7 @@ void ComponentLaserS300Server::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.laserSafetyTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.laserSafetyTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.laserSafetyTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(laserSafetyTask);
@@ -385,7 +383,7 @@ void ComponentLaserS300Server::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.laserTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.laserTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.laserTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(laserTask);
@@ -492,20 +490,22 @@ void ComponentLaserS300Server::fini()
 	delete commIOForkingServiceIn;
 	delete baseTimedClient;
 
+	// destroy request-handlers
+	delete laserQueryServiceAnswHandler;
+
 	// destroy server ports
 	delete laserServiceOutWrapper;
 	delete laserServiceOut;
-	delete laserQueryServer;
 	delete laserQueryServerInputTaskTrigger;
+	delete laserQueryServer;
 	delete safetyfieldEventServerWrapper;
 	delete safetyfieldEventServer;
+	
 	// destroy event-test handlers (if needed)
 	safetyfieldEventServerEventTestHandler;
 	
-	// destroy request-handlers
-	delete laserQueryServiceAnswHandler;
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -525,16 +525,6 @@ void ComponentLaserS300Server::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentLaserS300ServerROS1InterfacesExtension
-	
-	// destruction of ComponentLaserS300ServerROSExtension
-	
-	// destruction of ComponentLaserS300ServerRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentLaserS300ServerExtension
 	
 }
 
@@ -681,16 +671,6 @@ void ComponentLaserS300Server::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("LaserTask", "cpuAffinity")) {
 			parameter.getInteger("LaserTask", "cpuAffinity", connections.laserTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentLaserS300ServerROS1InterfacesExtension
-		
-		// load parameters for ComponentLaserS300ServerROSExtension
-		
-		// load parameters for ComponentLaserS300ServerRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentLaserS300ServerExtension
 		
 		
 		// load parameters for all registered component-extensions

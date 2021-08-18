@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -102,21 +103,21 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "OpenRave(";
-				os << "debugGrasping = " << debugGrasping << ", ";
-				os << "debugOpenRave = " << debugOpenRave << ", ";
-				os << "debugSend = " << debugSend << ", ";
-				os << "defaultEnvironmentPath = " << defaultEnvironmentPath << ", ";
-				os << "gui_active = " << gui_active << ", ";
-				os << "objectDatabasePath = " << objectDatabasePath << ", ";
-				os << "objectDatabaseXMLFilename = " << objectDatabaseXMLFilename << ", ";
-				os << "python_path = " << python_path << ", ";
-				os << "robotName = " << robotName << ", ";
-				os << "robotPath = " << robotPath << ", ";
-				os << "saveObjectsToFile = " << saveObjectsToFile << ", ";
-				os << "saveTrajectoryToFile = " << saveTrajectoryToFile << ", ";
-				os << "showCompleteTrajectory = " << showCompleteTrajectory << ", ";
-				os << "storedEnvironmentName = " << storedEnvironmentName << ", ";
-				os << "storedEnvironmentPath = " << storedEnvironmentPath << ", ";
+				os << "debugGrasping = " << debugGrasping; os << ", ";
+				os << "debugOpenRave = " << debugOpenRave; os << ", ";
+				os << "debugSend = " << debugSend; os << ", ";
+				os << "defaultEnvironmentPath = " << defaultEnvironmentPath; os << ", ";
+				os << "gui_active = " << gui_active; os << ", ";
+				os << "objectDatabasePath = " << objectDatabasePath; os << ", ";
+				os << "objectDatabaseXMLFilename = " << objectDatabaseXMLFilename; os << ", ";
+				os << "python_path = " << python_path; os << ", ";
+				os << "robotName = " << robotName; os << ", ";
+				os << "robotPath = " << robotPath; os << ", ";
+				os << "saveObjectsToFile = " << saveObjectsToFile; os << ", ";
+				os << "saveTrajectoryToFile = " << saveTrajectoryToFile; os << ", ";
+				os << "showCompleteTrajectory = " << showCompleteTrajectory; os << ", ";
+				os << "storedEnvironmentName = " << storedEnvironmentName; os << ", ";
+				os << "storedEnvironmentPath = " << storedEnvironmentPath;
 				os << ")\n";
 			}
 			
@@ -160,11 +161,11 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "PortParameter(";
-				os << "gripperComponentName = " << gripperComponentName << ", ";
-				os << "gripperComponentParameterService = " << gripperComponentParameterService << ", ";
-				os << "withGripper = " << withGripper << ", ";
-				os << "withManipulator = " << withManipulator << ", ";
-				os << "withObjectRecognition = " << withObjectRecognition << ", ";
+				os << "gripperComponentName = " << gripperComponentName; os << ", ";
+				os << "gripperComponentParameterService = " << gripperComponentParameterService; os << ", ";
+				os << "withGripper = " << withGripper; os << ", ";
+				os << "withManipulator = " << withManipulator; os << ", ";
+				os << "withObjectRecognition = " << withObjectRecognition;
 				os << ")\n";
 			}
 			

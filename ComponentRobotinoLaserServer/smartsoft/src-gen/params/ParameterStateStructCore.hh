@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -102,21 +103,21 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "RobotinoLaser_ini(";
-				os << "activatePushNewest = " << activatePushNewest << ", ";
-				os << "activate_safetyEventServer = " << activate_safetyEventServer << ", ";
-				os << "laserPosX = " << laserPosX << ", ";
-				os << "laserPosY = " << laserPosY << ", ";
-				os << "laserPosZ = " << laserPosZ << ", ";
-				os << "laserSafetyDist = " << laserSafetyDist << ", ";
-				os << "laserWarningSafetyDist = " << laserWarningSafetyDist << ", ";
-				os << "max_range = " << max_range << ", ";
-				os << "min_range = " << min_range << ", ";
-				os << "opening_angle = " << opening_angle << ", ";
-				os << "pitch = " << pitch << ", ";
-				os << "robotinoAddress = " << robotinoAddress << ", ";
-				os << "roll = " << roll << ", ";
-				os << "verbose = " << verbose << ", ";
-				os << "yaw = " << yaw << ", ";
+				os << "activatePushNewest = " << activatePushNewest; os << ", ";
+				os << "activate_safetyEventServer = " << activate_safetyEventServer; os << ", ";
+				os << "laserPosX = " << laserPosX; os << ", ";
+				os << "laserPosY = " << laserPosY; os << ", ";
+				os << "laserPosZ = " << laserPosZ; os << ", ";
+				os << "laserSafetyDist = " << laserSafetyDist; os << ", ";
+				os << "laserWarningSafetyDist = " << laserWarningSafetyDist; os << ", ";
+				os << "max_range = " << max_range; os << ", ";
+				os << "min_range = " << min_range; os << ", ";
+				os << "opening_angle = " << opening_angle; os << ", ";
+				os << "pitch = " << pitch; os << ", ";
+				os << "robotinoAddress = " << robotinoAddress; os << ", ";
+				os << "roll = " << roll; os << ", ";
+				os << "verbose = " << verbose; os << ", ";
+				os << "yaw = " << yaw;
 				os << ")\n";
 			}
 			

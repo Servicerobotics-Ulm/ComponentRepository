@@ -29,14 +29,6 @@
 class ComponentFileMoverPortFactoryInterface;
 class ComponentFileMoverExtension;
 
-// includes for ComponentFileMoverROS1InterfacesExtension
-
-// includes for ComponentFileMoverROSExtension
-
-// includes for ComponentFileMoverRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentFileMoverExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -74,6 +66,8 @@ class ComponentFileMoverExtension;
 #include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP ComponentFileMover::instance()
 
@@ -137,19 +131,10 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of ComponentFileMoverROS1InterfacesExtension
-	
-	// definitions of ComponentFileMoverROSExtension
-	
-	// definitions of ComponentFileMoverRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentFileMoverExtension
-	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	ParamUpdateHandler paramHandler;
@@ -269,16 +254,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} commFileWriteQueryReq;
-		
-		// -- parameters for ComponentFileMoverROS1InterfacesExtension
-		
-		// -- parameters for ComponentFileMoverROSExtension
-		
-		// -- parameters for ComponentFileMoverRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentFileMoverExtension
 		
 	} connections;
 };

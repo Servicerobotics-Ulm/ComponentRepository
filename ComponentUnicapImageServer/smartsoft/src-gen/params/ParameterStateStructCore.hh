@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -60,7 +61,7 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "settings(";
-				os << "debug_info = " << debug_info << ", ";
+				os << "debug_info = " << debug_info;
 				os << ")\n";
 			}
 			
@@ -101,10 +102,10 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "hardware(";
-				os << "camera_type = " << camera_type << ", ";
-				os << "debug_info = " << debug_info << ", ";
-				os << "device = " << device << ", ";
-				os << "identifier = " << identifier << ", ";
+				os << "camera_type = " << camera_type; os << ", ";
+				os << "debug_info = " << debug_info; os << ", ";
+				os << "device = " << device; os << ", ";
+				os << "identifier = " << identifier;
 				os << ")\n";
 			}
 			
@@ -147,7 +148,7 @@ public:
 				autoflag_shutter = false;
 				autoflag_white_balance_mode = true;
 				brightness = 16.0;
-				format = "YUV 4:2:2 (YUYV) ( YUYV )";
+				format = "YUYV 4:2:2 ( YUYV )";
 				framerate = 15;
 				gain = 100;
 				gamma = 128;
@@ -190,25 +191,25 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "hardware_properties(";
-				os << "auto_exposure = " << auto_exposure << ", ";
-				os << "autoflag_shutter = " << autoflag_shutter << ", ";
-				os << "autoflag_white_balance_mode = " << autoflag_white_balance_mode << ", ";
-				os << "brightness = " << brightness << ", ";
-				os << "format = " << format << ", ";
-				os << "framerate = " << framerate << ", ";
-				os << "gain = " << gain << ", ";
-				os << "gamma = " << gamma << ", ";
-				os << "height = " << height << ", ";
-				os << "hue = " << hue << ", ";
-				os << "saturation = " << saturation << ", ";
-				os << "sharpness = " << sharpness << ", ";
-				os << "shutter = " << shutter << ", ";
-				os << "trigger_mode = " << trigger_mode << ", ";
-				os << "trigger_polarity = " << trigger_polarity << ", ";
-				os << "white_balance_mode = " << white_balance_mode << ", ";
-				os << "white_balance_u = " << white_balance_u << ", ";
-				os << "white_balance_v = " << white_balance_v << ", ";
-				os << "width = " << width << ", ";
+				os << "auto_exposure = " << auto_exposure; os << ", ";
+				os << "autoflag_shutter = " << autoflag_shutter; os << ", ";
+				os << "autoflag_white_balance_mode = " << autoflag_white_balance_mode; os << ", ";
+				os << "brightness = " << brightness; os << ", ";
+				os << "format = " << format; os << ", ";
+				os << "framerate = " << framerate; os << ", ";
+				os << "gain = " << gain; os << ", ";
+				os << "gamma = " << gamma; os << ", ";
+				os << "height = " << height; os << ", ";
+				os << "hue = " << hue; os << ", ";
+				os << "saturation = " << saturation; os << ", ";
+				os << "sharpness = " << sharpness; os << ", ";
+				os << "shutter = " << shutter; os << ", ";
+				os << "trigger_mode = " << trigger_mode; os << ", ";
+				os << "trigger_polarity = " << trigger_polarity; os << ", ";
+				os << "white_balance_mode = " << white_balance_mode; os << ", ";
+				os << "white_balance_u = " << white_balance_u; os << ", ";
+				os << "white_balance_v = " << white_balance_v; os << ", ";
+				os << "width = " << width;
 				os << ")\n";
 			}
 			
@@ -240,7 +241,7 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "push_newest(";
-				os << "debug_info = " << debug_info << ", ";
+				os << "debug_info = " << debug_info;
 				os << ")\n";
 			}
 			
@@ -272,7 +273,7 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "push_timed(";
-				os << "debug_info = " << debug_info << ", ";
+				os << "debug_info = " << debug_info;
 				os << ")\n";
 			}
 			
@@ -319,12 +320,12 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "sensor_pose(";
-				os << "azimuth = " << azimuth << ", ";
-				os << "elevation = " << elevation << ", ";
-				os << "roll = " << roll << ", ";
-				os << "x = " << x << ", ";
-				os << "y = " << y << ", ";
-				os << "z = " << z << ", ";
+				os << "azimuth = " << azimuth; os << ", ";
+				os << "elevation = " << elevation; os << ", ";
+				os << "roll = " << roll; os << ", ";
+				os << "x = " << x; os << ", ";
+				os << "y = " << y; os << ", ";
+				os << "z = " << z;
 				os << ")\n";
 			}
 			
@@ -377,14 +378,14 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "base(";
-				os << "azimuth = " << azimuth << ", ";
-				os << "elevation = " << elevation << ", ";
-				os << "on_base = " << on_base << ", ";
-				os << "on_ptu = " << on_ptu << ", ";
-				os << "roll = " << roll << ", ";
-				os << "x = " << x << ", ";
-				os << "y = " << y << ", ";
-				os << "z = " << z << ", ";
+				os << "azimuth = " << azimuth; os << ", ";
+				os << "elevation = " << elevation; os << ", ";
+				os << "on_base = " << on_base; os << ", ";
+				os << "on_ptu = " << on_ptu; os << ", ";
+				os << "roll = " << roll; os << ", ";
+				os << "x = " << x; os << ", ";
+				os << "y = " << y; os << ", ";
+				os << "z = " << z;
 				os << ")\n";
 			}
 			
@@ -422,9 +423,9 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Image(";
-				os << "debug_info = " << debug_info << ", ";
-				os << "smart_format = " << smart_format << ", ";
-				os << "valid_time_in_sec = " << valid_time_in_sec << ", ";
+				os << "debug_info = " << debug_info; os << ", ";
+				os << "smart_format = " << smart_format; os << ", ";
+				os << "valid_time_in_sec = " << valid_time_in_sec;
 				os << ")\n";
 			}
 			
@@ -478,21 +479,21 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "IntrinsicParams(";
-				os << "calib_height = " << calib_height << ", ";
-				os << "calib_width = " << calib_width << ", ";
-				os << "cx = " << cx << ", ";
-				os << "cy = " << cy << ", ";
-				std::list<double>::const_iterator distortion_coeffsIt;
-				for(distortion_coeffsIt=distortion_coeffs.begin(); distortion_coeffsIt!=distortion_coeffs.end(); distortion_coeffsIt++)
+				os << "calib_height = " << calib_height; os << ", ";
+				os << "calib_width = " << calib_width; os << ", ";
+				os << "cx = " << cx; os << ", ";
+				os << "cy = " << cy; os << ", ";
+				os << "distortion_coeffs = [";
+				for(auto distortion_coeffsIt = distortion_coeffs.begin(); distortion_coeffsIt != distortion_coeffs.end(); distortion_coeffsIt++)
 				{
-				os << "distortion_coeffs = " << *distortion_coeffsIt << ", ";
-				os << "distortion_coeffs = " << *distortion_coeffsIt << ", ";
-				os << "distortion_coeffs = " << *distortion_coeffsIt << ", ";
-				os << "distortion_coeffs = " << *distortion_coeffsIt << ", ";
-				os << "distortion_coeffs = " << *distortion_coeffsIt << ", ";
+					if(distortion_coeffsIt != distortion_coeffs.begin()) {
+						os << ", ";
+					}
+					os << *distortion_coeffsIt;
 				}
-				os << "fx = " << fx << ", ";
-				os << "fy = " << fy << ", ";
+				os << "]"; os << ", ";
+				os << "fx = " << fx; os << ", ";
+				os << "fy = " << fy;
 				os << ")\n";
 			}
 			

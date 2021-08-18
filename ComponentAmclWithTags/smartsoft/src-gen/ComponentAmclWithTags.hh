@@ -29,14 +29,6 @@
 class ComponentAmclWithTagsPortFactoryInterface;
 class ComponentAmclWithTagsExtension;
 
-// includes for ComponentAmclWithTagsROS1InterfacesExtension
-
-// includes for ComponentAmclWithTagsROSExtension
-
-// includes for ComponentAmclWithTagsRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentAmclWithTagsExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -77,6 +69,8 @@ class ComponentAmclWithTagsExtension;
 #include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP ComponentAmclWithTags::instance()
 
@@ -150,19 +144,10 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of ComponentAmclWithTagsROS1InterfacesExtension
-	
-	// definitions of ComponentAmclWithTagsROSExtension
-	
-	// definitions of ComponentAmclWithTagsRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentAmclWithTagsExtension
-	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	ParamUpdateHandler paramHandler;
@@ -291,16 +276,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} markerListDetectionServiceIn;
-		
-		// -- parameters for ComponentAmclWithTagsROS1InterfacesExtension
-		
-		// -- parameters for ComponentAmclWithTagsROSExtension
-		
-		// -- parameters for ComponentAmclWithTagsRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentAmclWithTagsExtension
 		
 	} connections;
 };

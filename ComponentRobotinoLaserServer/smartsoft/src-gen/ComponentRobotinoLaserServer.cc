@@ -32,7 +32,7 @@ ComponentRobotinoLaserServer::ComponentRobotinoLaserServer()
 	std::cout << "constructor of ComponentRobotinoLaserServer\n";
 	
 	// set all pointer members to NULL
-	//coordinationPort = NULL;
+	//componentRobotinoLaserServer = NULL;
 	//coordinationPort = NULL;
 	laserServiceOut = NULL;
 	laserServiceOutWrapper = NULL;
@@ -49,6 +49,7 @@ ComponentRobotinoLaserServer::ComponentRobotinoLaserServer()
 	safetyfieldEventServerWrapper = NULL;
 	safetyfieldEventServerEventTestHandler = nullptr; 
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -148,10 +149,18 @@ void ComponentRobotinoLaserServer::startAllTasks() {
 		ACE_Sched_Params readLaserTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.readLaserTask.scheduler == "FIFO") {
 			readLaserTask_SchedParams.policy(ACE_SCHED_FIFO);
-			readLaserTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				readLaserTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				readLaserTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.readLaserTask.scheduler == "RR") {
 			readLaserTask_SchedParams.policy(ACE_SCHED_RR);
-			readLaserTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				readLaserTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				readLaserTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		readLaserTask->start(readLaserTask_SchedParams, connections.readLaserTask.cpuAffinity);
 	} else {
@@ -243,7 +252,8 @@ void ComponentRobotinoLaserServer::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -267,7 +277,7 @@ void ComponentRobotinoLaserServer::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.readLaserTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.readLaserTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.readLaserTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(readLaserTask);
@@ -363,20 +373,22 @@ void ComponentRobotinoLaserServer::fini()
 	// destroy client ports
 	delete baseTimedClient;
 
+	// destroy request-handlers
+	delete queryHandler;
+
 	// destroy server ports
 	delete laserServiceOutWrapper;
 	delete laserServiceOut;
-	delete queryServer;
 	delete queryServerInputTaskTrigger;
+	delete queryServer;
 	delete safetyfieldEventServerWrapper;
 	delete safetyfieldEventServer;
+	
 	// destroy event-test handlers (if needed)
 	safetyfieldEventServerEventTestHandler;
 	
-	// destroy request-handlers
-	delete queryHandler;
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	

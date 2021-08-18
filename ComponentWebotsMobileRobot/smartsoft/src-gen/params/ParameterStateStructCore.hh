@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -66,9 +67,9 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "OdometryRandomError(";
-				os << "varianceOfDistancePerMeter = " << varianceOfDistancePerMeter << ", ";
-				os << "varianceOfHeadingPerMeter = " << varianceOfHeadingPerMeter << ", ";
-				os << "varianceOfHeadingPerRadians = " << varianceOfHeadingPerRadians << ", ";
+				os << "varianceOfDistancePerMeter = " << varianceOfDistancePerMeter; os << ", ";
+				os << "varianceOfHeadingPerMeter = " << varianceOfHeadingPerMeter; os << ", ";
+				os << "varianceOfHeadingPerRadians = " << varianceOfHeadingPerRadians;
 				os << ")\n";
 			}
 			
@@ -128,43 +129,53 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Webots(";
-				std::list<double>::const_iterator distanceToRobotCentreIt;
-				for(distanceToRobotCentreIt=distanceToRobotCentre.begin(); distanceToRobotCentreIt!=distanceToRobotCentre.end(); distanceToRobotCentreIt++)
+				os << "distanceToRobotCentre = [";
+				for(auto distanceToRobotCentreIt = distanceToRobotCentre.begin(); distanceToRobotCentreIt != distanceToRobotCentre.end(); distanceToRobotCentreIt++)
 				{
-				os << "distanceToRobotCentre = " << *distanceToRobotCentreIt << ", ";
-				os << "distanceToRobotCentre = " << *distanceToRobotCentreIt << ", ";
-				os << "distanceToRobotCentre = " << *distanceToRobotCentreIt << ", ";
+					if(distanceToRobotCentreIt != distanceToRobotCentre.begin()) {
+						os << ", ";
+					}
+					os << *distanceToRobotCentreIt;
 				}
-				std::list<double>::const_iterator headingIt;
-				for(headingIt=heading.begin(); headingIt!=heading.end(); headingIt++)
+				os << "]"; os << ", ";
+				os << "heading = [";
+				for(auto headingIt = heading.begin(); headingIt != heading.end(); headingIt++)
 				{
-				os << "heading = " << *headingIt << ", ";
-				os << "heading = " << *headingIt << ", ";
-				os << "heading = " << *headingIt << ", ";
+					if(headingIt != heading.begin()) {
+						os << ", ";
+					}
+					os << *headingIt;
 				}
-				os << "keyboardControl = " << keyboardControl << ", ";
-				std::list<double>::const_iterator maxAccelerationIt;
-				for(maxAccelerationIt=maxAcceleration.begin(); maxAccelerationIt!=maxAcceleration.end(); maxAccelerationIt++)
+				os << "]"; os << ", ";
+				os << "keyboardControl = " << keyboardControl; os << ", ";
+				os << "maxAcceleration = [";
+				for(auto maxAccelerationIt = maxAcceleration.begin(); maxAccelerationIt != maxAcceleration.end(); maxAccelerationIt++)
 				{
-				os << "maxAcceleration = " << *maxAccelerationIt << ", ";
-				os << "maxAcceleration = " << *maxAccelerationIt << ", ";
-				os << "maxAcceleration = " << *maxAccelerationIt << ", ";
+					if(maxAccelerationIt != maxAcceleration.begin()) {
+						os << ", ";
+					}
+					os << *maxAccelerationIt;
 				}
-				std::list<std::string>::const_iterator motorNameIt;
-				for(motorNameIt=motorName.begin(); motorNameIt!=motorName.end(); motorNameIt++)
+				os << "]"; os << ", ";
+				os << "motorName = [";
+				for(auto motorNameIt = motorName.begin(); motorNameIt != motorName.end(); motorNameIt++)
 				{
-				os << "motorName = " << *motorNameIt << ", ";
-				os << "motorName = " << *motorNameIt << ", ";
-				os << "motorName = " << *motorNameIt << ", ";
+					if(motorNameIt != motorName.begin()) {
+						os << ", ";
+					}
+					os << *motorNameIt;
 				}
-				std::list<double>::const_iterator radiusIt;
-				for(radiusIt=radius.begin(); radiusIt!=radius.end(); radiusIt++)
+				os << "]"; os << ", ";
+				os << "radius = [";
+				for(auto radiusIt = radius.begin(); radiusIt != radius.end(); radiusIt++)
 				{
-				os << "radius = " << *radiusIt << ", ";
-				os << "radius = " << *radiusIt << ", ";
-				os << "radius = " << *radiusIt << ", ";
+					if(radiusIt != radius.begin()) {
+						os << ", ";
+					}
+					os << *radiusIt;
 				}
-				os << "robotName = " << robotName << ", ";
+				os << "]"; os << ", ";
+				os << "robotName = " << robotName;
 				os << ")\n";
 			}
 			
@@ -202,9 +213,9 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Robot(";
-				os << "maxRotVel = " << maxRotVel << ", ";
-				os << "maxVelX = " << maxVelX << ", ";
-				os << "maxVelY = " << maxVelY << ", ";
+				os << "maxRotVel = " << maxRotVel; os << ", ";
+				os << "maxVelX = " << maxVelX; os << ", ";
+				os << "maxVelY = " << maxVelY;
 				os << ")\n";
 			}
 			
@@ -245,10 +256,10 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "General(";
-				os << "poseFileName = " << poseFileName << ", ";
-				os << "useLocalizationEvent = " << useLocalizationEvent << ", ";
-				os << "verbose = " << verbose << ", ";
-				os << "writePoseFile = " << writePoseFile << ", ";
+				os << "poseFileName = " << poseFileName; os << ", ";
+				os << "useLocalizationEvent = " << useLocalizationEvent; os << ", ";
+				os << "verbose = " << verbose; os << ", ";
+				os << "writePoseFile = " << writePoseFile;
 				os << ")\n";
 			}
 			

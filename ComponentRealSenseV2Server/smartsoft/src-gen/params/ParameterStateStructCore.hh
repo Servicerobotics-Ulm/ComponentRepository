@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -81,14 +82,14 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "settings(";
-				os << "debug_info = " << debug_info << ", ";
-				os << "device_serial_number = " << device_serial_number << ", ";
-				os << "post_processing = " << post_processing << ", ";
-				os << "pushnewest_color_image = " << pushnewest_color_image << ", ";
-				os << "pushnewest_depth_image = " << pushnewest_depth_image << ", ";
-				os << "pushnewest_rgbd_image = " << pushnewest_rgbd_image << ", ";
-				os << "undistort_image = " << undistort_image << ", ";
-				os << "valid_image_time = " << valid_image_time << ", ";
+				os << "debug_info = " << debug_info; os << ", ";
+				os << "device_serial_number = " << device_serial_number; os << ", ";
+				os << "post_processing = " << post_processing; os << ", ";
+				os << "pushnewest_color_image = " << pushnewest_color_image; os << ", ";
+				os << "pushnewest_depth_image = " << pushnewest_depth_image; os << ", ";
+				os << "pushnewest_rgbd_image = " << pushnewest_rgbd_image; os << ", ";
+				os << "undistort_image = " << undistort_image; os << ", ";
+				os << "valid_image_time = " << valid_image_time;
 				os << ")\n";
 			}
 			
@@ -120,7 +121,7 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "stereo(";
-				os << "baseline = " << baseline << ", ";
+				os << "baseline = " << baseline;
 				os << ")\n";
 			}
 			
@@ -167,12 +168,12 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "sensor_pose(";
-				os << "azimuth = " << azimuth << ", ";
-				os << "elevation = " << elevation << ", ";
-				os << "roll = " << roll << ", ";
-				os << "x = " << x << ", ";
-				os << "y = " << y << ", ";
-				os << "z = " << z << ", ";
+				os << "azimuth = " << azimuth; os << ", ";
+				os << "elevation = " << elevation; os << ", ";
+				os << "roll = " << roll; os << ", ";
+				os << "x = " << x; os << ", ";
+				os << "y = " << y; os << ", ";
+				os << "z = " << z;
 				os << ")\n";
 			}
 			
@@ -210,9 +211,9 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "RGB_config(";
-				os << "framerate = " << framerate << ", ";
-				os << "height = " << height << ", ";
-				os << "width = " << width << ", ";
+				os << "framerate = " << framerate; os << ", ";
+				os << "height = " << height; os << ", ";
+				os << "width = " << width;
 				os << ")\n";
 			}
 			
@@ -250,9 +251,9 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Depth_config(";
-				os << "framerate = " << framerate << ", ";
-				os << "height = " << height << ", ";
-				os << "width = " << width << ", ";
+				os << "framerate = " << framerate; os << ", ";
+				os << "height = " << height; os << ", ";
+				os << "width = " << width;
 				os << ")\n";
 			}
 			
@@ -308,15 +309,15 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "base(";
-				os << "base_a = " << base_a << ", ";
-				os << "on_base = " << on_base << ", ";
-				os << "on_manipulator = " << on_manipulator << ", ";
-				os << "on_ptu = " << on_ptu << ", ";
-				os << "on_ur = " << on_ur << ", ";
-				os << "steer_a = " << steer_a << ", ";
-				os << "x = " << x << ", ";
-				os << "y = " << y << ", ";
-				os << "z = " << z << ", ";
+				os << "base_a = " << base_a; os << ", ";
+				os << "on_base = " << on_base; os << ", ";
+				os << "on_manipulator = " << on_manipulator; os << ", ";
+				os << "on_ptu = " << on_ptu; os << ", ";
+				os << "on_ur = " << on_ur; os << ", ";
+				os << "steer_a = " << steer_a; os << ", ";
+				os << "x = " << x; os << ", ";
+				os << "y = " << y; os << ", ";
+				os << "z = " << z;
 				os << ")\n";
 			}
 			

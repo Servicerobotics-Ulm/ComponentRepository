@@ -54,11 +54,14 @@ DockingTask::~DockingTask() {
 }
 
 // the webots node must have coordinate system x=front, y=left, z=up.
-// webots WorldInfo.coordinateSystem must be NUE. (todo: handle all coordinate systems correct)
+// webots WorldInfo.coordinateSystem must be ENU. (todo: handle all coordinate systems correct)
 Pose2D DockingTask::getNodePose(webots::Node *node) {
   const double *position = node->getPosition();
   const double *orientation = node->getOrientation();
-  Pose2D pose = { position[0], -position[2], atan2(-orientation[6], orientation[0]) };
+// NUE:
+//  Pose2D pose = { position[0], -position[2], atan2(-orientation[6], orientation[0]) };
+// ENU:
+  Pose2D pose = { position[0], position[1], atan2(orientation[3], orientation[0]) };
   return pose;
 }
 
@@ -129,6 +132,7 @@ int DockingTask::on_execute() {
         COMP->getParameters().getWebots().getStationName();
         std::cout << " minDistance " << minDistance;
         for (auto const &i : nameList) {
+        	std::cout << "Calculating Nearest station" <<std::endl;
           webots::Node *station = robot->getFromDef(i);
           webots::Node *node = NULL;
           if (station != NULL)
@@ -208,6 +212,8 @@ int DockingTask::on_execute() {
         const double acceleration = 0.25;
         double dx = targetPose.x - robotPose.x;
         double dy = targetPose.y - robotPose.y;
+        std::cout << "target pose [" << targetPose.x << ", " << targetPose.y  <<", "<< targetPose.heading << "]"
+        		  << "Robot pose  [" << robotPose.x  << ", " << robotPose.y  <<", "<<  robotPose.heading << "]"<<std::endl;
         double distance = std::sqrt(dx * dx + dy * dy);
         // v = sqrt(2*a*x)
         double v = std::sqrt(2 * acceleration * distance);
@@ -220,6 +226,7 @@ int DockingTask::on_execute() {
           // vector d = robot to target (length 1)
           dx = dx / distance;
           dy = dy / distance;
+
           // vector a = x-axis of robot (length 1)
           double ax = cos(robotPose.heading);
           double ay = sin(robotPose.heading);
@@ -254,9 +261,9 @@ int DockingTask::on_execute() {
       CommBasicObjects::CommTrafficLights trafficLights;
       trafficLights.setYellow(blink).setRed(isError);
       COMP->trafficLightsServiceOut->put(trafficLights);
-      //std::cout << "program " << program << " Counter " << programCounter << " targetPose=" << targetPose.x << " "
-       //   << targetPose.y << " " << targetPose.heading << " vx=" << vx << " vy=" << vy << " omega=" << omega
-        //  << " isError=" << isError << std::endl;
+      std::cout << "program " << program << " Counter " << programCounter << " targetPose=" << targetPose.x << " "
+                << targetPose.y << " " << targetPose.heading << " vx=" << vx << " vy=" << vy << " omega=" << omega
+                << " isError=" << isError << std::endl;
     }
     if (programCounter == 8)
       programCounter = 9;

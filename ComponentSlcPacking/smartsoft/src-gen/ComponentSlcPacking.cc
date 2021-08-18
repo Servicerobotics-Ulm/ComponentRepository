@@ -34,7 +34,7 @@ ComponentSlcPacking::ComponentSlcPacking()
 	// set all pointer members to NULL
 	captureTask = NULL;
 	captureTaskTrigger = NULL;
-	//coordinationPort = NULL;
+	//componentSlcPacking = NULL;
 	//coordinationPort = NULL;
 	environmentQueryServiceAnswHandler = NULL;
 	objectQueryServiceAnswHandler = NULL;
@@ -50,6 +50,7 @@ ComponentSlcPacking::ComponentSlcPacking()
 	objectPropertyQueryServerInputTaskTrigger = NULL;
 	rgbdQueryClient = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -90,16 +91,6 @@ ComponentSlcPacking::ComponentSlcPacking()
 	connections.packingTask.scheduler = "DEFAULT";
 	connections.packingTask.priority = -1;
 	connections.packingTask.cpuAffinity = -1;
-	
-	// initialize members of ComponentSlcPackingROS1InterfacesExtension
-	
-	// initialize members of ComponentSlcPackingROSExtension
-	
-	// initialize members of ComponentSlcPackingRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentSlcPackingExtension
 	
 }
 
@@ -188,10 +179,18 @@ void ComponentSlcPacking::startAllTasks() {
 		ACE_Sched_Params captureTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.captureTask.scheduler == "FIFO") {
 			captureTask_SchedParams.policy(ACE_SCHED_FIFO);
-			captureTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				captureTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				captureTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.captureTask.scheduler == "RR") {
 			captureTask_SchedParams.policy(ACE_SCHED_RR);
-			captureTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				captureTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				captureTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		captureTask->start(captureTask_SchedParams, connections.captureTask.cpuAffinity);
 	} else {
@@ -202,10 +201,18 @@ void ComponentSlcPacking::startAllTasks() {
 		ACE_Sched_Params packingTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.packingTask.scheduler == "FIFO") {
 			packingTask_SchedParams.policy(ACE_SCHED_FIFO);
-			packingTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				packingTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				packingTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.packingTask.scheduler == "RR") {
 			packingTask_SchedParams.policy(ACE_SCHED_RR);
-			packingTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				packingTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				packingTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		packingTask->start(packingTask_SchedParams, connections.packingTask.cpuAffinity);
 	} else {
@@ -237,16 +244,6 @@ void ComponentSlcPacking::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentSlcPackingROS1InterfacesExtension
-		
-		// initializations of ComponentSlcPackingROSExtension
-		
-		// initializations of ComponentSlcPackingRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentSlcPackingExtension
 		
 		
 		// initialize all registered port-factories
@@ -305,7 +302,8 @@ void ComponentSlcPacking::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -333,7 +331,7 @@ void ComponentSlcPacking::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.captureTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.captureTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.captureTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(captureTask);
@@ -358,7 +356,7 @@ void ComponentSlcPacking::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.packingTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.packingTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.packingTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(packingTask);
@@ -458,21 +456,23 @@ void ComponentSlcPacking::fini()
 	delete objectPropertyQueryClient;
 	delete rgbdQueryClient;
 
-	// destroy server ports
-	delete environmentQueryServer;
-	delete environmentQueryServerInputTaskTrigger;
-	delete objectEventServerWrapper;
-	delete objectEventServer;
-	delete objectPropertyQueryServer;
-	delete objectPropertyQueryServerInputTaskTrigger;
-	// destroy event-test handlers (if needed)
-	objectEventServerEventTestHandler;
-	
 	// destroy request-handlers
 	delete environmentQueryServiceAnswHandler;
 	delete objectQueryServiceAnswHandler;
+
+	// destroy server ports
+	delete environmentQueryServerInputTaskTrigger;
+	delete environmentQueryServer;
+	delete objectEventServerWrapper;
+	delete objectEventServer;
+	delete objectPropertyQueryServerInputTaskTrigger;
+	delete objectPropertyQueryServer;
+	
+	// destroy event-test handlers (if needed)
+	objectEventServerEventTestHandler;
 	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -492,16 +492,6 @@ void ComponentSlcPacking::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentSlcPackingROS1InterfacesExtension
-	
-	// destruction of ComponentSlcPackingROSExtension
-	
-	// destruction of ComponentSlcPackingRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentSlcPackingExtension
 	
 }
 
@@ -646,16 +636,6 @@ void ComponentSlcPacking::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("PackingTask", "cpuAffinity")) {
 			parameter.getInteger("PackingTask", "cpuAffinity", connections.packingTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentSlcPackingROS1InterfacesExtension
-		
-		// load parameters for ComponentSlcPackingROSExtension
-		
-		// load parameters for ComponentSlcPackingRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentSlcPackingExtension
 		
 		
 		// load parameters for all registered component-extensions

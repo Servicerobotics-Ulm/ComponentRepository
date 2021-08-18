@@ -29,10 +29,6 @@
 class ComponentKinectV2ServerPortFactoryInterface;
 class ComponentKinectV2ServerExtension;
 
-// includes for ComponentKinectV2ServerROS1InterfacesExtension
-
-// includes for ComponentKinectV2ServerRestInterfacesExtension
-
 // includes for PlainOpcUaComponentKinectV2ServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -76,6 +72,8 @@ class ComponentKinectV2ServerExtension;
 #include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP ComponentKinectV2Server::instance()
 
@@ -156,15 +154,10 @@ public:
 	ColorImageQueryHandler *colorImageQueryHandler;
 	ImageQueryHandler *imageQueryHandler;
 	
-	// definitions of ComponentKinectV2ServerROS1InterfacesExtension
-	
-	// definitions of ComponentKinectV2ServerRestInterfacesExtension
-	
-	// definitions of PlainOpcUaComponentKinectV2ServerExtension
-	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	ParamUpdateHandler paramHandler;
@@ -300,12 +293,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} ptuPosePushNewestClient;
-		
-		// -- parameters for ComponentKinectV2ServerROS1InterfacesExtension
-		
-		// -- parameters for ComponentKinectV2ServerRestInterfacesExtension
-		
-		// -- parameters for PlainOpcUaComponentKinectV2ServerExtension
 		
 	} connections;
 };

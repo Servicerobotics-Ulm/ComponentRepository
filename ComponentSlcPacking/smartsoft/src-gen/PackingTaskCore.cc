@@ -36,6 +36,20 @@ PackingTaskCore::~PackingTaskCore()
 {
 }
 
+int PackingTaskCore::start() {
+	this->resetTrigger();
+	return SmartACE::Task::start();
+}
+
+int PackingTaskCore::start(const ACE_Sched_Params &sched_params, const int &cpuAffinity) {
+	return SmartACE::Task::start(sched_params, cpuAffinity);
+}
+
+int PackingTaskCore::stop(const bool wait_till_stopped) {
+	this->cancelTrigger();
+	return SmartACE::Task::stop(wait_till_stopped);
+}
+
 
 void PackingTaskCore::notify_all_interaction_observers() {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);

@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -60,7 +61,7 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Settings(";
-				os << "no_path_event_timeout = " << no_path_event_timeout << ", ";
+				os << "no_path_event_timeout = " << no_path_event_timeout;
 				os << ")\n";
 			}
 			
@@ -114,7 +115,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tID(";
-						os << "id = " << id << ", ";
+						os << "id = " << id;
 						os << ")\n";
 					}
 					
@@ -235,7 +236,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tPLANNERMODE(";
-						os << "mode = " << mode << ", ";
+						os << "mode = " << mode;
 						os << ")\n";
 					}
 					

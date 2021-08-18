@@ -29,17 +29,9 @@
 class SmartJoystickServerPortFactoryInterface;
 class SmartJoystickServerExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaSmartJoystickServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
-
-// includes for SmartJoystickServerROS1InterfacesExtension
-
-// includes for SmartJoystickServerROSExtension
-
-// includes for SmartJoystickServerRestInterfacesExtension
 
 
 // include communication objects
@@ -62,6 +54,8 @@ class SmartJoystickServerExtension;
 #include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP SmartJoystickServer::instance()
 
@@ -122,19 +116,10 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaSmartJoystickServerExtension
-	
-	// definitions of SmartJoystickServerROS1InterfacesExtension
-	
-	// definitions of SmartJoystickServerROSExtension
-	
-	// definitions of SmartJoystickServerRestInterfacesExtension
-	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	ParamUpdateHandler paramHandler;
@@ -226,16 +211,6 @@ public:
 		} joystickServcieOut;
 	
 		//--- client port parameter ---
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaSmartJoystickServerExtension
-		
-		// -- parameters for SmartJoystickServerROS1InterfacesExtension
-		
-		// -- parameters for SmartJoystickServerROSExtension
-		
-		// -- parameters for SmartJoystickServerRestInterfacesExtension
 		
 	} connections;
 };

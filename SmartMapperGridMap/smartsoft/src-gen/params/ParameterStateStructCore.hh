@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -78,13 +79,13 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "CurrentMap(";
-				os << "growing = " << growing << ", ";
-				os << "id = " << id << ", ";
-				os << "interval = " << interval << ", ";
-				os << "xpos = " << xpos << ", ";
-				os << "xsize = " << xsize << ", ";
-				os << "ypos = " << ypos << ", ";
-				os << "ysize = " << ysize << ", ";
+				os << "growing = " << growing; os << ", ";
+				os << "id = " << id; os << ", ";
+				os << "interval = " << interval; os << ", ";
+				os << "xpos = " << xpos; os << ", ";
+				os << "xsize = " << xsize; os << ", ";
+				os << "ypos = " << ypos; os << ", ";
+				os << "ysize = " << ysize;
 				os << ")\n";
 			}
 			
@@ -131,12 +132,12 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "LtmMap(";
-				os << "id = " << id << ", ";
-				os << "kalman = " << kalman << ", ";
-				os << "xpos = " << xpos << ", ";
-				os << "xsize = " << xsize << ", ";
-				os << "ypos = " << ypos << ", ";
-				os << "ysize = " << ysize << ", ";
+				os << "id = " << id; os << ", ";
+				os << "kalman = " << kalman; os << ", ";
+				os << "xpos = " << xpos; os << ", ";
+				os << "xsize = " << xsize; os << ", ";
+				os << "ypos = " << ypos; os << ", ";
+				os << "ysize = " << ysize;
 				os << ")\n";
 			}
 			
@@ -177,10 +178,10 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "General(";
-				os << "cellsize = " << cellsize << ", ";
-				os << "connectLaser = " << connectLaser << ", ";
-				os << "mapDataDir = " << mapDataDir << ", ";
-				os << "verbose = " << verbose << ", ";
+				os << "cellsize = " << cellsize; os << ", ";
+				os << "connectLaser = " << connectLaser; os << ", ";
+				os << "mapDataDir = " << mapDataDir; os << ", ";
+				os << "verbose = " << verbose;
 				os << ")\n";
 			}
 			
@@ -317,7 +318,7 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tCUREMPTY(";
-						os << "mapmode = " << mapmode << ", ";
+						os << "mapmode = " << mapmode;
 						os << ")\n";
 					}
 					
@@ -435,8 +436,8 @@ public:
 					void to_ostream(std::ostream &os = std::cout) const
 					{
 						os << "\tCURLTM(";
-						os << "preoccupation = " << preoccupation << ", ";
-						os << "threshold = " << threshold << ", ";
+						os << "preoccupation = " << preoccupation; os << ", ";
+						os << "threshold = " << threshold;
 						os << ")\n";
 					}
 					

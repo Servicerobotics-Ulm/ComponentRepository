@@ -40,6 +40,22 @@ PlannerTaskCore::~PlannerTaskCore()
 {
 }
 
+int PlannerTaskCore::start() {
+	this->resetTrigger();
+	COMP->stateActivityManager->attach(this, "pathplanning");
+	return SmartACE::Task::start();
+}
+
+int PlannerTaskCore::start(const ACE_Sched_Params &sched_params, const int &cpuAffinity) {
+	return SmartACE::Task::start(sched_params, cpuAffinity);
+}
+
+int PlannerTaskCore::stop(const bool wait_till_stopped) {
+	COMP->stateActivityManager->detach(this, "pathplanning");
+	this->cancelTrigger();
+	return SmartACE::Task::stop(wait_till_stopped);
+}
+
 
 void PlannerTaskCore::notify_all_interaction_observers() {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
@@ -65,8 +81,11 @@ void PlannerTaskCore::detach_interaction_observer(PlannerTaskObserverInterface *
 int PlannerTaskCore::execute_protected_region()
 {
 	if(useDefaultState) {
-		Smart::StatusCode status = COMP->stateSlave->acquire("pathplanning");
-		if(status != Smart::SMART_OK) {
+		Smart::StatusCode status = COMP->stateActivityManager->acquire("pathplanning", this);
+		if(status == Smart::SMART_CANCELLED) {
+			std::cout << "state canceled -> stop activity PlannerTask" << std::endl;
+			return -1;
+		} else if(status != Smart::SMART_OK) {
 			std::cerr << "PlannerTaskCore: ERROR acquiring state: " << status << std::endl;
 			usleep(500000);
 			return 0;
@@ -94,7 +113,7 @@ int PlannerTaskCore::execute_protected_region()
 	currentUpdateCount++;
 	
 	if(useDefaultState) {
-		COMP->stateSlave->release("pathplanning");
+		COMP->stateActivityManager->release("pathplanning");
 	}
 	return retval;
 }
@@ -108,6 +127,16 @@ void PlannerTaskCore::updateAllCommObjects()
 }
 
 
+// this method is meant to be used in derived classes
+Smart::StatusCode PlannerTaskCore::currGridMapPushServiceOutPut(CommNavigationObjects::CommGridMap &currGridMapPushServiceOutDataObject)
+{
+	Smart::StatusCode result = COMP->currGridMapPushServiceOutWrapper->put(currGridMapPushServiceOutDataObject);
+	if(useLogging == true) {
+		//FIXME: use logging
+		//Smart::LOGGER->log(pushLoggingId+1, getCurrentUpdateCount(), getPreviousCommObjId());
+	}
+	return result;
+}
 // this method is meant to be used in derived classes
 Smart::StatusCode PlannerTaskCore::plannerEventServerPut(CommNavigationObjects::PlannerEventState &eventState)
 {
@@ -132,7 +161,7 @@ Smart::StatusCode PlannerTaskCore::plannerGoalServerPut(CommNavigationObjects::C
 void PlannerTaskCore::triggerLogEntry(const int& idOffset)
 {
 	if(useLogging == true) {
-		int logId = taskLoggingId + 2*2 + idOffset;
+		int logId = taskLoggingId + 2*3 + idOffset;
 		//FIXME: use logging
 		//Smart::LOGGER->log(logId, getCurrentUpdateCount(), getPreviousCommObjId());
 	}

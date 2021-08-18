@@ -35,6 +35,7 @@
 #include "CommBasicObjectsOpcUa/CommMobileUltrasonicScanOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
 #include "CommLocalizationObjectsOpcUa/CommAmclVisualizationInfoOpcUa.hh"
+#include "CommLocalizationObjectsOpcUa/CommVisualLocalizationFeatureMapOpcUa.hh"
 #include "CommNavigationObjectsOpcUa/CommGridMapOpcUa.hh"
 #include "CommNavigationObjectsOpcUa/CommGridMapRequestOpcUa.hh"
 #include "CommNavigationObjectsOpcUa/CommPlannerGoalOpcUa.hh"
@@ -87,6 +88,11 @@ Smart::IPushClientPattern<CommTrackingObjects::CommDetectedMarkerList> * Compone
 Smart::IQueryClientPattern<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage> * ComponentVisualizationOpcUaBackendPortFactory::createRGBDImageQueryServiceReq()
 {
 	return new SeRoNet::OPCUA::Client::QueryClient<CommBasicObjects::CommVoid, DomainVision::CommRGBDImage>(componentImpl);
+}
+
+Smart::IQueryClientPattern<CommBasicObjects::CommVoid, CommLocalizationObjects::CommVisualLocalizationFeatureMap> * ComponentVisualizationOpcUaBackendPortFactory::createVisualMarkers()
+{
+	return new SeRoNet::OPCUA::Client::QueryClient<CommBasicObjects::CommVoid, CommLocalizationObjects::CommVisualLocalizationFeatureMap>(componentImpl);
 }
 
 Smart::IPushClientPattern<CommBasicObjects::CommBaseState> * ComponentVisualizationOpcUaBackendPortFactory::createBaseClient()
@@ -147,6 +153,11 @@ Smart::IQueryClientPattern<CommTrackingObjects::CommPersonId, CommTrackingObject
 Smart::IPushClientPattern<CommNavigationObjects::CommPlannerGoal> * ComponentVisualizationOpcUaBackendPortFactory::createPlannerGoalPushClient()
 {
 	return new SeRoNet::OPCUA::Client::PushClient<CommNavigationObjects::CommPlannerGoal>(componentImpl);
+}
+
+Smart::IPushClientPattern<CommNavigationObjects::CommGridMap> * ComponentVisualizationOpcUaBackendPortFactory::createPlannerWavefrontGridMap()
+{
+	return new SeRoNet::OPCUA::Client::PushClient<CommNavigationObjects::CommGridMap>(componentImpl);
 }
 
 Smart::IPushClientPattern<DomainVision::CommRGBDImage> * ComponentVisualizationOpcUaBackendPortFactory::createRgbdPushNewestClient()

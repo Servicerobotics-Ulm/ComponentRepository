@@ -29,17 +29,9 @@
 class SmartGazeboBaseServerPortFactoryInterface;
 class SmartGazeboBaseServerExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaSmartGazeboBaseServerExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
-
-// includes for SmartGazeboBaseServerROS1InterfacesExtension
-
-// includes for SmartGazeboBaseServerROSExtension
-
-// includes for SmartGazeboBaseServerRestInterfacesExtension
 
 
 // include communication objects
@@ -94,6 +86,8 @@ class SmartGazeboBaseServerExtension;
 #include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP SmartGazeboBaseServer::instance()
 
@@ -181,19 +175,10 @@ public:
 	// define request-handlers
 	BaseStateQueryHandler *baseStateQueryHandler;
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaSmartGazeboBaseServerExtension
-	
-	// definitions of SmartGazeboBaseServerROS1InterfacesExtension
-	
-	// definitions of SmartGazeboBaseServerROSExtension
-	
-	// definitions of SmartGazeboBaseServerRestInterfacesExtension
-	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	ParamUpdateHandler paramHandler;
@@ -347,16 +332,6 @@ public:
 		} navVelServiceIn;
 	
 		//--- client port parameter ---
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaSmartGazeboBaseServerExtension
-		
-		// -- parameters for SmartGazeboBaseServerROS1InterfacesExtension
-		
-		// -- parameters for SmartGazeboBaseServerROSExtension
-		
-		// -- parameters for SmartGazeboBaseServerRestInterfacesExtension
 		
 	} connections;
 };

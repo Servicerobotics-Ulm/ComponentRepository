@@ -36,6 +36,7 @@ ComponentTrafficLightTest::ComponentTrafficLightTest()
 	trafficLightServiceOut = NULL;
 	trafficLightServiceOutWrapper = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	
@@ -59,16 +60,6 @@ ComponentTrafficLightTest::ComponentTrafficLightTest()
 	connections.generateOut.scheduler = "DEFAULT";
 	connections.generateOut.priority = -1;
 	connections.generateOut.cpuAffinity = -1;
-	
-	// initialize members of ComponentTrafficLightTestROS1InterfacesExtension
-	
-	// initialize members of ComponentTrafficLightTestROSExtension
-	
-	// initialize members of ComponentTrafficLightTestRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentTrafficLightTestExtension
 	
 }
 
@@ -139,10 +130,18 @@ void ComponentTrafficLightTest::startAllTasks() {
 		ACE_Sched_Params generateOut_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.generateOut.scheduler == "FIFO") {
 			generateOut_SchedParams.policy(ACE_SCHED_FIFO);
-			generateOut_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				generateOut_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				generateOut_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.generateOut.scheduler == "RR") {
 			generateOut_SchedParams.policy(ACE_SCHED_RR);
-			generateOut_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				generateOut_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				generateOut_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		generateOut->start(generateOut_SchedParams, connections.generateOut.cpuAffinity);
 	} else {
@@ -172,16 +171,6 @@ void ComponentTrafficLightTest::init(int argc, char *argv[])
 		// load initial parameters from ini-file (if found)
 		loadParameter(argc, argv);
 		
-		
-		// initializations of ComponentTrafficLightTestROS1InterfacesExtension
-		
-		// initializations of ComponentTrafficLightTestROSExtension
-		
-		// initializations of ComponentTrafficLightTestRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentTrafficLightTestExtension
 		
 		
 		// initialize all registered port-factories
@@ -230,7 +219,8 @@ void ComponentTrafficLightTest::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -252,7 +242,7 @@ void ComponentTrafficLightTest::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.generateOut.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.generateOut.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.generateOut.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(generateOut);
@@ -273,7 +263,7 @@ void ComponentTrafficLightTest::init(int argc, char *argv[])
 		{
 			// setup default task-trigger as PeriodicTimer
 			Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
-			int microseconds = 1000*1000 / 1.0;
+			int microseconds = (int)(1000.0*1000.0 / 1.0);
 			if(microseconds > 0) {
 				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
 				triggerPtr->attach(generateOut);
@@ -359,12 +349,14 @@ void ComponentTrafficLightTest::fini()
 	delete trafficLightServiceOutWrapper;
 	delete trafficLightServiceOut;
 
+	// destroy request-handlers
+
 	// destroy server ports
+	
 	// destroy event-test handlers (if needed)
 	
-	// destroy request-handlers
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -383,16 +375,6 @@ void ComponentTrafficLightTest::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentTrafficLightTestROS1InterfacesExtension
-	
-	// destruction of ComponentTrafficLightTestROSExtension
-	
-	// destruction of ComponentTrafficLightTestRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentTrafficLightTestExtension
 	
 }
 
@@ -495,16 +477,6 @@ void ComponentTrafficLightTest::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("GenerateOut", "cpuAffinity")) {
 			parameter.getInteger("GenerateOut", "cpuAffinity", connections.generateOut.cpuAffinity);
 		}
-		
-		// load parameters for ComponentTrafficLightTestROS1InterfacesExtension
-		
-		// load parameters for ComponentTrafficLightTestROSExtension
-		
-		// load parameters for ComponentTrafficLightTestRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentTrafficLightTestExtension
 		
 		
 		// load parameters for all registered component-extensions

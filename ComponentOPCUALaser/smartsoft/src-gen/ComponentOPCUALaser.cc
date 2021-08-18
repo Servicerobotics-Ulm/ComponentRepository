@@ -35,7 +35,7 @@ ComponentOPCUALaser::ComponentOPCUALaser()
 	baseStateServiceInInputTaskTrigger = NULL;
 	baseStateServiceInUpcallManager = NULL;
 	baseStateServiceInInputCollector = NULL;
-	//coordinationPort = NULL;
+	//componentOPCUALaser = NULL;
 	//coordinationPort = NULL;
 	laserQueryServiceAnsw = NULL;
 	laserQueryServiceAnswInputTaskTrigger = NULL;
@@ -45,6 +45,7 @@ ComponentOPCUALaser::ComponentOPCUALaser()
 	laserTask = NULL;
 	laserTaskTrigger = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -71,16 +72,6 @@ ComponentOPCUALaser::ComponentOPCUALaser()
 	connections.laserTask.scheduler = "DEFAULT";
 	connections.laserTask.priority = -1;
 	connections.laserTask.cpuAffinity = -1;
-	
-	// initialize members of ComponentOPCUALaserROS1InterfacesExtension
-	
-	// initialize members of ComponentOPCUALaserROSExtension
-	
-	// initialize members of ComponentOPCUALaserRestInterfacesExtension
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaComponentOPCUALaserExtension
 	
 }
 
@@ -152,10 +143,18 @@ void ComponentOPCUALaser::startAllTasks() {
 		ACE_Sched_Params laserTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.laserTask.scheduler == "FIFO") {
 			laserTask_SchedParams.policy(ACE_SCHED_FIFO);
-			laserTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				laserTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				laserTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.laserTask.scheduler == "RR") {
 			laserTask_SchedParams.policy(ACE_SCHED_RR);
-			laserTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				laserTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				laserTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		laserTask->start(laserTask_SchedParams, connections.laserTask.cpuAffinity);
 	} else {
@@ -188,16 +187,6 @@ void ComponentOPCUALaser::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of ComponentOPCUALaserROS1InterfacesExtension
-		
-		// initializations of ComponentOPCUALaserROSExtension
-		
-		// initializations of ComponentOPCUALaserRestInterfacesExtension
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaComponentOPCUALaserExtension
 		
 		
 		// initialize all registered port-factories
@@ -253,7 +242,8 @@ void ComponentOPCUALaser::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -278,7 +268,7 @@ void ComponentOPCUALaser::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.laserTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.laserTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.laserTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(laserTask);
@@ -377,17 +367,19 @@ void ComponentOPCUALaser::fini()
 	// destroy client ports
 	delete baseStateServiceIn;
 
-	// destroy server ports
-	delete laserQueryServiceAnsw;
-	delete laserQueryServiceAnswInputTaskTrigger;
-	delete laserServiceOutWrapper;
-	delete laserServiceOut;
-	// destroy event-test handlers (if needed)
-	
 	// destroy request-handlers
 	delete laserQueryServiceAnswHandler;
+
+	// destroy server ports
+	delete laserQueryServiceAnswInputTaskTrigger;
+	delete laserQueryServiceAnsw;
+	delete laserServiceOutWrapper;
+	delete laserServiceOut;
+	
+	// destroy event-test handlers (if needed)
 	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -407,16 +399,6 @@ void ComponentOPCUALaser::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of ComponentOPCUALaserROS1InterfacesExtension
-	
-	// destruction of ComponentOPCUALaserROSExtension
-	
-	// destruction of ComponentOPCUALaserRestInterfacesExtension
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaComponentOPCUALaserExtension
 	
 }
 
@@ -530,16 +512,6 @@ void ComponentOPCUALaser::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("LaserTask", "cpuAffinity")) {
 			parameter.getInteger("LaserTask", "cpuAffinity", connections.laserTask.cpuAffinity);
 		}
-		
-		// load parameters for ComponentOPCUALaserROS1InterfacesExtension
-		
-		// load parameters for ComponentOPCUALaserROSExtension
-		
-		// load parameters for ComponentOPCUALaserRestInterfacesExtension
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaComponentOPCUALaserExtension
 		
 		
 		// load parameters for all registered component-extensions

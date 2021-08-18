@@ -34,10 +34,18 @@ void ComponentWebotsMobileRobotAcePortFactory::initialize(ComponentWebotsMobileR
 		ACE_Sched_Params sched_params(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(component->connections.component.defaultScheduler == "FIFO") {
 			sched_params.policy(ACE_SCHED_FIFO);
-			sched_params.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				sched_params.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				sched_params.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(component->connections.component.defaultScheduler == "RR") {
 			sched_params.policy(ACE_SCHED_RR);
-			sched_params.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				sched_params.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				sched_params.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		// create new instance of the SmartSoft component with customized scheuling parameters 
 		componentImpl = new ComponentWebotsMobileRobotImpl(component->connections.component.name, argc, argv, sched_params);

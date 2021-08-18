@@ -31,10 +31,11 @@ ComponentTCLSequencer::ComponentTCLSequencer()
 	std::cout << "constructor of ComponentTCLSequencer\n";
 	
 	// set all pointer members to NULL
+	//componentTCLSequencerParams = NULL;
 	//coordinationMaster = NULL;
 	//coordinationPort = NULL;
-	//coordinationPort = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -167,7 +168,8 @@ void ComponentTCLSequencer::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -252,12 +254,14 @@ void ComponentTCLSequencer::fini()
 
 	// destroy client ports
 
+	// destroy request-handlers
+
 	// destroy server ports
+	
 	// destroy event-test handlers (if needed)
 	
-	// destroy request-handlers
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	

@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -138,33 +139,33 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "gfs(";
-				os << "angularUpdate = " << angularUpdate << ", ";
-				os << "astep = " << astep << ", ";
-				os << "critscore = " << critscore << ", ";
-				os << "delta = " << delta << ", ";
-				os << "generateMap = " << generateMap << ", ";
-				os << "iterations = " << iterations << ", ";
-				os << "kernelSize = " << kernelSize << ", ";
-				os << "linearUpdate = " << linearUpdate << ", ";
-				os << "lsigma = " << lsigma << ", ";
-				os << "lskip = " << lskip << ", ";
-				os << "lstep = " << lstep << ", ";
-				os << "maxMove = " << maxMove << ", ";
-				os << "maxUrange = " << maxUrange << ", ";
-				os << "maxrange = " << maxrange << ", ";
-				os << "ogain = " << ogain << ", ";
-				os << "particles = " << particles << ", ";
-				os << "regscore = " << regscore << ", ";
-				os << "resampleThreshold = " << resampleThreshold << ", ";
-				os << "sigma = " << sigma << ", ";
-				os << "srr = " << srr << ", ";
-				os << "srt = " << srt << ", ";
-				os << "str = " << str << ", ";
-				os << "stt = " << stt << ", ";
-				os << "xmax = " << xmax << ", ";
-				os << "xmin = " << xmin << ", ";
-				os << "ymax = " << ymax << ", ";
-				os << "ymin = " << ymin << ", ";
+				os << "angularUpdate = " << angularUpdate; os << ", ";
+				os << "astep = " << astep; os << ", ";
+				os << "critscore = " << critscore; os << ", ";
+				os << "delta = " << delta; os << ", ";
+				os << "generateMap = " << generateMap; os << ", ";
+				os << "iterations = " << iterations; os << ", ";
+				os << "kernelSize = " << kernelSize; os << ", ";
+				os << "linearUpdate = " << linearUpdate; os << ", ";
+				os << "lsigma = " << lsigma; os << ", ";
+				os << "lskip = " << lskip; os << ", ";
+				os << "lstep = " << lstep; os << ", ";
+				os << "maxMove = " << maxMove; os << ", ";
+				os << "maxUrange = " << maxUrange; os << ", ";
+				os << "maxrange = " << maxrange; os << ", ";
+				os << "ogain = " << ogain; os << ", ";
+				os << "particles = " << particles; os << ", ";
+				os << "regscore = " << regscore; os << ", ";
+				os << "resampleThreshold = " << resampleThreshold; os << ", ";
+				os << "sigma = " << sigma; os << ", ";
+				os << "srr = " << srr; os << ", ";
+				os << "srt = " << srt; os << ", ";
+				os << "str = " << str; os << ", ";
+				os << "stt = " << stt; os << ", ";
+				os << "xmax = " << xmax; os << ", ";
+				os << "xmin = " << xmin; os << ", ";
+				os << "ymax = " << ymax; os << ", ";
+				os << "ymin = " << ymin;
 				os << ")\n";
 			}
 			
@@ -205,10 +206,10 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "settings(";
-				os << "initial_pose_azimuth = " << initial_pose_azimuth << ", ";
-				os << "initial_pose_x = " << initial_pose_x << ", ";
-				os << "initial_pose_y = " << initial_pose_y << ", ";
-				os << "verbose = " << verbose << ", ";
+				os << "initial_pose_azimuth = " << initial_pose_azimuth; os << ", ";
+				os << "initial_pose_x = " << initial_pose_x; os << ", ";
+				os << "initial_pose_y = " << initial_pose_y; os << ", ";
+				os << "verbose = " << verbose;
 				os << ")\n";
 			}
 			

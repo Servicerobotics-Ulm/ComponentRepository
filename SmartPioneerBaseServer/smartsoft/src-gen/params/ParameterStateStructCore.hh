@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -87,16 +88,16 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Robot(";
-				os << "enable_motors = " << enable_motors << ", ";
-				os << "enable_sonar = " << enable_sonar << ", ";
-				os << "maxRotVel = " << maxRotVel << ", ";
-				os << "maxRotVelAcc = " << maxRotVelAcc << ", ";
-				os << "maxRotVelDecel = " << maxRotVelDecel << ", ";
-				os << "maxVel = " << maxVel << ", ";
-				os << "maxVelAcc = " << maxVelAcc << ", ";
-				os << "maxVelDecel = " << maxVelDecel << ", ";
-				os << "robotType = " << robotType << ", ";
-				os << "serialport = " << serialport << ", ";
+				os << "enable_motors = " << enable_motors; os << ", ";
+				os << "enable_sonar = " << enable_sonar; os << ", ";
+				os << "maxRotVel = " << maxRotVel; os << ", ";
+				os << "maxRotVelAcc = " << maxRotVelAcc; os << ", ";
+				os << "maxRotVelDecel = " << maxRotVelDecel; os << ", ";
+				os << "maxVel = " << maxVel; os << ", ";
+				os << "maxVelAcc = " << maxVelAcc; os << ", ";
+				os << "maxVelDecel = " << maxVelDecel; os << ", ";
+				os << "robotType = " << robotType; os << ", ";
+				os << "serialport = " << serialport;
 				os << ")\n";
 			}
 			

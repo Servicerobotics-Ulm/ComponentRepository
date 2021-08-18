@@ -36,7 +36,6 @@ SmartLaserLMS200Server::SmartLaserLMS200Server()
 	baseStateInUpcallManager = NULL;
 	baseStateInInputCollector = NULL;
 	//coordinationPort = NULL;
-	//coordinationPort = NULL;
 	laserQueryServiceAnsw = NULL;
 	laserQueryServiceAnswInputTaskTrigger = NULL;
 	laserQueryServiceAnswHandler = NULL;
@@ -44,7 +43,9 @@ SmartLaserLMS200Server::SmartLaserLMS200Server()
 	laserServiceOutWrapper = NULL;
 	laserTask = NULL;
 	laserTaskTrigger = NULL;
+	//smartLaserLMS200ServerParams = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -140,10 +141,18 @@ void SmartLaserLMS200Server::startAllTasks() {
 		ACE_Sched_Params laserTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.laserTask.scheduler == "FIFO") {
 			laserTask_SchedParams.policy(ACE_SCHED_FIFO);
-			laserTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				laserTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				laserTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.laserTask.scheduler == "RR") {
 			laserTask_SchedParams.policy(ACE_SCHED_RR);
-			laserTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				laserTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				laserTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		laserTask->start(laserTask_SchedParams, connections.laserTask.cpuAffinity);
 	} else {
@@ -231,7 +240,8 @@ void SmartLaserLMS200Server::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -335,17 +345,19 @@ void SmartLaserLMS200Server::fini()
 	// destroy client ports
 	delete baseStateIn;
 
-	// destroy server ports
-	delete laserQueryServiceAnsw;
-	delete laserQueryServiceAnswInputTaskTrigger;
-	delete laserServiceOutWrapper;
-	delete laserServiceOut;
-	// destroy event-test handlers (if needed)
-	
 	// destroy request-handlers
 	delete laserQueryServiceAnswHandler;
+
+	// destroy server ports
+	delete laserQueryServiceAnswInputTaskTrigger;
+	delete laserQueryServiceAnsw;
+	delete laserServiceOutWrapper;
+	delete laserServiceOut;
+	
+	// destroy event-test handlers (if needed)
 	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	

@@ -36,6 +36,20 @@ LoadTaskCore::~LoadTaskCore()
 {
 }
 
+int LoadTaskCore::start() {
+	this->resetTrigger();
+	return SmartACE::Task::start();
+}
+
+int LoadTaskCore::start(const ACE_Sched_Params &sched_params, const int &cpuAffinity) {
+	return SmartACE::Task::start(sched_params, cpuAffinity);
+}
+
+int LoadTaskCore::stop(const bool wait_till_stopped) {
+	this->cancelTrigger();
+	return SmartACE::Task::stop(wait_till_stopped);
+}
+
 
 void LoadTaskCore::notify_all_interaction_observers() {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);

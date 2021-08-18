@@ -29,14 +29,6 @@
 class ComponentOPCUALaserPortFactoryInterface;
 class ComponentOPCUALaserExtension;
 
-// includes for ComponentOPCUALaserROS1InterfacesExtension
-
-// includes for ComponentOPCUALaserROSExtension
-
-// includes for ComponentOPCUALaserRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentOPCUALaserExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -69,6 +61,8 @@ class ComponentOPCUALaserExtension;
 #include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP ComponentOPCUALaser::instance()
 
@@ -137,19 +131,10 @@ public:
 	// define request-handlers
 	LaserQueryServiceAnswHandler *laserQueryServiceAnswHandler;
 	
-	// definitions of ComponentOPCUALaserROS1InterfacesExtension
-	
-	// definitions of ComponentOPCUALaserROSExtension
-	
-	// definitions of ComponentOPCUALaserRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentOPCUALaserExtension
-	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	ParamUpdateHandler paramHandler;
@@ -264,16 +249,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} baseStateServiceIn;
-		
-		// -- parameters for ComponentOPCUALaserROS1InterfacesExtension
-		
-		// -- parameters for ComponentOPCUALaserROSExtension
-		
-		// -- parameters for ComponentOPCUALaserRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentOPCUALaserExtension
 		
 	} connections;
 };

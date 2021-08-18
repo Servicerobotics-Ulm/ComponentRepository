@@ -107,6 +107,8 @@ t3:SmartPlannerBreadthFirstSearch a robmosys:ComponentDefinition;
 	t1:providedService t3:SmartPlannerBreadthFirstSearch_PlannerGoalServer;
 	# ComponentPort PlannerEventServer
 	t1:providedService t3:SmartPlannerBreadthFirstSearch_PlannerEventServer;
+	# ComponentPort CurrGridMapPushServiceOut
+	t1:providedService t3:SmartPlannerBreadthFirstSearch_CurrGridMapPushServiceOut;
 .
 
 # a service definition usage. Here: provided service
@@ -145,6 +147,16 @@ t3:SmartPlannerBreadthFirstSearch_PlannerEventServer
 	rdf:type CommNavigationObjects:PlannerEventService ;
 	# name of this service definition as from the model
 	rdfs:label "PlannerEventServer";
+
+
+.
+
+# a service definition usage. Here: provided service
+# see https://robmosys.eu/wiki/modeling:metamodels:component
+t3:SmartPlannerBreadthFirstSearch_CurrGridMapPushServiceOut 
+	rdf:type CommNavigationObjects:CurrGridMapPushService ;
+	# name of this service definition as from the model
+	rdfs:label "CurrGridMapPushServiceOut";
 
 
 .

@@ -29,17 +29,9 @@
 class SmartJoystickNavigationPortFactoryInterface;
 class SmartJoystickNavigationExtension;
 
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaSmartJoystickNavigationExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
-
-// includes for SmartJoystickNavigationROS1InterfacesExtension
-
-// includes for SmartJoystickNavigationROSExtension
-
-// includes for SmartJoystickNavigationRestInterfacesExtension
 
 
 // include communication objects
@@ -66,6 +58,8 @@ class SmartJoystickNavigationExtension;
 #include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP SmartJoystickNavigation::instance()
 
@@ -131,19 +125,10 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaSmartJoystickNavigationExtension
-	
-	// definitions of SmartJoystickNavigationROS1InterfacesExtension
-	
-	// definitions of SmartJoystickNavigationROSExtension
-	
-	// definitions of SmartJoystickNavigationRestInterfacesExtension
-	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	ParamUpdateHandler paramHandler;
@@ -259,16 +244,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} navVelServiceOut;
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaSmartJoystickNavigationExtension
-		
-		// -- parameters for SmartJoystickNavigationROS1InterfacesExtension
-		
-		// -- parameters for SmartJoystickNavigationROSExtension
-		
-		// -- parameters for SmartJoystickNavigationRestInterfacesExtension
 		
 	} connections;
 };

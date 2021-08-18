@@ -162,9 +162,10 @@
 (execute '(testInst.tcb-same-name))
 (execute '(testInst2.tcb-same-name))
 
-;; error cases!
-(execute '(FALSEMODULE.tcb-testCoordinationInterface  1 2))
-(execute '(tcb-testCoordinationInterface  1 2))
+;; error cases! --> this should map to a fallback!
+;(execute '(FALSEMODULE.tcb-same-name))
+;(execute '(FALSEMODULE.tcb-testCoordinationInterface  1 2))
+;(execute '(tcb-testCoordinationInterface  1 2))
 
 ;;TEST the default
 ;(execute '(tcb-testCoordinationInterface  1 2))

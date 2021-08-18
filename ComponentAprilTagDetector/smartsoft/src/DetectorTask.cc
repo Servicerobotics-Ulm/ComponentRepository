@@ -110,7 +110,7 @@ int DetectorTask::on_execute()
 
 			//event service
 			CommTrackingObjects::CommDetectedMarkerEventState event_state;
-			event_state.set_CommDetectedMarkerList(dml);
+			event_state.setMarkers(dml);
 
 			COMP->markerListEventServiceOut->put(event_state);
 

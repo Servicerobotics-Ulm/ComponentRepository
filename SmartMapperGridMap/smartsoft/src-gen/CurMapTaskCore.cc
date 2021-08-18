@@ -38,6 +38,22 @@ CurMapTaskCore::~CurMapTaskCore()
 {
 }
 
+int CurMapTaskCore::start() {
+	this->resetTrigger();
+	COMP->stateActivityManager->attach(this, "currMap");
+	return SmartACE::Task::start();
+}
+
+int CurMapTaskCore::start(const ACE_Sched_Params &sched_params, const int &cpuAffinity) {
+	return SmartACE::Task::start(sched_params, cpuAffinity);
+}
+
+int CurMapTaskCore::stop(const bool wait_till_stopped) {
+	COMP->stateActivityManager->detach(this, "currMap");
+	this->cancelTrigger();
+	return SmartACE::Task::stop(wait_till_stopped);
+}
+
 
 void CurMapTaskCore::notify_all_interaction_observers() {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
@@ -63,8 +79,11 @@ void CurMapTaskCore::detach_interaction_observer(CurMapTaskObserverInterface *ob
 int CurMapTaskCore::execute_protected_region()
 {
 	if(useDefaultState) {
-		Smart::StatusCode status = COMP->stateSlave->acquire("currMap");
-		if(status != Smart::SMART_OK) {
+		Smart::StatusCode status = COMP->stateActivityManager->acquire("currMap", this);
+		if(status == Smart::SMART_CANCELLED) {
+			std::cout << "state canceled -> stop activity CurMapTask" << std::endl;
+			return -1;
+		} else if(status != Smart::SMART_OK) {
 			std::cerr << "CurMapTaskCore: ERROR acquiring state: " << status << std::endl;
 			usleep(500000);
 			return 0;
@@ -92,7 +111,7 @@ int CurMapTaskCore::execute_protected_region()
 	currentUpdateCount++;
 	
 	if(useDefaultState) {
-		COMP->stateSlave->release("currMap");
+		COMP->stateActivityManager->release("currMap");
 	}
 	return retval;
 }

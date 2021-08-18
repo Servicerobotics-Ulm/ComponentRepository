@@ -1,0 +1,9 @@
+SkillRealizationModel { 
+	CoordinationModuleRealization ptu coordModuleDef DomainPTU.ptuModule uses { 
+		DomainPTU.PTUCoordinationService intsName ptu_cs
+	} 
+	{ 
+		SkillRealization moveptuabsolute { action ( ) } 
+		SkillRealization moveptulocation { action ( ) }
+	}
+}

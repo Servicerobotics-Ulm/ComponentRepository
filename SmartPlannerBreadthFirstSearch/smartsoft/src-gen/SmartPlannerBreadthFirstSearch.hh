@@ -61,6 +61,7 @@ class SmartPlannerBreadthFirstSearchExtension;
 // output port wrappers
 #include "PlannerGoalServerWrapper.hh"
 #include "PlannerEventServerWrapper.hh"
+#include "CurrGridMapPushServiceOutWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -69,6 +70,8 @@ class SmartPlannerBreadthFirstSearchExtension;
 #include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP SmartPlannerBreadthFirstSearch::instance()
 
@@ -132,6 +135,8 @@ public:
 	// define input-handler
 	
 	// define output-ports
+	Smart::IPushServerPattern<CommNavigationObjects::CommGridMap> *currGridMapPushServiceOut;
+	CurrGridMapPushServiceOutWrapper *currGridMapPushServiceOutWrapper;
 	Smart::IEventServerPattern<CommNavigationObjects::CommPlannerEventParameter, CommNavigationObjects::CommPlannerEventResult, CommNavigationObjects::PlannerEventState> *plannerEventServer;
 	PlannerEventServerWrapper *plannerEventServerWrapper;
 	std::shared_ptr<Smart::IEventTestHandler<CommNavigationObjects::CommPlannerEventParameter, CommNavigationObjects::CommPlannerEventResult, CommNavigationObjects::PlannerEventState>> plannerEventServerEventTestHandler;
@@ -145,6 +150,7 @@ public:
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	ParamUpdateHandler paramHandler;
@@ -242,6 +248,10 @@ public:
 		//--- upcall parameter ---
 		
 		//--- server port parameter ---
+		struct CurrGridMapPushServiceOut_struct {
+				std::string serviceName;
+				std::string roboticMiddleware;
+		} currGridMapPushServiceOut;
 		struct PlannerEventServer_struct {
 				std::string serviceName;
 				std::string roboticMiddleware;

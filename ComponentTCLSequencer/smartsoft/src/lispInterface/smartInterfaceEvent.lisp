@@ -83,7 +83,7 @@
 ;;       example     : (getmessage *EVENT1*)
 
 
-(defgeneric activate (instance parameter))
+(defgeneric activate (instance))
 (defgeneric deactivate (instance))
 (defgeneric check (instance))
 (defgeneric getmessage (instance))
@@ -116,12 +116,11 @@
   (format t "mode       : ~s~%" (event-mode instance))
   (format t "result     : ~s~%" (event-result instance)))
 
-(defmethod activate ((instance event) parameter)
+(defmethod activate ((instance event))
   (cond ((equal (event-state instance) 'new)
-          (setf (event-parameter instance) parameter)
-          (setf (event-mode instance) (first parameter))
           (if *DEBUG-LI* (show instance)) ;;debug
-          (let ((tmp (interface (event-module instance) (event-module-instance instance) (event-ci-inst instance) (event-service instance) (format nil "~a-activate" (event-service instance)) parameter)))
+
+          (let ((tmp (interface (event-module instance) (event-module-instance instance) (event-ci-inst instance) (event-service instance) (format nil "~a-activate" (event-service instance)) (event-parameter instance) (event-mode instance))))
                (cond ((equal (first tmp) 'ok)
                        (setf (event-id instance) (first (second tmp)))
                        (setf (event-state instance) 'activated)
@@ -132,7 +131,7 @@
 (defmethod deactivate ((instance event))
   (if *DEBUG-LI* (show instance)) ;;debug
   (cond ((equal (event-state instance) 'activated)
-          (let ((tmp (interface (event-module instance) (event-module-instance instance) (event-ci-inst instance) (event-service instance) (format nil "~a-deactivate" (event-service instance)) (list (event-id instance)))))
+          (let ((tmp (interface (event-module instance) (event-module-instance instance) (event-ci-inst instance) (event-service instance) (format nil "~a-deactivate" (event-service instance)) (event-id instance))))
                (cond ((equal (first tmp) 'ok)
                        (setf (event-state instance) 'deactivated)
                        (list 'ok '()))

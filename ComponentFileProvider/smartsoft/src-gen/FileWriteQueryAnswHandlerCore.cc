@@ -22,8 +22,12 @@ FileWriteQueryAnswHandlerCore::FileWriteQueryAnswHandlerCore(IQueryServer* serve
 :	Smart::IInputHandler<std::pair<Smart::QueryIdPtr,CommBasicObjects::CommFileWriteRequest>>(server)
 ,	server(server)
 {
-	
 }
+
+FileWriteQueryAnswHandlerCore::~FileWriteQueryAnswHandlerCore()
+{
+}
+
 
 void FileWriteQueryAnswHandlerCore::updateAllCommObjects()
 {

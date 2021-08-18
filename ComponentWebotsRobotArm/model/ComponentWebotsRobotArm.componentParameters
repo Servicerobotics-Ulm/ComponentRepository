@@ -1,0 +1,50 @@
+ComponentParameter ComponentWebotsRobotArmParams component ComponentWebotsRobotArm
+{
+	InternalParameter webots
+	{
+		/** the webots robot arm name */
+  		robotName : String = "UR5e"
+	}
+
+	ParameterSetInstance CommManipulatorObjects.ManipulatorParameter
+	{
+		TriggerInstance MOVE_LINEAR active
+		TriggerInstance MOVE_CIRCULAR active
+		TriggerInstance SET_PCS active
+		TriggerInstance CLEAR_PCS active
+		TriggerInstance SET_TCP active
+		TriggerInstance MOVE_PATH active
+
+		TriggerInstance LOAD_PROGRAM passive
+		TriggerInstance START_PROGRAM passive
+	}
+
+
+	InternalParameter base
+	{
+/** <ul><li>on_base = true: robot arm is mounted on top of an mobile robot (base = mobile robot)</li>
+ * <li>on_base = false: robot arm is at a fixed position in the world (base = world)</li></ul> */		
+		on_base : Boolean = false		
+	}
+	
+/** the pose of the manipulator coordinate system relative to the base coordinate system */	
+	InternalParameter manipulator
+	{
+		/** print more debug information */
+		verbose : Boolean = true
+		/** x coordinate of the manipulator relative to the base [mm] */		
+		x : Int32 = 0
+		/** see x */
+		y : Int32 = 0
+		/** see x */
+		z : Int32 = 0
+		/** rotation around z-axis */
+		azimuth : Double = 0
+		/** rotation around y-axis */
+		elevation : Double = 0
+		/** rotation around x-axis */
+		roll : Double = 0
+		/** velocity of TCP movement (ToolCenterPoint = end point of tool at robot arm) [m/s] */
+		tcp_velocity : Double = 1.0
+	}
+}

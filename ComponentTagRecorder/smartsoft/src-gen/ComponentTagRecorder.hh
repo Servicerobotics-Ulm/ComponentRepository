@@ -29,14 +29,6 @@
 class ComponentTagRecorderPortFactoryInterface;
 class ComponentTagRecorderExtension;
 
-// includes for ComponentTagRecorderROS1InterfacesExtension
-
-// includes for ComponentTagRecorderROSExtension
-
-// includes for ComponentTagRecorderRestInterfacesExtension
-
-// includes for OpcUaBackendComponentGeneratorExtension
-
 // includes for PlainOpcUaComponentTagRecorderExtension
 // include plain OPC UA device clients
 // include plain OPC UA status servers
@@ -63,6 +55,8 @@ class ComponentTagRecorderExtension;
 #include "ParameterUpdateHandler.hh"
 
 #include "SmartStateChangeHandler.hh"
+#include "StateActivityManager.hh"
+
 
 #define COMP ComponentTagRecorder::instance()
 
@@ -126,19 +120,10 @@ public:
 	
 	// define request-handlers
 	
-	// definitions of ComponentTagRecorderROS1InterfacesExtension
-	
-	// definitions of ComponentTagRecorderROSExtension
-	
-	// definitions of ComponentTagRecorderRestInterfacesExtension
-	
-	// definitions of OpcUaBackendComponentGeneratorExtension
-	
-	// definitions of PlainOpcUaComponentTagRecorderExtension
-	
 	
 	// define default slave ports
 	SmartACE::StateSlave *stateSlave;
+	StateActivityManager *stateActivityManager;
 	SmartStateChangeHandler *stateChangeHandler;
 	SmartACE::WiringSlave *wiringSlave;
 	ParamUpdateHandler paramHandler;
@@ -245,16 +230,6 @@ public:
 			long interval;
 			std::string roboticMiddleware;
 		} markerListDetectionServiceIn;
-		
-		// -- parameters for ComponentTagRecorderROS1InterfacesExtension
-		
-		// -- parameters for ComponentTagRecorderROSExtension
-		
-		// -- parameters for ComponentTagRecorderRestInterfacesExtension
-		
-		// -- parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// -- parameters for PlainOpcUaComponentTagRecorderExtension
 		
 	} connections;
 };

@@ -20,6 +20,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include <list>
 #include <iostream>
 
 // forward declaration (in order to define validateCOMMIT(ParameterStateStruct) which is implemented in derived class)
@@ -81,14 +82,14 @@ public:
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "General(";
-				os << "device = " << device << ", ";
-				os << "interval_max = " << interval_max << ", ";
-				os << "interval_min = " << interval_min << ", ";
-				os << "invert_x1_axis = " << invert_x1_axis << ", ";
-				os << "invert_x2_axis = " << invert_x2_axis << ", ";
-				os << "invert_y1_axis = " << invert_y1_axis << ", ";
-				os << "invert_y2_axis = " << invert_y2_axis << ", ";
-				os << "verbose = " << verbose << ", ";
+				os << "device = " << device; os << ", ";
+				os << "interval_max = " << interval_max; os << ", ";
+				os << "interval_min = " << interval_min; os << ", ";
+				os << "invert_x1_axis = " << invert_x1_axis; os << ", ";
+				os << "invert_x2_axis = " << invert_x2_axis; os << ", ";
+				os << "invert_y1_axis = " << invert_y1_axis; os << ", ";
+				os << "invert_y2_axis = " << invert_y2_axis; os << ", ";
+				os << "verbose = " << verbose;
 				os << ")\n";
 			}
 			

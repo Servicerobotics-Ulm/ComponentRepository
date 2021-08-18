@@ -32,12 +32,13 @@ SmartJoystickServer::SmartJoystickServer()
 	
 	// set all pointer members to NULL
 	//coordinationPort = NULL;
-	//coordinationPort = NULL;
 	joystickServcieOut = NULL;
 	joystickServcieOutWrapper = NULL;
 	joystickTask = NULL;
 	joystickTaskTrigger = NULL;
+	//smartJoystickServerParameters = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -54,16 +55,6 @@ SmartJoystickServer::SmartJoystickServer()
 	connections.joystickTask.scheduler = "DEFAULT";
 	connections.joystickTask.priority = -1;
 	connections.joystickTask.cpuAffinity = -1;
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaSmartJoystickServerExtension
-	
-	// initialize members of SmartJoystickServerROS1InterfacesExtension
-	
-	// initialize members of SmartJoystickServerROSExtension
-	
-	// initialize members of SmartJoystickServerRestInterfacesExtension
 	
 }
 
@@ -116,10 +107,18 @@ void SmartJoystickServer::startAllTasks() {
 		ACE_Sched_Params joystickTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.joystickTask.scheduler == "FIFO") {
 			joystickTask_SchedParams.policy(ACE_SCHED_FIFO);
-			joystickTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				joystickTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				joystickTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.joystickTask.scheduler == "RR") {
 			joystickTask_SchedParams.policy(ACE_SCHED_RR);
-			joystickTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				joystickTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				joystickTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		joystickTask->start(joystickTask_SchedParams, connections.joystickTask.cpuAffinity);
 	} else {
@@ -151,16 +150,6 @@ void SmartJoystickServer::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaSmartJoystickServerExtension
-		
-		// initializations of SmartJoystickServerROS1InterfacesExtension
-		
-		// initializations of SmartJoystickServerROSExtension
-		
-		// initializations of SmartJoystickServerRestInterfacesExtension
 		
 		
 		// initialize all registered port-factories
@@ -209,7 +198,8 @@ void SmartJoystickServer::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -301,14 +291,16 @@ void SmartJoystickServer::fini()
 
 	// destroy client ports
 
+	// destroy request-handlers
+
 	// destroy server ports
 	delete joystickServcieOutWrapper;
 	delete joystickServcieOut;
+	
 	// destroy event-test handlers (if needed)
 	
-	// destroy request-handlers
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -328,16 +320,6 @@ void SmartJoystickServer::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaSmartJoystickServerExtension
-	
-	// destruction of SmartJoystickServerROS1InterfacesExtension
-	
-	// destruction of SmartJoystickServerROSExtension
-	
-	// destruction of SmartJoystickServerRestInterfacesExtension
 	
 }
 
@@ -428,16 +410,6 @@ void SmartJoystickServer::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("JoystickTask", "cpuAffinity")) {
 			parameter.getInteger("JoystickTask", "cpuAffinity", connections.joystickTask.cpuAffinity);
 		}
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaSmartJoystickServerExtension
-		
-		// load parameters for SmartJoystickServerROS1InterfacesExtension
-		
-		// load parameters for SmartJoystickServerROSExtension
-		
-		// load parameters for SmartJoystickServerRestInterfacesExtension
 		
 		
 		// load parameters for all registered component-extensions

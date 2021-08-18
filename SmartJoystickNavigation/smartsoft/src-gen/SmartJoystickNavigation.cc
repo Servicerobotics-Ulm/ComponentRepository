@@ -32,7 +32,6 @@ SmartJoystickNavigation::SmartJoystickNavigation()
 	
 	// set all pointer members to NULL
 	//coordinationPort = NULL;
-	//coordinationPort = NULL;
 	joystickNavTask = NULL;
 	joystickNavTaskTrigger = NULL;
 	joystickServiceIn = NULL;
@@ -41,7 +40,9 @@ SmartJoystickNavigation::SmartJoystickNavigation()
 	joystickServiceInInputCollector = NULL;
 	navVelServiceOut = NULL;
 	navVelServiceOutWrapper = NULL;
+	//smartJoystickNavigationParameters = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -73,16 +74,6 @@ SmartJoystickNavigation::SmartJoystickNavigation()
 	connections.joystickNavTask.scheduler = "DEFAULT";
 	connections.joystickNavTask.priority = -1;
 	connections.joystickNavTask.cpuAffinity = -1;
-	
-	// initialize members of OpcUaBackendComponentGeneratorExtension
-	
-	// initialize members of PlainOpcUaSmartJoystickNavigationExtension
-	
-	// initialize members of SmartJoystickNavigationROS1InterfacesExtension
-	
-	// initialize members of SmartJoystickNavigationROSExtension
-	
-	// initialize members of SmartJoystickNavigationRestInterfacesExtension
 	
 }
 
@@ -172,10 +163,18 @@ void SmartJoystickNavigation::startAllTasks() {
 		ACE_Sched_Params joystickNavTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.joystickNavTask.scheduler == "FIFO") {
 			joystickNavTask_SchedParams.policy(ACE_SCHED_FIFO);
-			joystickNavTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				joystickNavTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				joystickNavTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.joystickNavTask.scheduler == "RR") {
 			joystickNavTask_SchedParams.policy(ACE_SCHED_RR);
-			joystickNavTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				joystickNavTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				joystickNavTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		joystickNavTask->start(joystickNavTask_SchedParams, connections.joystickNavTask.cpuAffinity);
 	} else {
@@ -208,16 +207,6 @@ void SmartJoystickNavigation::init(int argc, char *argv[])
 		
 		// print out the actual parameters which are used to initialize the component
 		std::cout << " \nComponentDefinition Initial-Parameters:\n" << COMP->getParameters() << std::endl;
-		
-		// initializations of OpcUaBackendComponentGeneratorExtension
-		
-		// initializations of PlainOpcUaSmartJoystickNavigationExtension
-		
-		// initializations of SmartJoystickNavigationROS1InterfacesExtension
-		
-		// initializations of SmartJoystickNavigationROSExtension
-		
-		// initializations of SmartJoystickNavigationRestInterfacesExtension
 		
 		
 		// initialize all registered port-factories
@@ -270,7 +259,8 @@ void SmartJoystickNavigation::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
 		if (status != Smart::SMART_OK) std::cerr << status << "; failed setting initial ComponentMode: " << connections.component.initialComponentMode << std::endl;
 		// activate state slave
@@ -299,7 +289,7 @@ void SmartJoystickNavigation::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.joystickNavTask.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.joystickNavTask.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.joystickNavTask.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(joystickNavTask);
@@ -407,12 +397,14 @@ void SmartJoystickNavigation::fini()
 	delete navVelServiceOutWrapper;
 	delete navVelServiceOut;
 
+	// destroy request-handlers
+
 	// destroy server ports
+	
 	// destroy event-test handlers (if needed)
 	
-	// destroy request-handlers
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
@@ -432,16 +424,6 @@ void SmartJoystickNavigation::fini()
 	{
 		portFactory->second->destroy();
 	}
-	
-	// destruction of OpcUaBackendComponentGeneratorExtension
-	
-	// destruction of PlainOpcUaSmartJoystickNavigationExtension
-	
-	// destruction of SmartJoystickNavigationROS1InterfacesExtension
-	
-	// destruction of SmartJoystickNavigationROSExtension
-	
-	// destruction of SmartJoystickNavigationRestInterfacesExtension
 	
 }
 
@@ -553,16 +535,6 @@ void SmartJoystickNavigation::loadParameter(int argc, char *argv[])
 		if(parameter.checkIfParameterExists("JoystickNavTask", "cpuAffinity")) {
 			parameter.getInteger("JoystickNavTask", "cpuAffinity", connections.joystickNavTask.cpuAffinity);
 		}
-		
-		// load parameters for OpcUaBackendComponentGeneratorExtension
-		
-		// load parameters for PlainOpcUaSmartJoystickNavigationExtension
-		
-		// load parameters for SmartJoystickNavigationROS1InterfacesExtension
-		
-		// load parameters for SmartJoystickNavigationROSExtension
-		
-		// load parameters for SmartJoystickNavigationRestInterfacesExtension
 		
 		
 		// load parameters for all registered component-extensions

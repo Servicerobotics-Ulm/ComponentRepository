@@ -36,6 +36,22 @@ ImageTaskCore::~ImageTaskCore()
 {
 }
 
+int ImageTaskCore::start() {
+	this->resetTrigger();
+	COMP->stateActivityManager->attach(this, "PushImage");
+	return SmartACE::Task::start();
+}
+
+int ImageTaskCore::start(const ACE_Sched_Params &sched_params, const int &cpuAffinity) {
+	return SmartACE::Task::start(sched_params, cpuAffinity);
+}
+
+int ImageTaskCore::stop(const bool wait_till_stopped) {
+	COMP->stateActivityManager->detach(this, "PushImage");
+	this->cancelTrigger();
+	return SmartACE::Task::stop(wait_till_stopped);
+}
+
 
 void ImageTaskCore::notify_all_interaction_observers() {
 	std::unique_lock<std::mutex> lock(interaction_observers_mutex);
@@ -61,8 +77,11 @@ void ImageTaskCore::detach_interaction_observer(ImageTaskObserverInterface *obse
 int ImageTaskCore::execute_protected_region()
 {
 	if(useDefaultState) {
-		Smart::StatusCode status = COMP->stateSlave->acquire("PushImage");
-		if(status != Smart::SMART_OK) {
+		Smart::StatusCode status = COMP->stateActivityManager->acquire("PushImage", this);
+		if(status == Smart::SMART_CANCELLED) {
+			std::cout << "state canceled -> stop activity ImageTask" << std::endl;
+			return -1;
+		} else if(status != Smart::SMART_OK) {
 			std::cerr << "ImageTaskCore: ERROR acquiring state: " << status << std::endl;
 			usleep(500000);
 			return 0;
@@ -90,7 +109,7 @@ int ImageTaskCore::execute_protected_region()
 	currentUpdateCount++;
 	
 	if(useDefaultState) {
-		COMP->stateSlave->release("PushImage");
+		COMP->stateActivityManager->release("PushImage");
 	}
 	return retval;
 }

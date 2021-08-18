@@ -44,10 +44,11 @@
 
 #include "ColorImageQueryHandler.hh"
 #include "ComponentWebots3DCamera.hh"
+#include <chrono>
+#include <thread>
 
 ColorImageQueryHandler::ColorImageQueryHandler(
-    Smart::IQueryServerPattern<CommBasicObjects::CommVoid,
-        DomainVision::CommVideoImage> *server) :
+    Smart::IQueryServerPattern<CommBasicObjects::CommVoid, DomainVision::CommVideoImage> *server) :
     ColorImageQueryHandlerCore(server) {
 
 }
@@ -57,9 +58,32 @@ void ColorImageQueryHandler::handleQuery(const Smart::QueryIdPtr &id, const Comm
     DomainVision::CommVideoImage answer;
     answer.setIs_valid(false);
 
-    std::unique_lock<std::mutex> lock(COMP->imageTask->newestImageMutex);
-    if(COMP->imageTask->newestImage != NULL)
-        answer = COMP->imageTask->newestImage->getColor_image();
+    if (COMP->stateSlave->tryAcquire("nonneutral") == Smart::SMART_OK) {
+        if (COMP->stateSlave->tryAcquire("pushimage") == Smart::SMART_OK) {
+            COMP->NewestImageMutex.acquire();
+            if (COMP->newestImage != NULL) {
+                answer = COMP->newestImage->getColor_image();
+            }
+            COMP->NewestImageMutex.release();
+            COMP->stateSlave->release("pushimage");
+        } else {
+            bool imageFound = false;
+            while (!imageFound) {
+                COMP->imageTask->isQueryImage = true;
+                COMP->NewestImageMutex.acquire();
+                if (COMP->newestImage != NULL) {
+                    answer = COMP->newestImage->getColor_image();
+                    imageFound = true;
+                    COMP->newestImage = NULL;
+                }
+                COMP->NewestImageMutex.release();
+                if(!imageFound)
+                    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            }
+            COMP->imageTask->isQueryImage = false;
+        }
+        COMP->stateSlave->release("nonneutral");
+    }
     server->answer(id, answer);
     return;
 }
