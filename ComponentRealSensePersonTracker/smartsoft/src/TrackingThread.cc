@@ -62,8 +62,9 @@ TrackingThread::TrackingThread(SmartACE::SmartComponent *comp)
 
 		goalCounter = 0;
 
-		//std::string pt_data_files= "/home/shaik/SOFTWARE/smartsoft/repos/ComponentRepository/ComponentRealSensePersonTracker/smartsoft/src/3rdParty/data";
-		std::string pt_data_files= COMP->getGlobalState().getSettings().getPt_data();
+		std::string pt_data_files= "/home/shaik/SOFTWARE/smartsoft/repos/ComponentRepository/ComponentRealSensePersonTracker/smartsoft/src/3rdParty/data";
+		//std::string pt_data_files= COMP->getGlobalState().getSettings().getPt_data();
+
 		COMP->ptModule=rs::person_tracking::person_tracking_video_module_factory::create_person_tracking_video_module(GetWC(pt_data_files.c_str()));
 		//	ptModule=rs::person_tracking::person_tracking_video_module_factory::create_person_tracking_video_module(GetWC(pt_data_files.c_str()));
 

@@ -32,7 +32,7 @@ ComponentRealSensePersonTracker::ComponentRealSensePersonTracker()
 	std::cout << "constructor of ComponentRealSensePersonTracker\n";
 	
 	// set all pointer members to NULL
-	// = NULL;
+	//componentRealSensePersonTrackerParams = NULL;
 	//coordinationPort = NULL;
 	realSenseClient = NULL;
 	realSenseClientInputTaskTrigger = NULL;
@@ -48,6 +48,7 @@ ComponentRealSensePersonTracker::ComponentRealSensePersonTracker()
 	trackingGoalServer = NULL;
 	trackingGoalServerWrapper = NULL;
 	stateChangeHandler = NULL;
+	stateActivityManager = NULL;
 	stateSlave = NULL;
 	wiringSlave = NULL;
 	param = NULL;
@@ -147,10 +148,18 @@ void ComponentRealSensePersonTracker::startAllTasks() {
 		ACE_Sched_Params trackingThread_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
 		if(connections.trackingThread.scheduler == "FIFO") {
 			trackingThread_SchedParams.policy(ACE_SCHED_FIFO);
-			trackingThread_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				trackingThread_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				trackingThread_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		} else if(connections.trackingThread.scheduler == "RR") {
 			trackingThread_SchedParams.policy(ACE_SCHED_RR);
-			trackingThread_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#if defined(ACE_HAS_PTHREADS)
+				trackingThread_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				trackingThread_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
 		}
 		trackingThread->start(trackingThread_SchedParams, connections.trackingThread.cpuAffinity);
 	} else {
@@ -241,7 +250,8 @@ void ComponentRealSensePersonTracker::init(int argc, char *argv[])
 		
 		// create state pattern
 		stateChangeHandler = new SmartStateChangeHandler();
-		stateSlave = new SmartACE::StateSlave(component, stateChangeHandler);
+		stateActivityManager = new StateActivityManager(stateChangeHandler);
+		stateSlave = new SmartACE::StateSlave(component, stateActivityManager);
 		if (stateSlave->defineStates("follow" ,"follow") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion follow.follow" << std::endl;
 		if (stateSlave->defineStates("detect" ,"detect") != Smart::SMART_OK) std::cerr << "ERROR: defining state combinaion detect.detect" << std::endl;
 		status = stateSlave->setUpInitialState(connections.component.initialComponentMode);
@@ -267,7 +277,7 @@ void ComponentRealSensePersonTracker::init(int argc, char *argv[])
 		// configure task-trigger (if task is configurable)
 		if(connections.trackingThread.trigger == "PeriodicTimer") {
 			// create PeriodicTimerTrigger
-			int microseconds = 1000*1000 / connections.trackingThread.periodicActFreq;
+			int microseconds = (int)(1000.0*1000.0 / connections.trackingThread.periodicActFreq);
 			if(microseconds > 0) {
 				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
 				triggerPtr->attach(trackingThread);
@@ -363,6 +373,8 @@ void ComponentRealSensePersonTracker::fini()
 	// destroy client ports
 	delete realSenseClient;
 
+	// destroy request-handlers
+
 	// destroy server ports
 	delete personLostEventServerWrapper;
 	delete personLostEventServer;
@@ -370,12 +382,12 @@ void ComponentRealSensePersonTracker::fini()
 	delete rgb_video_server;
 	delete trackingGoalServerWrapper;
 	delete trackingGoalServer;
+	
 	// destroy event-test handlers (if needed)
 	personLostEventServerEventTestHandler;
 	
-	// destroy request-handlers
-	
 	delete stateSlave;
+	delete stateActivityManager;
 	// destroy state-change-handler
 	delete stateChangeHandler;
 	
