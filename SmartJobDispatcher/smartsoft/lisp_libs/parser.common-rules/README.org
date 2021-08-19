@@ -1,0 +1,830 @@
+#+TITLE:       parser.common-rules README
+#+AUTHOR:      Jan Moringen
+#+EMAIL:       jmoringe@techfak.uni-bielefeld.de
+#+DESCRIPTION:
+#+KEYWORDS:    parser, expression, infix, common rules, esrap
+#+LANGUAGE:    en
+
+* Introduction
+  This system provides rules and rule-constructing macros for the
+  [[https://github.com/scymtym/esrap][esrap parser library]] for common cases in the following categories:
+
+  + Anchors :: Rules that match if the input around the position in
+       question has certain properties.
+
+  + Whitespace :: Rules related to whitespace.
+
+  + Comments :: Rules for parsing different kinds of comments commonly
+       used in programming languages.
+
+  + Literals :: Rules for parsing commonly used literals such as
+       booleans, numbers and strings.
+
+  + Tokenization :: Macros for handling tokenization (which is usually
+       not done in a separate lexing step in esrap-based parsers).
+
+  + Infix Operators :: Macros for defining families of unary, binary
+       and ternary operators with given precedence relations and
+       associativity.
+
+       This functionality is provided as a separate system since it
+       introduces a dependency on the [[https://github.com/scymtym/architecture.builder-protocol][architecture.builder-protocol
+       system]].
+
+  #+ATTR_HTML: :alt "build status image" :title Build Status :align right
+  [[https://travis-ci.org/scymtym/parser.common-rules][https://travis-ci.org/scymtym/parser.common-rules.svg]]
+
+* Tutorial
+  #+BEGIN_SRC lisp :results silent :exports results :session "tutorial"
+    (ql:quickload '(:parser.common-rules :parser.common-rules.operators))
+  #+END_SRC
+** Anchors
+   "Anchor" rules match when the input around the current position has
+   certain properties and do not consume any input. For example:
+   #+BEGIN_SRC lisp :results value scalar :exports both :session "tutorial"
+     (esrap:parse 'parser.common-rules:<beginning-of-line> (format nil "foo~%bar")
+                  :start 4 :junk-allowed t)
+   #+END_SRC
+
+   #+RESULTS:
+   : :BEGINNING-OF-LINE
+   : 4
+   : T
+
+   The rules src_lisp[:exports code]{<end-of-line>},
+   src_lisp[:exports code]{<beginning-of-input>} and
+   src_lisp[:exports code]{<end-of-input>} work similarly.
+
+   The final rule, src_lisp[:exports code]{<same-line>} is different
+   in that it does consume input:
+
+   #+BEGIN_SRC lisp :results value scalar :exports both :session "tutorial"
+     (esrap:parse 'parser.common-rules:<same-line> (format nil "foo bar~%baz")
+                  :start 4 :junk-allowed t)
+   #+END_SRC
+
+   #+RESULTS:
+   : "bar"
+   : 7
+   : T
+
+** Whitespace
+   The whitespace-related rules should be pretty self-explanatory:
+
+   #+BEGIN_SRC lisp :results value scalar :exports both :session "tutorial"
+     (esrap:parse 'parser.common-rules:whitespace+ "  ")
+   #+END_SRC
+
+   #+RESULTS:
+   : NIL
+   : NIL
+   : T
+
+** Comments
+   There are several rules for parsing different styles of comments
+   commonly used in programming languages. For example, the following
+   rule parses src_c[:exports code]{/* … */} comments:
+
+   #+BEGIN_SRC lisp :results value scalar :exports both :session "tutorial"
+     (esrap:parse
+      'parser.common-rules:c-style-comment/delimited
+      "/*
+        * Foo bar
+        */")
+   #+END_SRC
+
+   #+RESULTS:
+   : "
+   :    * Foo bar
+   :    "
+   : NIL
+   : T
+
+   The above production is faithful to the input text with respect to
+   whitespace, but that is not always desired. In such cases, the
+   following comes in handy:
+
+   #+BEGIN_SRC lisp :results value scalar :exports both :session "tutorial"
+     (esrap:parse
+      'parser.common-rules:c-style-comment/delimited/trimmed
+      "/*
+        * Foo bar
+        ** fez baz
+        * * whoop
+        */")
+   #+END_SRC
+
+   #+RESULTS:
+   : "Foo bar
+   :  fez baz
+   : * whoop"
+   : NIL
+   : T
+
+   Note how prefixes of the same length are trimmed from all lines and
+   the =* whoop= in the third comment line remains intact.
+
+** Literals
+   The system provides rules for parsing Boolean, integer, floating
+   point and string literals. The two most interesting are probably
+
+   1. floating point literals
+
+      #+BEGIN_SRC lisp :results value scalar :exports both :session "tutorial"
+        (esrap:parse 'parser.common-rules:float-literal "0.12e-10")
+      #+END_SRC
+
+      #+RESULTS:
+      : 1.2f-11
+      : NIL
+      : T
+
+   2. string literals
+
+      #+BEGIN_SRC lisp :results value scalar :exports both :session "tutorial"
+        (esrap:parse 'parser.common-rules:string-literal/double-quotes
+                     "\" foo \\\" bar \\x041 \\\\ baz \"")
+      #+END_SRC
+
+      #+RESULTS:
+      : " foo \" bar A \\ baz "
+      : NIL
+      : T
+
+      #+BEGIN_SRC lisp :results value scalar :exports both :session "tutorial"
+        (esrap:parse 'parser.common-rules:string-literal/sextuple-quotes
+                     "\"\"\" foo \\\" bar \\x041 \\\\ baz \"\"\"")
+      #+END_SRC
+
+      #+RESULTS:
+      : " foo \\\" bar \\x041 \\\\ baz "
+      : NIL
+      : T
+
+** Tokenization
+   Esrap-based grammars in most cases work without a separate lexical
+   analysis phase. Among other things, this implies that the grammar
+   rules have to handle tokenization. This system provides the
+   src_lisp[:exports code]{defrule/s} macro to automate some of this
+   effort.
+
+   The macro is used in place of
+   src_lisp[:exports code]{esrap:defrule} to define rules which parse
+   token-like things. For example
+
+   #+BEGIN_SRC lisp :results silent :exports both :session "tutorial"
+     (parser.common-rules:defrule/s (identifier
+                                     :skippable-expression  parser.common-rules:whitespace+
+                                     :skippable?-expression parser.common-rules:whitespace*)
+         (and (esrap:character-ranges (#\a #\z) (#\A #\Z))
+              (* (esrap:character-ranges (#\a #\z) (#\A #\Z) (#\0 #\9))))
+       (:text t))
+   #+END_SRC
+
+   Instead of one rule src_lisp[:exports code]{identifier}, this form
+   defines up to three rules
+   + src_lisp[:exports code]{identifier}
+   + src_lisp[:exports code]{identifier/s}
+   + src_lisp[:exports code]{identifier/?s}
+   The second and third rules parse an identifier followed by mandatory
+   and optional "skippable" text (i.e. some form of whitespace in most
+   cases) respectively. These rules can be used in places that require
+   or allow an identifier to be separated by whitespace from the next
+   token. For example:
+
+   #+BEGIN_SRC lisp :results silent :exports both :session "tutorial"
+     (parser.common-rules:defrule/s (equals
+                                     :skippable-expression  parser.common-rules:whitespace+
+                                     :skippable?-expression parser.common-rules:whitespace*)
+         #\=)
+
+     (esrap:defrule declaration
+         (and identifier/?s equals/?s (* (digit-char-p character))))
+   #+END_SRC
+
+   This rule behaves like a parser with lexical analysis phase would:
+
+   #+BEGIN_SRC lisp :results value table:exports both :session "tutorial" :colnames '("input" "production")
+     (mapcar (lambda (input)
+               (list (prin1-to-string input)
+                     (princ-to-string (esrap:parse 'declaration input))))
+             '("a=1" "a =1" "a= 1" "a = 1"))
+   #+END_SRC
+
+   #+RESULTS:
+   | input   | production |
+   |---------+------------|
+   | "a=1"   | (a = (1))  |
+   | "a =1"  | (a = (1))  |
+   | "a= 1"  | (a = (1))  |
+   | "a = 1" | (a = (1))  |
+
+   Note that skippable text before and after the declaration is not
+   handled by this rule but in the respective context in which the
+   src_lisp[:exports code]{declaration} rule is used (This could
+   require defining the src_lisp[:exports code]{declaration} rule
+   using src_lisp[:exports code]{defrule/s} as well).
+
+   The unwieldy specification of skippable expressions
+
+   #+BEGIN_SRC lisp :exports code
+     (parser.common-rules:defrule/s (identifier
+                                     :skippable-expression  parser.common-rules:whitespace+
+                                     :skippable?-expression parser.common-rules:whitespace*)
+         …)
+   #+END_SRC
+
+   can be avoided by defining rules for skippable text in the package
+   of the symbol naming the rule:
+
+   #+BEGIN_SRC lisp :results silent :exports both :session "tutorial"
+     (esrap:defrule skippable
+         parser.common-rules:whitespace+)
+
+     (esrap:defrule skippable?
+         parser.common-rules:whitespace*)
+
+     (parser.common-rules:defrule/s (identifier)
+         (and (esrap:character-ranges (#\a #\z) (#\A #\Z))
+              (* (esrap:character-ranges (#\a #\z) (#\A #\Z) (#\0 #\9))))
+       (:text t))
+   #+END_SRC
+
+   These rules can then be shared by all rules defined with
+   src_lisp[:exports code]{defrule/s}.
+
+** Infix Operators
+
+   #+begin_note
+   Because of additional dependencies, this part of the project is
+   provided as a separate system =parser.common-rules.operators=.
+   #+end_note
+
+   The macros for defining infix operators are probably the most
+   complex but also most useful part of this project. The macro
+   src_lisp[:exports code]{define-operator-rules} defines a group of
+   rules that implement a group of unary and binary operators with
+   certain precedence relations:
+
+   #+BEGIN_SRC lisp :results silent :exports both :session "tutorial"
+     (parser.common-rules.operators:define-operator-rules
+         (:skippable?-expression (* #\Space))
+       (2 assign       ":="    :associativity :none)  ; lowest binding power
+       (3 if-then-else "?" ":")
+       (2 term         "+")
+       (2 factor       "*")
+       (2 expon        "^"     :associativity :right)
+       (1 neg          "-")
+       (1 inc          "++"    :fixity :postfix)      ; highest binding power
+       character)                                     ; leaf expression
+   #+END_SRC
+
+   Parse results are constructed using the
+   [[https://github.com/scymtym/architecture.builder-protocol][architecture.builder-protocol system]]. The following parsing code
+   and resulting parse tree demonstrate the precedence and
+   associativity properties:
+
+   #+BEGIN_SRC lisp :results value scalar :exports both :session "tutorial"
+     (architecture.builder-protocol:with-builder ('list)
+       (esrap:parse 'assign "x := a ? b : c + d^e^f * -g"))
+   #+END_SRC
+
+   #+RESULTS:
+   #+begin_example
+   (:BINARY-OPERATOR
+    (:OPERAND
+     ((#\x)
+      ((:TERNARY-OPERATOR
+        (:OPERAND
+         ((#\a) (#\b)
+          ((:BINARY-OPERATOR
+            (:OPERAND
+             ((#\c)
+              ((:BINARY-OPERATOR
+                (:OPERAND
+                 (((:BINARY-OPERATOR
+                    (:OPERAND
+                     ((#\d)
+                      ((:BINARY-OPERATOR (:OPERAND ((#\e) (#\f))) :OPERATOR "^"
+                        :BOUNDS (19 . 22)))))
+                    :OPERATOR "^" :BOUNDS (17 . 22)))
+                  ((:UNARY-OPERATOR (:OPERAND ((#\g))) :OPERATOR "-" :BOUNDS
+                    (25 . 27)))))
+                :OPERATOR "*" :BOUNDS (17 . 27)))))
+            :OPERATOR "+" :BOUNDS (13 . 27)))))
+        :OPERATOR1 "?" :OPERATOR2 ":" :BOUNDS (5 . 27)))))
+    :OPERATOR ":=" :BOUNDS (0 . 27))
+   NIL
+   T
+   #+end_example
+
+   src_lisp[:exports code]{define-operator-rules} is not concerned
+   with overriding operator precedence and associativity via
+   parentheses. This aspect is easily handled "manually", though:
+
+   #+BEGIN_SRC lisp :results silent :exports both :session "tutorial"
+     (parser.common-rules.operators:define-operator-rules
+         (:skippable?-expression (* #\Space))
+       (2 assign       ":="    :associativity :none)
+       (3 if-then-else "?" ":")
+       (2 term         "+")
+       (2 factor       "*")
+       (2 expon        "^"     :associativity :right)
+       (1 neg          "-")
+       (1 inc          "++"    :fixity :postfix)
+       (or parenthesized character))
+
+     (esrap:defrule parenthesized
+         (and #\( assign #\))
+       (:function second))
+   #+END_SRC
+
+   Now, parenthesis can be used to override precedence and associativity:
+
+   #+BEGIN_SRC lisp :results value scalar :exports both :session "tutorial"
+     (architecture.builder-protocol:with-builder ('list)
+       (esrap:parse 'assign "(((z := a) + b)^c)^d * (-e)"))
+   #+END_SRC
+
+   #+RESULTS:
+   #+begin_example
+   (:BINARY-OPERATOR
+    (:OPERAND
+     (((:BINARY-OPERATOR
+        (:OPERAND
+         (((:BINARY-OPERATOR
+            (:OPERAND
+             (((:BINARY-OPERATOR
+                (:OPERAND
+                 (((:BINARY-OPERATOR (:OPERAND ((#\z) (#\a))) :OPERATOR ":="
+                    :BOUNDS (3 . 9)))
+                  (#\b)))
+                :OPERATOR "+" :BOUNDS (2 . 14)))
+              (#\c)))
+            :OPERATOR "^" :BOUNDS (1 . 17)))
+          (#\d)))
+        :OPERATOR "^" :BOUNDS (0 . 20)))
+      ((:UNARY-OPERATOR (:OPERAND ((#\e))) :OPERATOR "-" :BOUNDS (24 . 26)))))
+    :OPERATOR "*" :BOUNDS (0 . 27))
+   NIL
+   T
+   #+end_example
+
+* Dictionary
+  #+BEGIN_SRC lisp :results silent :exports results :session "doc"
+    (ql:quickload '(:alexandria :split-sequence
+                    :parser.common-rules :parser.common-rules.operators))
+    (defun doc (symbol kind)
+      (let* ((lambda-list (sb-introspect:function-lambda-list symbol))
+             (string      (or (documentation symbol kind)
+                              (error "~@<~A ~S is not documented.~@:>"
+                                     kind symbol)))
+             (lines       (split-sequence:split-sequence #\Newline string))
+             (strip       (reduce
+                           #'min (rest lines)
+                           :key (lambda (line)
+                                  (or (position #\Space line :test-not #'char=)
+                                      most-positive-fixnum))))
+             (trimmed     (mapcar (lambda (line)
+                                    (subseq line (min strip (length line))))
+                                  (rest lines))))
+        (format nil "~(~A~) ~<~{~A~^ ~}~:@>~2%~{~A~^~%~}"
+                symbol (list lambda-list) (list* (first lines) trimmed))))
+  #+END_SRC
+** Anchors
+   #+BEGIN_EXAMPLE
+     <beginning-of-input>
+
+     Matches at the beginning of the input (i.e. there is no preceding
+     character). Produces :beginning-of-input and does not consume input.
+   #+END_EXAMPLE
+
+   #+BEGIN_EXAMPLE
+     <end-of-input>
+
+     Matches at the end of the input line (i.e. there is no following
+     character). Produces :end-of-input and does not consume input.
+   #+END_EXAMPLE
+
+   #+BEGIN_EXAMPLE
+     <beginning-of-line>
+
+     Matches at the beginning of a line (i.e. the preceding character is
+     #\Newline or there is no preceding character). Produces
+     :beginning-of-line and does not consume input.
+   #+END_EXAMPLE
+
+   #+BEGIN_EXAMPLE
+     <end-of-line>
+
+     Matches at the end of a line (i.e. the following character is
+     #\Newline or there is no following character). Produces :end-of-line
+     and does not consume input.
+   #+END_EXAMPLE
+
+   #+BEGIN_EXAMPLE
+     <same-line>
+
+     Consumes all characters until <end-of-line> and produces the resulting
+     string.
+   #+END_EXAMPLE
+
+** Whitespace
+   #+BEGIN_EXAMPLE
+     whitespace/not-newline
+
+     Consumes a single #\Space or #\Tab, produces nil.
+   #+END_EXAMPLE
+
+   #+BEGIN_EXAMPLE
+     whitespace/not-newline?
+
+     Consumes nothing or a single #\Space or #\Tab, produces nil.
+   #+END_EXAMPLE
+
+   #+BEGIN_EXAMPLE
+     whitespace
+
+     Consumes a single #\Tab, #\Space, #\Newline or #\Page, produces nil.
+   #+END_EXAMPLE
+
+   #+BEGIN_EXAMPLE
+     whitespace?
+
+     Consumes nothing or a single #\Tab, #\Space, #\Newline or #\Page,
+     produces nil.
+   #+END_EXAMPLE
+
+   #+BEGIN_EXAMPLE
+     whitespace+
+
+     Consumes one or more #\Tab, #\Space, #\Newline or #\Page characters,
+     produces nil.
+   #+END_EXAMPLE
+
+   #+BEGIN_EXAMPLE
+     whitespace*
+
+     Consumes zero or more #\Tab, #\Space, #\Newline or #\Page characters,
+     produces nil.
+   #+END_EXAMPLE
+
+** Comments
+   #+BEGIN_EXAMPLE
+     c-style-comment/rest-of-line[/trimmed]
+
+     Consumes a comment of the form // … <end-of-line>, produces a string
+     from the enclosed characters. The /trimmed variant removes leading
+     #\/ characters. The plain variant uses the character unmodified.
+   #+END_EXAMPLE
+
+   #+BEGIN_EXAMPLE
+     c-style-comment/delimited[/trimmed]
+
+     Consumes a comment of the form /* … */, produces a string from the
+     enclosed characters. The /trimmed variant removes a common prefix
+     consisting of #\Space and #\* characters. The plain variant uses the
+     enclosed characters unmodified.
+   #+END_EXAMPLE
+
+   #+BEGIN_EXAMPLE
+     shell-style-comment[/trimmed]
+
+     Consumes a comment of the form # … <end-of-line>, produces a string
+     from the enclosed characters. The /trimmed variant removes leading
+     #\# characters. The plain variant uses the character unmodified.
+   #+END_EXAMPLE
+
+   #+BEGIN_EXAMPLE
+     lisp-style-comment[/trimmed]
+
+     Consumes a comment of the form ; … <end-of-line>, produces a string
+     from the enclosed characters. The /trimmed variant removes leading
+     #\; characters. The plain variant uses the character unmodified.
+   #+END_EXAMPLE
+
+** Literals
+   #+BEGIN_EXAMPLE
+     boolean-literal/{lower-case,capital-case,extended}
+
+     Consumes a Boolean value of the form
+
+          true | false
+       or True | False
+       or true | false | t | f | 1 | 0
+
+     respectively and produces t or nil.
+   #+END_EXAMPLE
+
+   #+BEGIN_EXAMPLE
+     integer-literal/{binary,octal,decimal,hexdecimal}{,/prefix,/no-sign}
+
+     Consumes an integer literal and produces its value.
+
+     Variants:
+
+                    /prefix         plain         /no-sign
+       binary                       {+,-,}[01]+   [01]+
+       octal        {+,-,}0o[0-7]+  {+,-,}[0-7]+  [0-7]+
+       decimal                      {+,-,}[0-9]+  [0-9]+
+       hexadecimal  {+,-,}0x[0-f]+  {+,-,}[0-f]+  [0-f]+
+   #+END_EXAMPLE
+
+   #+BEGIN_EXAMPLE
+     {,single-,double-}float-literal[/rational]
+
+     Consumes a floating point literal in fixed or scientific notation and
+     produces its value as rational, single-float or double-float value.
+
+     The /rational variants return the parsed number as a rational value
+     while the plain variants coerce the parsed number into the respective
+     float sub-type.
+
+     the single- and double- variants verify that the parsed number is
+     within the value range of the respective type.
+   #+END_EXAMPLE
+
+   #+BEGIN_EXAMPLE
+     number-literal
+
+     Consumes an integer or float literal and produces its value. In case
+     of a float literal, a single-float value is returned.
+   #+END_EXAMPLE
+
+   #+BEGIN_EXAMPLE
+     string-literal-{single,double,triple,sextuple}-quotes
+
+     Consumes a string literal delimited by ', ", ''' or """ respectively.
+     Produces the content of the literal (i.e. excluding the delimiters) as
+     a string.
+
+     For the single-quote and double-quote rules, the #\\ character
+     initiates escape sequences. The following escape sequences are
+     recognized:
+
+       \\                                       -> #\Backslash
+
+       \a                                       -> #\Bel
+       \b                                       -> #\Backspace
+       \f                                       -> #\Page
+       \n                                       -> #\Newline
+       \r                                       -> #\Return
+       \t                                       -> #\Tab
+       \v                                       -> #\Line_Tabulation
+
+       \<octal number below decimal 256>        -> the character with that code
+       \x<hexadecimal number below decimal 256> -> the character with that code
+   #+END_EXAMPLE
+
+** Tokenization
+   #+BEGIN_SRC lisp :exports results :session "doc"
+     (doc 'parser.common-rules:defrule/s 'function)
+   #+END_SRC
+
+   #+RESULTS:
+   #+begin_example
+   defrule/s NAME-AND-OPTIONS EXPRESSION &BODY OPTIONS
+
+   Like `esrap:defule' but define additional rules named NAME/s and
+   NAME/?s which respectively require/allow EXPRESSION to be followed
+   by skippable input (e.g. whitespace).
+
+   NAME-AND-OPTIONS can be either just a rule name or a list of the
+   form
+
+     (NAME &key
+           SKIPPABLE-EXPRESSION  S?
+           SKIPPABLE?-EXPRESSION ?S?
+           DEFINER)
+
+   where SKIPPABLE-EXPRESSION and SKIPPABLE?-EXPRESSION name the rules
+   used to parse skippable input in the NAME/s and NAME/?s
+   variants. Default to `skippable' and `skippable?' respectively.
+
+   S? and ?S? control which of the NAME/S and NAME/?S rules should be
+   generated. Default is generating both.
+
+   DEFINER is the name of the macro used to define the "main"
+   rule. Defaults to `esrap:defrule'.
+   #+end_example
+
+** Infix Operators
+   #+BEGIN_SRC lisp :exports results :session "doc"
+     (doc 'parser.common-rules.operators:define-unary-operator-rule 'function)
+   #+END_SRC
+
+   #+RESULTS:
+   #+begin_example
+   define-unary-operator-rule NAME OPERATOR-EXPRESSION NEXT &KEY (FIXITY PREFIX)
+                              (SKIPPABLE?-EXPRESSION) (DEFINER 'DEFRULE)
+                              (NODE-KIND UNARY-OPERATOR)
+
+   Define a rule NAME for parsing an unary operator expressions with
+   operator OPERATOR-EXPRESSION and operand NEXT.
+
+   FIXITY has to be one of
+
+   :prefix
+
+     Generate a prefix operator, i.e.
+
+       (and OPERATOR-EXPRESSION SKIPPABLE?-EXPRESSION NEXT)
+
+   :postfix
+
+     Generate a postfix operator, i.e.
+
+       (and NEXT SKIPPABLE?-EXPRESSION OPERATOR-EXPRESSION)
+
+   If supplied, SKIPPABLE?-EXPRESSION is the expression to be used for
+   parsing skippable input (usually whitespace) between
+   OPERATOR-EXPRESSION and NEXT. If SKIPPABLE?-EXPRESSION is not
+   supplied, a rule whose name is
+
+     (find-symbol (string '#:skippable?) (symbol-package OPERATOR-NAME))
+
+   is used.
+
+   If supplied, DEFINER names the macro that should be used to define
+   the rule. Otherwise `esrap:defrule' is used.
+   #+end_example
+
+   #+BEGIN_SRC lisp :exports results :session "doc"
+     (doc 'parser.common-rules.operators:define-binary-operator-rule 'function)
+   #+END_SRC
+
+   #+RESULTS:
+   #+begin_example
+   define-binary-operator-rule NAME OPERATOR-EXPRESSION NEXT &KEY
+                               (ASSOCIATIVITY LEFT) (SKIPPABLE?-EXPRESSION)
+                               (DEFINER 'DEFRULE) (NODE-KIND BINARY-OPERATOR)
+
+   Define a rule NAME for parsing a binary operator expressions with
+   operator OPERATOR-EXPRESSION and operands NEXT.
+
+   ASSOCIATIVITY has to be one of
+
+   :none
+
+     The defined binary operator will be non-associative, i.e. for an
+     OPERATOR-EXPRESSION ":=", the expressions x:=y:=z will not be
+     syntatically legal.
+
+   :left
+
+     The defined binary operator will associate to the left, i.e.
+     x+y+z will be parsed as (x+y)+z.
+
+   :right
+
+     The defined binary operator will associate to the right, i.e.
+     x^y^z will be parsed as x^(y^z).
+
+   :associative
+
+     The defined binary operator will associate to the left (but this
+     should not be relied upon).
+
+   If supplied, SKIPPABLE?-EXPRESSION is the expression to be used for
+   parsing skippable input (usually whitespace) between
+   OPERATOR-EXPRESSION and NEXT. If SKIPPABLE?-EXPRESSION is not
+   supplied, a rule whose name is
+
+     (find-symbol (string '#:skippable?) (symbol-package OPERATOR-NAME))
+
+   is used.
+
+   If supplied, DEFINER names the macro that should be used to define
+   the rule. Otherwise `esrap:defrule' is used.
+   #+end_example
+
+   #+BEGIN_SRC lisp :exports results :session "doc"
+     (doc 'parser.common-rules.operators:define-ternary-operator-rule 'function)
+   #+END_SRC
+
+   #+RESULTS:
+   #+begin_example
+   define-ternary-operator-rule NAME OPERATOR1-EXPRESSION OPERATOR2-EXPRESSION
+                                NEXT &KEY (SKIPPABLE?-EXPRESSION)
+                                (DEFINER 'DEFRULE) (NODE-KIND TERNARY-OPERATOR)
+
+   Define a rule NAME for parsing a ternary operator expressions with
+   operators OPERATOR1-EXPRESSION and OPERATOR2-EXPRESSION and
+   operands NEXT.
+
+   If supplied, SKIPPABLE?-EXPRESSION is the expression to be used for
+   parsing skippable input (usually whitespace) between
+   OPERATOR-EXPRESSION and NEXT. If SKIPPABLE?-EXPRESSION is not
+   supplied, a rule whose name is
+
+     (find-symbol (string '#:skippable?) (symbol-package OPERATOR-NAME))
+
+   is used.
+
+   If supplied, DEFINER names the macro that should be used to define
+   the rule. Otherwise `esrap:defrule' is used.
+   #+end_example
+
+   #+BEGIN_SRC lisp :exports results :session "doc"
+     (doc 'parser.common-rules.operators:define-operator-rules 'function)
+   #+END_SRC
+
+   #+RESULTS:
+   #+begin_example
+   define-operator-rules (&KEY SKIPPABLE?-EXPRESSION
+                          (UNARY-NODE-KIND UNARY-OPERATOR)
+                          (BINARY-NODE-KIND BINARY-OPERATOR)
+                          (TERNARY-NODE-KIND TERNARY-OPERATOR))
+                         &BODY CLAUSES
+
+   Define rules for parsing infix operators according to CLAUSES.
+
+   The order of clauses in CLAUSES determines the precedence of
+   operators:
+
+     (define-operator-rules ()
+       OPERATOR-WITH-LOWEST-BINDING-POWER
+       ⋮
+       OPERATOR-WITH-HIGHEST-BINDING-POWER
+       LEAF-EXPRESSION)
+
+   All but the final clause in CLAUSES are of the form
+
+     (ARITY RULE-NAME OPERATOR-EXPRESSION &rest ARGS &key)
+
+   where
+
+   * ARITY is the number of operands accepted by the operator
+     being defined. The ARITY must be either 1, 2 or 3.
+
+   * RULE-NAME is the name of the rule generated for the operator.
+
+   * OPERATOR-EXPRESSION is an expression for parsing the operator
+     token, e.g. #\* for multiplication.
+
+   * ARGS can be any of the keyword arguments accepted by
+     `define-unary-operator-rule', `define-binary-operator-rule' or
+     `define-ternary-operator-rule' depending on ARITY, i.e.
+
+     * :fixity (:prefix | :postfix)
+
+       Only for unary operators. Fixity of the operator being defined.
+
+     * :associativity (:none | :left | :right | :associative)
+
+       Only for binary operators. Associativity of the operator being
+       defined.
+
+     * :skippable?-expression EXPRESSION
+
+       See below.
+
+     * :definer RULE-NAME
+
+       The macro used to define the operator rule. Defaults to
+       `esrap:defrule'.
+
+   The final LEAF-EXPRESSION clause is just a rule expression,
+   describing the "leafs" (i.e. not operator expressions) of the
+   operator grammar.
+
+   Whitespace handling can be controlled by specifying rules for
+   "skippable" input using the :skippable?-expression keyword
+   argument in ARGS. If supplied, SKIPPABLE?-EXPRESSION is applied to
+   all defined operators. If SKIPPABLE?-EXPRESSION is not supplied, a
+   rule whose name is
+
+     (find-symbol (string '#:skippable?) (symbol-package OPERATOR-NAME))
+
+   is used.
+
+   Example
+
+     (define-operator-rules (:skippable?-expression (* #\Space))
+       (2 term   "+") ; lowest binding power
+       (2 factor "*")
+       (1 neg    "-") ; highest binding power
+       #\x)           ; leaf expression
+
+     (architecture.builder-protocol:with-builder ('list)
+       (esrap:parse 'term "x + x * -x"))
+     =>
+     (:BINARY-OPERATOR
+      (:OPERAND (("x")
+                 ((:BINARY-OPERATOR
+                   (:OPERAND (("x")
+                              ((:UNARY-OPERATOR
+                                (:OPERAND (("x")))
+                                :OPERATOR "-" :BOUNDS (4 . 6)))))
+                   :OPERATOR "*" :BOUNDS (2 . 6)))))
+      :OPERATOR "+" :BOUNDS (0 . 6))
+
+   Note that this macro is not concerned with forcing operator
+   bindings via parentheses. See the documentation for recommendations
+   on that.
+   #+end_example
+
+* Settings                                                         :noexport:
+
+#+OPTIONS: H:2 num:nil toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS: TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc

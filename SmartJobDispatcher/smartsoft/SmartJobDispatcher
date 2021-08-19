@@ -1,0 +1,24 @@
+#!/bin/bash
+
+INIFILE="$(echo $1 | sed 's/-filename=//')"
+
+echo "File: $INIFILE"
+if [ -f "$INIFILE" ]; then
+ echo "USING command line ini file"
+else
+  echo "No ini file given using default"
+  INIFILE="etc/SmartJobDispatcher.ini"
+fi
+
+if [ -f "$INIFILE" ]; then
+    echo "Using System SMART_ROOT files.."
+    sbcl --userinit $SMART_ROOT_ACE/repos/ComponentRepository/SmartJobDispatcher/smartsoft/start-smartJobDispatcher.lisp "--filename=$INIFILE" "--jobdist-prefix" $SMART_ROOT_ACE/repos/ComponentRepository/SmartJobDispatcher/smartsoft/smartJobDispatcher/ "--lispinterface-prefix" $SMART_ROOT_ACE/repos/ComponentRepository/SmartJobDispatcher/smartsoft/lispInterface/
+else 
+  echo "INIFILE not found! --> EXIT"
+fi
+
+#sbcl --userinit %SMART_ROOT_ACE%/src/components/SmartJobDispatcher/start-smartJobDispatcher.lisp --filename=%SMART_ROOT_ACE%/etc/SmartJobDispatcher.ini --prefix %SMART_ROOT_ACE%/src/components/SmartJobDispatcher/smartJobDispatcher/
+#sbcl --userinit ./start-smartJobDispatcher.lisp --filename=./SmartJobDispatcher.ini --prefix ./smartJobDispatcher/
+
+#sbcl --userinit ./start-simpleKB.lisp --filename=./SmartSimpleKB.ini  --prefix ./smartSimpleKB_lisp/
+#cmake .. -G "Visual Studio 14 2015 Win64"

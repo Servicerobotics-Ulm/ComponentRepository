@@ -1,0 +1,5 @@
+(format t "Precompile dependencies...~%")
+(require "asdf")
+(require "cffi")
+(format t "...DONE!~%")
+(exit :code 0)

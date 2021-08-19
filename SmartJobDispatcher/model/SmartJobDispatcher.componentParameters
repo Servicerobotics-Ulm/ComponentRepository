@@ -1,0 +1,15 @@
+ComponentParameter SmartJobDispatcher component SmartJobDispatcher
+{
+	InternalParameter ModuleConnection {
+		PathNavigationServer : String = "ComponentCorridorNavigationServer"
+		Fileprovider:String = "ComponentFileProvider"
+		RobotinoRPC:String="@ROBOTINONAME@.SmartRobotinoRPCBridge"
+		Mapper:String="SmartMapperGridMap"
+		RobotStateViewer:String="SmartRobotStateViewer"
+		NavigationCoordinationServer:String="SmartNavigationCoordinationServer"
+		ConnectNavigationServer : Boolean = true
+		ConnectNavigationCoordinationServer : Boolean = false
+		ConnectJobSource3:Boolean = false
+	}
+	
+}

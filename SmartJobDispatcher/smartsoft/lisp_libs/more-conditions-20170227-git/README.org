@@ -1,0 +1,310 @@
+* Introduction
+  The =more-conditions= system contains some condition classes,
+  functions and macros which may be useful when building slightly
+  complex systems.
+
+  One aspect handled by these classes is "chaining" of
+  conditions. Chaining is one way to implement signaling and handling
+  of conditions in a layered architecture: layers handle (not
+  necessarily in the sense of unwinding the stack and transferring
+  control) conditions signaled from lower layers by wrapping them in
+  an appropriate condition instances and re-signaling. Support for
+  this pattern is provided by the following classes, functions and
+  macros:
+  + =chainable-condition=
+  + =cause= and =root-cause=
+  + =maybe-print-cause=
+  + =with-condition-translation=
+  + =define-condition-translating-method=
+  See [[*Condition Translation at Layer Boundaries]] below.
+
+  Another aspect are custom simple conditions. The function
+  =maybe-print-explanation= is intended to make writing report
+  functions for custom simple conditions easier. See [[*Custom Simple
+  Conditions]] below. =more-conditions= also provides a couple of
+  specific =program-error= s:
+  + =program-error=
+    + =missing-required-argument=
+      + =missing-required-initarg=
+    + =incompatible-arguments=
+      + =incompatible-initargs=
+    + =initarg-error=
+      + =missing-required-initarg=
+      + =incompatible-initargs=
+
+  Furthermore, =more-conditions= contains conditions for reporting
+  progress of operations up the callstack in a minimally invasive
+  way. See [[*Tracking and Reporting Progress of Operations]].
+
+  Finally, =more-conditions= supports embedding documentation
+  references in conditions via =condition-references= and the
+  =reference-condition= mixin. See [[*Embedding Documentation References
+  in Conditions]] below.
+
+
+  #+ATTR_HTML: :alt "build status image" :title Build Status :align right
+  [[https://travis-ci.org/scymtym/more-conditions][https://travis-ci.org/scymtym/more-conditions.svg]]
+
+* Error Behaviors for Layered Systems
+** Condition Translation at Layer Boundaries
+   Assume some complex backend whose primary entry point is a =emit
+   (NODE OPERATION TARGET)= function. Part of the backend interface is
+   an =emit-error= condition. In such a situation, it is desirable to
+   translate arbitrary conditions that may arise anywhere in the
+   backend into the =emit-error= condition without loosing information
+   regarding the root cause of the problem.
+
+   Using =more-conditions=, the problem can be solved as follows:
+   #+BEGIN_SRC lisp
+   (defgeneric emit (node operation target))
+
+   (define-condition emit-error (cl:error
+                                 more-conditions:chainable-condition)
+     ((node      :initarg :node
+                 :reader  node)
+      (operation :initarg :operation
+                 :reader  operation)
+      (target    :initarg :target
+                 :reader  target))
+     (:report (lambda (condition stream)
+                (format stream "Could not ~S node ~A to target ~A~/more-conditions:maybe-print-cause/"
+                        (operation condition)
+                        (node condition)
+                        (target condition)
+                        condition))))
+
+   (more-conditions:define-condition-translating-method emit (node operation target)
+     ((error emit-error)
+      :node node
+      :operation operation
+      :target target))
+
+   (defmethod emit ((node real) (operation (eql :foo)) (target stream))
+     (when (minusp node)
+       (error "Cannot ~S for negative real node ~A."
+              operation node)))
+   #+END_SRC
+   This does the following:
+   + Translate any =error= condition into an =emit-error= condition
+   + Store the node, operation, target and causing condition in the
+     =emit-error= condition (can be retrieved via
+     =more-conditions:cause= or =more-conditions:root-cause=)
+   + Do not unwind the stack since translation is done in
+     =handler-bind= rather than =handler-case=. This way the client can
+     still determine the location of the causing condition.
+   + Avoid wrapping multiple =emit-error= s around each other in case
+     of recursive =emit= calls.
+
+   Now =(emit -1 :foo *standard-output*)= signals an =emit-error= which
+   describes the failed operation and contains a detailed description
+   of the actual problem as its =more-conditions:cause=:
+   #+BEGIN_EXAMPLE
+   Could not :FOO node -1 to target #<SLIME-OUTPUT-STREAM {1005DAF453}> Caused by:
+   > Cannot :FOO for negative real node -1.
+   #+END_EXAMPLE
+** Error Policies at Layer Boundaries
+   When working with protocol functions, say =find-thing= for example,
+   different behaviors in case of errors may be desirable under
+   different circumstances such as
+   + Return =nil= or some other value in case of errors in order to
+     being able to write =(or (find-thing ARGS) SOMETHING-ELSE)=
+     + For efficiency reasons, it made be desirable to avoid
+       establishing handlers and/or restarts in this case
+   + Return =nil= or some other value and signal a =style-warning=
+     when a compile-time check fails or an optimization opportunity
+     is missed
+   + Signal an error when the computation cannot continue without the
+     result
+     + Establish restarts for higher layers to decide about error
+       recovery
+
+   =more-conditions= provides the =error-behavior-restart-case= macro
+   for such situations. It can be used as demonstrated in the
+   following example:
+   #+BEGIN_SRC lisp
+   (define-condition not-found-condition ()
+     ((name :initarg :name)))
+
+   (define-condition not-found-warning (warning not-found-condition)
+     ())
+
+   (define-condition not-found-error (error not-found-condition)
+     ())
+
+   (defmethod find-thing ((name t) &key)
+     nil)
+
+   (defmethod find-thing :around ((name t)
+                                  &key (if-does-not-exist #'error))
+     (or (call-next-method)
+         (more-conditions:error-behavior-restart-case
+          (if-does-not-exist (not-found-error :name name)
+                             :warning-condition   not-found-warning
+                             :allow-other-values? t)
+          (retry ()
+            (find-thing name))
+          (use-value (value)
+            value))))
+   #+END_SRC
+   Now, calling =find-thing= with different error policies results in
+   different behaviors:
+   #+BEGIN_SRC lisp
+   (find-thing :foo)
+   |- ERROR: Condition NOT-FOUND-ERROR was signalled
+
+   (find-thing :foo :if-does-not-exist #'warn)
+   | WARNING: Condition NOT-FOUND-WARNING was signalled
+   => nil
+
+   (find-thing :foo :if-does-not-exist nil)
+   => nil
+
+   (handler-bind ((error (lambda (c)
+                           (declare (ignore c))
+                           (invoke-restart 'use-value :value))))
+     (find-thing :foo))
+   => :value
+   #+END_SRC
+* Custom Simple Conditions
+  A custom simple conditions can be defined as follows:
+  #+BEGIN_SRC lisp
+    (define-condition simple-frob-error (cl:error
+                                         cl:simple-condition)
+      ((foo :initarg :foo
+            :reader  foo))
+      (:report (lambda (condition stream)
+                 (format stream "Could not frob ~S~/more-conditions:maybe-print-explanation/"
+                         (foo condition)
+                         condition))))
+
+    (defun simple-frob-error (foo &optional format &rest args)
+      (error 'simple-frob-error
+             :foo              foo
+             :format-control   format
+             :format-arguments args))
+  #+END_SRC
+  Now =(simple-frob-error :bar)= and =(simple-frob-error :bar "Fez
+  ~S." :whoop)= both produce nice reports.
+* Tracking and Reporting Progress of Operations
+  Despite the most frequently used condition superclasses, =cl:error=
+  and =cl:warning=, the Common Lisp condition system allows arbitrary
+  other subclasses of =cl:condition= which are not a-priori associated
+  with certain control transfer behavior. The =more-conditions= system
+  exploits this for providing a family of conditions which indicate
+  progress of operations without necessarily affecting flow of control
+  or program execution in general.
+
+  The =more-conditions= system does not address the question of
+  /handling/ progress conditions (But see
+  [[http://github.com/scymtym/user-interface.progress][=user-interface.progress=]]). This is intended to allow "speculative"
+  signaling of progress conditions from as many operations as possible
+  without introducing dependencies beyond =more-conditions= into the
+  signaling system. Further, signaling code does not have to care or
+  even know whether the signaled progress conditions are actually
+  handled or not in a particular situation since program execution
+  remains unaffected. Despite the hopefully low impact on program
+  design and code organization, there is some overhead involved in
+  signaling, and potentially handling, progress conditions. Therefore,
+  some amount of care is required when signaling progress conditions
+  form inner loops.
+
+  In the =more-conditions= system, there are two builtin progress
+  condition classes: =more-conditions:progress-condition= and
+  =more-conditions:simple-progress-condition=. Support for signaling
+  these conditions is provided in form of the function
+  =more-conditions:progress= and the macros
+  =more-conditions:with-trivial-progress= and
+  =more-conditions:with-sequence-progress=.
+
+  These can be used as follows (the outer =cl:handler-bind= is
+  required for the signaled progress conditions to produce an
+  observable effect):
+  #+BEGIN_SRC lisp
+  (handler-bind ((more-conditions:progress-condition #'princ))
+    (more-conditions:progress :my-operation 0 "Preparing")
+    (sleep 1)
+    (more-conditions:progress :my-operation 1/3 "Processing ~A" :data)
+    (sleep 1)
+    (more-conditions:progress :my-operation 2/3 "Cleaning up")
+    (sleep 1)
+    (more-conditions:progress :my-operation t))
+  #+END_SRC
+
+  The =more-conditions:with-trivial-progress= can be used to indicate
+  execution of long running operations without reporting detailed
+  progress during execution:
+  #+BEGIN_SRC lisp
+  (handler-bind ((more-conditions:progress-condition #'princ))
+    (more-conditions:with-trivial-progress (:factorial "Computing factorial of ~D" 1000)
+      (alexandria:factorial 1000)))
+  #+END_SRC
+
+  For the common case of processing data sequentially, the
+  =more-conditions:with-sequence-progress= macro can be used to
+  easily signal progress conditions:
+  #+BEGIN_SRC lisp
+  (handler-bind ((more-conditions:progress-condition #'princ))
+    (let ((items (alexandria:iota 5)))
+      (more-conditions:with-sequence-progress (:frob items)
+        (dolist (item items)
+          (more-conditions:progress "Processing element ~A" item)
+          (sleep 1)))))
+  #+END_SRC
+  When using higher-order functions to process sequences the
+  =more-conditions:progressing= function can be used:
+  #+BEGIN_SRC lisp
+  (handler-bind ((more-conditions:progress-condition #'princ))
+    (let ((items (alexandria:iota 5)))
+      (more-conditions:with-sequence-progress (:frob items)
+        (mapcar (more-conditions:progressing #'1+ :frob) items))))
+  #+END_SRC
+* Embedding Documentation References in Conditions
+  It is sometimes useful to include pointers to documentation in
+  signaled conditions. =more-conditions= supports this via the generic
+  function =condition-references= and the mixin class
+  =reference-condition=. =condition-references= returns a list of
+  references of the form =(DOCUMENT PART [LINK])=. The type
+  =reference-spec= and the readers =reference-document=,
+  =reference-part=, =reference-link= deal with these
+  references. =reference-condition= stores a list of such references
+  and =condition-references= collects all references traversing
+  =cause= relations.
+
+  For example, the following condition
+  #+BEGIN_SRC lisp
+  (define-condition foo-error (error
+                               more-conditions:reference-condition
+                               more-conditions:chainable-condition)
+    ()
+    (:report (lambda (condition stream)
+               ;; Prevent reference printing in causing condition(s)
+               (let ((more-conditions:*print-references* nil))
+                 (format stream "Foo Error.~/more-conditions:maybe-print-cause/"
+                         condition)))))
+
+  (error 'foo-error
+         :cause      (make-condition 'foo-error
+                                     :references '((:foo "bar")
+                                                   (:foo "baz")
+                                                   (:bar "fez" "http://whoop.org")))
+         :references '((:foo "bar")
+                       (:fez "whiz")))
+  #+END_SRC
+  would print the following report:
+  #+BEGIN_EXAMPLE
+  Foo Error. Caused by:
+  > Foo Error.
+  See also:
+    FOO, bar
+    FOO, baz
+    BAR, fez <http://whoop.org>
+    FEZ, whiz
+  #+END_EXAMPLE
+  Note how references from the causing condition are collected and
+  printed.
+
+* settings                                                         :noexport:
+
+# Local Variables:
+# mode: org
+# End:

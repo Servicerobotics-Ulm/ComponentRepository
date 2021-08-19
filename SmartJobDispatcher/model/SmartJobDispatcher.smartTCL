@@ -1,0 +1,1246 @@
+;;--------------------------------------------------------------------------
+;  BSD 3-Clause License
+;
+;  Copyright (C) Servicerobotics Ulm
+;  University of Applied Sciences Ulm
+;  Prittwitzstr. 10
+;  89075 Ulm
+;  Germany
+;  All rights reserved.
+;
+;  Author: Matthias Lutz
+;
+;Redistribution and use in source and binary forms, with or without
+;modification, are permitted provided that the following conditions are met:
+;
+;* Redistributions of source code must retain the above copyright notice, this
+;  list of conditions and the following disclaimer.
+;
+;* Redistributions in binary form must reproduce the above copyright notice,
+;  this list of conditions and the following disclaimer in the documentation
+;  and/or other materials provided with the distribution.
+;
+;* Neither the name of the copyright holder nor the names of its
+;  contributors may be used to endorse or promote products derived from
+;  this software without specific prior written permission.
+;
+;THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+;AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+;IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+;DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+;FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+;DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+;SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+;CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+;OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+;OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+;;--------------------------------------------------------------------------
+
+
+;; TODO - this code needs cleanup 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; FUNCTIONS FOR FLEET
+
+
+; (sendMessageToFleetManager "FleetManager" 'FLEETMANAGER "abc")
+
+;; FUNCTIONS USED FOR THE FLEET
+(defun sendMessageToFleetManager (module module-inst msg)
+  (tcl-send-direct :module module :module-inst module-inst :server 'fleetManager :service 'fleetSend :param msg))
+
+
+
+
+;;TODO maybe move this to the jobs?
+(defun send-command-info (state)
+  (let ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot)))))
+    (sendMessageToFleetManager "FleetManager" 'FLEETMANAGER (format nil "CommandInfo robotinoid:~d state:~s" (get-value robot 'name) state) )))
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; scenario  
+;;wait for both either web or fleet com commands
+(define-tcb (waitForCommands)
+  (module "FleetManager")
+  (rules (rule-abort-job-error-ack-restart))
+  (action (
+            (format t "=========================>>> waitForCommands ~%")
+
+            (let* ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot)))))
+              (tcl-push-back-plan :plan `( (LOCALIZATION.tcb-activate-localization)))
+              (cond    
+                ((get-value robot 'has-webinterface)
+                  (tcl-activate-event-direct :name 'evt-webinterface
+                                :handler 'handler-robotino-webserver-command
+                                :server 'webinterface 
+                                :service 'fleetEvent
+                                :mode 'continuous
+                                :module "FleetManager"
+                                :module-inst 'WEBINTERFACE)))
+
+              (tcl-activate-event :name 'evt-highlevel
+                                  :handler 'handler-highlevel-command
+                                  :server 'fleetManager 
+                                  :service 'fleetEvent
+                                  :mode 'continuous
+                                  :param (get-value robot 'name))))))
+
+
+(define-rule (rule-abort-job-error-ack-restart)
+  (tcb (ANY-TCB))
+  (return-value (ERROR (TASK ABBORT)))
+  (action (
+            (format t "=========================>>> RULE: rule-abort-job-error-ack-restart (ERROR (TASK ABBORT))  ~%")
+              (tcl-delete-plan)
+              (tcl-abort)
+              '(ERROR(RESTART)))))
+
+(define-rule (rule-deliver-from-to-mps-station-failed)
+  (tcb (tcb-deliver-from-to-mps-station ?fetch-station-id ?fetch-beltid ?deliver-station-id ?deliver-beltid))
+  (return-value (ERROR (FETCH DELIVER MPS)))
+  (action (
+              (format t "=========================>>> RULE: rule-deliver-from-to-mps-station-failed (ERROR (FETCH DELIVER MPS))  ~%")
+              (tcl-delete-plan)
+              (tcl-abort)
+              '(ERROR(RESTART)))))
+
+
+(define-tcb (addRobotToFleetRequest)
+ (module "FleetManager")
+ (action (
+           (format t "=========================>>> addRobotToFleetRequest~%")
+           (let ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot)))))
+             (tcl-activate-event :name 'evt-highlevel
+                                 :handler 'handler-add-request 
+                                 :server 'fleetManager
+                                 :service 'fleetEvent
+                                 :mode 'continuous
+                                 :param (get-value robot 'name))
+
+
+             (tcl-send :server 'fleetManager :service 'fleetSend :param `(AddRequest ,(get-value robot 'name) ,(get-value robot 'fleet-type)))))))
+
+
+(define-event-handler (handler-add-request)
+  (action (
+            (let ((message (read-from-string (tcl-event-message))))
+            (format t "=========================>>> HANDLER ADD REQUEST: ~s ~%~%" message)
+            (cond
+              ;; PushJob
+              ((equal (first message) 'ADDOK)
+                (format t "ADDOK-->continue~%")
+                (tcl-abort)
+		'(SUCCESS()))
+              ;;
+              (T
+                (format t "Error unknown command send to SmartTCL ~%")))))))
+
+
+(define-tcb (addRobotToFleet)
+  (module "FleetManager")
+  (action ( 
+            (format t "=========================>>> addRobotToFleet~%")
+            (let ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot)))))
+
+              (format t "robot name: ~s~%" (get-value robot 'name))
+              (tcl-activate-event :name 'evt-highlevel
+                                :handler 'handler-highlevel-command
+                                :server 'fleetManager 
+                                :service 'fleetEvent
+                                :mode 'continuous
+                                :param (get-value robot 'name))
+            (tcl-send :server 'fleetManager :service 'fleetSend :param `(AddRobot ,(get-value robot 'name)  ,(get-value robot 'base-component) ,(get-value robot 'performs-task) ,(get-value robot 'state),(get-value robot 'mode) ,(get-value robot 'is-docked) ,(get-value robot 'box-loaded) ,(get-value robot 'laser-component) ,(get-value robot 'fleet-type) ,(get-value robot 'path-nav-component) ,(get-value robot 'robotip)))))))
+
+
+
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; FESTO FLEET HANDLER
+
+
+;; TODO hier geht es weiter!
+ 
+(define-event-handler (handler-highlevel-command)
+  (action (
+           (let ((message (read-from-string (tcl-event-message))))
+            (format t "=========================>>> HANDLER HIGHLEVEL COMMAND: ~s ~%~%" message)
+            (format t "=================================================================================~%")
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; JOB HANDLING
+
+            (cond
+              ;; PushJob
+              ((equal (first message) 'PushJob)
+                (let ((request message))
+                  (format t "GOT: ~s ~%" request)
+                  (format t "PushJob - type: ~s - jobID: ~s priority: ~s robotid: ~s ~%" (second request)(third request)(fourth request) (fifth request))
+                  ;; (PLAN ( TYPE JOBID start-location start-belt end-location end-belt))
+                  ;;TODO
+                  (tcl-kb-update :key '(is-a) :value `(
+                                        (is-a robot)
+                                        (is-job-on-time neutral)))
+                  (cond
+
+                   ;; PushJob TestJob JOBID PRIORITY ROBOTINOID
+                    ((equal (second request) 'TestJob)
+                      (multiple-value-bind (jobtype jobid jobpriority robotid) 
+                                           (values (second request) (third request) (fourth request) (fifth request))
+                      (format t "TestJob: id ~s ~%" jobid)
+                      (tcl-kb-update :key '(is-a id) :value `(
+                                              (is-a job) 
+                                              (id ,jobid) 
+                                              (error-state NOERROR) 
+                                              (priority ,jobpriority)
+                                              (robotid ,robotid)
+                                              (type ,jobtype)))
+                      (tcl-push-back-plan :plan `( (tcb-job-test-job ,jobid)))))
+                                              
+
+                    ((equal (second request) 'DeliverFromTo)
+                      (multiple-value-bind (jobtype jobid jobpriority robotid from-station-id from-belt to-station-id to-belt)
+                                   (values (second request) (third request) (fourth request) (fifth request) (sixth request) (seventh request) (eighth request) (ninth request))
+                      (format t "Deliver from Station: ~s Belt: ~s to Station ~s Belt ~s ~%" from-station-id from-belt to-station-id to-belt)
+                      (tcl-kb-update :key '(is-a id) :value `(
+                                              (is-a job) 
+                                              (id ,jobid)
+                                              (error-state NOERROR) 
+                                              (priority ,jobpriority)
+                                              (robotid ,robotid)
+                                              (start-station ,from-station-id) (start-belt ,from-belt)
+                                              (end-station ,to-station-id) (end-belt ,to-belt)
+                                              (type ,jobtype)))
+
+                      (tcl-push-back-plan :plan `( (tcb-job-deliver-from-to ,jobid ,from-station-id ,from-belt ,to-station-id ,to-belt)))))
+
+                    ;; PushJob GotoPosition JOBID PRIORITY ROBOTINOID POSE
+                    ((equal (second request) 'GotoPosition)
+                      (multiple-value-bind (jobtype jobid jobpriority robotid goal-pose) 
+                                           (values (second request) (third request) (fourth request) (fifth request) (sixth request))
+                      (format t "Goto Position: ~s ~%" goal-pose)
+                      (tcl-kb-update :key '(is-a id) :value `(
+                                              (is-a job) 
+                                              (id ,jobid) 
+                                              (error-state NOERROR) 
+                                              (priority ,jobpriority)
+                                              (robotid ,robotid)
+                                              (goal-pose ,goal-pose)
+                                              (type ,jobtype)))
+                      (tcl-push-back-plan :plan `( (tcb-job-go-to-position ,jobid ,goal-pose)))))
+
+
+;;TODO
+                    ;; PushJob FollowPerson JOBID PRIORITY ROBOTINOID
+                    ((equal (second request) 'FollowPerson)
+                      (multiple-value-bind (jobtype jobid jobpriority robotid) 
+                                           (values (second request) (third request) (fourth request) (fifth request))
+                      (format t "FollowPerson ~%")
+                      (tcl-kb-update :key '(is-a id) :value `(
+                                              (is-a job) 
+                                              (id ,jobid) 
+                                              (error-state NOERROR) 
+                                              (priority ,jobpriority)
+                                              (robotid ,robotid)
+                                              (type ,jobtype)))
+                     
+                      (tcl-push-back-plan :plan `(
+                                              (tcb-update-robot-state 'BUSY ,jobid)
+                                              (tcb-job-set-lc-state-RUNNING)
+
+                                              (tcb-detect-persons)))))
+
+
+                    ;; PushJob MPSDocking JOBID PRIORITY ROBOTINOID ACTION STATION TOBELT
+                    ((equal (second request) 'MPSDocking)
+                      (multiple-value-bind (jobtype jobid jobpriority robotid docking-action docking-station-id docking-to-belt) 
+                                           (values (second request) (third request) (fourth request) (fifth request) (sixth request) (seventh request) (eighth request))
+                      (format t "MPSDocking: action ~s ~%" docking-action)
+                      (tcl-kb-update :key '(is-a id) :value `(
+                                              (is-a job) 
+                                              (id ,jobid) 
+                                              (error-state NOERROR) 
+                                              (priority ,jobpriority)
+                                              (robotid ,robotid)
+                                              (docking-action ,docking-action)
+                                              (docking-to-belt ,docking-to-belt)
+                                              (docking-station-id ,docking-station-id )
+                                              (type ,jobtype)))
+
+                      (tcl-push-back-plan :plan `( (tcb-job-mps-docking ,jobid ,docking-action ,docking-station-id ,docking-to-belt)))))
+ 
+
+                    ;; PushJob MPSLoading JOBID PRIORITY ROBOTINOID ACTION STATIONID
+                    ((equal (second request) 'MPSLoading)
+                      (multiple-value-bind (jobtype jobid jobpriority robotid loading-action stationid) 
+                                           (values (second request) (third request) (fourth request) (fifth request) (sixth request) (seventh request))
+                      (format t "MPSLoading: action ~s ~%" loading-action)
+                      (tcl-kb-update :key '(is-a id) :value `(
+                                              (is-a job) 
+                                              (id ,jobid) 
+                                              (error-state NOERROR) 
+                                              (priority ,jobpriority)
+                                              (robotid ,robotid)
+                                              (loading-action ,loading-action)
+                                              (stationid ,stationid)
+                                              (type ,jobtype)))
+
+                      (tcl-push-back-plan :plan `( (tcb-job-mps-loading ,jobid ,loading-action ,stationid)))))
+
+
+                    ;;PushJob BatteryChargerDocking JOBID PRIORITY ROBOTINOID ACTION
+                    ((equal (second request) 'BatteryChargerDocking)
+                      (multiple-value-bind (jobtype jobid jobpriority robotid docking-action) 
+                                           (values (second request) (third request) (fourth request) (fifth request) (sixth request))
+                      (format t "BatteryChargerDocking: action ~s ~%" docking-action)
+                      (tcl-kb-update :key '(is-a id) :value `(
+                                              (is-a job) 
+                                              (id ,jobid) 
+                                              (error-state NOERROR) 
+                                              (priority ,jobpriority)
+                                              (robotid ,robotid)
+                                              (docking-action ,docking-action)
+                                              (type ,jobtype)))
+
+                      (tcl-push-back-plan :plan `( (tcb-job-mps-battery-charger-docking ,jobid ,docking-action)))))
+
+               
+                    ;;PushJob RobotGripper JOBID PRIORITY ROBOTINOID ACTION
+                    ((equal (second request) 'RobotGripper)
+                      (multiple-value-bind (jobtype jobid jobpriority robotid gripper-action) 
+                                           (values (second request) (third request) (fourth request) (fifth request) (sixth request))
+                      (format t "RobotGripper: action ~s ~%" gripper-action)
+                      (tcl-kb-update :key '(is-a id) :value `(
+                                              (is-a job) 
+                                              (id ,jobid) 
+                                              (error-state NOERROR) 
+                                              (priority ,jobpriority)
+                                              (robotid ,robotid)
+                                              (gripper-action ,gripper-action)
+                                              (type ,jobtype)))
+
+                     (tcl-push-back-plan :plan `( (tcb-job-grippper-action ,jobid ,gripper-action)))))
+
+
+                    ;;(PushJob TYPE JOBID priority robotid goal-pose)
+                    ((equal (second request) 'ParkRobot)
+                      (format t "ParkRobot: ~s ~%" (sixth request))
+                      (tcl-kb-update :key '(is-a id) :value `(
+                                              (is-a job) 
+                                              (id ,(third request)) 
+                                              (error-state NOERROR) 
+                                              (priority ,(fourth request))
+                                              (robotid ,(fifth request))
+                                              (goal-pose ,(sixth request))
+                                              (type ,(second request))))
+
+                      (tcl-push-back-plan :plan `(
+                                              (tcb-update-robot-state 'BUSY ,(third request))
+                                              (tcb-job-set-lc-state-RUNNING)
+                                              (tcb-update-running-job-state 'DRIVING)
+
+                                              (tcb-approach-location ,(sixth request))
+                                              (tcb-dock-to-charger-if-modelled)
+
+                                              (tcb-job-set-lc-state-FINISHED)
+;;TODO
+                                              (tcb-update-robot-state 'IDLE))))
+
+;;TODO FIX THIS
+
+                    ;; PushJob RobotCommissioning JOBID PRIORITY JOBPART ROBOTINOID COMMISSIONINGROBOT FROMSTATION FROMBELT IsFromManual TOSTATION TOBELT IsToManual [ORDER_ITEM QUANTITY]+
+                    ((equal (second request) 'RobotCommissioning)
+                      (format t "RobotCommissioning job: id ~s ~%" (third request))
+                      (cond
+                        ;; PushJob RobotCommissioning JOBID PRIORITY Manipulation ROBOTINOID COMMISSIONINGROBOT [ORDER_ITEM QUANTITY]+
+                        ((equal (fifth request) 'Manipulation)
+                         (multiple-value-bind (jobtype jobid jobpriority jobpart transportation-robot-id commissioning-robot-id commission-order)
+                           (apply #'values (cdr request))
+                           (format t "Manipulation part - jobpart:~s trobotid:~s crobotid:~s order:~s ~%" jobpart transportation-robot-id commissioning-robot-id commission-order)
+                           (tcl-kb-update :key '(is-a id) :value `(
+                                 (is-a job)
+                                 (id ,jobid)
+                                 (type ,jobtype)
+                                 (jobpart ,jobpart)
+;                                 (state NOTSTARTED)
+                                 (error-state NOERROR)
+                                 (priority ,jobpriority)
+                                 (transportation-robot-id ,transportation-robot-id)
+                                 (commissioning-robot ,commissioning-robot-id)
+                                 (commission-order ,commission-order)))
+
+                           (tcl-push-back-plan :plan `(
+;;TODO
+                                 (tcb-update-robot-state 'BUSY ,jobid)
+                                 (tcb-job-set-lc-state-RUNNING)
+
+                                 (tcb-perform-commissioning-job-manipulation ,jobid)
+
+                                 (tcb-job-set-lc-state-FINISHED)
+                                 (tcb-update-robot-state 'IDLE)))))
+
+
+                        ;; PushJob RobotCommissioning JOBID PRIORITY Transportation ROBOTINOID COMMISSIONINGROBOT FROMSTATION FROMBELT TOSTATION TOBELT [ORDER_ITEM QUANTITY]+
+                        ((equal (fifth request) 'Transportation)
+                         (multiple-value-bind (jobtype jobid jobpriority jobpart transportation-robot-id commissioning-robot-id from-station from-belt to-station to-belt commission-order)
+                           (apply #'values (cdr request))
+                           (format t "Transportation part - jobpart:~s trobotid:~s crobotid:~s from-station:~s to-station:~s order:~s ~%" jobpart transportation-robot-id commissioning-robot-id from-station to-station commission-order)
+                           (tcl-kb-update :key '(is-a id) :value `(
+                                 (is-a job)
+                                 (id ,jobid)
+                                 (type ,jobtype)
+                                 (jobpart ,jobpart)
+;                                 (state NOTSTARTED)
+                                 (error-state NOERROR)
+                                 (priority ,jobpriority)
+                                 (transportation-robot-id ,transportation-robot-id)
+                                 (commissioning-robot ,commissioning-robot-id)
+                                 (start-station ,from-station) (start-belt ,from-belt)
+                                 (end-station ,to-station) (end-belt ,to-belt)
+                                 (commission-order ,commission-order)))
+
+                           (tcl-push-back-plan :plan `(
+;;TODO
+                                 (tcb-update-robot-state 'BUSY ,jobid)
+                                 (tcb-job-set-lc-state-RUNNING)
+
+                                 (tcb-perform-commissioning-job-transportation ,jobid)
+
+                                 (tcb-job-set-lc-state-FINISHED)
+                                 (tcb-update-robot-state 'IDLE)))))
+
+
+                        (T
+                          (format t "===== ERROR UNKOWN JOB PART SEND! ~%"))))
+
+
+                    ;; PushJob RobotCommissioning JOBID PRIORITY Transportation ROBOTINOID COMMISSIONINGROBOT FROMSTATION FROMBELT TOSTATION TOBELT [ORDER_ITEM QUANTITY]+
+
+                    ;; PushJob ProductProduction JOBID PRIORITY JOBPART ROBOTINOID MANIPULATIONROBOT FROMSTATION FROMBELT IsFromManual TOSTATION TOBELT IsToManual PRODUCTIONDATA
+                    ((equal (second request) 'ProductProduction)
+                      (format t "ProductProduction job: id ~s ~%" (third request))
+                      (cond
+                        ;; PushJob RobotCommissioning JOBID PRIORITY Manipulation ROBOTINOID COMMISSIONINGROBOT [ORDER_ITEM QUANTITY]+
+                        ((equal (fifth request) 'Transportation)
+
+                         (multiple-value-bind (jobtype jobid jobpriority jobpart transportation-robot-id production-robot-id from-station from-belt to-station to-belt production-data)
+                           (apply #'values (cdr request))
+                           (format t "Transportation part - jobpart:~s trobotid:~s crobotid:~s order:~s ~%" jobpart transportation-robot-id production-robot-id production-data)
+                           (tcl-kb-update :key '(is-a id) :value `(
+                                 (is-a job)
+                                 (id ,jobid)
+                                 (type ,jobtype)
+                                 (jobpart ,jobpart)
+;                                 (state NOTSTARTED)
+                                 (error-state NOERROR)
+                                 (priority ,jobpriority)
+                                 (start-station ,from-station) (start-belt ,from-belt)
+                                 (end-station ,to-station) (end-belt ,to-belt)
+                                 (transportation-robot-id ,transportation-robot-id)
+                                 (production-robot ,production-robot-id)
+                                 (production-data ,production-data)))
+
+                           (tcl-push-back-plan :plan `(
+                                 (tcb-update-robot-state 'BUSY ,jobid)
+                                 (tcb-job-set-lc-state-RUNNING)
+
+                                 (tcb-perform-production-job-transportation ,jobid)
+
+                                 (tcb-job-set-lc-state-FINISHED)
+                                 (tcb-update-robot-state 'IDLE)))))
+
+                        (T
+                          (format t "===== ERROR UNKOWN JOB PART SEND! ~%"))))
+
+                    (T
+                      (format t "===== ERROR UNKOWN JOB TYPE SEND! ~%")))))
+
+              ;; UpdateJob
+              ((equal (first message) 'UpdateJob)
+                (let ((request message))
+                  (format t "GOT: ~s ~%" request)
+                  (format t "UpdateJob - type: ~s - jobID: ~s ~%" (second request)(third request))
+                  (cond
+                    ;; StartFollowPerson
+                    ((equal (second request) 'StartFollowPerson)
+                      (multiple-value-bind (update-type jobid x y)
+                                           (values (second request) (third request) (fourth request) (fifth request))
+                      (format t "StartFollowPerson - id:~s x:~s y:~s ~%" jobid x y)
+                      (tcl-push-back-plan :plan `(
+                                              (tcb-follow-person ,x ,y)))))
+
+                    (T
+                      (format t "===== ERROR UNKOWN JOB UPDATE SEND! ~%")))))
+
+              ;; EndJob
+              ((equal (first message) 'EndJob)
+                (let ((request message))
+                  (format t "GOT: ~s ~%" request)
+                  (format t "EndJob - jobID: ~s ~%" (second request))
+                  (let* ((job (tcl-kb-query :key '(is-a id) :value `((is-a job) (id ,(second request)))))
+                         (type (get-value job 'type))
+                         (life-cycle-state (get-value job 'life-cycle-state)))
+                  (format t "EndJob - type: ~s - life-cycle-state: ~s ~%" type life-cycle-state)
+                  (cond
+                    ;; StartFollowPerson
+                    ((equal type 'FollowPerson)
+                      (format t "FollowPerson")
+                      (tcl-push-back-plan :plan `(
+                                              (tcb-stop-follow-person)
+                                              (tcb-job-set-lc-state-FINISHED)
+                                              (tcb-update-robot-state 'IDLE))))
+
+                    (T
+                      (format t "===== ERROR UNKOWN END JOB SEND! ~%"))))))
+
+;; JOB HANDLING
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ROBOT STATE HANDLING
+
+              ;; SetOperationMode
+              ((equal (first message) 'SetOperationMode)
+                (format t "SetOperationMode robotid: ~s mode: ~s ~%" (second message)(third message))
+                (tcl-kb-update :key '(is-a name) :value `((is-a robot)
+                                                    (name ,(second message)) (mode ,(third message)))))
+
+              ;; ShutdownRobot
+              ((equal (first message) 'ShutdownRobot)
+                (format t "ShutdownRobot CALLED! --> EXECUTE!~%")
+                (multiple-value-bind (second minute hour day month year) (get-decoded-time)
+                  (format t "~4,'0D-~2,'0D-~2,'0D ~2,'0D:~2,'0D:~2,'0D~%" year month day hour minute second))
+
+                (stop-scenario-components)
+
+                (format t "Init Component Shutdown ...~%")
+                (shutdowncomp)
+                (format t "Wait for Component Shutdown ...~%")
+                (waitoncomptasktocomplete)
+                (sleep 2)
+                (format t "Stop smartsoft-slave systemd job~%")
+                (sb-ext:run-program "/bin/systemctl" `("stop" "smartsoft-slave") :wait nil)
+                (multiple-value-bind (second minute hour day month year) (get-decoded-time)
+                  (format t "~4,'0D-~2,'0D-~2,'0D ~2,'0D:~2,'0D:~2,'0D~%" year month day hour minute second))
+                (format t "Shutdown done! --> QUIT/EXIT~%")
+                ;;sequncer is not calling a stop in himself, this needs to be done from external! (systemctl stop SmartTCL)
+                (exit))
+
+              ;; RestartRobot
+              ((equal (first message) 'RestartRobot)
+                (format t "RestartRobot CALLED! --> EXECUTE!~%")
+                (sb-ext:run-program "/sbin/restart" '("smartsoft") :wait nil))
+
+
+;; ROBOT STATE HANDLING
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; INTERNAL COMMANDS
+
+              ;; AddRobotCompleted
+              ((equal (first message) 'AddRobotCompleted)
+                (format t "AddRobotCompleted~%")
+                (tcl-abort)
+		'(SUCCESS()))
+
+              ;; ClearRobotsCurrentSymbolicPosition
+              ((equal (first message) 'ClearRobotsCurrentSymbolicPosition)
+                (format t "ClearRobotsCurrentSymbolicPosition ~%")
+                ;; set the current location to be unknown
+                (tcl-kb-update :key '(is-a) :value `((is-a robot)(current-symbolic-position nil)))
+		'(SUCCESS()))
+
+              ;; SetCurrentSymbolicPosition
+              ((equal (first message) 'SetCurrentSymbolicPosition)
+                (format t "SetCurrentSymbolicPosition: ~s ~%" (second message))
+                (tcl-kb-update :key '(is-a) :value `((is-a robot)(current-symbolic-position ,(second message))))
+                '(SUCCESS()))
+
+              ;; GlobalLocalization
+              ((equal (first message) 'GlobalLocalization)
+		(format t "GlobalLocalization THIS SOULD ONLY BE CALLED WHILE ROBOT IS NOT MOVEING~%")
+                ;; set the current location to be unknown
+                (tcl-kb-update :key '(is-a) :value `((is-a robot)(current-symbolic-position nil)))
+                (tcl-state :server 'localization :state "Neutral")
+                (tcl-param :server 'localization   :slot 'GLOBALLOCALIZATION)
+                (tcl-state :server 'localization :state "active"))
+
+              ;; ReloadDefaultMap
+              ((equal (first message) 'ReloadDefaultMap)
+		(format t "ReloadDefaultMap THIS SOULD ONLY BE CALLED WHILE ROBOT IS NOT MOVEING~%")
+                (tcl-push-back-plan :plan '((tcb-copy-map-files-from-master)
+                                            (tcb-reload-maps)))
+		'(SUCCESS()))
+
+
+;; INTERNAL COMMANDS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; OTHER COMMANDS
+
+              ;; SetRobotPose
+              ((equal (first message) 'SetRobotPose)
+		(format t "SetRobotPose id: ~s x: ~s y: ~s phi: ~s ~%" (second message) (third message) (fourth message) (fifth message))
+                (tcl-push-back-plan :plan `((tcb-set-robot-pose ,(round (*(third message) 1000)) ,(round (*(fourth message)1000)) ,(* (/ (fifth message) 180) pi))))
+		'(SUCCESS()))
+
+
+              ;; PauseRobot
+              ((equal (first message) 'PauseRobot)
+                (let ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot)))))
+                  (cond
+                    ((not (equal (get-value robot 'state) 'PAUSED))
+     	              (format t "PauseRobot ~%")
+                      (defvar *PRE-PAUSED-ROBOT-STATE*  (get-value robot 'state))
+                      (update-robot-state :state 'PAUSED)
+                      (defvar *PRE-PAUSED-CDL-STATE* (get-value (query-kb *MEMORY* '(is-a name) '((is-a component) (name cdl))) 'state))
+                      (tcl-state :server 'cdl :state "Neutral"))
+                    (T
+                      (format t "Robot already paused --> ignore!")))))
+               
+              ;; ContinueRobot
+              ((equal (first message) 'ContinueRobot)
+                (let ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot)))))
+	        (format t "ContinueRobot ~%")
+                (cond
+                    ((equal (get-value robot 'state) 'PAUSED)
+                      (update-robot-state :state *PRE-PAUSED-ROBOT-STATE*)
+                      (tcl-state :server 'cdl :state *PRE-PAUSED-CDL-STATE*)
+                      (makunbound '*PRE-PAUSED-ROBOT-STATE*)
+                      (makunbound '*PRE-PAUSED-CDL-STATE*))
+                    (T
+                      (format t "Robot not paused --> ignore!")))))
+
+              ((equal (first message) 'EndTask)
+		(format t "EndTask STOP ROBOT ~%")
+                (update-running-job-lc-state 'ABORTED)
+                (update-robot-state :state 'IDLE :performs-task nil :mode 'OUTOFSERVICE)
+                (send-command-info "EndTaskACK")
+                (tcl-delete-plan)
+                (tcl-push-back-plan :plan `(    (NAVCOR.setCorridorNavigationNeutral)
+                                                (LOCALIZATION.tcb-activate-localization) ;;set localization active in case if docking is stopped
+				                (MPS.setBeltNeutral)
+                                                (MPS.setDockingNeutral)
+                                                (CHARGERDOCKER.setBatteryDockingNeutral)
+                                                (tcb-reset-laser-safety-field-relay) ;;SET THE LASER IN NONE NAV MODE (relay) in any case!
+                                                (tcb-trigger-return (ERROR (TASK ABBORT)))))
+                (tcl-abort)
+		'(ERROR(RESTART)))
+
+
+
+;; OTHER COMMANDS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; PATHS NAV HANDLING
+
+              ;; ClearAllPathNetworkNodes
+              ((equal (first message) 'ClearAllPathNetworkNodes)
+                (let ((robot-name (get-value (tcl-kb-query :key '(is-a) :value '( (is-a robot) )) 'name)))
+                  (format t "ClearAllPathNetworkNodes ~%")
+                  (tcl-push-back-plan :plan `((NAVCOR.tcb-path-nav-release-all-nodes)
+                                              (FLEETMANAGER.tcb-send-highlevel-command '(AckClearAllPathNetworkNodes ,robot-name))))))
+
+
+;; PATHS NAV HANDLING
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; POSITION HANDLING
+
+              ;; TeachCurrentPosition
+              ((equal (first message) 'TeachCurrentPosition)
+		(format t "TeachCurrentPosition ID: ~s ~%" (third message))
+                (tcl-push-back-plan :plan `((BASE.getBasePose => ?x ?y ?yaw)
+                                            (FLEETMANAGER.tcb-send-teach-pose ?x ?y ?yaw ,(third message)))))
+
+;; POSITION HANDLING
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; MAPPING (SLAM)
+
+              ;; StartMapping
+              ((equal (first message) 'StartMapping)
+		(format t "StartMapping dirname ~s ~%" (third message))
+                (let ((newMapPath nil))
+                (cond 
+                  ((null (third message))
+                    (multiple-value-bind (second minute hour date month year)
+                      ;;get timestamp
+                      (get-decoded-time)
+                      ;;create dir
+                      (setf newMapPath (format NIL "map-~d-~d-~2,'0d_~2,'0d-~2,'0d-~2,'0d" year month date hour minute second))))
+                  (T
+                       (setf newMapPath (format NIL "~a" (third message)))))
+                (format t "New Map name: ~s~%" newMapPath)
+                (tcl-kb-update :key '(is-a) :value `((is-a robot) (newMapPath ,newMapPath))))
+
+
+                (tcl-push-back-plan :plan '(
+                                            (tcb-update-robot-state 'BUSY)
+                                            (LOCALIZATION.tcb-deactivate-localization)
+                                            (BASE.resetBase)
+                                            ;(tcb-sleep 1) ;; to be sure that the base pose is disributed to the laser ranger befor gmapping is able to fetch old data ;;TODO v3
+                                            (SLAM.tcb-start-mapping 0 0 0)))
+               
+                ;;;;;;;;;;;;;;;
+;;TODO PORT v3
+;                (tcl-activate-event :name 'evt-station-detection
+;                                    :handler 'handler-stations-detection-continous 
+;                                    :server 'visualmpsdocking 
+;                                    :service 'detectionevent
+;                                    :mode 'continuous
+;                                    :param `())
+;                (tcl-state :server 'image :state "pushimage")
+;                (tcl-state :server 'visualmpsdocking :state "detection")
+                ;;;;;;;;;;;;;;;
+
+		'(SUCCESS()))
+
+	      ;;AbortMapping
+              ((equal (first message) 'AbortMapping)
+                (format t "AbortMapping ~%")
+                (let* ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot))))
+                       (newMapPath (get-value robot 'newMapPath)))
+                  (cond
+                    ((null newMapPath)
+                      (format t "Stop Mapping called with slam being inactive --> do nothing~%"))
+                    (T
+                      (tcl-kb-update :key '(is-a) :value `((is-a robot) (newMapPath nil)))
+                      (tcl-push-back-plan :plan '((SLAM.tcb-abort-mapping)))
+                      ;(tcl-state :server 'slam :state "Neutral")
+                      ;;;;;;;;;;;;;;;
+;;TODO V3
+;                      (tcl-delete-event :name 'evt-station-detection)
+;                      (tcl-state :server 'visualmpsdocking :state "Neutral")
+;                      (tcl-state :server 'image :state "Neutral")
+                      ;;;;;;;;;;;;;;;
+                      (tcl-push-back-plan :plan '((tcb-reload-maps)
+                                                  (tcb-update-robot-state 'IDLE)))))))
+
+              ;;SaveMap - saves map with timestamp!
+              ((equal (first message) 'SaveMap)
+                (format t "SaveMap ~%")
+                (let* ((newMapPath nil)
+                      (newMapFullPathTarget nil)
+                      (newMapName nil)
+                     (robot (tcl-kb-query :key '(is-a) :value '((is-a robot)))))
+                    (multiple-value-bind (second minute hour date month year)
+                      ;;get timestamp
+                      (get-decoded-time)
+                      ;;create dir
+                      (setf newMapName (format NIL "map-~d-~d-~2,'0d_~2,'0d-~2,'0d-~2,'0d" year month date hour minute second)))
+                      (setf newMapPath (format NIL "~a/data/maps/~a/" (sb-ext:posix-getenv "SMART_ROOT_ACE") newMapName))
+                      (setf newMapFullPathTarget (format NIL "~a/data_master/maps/~a/" (sb-ext:posix-getenv "SMART_ROOT_ACE") newMapName))
+                (ensure-directories-exist newMapPath)
+                (tcl-state :server 'slam :state "Neutral")
+                (format t "MAP NAME: ~s" `(,newMapPath ,(get-value robot 'default-nav-map) ))
+
+                ;;copy new map to master
+                (tcl-push-back-plan :plan `((SLAM.tcb-save-current-map ,(get-value robot 'default-nav-map) ,newMapPath)
+                                            (tcb-copy-file-to-master ,newMapPath ,newMapFullPathTarget)))))
+
+              ;; StopMapping
+              ((equal (first message) 'StopMapping)
+                (let* ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot))))
+                       (newMapPath (get-value robot 'newMapPath))
+                       (newMapFullPath (format NIL "~a/data/maps/~a/" (sb-ext:posix-getenv "SMART_ROOT_ACE") newMapPath))
+                       (newMapFullPathTarget (format NIL "~a/data_master/maps/~a/" (sb-ext:posix-getenv "SMART_ROOT_ACE") newMapPath)))
+		  (format t "StopMapping -- dirname ~s ~%" newMapPath)
+                  (cond
+                    ((not (null newMapPath))
+                      (ensure-directories-exist newMapFullPath)
+
+                      
+                      (tcl-push-back-plan :plan `( (BASE.getBasePose => ?x ?y ?yaw)
+                                                   (SLAM.tcb-stop-mapping ,(get-value robot 'default-map) ,newMapFullPath)
+                                                   (SLAM.tcb-stop-mapping ,(get-value robot 'default-nav-map) ,newMapFullPath)
+                                                   (tcb-copy-file-to-master ,newMapFullPath ,newMapFullPathTarget)
+                                                   (tcb-send-New-MapsSaved-to-FleetManager ?x ?y ?yaw ,newMapPath)
+                                                   (tcb-update-robot-state 'IDLE)))
+
+                      (tcl-kb-update :key '(is-a) :value `((is-a robot) (newMapPath nil)))
+
+;TODO V3
+                      ;;;;;;;;;;;;;;;
+                      ;(tcl-delete-event :name 'evt-station-detection)
+                      ;(tcl-state :server 'visualmpsdocking :state "Neutral")
+                      ;(tcl-state :server 'image :state "Neutral")
+                      ;;;;;;;;;;;;;;;
+
+                      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      )
+                    (T
+                     (format t "Stop Mapping called with slam being inactive --> do nothing~%"))))
+		  '(SUCCESS()))
+
+;; MAPPING (SLAM)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; COMMANDS DEPRECATED
+
+              ;; GotoPosition
+              ((equal (first message) 'GotoPosition)
+                (let ((robotid nil) (goal nil))
+                  (cond
+                    ((= (list-length message) 2)
+                      (setf robotid nil)
+                      (setf goal (second message)))
+                    ((= (list-length message) 3)
+                      (setf robotid (second message))
+                      (setf goal (third message)))
+                    (T
+                      (format t "Got illegal GotoPosition Message! ~s" message)))
+                (format t "GotoPosition robotID: ~s position: ~s ~%" robotid goal)
+                (tcl-push-back-plan :plan `(
+                                        (tcb-update-robot-state 'BUSY -1)
+                                        ;(tcb-send-command-info "Started-GotoPosition")
+                                        (NAVCOR.tcb-approach-location ,goal)
+                                        (tcb-dock-to-charger-if-modelled)
+					;(tcb-send-command-info "Finished-GotoPosition")
+                                        (tcb-update-robot-state 'IDLE)
+                                      ))
+                '(SUCCESS())))
+
+
+
+;; COMMANDS DEPRECATED
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; TESTING
+
+              ;; NavigationResourceAllocate id blocking
+              ((equal (first message) 'NavigationResourceAllocate)
+                (format t "NavigationResourceAllocate~%")
+                (if (equal (third message) T)
+                  (tcl-push-back-plan :plan `((tcb-request-navigation-resource-blocking ,(second message))))
+                  (tcl-push-back-plan :plan `((tcb-request-navigation-resource ,(second message)))))
+		'(SUCCESS()))
+
+              ;; NavigationResourceFree id
+              ((equal (first message) 'NavigationResourceFree)
+                (format t "NavigationResourceFree~%")
+                (tcl-push-back-plan :plan `((tcb-free-navigation-resource ,(second message))))
+		'(SUCCESS()))
+
+;; TESTING
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+               
+
+              ;; EXIT
+              ((equal (first message) 'EXIT)
+                (format t "EXIT~%")
+                (tcl-abort)
+		'(SUCCESS()))
+
+              ;; Handeled in sperate event handler!
+              ;; AbortJobAndClearError
+              ;; ClearError
+              ;; ManualAcknowlege
+              ;;
+              (T
+                (format t "Error unknown command send to SmartTCL ~%")))))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; JOB STATE HANDLING
+
+;; LC STATE CHANGES
+
+
+
+;NOTAVAILABLE
+
+(define-tcb (tcb-job-set-lc-state-NOTSTARTED)
+  (action (
+    (format t "=========================>>> tcb-job-set-lc-state-NOTSTARTED ~%")
+    (update-running-job-lc-state 'NOTSTARTED)
+    )))
+
+(define-tcb (tcb-job-set-lc-state-RUNNING)
+  (action (
+    (format t "=========================>>> tcb-job-set-lc-state-RUNNING ~%")
+    (update-running-job-lc-state 'RUNNING)
+    )))
+
+(define-tcb (tcb-job-set-lc-state-FINISHED)
+  (action (
+    (format t "=========================>>> tcb-job-set-lc-state-FINISHED ~%")
+    (update-running-job-lc-state 'FINISHED)
+    )))
+
+(define-tcb (tcb-job-set-lc-state-ABORTED)
+  (action (
+    (format t "=========================>>> tcb-job-set-lc-state-ABORTED ~%")
+    (update-running-job-lc-state 'ABORTED)
+    )))
+
+(define-tcb (tcb-job-set-lc-state-ERROR ?error-state)
+  (action (
+    (format t "=========================>>> tcb-job-set-lc-state-ERROR ~%")
+    (update-running-job-lc-state 'ERROR ?error-state)
+    )))
+
+
+;;TODO add start and stop timing
+(defun update-running-job-lc-state (lc-state &optional (error-state nil error-state-supplied-p))
+  (let ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot)))))
+    (cond 
+      ((equal (not (get-value robot 'performs-task)) nil)
+       ;;update the job state, also set the robotid to the job (helps if the job has the id -1 (initated by robot))
+
+
+
+       ;;this is encoding the life cycle
+       (cond
+
+         ((equal lc-state 'NOTSTARTED)
+           (tcl-kb-update :key '(is-a id) :value `(
+                                              (is-a job) 
+                                              (id ,(get-value robot 'performs-task)) 
+                                              (robotid ,(get-value robot 'name))
+                                              (life-cycle-state ,lc-state)
+                                              (state nil))))
+
+         ((equal lc-state 'ABORTED)
+            (tcl-kb-update :key '(is-a) :value `(
+                                        (is-a robot)
+                                        (is-job-on-time neutral)))
+            (tcl-kb-update :key '(is-a id) :value `(
+                                              (is-a job) 
+                                              (id ,(get-value robot 'performs-task)) 
+                                              (robotid ,(get-value robot 'name))
+                                              (life-cycle-state ,lc-state)
+                                              (state nil))))
+
+           ((equal lc-state 'FINISHED)
+             (tcl-kb-update :key '(is-a) :value `(
+                                        (is-a robot)
+                                        (is-job-on-time neutral)))
+
+             (tcl-kb-update :key '(is-a id) :value `(
+                                              (is-a job) 
+                                              (id ,(get-value robot 'performs-task)) 
+                                              (robotid ,(get-value robot 'name))
+                                              (life-cycle-state ,lc-state)
+                                              (state nil))))
+
+           ((equal lc-state 'ERROR)
+             (tcl-kb-update :key '(is-a id) :value `(
+                                              (is-a job) 
+                                              (id ,(get-value robot 'performs-task)) 
+                                              (robotid ,(get-value robot 'name))
+                                              (life-cycle-state ,lc-state)
+                                              ,(if error-state-supplied-p `(error-state ,error-state)))))
+
+           ((equal lc-state 'RUNNING)
+             (tcl-kb-update :key '(is-a id) :value `(
+                                              (is-a job) 
+                                              (id ,(get-value robot 'performs-task)) 
+                                              (robotid ,(get-value robot 'name))
+                                              (life-cycle-state ,lc-state)
+                                              ,(if error-state-supplied-p `(error-state ,error-state)))))
+
+           ;; all other cases
+           (T
+             (format t "ERROR INVALID STATE LC STATE CHANGE REQUEST CALLED~%")))
+
+
+       ;;;; communication part
+       (let ((job (tcl-kb-query :key '(is-a id) :value `((is-a job)(id ,(get-value robot 'performs-task))))))
+          (sendMessageToFleetManager "FleetManager" 'FLEETMANAGER 
+              (format nil "JobInfo robotinoid:~d jobid:~d state:~d life-cycle-state:~d start-time:~d end-time:~d" 
+                (get-value job 'robotid) (get-value job 'id) 
+                (get-value job 'state) (get-value job 'life-cycle-state) 
+                (get-value job 'start-time) (get-value job 'end-time) ))
+
+         (cond
+           ((equal lc-state 'ERROR)
+              (sendMessageToFleetManager "FleetManager" 'FLEETMANAGER 
+              (format nil "JobError robotinoid:~d jobid:~d error:~s" 
+                (get-value job 'robotid) (get-value job 'id) 
+                (get-value job 'error-state) ))))))
+      (T
+        (format t "THE ROBOT IS NOT PERFORMING ANY JOB --> DO NOTHING~%")))))
+
+
+
+
+
+(define-tcb (tcb-update-running-job-state ?state)
+  (action (
+    (format t "=========================>>> tcb-update-running-job-state ~%")
+    (update-running-job-state ?state)
+    )))
+
+(defun update-running-job-state (state)
+    (let ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot)))))
+    (cond 
+      ((equal (not (get-value robot 'performs-task)) nil)
+       ;;update the job state, also set the robotid to the job (helps if the job has the id -1 (initated by robot))
+       (tcl-kb-update :key '(is-a id) :value `(
+                                              (is-a job) 
+                                              (id ,(get-value robot 'performs-task)) 
+                                              (robotid ,(get-value robot 'name))
+                                              (state ,state)))
+       (let* ((job (tcl-kb-query :key '(is-a id) :value `((is-a job)(id ,(get-value robot 'performs-task)))))
+              (message (format nil "JobInfo robotinoid:~d jobid:~d state:~d life-cycle-state:~d start-time:~d end-time:~d" 
+                (get-value job 'robotid) (get-value job 'id) 
+                (get-value job 'state) (get-value job 'life-cycle-state) 
+                (get-value job 'start-time) (get-value job 'end-time) )))
+         (sendMessageToFleetManager "FleetManager" 'FLEETMANAGER message)))             
+
+      (T
+        (format t "THE ROBOT IS NOT PERFORMING ANY JOB --> DO NOTHING~%")))))
+
+
+(define-tcb (tcb-update-robot-state ?state)
+  (action (
+    (format t "=========================>>> tcb-update-robot-state ~%")
+    (update-robot-state :state ?state)
+    )))
+
+(define-tcb (tcb-update-robot-state ?state ?performs-task)
+  (action (
+    (format t "=========================>>> tcb-update-robot-state ~%")
+    (update-robot-state :state ?state :performs-task ?performs-task)
+    )))
+
+
+(defun update-robot-state (&key (state nil state-supplied-p) (sub-state nil sub-state-supplied-p) (performs-task nil performs-task-supplied-p) (box-loaded nil box-loaded-supplied-p) (mode nil mode-supplied-p) (is-docked nil is-docked-supplied-p) (is-job-on-time nil is-job-on-time-p))
+    (tcl-kb-update :key '(is-a) :value `(
+                                        (is-a robot) 
+                                        ,(if state-supplied-p `(state ,state))
+                                        ,(if state-supplied-p (if (equal state 'IDLE) `(sub-state nil)))
+                                        ,(if sub-state-supplied-p `(sub-state ,sub-state))
+                                        ,(if is-docked-supplied-p `(is-docked ,is-docked))
+                                        ,(if performs-task-supplied-p `(performs-task ,performs-task))
+                                        ,(if box-loaded-supplied-p `(box-loaded ,box-loaded))
+                                        ,(if is-job-on-time-p `(is-job-on-time ,is-job-on-time))
+                                        ,(if mode-supplied-p `(mode ,mode))))
+    ;;TODO fix this
+  (let ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot)))))
+        
+    (cond 
+      ((equal state 'IDLE)
+        (setSignalState "MobileBaseModule" 'BASE 'IDLE))
+      ((equal state 'BUSY)
+        (cond 
+          ((and (not (null (get-value robot 'performs-task) )) (not (equal (get-value robot 'is-job-on-time) 'delayed)))
+            (tcl-kb-update :key '(is-a) :value '((is-a robot) (is-job-on-time intime)))))
+        (setSignalState "MobileBaseModule" 'BASE 'BUSY))
+      ((equal state 'ERROR)
+        (cond 
+          ((not (null (get-value robot 'performs-task) ))
+          (tcl-kb-update :key '(is-a) :value '((is-a robot) (is-job-on-time delayed)))))
+        (setSignalState "MobileBaseModule" 'BASE 'ERROR))))
+
+
+    (let* ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot))))
+           (message `(SystemState ,(get-value robot 'name)  ,(first (get-value robot 'base-component)) ,(get-value robot 'performs-task) ,(get-value robot 'state) ,(get-value robot 'mode) 
+                                                                                     ,(get-value robot 'is-docked) ,(get-value robot 'box-loaded) ,(first (get-value robot 'laser-component)) ,(get-value robot 'fleet-type) 
+                                                                                     ,(get-value robot 'sub-state)  ,(get-value robot 'current-symbolic-position) ,(get-value robot 'is-job-on-time) )))
+      (sendMessageToFleetManager "FleetManager" 'FLEETMANAGER message)))
+
+;  (check-robot-parked-state)
+
+
+(defun update-parking-poses-and-robot-state (robotid poseid action)
+      (sendMessageToFleetManager "FleetManager" 'FLEETMANAGER `(UpdateParkingAndRobotState ,robotid ,poseid , action)))
+
+
+(defun check-robot-parked-state ()
+  (let* ((robot (tcl-kb-query :key '(is-a) :value '( (is-a robot) )))
+         (current-symbolic-location (get-value robot 'current-symbolic-position))
+         (current-location (tcl-kb-query :key '(is-a name) :value `((is-a location)(name ,current-symbolic-location)))))
+    (format t "check-robot-parked-state current-symbolic-loc-name: ~s loc:~s ~%" current-symbolic-location current-location)
+    (cond
+      ((and (not (null current-location)) (equal (get-value current-location 'type) 'PARKING))
+       (format t "Robot is at a parking location!~%")
+       (update-parking-poses-and-robot-state (get-value robot 'name) current-symbolic-location 'occupied))
+       ;(update-world-state :slot 'LocationParkingStateUpdate :location-name current-symbolic-location :parking-state `(T ,(get-value robot 'name)))
+       ;(update-robot-state :is-parked `(T ,current-symbolic-location)))
+      (T
+       (format t "Robot is not at a parking location!~%")
+       (update-parking-poses-and-robot-state (get-value robot 'name) current-symbolic-location 'FREE)))))
+       ;(update-robot-state :is-parked nil)))))   
+
+;(defun update-world-state (&key (slot nil slot-supplied-p) (location-name nil location-nameslot-supplied-p) (parking-state nil parking-state--supplied-p) )
+;    (cond
+;      (slot-supplied-p
+;        (cond
+;          ((equal slot 'LocationParkingStateUpdate)
+;            (format t "Send LocationParkingStateUpdate update: ~s ~s ~%" location-name parking-state)
+;            (tcl-send :server 'highlevelcommand :service 'result :param `(WorldStateUpdate LocationParkingStateUpdate ,location-name ,parking-state)))
+;          (T
+;            (format t "ERROR UNKNOWN slot in WorldState update!~%"))))
+;      (T
+;        (format t "ERROR in WorldState update, no slot supplied!~%"))))
+
+
+
+
+(defun request-manual-ack-from-fleetmanager ()
+    (let ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot)))))
+      (sendMessageToFleetManager "FleetManager" 'FLEETMANAGER `(GetManualAcknowledge ,(get-value robot 'name)))))
+
+
+
+(define-tcb (tcb-request-manual-ack-from-fleetmanager)
+  (module "FleetManager")
+  (action (
+    (format t "=========================>>> tcb-request-manual-ack-from-fleetmanager ~%")
+    (let ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot)))))
+      (tcl-activate-event :name 'evt-highlevel
+                                :handler 'handler-festo-fleet-manual-ack
+                                :server 'fleetManager 
+                                :service 'fleetEvent
+                                :mode 'continuous
+                                :param (get-value robot 'name)))
+
+    (request-manual-ack-from-fleetmanager)
+    )))
+
+(define-event-handler (handler-festo-fleet-manual-ack)
+  (action (
+    (format t "=========================>>> HANDLER FESTO FLEET MANUAL ACK: ~s ~%~%" (tcl-event-message))
+    (let ((message (read-from-string (tcl-event-message))))
+      (cond
+        ((equal (first message) 'ManualAcknowledge)
+          (format t "ManualAcknowledge robotinoid: ~s ~%" (second message))
+          (tcl-abort)
+          '(SUCCESS (ManualAcknowledge)))
+        (T
+          (format t "Error unknown command send to SmartTCL ~%")))))))
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(define-tcb (tcb-send-highlevel-command ?command)
+  (module "FleetManager")
+  (action (
+          (tcl-send :server 'fleetManager :service 'fleetSend :param ?command))))
+
+
+(define-tcb (tcb-send-teach-pose ?x ?y ?yaw ?positionid)
+  (module "FleetManager")
+  (action (
+            (let ((x ?x) (y ?y) (yaw ?yaw) (positionid ?positionid))
+	     (format t "CURRPOSE x: ~s y: ~s a: ~s ~%" x y yaw)
+             ;;send new location to master
+             (tcl-send :server 'fleetManager :service 'fleetSend :param `(TeachPosition ,positionid ,(/ x 1000) ,(/ y 1000) ,(round (/ (* yaw 180) pi)) 0 0))
+	     '(SUCCESS())))))
+
+
+;; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ERROR HANDLING WITH FLEET MANAGER      
+; (execute '(FLEETMANAGER.tcb-wait-for-error-ack 'HW-ACK))
+; (execute '(FLEETMANAGER.tcb-wait-for-error-ack 'SW-ACK))
+;GetManualAcknowledge RobotinoID
+
+
+
+(define-tcb (tcb-wait-for-error-ack ?ACK-TYPE)
+  (module "FleetManager")
+  (rules (rule-request-hw-ack))
+ (action (
+   (format t "=========================>>> tcb-wait-for-error-ack ~%")
+   (let ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot)))))
+     (format t "  robot name: ~s ACK-TYPE ~a ~%" (get-value robot 'name) ?ACK-TYPE)
+     (cond
+       ((equal ?ACK-TYPE 'HW-ACK)
+         (tcl-activate-event :name 'evt-highlevel-error-ack
+                             :handler 'handler-festo-fleet-error
+                             :server 'fleetManager
+                             :service 'fleetEvent
+                             :mode 'continuous
+                             :param (get-value robot 'name))
+         (tcl-push-back-plan :plan `( (MPS.tcb-request-hw-ack) )))
+       (T
+         (tcl-activate-event :name 'evt-highlevel-error-ack
+                             :handler 'handler-festo-fleet-error 
+                             :server 'fleetManager 
+                             :service 'fleetEvent
+                             :mode 'continuous
+                             :param (get-value robot 'name))))))))
+
+
+(define-rule (rule-request-hw-ack)
+  (tcb (tcb-request-hw-ack))
+  (return-value (SUCCESS (ACK)))
+  (action (
+    (format t "=========================>>> RULE: rule-request-hw-ack ~%")
+    (send-command-info "ClearErrorACK")
+    (tcl-abort)
+    '(SUCCESS ()))))
+
+
+
+
+(define-event-handler (handler-festo-fleet-error)
+  (action (
+    (format t "=========================>>> HANDLER FESTO FLEET ERROR: ~s ~%~%" (tcl-event-message))
+    (let ((message (read-from-string (tcl-event-message))))
+     (cond
+      ((equal (first message) 'AbortJobAndClearError)
+        (format t "AbortJobAndClearError robotinoid: ~s ~%" (second message))
+;	(update-running-job-lc-state 'ABORTED)
+;        (update-robot-state :state 'IDLE :performs-task nil)
+        (send-command-info "AbortJobAndClearErrorACK")
+        (tcl-delete-plan)
+        (tcl-abort)
+        '(ERROR (TASK ABBORT)))
+
+      ((equal (first message) 'ClearError)
+        (format t "ClearError robotinoid: ~s ~%" message)
+        (send-command-info "ClearErrorACK")
+        (update-running-job-lc-state 'RUNNING)
+        (update-robot-state :state 'BUSY)
+        (tcl-abort)
+        '(SUCCESS (OK)))
+
+      (T
+        (format t "Error unknown command send to SmartTCL ~%")))))))
+
+
+(define-rule (rule-abort-job-error-ack)
+  (tcb (ANY-TCB))
+  (return-value (ERROR (TASK ABBORT)))
+  (action (
+    (format t "=========================>>> RULE: rule-abort-job-error-ack (ERROR (TASK ABBORT))  ~%")
+    (tcl-delete-plan)
+    '(ERROR (TASK ABBORT)))))
+

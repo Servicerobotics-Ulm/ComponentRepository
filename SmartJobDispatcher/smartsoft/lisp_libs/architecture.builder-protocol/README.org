@@ -1,0 +1,561 @@
+#+TITLE:       architecture.builder-protocol README
+#+AUTHOR:      Jan Moringen
+#+EMAIL:       jmoringe@techfak.uni-bielefeld.de
+#+DESCRIPTION: A protocol for flexible result construction.
+#+KEYWORDS:    common lisp, architecture, protocol, framework, builder, pattern, parsing
+#+LANGUAGE:    en
+
+* STARTED Introduction
+  In tasks such as parsing there is often a need to construct a result
+  representation of some kind, e.g. a parse tree. This system is
+  concerned with flexible construction and processing of different
+  result representations while avoiding coupling between producers and
+  consumers of such results.
+
+  Staying with the parsing example, the result of a successful parse
+  is some sort of (abstract) syntax tree (AST). Most parsing code in
+  Common Lisp seems to do this in one of two ways: nested list
+  structures or a tree of (class or structure) instances. Both
+  approaches have advantages and disadvantages
+  + On the one hand, list-based parse results are well suited for
+    debugging since they pretty print nicely and unit tests since they
+    are =equal= comparable.
+  + On the other hand list-based results are not suitable for
+    CLOS-dispatch while instances are.
+  + Both kinds of results are well suited for AST processing using
+    pattern matching (e.g. with [[http://github.com/m2ym/optima][optima]]).
+  In practice, much parsing code seems to be written for one
+  particular consumer of the produced AST. This fact usually seems to
+  inform the choice of result representation.
+
+  This system employs the "builder" design pattern to enable a
+  flexible result representation with little effort for consumers and
+  producers. A "builder protocol" is concerned with the construction
+  of results while a "un-builder protocol" is concerned with
+  destructuring and traversing the constructed representations.
+
+  #+ATTR_HTML: :alt "build status image" :title Build Status :align right
+  [[https://travis-ci.org/scymtym/architecture.builder-protocol][https://travis-ci.org/scymtym/architecture.builder-protocol.svg]]
+
+* STARTED Tutorial
+  #+begin_src lisp :results none :exports none :session "tutorial"
+    #.(progn
+        #1=(ql:quickload '(:alexandria :architecture.builder-protocol
+                           :utilities.print-tree))
+        '#1#)
+  #+end_src
+
+** STARTED Build Protocol
+   Since this is a probably a common case, we will use the construction
+   of a simplistic AST from the output of an equally simplistic parser
+   as an example.
+
+   The example code in the following sections can be loaded into the
+   =cl-user= package and assumes that the =alexandria= system is
+   loaded.
+*** Implementing a Consumer of Results
+    The nodes of the AST we want to construct are either literals or
+    operator applications with two operands and are both expressions:
+    #+begin_src lisp :results none :exports code :session "tutorial"
+      (defclass expression () ())
+
+      (defclass literal (expression)
+        ((value :initarg :value :reader literal-value)))
+
+      (defclass operator (expression)
+        ((operands :accessor operator-operands :initform '())))
+    #+end_src
+    Note that the =value= slot of the =literal= is initialized using
+    the =:value= initarg while the =operands= slot of the =operator=
+    class is initialized to the empty lists but allows for later
+    mutation via =(setf operator-operands)=. The rationale is that
+    =literal= instances can be constructed in one =make-instance= call
+    while =operator= instance may be constructed before their operand
+    nodes, thus requiring mutation to attach these operand nodes once
+    they have been constructed.
+
+    A simple implementation of the builder protocol for these nodes
+    looks like this:
+    #+begin_src lisp :results none :exports code :session "tutorial"
+      (defclass ast-builder () ())
+
+      (defmethod architecture.builder-protocol:make-node
+          ((builder ast-builder)
+           (kind    (eql :literal))
+           &key value)
+        (make-instance 'literal :value value))
+
+      (defmethod architecture.builder-protocol:make-node
+          ((builder ast-builder)
+           (kind    (eql :operator))
+           &key)
+        (make-instance 'operator))
+
+      (defmethod architecture.builder-protocol:relate
+          ((builder  ast-builder)
+           (relation (eql :operator-operand))
+           (left     operator)
+           (right    expression)
+           &key)
+        (alexandria:appendf (operator-operands left) (list right))
+        left)
+    #+end_src
+    We can already use this without the corresponding parser:
+    #+begin_src lisp :exports both :session "tutorial"
+      (let* ((builder  (make-instance 'ast-builder))
+             (operands (list (architecture.builder-protocol:make+finish-node
+                              builder :literal :value 5)
+                             (architecture.builder-protocol:make+finish-node
+                              builder :literal :value 6)))
+             (operator (architecture.builder-protocol:make-node builder :operator)))
+                (architecture.builder-protocol:finish-node
+                 builder :operator
+                 (reduce (lambda (l r)
+                           (architecture.builder-protocol:relate
+                            builder :operator-operand l r))
+                         operands :initial-value operator)))
+    #+end_src
+
+    #+RESULTS:
+    : #<OPERATOR {100E5961}>
+
+    The following is a more compact (but equivalent behind the scenes)
+    spelling of the above code:
+    #+BEGIN_SRC lisp :exports both :session "tutorial"
+      (architecture.builder-protocol:with-builder ((make-instance 'ast-builder))
+        (architecture.builder-protocol:node* (:operator)
+          (* :operator-operand (list (architecture.builder-protocol:node* (:literal :value 5))
+                                     (architecture.builder-protocol:node* (:literal :value 6))))))
+    #+END_SRC
+
+    #+RESULTS:
+    : #<OPERATOR {1019F0E013}>
+
+*** Implementing a Producer of Results
+    We will use a parser for a very simple expressions in polish
+    notation:
+    #+begin_example
+    EXPRESSION ::= OPERATOR | LITERAL
+    LITERAL    ::= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+    OPERATOR   ::= '+' EXPRESSION EXPRESSION
+    #+end_example
+    The parser is straightforward: it has a local function for each
+    element of the grammar and uses the builder protocol like in the
+    previous example. Since we now parse an actual source text, source
+    locations of constructed result nodes can be recorded using the
+    =:bounds= initarg.
+    #+begin_src lisp :exports code :session "tutorial"
+      (defun parse (stream builder)
+        (labels ((expression ()
+                   (let ((c (peek-char nil stream)))
+                     (cond
+                       ((char= c #\+)
+                        (operator))
+                       ((digit-char-p c)
+                        (literal)))))
+                 (literal ()
+                   (let ((start (stream-file-position stream))
+                         (c     (read-char stream)))
+                     (architecture.builder-protocol:make-node
+                      builder :literal
+                      :value  (parse-integer (string c))
+                      :bounds (cons start (1+ start)))))
+                 (operator ()
+                   (let ((start    (stream-file-position stream))
+                         (c        (read-char stream))
+                         (operands (list (expression) (expression)))
+                         (end      (stream-file-position stream)))
+                     (declare (ignore c))
+                     (architecture.builder-protocol:finish-node
+                      builder :operator
+                      (reduce (lambda (l r)
+                                (architecture.builder-protocol:relate
+                                 builder :operator-operand l r))
+                              operands
+                              :initial-value (architecture.builder-protocol:make-node
+                                              builder :operator
+                                              :bounds (cons start end)))))))
+          (expression)))
+    #+end_src
+*** The =list= Builder
+    When developing or testing result producers like parsers, it can be
+    convenient to produce a list-based result since it pretty-prints
+    nicely without any extra effort and can be =equal=-compared in unit
+    tests without depending on a more heavyweight representation such
+    as instances of AST node classes.
+
+    For these cases, the =architecture.builder-protocol= system
+    provides a builtin =list= builder:
+    #+begin_src lisp :results value code :exports both :session "tutorial"
+      (parse (make-string-input-stream "++123") 'list)
+    #+end_src
+
+    #+RESULTS:
+    #+BEGIN_SRC lisp
+
+    (:OPERATOR
+     (:OPERATOR-OPERAND
+      (((:OPERATOR
+         (:OPERATOR-OPERAND
+          (((:LITERAL NIL :VALUE 1 :BOUNDS (2 . 3)))
+           ((:LITERAL NIL :VALUE 2 :BOUNDS (3 . 4)))))
+         :BOUNDS (1 . 4)))
+       ((:LITERAL NIL :VALUE 3 :BOUNDS (4 . 5)))))
+     :BOUNDS (0 . 5))
+    #+END_SRC
+
+**** Printing =list= Builder Results
+     This may be slightly off-topic, but a nice hack for printing
+     /arbitrary/ results produced by the =list= builder can be done
+     using the [[http://github.com/scymtym/utilities.print-tree][=utilities.print-tree= system]]:
+     #+begin_src lisp :exports code :session "tutorial"
+       (defun print-tree (tree &optional (stream *standard-output*))
+         (utilities.print-tree:print-tree
+          stream tree
+          (utilities.print-tree:make-node-printer
+           (lambda (stream depth node)
+             (declare (ignore depth))
+             (destructuring-bind (kind relations &rest slots) node
+               (declare (ignore relations))
+               (format stream "~A~@[ @~A~]"
+                       kind (getf slots :bounds))
+               (alexandria:remove-from-plist slots :bounds)))
+           (lambda (stream depth node)
+             (declare (ignore depth))
+             (destructuring-bind (kind relations &rest slots) node
+               (declare (ignore kind relations))
+               (format stream "~{~A: ~A~^~@:_~}"
+                       (alexandria:remove-from-plist slots :bounds))))
+           (lambda (node)
+             (loop :for (relation nodes) :on (second node) :by #'cddr
+                :appending (mapcar #'car nodes))))))
+     #+end_src
+     Putting these pieces together, we can achieve the following:
+     #+begin_src lisp :results output :exports both :session "tutorial"
+       (print-tree (parse (make-string-input-stream "++123") 'list))
+     #+end_src
+
+     #+RESULTS:
+     : OPERATOR @(0 . 5)
+     : ├─OPERATOR @(1 . 4)
+     : │ ├─LITERAL @(2 . 3)
+     : │ │   VALUE: 1
+     : │ └─LITERAL @(3 . 4)
+     : │     VALUE: 2
+     : └─LITERAL @(4 . 5)
+     :     VALUE: 3
+
+** TODO "Un-build" Protocol
+*** STARTED The =walk-nodes= Function
+    The generic function =walk-nodes= can be used to traverse trees of
+    nodes built using the build protocol. It uses the "un-build"
+    protocol and can thus handle arbitrary tree representations.
+* TODO Dictionary
+
+  #+begin_src lisp :results none :exports none :session "doc"
+    #.(progn
+        #1=(ql:quickload '(:architecture.builder-protocol :alexandria :split-sequence))
+        '#1#)
+    (defun doc (symbol kind)
+      (let* ((lambda-list (sb-introspect:function-lambda-list symbol))
+             (string      (documentation symbol kind))
+             (lines       (split-sequence:split-sequence #\Newline string))
+             (trimmed     (mapcar (alexandria:curry #'string-left-trim '(#\Space)) lines)))
+        (format nil "~(~A~) ~<~{~A~^ ~}~:@>~2%~{~A~^~%~}"
+                symbol (list lambda-list) trimmed)))
+  #+end_src
+
+** STARTED Build Protocol
+
+   #+begin_src lisp :exports results :session "doc"
+     (doc 'architecture.builder-protocol:make-node 'function)
+   #+end_src
+
+   #+RESULTS:
+   #+begin_example
+   make-node BUILDER KIND &REST INITARGS &KEY &ALLOW-OTHER-KEYS
+
+   Use BUILDER to make a result tree node of kind KIND and return it.
+
+   As a convention, when supplied, the value of the :bounds keyword
+   argument is of the form (START . END) and can be used to indicate
+   the input range for which the tree is constructed.
+   #+end_example
+
+   #+begin_src lisp :exports results :session "doc"
+     (doc 'architecture.builder-protocol:finish-node 'function)
+   #+end_src
+
+   #+RESULTS:
+   #+begin_example
+   finish-node BUILDER KIND NODE
+
+   Use BUILDER to perform finalization for NODE and return NODE.
+   #+end_example
+
+   #+begin_src lisp :exports results :session "doc"
+     (doc 'architecture.builder-protocol:relate 'function)
+   #+end_src
+
+   #+RESULTS:
+   #+begin_example
+   relate BUILDER RELATION LEFT RIGHT &REST ARGS &KEY &ALLOW-OTHER-KEYS
+
+   Establish RELATION between nodes LEFT and RIGHT and return the
+   resulting modified LEFT node (or an appropriate newly created
+   object).
+
+   ARGS can be used to supply additional information about the
+   relation that is available from neither LEFT nor RIGHT.
+
+   In a typical case, RELATION could be :child, LEFT being the parent
+   node and RIGHT being the child node.
+   #+end_example
+
+*** STARTED Convenience Functions
+
+    #+BEGIN_SRC lisp :exports results :session "doc"
+      (doc 'architecture.builder-protocol:add-relations 'function)
+    #+END_SRC
+
+    #+RESULTS:
+    #+begin_example
+    add-relations BUILDER NODE RELATIONS
+
+    Use BUILDER to add relations according to RELATIONS to NODE.
+
+    RELATIONS is a list of relation specifications of the form
+
+    (CARDINALITY RELATION-NAME RIGHT &rest ARGS)
+
+    which are translated into `relate' calls in which NODE is the
+    "left" argument to `relate'. CARDINALITY has to be of type
+    `relation-cardinality' and is interpreted as follows:
+
+    ?            RIGHT is a single node or nil.
+
+    1            RIGHT is a single node.
+
+    *            RIGHT is a (possibly empty) sequence of nodes.
+
+    (:map . KEY) RIGHT is a (possible empty) sequence of nodes that
+    should be associated to the keys in the sequence that
+    is the value of KEY in the ARGS plist for RIGHT.
+
+    RELATION-NAME does not have to be unique across the elements of
+    RELATIONS. This allows multiple "right" nodes to be related to
+    NODE via a given RELATION-NAME with CARDINALITY * in multiple
+    RELATIONS entries, potentially with different ARGS.
+
+    The modified NODE or a new node is returned.
+    #+end_example
+
+    #+BEGIN_SRC lisp :exports results :session "doc"
+      (doc 'architecture.builder-protocol:make+finish-node 'function)
+    #+END_SRC
+
+    #+RESULTS:
+    #+begin_example
+    make+finish-node BUILDER KIND &REST INITARGS &KEY &ALLOW-OTHER-KEYS
+
+    Convenience function for constructing and immediately finishing a
+    node.
+    #+end_example
+
+    #+BEGIN_SRC lisp :exports results :session "doc"
+      (doc 'architecture.builder-protocol:make+finish-node+relations 'function)
+    #+END_SRC
+
+    #+RESULTS:
+    #+begin_example
+    make+finish-node+relations BUILDER KIND INITARGS RELATIONS
+
+    Use BUILDER to create a KIND, INITARGS node, relate it via RELATIONS.
+
+    RELATIONS is processed as described for `add-relations'.
+
+    `finish-node' is called on the created node. The created node is
+    returned.
+    #+end_example
+
+** STARTED "Un-build" Protocol
+
+   #+begin_src lisp :exports results :session "doc"
+     (doc 'architecture.builder-protocol:node-kind 'function)
+   #+end_src
+
+   #+RESULTS:
+   #+begin_example
+   node-kind BUILDER NODE
+
+   Return the kind of NODE w.r.t. BUILDER.
+
+   The return value is EQ to the KIND argument used to create NODE
+   with BUILDER.
+   #+end_example
+
+   #+begin_src lisp :exports results :session "doc"
+     (doc 'architecture.builder-protocol:node-initargs 'function)
+   #+end_src
+
+   #+RESULTS:
+   #+begin_example
+   node-initargs BUILDER NODE
+
+   Return a plist of initargs for NODE w.r.t. BUILDER.
+
+   The returned list is EQUAL to the list of keyword arguments pass
+   to the MAKE-NODE call that, using BUILDER, constructed NODE.
+   #+end_example
+
+   #+begin_src lisp :exports results :session "doc"
+     (doc 'architecture.builder-protocol:node-relations 'function)
+   #+end_src
+
+   #+RESULTS:
+   #+begin_example
+   node-relations BUILDER NODE
+
+   Return a list of relations of NODE w.r.t. BUILDER.
+
+   Each relation is of one of the forms
+
+   RELATION-NAME
+   (RELATION-NAME . CARDINALITY)
+
+   where RELATION-NAME names the relation and CARDINALITY is of type
+   `relation-cardinality'. When the first form is used,
+   i.e. CARDINALITY is not present, it is assumed to be
+   `*'. CARDINALITY values are interpreted as follows:
+
+   ?            The relation designated by RELATION-NAME with NODE
+   as the "left" node has zero or one "right"
+   nodes.
+
+   1            The relation designated by RELATION-NAME with NODE
+   as the "left" node has exactly one "right"
+   node.
+
+   *            The relation designated by RELATION-NAME with NODE
+   as the "left" node has zero or more "right"
+   nodes.
+
+   (:map . KEY) The relation designated by RELATION-NAME with NODE
+   as the "left" node has zero or more "right"
+   nodes with the additional constraint that the
+   relation parameters for each such node must contain
+   a unique value for the key KEY.
+
+   . This cardinality information is reflected by the return values
+   of (node-relation BUILDER RELATION-NAME NODE).
+   #+end_example
+
+   #+begin_src lisp :exports results :session "doc"
+     (doc 'architecture.builder-protocol:node-relation 'function)
+   #+end_src
+
+   #+RESULTS:
+   #+begin_example
+   node-relation BUILDER RELATION NODE
+
+   Return two values: 1) a sequence of nodes related to NODE via
+   RELATION w.r.t. BUILDER 2) `nil' or a same-length sequence of
+   arguments of the relations.
+
+   Each element in the sequence of relation arguments is EQUAL to the
+   list of arguments passed to the RELATE call that, using BUILDER,
+   established the relation between NODE and the related node.
+   #+end_example
+
+   #+begin_src lisp :exports results :session "doc"
+     (doc 'architecture.builder-protocol:walk-nodes 'function)
+   #+end_src
+
+   #+RESULTS:
+   #+begin_example
+   walk-nodes BUILDER FUNCTION ROOT
+
+   Call FUNCTION on nodes of the tree ROOT constructed by BUILDER.
+
+   Return whatever FUNCTION returns when called for ROOT.
+
+   The lambda-list of FUNCTION must be compatible to
+
+   (recurse relation relation-args node kind relations
+   &rest initargs)
+
+   where RELATION and RELATION-ARGS are the relation and its
+   arguments connecting NODE to the previously visited node,
+
+   NODE is the node currently being visited,
+
+   KIND is the kind returned by `node-kind' for BUILDER and NODE.
+
+   RELATIONS are the relations returned by `node-relations' for
+   BUILDER and NODE.
+
+   INITARGS are the initargs returned by `node-initargs' for BUILDER
+   and NODE.
+
+   RECURSE is a function with the lambda-list
+
+   (&key relations function)
+
+   that can be called, optionally with a list of relations, to
+   traverse the nodes related to NODE by that relation. If a list of
+   relations is not supplied via the :relations keyword parameter,
+   all relations are traversed. The :function keyword parameter
+   allows performing the traversal with a different function instead
+   of FUNCTION. Calls of this function return a list of elements each
+   of which is the result for the corresponding element of
+   RELATIONS. The result for a relation is either the return value of
+   FUNCTION if the cardinality of the relation is 1 or ? or a list of
+   such return values if the cardinality is * or :map.
+
+   If FUNCTION is an instance of `peeking', call the "peeking"
+   function stored in FUNCTION before the ordinary walk
+   function (also stored in FUNCTION) is called. The lambda-list of
+   the "peeking" function must be compatible to
+
+   (builder relation relation-args node)
+
+   (i.e. it does not receive kind, initargs or relations). This
+   function can control whether NODE should be processed normally,
+   replaced with something else, processed with a different builder
+   or ignored: Its return values are interpreted as follows:
+
+   NIL
+
+   Forego processing of NODE, in particular do not call
+   `node-kind', `node-relations', `node-initargs' or the walk
+   function for NODE.
+
+   T [* * * BUILDER]
+
+   Continue processing as if there was no "peeking" function.
+
+   If non-NIL, BUILDER specifies a builder that should be used
+   instead of the current builder to process the NODE and its
+   ancestors.
+
+   INSTEAD KIND INITARGS RELATIONS [BUILDER]
+
+   Continue processing as if NODE had been replaced by INSTEAD and
+   builder had returned KIND, INITARGS and RELATIONS. In particular
+   do not call `node-kind', `node-relations', `node-initargs' for
+   NODE.
+
+   If non-NIL, BUILDER specifies a builder that should be used
+   instead of the current builder to process INSTEAD and its
+   ancestors.
+
+   Depending on FUNCTION, potentially return a list-of-lists of the
+   same shape as the traversed tree containing return values of
+   FUNCTION.
+   #+end_example
+
+* Settings                                                         :noexport:
+
+#+OPTIONS: H:4 num:nil toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS: TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+SEQ_TODO: TODO STARTED | DONE

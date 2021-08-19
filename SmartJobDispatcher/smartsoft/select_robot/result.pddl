@@ -1,0 +1,1 @@
+((result ok)(ops 3)(plan ((UNDOCK-ROBOT ROBOT-3)(PERFORM-TASK ROBOT-3 TASK-2)(PERFORM-TASK ROBOT-2 TASK-1)))(cost 0))

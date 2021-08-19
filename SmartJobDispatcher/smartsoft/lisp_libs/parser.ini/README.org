@@ -1,0 +1,96 @@
+#+TITLE:       parser.ini README
+#+AUTHOR:      Jan Moringen
+#+EMAIL:       jmoringe@techfak.uni-bielefeld.de
+#+DESCRIPTION: Parser for ini-like configuration files with builder-based protocol.
+#+KEYWORDS:    parser, ini, config, esrap
+#+LANGUAGE:    en
+
+* Introduction
+
+  The =parser.ini= system provides a parser for the "ini-like" family
+  of configuration syntaxes. A [[https://github.com/scymtym/architecture.builder-protocol][builder-based protocol]] is used to
+  construct parse results.
+
+  #+ATTR_HTML: :alt "build status image" :title Build Status :align right
+  [[https://travis-ci.org/scymtym/parser.ini][https://travis-ci.org/scymtym/parser.ini.svg]]
+
+* Tutorial
+
+  To parse a string of configuration options and return the result as
+  a simple list-based structure, the =parse= function is called with
+  the symbol =list= instead of a more complicated builder object:
+
+  #+BEGIN_SRC lisp :results value code :exports both
+    (parser.ini:parse "[section] option = value" 'list)
+  #+END_SRC
+
+  #+RESULTS:
+  #+BEGIN_SRC lisp
+
+  ((:SECTION
+    (:SECTION-OPTION
+     (((:OPTION NIL :NAME ("option") :VALUE "value" :BOUNDS (10 . 24)))))
+    :NAME ("section") :BOUNDS (0 . 9)))
+  #+END_SRC
+
+  Syntactic variants (comments, assignment operator, interpretation of
+  whitespace in values, etc.) are controlled via special variables
+  (note ~:~ instead of ~=~):
+
+  #+BEGIN_SRC lisp :results value code :exports both
+    (let ((parser.ini:*assignment-operator* #\:))
+      (parser.ini:parse "[section] option: value" 'list))
+  #+END_SRC
+
+  #+RESULTS:
+  #+BEGIN_SRC lisp
+
+  ((:SECTION
+    (:SECTION-OPTION
+     (((:OPTION NIL :NAME ("option") :VALUE "value" :BOUNDS (10 . 23)))))
+    :NAME ("section") :BOUNDS (0 . 9)))
+  #+END_SRC
+
+  The builder-based protocol allows constructing arbitrary result
+  objects:
+
+  #+BEGIN_SRC lisp :results value :exports both
+    (defstruct located bounds)
+    (defstruct (section (:include located)) name options)
+    (defstruct (option (:include located)) name value)
+
+    (defmethod architecture.builder-protocol:make-node
+        ((builder (eql :my-builder)) (kind (eql :section)) &key name bounds)
+      (make-section :name name :bounds bounds))
+
+    (defmethod architecture.builder-protocol:relate
+        ((builder  (eql :my-builder))
+         (relation (eql :section-option))
+         (left     section)
+         (right    option)
+         &key)
+      (alexandria:appendf (section-options left) (list right))
+      left)
+
+    (defmethod architecture.builder-protocol:make-node
+        ((builder (eql :my-builder)) (kind (eql :option)) &key name value bounds)
+      (make-option :name name :value value :bounds bounds))
+
+    (parser.ini:parse "[section] option = value" :my-builder)
+  #+END_SRC
+
+  #+RESULTS:
+  : (#S(SECTION
+  :     :BOUNDS (0 . 9)
+  :     :NAME ("section")
+  :     :OPTIONS (#S(OPTION :BOUNDS (10 . 24) :NAME ("option") :VALUE "value"))))
+  : NIL
+  : T
+
+* TODO Reference
+
+
+* Settings                                                         :noexport:
+
+#+OPTIONS: H:2 num:nil toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS: TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc

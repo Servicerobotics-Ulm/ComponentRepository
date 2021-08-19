@@ -1,0 +1,41 @@
+ComponentDefinition SmartJobDispatcher logo "/SmartJobDispatcher/model/logo.png"
+{
+	Activity dummy {
+		
+	}
+	OutputPort jobEventServer implements CommBasicObjects.TaskEvent realizedBy dummy {
+		
+	}
+	
+	RequestPort SymbolicPannerServiceReq implements DomainSymbolicPlanner.SymbolicPannerService {
+	}
+	RequestPort CommKBQueryReq implements CommBasicObjects.CommKBQuery {
+	}
+
+	RequestPort NavigationTopologyMapQueryReq implements CommNavigationObjects.NavigationTopologyMapQuery {
+	}
+	InputPort jobSourceEventClient implements CommBasicObjects.TaskEvent { 
+	}
+	InputPort jobSource2EventClient implements CommBasicObjects.TaskEvent {
+	}
+	InputPort jobSource3EventClient implements CommBasicObjects.TaskEvent {
+	}
+	InputHandler JobSourceEventHandler triggeredFrom jobSourceEventClient { }
+	InputHandler JobSource2EventHandler triggeredFrom jobSource2EventClient { }
+	InputHandler JobSource3EventHandler triggeredFrom jobSource3EventClient { }
+	OutputPort TaskResultOut implements CommBasicObjects.TaskResult realizedBy dummy {
+	}
+	CoordinationMasterPort master implements CommBasicObjects.DefaultCoordinationService;
+	 
+	CoordinationSlavePort CoordinationPort implements DomainRobotFleet.FleetManagerCoordinationService
+	{
+		with fleetEvent realizedBy jobEventServer
+		with fleetSend realizedBy jobResultSendServer
+		SkillRealizationsRef FleetManagerMod
+	}
+	ComponentParameters SmartJobDispatcher slave CoordinationPort
+	InputPort jobResultSendServer implements CommBasicObjects.TaskSend {
+		SupportedMiddleware OpcUa_SeRoNet
+	}
+	InputHandler JobResultSendHandler triggeredFrom jobResultSendServer activeQueue { }
+}
