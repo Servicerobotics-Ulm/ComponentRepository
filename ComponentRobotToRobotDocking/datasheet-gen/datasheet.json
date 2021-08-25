@@ -1,0 +1,33 @@
+{
+	"name": "ComponentRobotToRobotDocking",
+	"shortDescription": "TODO: add short description for ComponentRobotToRobotDocking datasheet",
+	"type": "Toolify",
+	"description": "",
+	"purposes": [],
+	"services": [
+	],
+	"mainstates": [
+		"LaserDocking",
+		"UnDocking",
+		"Neutral"
+	],
+	"parameters": [
+		{
+			"name": "COMMIT",
+			"nameFQN": "COMMIT",
+			"type": "parameter",
+			"description": "Commit the current parameter configuration.",
+			"attributes": []
+		}
+	],
+	"triggers": [
+		{
+			"name": "SAVE_BEFORE_DOCKING_POSE",
+			"nameFQN": "CommRobotinoObjects.RobotinoDockingParameter.SAVE_BEFORE_DOCKING_POSE",
+			"type": "trigger",
+			"description": "",
+			"attributes": [
+			]
+		}
+	]
+}

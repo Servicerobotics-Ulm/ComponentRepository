@@ -1,0 +1,20 @@
+ComponentParameter ComponentRobotToRobotDocking component ComponentRobotToRobotDocking
+{
+	InternalParameter docking {
+		connectToServices : Boolean = true
+		useLaser: Boolean = true
+		laserDocking_transVelX: Double = 0.2
+		laserDocking_transVelY: Double = 0.2
+		laserDocking_rotVel: Double = 20
+		
+		// "Distance from robot to Robot center the laserDocking will stop the robots movement."
+		laserDocking_stopDistance: Double =  0.5 	
+		
+		enable_visualization:Boolean = false
+		
+		}
+	
+	ParameterSetInstance CommRobotinoObjects.RobotinoDockingParameter{
+		TriggerInstance SAVE_BEFORE_DOCKING_POSE active		
+	}
+}

@@ -1,0 +1,57 @@
+(define-tcb (dockToRobot)
+  (module "RobotDockingModule")
+  (action (
+              (format t "=========================>>> dockToRobot ~%")
+              (format t "DO DOCKING --> SAVE CURRENT POSE FOR UNDOCKING!~%")
+              (tcl-param :server 'cs_r2rDocking :slot 'CommRobotinoObjects.RobotinoDockingParameter.SAVE_BEFORE_DOCKING_POSE)
+              (tcl-activate-event :name 'evt-robot-docking
+                                  :handler 'handler-robot2robot-docking 
+                                  :server 'cs_r2rDocking
+                                  :service 'r2rdockingevent
+                                  :mode 'continuous)
+              (tcl-state :server 'cs_r2rDocking :state "LaserDocking"))))
+
+(define-tcb (undockFromRobot)
+  (module "RobotDockingModule")
+  (action (
+            (format t "=========================>>> undockFromRobot ~%")
+            (format t "DO UNDOCKING ~%")
+            (tcl-activate-event :name 'evt-roboto-undocking
+                                :handler 'handler-robot2robot-docking 
+                                :server 'cs_r2rDocking
+                                :service 'r2rdockingevent
+                                :mode 'continuous)
+            (tcl-state :server 'cs_r2rDocking :state "UnDocking"))))
+
+(define-event-handler (handler-robot2robot-docking)
+  (action (
+            (format t "=========================>>> HANDLER ROBOT 2 ROBOT DOCKING: ~s ~%~%" (tcl-event-message))
+            (cond
+              ;; UNDOCKING
+              ((equal (tcl-event-message) "(undocking not done)")
+                (format t "==========>>> UNDOCKING DOCKING START~%" ))
+
+              ((equal (tcl-event-message) "(undocking done)")
+                (format t "==========>>> UNDOCKING DOCKING DONE~%" )
+                (tcl-state :server 'cs_r2rDocking :state "Neutral")
+                (update-robot-state :is-docked '(nil))
+                (tcl-abort)
+                '(SUCCESS ()))
+       
+              ;; LASER
+              ((equal (tcl-event-message) "(laser docking not done)")
+                (format t "==========>>> LASER DOCKING DOCKING START~%" ))
+
+              ((equal (tcl-event-message) "(laser docking done)")
+                (format t "==========>>> LASER DOCKING DOCKING DONE~%" )
+                (update-robot-state :is-docked '(T ROBOT))
+                (tcl-state :server 'cs_r2rDocking :state "Neutral")
+                (tcl-abort)
+                '(SUCCESS ()))
+
+              ((equal (tcl-event-message) "(laser docking error)")
+                (format t "==========>>> LASER DOCKING DOCKING ERROR ~%" )
+                (tcl-state :server 'cs_r2rDocking :state "Neutral")
+                (update-robot-state :is-docked '(nil))
+                (tcl-abort)
+                '(ERROR (DOCKING)))))))

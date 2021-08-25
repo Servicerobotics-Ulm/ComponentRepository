@@ -1,0 +1,31 @@
+ComponentDefinition ComponentRobotToRobotDocking logo "/ComponentRobotToRobotDocking/model/logo.png"
+{
+Activity LaserDockingTask
+	{
+	}
+	Activity UndockingTask
+	{
+	}
+	Activity VisTask
+	{
+	}
+	CoordinationSlavePort CoordinationPort implements CommRobotinoObjects.RobotToRobotDockingCoordinationService
+	{
+		PublicOperationMode CommRobotinoObjects.RobotToRobotDockingStates.LaserDocking { activates ( LaserDocking ) } PublicOperationMode CommRobotinoObjects.RobotToRobotDockingStates.UnDocking { activates ( UnDocking ) } PrivateOperationMode LaserDocking PrivateOperationMode UnDocking
+		SkillRealizationsRef robotDocking
+		with r2rdockingevent realizedBy dockingEventServer
+	}
+	ComponentParameters ComponentRobotToRobotDocking slave CoordinationPort
+	InputPort baseStatePushClient implements CommBasicObjects.BaseStateService {
+		
+	}
+	OutputPort navVelSendClient implements CommNavigationObjects.NavigationVelocityService realizedBy LaserDockingTask {
+		
+	}
+	InputPort laserClient implements CommBasicObjects.LaserService {
+		
+	}
+	OutputPort dockingEventServer implements CommRobotinoObjects.RobotinoDockingEvent realizedBy LaserDockingTask {
+		
+	}
+}
