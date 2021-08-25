@@ -8,10 +8,12 @@
 	
 	### Example program:
 	
+	Set the joint angels of the [robot arm](https://cyberbotics.com/doc/guide/ure). 
+	
 	```
 	CommManipulatorObjects::CommManipulatorTrajectory trajectory;
 	// do these calls in this order only
-	// 1. only JOINT_ANGLES is possible, POSE_TCP not
+	// 1. set JOINT_ANGLES
 	trajectory.setFlag(CommManipulatorObjects::ManipulatorTrajectoryFlag::JOINT_ANGLES);
 	// 2. set number of points in trajectory
 	trajectory.set_trajectory_size(1);
@@ -29,6 +31,35 @@
 	trajectory.set_joint_angle(0, 5, 0.+084);
 	COMP -> sendTrajectoryServiceOut -> send(trajectory);
 	```
+	
+	Coordinate systems of robot arm and vacuum gripper (tool center point):
+	![image](CoordinateSystemRobotArm.png)
+	
+	Set the pose (position and orientation) of the vacuum gripper in the coordinate system of the robot arm.
+	The robot arms 'UR5' or 'UR5e' or 'UR10e' with a vacuum gripper of length 0.11m are supported.
+	
+	The orientation of the vacuum gripper's coordinate system is given by three [Euler Angles](https://web.mit.edu/2.05/www/Handout/HO2.PDF) called azimuth, elevation, roll using zyx convention (1. angle rotates around z-axis, 2. y, 3. x) 
+	* start with same coordinate system orientation as the robot arm (x/y/z-axis have same direction)
+	* rotate around blue z-axis by angle azimuth (in webots, you can click on the blue curved arrow and move the mouse to rotate objects)
+	* rotate around green y-axis by angle elevation (the y-axis could have been rotated by azimuth already)
+	* rotate around red x-axis by angle roll (the x-axis could have been rotated by azimuth or elevation already)
+	
+	In below example, the robot arm coordinate system is copied and rotated around x-axis by -PI/2 (-90 degrees), the new y-axis and the vacuum gripper will point downwards, ready to pick things from above.
+	
+	```
+	CommManipulatorObjects::CommManipulatorTrajectory trajectory;
+	trajectory.setFlag(CommManipulatorObjects::ManipulatorTrajectoryFlag::POSE_TCP);
+	double x, y, z, azimuth, elevation, roll;
+	x = 0.5; // 0.5m forward relative to robot arm
+	y = 0.3; // 0.3m left
+	z = 0.2; // 0.2m up
+	azimuth = 0.0;
+	elevation = 0.0;
+	roll = -M_PI/2; 
+	trajectory.set_pose_TCP_robot(x, y, z, azimuth, elevation, roll, 1);
+	COMP->sendTrajectoryServiceOut->send(trajectory);
+	```
+	
 	
 	### other similar components:
 	

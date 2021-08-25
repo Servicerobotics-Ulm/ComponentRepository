@@ -50,7 +50,7 @@ public:
 		public:
 			// default constructor
 			webotsType() {
-				robotName = "UR5e";
+				robotName = "UR5";
 			}
 		
 			/**

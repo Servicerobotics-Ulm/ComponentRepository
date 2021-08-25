@@ -60,6 +60,8 @@
 
 using namespace webots;
 
+std::string robotArmModel;
+
 //////////////// helper functions /////////////////////
 
 // replaces EulerTransformationMatrices::create_zyx_matrix(...)
@@ -241,11 +243,31 @@ int getJointAnglesFromTcpPoseMatrix(Eigen::MatrixXd matrix, std::array<double, 6
     //  y <--+            p0
 
     // todo: move these numbers into parameters
-    // (vacuum gripper is 0.11m long)
-    // these parameters are from UR5e.proto (HingeJointParameters anchor)
-    // double d[6] = {0.163, 0.425, 0.392, 0.138-0.131+0.127, 0.1, 0.1+0.11};
-    // UR10e.proto:
-    double d[6] = {0.181, 0.613, 0.571, 0.176-0.137+0.135, 0.12, 0.12+0.11};
+    // how to find parameters from e.g. UR5.proto:
+    // 1. endpoint translation 0 0 0.089159
+    // 2. endpoint translation 0 0.135850 0
+    // 3. endpoint translation 0 -0.119700 0.425000
+    // 4. endpoint translation 0 0 0.392250
+    // 5. endpoint translation 0 0.093000 0
+    // 6. endpoint translation 0 0 0.094650
+    //    toolslot translation 0 0.0823 0
+    //    vacuum gripper length 0.11
+
+    double d_UR5[6] = {0.089159, 0.425, 0.39225, 0.135850-0.119700+0.093000, 0.094650, 0.0823+0.11};
+    double d_UR5e[6] = {0.163, 0.425, 0.392, 0.138-0.131+0.127, 0.1, 0.1+0.11};
+    double d_UR10e[6] = {0.181, 0.613, 0.571, 0.176-0.137+0.135, 0.12, 0.12+0.11};
+    double d[6];
+    for(int i=6; i--;)
+      if(robotArmModel=="UR5")
+        d[i] = d_UR5[i];
+      else if(robotArmModel=="UR5e")
+        d[i] = d_UR5e[i];
+      else if(robotArmModel=="UR10e")
+        d[i] = d_UR10e[i];
+      else {
+          std::cout << "ERROR: robotArmModel " << robotArmModel << " has not kinetic defined" << std::endl;
+          return __LINE__;
+      }
     Eigen::Vector3d p6 = matrix.block<3,1>(0,3);
     printVectorError("p6", p6, realP[6]);
 
@@ -501,8 +523,10 @@ int PoseUpdateActivity::on_execute() {
         std::cerr << "Webots Robot '" << name << "' not found" << std::endl;
         return -1;
     }
-    std::cout << "Robot '" << name << "'" << std::endl;
+    robotArmModel = robot->getModel();
+    std::cout << "Robot '" << name << "' model=" << robotArmModel << std::endl;
     isNUE = robot->getRoot()->getField("children")->getMFNode(0)->getField("coordinateSystem")->getSFString() == "NUE";
+
 
 // *********** VacuumGripper *********
     DistanceSensor *distanceSensor = robot->getDistanceSensor("VacuumGripperDistanceSensor");
