@@ -30,7 +30,7 @@ public:
 //DO NOT USE CamelCase function names for extern "C" functions, as they are called from lisp!
 
 #if defined (__GNUC__) && defined(__unix__)
-extern "C" char* command(char* ciType, char* ciInstance, char* compType, char* compInstance, char* service, char* param, char* eventMode);
+extern "C" char* command(char* ciType, char* ciInstance, char* compType, char* compInstance, char* service, char* param);
 extern "C" void delay(int x);
 extern "C" int initialize(char* paramFile);
 
@@ -44,7 +44,7 @@ extern "C" char* destroyci(char* ciName, char* ciInstanceName);
 
 #elif defined (WIN32) || defined (WIN64)
 
-extern "C" __declspec(dllexport) char* command(char* ciType, char* ciInstance, char* compType, char* compInstance, char* service, char* param, char* eventMode);
+extern "C" __declspec(dllexport) char* command(char* ciType, char* ciInstance, char* compType, char* compInstance, char* service, char* param);
 extern "C" __declspec(dllexport) void delay(int x);
 extern "C" __declspec(dllexport) int initialize(char* param);
 

@@ -35,7 +35,7 @@
 #include <time.h>
 //#include "CommBasicObjects/CommTimeStamp.hh"
 
-std::string switchTimer(const std::string& moduleInst, const std::string& compnameTypename, const std::string& compname, const std::string& service, const std::string& parameter, const std::string& eventMode)
+std::string switchTimer(const std::string& moduleInst, const std::string& compnameTypename, const std::string& compname, const std::string& service, const std::string& inString)
 {
 
 	std::ostringstream outString;
@@ -49,9 +49,16 @@ std::string switchTimer(const std::string& moduleInst, const std::string& compna
 		int id;
 		char *running;
 		char *token;
+		char *mode;
 
 		// copy string
-		token = running = strdupa (parameter.c_str());
+		token = running = strdupa (inString.c_str());
+
+		// extract mode single || continuous
+		do
+		{
+			mode = strsep (&running, LISP_SEPARATOR);
+		} while ((mode != NULL) && (strlen(mode)==0));
 
 		int sec, msec;
 
@@ -81,9 +88,16 @@ std::string switchTimer(const std::string& moduleInst, const std::string& compna
 		int id;
 		char *running;
 		char *token;
+		char *mode;
 
 		// copy string
-		token = running = strdupa (parameter.c_str());
+		token = running = strdupa (inString.c_str());
+
+		// extract mode single || continuous
+		do
+		{
+			mode = strsep (&running, LISP_SEPARATOR);
+		} while ((mode != NULL) && (strlen(mode)==0));
 
 		int sec, msec;
 		time_t t;
@@ -157,7 +171,7 @@ std::string switchTimer(const std::string& moduleInst, const std::string& compna
 		char *pointer = (char *)NULL;
 		char *param1  = (char *)NULL;
 
-		pointer = input = strdup(parameter.c_str());
+		pointer = input = strdup(inString.c_str());
 		do
 		{
 			param1 = strsep(&input,LISP_SEPARATOR);
