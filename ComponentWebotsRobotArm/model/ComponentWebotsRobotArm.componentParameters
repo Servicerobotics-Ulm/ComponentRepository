@@ -19,15 +19,46 @@ ComponentParameter ComponentWebotsRobotArmParams component ComponentWebotsRobotA
 		TriggerInstance START_PROGRAM passive
 	}
 
+/** The pose of the TCP relative to the tool flange.
+ *  A tool can be attached to an flange at the end of an robot arm. The Tool Center Point (TCP) is the tip of the current tool.  
+ *  */ 
+	InternalParameter TCP
+	{
+		/** x coordinate of the TCP relative to the tool flange [m] */		
+		x : Int32 = 0
+		/** see x */
+		y : Int32 = 0
+		/** see x */
+		z : Int32 = 0
+		/** rotation around z-axis (euler angles ZYX convention) [radians] */
+		azimuth : Double = 0
+		/** rotation around y-axis */
+		elevation : Double = 0
+		/** rotation around x-axis */
+		roll : Double = 0					
+	}
 
+/** the pose of the base coordinate system relative to the world coordinate system */ 
 	InternalParameter base
 	{
-/** <ul><li>on_base = true: robot arm is mounted on top of an mobile robot (base = mobile robot)</li>
- * <li>on_base = false: robot arm is at a fixed position in the world (base = world)</li></ul> */		
-		on_base : Boolean = false		
+/** <ul><li>on_base = true: robot arm is mounted on top of an mobile robot, the mobile robot should send its actual position through the Port 'BaseStateServiceIn'</li>
+ * <li>on_base = false: robot arm is mounted on a fixed point</li></ul> */		
+		on_base : Boolean = false
+		/** x coordinate of the fixed point relative to the world [mm] */		
+		x : Int32 = 0
+		/** see x */
+		y : Int32 = 0
+		/** see x */
+		z : Int32 = 0
+		/** rotation around z-axis */
+		azimuth : Double = 0
+		/** rotation around y-axis */
+		elevation : Double = 0
+		/** rotation around x-axis */
+		roll : Double = 0					
 	}
 	
-/** the pose of the manipulator coordinate system relative to the base coordinate system */	
+/** the pose of the manipulator coordinate system relative to the mobile robot base coordinate system */	
 	InternalParameter manipulator
 	{
 		/** print more debug information */
@@ -44,7 +75,7 @@ ComponentParameter ComponentWebotsRobotArmParams component ComponentWebotsRobotA
 		elevation : Double = 0
 		/** rotation around x-axis */
 		roll : Double = 0
-		/** velocity of TCP movement (ToolCenterPoint = end point of tool at robot arm) [m/s] */
+		/** velocity of TCP movement [m/s] */
 		tcp_velocity : Double = 1.0
 	}
 }

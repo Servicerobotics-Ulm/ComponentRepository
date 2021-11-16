@@ -29,6 +29,9 @@
 #include <SeRoNetSDK/SeRoNet/OPCUA/Server/QueryServer.hpp>
 
 // include referenced CommunicationObject SeRoNetSDK self description implementations
+#include "CommBasicObjectsOpcUa/CommKBRequestOpcUa.hh"
+#include "CommBasicObjectsOpcUa/CommKBResponseOpcUa.hh"
+#include "DomainRobotFleetNavigationOpcUa/CommNavPathOpcUa.hh"
 
 // create a static instance of the OpcUaBackendPortFactory
 static ComponentWebotsOpcUaBackendPortFactory OpcUaBackendPortFactory;
@@ -54,6 +57,16 @@ int ComponentWebotsOpcUaBackendPortFactory::onStartup()
     	return 0;
     }
 	return -1;
+}
+
+Smart::IQueryClientPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse> * ComponentWebotsOpcUaBackendPortFactory::createCommKBQueryReq()
+{
+	return new SeRoNet::OPCUA::Client::QueryClient<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse>(componentImpl);
+}
+
+Smart::ISendClientPattern<DomainRobotFleetNavigation::CommNavPath> * ComponentWebotsOpcUaBackendPortFactory::createNavPathServiceOut()
+{
+	return new SeRoNet::OPCUA::Client::SendClient<DomainRobotFleetNavigation::CommNavPath>(componentImpl);
 }
 
 

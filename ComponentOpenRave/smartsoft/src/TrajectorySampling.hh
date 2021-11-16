@@ -52,8 +52,8 @@
 class TrajectorySampling  : public TrajectorySamplingCore
 {
 private:
-	void handleJointAngles(const CommManipulatorObjects::CommManipulatorTrajectory& r, std::vector<ORUtil::TrajectoryPoint>& openraveTrajectory);
-	void handlePoses(const CommManipulatorObjects::CommManipulatorTrajectory& r, std::vector<ORUtil::TrajectoryPoint>& openraveTrajectory);
+	void handleJointAngles(const CommManipulatorObjects::CommManipulationTrajectory& r, std::vector<ORUtil::TrajectoryPoint>& openraveTrajectory);
+	void handlePoses(const CommManipulatorObjects::CommManipulationTrajectory& r, std::vector<ORUtil::TrajectoryPoint>& openraveTrajectory);
 
 public:
 	TrajectorySampling(SmartACE::SmartComponent *comp);

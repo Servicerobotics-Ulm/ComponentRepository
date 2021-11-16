@@ -16,14 +16,14 @@
 #include "TrajectorySendServerUpcallManager.hh"
 
 TrajectorySendServerUpcallManager::TrajectorySendServerUpcallManager(
-	Smart::InputSubject<CommManipulatorObjects::CommManipulatorTrajectory> *subject,
+	Smart::InputSubject<CommManipulatorObjects::CommManipulationTrajectory> *subject,
 	const int &prescaleFactor)
-	:	Smart::IInputHandler<CommManipulatorObjects::CommManipulatorTrajectory>(subject, prescaleFactor)
+	:	Smart::IInputHandler<CommManipulatorObjects::CommManipulationTrajectory>(subject, prescaleFactor)
 {  }
 TrajectorySendServerUpcallManager::~TrajectorySendServerUpcallManager()
 {  }
 
-void TrajectorySendServerUpcallManager::notify_upcalls(const CommManipulatorObjects::CommManipulatorTrajectory &input)
+void TrajectorySendServerUpcallManager::notify_upcalls(const CommManipulatorObjects::CommManipulationTrajectory &input)
 {
 	for(auto it=upcalls.begin(); it!=upcalls.end(); it++) {
 		(*it)->on_trajectorySendServer(input);

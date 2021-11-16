@@ -161,15 +161,6 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		//
 		// load internal parameters (if any)
 		//
-		// parameter ProductionStations
-		if(parameter.getStringList("ProductionStations", "stationName", commitState.ProductionStations.stationName))
-		{
-			globalState.ProductionStations.stationName = commitState.ProductionStations.stationName;
-		}
-		if(parameter.getStringList("ProductionStations", "stationUrl", commitState.ProductionStations.stationUrl))
-		{
-			globalState.ProductionStations.stationUrl = commitState.ProductionStations.stationUrl;
-		}
 		// parameter Robot
 		if(parameter.getInteger("Robot", "belt_time_out_sec", commitState.Robot.belt_time_out_sec))
 		{

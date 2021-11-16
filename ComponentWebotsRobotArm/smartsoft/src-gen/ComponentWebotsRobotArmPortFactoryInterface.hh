@@ -28,14 +28,14 @@
 #include <CommBasicObjects/CommDigitalInputEventStateACE.hh>
 #include <CommBasicObjects/CommIOValues.hh>
 #include <CommBasicObjects/CommIOValuesACE.hh>
+#include <CommManipulatorObjects/CommManipulationTrajectory.hh>
+#include <CommManipulatorObjects/CommManipulationTrajectoryACE.hh>
 #include <CommManipulatorObjects/CommManipulatorEventParameter.hh>
 #include <CommManipulatorObjects/CommManipulatorEventParameterACE.hh>
 #include <CommManipulatorObjects/CommManipulatorEventResult.hh>
 #include <CommManipulatorObjects/CommManipulatorEventResultACE.hh>
 #include <CommManipulatorObjects/CommManipulatorEventState.hh>
 #include <CommManipulatorObjects/CommManipulatorEventStateACE.hh>
-#include <CommManipulatorObjects/CommManipulatorTrajectory.hh>
-#include <CommManipulatorObjects/CommManipulatorTrajectoryACE.hh>
 #include <CommManipulatorObjects/CommMobileManipulatorPrograms.hh>
 #include <CommManipulatorObjects/CommMobileManipulatorProgramsACE.hh>
 #include <CommManipulatorObjects/CommMobileManipulatorState.hh>
@@ -67,7 +67,7 @@ public:
 	virtual Smart::IPushServerPattern<CommManipulatorObjects::CommMobileManipulatorState> * createPosePushServer(const std::string &serviceName) = 0;
 	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorState> * createPoseQueryServer(const std::string &serviceName) = 0;
 	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorPrograms> * createProgramQuery(const std::string &serviceName) = 0;
-	virtual Smart::ISendServerPattern<CommManipulatorObjects::CommManipulatorTrajectory> * createTrajectorySendServer(const std::string &serviceName) = 0;
+	virtual Smart::ISendServerPattern<CommManipulatorObjects::CommManipulationTrajectory> * createTrajectorySendServer(const std::string &serviceName) = 0;
 
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) = 0;
 	virtual void destroy() = 0;

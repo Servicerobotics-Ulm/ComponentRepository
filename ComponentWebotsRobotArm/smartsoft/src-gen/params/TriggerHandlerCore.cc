@@ -86,6 +86,24 @@ int TriggerHandlerCore::on_execute()
 // trigger internal handler methods
 //
 
+	// handle ADD_TCP
+	void TriggerHandlerCore::handleCommManipulatorObjects_ManipulatorParameter_ADD_TCPCore(const std::string &name, const double &x, const double &y, const double &z, const double &rX, const double &rY, const double &rZ)
+	{
+		this->handleCommManipulatorObjects_ManipulatorParameter_ADD_TCP(name, x, y, z, rX, rY, rZ);
+	}
+
+	// handle ADD_TOOL
+	void TriggerHandlerCore::handleCommManipulatorObjects_ManipulatorParameter_ADD_TOOLCore(const std::string &name, const std::list<float> &center_of_grav, const float &weight, const std::list<float> &inertia)
+	{
+		this->handleCommManipulatorObjects_ManipulatorParameter_ADD_TOOL(name, center_of_grav, weight, inertia);
+	}
+
+	// handle CANCEL_MOTION
+	void TriggerHandlerCore::handleCommManipulatorObjects_ManipulatorParameter_CANCEL_MOTIONCore()
+	{
+		this->handleCommManipulatorObjects_ManipulatorParameter_CANCEL_MOTION();
+	}
+
 	// handle CLEAR_PCS
 	void TriggerHandlerCore::handleCommManipulatorObjects_ManipulatorParameter_CLEAR_PCSCore()
 	{
@@ -182,6 +200,18 @@ int TriggerHandlerCore::on_execute()
 		sema.release();
 	}
 
+	// handle SET_ACTIVE_TCP
+	void TriggerHandlerCore::handleCommManipulatorObjects_ManipulatorParameter_SET_ACTIVE_TCPCore(const std::string &name)
+	{
+		this->handleCommManipulatorObjects_ManipulatorParameter_SET_ACTIVE_TCP(name);
+	}
+
+	// handle SET_ACTIVE_TOOL
+	void TriggerHandlerCore::handleCommManipulatorObjects_ManipulatorParameter_SET_ACTIVE_TOOLCore(const std::string &name)
+	{
+		this->handleCommManipulatorObjects_ManipulatorParameter_SET_ACTIVE_TOOL(name);
+	}
+
 	// handle SET_PCS
 	void TriggerHandlerCore::handleCommManipulatorObjects_ManipulatorParameter_SET_PCSCore(const double &x, const double &y, const double &z, const double &rX, const double &rY, const double &rZ)
 	{
@@ -226,10 +256,28 @@ int TriggerHandlerCore::on_execute()
 		sema.release();
 	}
 
+	// handle START_FREEDRIVE
+	void TriggerHandlerCore::handleCommManipulatorObjects_ManipulatorParameter_START_FREEDRIVECore()
+	{
+		this->handleCommManipulatorObjects_ManipulatorParameter_START_FREEDRIVE();
+	}
+
 	// handle START_PROGRAM
 	void TriggerHandlerCore::handleCommManipulatorObjects_ManipulatorParameter_START_PROGRAMCore()
 	{
 		this->handleCommManipulatorObjects_ManipulatorParameter_START_PROGRAM();
+	}
+
+	// handle STOP_FREEDRIVE
+	void TriggerHandlerCore::handleCommManipulatorObjects_ManipulatorParameter_STOP_FREEDRIVECore()
+	{
+		this->handleCommManipulatorObjects_ManipulatorParameter_STOP_FREEDRIVE();
+	}
+
+	// handle STOP_PROGRAM
+	void TriggerHandlerCore::handleCommManipulatorObjects_ManipulatorParameter_STOP_PROGRAMCore()
+	{
+		this->handleCommManipulatorObjects_ManipulatorParameter_STOP_PROGRAM();
 	}
 
 //

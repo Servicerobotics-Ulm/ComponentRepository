@@ -122,13 +122,6 @@ Meaning of the signal lights (on the mobile robot):
 </p></td>
 </tr>
 <tr>
-<td style="border:1px solid black; padding: 5px;"><b>stationName</b></td>
-<td style="border:1px solid black; padding: 5px;">String</td>
-<td style="border:1px solid black; padding: 5px;">["MPS0", "MPS1", "MPS2", "MPS3"]</td>
-<td style="border:1px solid black; padding: 5px;"><p>the DEF names of the docking stations in webots
-</p></td>
-</tr>
-<tr>
 <td style="border:1px solid black; padding: 5px;"><b>maxDistanceToDockingPoint</b></td>
 <td style="border:1px solid black; padding: 5px;">Double</td>
 <td style="border:1px solid black; padding: 5px;">2.0</td>

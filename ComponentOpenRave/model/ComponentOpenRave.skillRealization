@@ -2,7 +2,7 @@ SkillRealizationModel {
 	CoordinationModuleRealization manipulationPlanning coordModuleDef CommManipulationPlannerObjects.manipulationPlannerModule 
 	uses {
 		CommManipulationPlannerObjects.ManipulationPlannerCoordinationService intsName cs_trajPlanning 
-		CommManipulatorObjects.ManipulatorCoordinationService intsName cs_trajExecution
+		CommManipulatorObjects.ManipulationCoordinationService intsName cs_trajExecution
 	}
 	{
 		SkillRealization graspobjects { action() }

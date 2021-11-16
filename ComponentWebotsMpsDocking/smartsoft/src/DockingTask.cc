@@ -44,6 +44,8 @@
 
 #include "DockingTask.hh"
 #include "ComponentWebotsMpsDocking.hh"
+#include <webots/Keyboard.hpp>
+#include <webots/Supervisor.hpp>
 
 #include <iostream>
 
@@ -55,7 +57,7 @@ DockingTask::~DockingTask() {
 
 // the webots node must have coordinate system x=front, y=left, z=up.
 // webots WorldInfo.coordinateSystem must be ENU. (todo: handle all coordinate systems correct)
-Pose2D DockingTask::getNodePose(webots::Node *node) {
+Pose2D getNodePose(webots::Node *node) {
   const double *position = node->getPosition();
   const double *orientation = node->getOrientation();
 // NUE:
@@ -82,27 +84,43 @@ void DockingTask::sendEvent(CommRobotinoObjects::RobotinoDockingEventType event)
 }
 
 int DockingTask::on_entry() {
+  return 0;
+}
+
+int DockingTask::on_execute() {
   std::string webotsRobotName =
   COMP->getParameters().getWebots().getRobotName();
   char environment[256] = "WEBOTS_ROBOT_NAME=";
   putenv(strcat(environment, webotsRobotName.c_str()));
   std::cout << " \033[0;32mConnect to webots robot with name '" << webotsRobotName << "' ...\033[0m" << std::endl;
-  robot = new webots::Supervisor();
+  webots::Supervisor *robot = new webots::Supervisor();
   if (!robot) {
     std::cerr << "in webots is no robot with name '" << webotsRobotName << "'" << std::endl;
     return 1;
   }
-  return 0;
-}
-
-int DockingTask::on_execute() {
+  webots::Keyboard *keyboard = robot->getKeyboard();
+  keyboard->enable(robot->getBasicTimeStep());
   Program oldProgram = prFirstRun;
   int programCounter;
   double blinkTime;
   bool blink;
   bool isError = false;
   Pose2D targetPose;
+  webots::Node* node = robot->getFromDef("Stations");
+  if(!node) {
+      std::cerr << "ERROR: no DEF Stations Group found" << std::endl;
+      return 1;
+  }
+  webots::Field* stations = node->getField("children");
+  if(!stations || node->getTypeName()!="Group") {
+      std::cerr << "ERROR LINE" << __LINE__ << std::endl;
+      return 1;
+  }
+
   while (robot->step(robot->getBasicTimeStep()) != -1) {
+    int key=keyboard->getKey();
+    if(key=='-' || key==7) // Editor may delete Station
+        continue;
     Program program = newProgram;
     double t = robot->getTime();
     double vx = 0.0;
@@ -128,18 +146,22 @@ int DockingTask::on_execute() {
         double minDistance = COMP->getParameters().getWebots().getMaxDistanceToDockingPoint();
         webots::Node *bestDocking = NULL;
         webots::Node *bestStation;
-        std::list<std::string> nameList =
-        COMP->getParameters().getWebots().getStationName();
-        std::cout << " minDistance " << minDistance;
-        for (auto const &i : nameList) {
-        	std::cout << "Calculating Nearest station" <<std::endl;
-          webots::Node *station = robot->getFromDef(i);
-          webots::Node *node = NULL;
-          if (station != NULL)
-            node = station->getFromProtoDef("DockingPoint");
-          if (station == NULL || node == NULL) {
-            std::cerr << "in webots is no ProductionStation with DEF '" << i << "' (and DEF DockingPoint inside proto)"
-                << std::endl;
+
+/*      user has to stop simulation himself during editing, at least if he deletes something
+        // if user deletes a station, a supervisor function call to read stations could crash
+        // => don't do it if Editor or something inside is selected
+        webots::Node *selected = robot->getSelected();
+        while (selected != NULL && selected != editor)
+            selected = selected->getParentNode();
+        if (selected)
+            continue;
+*/
+        std::cout << " minDistance " << minDistance << " Calculating Nearest station" << std::endl;
+        for(int i=stations->getCount(); i--;) {
+          webots::Node *station = stations->getMFNode(i);
+          webots::Node *node = station->getFromProtoDef("DockingPoint");
+          if (node == NULL) {
+            std::cerr << (i+1) << ". children in Editor Stations is wrong (has no DEF DockingPoint inside proto)" << std::endl;
             if (program == prDocking) {
               sendEvent(CommRobotinoObjects::RobotinoDockingEventType::LASER_DOCKING_ERROR);
             }
@@ -169,6 +191,11 @@ int DockingTask::on_execute() {
         } else {
           Pose2D poseDocking = getNodePose(bestDocking);
           Pose2D pose2 = getNodePose(bestStation);
+          // how docking is done: (undocking is reverse)
+          // 1) mobile robot drives near to a point half a meter in front of station (called 'undocking point') by other components/behavior
+          // 2) state is changed to laserDocking or irDocking (prDocking)
+          // 3) drive a few millimeters in front of station (called 'docking point') by this component
+          // (docking drives from actual mobile robot position to docking point. undocking drives to undocking point)
           // station center point and docking point are directly read from webots
           // the undocking point is calculated based on them:
 
@@ -189,6 +216,8 @@ int DockingTask::on_execute() {
             targetPose = pose2;
             sendEvent(CommRobotinoObjects::RobotinoDockingEventType::UN_DOCKING_NOT_DONE);
           }
+          std::cout << "point half a meter in front of station x:" << pose2.x << " y:" << pose2.y << " heading:" << pose2.heading << std::endl;
+          std::cout << "point directly in front of station x:" << poseDocking.x << " y:" << poseDocking.y << " heading:" << poseDocking.heading << std::endl;
         }
         programCounter = 1;
       }
@@ -212,8 +241,8 @@ int DockingTask::on_execute() {
         const double acceleration = 0.25;
         double dx = targetPose.x - robotPose.x;
         double dy = targetPose.y - robotPose.y;
-        std::cout << "target pose [" << targetPose.x << ", " << targetPose.y  <<", "<< targetPose.heading << "]"
-        		  << "Robot pose  [" << robotPose.x  << ", " << robotPose.y  <<", "<<  robotPose.heading << "]"<<std::endl;
+        // std::cout << "target pose [" << targetPose.x << ", " << targetPose.y  <<", "<< targetPose.heading << "]"
+        //		  << "Robot pose  [" << robotPose.x  << ", " << robotPose.y  <<", "<<  robotPose.heading << "]"<<std::endl;
         double distance = std::sqrt(dx * dx + dy * dy);
         // v = sqrt(2*a*x)
         double v = std::sqrt(2 * acceleration * distance);

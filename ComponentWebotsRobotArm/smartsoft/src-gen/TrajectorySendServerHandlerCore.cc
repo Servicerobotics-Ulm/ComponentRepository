@@ -17,9 +17,9 @@
 #include "TrajectorySendServerHandler.hh"
 
 TrajectorySendServerHandlerCore::TrajectorySendServerHandlerCore(
-	Smart::InputSubject<CommManipulatorObjects::CommManipulatorTrajectory> *subject,
+	Smart::InputSubject<CommManipulatorObjects::CommManipulationTrajectory> *subject,
 	const int &prescaleFactor)
-	:	Smart::InputTaskTrigger<CommManipulatorObjects::CommManipulatorTrajectory>(subject, prescaleFactor)
+	:	Smart::InputTaskTrigger<CommManipulatorObjects::CommManipulationTrajectory>(subject, prescaleFactor)
 {
 }
 TrajectorySendServerHandlerCore::~TrajectorySendServerHandlerCore()

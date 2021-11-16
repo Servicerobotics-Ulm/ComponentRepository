@@ -219,12 +219,12 @@ void BaseVisualization::displayBase(const CommBasicObjects::CommBaseState& pos) 
 
 	//round off values to 2 decimals for label
 	double pose_x = std::ceil(p.get_x(1.0) * 100.0-0.55555) / 100.0;
-	double pose_y = std::ceil(p.get_x(1.0) * 100.0-0.55555) / 100.0;
+	double pose_y = std::ceil(p.get_y(1.0) * 100.0-0.55555) / 100.0;
 	double pose_azimuth = std::ceil((p.get_azimuth()*180/M_PI) * 100.0-0.55555) / 100.0;
 
 	//round off values to 2 decimals for label
 	double odom_x = std::ceil(rp.get_x(1.0) * 100.0-0.55555) / 100.0;
-	double odom_y = std::ceil(rp.get_x(1.0) * 100.0-0.55555) / 100.0;
+	double odom_y = std::ceil(rp.get_y(1.0) * 100.0-0.55555) / 100.0;
 	double odom_azimuth = std::ceil((rp.get_azimuth()*180/M_PI) * 100.0-0.55555) / 100.0;
 
 

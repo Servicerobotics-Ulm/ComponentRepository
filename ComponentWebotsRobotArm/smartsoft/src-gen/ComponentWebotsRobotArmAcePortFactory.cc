@@ -96,9 +96,9 @@ Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::C
 	return new SmartACE::QueryServer<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorPrograms>(componentImpl, serviceName);
 }
 
-Smart::ISendServerPattern<CommManipulatorObjects::CommManipulatorTrajectory> * ComponentWebotsRobotArmAcePortFactory::createTrajectorySendServer(const std::string &serviceName)
+Smart::ISendServerPattern<CommManipulatorObjects::CommManipulationTrajectory> * ComponentWebotsRobotArmAcePortFactory::createTrajectorySendServer(const std::string &serviceName)
 {
-	return new SmartACE::SendServer<CommManipulatorObjects::CommManipulatorTrajectory>(componentImpl, serviceName);
+	return new SmartACE::SendServer<CommManipulatorObjects::CommManipulationTrajectory>(componentImpl, serviceName);
 }
 
 

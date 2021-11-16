@@ -21,7 +21,7 @@
 // include upcall interface
 
 // include communication-objects for output ports
-#include <CommManipulatorObjects/CommManipulatorTrajectory.hh>
+#include <CommManipulatorObjects/CommManipulationTrajectory.hh>
 
 // include all interaction-observer interfaces
 #include <TrajectorySamplingObserverInterface.hh>
@@ -51,7 +51,7 @@ protected:
 	
 	
 	// this method is meant to be used in derived classes
-	Smart::StatusCode sendTrajectoryOutPut(CommManipulatorObjects::CommManipulatorTrajectory &sendTrajectoryOutDataObject);
+	Smart::StatusCode sendTrajectoryOutPut(CommManipulatorObjects::CommManipulationTrajectory &sendTrajectoryOutDataObject);
 	
 	
 /**

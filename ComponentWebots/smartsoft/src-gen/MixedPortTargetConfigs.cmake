@@ -7,6 +7,8 @@ ENDIF(EXISTS ${ROS_DIR})
 IF(SeRoNetSDK_FOUND)
 # SeRoNetSDK has to be linked at the minimum (in case the component does not have any ports specified for any reason)
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} SeRoNetSDK::SeRoNetSDK)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} CommBasicObjectsOpcUa)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} DomainRobotFleetNavigationOpcUa)
 ENDIF(SeRoNetSDK_FOUND)
 
 # target configurations for PlainOpcUaComponentWebotsExtension

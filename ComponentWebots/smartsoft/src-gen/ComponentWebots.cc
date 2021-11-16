@@ -31,8 +31,13 @@ ComponentWebots::ComponentWebots()
 	std::cout << "constructor of ComponentWebots\n";
 	
 	// set all pointer members to NULL
+	commKBQueryReq = NULL;
 	//componentWebots = NULL;
 	//coordinationPort = NULL;
+	editorTask = NULL;
+	editorTaskTrigger = NULL;
+	navPathServiceOut = NULL;
+	navPathServiceOutWrapper = NULL;
 	stateChangeHandler = NULL;
 	stateActivityManager = NULL;
 	stateSlave = NULL;
@@ -45,6 +50,24 @@ ComponentWebots::ComponentWebots()
 	connections.component.defaultScheduler = "DEFAULT";
 	connections.component.useLogger = false;
 	
+	connections.commKBQueryReq.initialConnect = false;
+	connections.commKBQueryReq.wiringName = "CommKBQueryReq";
+	connections.commKBQueryReq.serverName = "unknown";
+	connections.commKBQueryReq.serviceName = "unknown";
+	connections.commKBQueryReq.interval = 1;
+	connections.commKBQueryReq.roboticMiddleware = "ACE_SmartSoft";
+	connections.navPathServiceOut.initialConnect = false;
+	connections.navPathServiceOut.wiringName = "NavPathServiceOut";
+	connections.navPathServiceOut.serverName = "unknown";
+	connections.navPathServiceOut.serviceName = "unknown";
+	connections.navPathServiceOut.interval = 1;
+	connections.navPathServiceOut.roboticMiddleware = "ACE_SmartSoft";
+	connections.editorTask.minActFreq = 0.0;
+	connections.editorTask.maxActFreq = 0.0;
+	// scheduling default parameters
+	connections.editorTask.scheduler = "DEFAULT";
+	connections.editorTask.priority = -1;
+	connections.editorTask.cpuAffinity = -1;
 	
 }
 
@@ -76,6 +99,38 @@ void ComponentWebots::setStartupFinished() {
 }
 
 
+Smart::StatusCode ComponentWebots::connectCommKBQueryReq(const std::string &serverName, const std::string &serviceName) {
+	Smart::StatusCode status;
+	
+	if(connections.commKBQueryReq.initialConnect == false) {
+		return Smart::SMART_OK;
+	}
+	std::cout << "connecting to: " << serverName << "; " << serviceName << std::endl;
+	status = commKBQueryReq->connect(serverName, serviceName);
+	while(status != Smart::SMART_OK)
+	{
+		ACE_OS::sleep(ACE_Time_Value(0,500000));
+		status = COMP->commKBQueryReq->connect(serverName, serviceName);
+	}
+	std::cout << "connected.\n";
+	return status;
+}
+Smart::StatusCode ComponentWebots::connectNavPathServiceOut(const std::string &serverName, const std::string &serviceName) {
+	Smart::StatusCode status;
+	
+	if(connections.navPathServiceOut.initialConnect == false) {
+		return Smart::SMART_OK;
+	}
+	std::cout << "connecting to: " << serverName << "; " << serviceName << std::endl;
+	status = navPathServiceOut->connect(serverName, serviceName);
+	while(status != Smart::SMART_OK)
+	{
+		ACE_OS::sleep(ACE_Time_Value(0,500000));
+		status = COMP->navPathServiceOut->connect(serverName, serviceName);
+	}
+	std::cout << "connected.\n";
+	return status;
+}
 
 
 /**
@@ -85,6 +140,10 @@ void ComponentWebots::setStartupFinished() {
 Smart::StatusCode ComponentWebots::connectAndStartAllServices() {
 	Smart::StatusCode status = Smart::SMART_OK;
 	
+	status = connectCommKBQueryReq(connections.commKBQueryReq.serverName, connections.commKBQueryReq.serviceName);
+	if(status != Smart::SMART_OK) return status;
+	status = connectNavPathServiceOut(connections.navPathServiceOut.serverName, connections.navPathServiceOut.serviceName);
+	if(status != Smart::SMART_OK) return status;
 	return status;
 }
 
@@ -92,6 +151,28 @@ Smart::StatusCode ComponentWebots::connectAndStartAllServices() {
  * Start all tasks contained in this component.
  */
 void ComponentWebots::startAllTasks() {
+	// start task EditorTask
+	if(connections.editorTask.scheduler != "DEFAULT") {
+		ACE_Sched_Params editorTask_SchedParams(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF);
+		if(connections.editorTask.scheduler == "FIFO") {
+			editorTask_SchedParams.policy(ACE_SCHED_FIFO);
+			#if defined(ACE_HAS_PTHREADS)
+				editorTask_SchedParams.priority(ACE_THR_PRI_FIFO_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				editorTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
+		} else if(connections.editorTask.scheduler == "RR") {
+			editorTask_SchedParams.policy(ACE_SCHED_RR);
+			#if defined(ACE_HAS_PTHREADS)
+				editorTask_SchedParams.priority(ACE_THR_PRI_RR_MIN);
+			#elif defined (ACE_HAS_WTHREADS)
+				editorTask_SchedParams.priority(THREAD_PRIORITY_IDLE);
+			#endif
+		}
+		editorTask->start(editorTask_SchedParams, connections.editorTask.cpuAffinity);
+	} else {
+		editorTask->start();
+	}
 }
 
 /**
@@ -155,6 +236,9 @@ void ComponentWebots::init(int argc, char *argv[])
 		// TODO: set minCycleTime from Ini-file
 		
 		// create client ports
+		commKBQueryReq = portFactoryRegistry[connections.commKBQueryReq.roboticMiddleware]->createCommKBQueryReq();
+		navPathServiceOut = portFactoryRegistry[connections.navPathServiceOut.roboticMiddleware]->createNavPathServiceOut();
+		navPathServiceOutWrapper = new NavPathServiceOutWrapper(navPathServiceOut);
 		
 		// create InputTaskTriggers and UpcallManagers
 		
@@ -174,10 +258,43 @@ void ComponentWebots::init(int argc, char *argv[])
 		
 		wiringSlave = new SmartACE::WiringSlave(component);
 		// add client port to wiring slave
+		if(connections.commKBQueryReq.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::QueryClient<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse>*>(commKBQueryReq)->add(wiringSlave, connections.commKBQueryReq.wiringName);
+		}
+		if(connections.navPathServiceOut.roboticMiddleware == "ACE_SmartSoft") {
+			//FIXME: this must also work with other implementations
+			dynamic_cast<SmartACE::SendClient<DomainRobotFleetNavigation::CommNavPath>*>(navPathServiceOut)->add(wiringSlave, connections.navPathServiceOut.wiringName);
+		}
 		
 		// create parameter slave
 		param = new SmartACE::ParameterSlave(component, &paramHandler);
 		
+		
+		// create Task EditorTask
+		editorTask = new EditorTask(component);
+		// configure input-links
+		// configure task-trigger (if task is configurable)
+		if(connections.editorTask.trigger == "PeriodicTimer") {
+			// create PeriodicTimerTrigger
+			int microseconds = (int)(1000.0*1000.0 / connections.editorTask.periodicActFreq);
+			if(microseconds > 0) {
+				Smart::TimedTaskTrigger *triggerPtr = new Smart::TimedTaskTrigger();
+				triggerPtr->attach(editorTask);
+				component->getTimerManager()->scheduleTimer(triggerPtr, (void *) 0, std::chrono::microseconds(microseconds), std::chrono::microseconds(microseconds));
+				// store trigger in class member
+				editorTaskTrigger = triggerPtr;
+			} else {
+				std::cerr << "ERROR: could not set-up Timer with cycle-time " << microseconds << " as activation source for Task EditorTask" << std::endl;
+			}
+		} else if(connections.editorTask.trigger == "DataTriggered") {
+			editorTaskTrigger = getInputTaskTriggerFromString(connections.editorTask.inPortRef);
+			if(editorTaskTrigger != NULL) {
+				editorTaskTrigger->attach(editorTask, connections.editorTask.prescale);
+			} else {
+				std::cerr << "ERROR: could not set-up InPort " << connections.editorTask.inPortRef << " as activation source for Task EditorTask" << std::endl;
+			}
+		} 
 		
 		
 		// link observers with subjects
@@ -239,12 +356,21 @@ void ComponentWebots::fini()
 	// unlink all observers
 	
 	// destroy all task instances
+	// unlink all UpcallManagers
+	// unlink the TaskTrigger
+	if(editorTaskTrigger != NULL){
+		editorTaskTrigger->detach(editorTask);
+		delete editorTask;
+	}
 
 	// destroy all input-handler
 
 	// destroy InputTaskTriggers and UpcallManagers
 
 	// destroy client ports
+	delete commKBQueryReq;
+	delete navPathServiceOutWrapper;
+	delete navPathServiceOut;
 
 	// destroy request-handlers
 
@@ -346,8 +472,43 @@ void ComponentWebots::loadParameter(int argc, char *argv[])
 			parameter.getBoolean("component", "useLogger", connections.component.useLogger);
 		}
 		
+		// load parameters for client CommKBQueryReq
+		parameter.getBoolean("CommKBQueryReq", "initialConnect", connections.commKBQueryReq.initialConnect);
+		parameter.getString("CommKBQueryReq", "serviceName", connections.commKBQueryReq.serviceName);
+		parameter.getString("CommKBQueryReq", "serverName", connections.commKBQueryReq.serverName);
+		parameter.getString("CommKBQueryReq", "wiringName", connections.commKBQueryReq.wiringName);
+		if(parameter.checkIfParameterExists("CommKBQueryReq", "roboticMiddleware")) {
+			parameter.getString("CommKBQueryReq", "roboticMiddleware", connections.commKBQueryReq.roboticMiddleware);
+		}
+		// load parameters for client NavPathServiceOut
+		parameter.getBoolean("NavPathServiceOut", "initialConnect", connections.navPathServiceOut.initialConnect);
+		parameter.getString("NavPathServiceOut", "serviceName", connections.navPathServiceOut.serviceName);
+		parameter.getString("NavPathServiceOut", "serverName", connections.navPathServiceOut.serverName);
+		parameter.getString("NavPathServiceOut", "wiringName", connections.navPathServiceOut.wiringName);
+		if(parameter.checkIfParameterExists("NavPathServiceOut", "roboticMiddleware")) {
+			parameter.getString("NavPathServiceOut", "roboticMiddleware", connections.navPathServiceOut.roboticMiddleware);
+		}
 		
 		
+		// load parameters for task EditorTask
+		parameter.getDouble("EditorTask", "minActFreqHz", connections.editorTask.minActFreq);
+		parameter.getDouble("EditorTask", "maxActFreqHz", connections.editorTask.maxActFreq);
+		parameter.getString("EditorTask", "triggerType", connections.editorTask.trigger);
+		if(connections.editorTask.trigger == "PeriodicTimer") {
+			parameter.getDouble("EditorTask", "periodicActFreqHz", connections.editorTask.periodicActFreq);
+		} else if(connections.editorTask.trigger == "DataTriggered") {
+			parameter.getString("EditorTask", "inPortRef", connections.editorTask.inPortRef);
+			parameter.getInteger("EditorTask", "prescale", connections.editorTask.prescale);
+		}
+		if(parameter.checkIfParameterExists("EditorTask", "scheduler")) {
+			parameter.getString("EditorTask", "scheduler", connections.editorTask.scheduler);
+		}
+		if(parameter.checkIfParameterExists("EditorTask", "priority")) {
+			parameter.getInteger("EditorTask", "priority", connections.editorTask.priority);
+		}
+		if(parameter.checkIfParameterExists("EditorTask", "cpuAffinity")) {
+			parameter.getInteger("EditorTask", "cpuAffinity", connections.editorTask.cpuAffinity);
+		}
 		
 		
 		// load parameters for all registered component-extensions

@@ -34,10 +34,10 @@
 #include "CommManipulationPlannerObjectsOpcUa/CommManipulationPlannerEventResultOpcUa.hh"
 #include "CommManipulationPlannerObjectsOpcUa/CommManipulationPlannerEventStateOpcUa.hh"
 #include "CommManipulatorObjectsOpcUa/CommGripperStateOpcUa.hh"
+#include "CommManipulatorObjectsOpcUa/CommManipulationTrajectoryOpcUa.hh"
 #include "CommManipulatorObjectsOpcUa/CommManipulatorEventParameterOpcUa.hh"
 #include "CommManipulatorObjectsOpcUa/CommManipulatorEventResultOpcUa.hh"
 #include "CommManipulatorObjectsOpcUa/CommManipulatorEventStateOpcUa.hh"
-#include "CommManipulatorObjectsOpcUa/CommManipulatorTrajectoryOpcUa.hh"
 #include "CommManipulatorObjectsOpcUa/CommMobileManipulatorStateOpcUa.hh"
 #include "CommObjectRecognitionObjectsOpcUa/CommObjectRecognitionEnvironmentOpcUa.hh"
 #include "CommObjectRecognitionObjectsOpcUa/CommObjectRecognitionIdOpcUa.hh"
@@ -109,9 +109,9 @@ Smart::IQueryClientPattern<CommObjectRecognitionObjects::CommObjectRecognitionId
 	return new SeRoNet::OPCUA::Client::QueryClient<CommObjectRecognitionObjects::CommObjectRecognitionId, CommObjectRecognitionObjects::CommObjectRecognitionObjectProperties>(componentImpl);
 }
 
-Smart::ISendClientPattern<CommManipulatorObjects::CommManipulatorTrajectory> * ComponentOpenRaveOpcUaBackendPortFactory::createSendTrajectoryOut()
+Smart::ISendClientPattern<CommManipulatorObjects::CommManipulationTrajectory> * ComponentOpenRaveOpcUaBackendPortFactory::createSendTrajectoryOut()
 {
-	return new SeRoNet::OPCUA::Client::SendClient<CommManipulatorObjects::CommManipulatorTrajectory>(componentImpl);
+	return new SeRoNet::OPCUA::Client::SendClient<CommManipulatorObjects::CommManipulationTrajectory>(componentImpl);
 }
 
 

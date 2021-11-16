@@ -45,6 +45,7 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_LIST_DIR}/src
   ${CMAKE_CURRENT_LIST_DIR}/src-gen
   ${CMAKE_CURRENT_LIST_DIR}/src-gen/params
+  $ENV{WEBOTS_HOME}/include/controller/cpp
 )
 
 # collect the toolchain-generated source-files
@@ -60,6 +61,8 @@ ADD_EXECUTABLE(${PROJECT_NAME} ${SRC} ${SRC_GEN} ${SRC_GEN_PARAMS} ${FURTHER_SRC
 
 # link your external libraries here (if there are any)
 #TARGET_LINK_LIBRARIES(${PROJECT_NAME} <your-libs>)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} $ENV{WEBOTS_HOME}/lib/controller/libCppController.so)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${WEBOTS})
 
 INCLUDE(${CMAKE_CURRENT_LIST_DIR}/src-gen/MixedPortTargetConfigs.cmake)
 

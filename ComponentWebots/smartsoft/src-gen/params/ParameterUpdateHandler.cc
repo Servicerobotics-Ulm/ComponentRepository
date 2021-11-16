@@ -140,6 +140,10 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.General.WorldPath = commitState.General.WorldPath;
 		}
+		if(parameter.getBoolean("General", "enableEditor", commitState.General.enableEditor))
+		{
+			globalState.General.enableEditor = commitState.General.enableEditor;
+		}
 		
 		//
 		// load extended parameters (if any)

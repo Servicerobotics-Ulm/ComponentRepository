@@ -41,6 +41,15 @@ public:
 	// trigger user methods
 	
 		
+		virtual void handleCommManipulatorObjects_ManipulatorParameter_ADD_TCP(const std::string &name, const double &x, const double &y, const double &z, const double &rX, const double &rY, const double &rZ) = 0;
+	
+		
+		virtual void handleCommManipulatorObjects_ManipulatorParameter_ADD_TOOL(const std::string &name, const std::list<float> &center_of_grav, const float &weight, const std::list<float> &inertia) = 0;
+	
+		
+		virtual void handleCommManipulatorObjects_ManipulatorParameter_CANCEL_MOTION() = 0;
+	
+		
 		virtual void handleCommManipulatorObjects_ManipulatorParameter_CLEAR_PCS() = 0;
 	
 		
@@ -56,13 +65,28 @@ public:
 		virtual void handleCommManipulatorObjects_ManipulatorParameter_MOVE_PATH(const std::string &pathID, const bool &overwriteSpeed, const double &acc, const double &speed) = 0;
 	
 		
+		virtual void handleCommManipulatorObjects_ManipulatorParameter_SET_ACTIVE_TCP(const std::string &name) = 0;
+	
+		
+		virtual void handleCommManipulatorObjects_ManipulatorParameter_SET_ACTIVE_TOOL(const std::string &name) = 0;
+	
+		
 		virtual void handleCommManipulatorObjects_ManipulatorParameter_SET_PCS(const double &x, const double &y, const double &z, const double &rX, const double &rY, const double &rZ) = 0;
 	
 		
 		virtual void handleCommManipulatorObjects_ManipulatorParameter_SET_TCP(const double &x, const double &y, const double &z, const double &rX, const double &rY, const double &rZ) = 0;
 	
 		
+		virtual void handleCommManipulatorObjects_ManipulatorParameter_START_FREEDRIVE() = 0;
+	
+		
 		virtual void handleCommManipulatorObjects_ManipulatorParameter_START_PROGRAM() = 0;
+	
+		
+		virtual void handleCommManipulatorObjects_ManipulatorParameter_STOP_FREEDRIVE() = 0;
+	
+		
+		virtual void handleCommManipulatorObjects_ManipulatorParameter_STOP_PROGRAM() = 0;
 	
 	// extended trigger user methods
 	
@@ -156,14 +180,22 @@ protected:
 	
 private:
 	// trigger internal methods
+	void handleCommManipulatorObjects_ManipulatorParameter_ADD_TCPCore(const std::string &name, const double &x, const double &y, const double &z, const double &rX, const double &rY, const double &rZ);
+	void handleCommManipulatorObjects_ManipulatorParameter_ADD_TOOLCore(const std::string &name, const std::list<float> &center_of_grav, const float &weight, const std::list<float> &inertia);
+	void handleCommManipulatorObjects_ManipulatorParameter_CANCEL_MOTIONCore();
 	void handleCommManipulatorObjects_ManipulatorParameter_CLEAR_PCSCore();
 	void handleCommManipulatorObjects_ManipulatorParameter_LOAD_PROGRAMCore(const std::string &name);
 	void handleCommManipulatorObjects_ManipulatorParameter_MOVE_CIRCULARCore(const double &viaX, const double &viaY, const double &viaZ, const double &viaRX, const double &viaRY, const double &viaRZ, const double &goalX, const double &goalY, const double &goalZ, const double &goalRX, const double &goalRY, const double &goalRZ, const double &acc, const double &speed);
 	void handleCommManipulatorObjects_ManipulatorParameter_MOVE_LINEARCore(const double &goalX, const double &goalY, const double &goalZ, const double &goalRX, const double &goalRY, const double &goalRZ, const double &acc, const double &speed);
 	void handleCommManipulatorObjects_ManipulatorParameter_MOVE_PATHCore(const std::string &pathID, const bool &overwriteSpeed, const double &acc, const double &speed);
+	void handleCommManipulatorObjects_ManipulatorParameter_SET_ACTIVE_TCPCore(const std::string &name);
+	void handleCommManipulatorObjects_ManipulatorParameter_SET_ACTIVE_TOOLCore(const std::string &name);
 	void handleCommManipulatorObjects_ManipulatorParameter_SET_PCSCore(const double &x, const double &y, const double &z, const double &rX, const double &rY, const double &rZ);
 	void handleCommManipulatorObjects_ManipulatorParameter_SET_TCPCore(const double &x, const double &y, const double &z, const double &rX, const double &rY, const double &rZ);
+	void handleCommManipulatorObjects_ManipulatorParameter_START_FREEDRIVECore();
 	void handleCommManipulatorObjects_ManipulatorParameter_START_PROGRAMCore();
+	void handleCommManipulatorObjects_ManipulatorParameter_STOP_FREEDRIVECore();
+	void handleCommManipulatorObjects_ManipulatorParameter_STOP_PROGRAMCore();
 	
 	// extended trigger internal methods 
 };

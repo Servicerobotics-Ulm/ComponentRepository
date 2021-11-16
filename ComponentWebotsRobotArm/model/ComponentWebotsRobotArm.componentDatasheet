@@ -34,9 +34,9 @@ COMP -> sendTrajectoryServiceOut -> send(trajectory);
 ```
 
 Coordinate systems of robot arm and vacuum gripper (tool center point):
-![image](CoordinateSystemRobotArm.png)
+![image](doc/CoordinateSystemRobotArm.png)
 
-Set the pose (position and orientation) of the vacuum gripper in the coordinate system of the robot arm.
+Move the robot arm to a given pose (position and orientation) of the end tool relative to the base mounting point.
 The robot arms 'UR5' or 'UR5e' or 'UR10e' with a vacuum gripper of length 0.11m are supported.
 
 The orientation of the vacuum gripper's coordinate system is given by three [Euler Angles](https://web.mit.edu/2.05/www/Handout/HO2.PDF) called azimuth, elevation, roll using zyx convention (1. angle rotates around z-axis, 2. y, 3. x) 

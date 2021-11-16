@@ -35,10 +35,10 @@
 #include "CommBasicObjectsOpcUa/CommDigitalInputEventStateOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommIOValuesOpcUa.hh"
 #include "CommBasicObjectsOpcUa/CommVoidOpcUa.hh"
+#include "CommManipulatorObjectsOpcUa/CommManipulationTrajectoryOpcUa.hh"
 #include "CommManipulatorObjectsOpcUa/CommManipulatorEventParameterOpcUa.hh"
 #include "CommManipulatorObjectsOpcUa/CommManipulatorEventResultOpcUa.hh"
 #include "CommManipulatorObjectsOpcUa/CommManipulatorEventStateOpcUa.hh"
-#include "CommManipulatorObjectsOpcUa/CommManipulatorTrajectoryOpcUa.hh"
 #include "CommManipulatorObjectsOpcUa/CommMobileManipulatorProgramsOpcUa.hh"
 #include "CommManipulatorObjectsOpcUa/CommMobileManipulatorStateOpcUa.hh"
 
@@ -104,9 +104,9 @@ Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::C
 	return new SeRoNet::OPCUA::Server::QueryServer<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorPrograms>(componentImpl, serviceName);
 }
 
-Smart::ISendServerPattern<CommManipulatorObjects::CommManipulatorTrajectory> * ComponentWebotsRobotArmOpcUaBackendPortFactory::createTrajectorySendServer(const std::string &serviceName)
+Smart::ISendServerPattern<CommManipulatorObjects::CommManipulationTrajectory> * ComponentWebotsRobotArmOpcUaBackendPortFactory::createTrajectorySendServer(const std::string &serviceName)
 {
-	return new SeRoNet::OPCUA::Server::SendServer<CommManipulatorObjects::CommManipulatorTrajectory>(componentImpl, serviceName);
+	return new SeRoNet::OPCUA::Server::SendServer<CommManipulatorObjects::CommManipulationTrajectory>(componentImpl, serviceName);
 }
 
 

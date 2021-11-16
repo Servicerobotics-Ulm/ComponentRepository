@@ -26,23 +26,23 @@
  * of incoming data to all associated (i.e. attached) Upcalls.
  */
 class TrajectorySendServerUpcallManager
-:	public Smart::IInputHandler<CommManipulatorObjects::CommManipulatorTrajectory>
+:	public Smart::IInputHandler<CommManipulatorObjects::CommManipulationTrajectory>
 {
 private:
 	// list of associated updalls
 	std::list<TrajectorySendServerUpcallInterface*> upcalls;
 
 	// call the on_trajectorySendServer of all the attached TrajectorySendServerUpcallInterfaces
-	void notify_upcalls(const CommManipulatorObjects::CommManipulatorTrajectory &input);
+	void notify_upcalls(const CommManipulatorObjects::CommManipulationTrajectory &input);
 	
 protected:
-	virtual void handle_input(const CommManipulatorObjects::CommManipulatorTrajectory &input) {
+	virtual void handle_input(const CommManipulatorObjects::CommManipulationTrajectory &input) {
 		// relay input-handling to all attached TrajectorySendServerUpcallInterfaces
 		this->notify_upcalls(input);
 	}
 public:
 	TrajectorySendServerUpcallManager(
-		Smart::InputSubject<CommManipulatorObjects::CommManipulatorTrajectory> *subject,
+		Smart::InputSubject<CommManipulatorObjects::CommManipulationTrajectory> *subject,
 		const int &prescaleFactor=1
 	);
 	virtual ~TrajectorySendServerUpcallManager();

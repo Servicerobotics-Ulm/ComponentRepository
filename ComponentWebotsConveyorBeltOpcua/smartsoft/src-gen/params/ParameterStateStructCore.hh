@@ -68,64 +68,6 @@ public:
 		}; // end class webotsType
 		
 		/**
-		 * Definition of Parameter ProductionStations
-		 */
-		class ProductionStationsType 
-		{
-			friend class ParamUpdateHandler;
-		protected:
-			/**
-			 * here are the member definitions
-			 */
-			std::list<std::string> stationName;
-			std::list<std::string> stationUrl;
-		
-		public:
-			// default constructor
-			ProductionStationsType() {
-				stationName.push_back("MPS0");
-				stationName.push_back("MPS1");
-				stationName.push_back("MPS2");
-				stationName.push_back("MPS3");
-				stationUrl.push_back("opc.tcp://localhost:4840");
-				stationUrl.push_back("opc.tcp://localhost:4841");
-				stationUrl.push_back("opc.tcp://localhost:4842");
-				stationUrl.push_back("PASSIVE_STATION");
-			}
-		
-			/**
-			 * here are the public getters
-			 */
-			inline std::list<std::string> getStationName() const { return stationName; }
-			inline std::list<std::string> getStationUrl() const { return stationUrl; }
-			
-			void to_ostream(std::ostream &os = std::cout) const
-			{
-				os << "ProductionStations(";
-				os << "stationName = [";
-				for(auto stationNameIt = stationName.begin(); stationNameIt != stationName.end(); stationNameIt++)
-				{
-					if(stationNameIt != stationName.begin()) {
-						os << ", ";
-					}
-					os << *stationNameIt;
-				}
-				os << "]"; os << ", ";
-				os << "stationUrl = [";
-				for(auto stationUrlIt = stationUrl.begin(); stationUrlIt != stationUrl.end(); stationUrlIt++)
-				{
-					if(stationUrlIt != stationUrl.begin()) {
-						os << ", ";
-					}
-					os << *stationUrlIt;
-				}
-				os << "]";
-				os << ")\n";
-			}
-			
-		}; // end class ProductionStationsType
-		
-		/**
 		 * Definition of Parameter Robot
 		 */
 		class RobotType 
@@ -258,7 +200,6 @@ public:
 protected:
 
 	// Internal params
-	ProductionStationsType ProductionStations;
 	RobotType Robot;
 	webotsType webots;
 	
@@ -281,9 +222,6 @@ public:
 	virtual ~ParameterStateStructCore() {  }
 	
 	// internal param getters
-	ProductionStationsType getProductionStations() const {
-		return ProductionStations;
-	}
 	RobotType getRobot() const {
 		return Robot;
 	}
@@ -302,7 +240,6 @@ public:
 	void to_ostream(std::ostream &os = std::cout) const
 	{
 		// Internal params
-		ProductionStations.to_ostream(os);
 		Robot.to_ostream(os);
 		webots.to_ostream(os);
 		
@@ -315,10 +252,6 @@ public:
 	std::string getAsJSONString() {
 		nlohmann::json param;
 	
-		param["ProductionStations"] = nlohmann::json {
-			{"stationName" , getProductionStations().getStationName()},
-			{"stationUrl" , getProductionStations().getStationUrl()}
-		};
 		param["Robot"] = nlohmann::json {
 			{"belt_time_out_sec" , getRobot().getBelt_time_out_sec()},
 			{"ignore_station_communication_unload_time_sec" , getRobot().getIgnore_station_communication_unload_time_sec()}

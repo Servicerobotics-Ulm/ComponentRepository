@@ -68,6 +68,58 @@ public:
 		}; // end class webotsType
 		
 		/**
+		 * Definition of Parameter TCP
+		 */
+		class TCPType 
+		{
+			friend class ParamUpdateHandler;
+		protected:
+			/**
+			 * here are the member definitions
+			 */
+			double azimuth;
+			double elevation;
+			double roll;
+			int x;
+			int y;
+			int z;
+		
+		public:
+			// default constructor
+			TCPType() {
+				azimuth = 0;
+				elevation = 0;
+				roll = 0;
+				x = 0;
+				y = 0;
+				z = 0;
+			}
+		
+			/**
+			 * here are the public getters
+			 */
+			inline double getAzimuth() const { return azimuth; }
+			inline double getElevation() const { return elevation; }
+			inline double getRoll() const { return roll; }
+			inline int getX() const { return x; }
+			inline int getY() const { return y; }
+			inline int getZ() const { return z; }
+			
+			void to_ostream(std::ostream &os = std::cout) const
+			{
+				os << "TCP(";
+				os << "azimuth = " << azimuth; os << ", ";
+				os << "elevation = " << elevation; os << ", ";
+				os << "roll = " << roll; os << ", ";
+				os << "x = " << x; os << ", ";
+				os << "y = " << y; os << ", ";
+				os << "z = " << z;
+				os << ")\n";
+			}
+			
+		}; // end class TCPType
+		
+		/**
 		 * Definition of Parameter base
 		 */
 		class baseType 
@@ -77,23 +129,47 @@ public:
 			/**
 			 * here are the member definitions
 			 */
+			double azimuth;
+			double elevation;
 			bool on_base;
+			double roll;
+			int x;
+			int y;
+			int z;
 		
 		public:
 			// default constructor
 			baseType() {
+				azimuth = 0;
+				elevation = 0;
 				on_base = false;
+				roll = 0;
+				x = 0;
+				y = 0;
+				z = 0;
 			}
 		
 			/**
 			 * here are the public getters
 			 */
+			inline double getAzimuth() const { return azimuth; }
+			inline double getElevation() const { return elevation; }
 			inline bool getOn_base() const { return on_base; }
+			inline double getRoll() const { return roll; }
+			inline int getX() const { return x; }
+			inline int getY() const { return y; }
+			inline int getZ() const { return z; }
 			
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "base(";
-				os << "on_base = " << on_base;
+				os << "azimuth = " << azimuth; os << ", ";
+				os << "elevation = " << elevation; os << ", ";
+				os << "on_base = " << on_base; os << ", ";
+				os << "roll = " << roll; os << ", ";
+				os << "x = " << x; os << ", ";
+				os << "y = " << y; os << ", ";
+				os << "z = " << z;
 				os << ")\n";
 			}
 			
@@ -221,6 +297,7 @@ public:
 protected:
 
 	// Internal params
+	TCPType TCP;
 	baseType base;
 	manipulatorType manipulator;
 	webotsType webots;
@@ -244,6 +321,9 @@ public:
 	virtual ~ParameterStateStructCore() {  }
 	
 	// internal param getters
+	TCPType getTCP() const {
+		return TCP;
+	}
 	baseType getBase() const {
 		return base;
 	}
@@ -265,6 +345,7 @@ public:
 	void to_ostream(std::ostream &os = std::cout) const
 	{
 		// Internal params
+		TCP.to_ostream(os);
 		base.to_ostream(os);
 		manipulator.to_ostream(os);
 		webots.to_ostream(os);
@@ -278,8 +359,22 @@ public:
 	std::string getAsJSONString() {
 		nlohmann::json param;
 	
+		param["TCP"] = nlohmann::json {
+			{"azimuth" , getTCP().getAzimuth()},
+			{"elevation" , getTCP().getElevation()},
+			{"roll" , getTCP().getRoll()},
+			{"x" , getTCP().getX()},
+			{"y" , getTCP().getY()},
+			{"z" , getTCP().getZ()}
+		};
 		param["base"] = nlohmann::json {
-			{"on_base" , getBase().getOn_base()}
+			{"azimuth" , getBase().getAzimuth()},
+			{"elevation" , getBase().getElevation()},
+			{"on_base" , getBase().getOn_base()},
+			{"roll" , getBase().getRoll()},
+			{"x" , getBase().getX()},
+			{"y" , getBase().getY()},
+			{"z" , getBase().getZ()}
 		};
 		param["manipulator"] = nlohmann::json {
 			{"azimuth" , getManipulator().getAzimuth()},

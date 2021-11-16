@@ -22,7 +22,7 @@
 
 // other extensin includes
 
-SendTrajectoryOutWrapper::SendTrajectoryOutWrapper(Smart::ISendClientPattern<CommManipulatorObjects::CommManipulatorTrajectory> *sendTrajectoryOut) {
+SendTrajectoryOutWrapper::SendTrajectoryOutWrapper(Smart::ISendClientPattern<CommManipulatorObjects::CommManipulationTrajectory> *sendTrajectoryOut) {
 	this->sendTrajectoryOut = sendTrajectoryOut;
 	update_status = Smart::SMART_NODATA;
 }
@@ -31,14 +31,14 @@ SendTrajectoryOutWrapper::~SendTrajectoryOutWrapper() {
 }
 
 
-Smart::StatusCode SendTrajectoryOutWrapper::send(CommManipulatorObjects::CommManipulatorTrajectory &sendTrajectoryOutDataObject) {
+Smart::StatusCode SendTrajectoryOutWrapper::send(CommManipulatorObjects::CommManipulationTrajectory &sendTrajectoryOutDataObject) {
 	std::unique_lock<std::mutex> lock(update_mutex);
 	updateData = sendTrajectoryOutDataObject;
 	update_status = sendTrajectoryOut->send(sendTrajectoryOutDataObject);
 	return update_status;
 }
 
-Smart::StatusCode SendTrajectoryOutWrapper::getLatestUpdate(CommManipulatorObjects::CommManipulatorTrajectory &sendTrajectoryOutDataObject) {
+Smart::StatusCode SendTrajectoryOutWrapper::getLatestUpdate(CommManipulatorObjects::CommManipulationTrajectory &sendTrajectoryOutDataObject) {
 	std::unique_lock<std::mutex> lock(update_mutex);
 	sendTrajectoryOutDataObject = updateData;
 	return update_status;

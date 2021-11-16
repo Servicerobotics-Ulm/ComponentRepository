@@ -48,7 +48,7 @@
 #include "WebotsTaskCore.hh"
 #include "OpcUaProductionStation.hh"
 
-#include <webots/Robot.hpp>
+#include <webots/Supervisor.hpp>
 #include <webots/Motor.hpp>
 #include <webots/LED.hpp>
 #include <webots/Motor.hpp>

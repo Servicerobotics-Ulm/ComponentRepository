@@ -69,6 +69,12 @@ void WebotsTask::sendEvent(RobotinoConveyerBeltEventType t) {
   COMP->robotinoConveyerBeltEventOut->put(goalEventState);
 }
 
+
+/*
+stationName : String [*] = ["MPS0", "MPS1", "MPS2", "MPS3"];
+stationUrl : String [*] = ["opc.tcp://localhost:4840", "opc.tcp://localhost:4841", "opc.tcp://localhost:4842", "PASSIVE_STATION"];
+*/
+
 int WebotsTask::on_execute() {
   ProductionStation station;
   ParameterStateStruct params = COMP->getParameters();
@@ -79,11 +85,22 @@ int WebotsTask::on_execute() {
   char environment[256] = "WEBOTS_ROBOT_NAME=";
   putenv(strcat(environment, robotName.c_str()));
   std::cout << "\033[0;32mConnect to webots robot with name '" << robotName << "' ...\033[0m" << std::endl;
-  Robot *robot = new Robot();
+  Supervisor *robot = new Supervisor();
   if (!robot) {
     cerr << "Webots robot '" << robotName << "' not found" << endl;
     return -1;
   }
+  webots::Node* node = robot->getFromDef("Stations");
+  if(!node) {
+      std::cerr << "ERROR: no DEF Stations Group found" << std::endl;
+      return 1;
+  }
+  webots::Field* stations = node->getField("children");
+  if(!stations || node->getTypeName()!="Group") {
+      std::cerr << "ERROR LINE" << __LINE__ << std::endl;
+      return 1;
+  }
+
   Motor *motor = robot->getMotor("Belt_Motor");
   motor->setPosition(INFINITY);
   LED *greenLED = robot->getLED("green_led");
@@ -104,6 +121,9 @@ int WebotsTask::on_execute() {
   bool isPassiveStation;
   int _counter = 0;
   while (robot->step(robot->getBasicTimeStep()) != -1) {
+    int key=keyboard->getKey();
+    if(key=='-' || key==7) // Editor may delete Station
+      continue;
     bool isBoxPresent = dsBoxPresent->getValue() > 0.3;
 
     Program program = newProgram;
@@ -178,14 +198,30 @@ int WebotsTask::on_execute() {
       }
       if (isAutomatic) {
         int stationId = getStationId();
-        list<string> urlList = params.getProductionStations().getStationUrl();
-        vector<string> urlVector { begin(urlList), end(urlList) };
-        list<string> nameList = params.getProductionStations().getStationName();
-        vector<string> nameVector { begin(nameList), end(nameList) };
-        if (stationId < 0 || stationId >= urlVector.size())
+
+        Node *stationNode;
+        int stationNr = stations->getCount();
+        while(stationNr--) {
+          stationNode = stations->getMFNode(stationNr);
+          webots::Field *idField = stationNode->getField("id");
+          if(idField==NULL) {
+            std::cerr << (stationNr+1) << ". children in Editor Stations is wrong (has no id field)"
+                << std::endl;
+          } else if(idField->getSFInt32() == stationId)
+              break;
+        }
+        string nameVector = "";
+        string urlVector = "";
+        if (stationNr<0) {
           isError = true;
-        else {
-          isPassiveStation = urlVector[stationId] == "PASSIVE_STATION";
+        } else {
+          nameVector = "Station" + to_string(stationId);
+          Field *portField = stationNode->getField("port");
+          if(portField!=NULL)
+             urlVector = "opc.tcp://localhost:" + to_string(portField->getSFInt32());
+          else
+             urlVector = "PASSIVE_STATION";
+          isPassiveStation = urlVector == "PASSIVE_STATION";
           if (isLoad && isPassiveStation)
             isError = true;
         }
@@ -198,7 +234,7 @@ int WebotsTask::on_execute() {
           waitTime = t + params.getRobot().getIgnore_station_communication_unload_time_sec();
         else {
           string callResult;
-          if (station.connect(urlVector[stationId], nameVector[stationId]) != OPCUA::StatusCode::ALL_OK)
+          if (station.connect(urlVector, nameVector) != OPCUA::StatusCode::ALL_OK)
             isError = true;
           else if (isLoad) {
             if (station.callStart_unloading(timeOut, callResult) != OPCUA::StatusCode::ALL_OK
@@ -235,7 +271,6 @@ int WebotsTask::on_execute() {
         isRed = !isRed;
         blinkTime = t + 0.5;
       }
-      int key = keyboard->getKey();
       if ((isManual || program == prSignalError) && (key == 4 || key == 5)) // 4 = return key, 5 = enter key
         programCounter = 3;
     }

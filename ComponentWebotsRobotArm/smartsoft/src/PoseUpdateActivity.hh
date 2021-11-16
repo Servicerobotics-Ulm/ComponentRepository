@@ -46,7 +46,7 @@
 #define _POSEUPDATEACTIVITY_HH
 
 #include "PoseUpdateActivityCore.hh"
-#include "CommManipulatorObjects/CommManipulatorTrajectory.hh"
+#include "CommManipulatorObjects/CommManipulationTrajectory.hh"
 #include <webots/Supervisor.hpp>
 #include <eigen3/Eigen/Geometry>
 
@@ -70,8 +70,9 @@ private:
     std::array<double, nrJoints> jointPosition;
     bool jointValid = false;
     std::vector<Trajectory> trajectory;
-    Eigen::MatrixXd targetTcpPoseMatrix; // target pose of TCP relative to robot arm
-    std::array<double, 6> tcpPoseArgs; // actual pose of TCP relative to robot arm
+
+    Eigen::MatrixXd targetTcpPoseMatrix; // target pose of toolSlot relative to robot arm
+    std::array<double, 6> tcpPoseArgs; // actual pose of toolSlot relative to robot arm
     bool isTcpMovement = false; // false = move trajectory of joint angular positions; true = move to TCP position
 
     virtual void on_baseStateServiceIn(const CommBasicObjects::CommBaseState &input);
@@ -87,7 +88,7 @@ public:
 	virtual int on_exit();
 
 	void handleEnterState(const std::string &substate);
-    void on_trajectorySendServer(const CommManipulatorObjects::CommManipulatorTrajectory &input);
+    void on_trajectorySendServer(const CommManipulatorObjects::CommManipulationTrajectory &input);
     void getMobileManipulatorState(CommManipulatorObjects::CommMobileManipulatorState &mobileState);
     void setVacuumGripper(bool isVacuum);
 

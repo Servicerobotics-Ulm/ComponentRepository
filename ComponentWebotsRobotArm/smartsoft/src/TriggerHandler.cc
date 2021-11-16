@@ -20,6 +20,24 @@
 #include "ComponentWebotsRobotArm.hh"
 
 // trigger user methods
+void TriggerHandler::handleCommManipulatorObjects_ManipulatorParameter_ADD_TCP(const std::string &name, const double &x, const double &y, const double &z, const double &rX, const double &rY, const double &rZ)
+{
+	// implement the trigger behavior here. Be aware, if you must use blocking calls here, please set this
+	// trigger as active in the model. For an active trigger an active queue will be generated internally 
+	// (transparent for the usage here). Thus an active trigger will be called within a separate task scope.
+}
+void TriggerHandler::handleCommManipulatorObjects_ManipulatorParameter_ADD_TOOL(const std::string &name, const std::list<float> &center_of_grav, const float &weight, const std::list<float> &inertia)
+{
+	// implement the trigger behavior here. Be aware, if you must use blocking calls here, please set this
+	// trigger as active in the model. For an active trigger an active queue will be generated internally 
+	// (transparent for the usage here). Thus an active trigger will be called within a separate task scope.
+}
+void TriggerHandler::handleCommManipulatorObjects_ManipulatorParameter_CANCEL_MOTION()
+{
+	// implement the trigger behavior here. Be aware, if you must use blocking calls here, please set this
+	// trigger as active in the model. For an active trigger an active queue will be generated internally 
+	// (transparent for the usage here). Thus an active trigger will be called within a separate task scope.
+}
 void TriggerHandler::handleCommManipulatorObjects_ManipulatorParameter_CLEAR_PCS()
 {
 	// implement the trigger behavior here. Be aware, if you must use blocking calls here, please set this
@@ -50,6 +68,18 @@ void TriggerHandler::handleCommManipulatorObjects_ManipulatorParameter_MOVE_PATH
 	// trigger as active in the model. For an active trigger an active queue will be generated internally 
 	// (transparent for the usage here). Thus an active trigger will be called within a separate task scope.
 }
+void TriggerHandler::handleCommManipulatorObjects_ManipulatorParameter_SET_ACTIVE_TCP(const std::string &name)
+{
+	// implement the trigger behavior here. Be aware, if you must use blocking calls here, please set this
+	// trigger as active in the model. For an active trigger an active queue will be generated internally 
+	// (transparent for the usage here). Thus an active trigger will be called within a separate task scope.
+}
+void TriggerHandler::handleCommManipulatorObjects_ManipulatorParameter_SET_ACTIVE_TOOL(const std::string &name)
+{
+	// implement the trigger behavior here. Be aware, if you must use blocking calls here, please set this
+	// trigger as active in the model. For an active trigger an active queue will be generated internally 
+	// (transparent for the usage here). Thus an active trigger will be called within a separate task scope.
+}
 void TriggerHandler::handleCommManipulatorObjects_ManipulatorParameter_SET_PCS(const double &x, const double &y, const double &z, const double &rX, const double &rY, const double &rZ)
 {
 	// implement the trigger behavior here. Be aware, if you must use blocking calls here, please set this
@@ -62,7 +92,25 @@ void TriggerHandler::handleCommManipulatorObjects_ManipulatorParameter_SET_TCP(c
 	// trigger as active in the model. For an active trigger an active queue will be generated internally 
 	// (transparent for the usage here). Thus an active trigger will be called within a separate task scope.
 }
+void TriggerHandler::handleCommManipulatorObjects_ManipulatorParameter_START_FREEDRIVE()
+{
+	// implement the trigger behavior here. Be aware, if you must use blocking calls here, please set this
+	// trigger as active in the model. For an active trigger an active queue will be generated internally 
+	// (transparent for the usage here). Thus an active trigger will be called within a separate task scope.
+}
 void TriggerHandler::handleCommManipulatorObjects_ManipulatorParameter_START_PROGRAM()
+{
+	// implement the trigger behavior here. Be aware, if you must use blocking calls here, please set this
+	// trigger as active in the model. For an active trigger an active queue will be generated internally 
+	// (transparent for the usage here). Thus an active trigger will be called within a separate task scope.
+}
+void TriggerHandler::handleCommManipulatorObjects_ManipulatorParameter_STOP_FREEDRIVE()
+{
+	// implement the trigger behavior here. Be aware, if you must use blocking calls here, please set this
+	// trigger as active in the model. For an active trigger an active queue will be generated internally 
+	// (transparent for the usage here). Thus an active trigger will be called within a separate task scope.
+}
+void TriggerHandler::handleCommManipulatorObjects_ManipulatorParameter_STOP_PROGRAM()
 {
 	// implement the trigger behavior here. Be aware, if you must use blocking calls here, please set this
 	// trigger as active in the model. For an active trigger an active queue will be generated internally 

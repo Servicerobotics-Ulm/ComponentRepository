@@ -345,6 +345,12 @@ int ORUtil::setJoints(const std::vector<double>& jointAngles)
 int ORUtil::moveJoints(const std::vector<double>& targetJointAngles, vector<TrajectoryPoint>& resultTraj, double sampleTime,
 		unsigned int maxiter, unsigned int maxtries)
 {
+	std::cout << "TIMO !!!!!!!!!!!! moveJoints, targetJointAngles.size: " << targetJointAngles.size() << std::endl;
+	for (int i = 0; i < targetJointAngles.size(); i++) {
+		std::cout << "TIMO !!!!!!!!!!!! moveJoints, targetJointAngles: " << targetJointAngles[i] << std::endl;
+	}
+
+
 	SmartACE::SmartGuard guard(this->mutex);
 
 	int result;
@@ -837,7 +843,8 @@ int ORUtil::releaseGrabbedObject(vector<TrajectoryPoint>& resultTraj, double sam
 	SmartACE::SmartGuard guard(this->mutex);
 
 	int result = 0;
-	PyObject* pResult = PyObject_CallMethod(this->pClass, (char*) "releaseGrabbedObject", ((char*) "d"), sampleTime);
+	//PyObject* pResult = PyObject_CallMethod(this->pClass, (char*) "releaseGrabbedObject", ((char*) "d"), sampleTime);
+	PyObject* pResult = PyObject_CallMethod(this->pClass, (char*) "releaseObject", (NULL));
 	if (!PyInt_Check(pResult))
 	{
 		result = this->manipulator->parseTrajectory(pResult, resultTraj);

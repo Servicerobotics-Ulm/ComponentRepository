@@ -79,74 +79,74 @@ int TrajectorySampling::on_exit()
 	return 0;
 }
 
-void TrajectorySampling::handleJointAngles(const CommManipulatorObjects::CommManipulatorTrajectory &r,
-		std::vector<ORUtil::TrajectoryPoint>& openraveTrajectory)
-{
-	MessageHandler::handleMessage("[PathPlanningSendHandler::handleJointAngles] Planning Path.",
-			CommManipulationPlannerObjects::ManipulationPlannerEvent::PLANNING_PATH, MessageHandler::INFO, COMP->getGlobalState().getOpenRave().getDebugSend());
-
-	std::vector<double> angles;
-
-	for (uint32_t j = 0; j < r.get_joint_count(); ++j)
-	{
-		angles.push_back(r.get_joint_angle(0, j));
-	}
-
-	if (OPENRAVE->getParameter().simulation_test_ik_only && (COMP->stateSlave->tryAcquire("simulation") == Smart::SMART_OK))
-	{
-		COMP->stateSlave->release("simulation");
-		MessageHandler::handleMessage(
-				"[PathPlanningSendHandler::handleJointAngles] IK Solution Found with SIMULATION_TEST_IK_ONLY parameter.",
-				CommManipulationPlannerObjects::ManipulationPlannerEvent::PATH_FOUND, MessageHandler::INFO, COMP->getGlobalState().getOpenRave().getDebugSend());
-	}
-
-	/*else if (!OPENRAVE->planPath(angles, openraveTrajectory))
-	{
-		throw MessageHandler::ErrorException("[PathPlanningSendHandler::handleJointAngles] Path planning failed.",
-				CommManipulationPlannerObjects::ManipulationPlannerEvent::NO_PATH_FOUND);
-	}*/
-
-}
-
-void TrajectorySampling::handlePoses(const CommManipulatorObjects::CommManipulatorTrajectory &r,
-		std::vector<ORUtil::TrajectoryPoint>& openraveTrajectory)
-{
-	try
-	{
-		std::vector<double> angles;
-		double x, y, z, azimuth, elevation, roll;
-
-		// Get TCP Pose in robot coordinate frame
-		r.get_pose_TCP_robot(x, y, z, azimuth, elevation, roll, 1);
-
-		/*cout << "[PathPlanningSendHandler::handlePoses] r.get_pose_TCP_robot(x, y, z, azimuth, elevation, roll): " << x << ", " << y
-				<< ", " << z << ", " << azimuth << ", " << elevation << ", " << roll << std::endl;*/
-		CommBasicObjects::CommPose3d resultPoseAfterIteration;
-
-		if (!OPENRAVE->iterateToGetGraspingIKSolution(x, y, z, azimuth, elevation, roll, angles, resultPoseAfterIteration))
-		{
-			throw MessageHandler::ErrorException(
-					"[PathPlanningSendHandler::handlePoses] Iteration exceeded to find grasping IK solution using.",
-					CommManipulationPlannerObjects::ManipulationPlannerEvent::NO_IK_SOLUTION_FOUND);
-		}
-
-		// found IK solution for simple grasping
-		// Send PLANNING_PATH event with final TCP pose where the path is planned to
-		MessageHandler::handleMessage("[PathPlanningSendHandler::handlePoses] Planning Path.",
-				CommManipulationPlannerObjects::ManipulationPlannerEvent::PLANNING_PATH, resultPoseAfterIteration, MessageHandler::INFO,
-				COMP->getGlobalState().getOpenRave().getDebugSend());
-
-		/*if (!OPENRAVE->planPath(angles, openraveTrajectory))
-		{
-			throw MessageHandler::ErrorException("[PathPlanningSendHandler::handlePoses] Path planning failed.",
-					CommManipulationPlannerObjects::ManipulationPlannerEvent::NO_PATH_FOUND);
-		}*/
-	} catch (MessageHandler::ErrorException ex)
-	{
-		throw ex;
-	} catch (...)
-	{
-		throw MessageHandler::ErrorException("[PathPlanningSendHandler::handlePoses] Unknown error.",
-				CommManipulationPlannerObjects::ManipulationPlannerEvent::UNKNOWN);
-	}
-}
+//void TrajectorySampling::handleJointAngles(const CommManipulatorObjects::CommManipulationTrajectory &r,
+//		std::vector<ORUtil::TrajectoryPoint>& openraveTrajectory)
+//{
+//	MessageHandler::handleMessage("[PathPlanningSendHandler::handleJointAngles] Planning Path.",
+//			CommManipulationPlannerObjects::ManipulationPlannerEvent::PLANNING_PATH, MessageHandler::INFO, COMP->getGlobalState().getOpenRave().getDebugSend());
+//
+//	std::vector<double> angles;
+//
+//	for (uint32_t j = 0; j < r.get_joint_count(); ++j)
+//	{
+//		angles.push_back(r.get_joint_angle(0, j));
+//	}
+//
+//	if (OPENRAVE->getParameter().simulation_test_ik_only && (COMP->stateSlave->tryAcquire("simulation") == Smart::SMART_OK))
+//	{
+//		COMP->stateSlave->release("simulation");
+//		MessageHandler::handleMessage(
+//				"[PathPlanningSendHandler::handleJointAngles] IK Solution Found with SIMULATION_TEST_IK_ONLY parameter.",
+//				CommManipulationPlannerObjects::ManipulationPlannerEvent::PATH_FOUND, MessageHandler::INFO, COMP->getGlobalState().getOpenRave().getDebugSend());
+//	}
+//
+//	/*else if (!OPENRAVE->planPath(angles, openraveTrajectory))
+//	{
+//		throw MessageHandler::ErrorException("[PathPlanningSendHandler::handleJointAngles] Path planning failed.",
+//				CommManipulationPlannerObjects::ManipulationPlannerEvent::NO_PATH_FOUND);
+//	}*/
+//
+//}
+//
+//void TrajectorySampling::handlePoses(const CommManipulatorObjects::CommManipulationTrajectory &r,
+//		std::vector<ORUtil::TrajectoryPoint>& openraveTrajectory)
+//{
+//	try
+//	{
+//		std::vector<double> angles;
+//		double x, y, z, azimuth, elevation, roll;
+//
+//		// Get TCP Pose in robot coordinate frame
+//		r.get_pose_TCP_robot(x, y, z, azimuth, elevation, roll, 1);
+//
+//		/*cout << "[PathPlanningSendHandler::handlePoses] r.get_pose_TCP_robot(x, y, z, azimuth, elevation, roll): " << x << ", " << y
+//				<< ", " << z << ", " << azimuth << ", " << elevation << ", " << roll << std::endl;*/
+//		CommBasicObjects::CommPose3d resultPoseAfterIteration;
+//
+//		if (!OPENRAVE->iterateToGetGraspingIKSolution(x, y, z, azimuth, elevation, roll, angles, resultPoseAfterIteration))
+//		{
+//			throw MessageHandler::ErrorException(
+//					"[PathPlanningSendHandler::handlePoses] Iteration exceeded to find grasping IK solution using.",
+//					CommManipulationPlannerObjects::ManipulationPlannerEvent::NO_IK_SOLUTION_FOUND);
+//		}
+//
+//		// found IK solution for simple grasping
+//		// Send PLANNING_PATH event with final TCP pose where the path is planned to
+//		MessageHandler::handleMessage("[PathPlanningSendHandler::handlePoses] Planning Path.",
+//				CommManipulationPlannerObjects::ManipulationPlannerEvent::PLANNING_PATH, resultPoseAfterIteration, MessageHandler::INFO,
+//				COMP->getGlobalState().getOpenRave().getDebugSend());
+//
+//		/*if (!OPENRAVE->planPath(angles, openraveTrajectory))
+//		{
+//			throw MessageHandler::ErrorException("[PathPlanningSendHandler::handlePoses] Path planning failed.",
+//					CommManipulationPlannerObjects::ManipulationPlannerEvent::NO_PATH_FOUND);
+//		}*/
+//	} catch (MessageHandler::ErrorException ex)
+//	{
+//		throw ex;
+//	} catch (...)
+//	{
+//		throw MessageHandler::ErrorException("[PathPlanningSendHandler::handlePoses] Unknown error.",
+//				CommManipulationPlannerObjects::ManipulationPlannerEvent::UNKNOWN);
+//	}
+//}

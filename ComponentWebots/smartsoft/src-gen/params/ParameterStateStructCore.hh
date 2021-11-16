@@ -46,22 +46,26 @@ public:
 			 * here are the member definitions
 			 */
 			std::string WorldPath;
+			bool enableEditor;
 		
 		public:
 			// default constructor
 			GeneralType() {
 				WorldPath = "$SMART_ROOT_ACE/repos/DataRepository/webots/worlds/ConveyorBeltIntralogistic.wbt";
+				enableEditor = false;
 			}
 		
 			/**
 			 * here are the public getters
 			 */
 			inline std::string getWorldPath() const { return WorldPath; }
+			inline bool getEnableEditor() const { return enableEditor; }
 			
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "General(";
-				os << "WorldPath = " << WorldPath;
+				os << "WorldPath = " << WorldPath; os << ", ";
+				os << "enableEditor = " << enableEditor;
 				os << ")\n";
 			}
 			
@@ -123,7 +127,8 @@ public:
 		nlohmann::json param;
 	
 		param["General"] = nlohmann::json {
-			{"WorldPath" , getGeneral().getWorldPath()}
+			{"WorldPath" , getGeneral().getWorldPath()},
+			{"enableEditor" , getGeneral().getEnableEditor()}
 		};
 	
 		

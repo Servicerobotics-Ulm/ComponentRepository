@@ -678,6 +678,7 @@ class OpenRaveManipulation:
             print >> sys.stderr, "-----------------------------------------------------"
             return -2
         return 0
+       
     
     def doDoorManipulation(self, furniture, door, openAmount, sampleTime=0.2, startBounds=None, goalBounds=None, handleBounds=None):
         result = list()

@@ -52,6 +52,102 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParametersNamed(const 
 			// the commit state is rejected and is not copied into the global state
 		}
 	}
+	else if (tag == "COMMMANIPULATOROBJECTS.MANIPULATORPARAMETER.ADD_TCP")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		std::string temp_name = "";
+		if(request.getString("name", temp_name) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: name request: "<<request<<std::endl;
+		}
+		double temp_x = 0.0;
+		if(request.getDouble("x", temp_x) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: x request: "<<request<<std::endl;
+		}
+		double temp_y = 0.0;
+		if(request.getDouble("y", temp_y) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: y request: "<<request<<std::endl;
+		}
+		double temp_z = 0.0;
+		if(request.getDouble("z", temp_z) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: z request: "<<request<<std::endl;
+		}
+		double temp_rX = 0.0;
+		if(request.getDouble("rX", temp_rX) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: rX request: "<<request<<std::endl;
+		}
+		double temp_rY = 0.0;
+		if(request.getDouble("rY", temp_rY) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: rY request: "<<request<<std::endl;
+		}
+		double temp_rZ = 0.0;
+		if(request.getDouble("rZ", temp_rZ) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: rZ request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommManipulatorObjects_ManipulatorParameter_ADD_TCPCore(
+			temp_name, 
+			temp_x, 
+			temp_y, 
+			temp_z, 
+			temp_rX, 
+			temp_rY, 
+			temp_rZ
+			);
+		}
+	}
+	else if (tag == "COMMMANIPULATOROBJECTS.MANIPULATORPARAMETER.ADD_TOOL")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		std::string temp_name = "";
+		if(request.getString("name", temp_name) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: name request: "<<request<<std::endl;
+		}
+		std::list<float> temp_center_of_grav;
+		if(request.getDoubleList("center_of_grav", temp_center_of_grav) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: center_of_grav request: "<<request<<std::endl;
+		}
+		float temp_weight = 0.0;
+		if(request.getDouble("weight", temp_weight) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: weight request: "<<request<<std::endl;
+		}
+		std::list<float> temp_inertia;
+		if(request.getDoubleList("inertia", temp_inertia) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: inertia request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommManipulatorObjects_ManipulatorParameter_ADD_TOOLCore(
+			temp_name, 
+			temp_center_of_grav, 
+			temp_weight, 
+			temp_inertia
+			);
+		}
+	}
+	else if (tag == "COMMMANIPULATOROBJECTS.MANIPULATORPARAMETER.CANCEL_MOTION")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommManipulatorObjects_ManipulatorParameter_CANCEL_MOTIONCore(
+			);
+		}
+	}
 	else if (tag == "COMMMANIPULATOROBJECTS.MANIPULATORPARAMETER.CLEAR_PCS")
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK);
@@ -264,6 +360,38 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParametersNamed(const 
 			);
 		}
 	}
+	else if (tag == "COMMMANIPULATOROBJECTS.MANIPULATORPARAMETER.SET_ACTIVE_TCP")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		std::string temp_name = "";
+		if(request.getString("name", temp_name) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: name request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommManipulatorObjects_ManipulatorParameter_SET_ACTIVE_TCPCore(
+			temp_name
+			);
+		}
+	}
+	else if (tag == "COMMMANIPULATOROBJECTS.MANIPULATORPARAMETER.SET_ACTIVE_TOOL")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		std::string temp_name = "";
+		if(request.getString("name", temp_name) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: name request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommManipulatorObjects_ManipulatorParameter_SET_ACTIVE_TOOLCore(
+			temp_name
+			);
+		}
+	}
 	else if (tag == "COMMMANIPULATOROBJECTS.MANIPULATORPARAMETER.SET_PCS")
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK);
@@ -356,6 +484,16 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParametersNamed(const 
 			);
 		}
 	}
+	else if (tag == "COMMMANIPULATOROBJECTS.MANIPULATORPARAMETER.START_FREEDRIVE")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommManipulatorObjects_ManipulatorParameter_START_FREEDRIVECore(
+			);
+		}
+	}
 	else if (tag == "COMMMANIPULATOROBJECTS.MANIPULATORPARAMETER.START_PROGRAM")
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK);
@@ -363,6 +501,26 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParametersNamed(const 
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
 			triggerHandler.handleCommManipulatorObjects_ManipulatorParameter_START_PROGRAMCore(
+			);
+		}
+	}
+	else if (tag == "COMMMANIPULATOROBJECTS.MANIPULATORPARAMETER.STOP_FREEDRIVE")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommManipulatorObjects_ManipulatorParameter_STOP_FREEDRIVECore(
+			);
+		}
+	}
+	else if (tag == "COMMMANIPULATOROBJECTS.MANIPULATORPARAMETER.STOP_PROGRAM")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommManipulatorObjects_ManipulatorParameter_STOP_PROGRAMCore(
 			);
 		}
 	}
@@ -401,6 +559,102 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParametersSequence(con
 		} else {
 			// the commit validation check returned != OK
 			// the commit state is rejected and is not copied into the global state
+		}
+	}
+	else if (tag == "COMMMANIPULATOROBJECTS.MANIPULATORPARAMETER.ADD_TCP")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		std::string temp_name = "";
+		if(request.getString("1", temp_name) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: name request: "<<request<<std::endl;
+		}
+		double temp_x = 0.0;
+		if(request.getDouble("2", temp_x) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: x request: "<<request<<std::endl;
+		}
+		double temp_y = 0.0;
+		if(request.getDouble("3", temp_y) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: y request: "<<request<<std::endl;
+		}
+		double temp_z = 0.0;
+		if(request.getDouble("4", temp_z) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: z request: "<<request<<std::endl;
+		}
+		double temp_rX = 0.0;
+		if(request.getDouble("5", temp_rX) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: rX request: "<<request<<std::endl;
+		}
+		double temp_rY = 0.0;
+		if(request.getDouble("6", temp_rY) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: rY request: "<<request<<std::endl;
+		}
+		double temp_rZ = 0.0;
+		if(request.getDouble("7", temp_rZ) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: rZ request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommManipulatorObjects_ManipulatorParameter_ADD_TCPCore(
+			temp_name, 
+			temp_x, 
+			temp_y, 
+			temp_z, 
+			temp_rX, 
+			temp_rY, 
+			temp_rZ
+			);
+		}
+	}
+	else if (tag == "COMMMANIPULATOROBJECTS.MANIPULATORPARAMETER.ADD_TOOL")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		std::string temp_name = "";
+		if(request.getString("1", temp_name) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: name request: "<<request<<std::endl;
+		}
+		std::list<float> temp_center_of_grav;
+		if(request.getDoubleList("2", temp_center_of_grav) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: center_of_grav request: "<<request<<std::endl;
+		}
+		float temp_weight = 0.0;
+		if(request.getDouble("3", temp_weight) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: weight request: "<<request<<std::endl;
+		}
+		std::list<float> temp_inertia;
+		if(request.getDoubleList("4", temp_inertia) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: inertia request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommManipulatorObjects_ManipulatorParameter_ADD_TOOLCore(
+			temp_name, 
+			temp_center_of_grav, 
+			temp_weight, 
+			temp_inertia
+			);
+		}
+	}
+	else if (tag == "COMMMANIPULATOROBJECTS.MANIPULATORPARAMETER.CANCEL_MOTION")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommManipulatorObjects_ManipulatorParameter_CANCEL_MOTIONCore(
+			);
 		}
 	}
 	else if (tag == "COMMMANIPULATOROBJECTS.MANIPULATORPARAMETER.CLEAR_PCS")
@@ -615,6 +869,38 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParametersSequence(con
 			);
 		}
 	}
+	else if (tag == "COMMMANIPULATOROBJECTS.MANIPULATORPARAMETER.SET_ACTIVE_TCP")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		std::string temp_name = "";
+		if(request.getString("1", temp_name) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: name request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommManipulatorObjects_ManipulatorParameter_SET_ACTIVE_TCPCore(
+			temp_name
+			);
+		}
+	}
+	else if (tag == "COMMMANIPULATOROBJECTS.MANIPULATORPARAMETER.SET_ACTIVE_TOOL")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		std::string temp_name = "";
+		if(request.getString("1", temp_name) != 0) {
+			answer.setResponse(SmartACE::ParamResponseType::INVALID);
+			std::cout<<"ParamUpdateHandler - error parsing value: name request: "<<request<<std::endl;
+		}
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommManipulatorObjects_ManipulatorParameter_SET_ACTIVE_TOOLCore(
+			temp_name
+			);
+		}
+	}
 	else if (tag == "COMMMANIPULATOROBJECTS.MANIPULATORPARAMETER.SET_PCS")
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK);
@@ -707,6 +993,16 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParametersSequence(con
 			);
 		}
 	}
+	else if (tag == "COMMMANIPULATOROBJECTS.MANIPULATORPARAMETER.START_FREEDRIVE")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommManipulatorObjects_ManipulatorParameter_START_FREEDRIVECore(
+			);
+		}
+	}
 	else if (tag == "COMMMANIPULATOROBJECTS.MANIPULATORPARAMETER.START_PROGRAM")
 	{
 		answer.setResponse(SmartACE::ParamResponseType::OK);
@@ -714,6 +1010,26 @@ SmartACE::CommParameterResponse ParamUpdateHandler::handleParametersSequence(con
 		
 		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
 			triggerHandler.handleCommManipulatorObjects_ManipulatorParameter_START_PROGRAMCore(
+			);
+		}
+	}
+	else if (tag == "COMMMANIPULATOROBJECTS.MANIPULATORPARAMETER.STOP_FREEDRIVE")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommManipulatorObjects_ManipulatorParameter_STOP_FREEDRIVECore(
+			);
+		}
+	}
+	else if (tag == "COMMMANIPULATOROBJECTS.MANIPULATORPARAMETER.STOP_PROGRAM")
+	{
+		answer.setResponse(SmartACE::ParamResponseType::OK);
+		
+		
+		if(answer.getResponse() == SmartACE::ParamResponseType::OK) {
+			triggerHandler.handleCommManipulatorObjects_ManipulatorParameter_STOP_PROGRAMCore(
 			);
 		}
 	}
@@ -763,10 +1079,59 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		//
 		// load internal parameters (if any)
 		//
+		// parameter TCP
+		if(parameter.getDouble("TCP", "azimuth", commitState.TCP.azimuth))
+		{
+			globalState.TCP.azimuth = commitState.TCP.azimuth;
+		}
+		if(parameter.getDouble("TCP", "elevation", commitState.TCP.elevation))
+		{
+			globalState.TCP.elevation = commitState.TCP.elevation;
+		}
+		if(parameter.getDouble("TCP", "roll", commitState.TCP.roll))
+		{
+			globalState.TCP.roll = commitState.TCP.roll;
+		}
+		if(parameter.getInteger("TCP", "x", commitState.TCP.x))
+		{
+			globalState.TCP.x = commitState.TCP.x;
+		}
+		if(parameter.getInteger("TCP", "y", commitState.TCP.y))
+		{
+			globalState.TCP.y = commitState.TCP.y;
+		}
+		if(parameter.getInteger("TCP", "z", commitState.TCP.z))
+		{
+			globalState.TCP.z = commitState.TCP.z;
+		}
 		// parameter base
+		if(parameter.getDouble("base", "azimuth", commitState.base.azimuth))
+		{
+			globalState.base.azimuth = commitState.base.azimuth;
+		}
+		if(parameter.getDouble("base", "elevation", commitState.base.elevation))
+		{
+			globalState.base.elevation = commitState.base.elevation;
+		}
 		if(parameter.getBoolean("base", "on_base", commitState.base.on_base))
 		{
 			globalState.base.on_base = commitState.base.on_base;
+		}
+		if(parameter.getDouble("base", "roll", commitState.base.roll))
+		{
+			globalState.base.roll = commitState.base.roll;
+		}
+		if(parameter.getInteger("base", "x", commitState.base.x))
+		{
+			globalState.base.x = commitState.base.x;
+		}
+		if(parameter.getInteger("base", "y", commitState.base.y))
+		{
+			globalState.base.y = commitState.base.y;
+		}
+		if(parameter.getInteger("base", "z", commitState.base.z))
+		{
+			globalState.base.z = commitState.base.z;
 		}
 		// parameter manipulator
 		if(parameter.getDouble("manipulator", "azimuth", commitState.manipulator.azimuth))

@@ -82,6 +82,16 @@
   ))
 )
 
+(define-tcb (release ?obj-id)
+  (module "manipulationPlannerModule")
+  (action (
+            (format t "=========================>>> release ~s ~%" '?obj-id)
+            (tcl-state :server 'cs_trajPlanning :state "Neutral")
+            (tcl-param :server 'cs_trajPlanning :slot 'COMMMANIPULATIONPLANNEROBJECTS.MANIPULATIONPLANNERPARAMETER.PLANNING_RELEASEOBJ :value '?obj-id)
+            '(SUCCESS ())
+  ))
+)
+
 (define-tcb (delete ?obj-id)
   (module "manipulationPlannerModule")
   (action (
@@ -113,10 +123,17 @@
 )
                               
 ;; TODO: Handler OpenRave??
-(define-tcb (gotoAnglesOR ?angles)
+(define-tcb (gotoAnglesOR 'name ?name)
   (module "manipulationPlannerModule")
+  (precondition  (not (equal '() (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a manipulator-pose) (name ?name))) 'angles))))
   (action (
-            (format t "=========================>>> gotoAnglesOR ~s ~%" '?angles)
+
+  		(let (
+  				(angles (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a manipulator-pose) (name ?name))) 'angles))
+  			 )
+  		
+
+            (format t "=========================>>> gotoAnglesOR ~s ~%" angles)
             (tcl-activate-event :name 'evt-manipulator
                                 :handler 'handler-manipulator  
                                 :server 'cs_trajExecution
@@ -132,17 +149,25 @@
             (tcl-state :server 'cs_trajExecution :state "Trajectory")
             (tcl-state :server 'cs_trajPlanning :state "Trajectory")
             
-        	(tcl-param :server 'cs_trajPlanning :slot 'COMMMANIPULATIONPLANNEROBJECTS.MANIPULATIONPLANNERPARAMETER.PLAN_PATH_TARGET_JOINT_ANGLES :value '(?angles))
+        	(tcl-param :server 'cs_trajPlanning :slot 'COMMMANIPULATIONPLANNEROBJECTS.MANIPULATIONPLANNERPARAMETER.PLAN_PATH_TARGET_JOINT_ANGLES :value `(,angles))
 
-            '(SUCCESS ()))))
+            '(SUCCESS ())
+
+            )
+    )
+  )
+ )
 
 (define-rule (gotoAnglesOR_NoPath)
-  (tcb (gotoAnglesOR ?angles))
+  (tcb (gotoAnglesOR 'name ?name))
   (return-value (ERROR (NO PATH)))
   (action (
-            (format t "=========================>>> RULE: (ERROR (NO PATH)) ~%")
+            (format t "=========================>>> RULE: (ERROR (NO PATH)) gotoAnglesOR ~%")
             (tcl-delete-plan)
-            '(ERROR (NO PATH)))))
+            '(ERROR (NO PATH))
+          )
+  )
+)
 
 (define-tcb (gotoTCPOR ?tcp)
   (module "manipulationPlannerModule")
@@ -182,15 +207,16 @@
   ))
 )
 
-
-(define-rule (gotoTCPOR_NoPath)
+(define-rule (gotoTCPOR_NoIk)
   (tcb (gotoTCPOR ?tcp))
-  (return-value (ERROR (NO PATH)))
+  (return-value (ERROR (NO IK)))
   (action (
-            (format t "=========================>>> RULE: (ERROR (NO PATH)) ~%")
+            (format t "=========================>>> RULE: (ERROR (NO IK)) gotoTCPOR ~%")
             (tcl-delete-plan)
-            '(ERROR (NO PATH)))))
-
+            '(ERROR (NO IK))
+          )
+  )
+)
 
  (define-event-handler (handler-planner)
   (action (
@@ -215,9 +241,11 @@
                   ;        :value `(
                   ;                  (is-a OBJECT)
                   ;                  (id obj-id)
-                  ;                  (status NOT_GRASPABLE)))))) 
+                  ;                  (status NOT_GRASPABLE))))))
+
                   (tcl-abort)
-                  '(ERROR (NO PATH)))
+				  '(ERROR (NO IK))
+                )
               
                 ((equal (tcl-event-message) "(NO PATH FOUND)")
                   (format t "=========================>>> NO PATH FOUND !!! ~%")   
@@ -304,7 +332,7 @@
   (action ((format t "=========================>>> gotoTCPURRel~%" '?tcp-relative)
              
            (let ((tcp nil))
-              (setf tcp (rest (assoc 'pose (first (rest (tcl-query :server 'cs_trajExecution :service 'manipulatorstate))))))
+              (setf tcp (rest(first(rest (tcl-query :server 'cs_trajExecution :service 'manipulatorstate)))))
               (format t "TCP pose query: ~s ~%" tcp)
               (format t "TCP relative: ~s ~%" '?tcp-relative)
               ;;TODO this only use a translation tranformation the relative angles are ignored!!
@@ -322,7 +350,7 @@
   (action ((format t "=========================>>> gotoTCPORRel~%" '?tcp-relative)
              
            (let ((tcp nil))
-              (setf tcp (rest (assoc 'pose (first (rest (tcl-query :server 'cs_trajExecution :service 'manipulatorstate))))))
+              (setf tcp (rest(first(rest (tcl-query :server 'cs_trajExecution :service 'manipulatorstate)))))
               (format t "TCP pose query: ~s ~%" tcp)
               (format t "TCP relative: ~s ~%" '?tcp-relative)
               ;;TODO this only use a translation tranformation the relative angles are ignored!!
@@ -386,7 +414,8 @@
   (action (
 
     (let ((tcp nil))
-      (setf tcp (rest (assoc 'pose (first (rest (tcl-query :server 'cs_trajExecution :service 'manipulatorstate))))))
+      ;(setf tcp (rest (assoc 'pose (first (rest (tcl-query :server 'cs_trajExecution :service 'manipulatorstate))))))
+      (setf tcp (rest(first(rest (tcl-query :server 'cs_trajExecution :service 'manipulatorstate)))))
         (format t "TCP: ~s ~%" tcp)
     )
 
@@ -398,8 +427,9 @@
   (action (
 
     (let ((tcp nil))
-      (setf angles (rest (assoc 'angles (first (rest (tcl-query :server 'cs_trajExecution :service 'manipulatorstate))))))
-        (format t "Angles: ~s ~%" angles)
+      ;(setf angles (rest (assoc 'angles (first (rest (tcl-query :server 'cs_trajExecution :service 'manipulatorstate))))))
+      (setf angles (rest(first(tcl-query :server 'cs_trajExecution :service 'manipulatorstate))))
+      (format t "Angles: ~s ~%" angles)
     )
 
   ))

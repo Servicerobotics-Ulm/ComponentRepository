@@ -100,9 +100,9 @@ Smart::IQueryClientPattern<CommObjectRecognitionObjects::CommObjectRecognitionId
 	return new SmartACE::QueryClient<CommObjectRecognitionObjects::CommObjectRecognitionId, CommObjectRecognitionObjects::CommObjectRecognitionObjectProperties>(componentImpl);
 }
 
-Smart::ISendClientPattern<CommManipulatorObjects::CommManipulatorTrajectory> * ComponentOpenRaveAcePortFactory::createSendTrajectoryOut()
+Smart::ISendClientPattern<CommManipulatorObjects::CommManipulationTrajectory> * ComponentOpenRaveAcePortFactory::createSendTrajectoryOut()
 {
-	return new SmartACE::SendClient<CommManipulatorObjects::CommManipulatorTrajectory>(componentImpl);
+	return new SmartACE::SendClient<CommManipulatorObjects::CommManipulationTrajectory>(componentImpl);
 }
 
 

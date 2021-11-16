@@ -19,7 +19,7 @@
 
 #include <iostream>
 
-TrajectorySendServerHandler::TrajectorySendServerHandler(Smart::InputSubject<CommManipulatorObjects::CommManipulatorTrajectory> *subject, const int &prescaleFactor)
+TrajectorySendServerHandler::TrajectorySendServerHandler(Smart::InputSubject<CommManipulatorObjects::CommManipulationTrajectory> *subject, const int &prescaleFactor)
 :	TrajectorySendServerHandlerCore(subject, prescaleFactor)
 {
 	std::cout << "constructor TrajectorySendServerHandler\n";
@@ -29,7 +29,7 @@ TrajectorySendServerHandler::~TrajectorySendServerHandler()
 	std::cout << "destructor TrajectorySendServerHandler\n";
 }
 
-void TrajectorySendServerHandler::on_trajectorySendServer(const CommManipulatorObjects::CommManipulatorTrajectory &input)
+void TrajectorySendServerHandler::on_trajectorySendServer(const CommManipulatorObjects::CommManipulationTrajectory &input)
 {
     COMP->poseUpdateActivity->on_trajectorySendServer(input);
 }

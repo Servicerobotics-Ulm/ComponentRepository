@@ -22,6 +22,76 @@ Example:
         }
     }
 ```
+#### Editor
+
+The Editor can add, move, change and delete Locations, Stations or Waypoints.
+
+To turn on the editor:
+* set parameter enableEditor=true
+* add to the world file (*.wbt)
+``` 
+Editor {
+}
+``` 
+
+The Editor will add these new named Groups to the world:
+```
+...
+DEF Locations Group
+DEF Stations Group
+DEF Waypoints Group
+DEF WaypointConnections Group
+...
+```
+
+(In Webots, press <kbd>CTRL</kbd>+<kbd>J</kbd> to restore the layout in case some windows are missing)
+ 
+A **Location** is a cross on the floor as goal point for free robot movement. The robot will find a path by using its map and avoid obstacles by using its sensors.
+
+To add an Location:
+* double click on the Group 'Locations'
+* click on 'children'
+* right-click 'Add New'
+* find 'Location' or select it from 'PROTO nodes (Current Project)'
+
+Double click on the newly added Location, enter an unique name.
+
+To move an Location:
+* click on the cross, press <kdb>shift</kdb> while moving it with the mouse [(moving a solid object)](https://cyberbotics.com/doc/guide/the-3d-window#moving-a-solid-object)
+* to rotate it, use the blue curved arrow 
+
+Fields of the Location
+* *name* : the name of the Location
+* *translation* : (x y z) coordinate, z should be 0 (up)
+* *rotation* : (0 0 1 angle) = rotate around (0 0 1) axis (up) by angle radians  
+* *color* : the color of the cross
+* *radius* : robot will move to the Location until its distance is less than this value
+* *smallerRadius* :
+    * 0 (default): stop if distance is less then double the radius
+    * > 0 : after stopping at radius distance, move again to smallerRadius distance
+
+A **Station** can be
+* OPC_UA_Station
+* RollerConveyorStation
+
+Fields:
+* *id* : a unique number
+* *port* : Default port for OPC UA communication is 4840. Each OPC_UA_Station must have an different port number e.g. 4840 4841 ... [List](https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers). port -1 disables communication. Changing the port restarts the OPC UA program.
+
+**Waypoints** can be connected by one way **WaypointConnections**. Mobile robots must use stay on these connections to travel from one Waypoint to another. Robots can use intersections of two connections. Connections are one-way only, e.g. if there is a connection from A to B, there can't be a direct connection from B to A. A selected Waypoint is red if it is too close to other Waypoints. Connections have green arrows of length 1m.
+
+These keys are used in the graphics window of webots (can be found on the right side of an standard PC keyboard) if the simulation is running and the ComponentWebots Editor is enabled:
+* <kbd>Insert</kbd> or <kbd>+</kbd> : create a new Waypoint, connect it to the old selected Waypoint if possible
+* <kbd>Del</kbd> or <kbd>-</kbd> : delete the selected Waypoint or WaypointConnection
+* <kbd>*</kbd> : while pressing this key and selecting a new Waypoint, a connection from the old selected Waypoint and the new one is made
+* <kbd>/</kbd> : while pressing this key and selecting Waypoint or WaypointConnection, the defaultWaypointWidth of the Editor is applied to it
+* <kbd>space</kbd> : send changes in Waypoints or WaypointsConnections to the navigation system
+
+**Editor** fields:
+* *defaultWaypointWidth* : The diameter of newly added Waypoints or the width of newly added WaypointConnections (in meters). To set this value to an existing Waypoint/WaypointConnection, select it while pressing the <kbd>/</kbd> key.
+* *showWaypoints* : if set to false, all Waypoints and WaypointConnections are invisible
+
+To add/delete Stations or Locations, you can quit the System and start webots directly by typing 'webots' in a console. The same world will be loaded, but the simulation will be stopped. After all changes are done, save the world, quit webots and start the System again. 
 
 #### How to install Webots in Linux (Ubuntu 20.04)
 
@@ -31,12 +101,12 @@ if webots was already installed, deinstall the old version first:
 sudo dpkg -r webots
 ```
 
-go to [https://github.com/cyberbotics/webots/releases](https://github.com/cyberbotics/webots/releases)
+go to [https://cyberbotics.com/](https://cyberbotics.com/)
 
-click on 'Nightly Build', download webots_2021a-rev1_amd64.deb into your Downloads-folder, then do:
+click on 'Download', download [webots_2021b_amd64.deb](https://github.com/cyberbotics/webots/releases/download/R2021b/webots_2021b_amd64.deb) into your Downloads-folder, then do:
 
 ```
-sudo apt install ~/Downloads/webots_2021a-rev1_amd64.deb
+sudo apt install ~/Downloads/webots_2021b_amd64.deb
 ```
 
 Add to your ~/.profile:
@@ -135,6 +205,16 @@ export SVGA_VGPU10=0
 
 ## Component Ports
 
+### CommKBQueryReq
+
+*Documentation:*
+
+
+### NavPathServiceOut
+
+*Documentation:*
+
+
 
 
 ## Component Parameters: ComponentWebots
@@ -156,6 +236,13 @@ export SVGA_VGPU10=0
 <td style="border:1px solid black; padding: 5px;">String</td>
 <td style="border:1px solid black; padding: 5px;">"$SMART_ROOT_ACE/repos/DataRepository/webots/worlds/ConveyorBeltIntralogistic.wbt"</td>
 <td style="border:1px solid black; padding: 5px;"><p>The webots simulator will load this world file (path and filename of an .wbt file).
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>enableEditor</b></td>
+<td style="border:1px solid black; padding: 5px;">Boolean</td>
+<td style="border:1px solid black; padding: 5px;">false</td>
+<td style="border:1px solid black; padding: 5px;"><p>enable editor to edit locations, stations, paths etc. ?
 </p></td>
 </tr>
 </table>

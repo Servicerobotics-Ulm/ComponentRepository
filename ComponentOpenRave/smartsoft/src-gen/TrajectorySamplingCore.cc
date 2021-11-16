@@ -106,7 +106,7 @@ void TrajectorySamplingCore::updateAllCommObjects()
 
 
 // this method is meant to be used in derived classes
-Smart::StatusCode TrajectorySamplingCore::sendTrajectoryOutPut(CommManipulatorObjects::CommManipulatorTrajectory &sendTrajectoryOutDataObject)
+Smart::StatusCode TrajectorySamplingCore::sendTrajectoryOutPut(CommManipulatorObjects::CommManipulationTrajectory &sendTrajectoryOutDataObject)
 {
 	Smart::StatusCode result = COMP->sendTrajectoryOutWrapper->send(sendTrajectoryOutDataObject);
 	if(useLogging == true) {

@@ -135,38 +135,6 @@ Meaning of the signal lights (on the mobile robot or production station):
 </tr>
 </table>
 
-### Internal Parameter: ProductionStations
-
-*Documentation:*
-
-<table style="border-collapse:collapse;">
-<caption><i>Table:</i> Internal Parameter <b>ProductionStations</b></caption>
-<tr style="background-color:#ccc;">
-<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
-<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
-<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
-<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
-</tr>
-<tr>
-<td style="border:1px solid black; padding: 5px;"><b>stationName</b></td>
-<td style="border:1px solid black; padding: 5px;">String</td>
-<td style="border:1px solid black; padding: 5px;">["MPS0", "MPS1", "MPS2", "MPS3"]</td>
-<td style="border:1px solid black; padding: 5px;"><p>names of the production stations
-</p></td>
-</tr>
-<tr>
-<td style="border:1px solid black; padding: 5px;"><b>stationUrl</b></td>
-<td style="border:1px solid black; padding: 5px;">String</td>
-<td style="border:1px solid black; padding: 5px;">["opc.tcp://localhost:4840", "opc.tcp://localhost:4841", "opc.tcp://localhost:4842", "PASSIVE_STATION"]</td>
-<td style="border:1px solid black; padding: 5px;"><p><ol>
- <li>active station with conveyor belt: url of its OPC UA server, e.g. "opc.tcp://localhost:4840", (port 4840 is reserved for OPC UA)</li>
- <li>passive station with roller conveyor: "PASSIVE_STATION"</li>
- </ol>
-</p>
-<p></p></td>
-</tr>
-</table>
-
 ### Internal Parameter: Robot
 
 *Documentation:*

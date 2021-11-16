@@ -18,6 +18,12 @@
 #define COMPONENTWEBOTS_PORTFACTORYINTERFACE_HH_
 
 // include communication objects
+#include <CommBasicObjects/CommKBRequest.hh>
+#include <CommBasicObjects/CommKBRequestACE.hh>
+#include <CommBasicObjects/CommKBResponse.hh>
+#include <CommBasicObjects/CommKBResponseACE.hh>
+#include <DomainRobotFleetNavigation/CommNavPath.hh>
+#include <DomainRobotFleetNavigation/CommNavPathACE.hh>
 
 #include <chrono>
 
@@ -35,6 +41,8 @@ public:
 	virtual void initialize(ComponentWebots *component, int argc, char* argv[]) = 0;
 	virtual int onStartup() = 0;
 
+	virtual Smart::IQueryClientPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse> * createCommKBQueryReq() = 0;
+	virtual Smart::ISendClientPattern<DomainRobotFleetNavigation::CommNavPath> * createNavPathServiceOut() = 0;
 	
 
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) = 0;

@@ -591,7 +591,7 @@ void ComponentOpenRave::init(int argc, char *argv[])
 		}
 		if(connections.sendTrajectoryOut.roboticMiddleware == "ACE_SmartSoft") {
 			//FIXME: this must also work with other implementations
-			dynamic_cast<SmartACE::SendClient<CommManipulatorObjects::CommManipulatorTrajectory>*>(sendTrajectoryOut)->add(wiringSlave, connections.sendTrajectoryOut.wiringName);
+			dynamic_cast<SmartACE::SendClient<CommManipulatorObjects::CommManipulationTrajectory>*>(sendTrajectoryOut)->add(wiringSlave, connections.sendTrajectoryOut.wiringName);
 		}
 		
 		// create parameter slave

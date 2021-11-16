@@ -38,9 +38,9 @@ COMP -> sendTrajectoryServiceOut -> send(trajectory);
 ```
 
 Coordinate systems of robot arm and vacuum gripper (tool center point):
-![image](CoordinateSystemRobotArm.png)
+![image](doc/CoordinateSystemRobotArm.png)
 
-Set the pose (position and orientation) of the vacuum gripper in the coordinate system of the robot arm.
+Move the robot arm to a given pose (position and orientation) of the end tool relative to the base mounting point.
 The robot arms 'UR5' or 'UR5e' or 'UR10e' with a vacuum gripper of length 0.11m are supported.
 
 The orientation of the vacuum gripper's coordinate system is given by three [Euler Angles](https://web.mit.edu/2.05/www/Handout/HO2.PDF) called azimuth, elevation, roll using zyx convention (1. angle rotates around z-axis, 2. y, 3. x) 
@@ -232,9 +232,71 @@ COMP->sendTrajectoryServiceOut->send(trajectory);
 
 *Documentation:*
 
+### Internal Parameter: TCP
+
+*Documentation:*
+<p>The pose of the TCP relative to the tool flange.
+  A tool can be attached to an flange at the end of an robot arm. The Tool Center Point (TCP) is the tip of the current tool.
+</p>
+<p></p>
+
+<table style="border-collapse:collapse;">
+<caption><i>Table:</i> Internal Parameter <b>TCP</b></caption>
+<tr style="background-color:#ccc;">
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Name</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Type</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Value</i></th>
+<th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>x</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"><p>x coordinate of the TCP relative to the tool flange [m]
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>y</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"><p>see x
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>z</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"><p>see x
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>azimuth</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"><p>rotation around z-axis (euler angles ZYX convention) [radians]
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>elevation</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"><p>rotation around y-axis
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>roll</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"><p>rotation around x-axis
+</p></td>
+</tr>
+</table>
+
 ### Internal Parameter: base
 
 *Documentation:*
+<p>the pose of the base coordinate system relative to the world coordinate system
+</p>
 
 <table style="border-collapse:collapse;">
 <caption><i>Table:</i> Internal Parameter <b>base</b></caption>
@@ -248,8 +310,50 @@ COMP->sendTrajectoryServiceOut->send(trajectory);
 <td style="border:1px solid black; padding: 5px;"><b>on_base</b></td>
 <td style="border:1px solid black; padding: 5px;">Boolean</td>
 <td style="border:1px solid black; padding: 5px;">false</td>
-<td style="border:1px solid black; padding: 5px;"><p><ul><li>on_base = true: robot arm is mounted on top of an mobile robot (base = mobile robot)</li>
- <li>on_base = false: robot arm is at a fixed position in the world (base = world)</li></ul>
+<td style="border:1px solid black; padding: 5px;"><p><ul><li>on_base = true: robot arm is mounted on top of an mobile robot, the mobile robot should send its actual position through the Port 'BaseStateServiceIn'</li>
+ <li>on_base = false: robot arm is mounted on a fixed point</li></ul>
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>x</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"><p>x coordinate of the fixed point relative to the world [mm]
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>y</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"><p>see x
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>z</b></td>
+<td style="border:1px solid black; padding: 5px;">Int32</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"><p>see x
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>azimuth</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"><p>rotation around z-axis
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>elevation</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"><p>rotation around y-axis
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>roll</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">0</td>
+<td style="border:1px solid black; padding: 5px;"><p>rotation around x-axis
 </p></td>
 </tr>
 </table>
@@ -257,7 +361,7 @@ COMP->sendTrajectoryServiceOut->send(trajectory);
 ### Internal Parameter: manipulator
 
 *Documentation:*
-<p>the pose of the manipulator coordinate system relative to the base coordinate system
+<p>the pose of the manipulator coordinate system relative to the mobile robot base coordinate system
 </p>
 
 <table style="border-collapse:collapse;">
@@ -321,7 +425,7 @@ COMP->sendTrajectoryServiceOut->send(trajectory);
 <td style="border:1px solid black; padding: 5px;"><b>tcp_velocity</b></td>
 <td style="border:1px solid black; padding: 5px;">Double</td>
 <td style="border:1px solid black; padding: 5px;">1.0</td>
-<td style="border:1px solid black; padding: 5px;"><p>velocity of TCP movement (ToolCenterPoint = end point of tool at robot arm) [m/s]
+<td style="border:1px solid black; padding: 5px;"><p>velocity of TCP movement [m/s]
 </p></td>
 </tr>
 </table>

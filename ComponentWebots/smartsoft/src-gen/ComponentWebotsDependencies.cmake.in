@@ -15,4 +15,7 @@
 #--------------------------------------------------------------------------
 
 # other CommunicationObject-dependencies are added here (if there are any)
+LIST(APPEND ComponentWebots_DEPENDENCIES CommBasicObjects)
+LIST(APPEND ComponentWebots_DEPENDENCIES DomainRobotFleetNavigation)
 
+LIST(REMOVE_DUPLICATES ComponentWebots_DEPENDENCIES)

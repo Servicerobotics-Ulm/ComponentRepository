@@ -11,17 +11,6 @@ ComponentParameter ComponentWebotsConveyorBeltOpcua component ComponentWebotsCon
 			id = 0
 		}
 	}
-	InternalParameter ProductionStations
-	{
-		/** names of the production stations */
-		stationName : String [*] = ["MPS0", "MPS1", "MPS2", "MPS3"];
-		/** <ol>
-		 * <li>active station with conveyor belt: url of its OPC UA server, e.g. "opc.tcp://localhost:4840", (port 4840 is reserved for OPC UA)</li>
-		 * <li>passive station with roller conveyor: "PASSIVE_STATION"</li>
-		 * </ol>  
-		 */
-		stationUrl : String [*] = ["opc.tcp://localhost:4840", "opc.tcp://localhost:4841", "opc.tcp://localhost:4842", "PASSIVE_STATION"];
-	}
 
 	InternalParameter Robot
 	{

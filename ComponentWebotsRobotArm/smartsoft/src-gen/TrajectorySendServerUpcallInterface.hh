@@ -16,13 +16,13 @@
 #ifndef _TRAJECTORYSENDSERVER_UPCALL_INTERFACE_HH
 #define _TRAJECTORYSENDSERVER_UPCALL_INTERFACE_HH
 
-#include "CommManipulatorObjects/CommManipulatorTrajectory.hh"
+#include "CommManipulatorObjects/CommManipulationTrajectory.hh"
 
 class TrajectorySendServerUpcallInterface {
 public:
 	virtual ~TrajectorySendServerUpcallInterface() {  }
 
-	virtual void on_trajectorySendServer(const CommManipulatorObjects::CommManipulatorTrajectory &input) = 0;
+	virtual void on_trajectorySendServer(const CommManipulatorObjects::CommManipulationTrajectory &input) = 0;
 };
 
 #endif

@@ -28,17 +28,17 @@
  * the other related input handlders (e.g. for related UpcallManagers and InputTaskTriggers).
  */
 class TrajectorySendServerInputCollector
-:	public Smart::IInputHandler<CommManipulatorObjects::CommManipulatorTrajectory>
-,	public Smart::InputSubject<CommManipulatorObjects::CommManipulatorTrajectory>
+:	public Smart::IInputHandler<CommManipulatorObjects::CommManipulationTrajectory>
+,	public Smart::InputSubject<CommManipulatorObjects::CommManipulationTrajectory>
 {
 public:
-	TrajectorySendServerInputCollector(Smart::InputSubject<CommManipulatorObjects::CommManipulatorTrajectory> *subject)
-	:	Smart::IInputHandler<CommManipulatorObjects::CommManipulatorTrajectory>(subject)
+	TrajectorySendServerInputCollector(Smart::InputSubject<CommManipulatorObjects::CommManipulationTrajectory> *subject)
+	:	Smart::IInputHandler<CommManipulatorObjects::CommManipulationTrajectory>(subject)
 	{  }
 	virtual ~TrajectorySendServerInputCollector() = default;
 	
 	// this method is implemented public and can be called from multiple sources
-	virtual void handle_input(const CommManipulatorObjects::CommManipulatorTrajectory &input) {
+	virtual void handle_input(const CommManipulatorObjects::CommManipulationTrajectory &input) {
 		this->notify_input(input);
 	}
 };

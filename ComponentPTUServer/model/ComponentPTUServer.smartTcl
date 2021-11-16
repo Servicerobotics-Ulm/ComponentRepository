@@ -1,7 +1,7 @@
 (define-tcb (moveptu absolute ?pan ?tilt)
 	(module "ptuModule")
   (action (
-            (format t "===================nayab======>>> tcb-ptu-pose absolute ~d ~d ~%" '?pan '?tilt)
+            (format t "=========================>>> tcb-ptu-pose absolute ~d ~d ~%" '?pan '?tilt)
             (tcl-activate-event :name 'lala 
                                 :handler 'handler-ptu
                                 :server 'ptu_cs 

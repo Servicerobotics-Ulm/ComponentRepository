@@ -82,20 +82,6 @@ opcuaXmlFile /ComponentWebotsConveyorBeltOpcua/model/ProductionStation.xml
 # internal parameters
 #####################
 ##########################
-# InternalParameter ProductionStations
-[ProductionStations]
-# stationName has an array value (defined by assigning each array element in a separate line)
-stationName MPS0
-stationName MPS1
-stationName MPS2
-stationName MPS3
-# stationUrl has an array value (defined by assigning each array element in a separate line)
-stationUrl opc.tcp://localhost:4840
-stationUrl opc.tcp://localhost:4841
-stationUrl opc.tcp://localhost:4842
-stationUrl PASSIVE_STATION
-
-##########################
 # InternalParameter Robot
 [Robot]
 belt_time_out_sec 10

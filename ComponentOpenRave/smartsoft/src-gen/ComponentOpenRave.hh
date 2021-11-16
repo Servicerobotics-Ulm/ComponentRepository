@@ -43,14 +43,14 @@ class ComponentOpenRaveExtension;
 #include <CommManipulationPlannerObjects/CommManipulationPlannerEventResultACE.hh>
 #include <CommManipulationPlannerObjects/CommManipulationPlannerEventState.hh>
 #include <CommManipulationPlannerObjects/CommManipulationPlannerEventStateACE.hh>
+#include <CommManipulatorObjects/CommManipulationTrajectory.hh>
+#include <CommManipulatorObjects/CommManipulationTrajectoryACE.hh>
 #include <CommManipulatorObjects/CommManipulatorEventParameter.hh>
 #include <CommManipulatorObjects/CommManipulatorEventParameterACE.hh>
 #include <CommManipulatorObjects/CommManipulatorEventResult.hh>
 #include <CommManipulatorObjects/CommManipulatorEventResultACE.hh>
 #include <CommManipulatorObjects/CommManipulatorEventState.hh>
 #include <CommManipulatorObjects/CommManipulatorEventStateACE.hh>
-#include <CommManipulatorObjects/CommManipulatorTrajectory.hh>
-#include <CommManipulatorObjects/CommManipulatorTrajectoryACE.hh>
 #include <CommManipulatorObjects/CommMobileManipulatorState.hh>
 #include <CommManipulatorObjects/CommMobileManipulatorStateACE.hh>
 #include <CommObjectRecognitionObjects/CommObjectRecognitionEnvironment.hh>
@@ -82,8 +82,8 @@ class ComponentOpenRaveExtension;
 // include request-handler(s)
 #include "ObjectQueryServiceAnswHandler.hh"
 // output port wrappers
-#include "SendTrajectoryOutWrapper.hh"
 #include "PlanningEventServiceOutWrapper.hh"
+#include "SendTrajectoryOutWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -180,7 +180,7 @@ public:
 	Smart::IEventServerPattern<CommManipulationPlannerObjects::CommManipulationPlannerEventParameter, CommManipulationPlannerObjects::CommManipulationPlannerEventResult, CommManipulationPlannerObjects::CommManipulationPlannerEventState> *planningEventServiceOut;
 	PlanningEventServiceOutWrapper *planningEventServiceOutWrapper;
 	std::shared_ptr<Smart::IEventTestHandler<CommManipulationPlannerObjects::CommManipulationPlannerEventParameter, CommManipulationPlannerObjects::CommManipulationPlannerEventResult, CommManipulationPlannerObjects::CommManipulationPlannerEventState>> planningEventServiceOutEventTestHandler;
-	Smart::ISendClientPattern<CommManipulatorObjects::CommManipulatorTrajectory> *sendTrajectoryOut;
+	Smart::ISendClientPattern<CommManipulatorObjects::CommManipulationTrajectory> *sendTrajectoryOut;
 	SendTrajectoryOutWrapper *sendTrajectoryOutWrapper;
 	
 	// define answer-ports

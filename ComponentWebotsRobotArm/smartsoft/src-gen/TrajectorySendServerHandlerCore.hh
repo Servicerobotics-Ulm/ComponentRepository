@@ -26,7 +26,7 @@
 #include <TrajectorySendServerHandlerObserverInterface.hh>
 
 class TrajectorySendServerHandlerCore
-:	public Smart::InputTaskTrigger<CommManipulatorObjects::CommManipulatorTrajectory>
+:	public Smart::InputTaskTrigger<CommManipulatorObjects::CommManipulationTrajectory>
 ,	public TrajectorySendServerUpcallInterface
 {
 private:
@@ -34,14 +34,14 @@ private:
 	virtual void updateAllCommObjects();
 	
 	// internal input handling method
-	virtual void handle_input(const CommManipulatorObjects::CommManipulatorTrajectory& input) {
+	virtual void handle_input(const CommManipulatorObjects::CommManipulationTrajectory& input) {
 		this->updateAllCommObjects();
 		// call the input handler method (which has to be implemented in derived classes)
 		this->on_trajectorySendServer(input);
 		// notify all attached interaction observers
 		this->notify_all_interaction_observers();
 		// call implementation of base class
-		Smart::InputTaskTrigger<CommManipulatorObjects::CommManipulatorTrajectory>::handle_input(input);
+		Smart::InputTaskTrigger<CommManipulatorObjects::CommManipulationTrajectory>::handle_input(input);
 	}
 	
 /**
@@ -60,7 +60,7 @@ protected:
 
 public:
 	TrajectorySendServerHandlerCore(
-		Smart::InputSubject<CommManipulatorObjects::CommManipulatorTrajectory> *subject,
+		Smart::InputSubject<CommManipulatorObjects::CommManipulationTrajectory> *subject,
 		const int &prescaleFactor=1);
 	virtual ~TrajectorySendServerHandlerCore();
 };

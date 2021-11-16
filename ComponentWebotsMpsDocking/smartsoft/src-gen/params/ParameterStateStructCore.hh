@@ -47,17 +47,12 @@ public:
 			 */
 			double maxDistanceToDockingPoint;
 			std::string robotName;
-			std::list<std::string> stationName;
 		
 		public:
 			// default constructor
 			WebotsType() {
 				maxDistanceToDockingPoint = 2.0;
 				robotName = "MpsDocking";
-				stationName.push_back("MPS0");
-				stationName.push_back("MPS1");
-				stationName.push_back("MPS2");
-				stationName.push_back("MPS3");
 			}
 		
 			/**
@@ -65,22 +60,12 @@ public:
 			 */
 			inline double getMaxDistanceToDockingPoint() const { return maxDistanceToDockingPoint; }
 			inline std::string getRobotName() const { return robotName; }
-			inline std::list<std::string> getStationName() const { return stationName; }
 			
 			void to_ostream(std::ostream &os = std::cout) const
 			{
 				os << "Webots(";
 				os << "maxDistanceToDockingPoint = " << maxDistanceToDockingPoint; os << ", ";
-				os << "robotName = " << robotName; os << ", ";
-				os << "stationName = [";
-				for(auto stationNameIt = stationName.begin(); stationNameIt != stationName.end(); stationNameIt++)
-				{
-					if(stationNameIt != stationName.begin()) {
-						os << ", ";
-					}
-					os << *stationNameIt;
-				}
-				os << "]";
+				os << "robotName = " << robotName;
 				os << ")\n";
 			}
 			
@@ -143,8 +128,7 @@ public:
 	
 		param["Webots"] = nlohmann::json {
 			{"maxDistanceToDockingPoint" , getWebots().getMaxDistanceToDockingPoint()},
-			{"robotName" , getWebots().getRobotName()},
-			{"stationName" , getWebots().getStationName()}
+			{"robotName" , getWebots().getRobotName()}
 		};
 	
 		

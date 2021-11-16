@@ -50,6 +50,9 @@ void MessageHandler::handleMessage(const std::string& message, MessageHandler::E
 void MessageHandler::handleMessage(const std::string& message, CommManipulationPlannerObjects::ManipulationPlannerEvent event,
 		MessageHandler::ErrorTypes type, bool sendMessage)
 {
+
+	std::cout << "Timo ERROR Type: " << type << std::endl;
+
 	MessageHandler::handleMessage(message, type, sendMessage);
 	// send event to other components
 	CommManipulationPlannerObjects::CommManipulationPlannerEventState state;

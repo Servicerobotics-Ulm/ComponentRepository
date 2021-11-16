@@ -279,7 +279,7 @@ void ComponentWebotsRobotArm::init(int argc, char *argv[])
 		baseStateServiceInInputTaskTrigger = new Smart::InputTaskTrigger<CommBasicObjects::CommBaseState>(baseStateServiceInInputCollector);
 		baseStateServiceInUpcallManager = new BaseStateServiceInUpcallManager(baseStateServiceInInputCollector);
 		trajectorySendServerInputCollector = new TrajectorySendServerInputCollector(trajectorySendServer);
-		trajectorySendServerInputTaskTrigger = new Smart::InputTaskTrigger<CommManipulatorObjects::CommManipulatorTrajectory>(trajectorySendServerInputCollector);
+		trajectorySendServerInputTaskTrigger = new Smart::InputTaskTrigger<CommManipulatorObjects::CommManipulationTrajectory>(trajectorySendServerInputCollector);
 		trajectorySendServerUpcallManager = new TrajectorySendServerUpcallManager(trajectorySendServerInputCollector);
 		
 		// create input-handler

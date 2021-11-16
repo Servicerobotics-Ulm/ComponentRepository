@@ -42,7 +42,7 @@ public:
 	virtual Smart::IPushServerPattern<CommManipulatorObjects::CommMobileManipulatorState> * createPosePushServer(const std::string &serviceName) override;
 	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorState> * createPoseQueryServer(const std::string &serviceName) override;
 	virtual Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorPrograms> * createProgramQuery(const std::string &serviceName) override;
-	virtual Smart::ISendServerPattern<CommManipulatorObjects::CommManipulatorTrajectory> * createTrajectorySendServer(const std::string &serviceName) override;
+	virtual Smart::ISendServerPattern<CommManipulatorObjects::CommManipulationTrajectory> * createTrajectorySendServer(const std::string &serviceName) override;
 	
 	// get a pointer to the internal component implementation
 	SmartACE::SmartComponent* getComponentImpl();

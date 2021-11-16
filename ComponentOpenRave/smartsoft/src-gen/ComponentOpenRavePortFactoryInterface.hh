@@ -26,14 +26,14 @@
 #include <CommManipulationPlannerObjects/CommManipulationPlannerEventResultACE.hh>
 #include <CommManipulationPlannerObjects/CommManipulationPlannerEventState.hh>
 #include <CommManipulationPlannerObjects/CommManipulationPlannerEventStateACE.hh>
+#include <CommManipulatorObjects/CommManipulationTrajectory.hh>
+#include <CommManipulatorObjects/CommManipulationTrajectoryACE.hh>
 #include <CommManipulatorObjects/CommManipulatorEventParameter.hh>
 #include <CommManipulatorObjects/CommManipulatorEventParameterACE.hh>
 #include <CommManipulatorObjects/CommManipulatorEventResult.hh>
 #include <CommManipulatorObjects/CommManipulatorEventResultACE.hh>
 #include <CommManipulatorObjects/CommManipulatorEventState.hh>
 #include <CommManipulatorObjects/CommManipulatorEventStateACE.hh>
-#include <CommManipulatorObjects/CommManipulatorTrajectory.hh>
-#include <CommManipulatorObjects/CommManipulatorTrajectoryACE.hh>
 #include <CommManipulatorObjects/CommMobileManipulatorState.hh>
 #include <CommManipulatorObjects/CommMobileManipulatorStateACE.hh>
 #include <CommObjectRecognitionObjects/CommObjectRecognitionEnvironment.hh>
@@ -69,7 +69,7 @@ public:
 	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorState> * createMobileManipulatorStateQueryServiceReq() = 0;
 	virtual Smart::IPushClientPattern<CommManipulatorObjects::CommMobileManipulatorState> * createMobileManipulatorStateServiceIn() = 0;
 	virtual Smart::IQueryClientPattern<CommObjectRecognitionObjects::CommObjectRecognitionId, CommObjectRecognitionObjects::CommObjectRecognitionObjectProperties> * createObjectQueryServiceReq() = 0;
-	virtual Smart::ISendClientPattern<CommManipulatorObjects::CommManipulatorTrajectory> * createSendTrajectoryOut() = 0;
+	virtual Smart::ISendClientPattern<CommManipulatorObjects::CommManipulationTrajectory> * createSendTrajectoryOut() = 0;
 	
 	virtual Smart::IQueryServerPattern<CommObjectRecognitionObjects::CommObjectRecognitionId, CommObjectRecognitionObjects::CommObjectRecognitionObjectProperties> * createObjectQueryServiceAnsw(const std::string &serviceName) = 0;
 	virtual Smart::IEventServerPattern<CommManipulationPlannerObjects::CommManipulationPlannerEventParameter, CommManipulationPlannerObjects::CommManipulationPlannerEventResult, CommManipulationPlannerObjects::CommManipulationPlannerEventState> * createPlanningEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommManipulationPlannerObjects::CommManipulationPlannerEventParameter, CommManipulationPlannerObjects::CommManipulationPlannerEventResult, CommManipulationPlannerObjects::CommManipulationPlannerEventState>> planningEventServiceOutEventTestHandler) = 0;

@@ -35,13 +35,21 @@ class ComponentWebotsExtension;
 
 
 // include communication objects
+#include <CommBasicObjects/CommKBRequest.hh>
+#include <CommBasicObjects/CommKBRequestACE.hh>
+#include <CommBasicObjects/CommKBResponse.hh>
+#include <CommBasicObjects/CommKBResponseACE.hh>
+#include <DomainRobotFleetNavigation/CommNavPath.hh>
+#include <DomainRobotFleetNavigation/CommNavPathACE.hh>
 
 // include tasks
+#include "EditorTask.hh"
 // include UpcallManagers and InputCollectors
 
 // include input-handler(s)
 // include request-handler(s)
 // output port wrappers
+#include "NavPathServiceOutWrapper.hh"
 
 // include handler
 #include "CompHandler.hh"
@@ -95,14 +103,19 @@ public:
 	}
 	
 	// define tasks
+	Smart::TaskTriggerSubject* editorTaskTrigger;
+	EditorTask *editorTask;
 	
 	// define input-ports
 	
 	// define request-ports
+	Smart::IQueryClientPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse> *commKBQueryReq;
 	
 	// define input-handler
 	
 	// define output-ports
+	Smart::ISendClientPattern<DomainRobotFleetNavigation::CommNavPath> *navPathServiceOut;
+	NavPathServiceOutWrapper *navPathServiceOutWrapper;
 	
 	// define answer-ports
 	
@@ -157,6 +170,8 @@ public:
 	/// start all associated timers
 	void startAllTimers();
 	
+	Smart::StatusCode connectCommKBQueryReq(const std::string &serverName, const std::string &serviceName);
+	Smart::StatusCode connectNavPathServiceOut(const std::string &serverName, const std::string &serviceName);
 
 	// return singleton instance
 	static ComponentWebots* instance()
@@ -187,12 +202,44 @@ public:
 		} component;
 		
 		//--- task parameter ---
+		struct EditorTask_struct {
+			double minActFreq;
+			double maxActFreq;
+			std::string trigger;
+			// only one of the following two params is 
+			// actually used at run-time according 
+			// to the system config model
+			double periodicActFreq;
+			// or
+			std::string inPortRef;
+			int prescale;
+			// scheduling parameters
+			std::string scheduler;
+			int priority;
+			int cpuAffinity;
+		} editorTask;
 		
 		//--- upcall parameter ---
 		
 		//--- server port parameter ---
 	
 		//--- client port parameter ---
+		struct CommKBQueryReq_struct {
+			bool initialConnect;
+			std::string serverName;
+			std::string serviceName;
+			std::string wiringName;
+			long interval;
+			std::string roboticMiddleware;
+		} commKBQueryReq;
+		struct NavPathServiceOut_struct {
+			bool initialConnect;
+			std::string serverName;
+			std::string serviceName;
+			std::string wiringName;
+			long interval;
+			std::string roboticMiddleware;
+		} navPathServiceOut;
 		
 	} connections;
 };

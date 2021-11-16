@@ -45,6 +45,8 @@ public:
 	virtual void initialize(ComponentWebots *component, int argc, char* argv[]) override;
 	virtual int onStartup() override;
 
+	virtual Smart::IQueryClientPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse> * createCommKBQueryReq() override;
+	virtual Smart::ISendClientPattern<DomainRobotFleetNavigation::CommNavPath> * createNavPathServiceOut() override;
 	
 	
 	virtual int onShutdown(const std::chrono::steady_clock::duration &timeoutTime=std::chrono::seconds(2)) override;

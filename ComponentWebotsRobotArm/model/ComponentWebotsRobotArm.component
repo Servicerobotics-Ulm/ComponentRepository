@@ -1,7 +1,7 @@
 ComponentDefinition ComponentWebotsRobotArm 
 {
 	/** Reads periodically a movement trajectory: CommManipulatorObjects.CommManipulatorTrajectory */
-	InputPort trajectorySendServer implements CommManipulatorObjects.SendTrajectoryService {
+	InputPort trajectorySendServer implements CommManipulatorObjects.ManipulationTrajectoryService {
 	}
 	Activity PoseUpdateActivity
 	{
@@ -34,7 +34,7 @@ ComponentDefinition ComponentWebotsRobotArm
 	RequestHandler programQueryHandler triggeredFrom programQuery {
 	}	
     /** CommManipulatorObjects.ManipulatorCoordinationService */
-	CoordinationSlavePort CoordinationPort implements CommManipulatorObjects.ManipulatorCoordinationService {
+	CoordinationSlavePort CoordinationPort implements CommManipulatorObjects.ManipulationCoordinationService {
 		
 		with manipulatorevent realizedBy manipulatorEventServiceOut
 		with manipulatorstate realizedBy poseQueryServer

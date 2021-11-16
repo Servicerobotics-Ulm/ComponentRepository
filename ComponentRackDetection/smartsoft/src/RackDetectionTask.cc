@@ -18,7 +18,7 @@
 #include "ComponentRackDetection.hh"
 
 #include "CommBasicObjects/CommPosition3d.hh"
-
+#include "colors.hh"
 #include <mrpt/system/CTicTac.h>
 
 #include <iostream>
@@ -111,19 +111,20 @@ int RackDetectionTask::on_execute()
 	DomainVision::CommRGBDImage rgbd_image;
 
 	// Get new image from Kinect by query
-	Smart::StatusCode status = COMP->kinectQueryClient->query(v, rgbd_image);
+	bool is_valid_image = false;
+	Smart::StatusCode status;
+	do{
+	status = COMP->kinectQueryClient->query(v, rgbd_image);
+	is_valid_image = rgbd_image.getIs_valid();
 
-	if (status != Smart::SMART_OK) {
-		std::cerr << "[RackDetectionTask] Error in KinectServer communication: " << Smart::StatusCodeConversion(status) << std::endl;
-		errorQuit();
-		return 0;
+	if(status != Smart::SMART_OK) {
+		std::cout << COLOR_RED << "[RackDetectionTask] Error receiving the image: " << Smart::StatusCodeConversion(status) << COLOR_DEFAULT << std::endl;
 	}
-
-	if (! rgbd_image.getIs_valid()) {
-		std::cerr << "[RackDetectionTask] Error: Data is not valid!" << std::endl;
-		errorQuit();
-		return 0;
+	if(!is_valid_image) {
+		std::cout << COLOR_RED << "[RackDetectionTask] Invalid Image! retry..." << COLOR_DEFAULT << std::endl;
 	}
+	usleep(1000000);
+	}while (!is_valid_image);
 
 	DomainVision::CommVideoImage current_video_image;
 	DomainVision::CommDepthImage current_depth_image;
@@ -718,7 +719,8 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr RackDetectionTask::cutOutRack(pcl::PointClou
 
 //delete objects from cloud, for better path planning
 pcl::PointCloud<pcl::PointXYZ>::Ptr RackDetectionTask::cutOutObjects(pcl::PointCloud<pcl::PointXYZ>::Ptr env_cloud){
-	float obj_height = _obj_height / 2; //divided because otherwise too much is cut
+
+	float obj_height = _obj_height;
 	float obj_width = _obj_width;
 	float obj_depth = _obj_depth;
 	float deviation = 0.01; // additional 1 cm
@@ -727,11 +729,13 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr RackDetectionTask::cutOutObjects(pcl::PointC
 	if (_pick_direction == left || _pick_direction == right) {
 		obj_dimensions_xyz.push_back(obj_width + deviation);
 		obj_dimensions_xyz.push_back(obj_depth + deviation * 4);
-		obj_dimensions_xyz.push_back(obj_height + deviation);
+		// changed from *10 to *1 again
+		obj_dimensions_xyz.push_back(obj_height + deviation* 1);
 	} else if (_pick_direction == front){
 		obj_dimensions_xyz.push_back(obj_depth + deviation * 4);
 		obj_dimensions_xyz.push_back(obj_width + deviation);
-		obj_dimensions_xyz.push_back(obj_height + deviation);
+        // changed from *10 to *1 again
+		obj_dimensions_xyz.push_back(obj_height + deviation* 1);
 	}
 
 	for (std::list<ConcreteObject>::const_iterator iter = COMP->concreteObjects.begin(); iter != COMP->concreteObjects.end(); iter++) {

@@ -53,7 +53,7 @@ public:
 	virtual Smart::IQueryClientPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorState> * createMobileManipulatorStateQueryServiceReq() override;
 	virtual Smart::IPushClientPattern<CommManipulatorObjects::CommMobileManipulatorState> * createMobileManipulatorStateServiceIn() override;
 	virtual Smart::IQueryClientPattern<CommObjectRecognitionObjects::CommObjectRecognitionId, CommObjectRecognitionObjects::CommObjectRecognitionObjectProperties> * createObjectQueryServiceReq() override;
-	virtual Smart::ISendClientPattern<CommManipulatorObjects::CommManipulatorTrajectory> * createSendTrajectoryOut() override;
+	virtual Smart::ISendClientPattern<CommManipulatorObjects::CommManipulationTrajectory> * createSendTrajectoryOut() override;
 	
 	virtual Smart::IQueryServerPattern<CommObjectRecognitionObjects::CommObjectRecognitionId, CommObjectRecognitionObjects::CommObjectRecognitionObjectProperties> * createObjectQueryServiceAnsw(const std::string &serviceName) override;
 	virtual Smart::IEventServerPattern<CommManipulationPlannerObjects::CommManipulationPlannerEventParameter, CommManipulationPlannerObjects::CommManipulationPlannerEventResult, CommManipulationPlannerObjects::CommManipulationPlannerEventState> * createPlanningEventServiceOut(const std::string &serviceName, std::shared_ptr<Smart::IEventTestHandler<CommManipulationPlannerObjects::CommManipulationPlannerEventParameter, CommManipulationPlannerObjects::CommManipulationPlannerEventResult, CommManipulationPlannerObjects::CommManipulationPlannerEventState>> planningEventServiceOutEventTestHandler) override;

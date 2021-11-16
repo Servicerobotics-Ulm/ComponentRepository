@@ -47,7 +47,6 @@
 
 #include "DockingTaskCore.hh"
 #include "CommNavigationObjects/CommDockingEventState.hh"
-#include <webots/Supervisor.hpp>
 
 struct Pose2D{
     double x, y, heading;
@@ -58,9 +57,6 @@ class DockingTask  : public DockingTaskCore
 private:
     enum Program {prFirstRun=0, prNeutral=1, prDocking=2, prUndocking=3};
     std::atomic<Program> newProgram {prNeutral}; // indirectly set by another thread (SmartStateChangeHandler)
-    webots::Supervisor *robot;
-
-    Pose2D getNodePose(webots::Node *node);
 
 public:
 	DockingTask(SmartACE::SmartComponent *comp);

@@ -62,9 +62,77 @@ using namespace webots;
 
 std::string robotArmModel;
 
+// glossary:
+// frame = frame of reference = coordinate system
+// pose = position (translation) and orientation (rotation) of B relative to A (both A and B are points in 3D space, A is used as frame of reference)
+// transformation = translation or rotation or scaling or shearing
+// translation = change position
+// rotation = change orientation
+//
+// we use 3D, rectangular, right handed coordinate systems, unit [m] or [mm]
+// axes conventions:
+// ENU: x=east, y=north, z=up (for world map)
+// FLU: x=forward, y=left, z=up (for robots etc.)
+// x=Red y=Green z=Blue
+//
+// angle is measured in radians
+// e.g. heading/yaw/azimuth = rotation around z-axis, starting from x-axis in direction to y-axis
+//                   0
+//                Z  | X
+//                |  |/
+//             ***|**+***
+//   pi/2  ****   | /    **  3/2*pi
+//      \ *       |/       */
+//    Y--+--------+--------+--
+//        *      /        *
+//         **   /    ****
+//           **+*****
+//            / \
+//               pi
+//
+// rotate | start | to   |
+// around | axis  | axis | names
+// -------+-------+------+
+//    Z       X      Y     yaw   = azimuth   = heading
+//    Y       X     -Z     pitch = elevation = pitch
+//    X       Y      Z     roll  = roll      = bank
+// (see right hand rule)
+//
+// different representations for rotation:
+// * pose matrix
+//   a homogeneous matrix allows a combination of any number of translation, rotation, scaling or shearing.
+//   (see https://www.javatpoint.com/computer-graphics-homogeneous-coordinates)
+//   transform a point (x,y,z) by 9 matrices:
+//                        (x)       (x)
+//                        (y)       (y)
+//   M1 * M2 * ... * M9 * (z) = M * (z)   with M = M1 * M2 * ... M9
+//                        (1)       (1)
+//   pose matrix is a special case of a homogeneous matrix: only translation and rotation possible, last line in matrix is always 0 0 0 1.
+//   Pose Matrix            Rotation Matrix        Translation Matrix
+//   P = r11 r12 r13  x     R = r11 r12 r13  0     T = 1   0   0  x
+//       r21 r22 r23  y         r21 r22 r23  0         0   1   0  y
+//       r32 r32 r33  z         r31 r32 r33  0         0   0   1  z
+//         0   0   0  1           0   0   0  1         0   0   0  1
+// * euler angles :
+//   used for parameters in SmartSoft
+//   intrinsic ZYX rotate around z/y/x axis by angle azimuth(yaw)/elevation(pitch)/roll [radians]
+//     x, y, z, azimuth, elevation, roll
+// * axis angle :
+//   used in webots as
+//     (nx, ny, nz, alpha)
+//     rotate around AXIS (nx,ny,nz) by ANGLE alpha [radians].
+//     (nx,ny,nz) must be a unit axis <=> normalized <=> length 1 <=> sqrt(nx*nx+ny*ny+nz*nz)=1
+//   used in universal robotics controller as
+//     (rx, ry, rz) = alpha * (nx, ny, nz) = (alpha*nx, alpha*ny, alpha*nz)
+// * quaternion :
+//   used for rotation interpolation (SLERP algorithm)
+//     (qw, qx, qy, qz) = (cos(alpha/2), nx*sin(alpha), ny*sin(alpha), nz*sin(alpha))
+//     unit quaterion <=> normalized <=> length 1 <=> sqrt(qw*q2+qx*qx+qy*qy+qz*qz)=1 <=> (nx,ny,nz) is unit vector
+
 //////////////// helper functions /////////////////////
 
 // replaces EulerTransformationMatrices::create_zyx_matrix(...)
+// replaces CommBasicObjects::CommPose3d getHomogeneousMatrix()
 Eigen::MatrixXd getPoseMatrixFromEulerAngles(double x, double y, double z, double azimuth, double elevation, double roll) {
     Eigen::Matrix3d R;
     R = Eigen::AngleAxisd(azimuth, Eigen::Vector3d::UnitZ()) *
@@ -77,6 +145,36 @@ Eigen::MatrixXd getPoseMatrixFromEulerAngles(double x, double y, double z, doubl
     matrix(1,3) = y;
     matrix(2,3) = z;
     return matrix;
+}
+
+// replaces EulerTransformationMatrices::zyx_from_matrix(...)
+void getEulerAnglesFromPoseMatrix(Eigen::MatrixXd matrix, double& x, double &y, double &z, double &azimuth, double & elevation, double &roll) {
+    Eigen::Matrix3d R;
+    R = matrix.block<3,3>(0,0);
+    Eigen::Vector3d ea = R.eulerAngles(2, 1, 0);
+    x = matrix(0,3);
+    y = matrix(1,3);
+    z = matrix(2,3);
+    azimuth = ea(0);
+    elevation = ea(1);
+    roll = ea(2);
+}
+
+// returns inverse of pose matrix; same as inv(arma::mat) but should be much faster
+Eigen::MatrixXd getInversePoseMatrix(Eigen::MatrixXd matrix) {
+    Eigen::Matrix3d R = matrix.block<3,3>(0,0).transpose();
+    Eigen::Vector3d t = -R * matrix.block<3,1>(0,3);
+    Eigen::MatrixXd m(4,4);
+    m.setIdentity();
+    m.block<3,3>(0,0) = R;
+    m.block<3,1>(0,3) = t;
+    return m;
+}
+
+Eigen::Quaterniond getQuaternionFromPoseMatrix(Eigen::MatrixXd matrix) {
+    Eigen::Matrix3d mat = matrix.block<3,3>(0,0);
+    Eigen::Quaterniond q(mat);
+    return q.normalized();
 }
 
 bool isNUE; // is the webots world coordinate system NorthUpEast?
@@ -105,22 +203,15 @@ std::array<double, 9> webots2smartOrientation(const double *d) {
     }
 }
 
-// returns a 4x4 matrix with the pose of the node in the world
+// get pose matrix from a webots node
+// 4x4 pose matrix:
 // r11 r12 r13  x
 // r21 r22 r23  y
 // r32 r32 r33  z
 //   0   0   0  1
 // translation = node->getPosition() = x/y/z [m]
 // rotation = node->getOrientation() = r11, r12, ..., r33
-// combine two transformations into one: matrix_a * matrix_b
-// transform from node coordinate system to world coordinate system:
-// matrix * vector {x, y, z, 1}
-// transform from world's coordinate system to node coordinate system:
-// inv(matrix) * vector {x, y, z, 1}
-// see also: CommBasicObjects::CommPose3d getHomogeneousMatrix()
-// EulerTransformationMatrices::create_zyx_matrix(...) to get matrix from azimuth/elevation/roll
-// EulerTransformationMatrices::zyx_from_matrix(...) to get azimuth/elevation/roll from matrix
-Eigen::MatrixXd getPoseMatrix(webots::Node *node) {
+Eigen::MatrixXd getPoseMatrixFromWebotsNode(webots::Node *node) {
     std::array<double, 3> position = webots2smartPosition(node->getPosition());
     std::array<double, 9> orientation = webots2smartOrientation(node->getOrientation());
     Eigen::MatrixXd matrix(4, 4);
@@ -134,41 +225,18 @@ Eigen::MatrixXd getPoseMatrix(webots::Node *node) {
     return matrix;
 }
 
-// todo: replace armadillo with Eigen
-//       replace EulerTransformation with Eigen (eulerAngles(2, 1, 0))
-// armadillo examples: see
-// https://github.com/lsolanka/armadillo/blob/master/examples/example1.cpp
+// ComponentAmclWithTags AmclTask.cc:
+// mrpt::poses::CPose3D robot_to_marker(markerPoseInRobotFrame.get_x(1), ... markerPoseInRobotFrame.get_roll());
+// mrpt::poses::CPose3D world_to_marker(markerPoseInWorldFrame.get_x(1) ... markerPoseInWorldFrame.get_roll());
+// arma::mat m_world_to_marker = markerPoseInWorldFrame.getHomogeneousMatrix(1.0);
+// arma::mat m_robot_to_marker = markerPoseInRobotFrame.getHomogeneousMatrix(1.0);
+// arma::mat m_world_to_robot  = m_world_to_marker * arma::inv(m_robot_to_marker);
 
-// returns inverse of pose matrix; same as inv(arma::mat) but should be much faster
-Eigen::MatrixXd getInvPoseMatrix(Eigen::MatrixXd matrix) {
-    Eigen::Matrix3d R = matrix.block<3,3>(0,0).transpose();
-    Eigen::Vector3d t = -R * matrix.block<3,1>(0,3);
-    Eigen::MatrixXd m(4,4);
-    m.setIdentity();
-    m.block<3,3>(0,0) = R;
-    m.block<3,1>(0,3) = t;
-    return m;
-}
-
-Eigen::Quaterniond getQuaternionFromPoseMatrix(Eigen::MatrixXd matrix) {
-    Eigen::Matrix3d mat = matrix.block<3,3>(0,0);
-    Eigen::Quaterniond q(mat);
-    return q.normalized();
-}
-
-// replaces EulerTransformationMatrices::zyx_from_matrix(...)
-void getEulerAnglesFromPoseMatrix(Eigen::MatrixXd matrix, double& x, double &y, double &z, double &azimuth, double & elevation, double &roll) {
-    Eigen::Matrix3d R;
-    R = matrix.block<3,3>(0,0);
-    Eigen::Vector3d ea = R.eulerAngles(2, 1, 0);
-    x = matrix(0,3);
-    y = matrix(1,3);
-    z = matrix(2,3);
-    azimuth = ea(0);
-    elevation = ea(1);
-    roll = ea(2);
-}
-
+// combine two transformations into one: matrix_a * matrix_b
+// transform from node coordinate system to world coordinate system:
+// matrix * vector {x, y, z, 1}
+// transform from world's coordinate system to node coordinate system:
+// inv(matrix) * vector {x, y, z, 1}
 
 Eigen::Vector3d realP[7];
 // negativeJointAngles4= true <=>  -M_PI < jointAngles[4] < 0
@@ -211,36 +279,41 @@ void printVectorError(std::string msg, Eigen::Vector3d vec1, Eigen::Vector3d vec
 //             *                  *
 //            p1->x          x<-p1
 // => always choose left solution
-// (todo: calculate both solutions, choose the solution with similar joint angels than actual robot arm)
+// (todo: calculate both solutions, choose the solution with similar joint angles than actual robot arm)
 
-// inverse kinematic: calculate joint angles from TCP position; if calculation was done return 0 else return error line number
-int getJointAnglesFromTcpPoseMatrix(Eigen::MatrixXd matrix, std::array<double, 6> &jointAngles) {
-    // calculation is based on UR5 from Universal Robotics or similar (6 motors):
-    // www.universal-robots.com/articles/ur/application-installation/dh-parameters-for-calculations-of-kinematics-and-dynamics
-    // (bug: the webots UR5e.proto x-cooridnate is opposite direction than in above article)
-    // p0 = start point (robot arm is mounted here, is (0/0/0) of robots coordinate system)
-    // p0..p5 = motor i rotates around this point
-    // p6 = TCP = ToolCenterPoint = end point of the last part of the robot arm
-    // d[i] = distance between p[i] and p[i+1]
+// This function does the inverse kinematic for an webots UR5/UR5e/UR10e robot arm.
+// input parameter 'matrix': 4x4 pose matrix with position and orientation of the webots toolSlot relative to the webots robot arm frame
+// output parameter 'jointAngles': roboter arm joint angles.
+// returns 0 if the calculation was successfull, or returns the line number if an error occurred.
+int getJointAnglesFromToolSlotPoseMatrix(Eigen::MatrixXd matrix, std::array<double, 6> &jointAngles) {
+    // length, coordinate systems etc. are from webots UR5e.proto UR10e.proto or UR5.proto
+    // (.proto are made from ROS .urdf and .srdf files)
+    // NOT equal to Universal Robotics coordinate systems
+    // NOT equal to SmartSoft coordinate systems
 
-    // top view: (starting position: all jointAngles == 0)
+    // (see https://cyberbotics.com/doc/guide/ure)
+    // starting position: all jointAngles == 0 (coordinate system from p0)
+    // top view:
     //   y                      p6
     //   ^                      |
     //   |                      p5
-    //   +--> x      p0        /
-    //  /          +/----+     p4
-    // z           p1    p2----p3
-
-    // side view: (upright position, not starting position)
+    //   +--> x                /
+    //  /            p0        p4
+    // z            /          |
+    //             p1----p2----p3
     //
-    //             p6--p5
-    //                 |
-    //                 p4-p3
-    //                     |
-    //       z          +-p2
-    //       ^ x        |
-    //       |/         +-p1
-    //  y <--+            p0
+    // side view:                 p4 p6
+    //   z                       /| /
+    //   ^         p1----p2----p3 p5
+    //   |         |
+    //   +--> x    p0
+    //  /
+    // y
+
+    // p0 = start point (robot arm is mounted here, is (0/0/0) of robots coordinate system)
+    // p6 = toolSlot of robot arm in webots = flange = where tools are mounted at the end of the robot arm
+    // motor 0 rotates around p0 by jointAngles[0] etc.
+    // d[i] = distance between p[i] and p[i+1]
 
     // todo: move these numbers into parameters
     // how to find parameters from e.g. UR5.proto:
@@ -251,11 +324,11 @@ int getJointAnglesFromTcpPoseMatrix(Eigen::MatrixXd matrix, std::array<double, 6
     // 5. endpoint translation 0 0.093000 0
     // 6. endpoint translation 0 0 0.094650
     //    toolslot translation 0 0.0823 0
-    //    vacuum gripper length 0.11
 
-    double d_UR5[6] = {0.089159, 0.425, 0.39225, 0.135850-0.119700+0.093000, 0.094650, 0.0823+0.11};
-    double d_UR5e[6] = {0.163, 0.425, 0.392, 0.138-0.131+0.127, 0.1, 0.1+0.11};
-    double d_UR10e[6] = {0.181, 0.613, 0.571, 0.176-0.137+0.135, 0.12, 0.12+0.11};
+    double d_UR5[6] = {0.089159, 0.425, 0.39225, 0.135850-0.119700+0.093000, 0.094650, 0.0823};
+    double d_UR5e[6] = {0.163, 0.425, 0.392, 0.138-0.131+0.127, 0.1, 0.1};
+    // todo: remove extra length of vacuum gripper from model
+    double d_UR10e[6] = {0.181, 0.613, 0.571, 0.176-0.137+0.135, 0.12, 0.12+0.119};
     double d[6];
     for(int i=6; i--;)
       if(robotArmModel=="UR5")
@@ -373,9 +446,12 @@ int getJointAnglesFromTcpPoseMatrix(Eigen::MatrixXd matrix, std::array<double, 6
     jointAngles[4] = -atan2(axisP5P6.dot(axisP3P4.cross(axisP4P5)), axisP5P6.dot(axisP3P4));
 
     Eigen::Vector4d p4Homogeneous = p4.homogeneous();
-    std::cout << "p4:" << p4.transpose() << " p4p4Homogenous" << p4Homogeneous.transpose() << std::endl;
+    std::cout << "p4:" << p4.transpose() << " p4p4homogeneous" << p4Homogeneous.transpose() << std::endl;
 
 
+    //  coordinate system of flange (tool mounting point at end of robot arm):
+    //  y-axis is same as p5p6, pointing away from p6
+    //  jointAngles[5] == 0  => x-axis is parallel to p5p4 (coordinate system is from p6/toolSlot)
     //     z
     //     ^ y
     //     |/
@@ -387,7 +463,7 @@ int getJointAnglesFromTcpPoseMatrix(Eigen::MatrixXd matrix, std::array<double, 6
     //           p4
 
     // get p4 position relative to TCP coordinate system
-    Eigen::Vector3d p4_in_tcp_coord = getInvPoseMatrix(matrix) * p4Homogeneous;
+    Eigen::Vector3d p4_in_tcp_coord = getInversePoseMatrix(matrix) * p4Homogeneous;
     std::cout << "p4_in_tcp_coord = " << p4_in_tcp_coord.transpose() << std::endl;
     jointAngles[5] = atan2(p4_in_tcp_coord[0], -p4_in_tcp_coord[2]);
     return 0;
@@ -413,20 +489,34 @@ void PoseUpdateActivity::handleEnterState(const std::string &substate) {
 }
 
 // called from TrajectorySendServerHandler.cc
-void PoseUpdateActivity::on_trajectorySendServer(const CommManipulatorObjects::CommManipulatorTrajectory &input) {
+void PoseUpdateActivity::on_trajectorySendServer(const CommManipulatorObjects::CommManipulationTrajectory &input) {
+    ParameterStateStruct params = COMP->getParameters();
     std::unique_lock<std::mutex> lock(jointMutex);
-    if (input.getFlag() == CommManipulatorObjects::ManipulatorTrajectoryFlag::POSE_TCP) {
+    if (input.getType() == CommManipulatorObjects::ManipulatorTrajectoryFlag::POSE_TCP) {
         setGoalReached(false);
         double x,y,z,azimuth,elevation,roll;
-        input.get_pose_TCP_robot(x, y, z, azimuth, elevation, roll, 1);
-        targetTcpPoseMatrix = getPoseMatrixFromEulerAngles(x, y, z, azimuth, elevation, roll);
-//        std::cout << "on_trajectorySendServer POSE_TCP " << x << " " << azimuth << std::endl;
-//        std::cout << targetTcpPoseMatrix << std::endl;
+
+        // similar code with comments in getMobileManipulatorState()
+        input.get_first_pose_TCP_robot(x, y, z, azimuth, elevation, roll, 1);
+        Eigen::MatrixXd base_to_TCP = getPoseMatrixFromEulerAngles(x, y, z, azimuth, elevation, roll);
+        Eigen::MatrixXd base_to_manipulatorUR = getPoseMatrixFromEulerAngles(
+            params.getManipulator().getX(), params.getManipulator().getY(), params.getManipulator().getZ(),
+            params.getManipulator().getAzimuth(), params.getManipulator().getElevation(), params.getManipulator().getRoll());
+        Eigen::MatrixXd manipulatorUR_to_manipulatorWebots = getPoseMatrixFromEulerAngles(0, 0, 0, 0, 0, M_PI);
+        Eigen::MatrixXd toolSlotWebots_to_tool0 = getPoseMatrixFromEulerAngles(0, 0, 0, 0, 0, -M_PI);
+        Eigen::MatrixXd tool0_to_TCP = getPoseMatrixFromEulerAngles(
+            params.getTCP().getX(), params.getTCP().getY(), params.getTCP().getZ(),
+            params.getTCP().getAzimuth(), params.getTCP().getElevation(), params.getTCP().getRoll());
+        Eigen::MatrixXd manipulatorWebots_to_base =  getInversePoseMatrix(base_to_manipulatorUR * manipulatorUR_to_manipulatorWebots);
+        Eigen::MatrixXd TCP_to_toolSlot = getInversePoseMatrix(toolSlotWebots_to_tool0 * tool0_to_TCP);
+        Eigen::MatrixXd manipulatorWebots_to_toolSlot = manipulatorWebots_to_base * base_to_TCP * TCP_to_toolSlot;
+        targetTcpPoseMatrix = manipulatorWebots_to_toolSlot;
+        targetTcpPoseMatrix = base_to_TCP;
         isTcpMovement = true;
         return;
     }
-    if (input.getFlag() != CommManipulatorObjects::ManipulatorTrajectoryFlag::JOINT_ANGLES) {
-        std::cerr << __FILE__ << __LINE__ << " error: flag " << input.getFlag() << std::endl;
+    if (input.getType() != CommManipulatorObjects::ManipulatorTrajectoryFlag::JOINT_ANGLES) {
+        std::cerr << __FILE__ << __LINE__ << " error: flag " << input.getType() << std::endl;
         return;
     }
     isTcpMovement = false;
@@ -437,9 +527,9 @@ void PoseUpdateActivity::on_trajectorySendServer(const CommManipulatorObjects::C
     for (int i = 0; i < input.get_trajectory_size(); i++) {
         Trajectory t;
         auto x = input.getJoint_anglesElemAtPos(i);
-        t.time = x.getTime();
+        t.time = x.getReach_time();
         for (int j = 0; j < nrJoints; j++)
-            t.jointTargetPosition[j] = x.getValuesElemAtPos(j);
+            t.jointTargetPosition[j] = x.getJoint_anglesElemAtPos(j);
         trajectory.push_back(t);
     }
 }
@@ -458,11 +548,42 @@ void PoseUpdateActivity::getMobileManipulatorState(CommManipulatorObjects::CommM
             params.getManipulator().getZ(), params.getManipulator().getAzimuth(),
             params.getManipulator().getElevation(), params.getManipulator().getRoll());
         state.set_joint_count(nrJoints);
-        if (jointValid) {
-            for (int i = 0; i < nrJoints; ++i) {
-                state.set_joint_angle(i, jointPosition[i]);
-            }
-            state.set_pose_TCP_manipulator(tcpPoseArgs[0], tcpPoseArgs[1], tcpPoseArgs[2], tcpPoseArgs[3], tcpPoseArgs[4], tcpPoseArgs[5], 1.0);
+
+        if(jointValid) {
+          for (int i = 0; i < nrJoints; ++i) {
+              state.set_joint_angle(i, jointPosition[i]);
+          }
+
+          // different coordinate systems:
+          //  toolSlot           tool0 UR5         TCP
+          //  webots                 Y             smartsoft
+          //                         |
+          //    +--X                 +--X         Y--+
+          //   /|                   /               /|
+          //  Y Z                  Z               X Z
+
+          // (base -> manipulator(UR)) nur in performTrajectoryPoseTCP
+
+          // (A -> B) means pose of B in frame A
+          // (manipulator(UR) -> manipulator (webots)) <=> roll=pi
+          Eigen::MatrixXd manipulatorUR_to_manipulatorWebots = getPoseMatrixFromEulerAngles(0, 0, 0, 0, 0, M_PI);
+          // manipulator(webots) -> toolSlot(webots)
+          // tcpPoseArgs is position/orientation of webots toolSlot in webots robot arm frame, set in on_execute()
+          Eigen::MatrixXd manipulatorWebots_to_toolSlotWebots = getPoseMatrixFromEulerAngles(tcpPoseArgs[0], tcpPoseArgs[1], tcpPoseArgs[2], tcpPoseArgs[3], tcpPoseArgs[4], tcpPoseArgs[5]);
+          // (toolSlot(webots) -> tool0) <=> rotate around x-axis by -pi <=> roll=-pi
+          Eigen::MatrixXd toolSlotWebots_to_tool0 = getPoseMatrixFromEulerAngles(0, 0, 0, 0, 0, -M_PI);
+          // (tool0 -> tool param) <=> InternalParameter TCP <=> x=0 y=0 z=0.1192 azimuth=pi/2 elevation=-pi/2 roll=0
+          Eigen::MatrixXd tool0_to_TCP = getPoseMatrixFromEulerAngles(
+              params.getTCP().getX(), params.getTCP().getY(), params.getTCP().getZ(),
+              params.getTCP().getAzimuth(), params.getTCP().getElevation(), params.getTCP().getRoll());
+          Eigen::MatrixXd manipulatorUR_to_TCP =
+              manipulatorUR_to_manipulatorWebots *
+              manipulatorWebots_to_toolSlotWebots *
+              toolSlotWebots_to_tool0 *
+              tool0_to_TCP;
+          double args[6];
+          getEulerAnglesFromPoseMatrix(manipulatorUR_to_TCP , args[0], args[1], args[2], args[3], args[4], args[5]);
+          state.set_pose_TCP_manipulator(args[0], args[1], args[2], args[3], args[4], args[5], 1.0);
         }
         state.set_valid(jointValid);
     }
@@ -499,7 +620,6 @@ void PoseUpdateActivity::setGoalReached(bool reached) {
         CommManipulatorObjects::ManipulatorEvent::GOAL_REACHED :
         CommManipulatorObjects::ManipulatorEvent::GOAL_NOT_REACHED);
 }
-
 
 int PoseUpdateActivity::on_execute() {
     std::cout  << std::fixed << std::setprecision(5) << std::showpos;
@@ -650,20 +770,24 @@ int PoseUpdateActivity::on_execute() {
             jointValid = true;
             // (position relative to world) =  Matrix * (position relative to arm)
             webots::Node* tcpNode;
-//            tcpNode = robot->getFromDef("P6");
+            // a receiver node is used to detect TCP positions
+            // (add an invisible receiver node in webots robot arm, e.g. in the tool)
             webots::Receiver* receiver = robot->getReceiver("receiver");
             if(receiver)
                 tcpNode = robot->getFromDevice(receiver);
-            else
-                tcpNode = robot->getFromDevice(distanceSensor);
             if(!tcpNode) {
-                std::cerr << "tcpNode not found" << std::endl;
+                std::cerr << "no receiver found to detect TCP pose" << std::endl;
                 return -1;
             }
 
-            // tcpPose relative to arm = inv(armPose) * tcpPose
-            Eigen::MatrixXd invArmMatrix = getInvPoseMatrix(getPoseMatrix(robot->getSelf()));
-            Eigen::MatrixXd actualTcpPoseMatrix = invArmMatrix * getPoseMatrix(tcpNode);
+            // pose of robot arm in world frame
+            Eigen::MatrixXd world_to_arm = getPoseMatrixFromWebotsNode(robot->getSelf());
+            // pose of world in robot arm frame
+            Eigen::MatrixXd arm_to_world = getInversePoseMatrix(world_to_arm);
+            // pose of tool slot in world frame
+            Eigen::MatrixXd world_to_toolSlot = getPoseMatrixFromWebotsNode(tcpNode);
+            // pose of toolSlot in robot arm frame
+            Eigen::MatrixXd actualTcpPoseMatrix = arm_to_world * world_to_toolSlot;
             getEulerAnglesFromPoseMatrix(actualTcpPoseMatrix , tcpPoseArgs[0], tcpPoseArgs[1], tcpPoseArgs[2], tcpPoseArgs[3], tcpPoseArgs[4], tcpPoseArgs[5]);
 
             if (program == prNeutral)
@@ -725,7 +849,7 @@ int PoseUpdateActivity::on_execute() {
 /*
                 for(int i=0; i<=6; i++) {
                     webots::Node* node = robot->getFromDef("P"+std::to_string(i));
-                    Eigen::MatrixXd matrix = invArmMatrix * getPoseMatrix(node);
+                    Eigen::MatrixXd matrix = invArmMatrix * getPoseMatrixFromWebotsNode(node);
                     realP[i] = matrix.block<3,1>(0,3).transpose();
                 }
 */
@@ -775,7 +899,7 @@ int PoseUpdateActivity::on_execute() {
                         " distanceDivision: " << distanceDivision << std::endl;
                 }
                 std::array<double, 6> jointAngles;
-                int errorLine = getJointAnglesFromTcpPoseMatrix(newTcpPoseMatrix, jointAngles);
+                int errorLine = getJointAnglesFromToolSlotPoseMatrix(newTcpPoseMatrix, jointAngles);
                 // sometimes joint angles jump by 360° => if old angle - new angle = 360° then new_angle += 360° (if possible)
                 for(int i=0; i<6; i++) {
                     double tmp = jointAngles[i] - jointPosition[i];
@@ -823,7 +947,7 @@ int PoseUpdateActivity::on_execute() {
                     else
                         jointTargetPosition[i] = k[i];
                 if(errorLine != 0) {
-                    std::cout << AnsiCodes::RED_FOREGROUND << "getJointAnglesFromTcpPoseMatrix() failed: " << errorLine << AnsiCodes::RESET << std::endl;
+                    std::cout << AnsiCodes::RED_FOREGROUND << "getJointAnglesFromToolSlotPoseMatrix() failed: " << errorLine << AnsiCodes::RESET << std::endl;
                     continue; // don't move arm
                 }
 
@@ -870,8 +994,6 @@ int PoseUpdateActivity::on_execute() {
             connector->lock();
         if (!isVacuumOn)
             connector->unlock();
-
-
 /*
         if (params.getManipulator().getVerbose()) {
             std::cout << "program=" << program;

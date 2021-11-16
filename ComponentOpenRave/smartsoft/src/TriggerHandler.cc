@@ -293,14 +293,14 @@ void TriggerHandler::handleCommManipulationPlannerObjects_ManipulationPlannerPar
 			}
 
 			// Set default parameters into the trajectory which will be sent to the Manipulator
-			CommManipulatorObjects::CommManipulatorTrajectory manipulatorTrajectory;
-			manipulatorTrajectory.set_valid_values(CommManipulatorObjects::ManipulatorTrajectoryFlag::JOINT_ANGLES);
-			manipulatorTrajectory.set_trajectory_size(openraveTrajectory.size());
+			CommManipulatorObjects::CommManipulationTrajectory manipulationTrajectory;
+			manipulationTrajectory.set_valid_values(CommManipulatorObjects::ManipulatorTrajectoryFlag::JOINT_ANGLES);
+			manipulationTrajectory.set_trajectory_size(openraveTrajectory.size());
 
 			if (openraveTrajectory.size() == 0) {
-				manipulatorTrajectory.set_joint_count(0);
+				manipulationTrajectory.set_joint_count(0);
 			} else {
-				manipulatorTrajectory.set_joint_count(openraveTrajectory[0].jointValues.size());
+				manipulationTrajectory.set_joint_count(openraveTrajectory[0].jointValues.size());
 			}
 
 			/*
@@ -309,9 +309,9 @@ void TriggerHandler::handleCommManipulationPlannerObjects_ManipulationPlannerPar
 			 * set the converted angles into the trajectory sent to the manipulator
 			 */
 			for (size_t j = 0; j < openraveTrajectory.size(); ++j) {
-				manipulatorTrajectory.set_joint_time(j, openraveTrajectory[j].time);
-				for (size_t k = 0; k < manipulatorTrajectory.get_joint_count(); ++k) {
-					manipulatorTrajectory.set_joint_angle(j, k, openraveTrajectory[j].jointValues[k]);
+				manipulationTrajectory.set_joint_time(j, openraveTrajectory[j].time);
+				for (size_t k = 0; k < manipulationTrajectory.get_joint_count(); ++k) {
+					manipulationTrajectory.set_joint_angle(j, k, openraveTrajectory[j].jointValues[k]);
 				}
 			}
 
@@ -348,7 +348,7 @@ void TriggerHandler::handleCommManipulationPlannerObjects_ManipulationPlannerPar
 
 				if (COMP->getGlobalState().getPortParameter().getWithManipulator()) {
 					std::cout << "[PathPlanningSendHandler] Send trajectory to manipulator ...\n";
-					status = COMP->sendTrajectoryOut->send(manipulatorTrajectory);
+					status = COMP->sendTrajectoryOut->send(manipulationTrajectory);
 
 					if (status != Smart::SMART_OK) {
 						throw MessageHandler::ErrorException(
@@ -466,7 +466,7 @@ void TriggerHandler::handleCommManipulationPlannerObjects_ManipulationPlannerPar
 						CommManipulationPlannerObjects::ManipulationPlannerEvent::NO_IK_SOLUTION_FOUND);
 			}
 
-			std::cout << "Timo: iterate finished" << std::endl;
+			std::cout << "Timo: iterate finished: angles.size(): "  << angles.size() << std::endl;
 
 			// found IK solution for simple grasping
 			// Send PLANNING_PATH event with final TCP pose where the path is planned to
@@ -487,14 +487,14 @@ void TriggerHandler::handleCommManipulationPlannerObjects_ManipulationPlannerPar
 			std::cout << "Timo: plan finished" << std::endl;
 
 			// Set default parameters into the trajectory which will be sent to the Manipulator
-			CommManipulatorObjects::CommManipulatorTrajectory manipulatorTrajectory;
-			manipulatorTrajectory.set_valid_values(CommManipulatorObjects::ManipulatorTrajectoryFlag::JOINT_ANGLES);
-			manipulatorTrajectory.set_trajectory_size(openraveTrajectory.size());
+			CommManipulatorObjects::CommManipulationTrajectory manipulationTrajectory;
+			manipulationTrajectory.set_valid_values(CommManipulatorObjects::ManipulatorTrajectoryFlag::JOINT_ANGLES);
+			manipulationTrajectory.set_trajectory_size(openraveTrajectory.size());
 
 			if (openraveTrajectory.size() == 0) {
-				manipulatorTrajectory.set_joint_count(0);
+				manipulationTrajectory.set_joint_count(0);
 			} else {
-				manipulatorTrajectory.set_joint_count(openraveTrajectory[0].jointValues.size());
+				manipulationTrajectory.set_joint_count(openraveTrajectory[0].jointValues.size());
 			}
 
 			/*
@@ -503,9 +503,9 @@ void TriggerHandler::handleCommManipulationPlannerObjects_ManipulationPlannerPar
 			 * set the converted angles into the trajectory sent to the manipulator
 			 */
 			for (size_t j = 0; j < openraveTrajectory.size(); ++j) {
-				manipulatorTrajectory.set_joint_time(j, openraveTrajectory[j].time);
-				for (size_t k = 0; k < manipulatorTrajectory.get_joint_count(); ++k) {
-					manipulatorTrajectory.set_joint_angle(j, k, openraveTrajectory[j].jointValues[k]);
+				manipulationTrajectory.set_joint_time(j, openraveTrajectory[j].time);
+				for (size_t k = 0; k < manipulationTrajectory.get_joint_count(); ++k) {
+					manipulationTrajectory.set_joint_angle(j, k, openraveTrajectory[j].jointValues[k]);
 				}
 			}
 
@@ -542,7 +542,7 @@ void TriggerHandler::handleCommManipulationPlannerObjects_ManipulationPlannerPar
 
 				if (COMP->getGlobalState().getPortParameter().getWithManipulator()) {
 					std::cout << "[PathPlanningSendHandler] Send trajectory to manipulator ...\n";
-					status = COMP->sendTrajectoryOut->send(manipulatorTrajectory);
+					status = COMP->sendTrajectoryOut->send(manipulationTrajectory);
 
 					if (status != Smart::SMART_OK) {
 						throw MessageHandler::ErrorException(

@@ -1,7 +1,5 @@
 ComponentDefinition ComponentOpenRave logo "/ComponentOpenRave/model/logo.png"
 {
-	OutputPort SendTrajectoryOut implements CommManipulatorObjects.SendTrajectoryService realizedBy TrajectorySampling {
-	}
 	OutputPort PlanningEventServiceOut implements CommManipulationPlannerObjects.ManipulationPlannerEventService realizedBy EventActivity {
 	}
 
@@ -60,4 +58,6 @@ ComponentDefinition ComponentOpenRave logo "/ComponentOpenRave/model/logo.png"
 	}
 	ComponentParameters ComponentOpenRaveParams slave CoordinationPort
 	InputHandler GripperEventServiceInHandler triggeredFrom GripperEventServiceIn { }
+OutputPort SendTrajectoryOut implements CommManipulatorObjects.ManipulationTrajectoryService realizedBy TrajectorySampling {
+	}
 }

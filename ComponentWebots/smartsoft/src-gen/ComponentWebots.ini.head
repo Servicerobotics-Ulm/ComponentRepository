@@ -31,6 +31,21 @@ initialComponentMode Neutral
 ##########################
 # Task parameters
 
+[EditorTask]
+minActFreqHz 0.0
+maxActFreqHz 0.0
+# other trigger-types are:
+#triggerType PeriodicTimer
+#periodicActFreqHz 0.0
+# or alternatively:
+#triggerType DataTriggered
+#inPortRef <InPortName>
+#prescale 1
+# optional scheduling parameters
+# scheduler FIFO
+# priority 0
+# cpuAffinity 0
+
 ##########################
 # InputHandler parameters
 
@@ -39,6 +54,22 @@ initialComponentMode Neutral
 
 ##########################
 # client port parameter
+
+[CommKBQueryReq]
+initialConnect false
+serverName unknown
+serviceName unknown
+wiringName CommKBQueryReq
+interval 1
+roboticMiddleware ACE_SmartSoft
+
+[NavPathServiceOut]
+initialConnect false
+serverName unknown
+serviceName unknown
+wiringName NavPathServiceOut
+interval 1
+roboticMiddleware ACE_SmartSoft
 
 ##########################
 ## parameters of PlainOpcUaComponentWebotsExtension

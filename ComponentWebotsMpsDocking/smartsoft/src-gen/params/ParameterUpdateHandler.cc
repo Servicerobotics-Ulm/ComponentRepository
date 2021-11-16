@@ -144,10 +144,6 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.Webots.robotName = commitState.Webots.robotName;
 		}
-		if(parameter.getStringList("Webots", "stationName", commitState.Webots.stationName))
-		{
-			globalState.Webots.stationName = commitState.Webots.stationName;
-		}
 		
 		//
 		// load extended parameters (if any)

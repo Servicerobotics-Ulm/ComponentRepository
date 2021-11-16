@@ -60,6 +60,16 @@ int ComponentWebotsAcePortFactory::onStartup()
 	return componentImpl->startComponentInfrastructure();
 }
 
+Smart::IQueryClientPattern<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse> * ComponentWebotsAcePortFactory::createCommKBQueryReq()
+{
+	return new SmartACE::QueryClient<CommBasicObjects::CommKBRequest, CommBasicObjects::CommKBResponse>(componentImpl);
+}
+
+Smart::ISendClientPattern<DomainRobotFleetNavigation::CommNavPath> * ComponentWebotsAcePortFactory::createNavPathServiceOut()
+{
+	return new SmartACE::SendClient<DomainRobotFleetNavigation::CommNavPath>(componentImpl);
+}
+
 
 
 SmartACE::SmartComponent* ComponentWebotsAcePortFactory::getComponentImpl()

@@ -20,8 +20,8 @@
 #include "aceSmartSoft.hh"
 
 // include communication objects
-#include <CommManipulatorObjects/CommManipulatorTrajectory.hh>
-#include <CommManipulatorObjects/CommManipulatorTrajectoryACE.hh>
+#include <CommManipulatorObjects/CommManipulationTrajectory.hh>
+#include <CommManipulatorObjects/CommManipulationTrajectoryACE.hh>
 
 
 class SendTrajectoryOutWrapper
@@ -30,17 +30,17 @@ private:
 	std::mutex update_mutex;
 	Smart::StatusCode update_status;
 	
-	CommManipulatorObjects::CommManipulatorTrajectory updateData;
+	CommManipulatorObjects::CommManipulationTrajectory updateData;
 	
-	Smart::ISendClientPattern<CommManipulatorObjects::CommManipulatorTrajectory> *sendTrajectoryOut;
+	Smart::ISendClientPattern<CommManipulatorObjects::CommManipulationTrajectory> *sendTrajectoryOut;
 	
 public:
-	SendTrajectoryOutWrapper(Smart::ISendClientPattern<CommManipulatorObjects::CommManipulatorTrajectory> *sendTrajectoryOut);
+	SendTrajectoryOutWrapper(Smart::ISendClientPattern<CommManipulatorObjects::CommManipulationTrajectory> *sendTrajectoryOut);
 	virtual ~SendTrajectoryOutWrapper();
 	
-	Smart::StatusCode send(CommManipulatorObjects::CommManipulatorTrajectory &sendTrajectoryOutDataObject);
+	Smart::StatusCode send(CommManipulatorObjects::CommManipulationTrajectory &sendTrajectoryOutDataObject);
 	
-	Smart::StatusCode getLatestUpdate(CommManipulatorObjects::CommManipulatorTrajectory &sendTrajectoryOutDataObject);
+	Smart::StatusCode getLatestUpdate(CommManipulatorObjects::CommManipulationTrajectory &sendTrajectoryOutDataObject);
 	
 };
 

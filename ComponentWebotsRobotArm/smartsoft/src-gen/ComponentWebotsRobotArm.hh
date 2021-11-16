@@ -45,14 +45,14 @@ class ComponentWebotsRobotArmExtension;
 #include <CommBasicObjects/CommDigitalInputEventStateACE.hh>
 #include <CommBasicObjects/CommIOValues.hh>
 #include <CommBasicObjects/CommIOValuesACE.hh>
+#include <CommManipulatorObjects/CommManipulationTrajectory.hh>
+#include <CommManipulatorObjects/CommManipulationTrajectoryACE.hh>
 #include <CommManipulatorObjects/CommManipulatorEventParameter.hh>
 #include <CommManipulatorObjects/CommManipulatorEventParameterACE.hh>
 #include <CommManipulatorObjects/CommManipulatorEventResult.hh>
 #include <CommManipulatorObjects/CommManipulatorEventResultACE.hh>
 #include <CommManipulatorObjects/CommManipulatorEventState.hh>
 #include <CommManipulatorObjects/CommManipulatorEventStateACE.hh>
-#include <CommManipulatorObjects/CommManipulatorTrajectory.hh>
-#include <CommManipulatorObjects/CommManipulatorTrajectoryACE.hh>
 #include <CommManipulatorObjects/CommMobileManipulatorPrograms.hh>
 #include <CommManipulatorObjects/CommMobileManipulatorProgramsACE.hh>
 #include <CommManipulatorObjects/CommMobileManipulatorState.hh>
@@ -141,8 +141,8 @@ public:
 	BaseStateServiceInUpcallManager *baseStateServiceInUpcallManager;
 	BaseStateServiceInInputCollector *baseStateServiceInInputCollector;
 	// InputPort trajectorySendServer
-	Smart::ISendServerPattern<CommManipulatorObjects::CommManipulatorTrajectory> *trajectorySendServer;
-	Smart::InputTaskTrigger<CommManipulatorObjects::CommManipulatorTrajectory> *trajectorySendServerInputTaskTrigger;
+	Smart::ISendServerPattern<CommManipulatorObjects::CommManipulationTrajectory> *trajectorySendServer;
+	Smart::InputTaskTrigger<CommManipulatorObjects::CommManipulationTrajectory> *trajectorySendServerInputTaskTrigger;
 	TrajectorySendServerUpcallManager *trajectorySendServerUpcallManager;
 	TrajectorySendServerInputCollector *trajectorySendServerInputCollector;
 	
