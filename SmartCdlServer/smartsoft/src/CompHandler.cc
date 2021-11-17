@@ -280,6 +280,9 @@ void CompHandler::onStartup()
 	status = COMP->connectLaserClient(COMP->connections.laserClient.serverName, COMP->connections.laserClient.serviceName);
 	status = COMP->connectNavVelSendClient(COMP->connections.navVelSendClient.serverName, COMP->connections.navVelSendClient.serviceName);
 
+	// port removed
+    // status = COMP->connectNavigationPose2DServiceOut(COMP->connections.navigationPose2DServiceOut.serverName, COMP->connections.navigationPose2DServiceOut.serviceName);
+
 	if(COMP->getGlobalState().getServer().getLaserClient2Init()) {
 		status = COMP->connectLaserClient2(COMP->connections.laserClient2.serverName, COMP->connections.laserClient2.serviceName);
 	}

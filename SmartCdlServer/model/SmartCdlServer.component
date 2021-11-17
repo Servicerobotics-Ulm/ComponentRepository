@@ -78,7 +78,5 @@ ComponentDefinition SmartCdlServer
 	OutputPort NavVelSendClient implements CommNavigationObjects.NavigationVelocityService realizedBy CdlTask { 
 	}
 	OutputPort GoalEventServer implements CommNavigationObjects.GoalEventService realizedBy CdlTask { }
-	OutputPort RobotBlockedEventServer implements CommNavigationObjects.RobotBlockedEventService realizedBy CdlTask { } 
-	
-
+	OutputPort RobotBlockedEventServer implements CommNavigationObjects.RobotBlockedEventService realizedBy CdlTask { }
 }

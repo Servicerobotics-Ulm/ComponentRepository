@@ -1618,6 +1618,11 @@ int CdlLookupClass::calculateSpeedValues(
   if (wmin < wminIni) wmin=wminIni;
   if (wmax > wmaxIni) wmax=wmaxIni;
 
+  std::cout << "timo ************************************** v: " << v << std::endl;
+  std::cout << "timo ************************************** vacc: " << vacc << std::endl;
+  std::cout << "timo ************************************** vmax: " << vmax << std::endl;
+  std::cout << "timo ************************************** deltat: " << deltat << std::endl;
+
   ivmin = (int)(floor((vmin-cdl_v_tra_min)/cdl_v_tra_step+0.5));
   ivmax = (int)(floor((vmax-cdl_v_tra_min)/cdl_v_tra_step+0.5));
   iwmin = (int)(floor((wmin-local_cdl_v_rot_min)/local_cdl_v_rot_step+0.5));

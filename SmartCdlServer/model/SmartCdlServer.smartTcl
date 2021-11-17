@@ -95,6 +95,19 @@
 (define-tcb (approachLocation ?location)
   (module "NavigationModule")
   (rules (rule-unknown-location rule-location-success rule-robot-blocked))
+  (precondition  (equal '(halt-point) (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a location) (name ?location))) 'approach-type)))
+  (priority 99)
+  (abort-action (
+                  (tcl-state :server 'cdl :state "Neutral")
+                  (tcl-state :server 'mapper :state "Neutral")
+                  (tcl-state :server 'planner :state "Neutral")))
+  (plan (
+          (tcb-move-robot 'approach-region ?location)
+          (tcb-move-robot 'approach-exact ?location))))
+
+(define-tcb (approachLocation ?location)
+  (module "NavigationModule")
+  (rules (rule-unknown-location rule-location-success rule-robot-blocked))
   (precondition  (equal '(exact) (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a location) (name ?location))) 'approach-type)))
   (priority 99)
   (abort-action (
@@ -106,6 +119,7 @@
           (tcb-move-robot 'orientate-region ?location)
           (tcb-move-robot 'approach-exact ?location)
           (tcb-move-robot 'orientate-exact ?location))))
+
 
 ;;TODO TEST
 ;;detector wall
@@ -208,6 +222,7 @@
                   (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ID :value goalid)
                   (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.LOOKUPTABLE  :value 'DEFAULT)
                   (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SAFETYCL :value 200)
+                  (format t "timo-transvel ~s ~%" (first velocity-travelling))
                   (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.TRANSVEL :value (first velocity-travelling))
                   (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ROTVEL :value (second velocity-travelling))
                   (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.APPROACHDIST :value dist)
@@ -239,6 +254,7 @@
   (action (
             (format t "=========================>>> tcb-move-robot 'approach-exact ~s ~%" '?location)
             (let* ((pose (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a location) (name ?location))) 'approach-exact-pose))
+                   (orientation (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a location) (name ?location))) 'orientation-exact)) 
                    (dist (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a location) (name ?location))) 'approach-exact-dist))
                    (safetycl (get-value (tcl-kb-query :key '(is-a name)  :value '( (is-a location) (name ?location))) 'approach-exact-safetycl))
                    (velocity-travelling (get-value (tcl-kb-query :key '(is-a)  :value '((is-a robot))) 'velocity-travelling))
@@ -273,7 +289,8 @@
                   (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.TRANSVEL :value (first velocity-travelling))
                   (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ROTVEL :value (second velocity-travelling))
                   (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.APPROACHDIST :value dist)
-                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALREGION :value `(,(first pose) ,(second pose) 0 ,dist))
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALREGION :value (list (first pose) (second pose) (second orientation) goalid ))
+
                   (tcl-param :server 'cdl :slot 'COMMIT)
                   ;;(tcl-param :server 'cdl :slot 'SETGOALREGION :value dist) ;;no GOAL ID needed for direct movement with CDL (without planner)
 

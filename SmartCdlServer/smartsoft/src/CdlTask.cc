@@ -18,6 +18,7 @@
 // --------------------------------------------------------------------------
 //
 //  Copyright (C) 2008 Christian Schlegel, Andreas Steck, Matthias Lutz
+//                2021 Thomas Feldmeier
 //
 //        schlegel@hs-ulm.de
 //        steck@hs-ulm.de
@@ -777,7 +778,7 @@ int CdlTask::on_execute()
 								COMP->cdlLookup->calculateSpeedValues(v, w, x, y, a, local_vmin, local_vmax, local_wmin, local_wmax, CDL_STRATEGY_15, evalFunction, vres, wres, vaccres, waccres);
 							}
 
-							if(vres == 0.0 && wres == 0.0 && v== 0.0 && trick15Flag==false){
+							if(vres == 0.0 && wres == 0.0 && fabs(v-0.0) < 0.00001 && trick15Flag==false) {
 								std::cout<<"START TRICK15"<<std::endl;
 							trick15Flag = true;
 //									gettimeofday(&beginTrick15Time,0);
@@ -786,6 +787,11 @@ int CdlTask::on_execute()
 								trick15GoalY = goalYWorld;
 
 							}
+
+                            // Timo Blender 15-11-21
+                            else if (vres == 0.0 && wres == 0.0 && fabs(v-0.0) < 0.00001 && trick15Flag == true) {
+                            	pathNavState = PATHNAV_ROTATE;
+                            }
 						}
 
 
@@ -1040,6 +1046,77 @@ int CdlTask::on_execute()
 				vmax = local_vmax;
 				wmin = local_wmin;
 				wmax = local_wmax;
+
+                // called from: SmartCdlServer.smartTcl:
+                //   (define-tcb (approachLocation ?location)
+                //      (module "NavigationModule")
+                //      ...
+                //      (precondition  (equal '(exact) ... 'approach-type)))
+                //      ...
+                //      (tcb-move-robot 'approach-exact ?location)
+                //      (tcb-move-robot 'orientate-exact ?location)
+                //
+                //  (define-tcb (tcb-move-robot 'approach-exact ?location)
+                //       ...
+                //       (tcl-param .. SETSTRATEGY :value 'APPROACH_HALT)
+                //                     GOALMODE 'ABSOLUTE
+                //                     APPROACHDIST :value dist
+
+                // approachdist > 0 : robot stops if he gets closer to goal point than this value (if value is too small robot will oscillate around goal)
+                // approachdist < 0 : not possible anymore (robot stops exactly at goal point (sending CommBasicObjects::CommNavigationPose2D command to robot base component))
+                // todo: check if obstacles are within path (e.g. abort by sending speed zero command or avoid by other strategy or send other position)
+                // todo: merge translation and rotation into one command
+                double _approachDistance =
+                    localState.getCommNavigationObjects().getCdlParameter().getAPPROACHDIST().getApproachDistance();
+                if (_approachDistance < 0) {
+                    std::cout << "ERROR: approachDistance =" << _approachDistance << " not possible anymore" << std::endl;
+                    /*
+                    distance = sqrt((local_goalX - x) * (local_goalX - x) + (local_goalY - y) * (local_goalY - y));
+                    double headingDistance = local_goalA - a + 4*M_PI;
+                    while(headingDistance > M_PI) // not in [-pi, pi] ?
+                        headingDistance -= 2*M_PI;
+
+                    std::cout << "SETSTRATEGY=APPROACH_HALT GOALMODE=ABSOLUTE APPROACHDIST=" << _approachDistance
+                        << " measured distance=" << distance << " (goal=" << local_goalX << " " << local_goalY << " " << local_goalA << " pos=" << x
+                        << " " << y << " " << a << " v=" << v << " w=" << w << " headingDistance=" << headingDistance << ")" << std::endl;
+
+                    // (must be same if(...) values as in ComponentWebotsMobileRobot WebotsAPITask.cc):
+                    // if (programCounter == 5 && fabs(endHeading) < 0.04 && fabs(omega) < 0.01 && fabs(velocity)<0.01)
+                    if (fabs(distance) < 30.0 && fabs(headingDistance)<0.04 && fabs(v) < 0.01  && fabs(w) < 0.01) {
+                        // goal reached, stop robot
+                        vres = 0.0;
+                        wres = 0.0;
+
+                        // this stop is intended, since the goal has been reached
+                        stalledFlag = 0;
+
+                        // -------------------------------------------
+                        // put event into object
+                        // -------------------------------------------
+                        cdlGoalEventState.set(CommNavigationObjects::CdlGoalEventType::CDL_GOAL_REACHED);
+                        COMP->goalEventServer->put(cdlGoalEventState);
+                        std::cout << "CDL EVENT CDL_GOAL_REACHED FIRED!" << std::endl;
+
+                        std::cout << "GOAL REACHED !!!!!!!! actpos " << x << " " << y << " " << a * 180.0 / M_PI
+                            << "\n";
+                        std::cout << "             goal   " << local_goalX << " " << local_goalY << "\n";
+                        std::cout << "CDL COMP->localState.id: "
+                            << localState.getCommNavigationObjects().getCdlParameter().getID().getId() << " goalID: "
+                            << local_goalId << "\n";
+                        break;
+                    } else {
+                        CommBasicObjects::CommNavigationPose2D pose2D;
+                        pose2D.setX(local_goalX);
+                        pose2D.setY(local_goalY);
+                        pose2D.setAzimuth(local_goalA);
+                        status = COMP->navigationPose2DServiceOut->send(pose2D);
+                        if (status != Smart::SMART_OK)
+                            std::cout << "navigationPose2DServiceOut " << status << std::endl;
+                        return 0; // don't send NavVel
+                    }
+                    */
+                }
+
 				break;
 			}
 
