@@ -2,12 +2,12 @@ ComponentParameter ComponentWebotsMobileRobotParams component ComponentWebotsMob
 {
 	InternalParameter OdometryRandomError
 	{
-		/** e.g. 0.05m * 0.05m / 1m = 0.0025 m (after traveling 1m, distance error has standard deviation of 0.05m) */           
-        varianceOfDistancePerMeter : Double = 0.0025
-		/** e.g. (5°*5°)/360° /180°*pi = 0.001212 (after rotating 360 degrees, heading error has standard deviation of 5 degrees) */
-        varianceOfHeadingPerRadians : Double = 0.001212
-		/** e.g. (2°/180°*pi)^2/1m  = 0.001218 (after traveling 1m, heading error has standard deviation of 2 degrees) */
-        varianceOfHeadingPerMeter : Double = 0.001218
+		/** e.g. 0.005m * 0.005m / 1m = 0.000025 m (after traveling 1m, distance error has standard deviation of 0.005m) */           
+        varianceOfDistancePerMeter : Double = 0.000025
+		/** e.g. (0.5°*0.5°)/360° /180°*pi = 0.00001212 (after rotating 360 degrees, heading error has standard deviation of 0.5 degrees) */
+        varianceOfHeadingPerRadians : Double = 0.00001212
+		/** e.g. (0.2°/180°*pi)^2/1m  = 0.00001218 (after traveling 1m, heading error has standard deviation of 0.2 degrees) */
+        varianceOfHeadingPerMeter : Double = 0.00001218
 	}
 	InternalParameter Webots
 	{
@@ -22,7 +22,7 @@ ComponentParameter ComponentWebotsMobileRobotParams component ComponentWebotsMob
 		/** the heading of the wheels, for differential drives set these to 0 [degrees] */
         heading : Double[] = [90.0, 210.0, 330.0]
 		/** the max. acceleration front [m/s], sideways [m/s], rotation [radians/s] */
-        maxAcceleration : Double[] = [10.0, 6.0, 40.0]
+        maxAcceleration : Double[] = [1.0, 1.0, 5.0]
 		/** if true, the following keys are enabled:
 		 * <ul><li>Y key: robot moves itself (no keyboard movement, default).</li>
 		 * <li>X key: accelerate robot by arrow or WASD keys (QE sideways, press space to stop).</li>

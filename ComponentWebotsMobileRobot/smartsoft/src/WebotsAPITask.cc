@@ -56,84 +56,54 @@
 using namespace webots;
 
 WebotsAPITask::WebotsAPITask(SmartACE::SmartComponent *comp) :
-		WebotsAPITaskCore(comp) {
+    WebotsAPITaskCore(comp) {
     std::cout << "constructor WebotsAPITask\n";
 }
 
 WebotsAPITask::~WebotsAPITask() {
-	std::cout << "destructor WebotsAPITask\n";
+    std::cout << "destructor WebotsAPITask\n";
 }
 
 int WebotsAPITask::on_entry() {
-	ParameterStateStructCore::WebotsType p = COMP->getParameters().getWebots();
-
-	webotsRobotName = p.getRobotName();
-	char environment[256] = "WEBOTS_ROBOT_NAME=";
-	putenv(strcat(environment, webotsRobotName.c_str()));
-
-	std::cout << " \033[0;32mConnect to webots robot with name '" << webotsRobotName << "' ...\033[0m" << std::endl;
-	webotsRobot = new Supervisor();
-	if (!webotsRobot) {
-		std::cout << "not found, fatal error" << std::endl;
-		return 1;
-	}
-    std::cout << " \033[0;32mConnected\033[0m" << std::endl;
-
-	webotsKeyboard = webotsRobot->getKeyboard();
-	webotsKeyboard->enable(webotsRobot->getBasicTimeStep());
-
-	int i = 0;
-	for (auto const it : p.getMotorName()) {
-		Motor *motor = webotsRobot->getMotor(it);
-		if (!motor) {
-			std::cerr << "no webots motor with name '" << it
-					<< "' in a robot with name '" << webotsRobotName << "'"
-					<< std::endl;
-			return 1;
-		}
-		motor->setPosition(INFINITY);
-		motor->setVelocity(0);
-		motor->setAcceleration(-1.0); // overrides the acceleration from webots, use maxAcceleration instead
-		webotsMotors.push_back(webotsMotor());
-		webotsMotors[i++].motor = motor;
-	}
-	i = 0;
-	for (auto const it : p.getMaxAcceleration())
-		maxAcceleration[i++] = it;
-	i = 0;
-	for (auto const it : p.getRadius())
-		webotsMotors[i++].radius = it;
-	i = 0;
-	for (auto const it : p.getDistanceToRobotCentre())
-		webotsMotors[i++].distanceToRobotCentre = it;
-	i = 0;
-	for (auto const it : p.getHeading())
-		webotsMotors[i++].heading = it;
-
-	return 0;
+    return 0;
 }
 
-// BUG: robotino 3 will not move correct if world's coordinate system is set to ENU (maybe asymmetric friction is not correct calculated by physics engine)
 // BUG: in documentation of all functions is mm instead of m
 // set robot speed to vx m/s forward, vy m/s left, and rotate omega radians/s counterclockwise
 void WebotsAPITask::setVxVyOmega(double vX, double vY, double omega) {
-	std::lock_guard<std::mutex> guard(mutex_targetSpeed);
-	targetSpeed[0] = vX;
-	targetSpeed[1] = vY;
-	targetSpeed[2] = omega;
+    std::lock_guard<std::mutex> guard(mutex_targetSpeed);
+    targetSpeed[0] = vX;
+    targetSpeed[1] = vY;
+    targetSpeed[2] = omega;
+    isTargetPose = false;
+}
+
+// stop at position x/y, rotate there to heading azimuth
+void WebotsAPITask::setXYAzimuth(double x, double y, double azimuth) {
+    std::lock_guard<std::mutex> guard(mutex_targetSpeed);
+    targetPose2D[0] = x;
+    targetPose2D[1] = y;
+    targetPose2D[2] = azimuth;
+    isTargetPose = true;
+    for (int i = 0; i < 3; i++) {
+        if (lastTargetPose2D[i] != targetPose2D[i]) {
+            programCounter = 0;
+        }
+        lastTargetPose2D[i] = targetPose2D[i];
+    }
 }
 
 // transforms webots global coordinates from NUE to ENU if needed
 // webots (x, y, z) -> x=forward y=up z=right -> smartsoft (x, -z, y)
 // see also convert_nue_to_enu.py script from webots or the controller based on it
 Coord WebotsAPITask::webots2smart(const double *d) {
-	if (isNUE) {
-		Coord c = { d[0], -d[2], d[1] };  // script does the same
-		return c;
-	} else {
-		Coord c = { d[0], d[1], d[2] };
-		return c;
-	}
+    if (isNUE) {
+        Coord c = { d[0], -d[2], d[1] };  // script does the same
+        return c;
+    } else {
+        Coord c = { d[0], d[1], d[2] };
+        return c;
+    }
 }
 // todo: smart2webots() smartsoft (x, y, z) -> x=forward y=left z=up -> webots (x, z, -y)
 
@@ -148,18 +118,18 @@ Coord WebotsAPITask::webots2smart(const double *d) {
 // * the controller in world.wbt should be set to "<extern>" or "" as needed
 
 std::string space2underscore(std::string text) {
-	for (int i = 0; i < text.length(); i++) {
-		if (text[i] == ' ')
-			text[i] = '_';
-	}
-	return text;
+    for (int i = 0; i < text.length(); i++) {
+        if (text[i] == ' ')
+            text[i] = '_';
+    }
+    return text;
 }
 
 void changeSpeedLevel(double &value, double diff) {
     value += diff;
-    if(value > 1)
+    if (value > 1)
         value = 1;
-    if(value < -1)
+    if (value < -1)
         value = -1;
 }
 
@@ -167,163 +137,215 @@ void changeSpeedLevel(double &value, double diff) {
 // webots controller is synchronized by webots, so SmartSoft should NOT set a timer of frequency how often this function is called.
 int WebotsAPITask::on_execute() {
 
-	isNUE = webotsRobot->getRoot()->getField("children")->getMFNode(0)->
-			getField("coordinateSystem")->getSFString() == "NUE";
-	int nrProgram = 0;
-	int programStep = 0;
-	int subProgram;
-	const Pose2D zeroPose = { 0, 0, 0 };
-	Pose2D sum = zeroPose;
-	Pose2D sumSq = zeroPose;
-	int nrSummands = 0;
-	double keySpeedLevels = 0.0;
-	double kxLevel, kyLevel, komegaLevel;
+    Pose2D oldRealPose, oldOdomPose;
+    double maxAcceleration[3];
 
-	// used for acceleration, see also targetSpeed[3] from .hh
-	// {x, y, angular}
-	double actualSpeed[3] = { 0, 0, 0 };
+    struct webotsMotor {
+        webots::Motor *motor;
+        double radius;
+        double distanceToRobotCentre;
+        double heading;
+    };
+    std::vector<webotsMotor> webotsMotors;
+    webots::Supervisor *webotsRobot;
+    webots::Keyboard *webotsKeyboard;
+    std::string webotsRobotName;
 
-	// the function 'step' blocks until webots is ready for the next timestep
-	// see https://cyberbotics.com/doc/guide/controller-programming#synchronization-of-simulation-and-controller-steps
-	while (webotsRobot->step(webotsRobot->getBasicTimeStep()) != -1) {
-		Pose2D newRealPose, newOdomPose;
+    double maxVelX = COMP->getParameters().getRobot().getMaxVelX();
+    double maxVelY = COMP->getParameters().getRobot().getMaxVelY();
+    double maxRotVel = COMP->getParameters().getRobot().getMaxRotVel();
 
-		// how odometry is done of an simulated robot:
-		// * get previous and current (exact) position of robot
-		// * calculate exact relative movement and rotation of robot
-		// * add some noise (random error) to it
-		// * use it to update the odometry position/heading
-		// an real robot does the same:
-		// * measure the real movement/rotation with sensors (wheel tick etc.)
-		// * it already had some error
-		// * use it to calculate the change in robot's position/heading
+    ParameterStateStructCore::WebotsType p = COMP->getParameters().getWebots();
 
-		Node *supervisorNode = webotsRobot->getSelf();
+    webotsRobotName = p.getRobotName();
+    char environment[256] = "WEBOTS_ROBOT_NAME=";
+    putenv(strcat(environment, webotsRobotName.c_str()));
+
+    std::cout << " \033[0;32mConnect to webots robot with name '" << webotsRobotName << "' ...\033[0m" << std::endl;
+    webotsRobot = new Supervisor();
+    if (!webotsRobot) {
+        std::cout << "not found, fatal error" << std::endl;
+        return 1;
+    }
+    std::cout << " \033[0;32mConnected\033[0m" << std::endl;
+
+    webotsKeyboard = webotsRobot->getKeyboard();
+    webotsKeyboard->enable(webotsRobot->getBasicTimeStep());
+
+    int i = 0;
+    for (auto const it : p.getMotorName()) {
+        Motor *motor = webotsRobot->getMotor(it);
+        if (!motor) {
+            std::cerr << "no webots motor with name '" << it << "' in a robot with name '" << webotsRobotName << "'"
+                << std::endl;
+            return 1;
+        }
+        motor->setPosition(INFINITY);
+        motor->setVelocity(0);
+        motor->setAcceleration(-1.0); // overrides the acceleration from webots, use maxAcceleration instead
+        webotsMotors.push_back(webotsMotor());
+        webotsMotors[i++].motor = motor;
+    }
+    i = 0;
+    for (auto const it : p.getMaxAcceleration())
+        maxAcceleration[i++] = it;
+    i = 0;
+    for (auto const it : p.getRadius())
+        webotsMotors[i++].radius = it;
+    i = 0;
+    for (auto const it : p.getDistanceToRobotCentre())
+        webotsMotors[i++].distanceToRobotCentre = it;
+    i = 0;
+    for (auto const it : p.getHeading())
+        webotsMotors[i++].heading = it;
+
+    isNUE = webotsRobot->getRoot()->getField("children")->getMFNode(0)->getField("coordinateSystem")->getSFString()
+        == "NUE";
+
+    const Pose2D zeroPose = { 0, 0, 0 };
+    double keySpeedLevels = 0.0;
+    double kxLevel, kyLevel, komegaLevel;
+
+    // used for acceleration, see also targetSpeed[3] from .hh
+    // {x, y, angular}
+    double actualSpeed[3] = { 0, 0, 0 };
+
+    // the function 'step' blocks until webots is ready for the next timestep
+    // see https://cyberbotics.com/doc/guide/controller-programming#synchronization-of-simulation-and-controller-steps
+    while (webotsRobot->step(webotsRobot->getBasicTimeStep()) != -1) {
+        Pose2D newRealPose, newOdomPose;
+
+        // how odometry is done of an simulated robot:
+        // * get previous and current (exact) position of robot
+        // * calculate exact relative movement and rotation of robot
+        // * add some noise (random error) to it
+        // * use it to update the odometry position/heading
+        // an real robot does the same:
+        // * measure the real movement/rotation with sensors (wheel tick etc.)
+        // * it already had some error
+        // * use it to calculate the change in robot's position/heading
+
+        Node *supervisorNode = webotsRobot->getSelf();
 
 //      webots2smart(supervisorNode->getField("translation")->getSFVec3f());
 
-		// robotCoordinateSystem is used to measure the position/heading of the robot:
-		//   a transformation node inside of the robot in webots
-		//   should be named by DEF keyword with "CoordinateSystem" + space2underscore(webotsRobotName)
-		//   x=front, y=left, z=up (relative to robot)
-		//   z=0 is at floor level
-		//   x=y=0 is at the turning point of the robot (centre between wheels)
-		Node *robotCoordinateSystem = webotsRobot->getFromDef(
-				"CoordinateSystem" + space2underscore(webotsRobotName));
-		if (!robotCoordinateSystem)
-			robotCoordinateSystem = supervisorNode;
+        // robotCoordinateSystem is used to measure the position/heading of the robot:
+        //   a transformation node inside of the robot in webots
+        //   should be named by DEF keyword with "CoordinateSystem" + space2underscore(webotsRobotName)
+        //   x=front, y=left, z=up (relative to robot)
+        //   z=0 is at floor level
+        //   x=y=0 is at the turning point of the robot (centre between wheels)
+        Node *robotCoordinateSystem = webotsRobot->getFromDef("CoordinateSystem" + space2underscore(webotsRobotName));
+        if (!robotCoordinateSystem)
+            robotCoordinateSystem = supervisorNode;
 
-		Coord translation = webots2smart(robotCoordinateSystem->getPosition());
+        Coord translation = webots2smart(robotCoordinateSystem->getPosition());
 
-		const double *xyzAxis = robotCoordinateSystem->getOrientation();
-		const double _xAxis[3] = { xyzAxis[0], xyzAxis[3], xyzAxis[6] };
-		Coord xAxis = webots2smart(_xAxis);
-		double heading = atan2(xAxis.y, xAxis.x);
+        const double *xyzAxis = robotCoordinateSystem->getOrientation();
+        const double _xAxis[3] = { xyzAxis[0], xyzAxis[3], xyzAxis[6] };
+        Coord xAxis = webots2smart(_xAxis);
+        double heading = atan2(xAxis.y, xAxis.x);
 
-		const double *_velocities = supervisorNode->getVelocity();
-		Coord velocities = webots2smart(_velocities);
-		const double _velocities2[3] = { _velocities[3], _velocities[4],
-				_velocities[5] };
-		Coord velocities2 = webots2smart(_velocities2);
+        const double *_velocities = supervisorNode->getVelocity();
+        Coord velocities = webots2smart(_velocities);
+        const double _velocities2[3] = { _velocities[3], _velocities[4], _velocities[5] };
+        Coord velocities2 = webots2smart(_velocities2);
 
-		newRealPose.x = translation.x;
-		newRealPose.y = translation.y;
-		newRealPose.heading = heading;
-		if (sequence == 0) {
-			oldRealPose = newRealPose;
-			oldOdomPose = zeroPose;
-			for (int i = 3; i--;)
-				targetSpeed[i] = 0.0;
-		}
+        newRealPose.x = translation.x;
+        newRealPose.y = translation.y;
+        newRealPose.heading = heading;
+        if (sequence == 0) {
+            std::lock_guard<std::mutex> guard(mutex_targetSpeed);
 
-		double vx = velocities.x;
-		double vy = velocities.y;
-		double omega = velocities2.z;
+            oldRealPose = newRealPose;
+            oldOdomPose = zeroPose;
+            for (int i = 3; i--;)
+                targetSpeed[i] = 0.0;
+            isTargetPose = false;
+        }
 
-		double delta_x = newRealPose.x - oldRealPose.x;
-		double delta_y = newRealPose.y - oldRealPose.y;
-		double delta_heading = newRealPose.heading - oldRealPose.heading;
-		double d = sqrt(delta_x * delta_x + delta_y * delta_y); // distance (newPose to oldPose)
-		double delta = 0; // global direction of movement
-		if (d > 0)
-			delta = atan2(delta_y, delta_x);
+        double vx = velocities.x;
+        double vy = velocities.y;
+        double omega = velocities2.z;
 
-		std::random_device rd { };
-		std::mt19937 gen { rd() };
+        double delta_x = newRealPose.x - oldRealPose.x;
+        double delta_y = newRealPose.y - oldRealPose.y;
+        double delta_heading = newRealPose.heading - oldRealPose.heading;
+        double d = sqrt(delta_x * delta_x + delta_y * delta_y); // distance (newPose to oldPose)
+        double delta = 0; // global direction of movement
+        if (d > 0)
+            delta = atan2(delta_y, delta_x);
 
-		// from Robot.cc, updateCovMatrix() calculates errors too
-		// variance of error(distance traveled)  = |distance| * constant
-		// => constant = variance / |distance| = standardDeviation(distance)^2 / distance
-		// normDist() needs standard deviation = sqrt(variance) = sqrt(|distance|*constant)
-		// (note that variance is linear congruent to distance, but the standard deviation is not linear congruent)
-		// (note that the constant must have the same measurement unit than the distance or standard deviation)
-		// error of distance should have a standard deviation of 50m after 1000m traveled (unit m)
-		// lamdaSigmaD = 50*50/1000.0;
-		// => standardDeviation(1m) = sqrt(1m*50m*50m/1000m) = 1.58m (really big, probably unit mm was meant instead)
-		// error of heading should have a standard deviation of 5 degree after 1 rotation (unit converted to radians)
-		// lamdaSigmaDeltaAlpha = (5*5/360.0) /180.0 * M_PI;
-		// error of heading should have a standard deviation of 2 degree after 1000 m traveled (unit converted to radians)
-		// lamdaSigmaDeltaBeta = (2*2/1000.0) /180.0 * M_PI;
-		// (really small, probably unit mm was meant instead)
-		// wrong assumption in calculation of covariance matrix: robot is only moving forward
-		//   if robot moves backwards, this will be calculated as the robot is turning backwards and forwards again (alpha1 and alpha2 will be large)
-		//   each time step (covariance matrix update), so moving backwards generates an much larger error than moving forwards
+        std::random_device rd { };
+        std::mt19937 gen { rd() };
 
-		/*
-		 InternalParameter OdometryRandomError{
-		 //@doc"e.g. 0.05m * 0.05m / 1m = 0.0025 m (after traveling 1m, distance error has standard deviation of 0.05m)"
-		 varianceOfDistancePerMeter: Double = 0.0025
-		 //@doc"e.g. (5°*5°)/360° /180°*pi = 0.001212 (after rotating 360 degrees, heading error has standard deviation of 5 degrees)"
-		 varianceOfHeadingPerRadians: Double = 0.001212
-		 //@doc"e.g. (2°/180°*pi)^2/1m  = 0.001218 (after traveling 1m, heading error has standard deviation of 2 degrees)"
-		 varianceOfHeadingPerMeter: Double = 0.001218
-		 }
-		 */
-		const double varianceD =
-				COMP->getParameters().getOdometryRandomError().getVarianceOfDistancePerMeter();
-		const double varianceAlpha =
-				COMP->getParameters().getOdometryRandomError().getVarianceOfHeadingPerRadians();
-		const double varianceBeta =
-				COMP->getParameters().getOdometryRandomError().getVarianceOfHeadingPerMeter();
+        // from Robot.cc, updateCovMatrix() calculates errors too
+        // variance of error(distance traveled)  = |distance| * constant
+        // => constant = variance / |distance| = standardDeviation(distance)^2 / distance
+        // normDist() needs standard deviation = sqrt(variance) = sqrt(|distance|*constant)
+        // (note that variance is linear congruent to distance, but the standard deviation is not linear congruent)
+        // (note that the constant must have the same measurement unit than the distance or standard deviation)
+        // error of distance should have a standard deviation of 50m after 1000m traveled (unit m)
+        // lamdaSigmaD = 50*50/1000.0;
+        // => standardDeviation(1m) = sqrt(1m*50m*50m/1000m) = 1.58m (really big, probably unit mm was meant instead)
+        // error of heading should have a standard deviation of 5 degree after 1 rotation (unit converted to radians)
+        // lamdaSigmaDeltaAlpha = (5*5/360.0) /180.0 * M_PI;
+        // error of heading should have a standard deviation of 2 degree after 1000 m traveled (unit converted to radians)
+        // lamdaSigmaDeltaBeta = (2*2/1000.0) /180.0 * M_PI;
+        // (really small, probably unit mm was meant instead)
+        // wrong assumption in calculation of covariance matrix: robot is only moving forward
+        //   if robot moves backwards, this will be calculated as the robot is turning backwards and forwards again (alpha1 and alpha2 will be large)
+        //   each time step (covariance matrix update), so moving backwards generates an much larger error than moving forwards
 
-		std::normal_distribution<> normDistD { 0, std::sqrt(
-				std::fabs(d * varianceD)) };
-		d += normDistD(gen);
+        /*
+         InternalParameter OdometryRandomError{
+         //@doc"e.g. 0.05m * 0.05m / 1m = 0.0025 m (after traveling 1m, distance error has standard deviation of 0.05m)"
+         varianceOfDistancePerMeter: Double = 0.0025
+         //@doc"e.g. (5°*5°)/360° /180°*pi = 0.001212 (after rotating 360 degrees, heading error has standard deviation of 5 degrees)"
+         varianceOfHeadingPerRadians: Double = 0.001212
+         //@doc"e.g. (2°/180°*pi)^2/1m  = 0.001218 (after traveling 1m, heading error has standard deviation of 2 degrees)"
+         varianceOfHeadingPerMeter: Double = 0.001218
+         }
+         */
+        const double varianceD =
+        COMP->getParameters().getOdometryRandomError().getVarianceOfDistancePerMeter();
+        const double varianceAlpha =
+        COMP->getParameters().getOdometryRandomError().getVarianceOfHeadingPerRadians();
+        const double varianceBeta =
+        COMP->getParameters().getOdometryRandomError().getVarianceOfHeadingPerMeter();
 
-		// error to rotation:
-		//std::normal_distribution<> normDistAlpha{0, std::sqrt(std::fabs(delta_heading)*lamdaeltaAlpha)};
-		std::normal_distribution<> normDistAlpha { 0, std::sqrt(
-				std::fabs(delta_heading) * varianceAlpha) };
-		delta_heading += normDistAlpha(gen);
+        std::normal_distribution<> normDistD { 0, std::sqrt(std::fabs(d * varianceD)) };
+        d += normDistD(gen);
 
-		// error to heading because of movement:
-		std::normal_distribution<> normDistBeta { 0, std::sqrt(
-				std::fabs(d) * varianceBeta) };
-		delta_heading += normDistBeta(gen);
+        // error to rotation:
+        //std::normal_distribution<> normDistAlpha{0, std::sqrt(std::fabs(delta_heading)*lamdaeltaAlpha)};
+        std::normal_distribution<> normDistAlpha { 0, std::sqrt(std::fabs(delta_heading) * varianceAlpha) };
+        delta_heading += normDistAlpha(gen);
 
-		newOdomPose.x = oldOdomPose.x
-				+ d * cos(delta + (oldOdomPose.heading - oldRealPose.heading));
-		newOdomPose.y = oldOdomPose.y
-				+ d * sin(delta + (oldOdomPose.heading - oldRealPose.heading));
-		newOdomPose.heading = oldOdomPose.heading + delta_heading;
+        // error to heading because of movement:
+        std::normal_distribution<> normDistBeta { 0, std::sqrt(std::fabs(d) * varianceBeta) };
+        delta_heading += normDistBeta(gen);
 
-		// todo: do all the other update call in other components, see RobotinoAPITask processEvent()
-		// todo: there is no error in vx vy omega
+        newOdomPose.x = oldOdomPose.x + d * cos(delta + (oldOdomPose.heading - oldRealPose.heading));
+        newOdomPose.y = oldOdomPose.y + d * sin(delta + (oldOdomPose.heading - oldRealPose.heading));
+        newOdomPose.heading = oldOdomPose.heading + delta_heading;
 
-		// vx/vy is in world coordinate system. convert it to robot's coordinate system:
-		// robots x-axis 2D vector with length 1: (google for 'polar coordinate to cartesian formula')
-		// x-axis = ( cos(heading), sin(heading) )
-		// robots y-axis is like x-axis, but rotate heading by pi/2 counterclockwise:
-		// y-axis = ( cos(heading + PI/2), sin(heading + PI/2) )
-		// to transform the vector v = ( vx, vy ) into robot's cooridnate system,
-		// calculate dot product of v with x-axis and y-axis
-		// (vx,vy) * (cos(heading), sin(heading))
-		double vx_robot = vx * cos(heading) + vy * sin(heading);
-		// (vx,vy) * (cos(heading+PI/2), sin(heading+PI/2))
-		double vy_robot = vx * cos(heading+M_PI/2) + vy * sin(heading+M_PI/2);
+        // todo: do all the other update call in other components, see RobotinoAPITask processEvent()
+        // todo: there is no error in vx vy omega
 
-		COMP->robot->update(newOdomPose.x, newOdomPose.y, newOdomPose.heading,
-				vx_robot, vy_robot, omega, sequence);
+        // vx/vy is in world coordinate system. convert it to robot's coordinate system:
+        // robots x-axis 2D vector with length 1: (google for 'polar coordinate to cartesian formula')
+        // x-axis = ( cos(heading), sin(heading) )
+        // robots y-axis is like x-axis, but rotate heading by pi/2 counterclockwise:
+        // y-axis = ( cos(heading + PI/2), sin(heading + PI/2) )
+        // to transform the vector v = ( vx, vy ) into robot's cooridnate system,
+        // calculate dot product of v with x-axis and y-axis
+        // (vx,vy) * (cos(heading), sin(heading))
+        double vx_robot = vx * cos(heading) + vy * sin(heading);
+        // (vx,vy) * (cos(heading+PI/2), sin(heading+PI/2))
+        double vy_robot = vx * cos(heading + M_PI / 2) + vy * sin(heading + M_PI / 2);
+
+        COMP->robot->update(newOdomPose.x, newOdomPose.y, newOdomPose.heading, vx_robot, vy_robot, omega, sequence);
 
 //		std::cout << "realPose x:" << newRealPose.x << " y:" << newRealPose.y
 //				<< " heading:" << newRealPose.heading << std::endl;
@@ -331,142 +353,312 @@ int WebotsAPITask::on_execute() {
 //		std::cout << "newOdomPose x:" << newOdomPose.x << " y:" << newOdomPose.y
 //				<< " heading:" << newOdomPose.heading << std::endl;
 
-		oldRealPose = newRealPose;
-		oldOdomPose = newOdomPose;
-		++sequence;
+        oldRealPose = newRealPose;
+        oldOdomPose = newOdomPose;
+        ++sequence;
 
-		int kx = 0, ky = 0, komega = 0, kspace = 0;
-		int key;
-		while ((key = webotsKeyboard->getKey()) != -1) {
-			if (key == 'W' || key == webotsKeyboard->UP)
-				kx = 1;
-			if (key == 'S' || key == webotsKeyboard->DOWN)
-				kx = -1;
-			if (key == 'A' || key == webotsKeyboard->LEFT)
-				komega = 1;
-			if (key == 'D' || key == webotsKeyboard->RIGHT)
-				komega = -1;
-			if (key == 'Q')
-				ky = 1;
-			if (key == 'E')
-				ky = -1;
-			if (key == ' ') {
-				kxLevel = 0;
-				kyLevel = 0;
-				komegaLevel = 0;
-			}
-			if (key == 'Y')
-			    keySpeedLevels = 0.0;
-			if (key == 'X')
-			    keySpeedLevels = webotsRobot->getBasicTimeStep() / 2000.0; // reach max speed in 2000 ms
-			if (key == 'C')
+        int kx = 0, ky = 0, komega = 0, kspace = 0;
+        int key;
+        while ((key = webotsKeyboard->getKey()) != -1) {
+            if (key == 'W' || key == webotsKeyboard->UP)
+                kx = 1;
+            if (key == 'S' || key == webotsKeyboard->DOWN)
+                kx = -1;
+            if (key == 'A' || key == webotsKeyboard->LEFT)
+                komega = 1;
+            if (key == 'D' || key == webotsKeyboard->RIGHT)
+                komega = -1;
+            if (key == 'Q')
+                ky = 1;
+            if (key == 'E')
+                ky = -1;
+            if (key == ' ') {
+                kxLevel = 0;
+                kyLevel = 0;
+                komegaLevel = 0;
+            }
+            if (key == 'Y') // don't change speed by keyboard
+                keySpeedLevels = 0.0;
+            if (key == 'X') // reach max speed in 2000 ms
+                keySpeedLevels = webotsRobot->getBasicTimeStep() / 2000.0;
+            if (key == 'C') // reach max speed at once
                 keySpeedLevels = 1;
-		}
-		// start lock
-		{
-			std::lock_guard<std::mutex> guard(mutex_targetSpeed);
-			if(COMP->getParameters().getWebots().getKeyboardControl() && keySpeedLevels!=0.0) {
-                if(keySpeedLevels == 1.0) {
+        }
+        // start lock
+        {
+            std::lock_guard<std::mutex> guard(mutex_targetSpeed);
+            if (p.getKeyboardControl() && keySpeedLevels != 0.0) {
+                if (keySpeedLevels == 1.0) {
                     kxLevel = kx;
                     kyLevel = ky;
                     komegaLevel = komega;
                 } else {
-                    changeSpeedLevel(kxLevel, kx*keySpeedLevels);
-                    changeSpeedLevel(kyLevel, ky*keySpeedLevels);
-                    changeSpeedLevel(komegaLevel, komega*keySpeedLevels);
+                    changeSpeedLevel(kxLevel, kx * keySpeedLevels);
+                    changeSpeedLevel(kyLevel, ky * keySpeedLevels);
+                    changeSpeedLevel(komegaLevel, komega * keySpeedLevels);
                 }
-                targetSpeed[0] = kxLevel * COMP->getParameters().getRobot().getMaxVelX();
-                targetSpeed[1] = kyLevel * COMP->getParameters().getRobot().getMaxVelY();
-                targetSpeed[2] = komegaLevel * COMP->getParameters().getRobot().getMaxRotVel();
+                targetSpeed[0] = kxLevel * maxVelX;
+                targetSpeed[1] = kyLevel * maxVelY;
+                targetSpeed[2] = komegaLevel * maxRotVel;
+                std::cout << "Keyboard control  v=" << std::setw(5) << targetSpeed[0] << " m/s (left=" << targetSpeed[1] << " m/s) " << std::setw(5) << targetSpeed[2] << " rad/s";
+            } else if (isTargetPose) {
+                std::cout << "Position control x=" << targetPose2D[0] / 1000.0 << " y=" << targetPose2D[1] / 1000.0
+                    << " heading=" << targetPose2D[2];
+
+                // go exactly to target position x/y and stop there:
+                // a) rotate to target position (rotation)
+                // b) drive to target position in a straight line (translation)
+                // c) rotate to target heading (rotation)
+                // differential drive: first a) second b) third c)
+                // other kinds of drive: b) and c) at the same time (skip a)
+                //
+                // travel as fast as possible, limited by:
+                // * max velocity or
+                // * distance and velocity to stop in time
+
+                // todo: add goal heading
+                // todo: move differential robot backwards if actual and goal heading is like this
+                //       if (fabs(heading) > M_PI / 2 && fabs(heading) <= M_PI / 2) {
+
+                bool isDifferentialDrive = webotsMotors.size() == 2;
+
+                CommBasicObjects::CommBasePose basePose = COMP->robot->getBasePosition();
+                double robotPose2D[3] = { basePose.get_x(), basePose.get_y(), basePose.get_base_azimuth() };
+                // true actual values without error
+//                double robotPose2D[3] = { newRealPose.x*1000, newRealPose.y*1000, newRealPose.heading };
+                // CommBasicObjects::CommBaseVelocity baseVel = COMP->robot->getBaseVelocity();
+                // vx/vy are true velocities directly from webots simulator without error
+                double velocity = std::sqrt(vx * vx + vy * vy);
+
+                double dx = (targetPose2D[0] - robotPose2D[0]) / 1000.0;
+                double dy = (targetPose2D[1] - robotPose2D[1]) / 1000.0;
+                double endHeading = targetPose2D[2] - robotPose2D[2];
+                endHeading += 4 * M_PI;
+                while (endHeading > M_PI) // not in the interval [-pi, +pi] radians ?
+                    endHeading -= 2 * M_PI;
+
+//                double dx = (targetPose2D[0]) / 1000.0 - newRealPose.x;
+//                double dy = (targetPose2D[1]) / 1000.0 - newRealPose.y;
+                // at target position, robot should rotate to this direction, relativ to robot
+//                double endHeading = targetPose2D[2] - newRealPose.heading;
+
+                double distance = std::sqrt(dx * dx + dy * dy);
+                bool isAtTarget = distance < 0.001; // error less than 1 mm
+                // heading of target position relative to robot
+                double heading = atan2(dy, dx) - robotPose2D[2];
+                heading += 4 * M_PI;
+                while (heading > M_PI) // not in the interval [-pi, +pi] radians ?
+                    heading -= 2 * M_PI;
+                double accLimit, velLimit;
+                if (isDifferentialDrive) {
+                    accLimit = maxAcceleration[0];
+                    velLimit = maxVelX;
+                } else {
+                    // assume maxAcceleration(x,y) and maxVelocity(x,y) is an ellipse
+                    accLimit = maxAcceleration[0] * cos(heading) * cos(heading)
+                        + maxAcceleration[1] * sin(heading) * sin(heading);
+                    velLimit = maxVelX * cos(heading) * cos(heading) + maxVelY * sin(heading) * sin(heading);
+                }
+                if (isDifferentialDrive) {
+                    double distForward = fabs(cos(heading) * distance);
+                    double distLeft = fabs(sin(heading) * distance);
+                    // std::cout << "pc=" << programCounter << " pose = " << distance << " " << heading
+                    //    << " distXY=" << distForward << " " << distLeft << " v=" << velocity << " " << omega << std::endl;
+                    if ((programCounter & 1) == 0 && fabs(velocity) < 0.001 && fabs(omega < 0.001))
+                        programCounter++;
+                    if (programCounter == 1 && fabs(heading) < 0.02 && fabs(omega) < 0.01 && fabs(velocity)<0.001)
+                        programCounter++;
+                    // if (programCounter == 3 && distLeft > 0.03)
+                    //     programCounter = 0;
+                    if (programCounter == 3 && distForward < 0.01 && fabs(omega) < 0.0001 && fabs(velocity)<0.0001)
+                        programCounter++;
+                    if (programCounter >= 5 && fabs(distance) > 0.03)
+                        programCounter = 0;
+                    if (programCounter > 5 && fabs(endHeading) > 0.04)
+                        programCounter = 0;
+                    // must be same if(...) values as in SmartCdl CdlTask.cc:
+                    // if (fabs(distance) < 30.0 && fabs(headingDistance)<0.04 && fabs(v) < 0.01  && fabs(w) < 0.01) {
+                    if (programCounter == 5 && fabs(endHeading) < 0.04 && fabs(omega) < 0.01 && fabs(velocity)<0.01)
+                          programCounter++;
+                    if (programCounter == 1) {
+                        distance = 0;
+                        endHeading = heading;
+                    } else if (programCounter == 3) {
+                        distance = distForward;
+                        endHeading = 0;
+                    } else if (programCounter == 5) {
+                        distance = 0;
+                        // endHeading = endHeading;
+                    } else {
+                        distance = 0;
+                        endHeading = 0;
+                    }
+                    // std::cout << "pc=" << programCounter << " goTo = " << distance << " " << endHeading << std::endl;
+                }
+                //  std::cout << " isAtTarg=" << isAtTarget << " programCounter=" << programCounter << " dx=" << dx
+                //    << " dy=" << dy << " distance=" << distance << " heading=" << heading << " endHeading="
+                //    << endHeading << " a=" << accLimit << " v=" << velLimit;
+
+                // * after each timeStep the velocity is reduced by a constant value
+                // * each timeStep the robot moves
+                // * how many timeSteps does it need at least to move to the target and stop there?
+                //
+                //  velocity v
+                //    ^
+                //    |__
+                //    |  |
+                //    |__|__
+                //    |  |  |
+                //    |__|__|__
+                //    |  |  |  |
+                //    |  |  |  |
+                //    +-------------------> timeSteps t
+                //    0  1  2  3
+                //
+                //   traveled distance after t timeSteps
+                //     = integral of above graph = sum of area of all rectangles
+                //     = (1 + 2 + ... + t) * rectangleWidth * rectangleHeight
+                //     = t*(t+1)/2 * rectangleWidth * rectangleHeight
+                //   t*(t+1) = distance / (rectangleWidth * rectangleHeight)
+                //   t^2 + t - distance / (rectangleWidth * rectangleHeight) = 0
+                //   solve with midnight formula
+                //
+                //   rectangleHeight = acceleration * timeStep
+                //   rectangleWidth = timeStep
+
+                for (int i = 0; i < 2; i++) {
+                    double maxAcc, maxVel, dist;
+                    bool negativeDist = false;
+                    if (i == 0) {
+                        maxAcc = accLimit;
+                        maxVel = velLimit;
+                        dist = distance;
+                    } else {
+                        maxAcc = maxAcceleration[2];
+                        maxVel = maxRotVel;
+                        dist = endHeading;
+                    }
+                    if (dist < 0)
+                        negativeDist = true;
+                    dist = fabs(dist);
+                    double c = -2 * dist / (maxAcc * std::pow(webotsRobot->getBasicTimeStep() / 1000.0, 2));
+                    double timeSteps = std::ceil((-1 + std::sqrt(1 * 1 - 4 * 1 * c)) / 2); // midnight formula
+                    // actual timeStep distance is t from (1+2+3+...+t) rectangles
+                    dist = dist * timeSteps / (timeSteps * (timeSteps + 1) / 2);
+                    double v = dist / (webotsRobot->getBasicTimeStep() / 1000.0);
+                    // std::cout << " i=" << i << " timeSteps=" << timeSteps << " dist=" << dist << " v=" << v;
+                    if (timeSteps == 0.0)
+                        v = 0;
+                    if (v > maxVel)
+                        v = maxVel;
+                    if (i == 0) {
+                        if (isAtTarget)
+                            v = 0;
+                        targetSpeed[0] = v * cos(heading);
+                        targetSpeed[1] = v * sin(heading);
+                        if (isDifferentialDrive)
+                            targetSpeed[1] = 0;
+                    } else {
+                        if (negativeDist)
+                            v = -v;
+                        targetSpeed[2] = v;
+                    }
+                }
+            } else {
+                std::cout << "Speed control  v=" << std::setw(5) << targetSpeed[0] << " m/s (left=" << targetSpeed[1] << " m/s) " << std::setw(5) << targetSpeed[2] << " rad/s";
             }
-            ParameterStateStructCore::RobotType paramRobot = COMP->getParameters().getRobot();
-            double speedLimit[] {paramRobot.getMaxVelX(),
-                paramRobot.getMaxVelY(),
-                paramRobot.getMaxRotVel()};
+            CommBasicObjects::CommBasePose basePose = COMP->robot->getBasePosition();
+            double headingError = -basePose.get_base_azimuth() + newRealPose.heading;
+            headingError += 4 * M_PI;
+            while (headingError > M_PI) // not in the interval [-pi, +pi] radians ?
+                headingError -= 2 * M_PI;
+            std::cout << std::fixed << std::setprecision(2);
+            std::cout << " => " << std::setw(5) << sqrt(vx*vx+vy*vy) << " m/s " << std::setw(5) << omega << " rad/s" <<
+                " X=" << std::setw(5) << basePose.get_x()/1000 <<
+                " m (" << -basePose.get_x()/1000 + newRealPose.x <<
+                ") Y=" << std::setw(5) << basePose.get_y()/1000 <<
+                " m (" << -basePose.get_y()/1000 + newRealPose.y <<
+                ") heading=" << std::setw(6) << basePose.get_base_azimuth() <<
+                " rad (" << headingError << ")" << std::endl;
+
+            double speedLimit[] { maxVelX, maxVelY, maxRotVel };
             for (int i = 3; i--;)
-                if(targetSpeed[i] > speedLimit[i])
+                if (targetSpeed[i] > speedLimit[i])
                     targetSpeed[i] = speedLimit[i];
-                else if(targetSpeed[i] < -speedLimit[i])
+                else if (targetSpeed[i] < -speedLimit[i])
                     targetSpeed[i] = -speedLimit[i];
-			double maxSteps = 0;
-			for (int i = 3; i--;) {
-				double stepsNeeded = abs(targetSpeed[i] - actualSpeed[i])
-						/ (maxAcceleration[i] * (webotsRobot->getBasicTimeStep() / 1000.0));
-				if (stepsNeeded > maxSteps)
-					maxSteps = stepsNeeded;
-			}
-			if (maxSteps < 1)
-				maxSteps = 1;
-			for (int i = 3; i--;)
-				actualSpeed[i] += (targetSpeed[i] - actualSpeed[i]) / maxSteps;
-		} // end lock
+            double maxSteps = 0;
+            for (int i = 3; i--;) {
+                double stepsNeeded = abs(targetSpeed[i] - actualSpeed[i])
+                    / (maxAcceleration[i] * (webotsRobot->getBasicTimeStep() / 1000.0));
+                if (stepsNeeded > maxSteps)
+                    maxSteps = stepsNeeded;
+            }
+            if (maxSteps < 1)
+                maxSteps = 1;
+            for (int i = 3; i--;)
+                actualSpeed[i] += (targetSpeed[i] - actualSpeed[i]) / maxSteps;
+        } // end lock
 
         // mecanum wheels:
         // double v1 = 1/webotsMotors[0].radius*(actualSpeed[0] - actualSpeed[1] - (lx+ly)*actualSpeed[2]);
         // double v2 = 1/webotsMotors[1].radius*(actualSpeed[0] + actualSpeed[1] + (lx+ly)*actualSpeed[2]);
         // double v3 = 1/webotsMotors[2].radius*(actualSpeed[0] + actualSpeed[1] - (lx+ly)*actualSpeed[2]);
         // double v4 = 1/webotsMotors[3].radius*(actualSpeed[0] - actualSpeed[1] + (lx+ly)*actualSpeed[2]);
-		if(webotsMotors.size()==4) {
-		    for(int i=0; i<4; i++) {
-		        webotsMotors[i].motor->setVelocity(
-		            (actualSpeed[0]
-		             + actualSpeed[1] * ( (i==1 || i==2) ? 1 : -1)
-		             + actualSpeed[2] * ( (i==1 || i==3) ? 1 : -1) * webotsMotors[i].distanceToRobotCentre)
-		            / webotsMotors[i].radius);
-		    }
-		} else {
-			for (auto &i : webotsMotors){
-				i.motor->setVelocity(
-                    (actualSpeed[0] * cos(i.heading / 180 * M_PI)
-                    + actualSpeed[1] * sin(i.heading / 180 * M_PI)
-                    + actualSpeed[2] * i.distanceToRobotCentre)
-                    / i.radius);
-			}
-		}
+        if (webotsMotors.size() == 4) {
+            for (int i = 0; i < 4; i++) {
+                webotsMotors[i].motor->setVelocity(
+                    (actualSpeed[0] + actualSpeed[1] * ((i == 1 || i == 2) ? 1 : -1)
+                        + actualSpeed[2] * ((i == 1 || i == 3) ? 1 : -1) * webotsMotors[i].distanceToRobotCentre)
+                        / webotsMotors[i].radius);
+            }
+        } else {
+            for (auto &i : webotsMotors) {
+                i.motor->setVelocity(
+                    (actualSpeed[0] * cos(i.heading / 180 * M_PI) + actualSpeed[1] * sin(i.heading / 180 * M_PI)
+                        + actualSpeed[2] * i.distanceToRobotCentre) / i.radius);
+            }
+        }
 
-		/////////////////////////
-		// baseStateServiceOut //
-		/////////////////////////
+        /////////////////////////
+        // baseStateServiceOut //
+        /////////////////////////
 
-		// this was done in OdemTask.cc previously
-		// same is done in BaseStateQueryServiceAnswHandler::handleQuery(...)
+        // this was done in OdemTask.cc previously
+        // same is done in BaseStateQueryServiceAnswHandler::handleQuery(...)
 
-		CommBasicObjects::CommTimeStamp time_stamp;
-		CommBasicObjects::CommBasePose base_position;
-		CommBasicObjects::CommBaseVelocity base_velocity;
-		CommBasicObjects::CommBaseState base_state;
+        CommBasicObjects::CommTimeStamp time_stamp;
+        CommBasicObjects::CommBasePose base_position;
+        CommBasicObjects::CommBaseVelocity base_velocity;
+        CommBasicObjects::CommBaseState base_state;
 
-		time_stamp.set_now(); // Set the timestamp to the current time
-		base_velocity = COMP->robot->getBaseVelocity();
-		base_state.set_time_stamp(time_stamp);
-		base_state.set_base_position(COMP->robot->getBasePosition());
-		base_state.set_base_raw_position(COMP->robot->getBaseRawPosition());
-		base_state.set_base_velocity(base_velocity);
-		if (COMP->getGlobalState().getGeneral().getVerbose() == true) {
-			std::cout << "Base Pose: "
-					<< base_state.getBasePose().get_base_pose3d().get_position()
-					<< std::endl;
-			std::cout << "Base Odom: "
-					<< base_state.get_base_raw_position().get_base_pose3d().get_position()
-					<< std::endl;
-		}
+        time_stamp.set_now(); // Set the timestamp to the current time
+        base_velocity = COMP->robot->getBaseVelocity();
+        base_state.set_time_stamp(time_stamp);
+        base_state.set_base_position(COMP->robot->getBasePosition());
+        base_state.set_base_raw_position(COMP->robot->getBaseRawPosition());
+        base_state.set_base_velocity(base_velocity);
+        if (COMP->getGlobalState().getGeneral().getVerbose() == true) {
+            std::cout << "Base Pose: " << base_state.getBasePose().get_base_pose3d().get_position() << std::endl;
+            std::cout << "Base Odom: " << base_state.get_base_raw_position().get_base_pose3d().get_position()
+                << std::endl;
+        }
 
-		const Smart::StatusCode status = COMP->baseStateServiceOut->put(
-				base_state);
-		if (status != Smart::SMART_OK) {
-			std::cerr << "ERROR: failed to push base state ("
-					<< Smart::StatusCodeConversion(status) << ")" << std::endl;
-		}
-	}
-	return 1;  // if webots simulation stops, quit this task too
+        const Smart::StatusCode status = COMP->baseStateServiceOut->put(base_state);
+        if (status != Smart::SMART_OK) {
+            std::cerr << "ERROR: failed to push base state (" << Smart::StatusCodeConversion(status) << ")"
+                << std::endl;
+        }
+    }
+    return 1;  // if webots simulation stops, quit this task too
 }
 
 void WebotsAPITask::resetOdomPose() {
-	COMP->robot->update(0, 0, 0, 0, 0, 0, 0);
-	sequence = 0;
+    COMP->robot->update(0, 0, 0, 0, 0, 0, 0);
+    sequence = 0;
 }
 
 int WebotsAPITask::on_exit() {
-	// use this method to clean-up resources which are initialized in on_entry() and needs to be freed before the on_execute() can be called again
-	return 0;
+    // use this method to clean-up resources which are initialized in on_entry() and needs to be freed before the on_execute() can be called again
+    return 0;
 }

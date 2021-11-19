@@ -62,7 +62,7 @@ heading is the orientation of the wheels relative to the front direction of the 
       radius = [0.063, 0.063, 0.063]
       distanceToRobotCentre = [-0.1826, -0.1826, -0.1826]
       heading = [90.0, 210.0, 330.0]
-      maxAcceleration = [3.0, 3.0, 20.0]
+      maxAcceleration = [1.0, 1.0, 5.0]
   }
 ```
 
@@ -81,7 +81,7 @@ ParameterRefinement Webots {
 	radius = [0.05, 0.05, 0.05, 0.05]
 	distanceToRobotCentre = [0.386, 0.386, 0.386, 0.386]
 	heading = [0, 0, 0, 0]
-	maxAcceleration = [2.0, 2.0, 8.0]
+	maxAcceleration = [1.0, 1.0, 5.0]
 	keyboardControl = true	
 }
 ```
@@ -221,22 +221,22 @@ COMP->navigationVelocityServiceOut->send(navigationVelocity);
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>varianceOfDistancePerMeter</b></td>
 <td style="border:1px solid black; padding: 5px;">Double</td>
-<td style="border:1px solid black; padding: 5px;">0.0025</td>
-<td style="border:1px solid black; padding: 5px;"><p>e.g. 0.05m * 0.05m / 1m = 0.0025 m (after traveling 1m, distance error has standard deviation of 0.05m)
+<td style="border:1px solid black; padding: 5px;">2.5E-5</td>
+<td style="border:1px solid black; padding: 5px;"><p>e.g. 0.005m * 0.005m / 1m = 0.000025 m (after traveling 1m, distance error has standard deviation of 0.005m)
 </p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>varianceOfHeadingPerRadians</b></td>
 <td style="border:1px solid black; padding: 5px;">Double</td>
-<td style="border:1px solid black; padding: 5px;">0.001212</td>
-<td style="border:1px solid black; padding: 5px;"><p>e.g. (5°*5°)/360° /180°*pi = 0.001212 (after rotating 360 degrees, heading error has standard deviation of 5 degrees)
+<td style="border:1px solid black; padding: 5px;">1.212E-5</td>
+<td style="border:1px solid black; padding: 5px;"><p>e.g. (0.5°*0.5°)/360° /180°*pi = 0.00001212 (after rotating 360 degrees, heading error has standard deviation of 0.5 degrees)
 </p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>varianceOfHeadingPerMeter</b></td>
 <td style="border:1px solid black; padding: 5px;">Double</td>
-<td style="border:1px solid black; padding: 5px;">0.001218</td>
-<td style="border:1px solid black; padding: 5px;"><p>e.g. (2°/180°*pi)^2/1m  = 0.001218 (after traveling 1m, heading error has standard deviation of 2 degrees)
+<td style="border:1px solid black; padding: 5px;">1.218E-5</td>
+<td style="border:1px solid black; padding: 5px;"><p>e.g. (0.2°/180°*pi)^2/1m  = 0.00001218 (after traveling 1m, heading error has standard deviation of 0.2 degrees)
 </p></td>
 </tr>
 </table>
@@ -291,7 +291,7 @@ COMP->navigationVelocityServiceOut->send(navigationVelocity);
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>maxAcceleration</b></td>
 <td style="border:1px solid black; padding: 5px;">Double</td>
-<td style="border:1px solid black; padding: 5px;">[10.0, 6.0, 40.0]</td>
+<td style="border:1px solid black; padding: 5px;">[1.0, 1.0, 5.0]</td>
 <td style="border:1px solid black; padding: 5px;"><p>the max. acceleration front [m/s], sideways [m/s], rotation [radians/s]
 </p></td>
 </tr>

@@ -72,28 +72,15 @@ private:
 
     SmartACE::SmartMutex mRobotMutex;
 
-    Pose2D oldRealPose, oldOdomPose;
-
     long long sequence=0;
 
-    struct webotsMotor {
-        webots::Motor *motor;
-        double radius;
-        double distanceToRobotCentre;
-        double heading;
-    };
+    std::mutex mutex_targetSpeed;  // protects next variables
+    double targetSpeed[3]; // set by NavigationVelocityServiceInHandler
+    double targetPose2D[3]; // set by NavigationPose2DServiceInHandler
+    double lastTargetPose2D[3] = {-999.9, -999.9, -999.9};
+    bool isTargetPose = false; // true only if set by NavigationPose2DServiceInHandler
+    int programCounter;
 
-    double maxAcceleration[3];
-
-    std::vector<webotsMotor> webotsMotors;
-
-    webots::Supervisor *webotsRobot;
-    webots::Keyboard *webotsKeyboard;
-    webots::Motor* webotsWheels[3];
-    std::string webotsRobotName;
-
-    std::mutex mutex_targetSpeed;
-    double targetSpeed[3];
     bool isNUE;
 
     Coord webots2smart(const double* coords);
@@ -103,7 +90,8 @@ public:
     virtual ~WebotsAPITask();
     void resetOdomPose();
 
-    void setVxVyOmega( double vX, double vY, double omega );
+    void setVxVyOmega( double vX, double vY, double omega);
+    void setXYAzimuth(double x, double y, double azimuth);
 
     virtual int on_entry();
     virtual int on_execute();

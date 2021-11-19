@@ -107,9 +107,9 @@ writePoseFile false
 ##########################
 # InternalParameter OdometryRandomError
 [OdometryRandomError]
-varianceOfDistancePerMeter 0.0025
-varianceOfHeadingPerMeter 0.001218
-varianceOfHeadingPerRadians 0.001212
+varianceOfDistancePerMeter 2.5E-5
+varianceOfHeadingPerMeter 1.218E-5
+varianceOfHeadingPerRadians 1.212E-5
 
 ##########################
 # InternalParameter Robot
@@ -131,9 +131,9 @@ heading 210.0
 heading 330.0
 keyboardControl true
 # maxAcceleration has an array value (defined by assigning each array element in a separate line)
-maxAcceleration 10.0
-maxAcceleration 6.0
-maxAcceleration 40.0
+maxAcceleration 1.0
+maxAcceleration 1.0
+maxAcceleration 5.0
 # motorName has an array value (defined by assigning each array element in a separate line)
 motorName wheel0_joint
 motorName wheel1_joint

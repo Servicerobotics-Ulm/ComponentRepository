@@ -52,9 +52,9 @@ public:
 		public:
 			// default constructor
 			OdometryRandomErrorType() {
-				varianceOfDistancePerMeter = 0.0025;
-				varianceOfHeadingPerMeter = 0.001218;
-				varianceOfHeadingPerRadians = 0.001212;
+				varianceOfDistancePerMeter = 2.5E-5;
+				varianceOfHeadingPerMeter = 1.218E-5;
+				varianceOfHeadingPerRadians = 1.212E-5;
 			}
 		
 			/**
@@ -103,9 +103,9 @@ public:
 				heading.push_back(210.0);
 				heading.push_back(330.0);
 				keyboardControl = true;
-				maxAcceleration.push_back(10.0);
-				maxAcceleration.push_back(6.0);
-				maxAcceleration.push_back(40.0);
+				maxAcceleration.push_back(1.0);
+				maxAcceleration.push_back(1.0);
+				maxAcceleration.push_back(5.0);
 				motorName.push_back("wheel0_joint");
 				motorName.push_back("wheel1_joint");
 				motorName.push_back("wheel2_joint");
