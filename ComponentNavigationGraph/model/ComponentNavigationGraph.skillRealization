@@ -1,0 +1,12 @@
+SkillRealizationModel {
+	CoordinationModuleRealization navPath coordModuleDef DomainRobotFleetNavigation.navPath 
+	uses {
+		DomainRobotFleetNavigation.NavPathCoordinationService intsName navPath
+	}
+	
+	{
+		SkillRealization goto {
+			action ()
+		}
+	}
+}

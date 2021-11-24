@@ -1,0 +1,209 @@
+#|
+
+(define-tcb (goto ?location)
+  (rules (rule-path-nav-error-ack-ok rule-path-nav-error-ack-abort rule-abort-job-error-ack
+          rule-bumper-pressed-path-nav rule-cdl-blocked-path-nav rule-laser-safety-fields-blocked-path-nav))
+  (module "navPath")
+  (action (
+            (format t "=========================>>> tcb-move-robot 'approach-using-path ~s ~%" '?location)
+            (let* ((current-symbolic-location (get-value (tcl-kb-query :key '(is-a) :value '( (is-a robot) )) 'current-symbolic-position))
+                   (robot (tcl-kb-query :key '(is-a) :value '( (is-a robot))))
+                   (robot-current-room-name (get-value (tcl-kb-query :key '(is-a)  :value '((is-a robot))) 'current-room))
+                   (robot-room (tcl-kb-query :key '(is-a name) :value `((is-a room)(name ,robot-current-room-name))))
+                   (robot-name (get-value robot 'name)))
+              (cond
+                ;; location unknown
+                ((null current-symbolic-location)
+                  '(ERROR (UNKNOWN CURRENT LOCATION)))
+
+                ;; location known
+                ((null ?location)
+                  '(ERROR (UNKNOWN LOCATION)))
+
+                (T
+
+                  (tcl-kb-update :key '(is-a name) :value '((is-a counter)(name no-path-counter)(count 0)))
+
+                  (tcl-activate-event :name 'evt-path-purepursuitgoal
+                                      :handler 'handler-path-purepursuit
+                                      :server 'purepursuit
+                                      :service 'goalevent
+                                      :mode 'continuous)
+
+                  (tcl-push-plan :plan `( (one-of (
+                                            (monitorCdlBocked)
+                                            (BASE.monitorBaseBumper)
+                                            (LASERSAFETY.monitorLaserSafetyFields)))))
+
+                  (tcl-activate-event :name 'evt-corridornavclient 
+                                      :handler 'handler-corridornavclient 
+                                      :server 'corridornavclient 
+                                      :service 'goalevent 
+                                      :mode 'continuous)
+
+                  (tcl-activate-event :name 'evt-planner
+                                      :handler 'handler-planner-path-nav
+                                      :server 'planner 
+                                      :service 'plannerevent 
+                                      :mode 'continuous)
+
+                  ;; read - increment - store goalid
+                  (setf goalid (get-value (tcl-kb-query :key '(is-a) :value '((is-a robot))) 'goalid))
+                  (setf goalid (+ goalid 1))
+                  (format t "GoalID: ~s~%" goalid)
+                  (tcl-kb-update :key '(is-a) :value `((is-a robot)(goalid ,goalid)))
+
+                  (tcl-state :server 'planner :state "Neutral")
+                  (tcl-state :server 'mapper  :state "Neutral")
+
+                  ;; corridornavclient
+                  ;; configure the component with the ID before triggering the goal (SET_GOAL)
+                  (tcl-param :server 'corridornavclient :slot 'COMMNAVIGATIONOBJECTS.CORRIDORNAVIGATIONCLIENTPARAMS.SETROBOTID :value robot-name)
+                  (tcl-param :server 'corridornavclient :slot 'COMMNAVIGATIONOBJECTS.CORRIDORNAVIGATIONCLIENTPARAMS.ID :value goalid)
+                  (tcl-param :server 'corridornavclient :slot 'COMMIT)
+                  (tcl-param :server 'corridornavclient :slot 'COMMNAVIGATIONOBJECTS.CORRIDORNAVIGATIONCLIENTPARAMS.SET_GOAL :value `(,current-symbolic-location ?location))
+
+                  ;; purepursuit
+                  (tcl-param :server 'purepursuit :slot 'COMMNAVIGATIONOBJECTS.PUREPURSUITNAVIGATIONPARAMETER.TRANSVEL :value (first  (get-value robot 'velocity-path-navigation)))
+                  (tcl-param :server 'purepursuit :slot 'COMMNAVIGATIONOBJECTS.PUREPURSUITNAVIGATIONPARAMETER.ROTVEL :value (second (get-value robot 'velocity-path-navigation)))
+                  (tcl-param :server 'purepursuit :slot 'COMMNAVIGATIONOBJECTS.PUREPURSUITNAVIGATIONPARAMETER.ID :value goalid)
+                  (tcl-param :server 'purepursuit :slot 'COMMNAVIGATIONOBJECTS.PUREPURSUITNAVIGATIONPARAMETER.PLANNERMODE :value 'PATHNAV)
+                  (tcl-param :server 'purepursuit :slot 'COMMIT)
+
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.TRANSVEL :value (first (get-value robot 'velocity-path-navigation)))
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ROTVEL :value (second (get-value robot 'velocity-path-navigation)))
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.LOOKUPTABLE  :value 'SECOND)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.FREEBEHAVIOR :value 'DEACTIVATE)
+                  (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETSTRATEGY :value 'VELCHECK)
+                  (tcl-param :server 'cdl :slot 'COMMIT)
+
+                  ;; mapper
+                  (tcl-param :server 'mapper :slot 'CommNavigationObjects.MapperParams.CURPARAMETER 
+                             :value (append (get-value robot-room 'size) 
+                                            (get-value robot-room 'offset)
+                                            (list goalid)))	   
+                  (tcl-param :server 'mapper :slot 'CommNavigationObjects.MapperParams.CURLOADLTM)
+                  (tcl-param :server 'mapper :slot 'COMMIT)
+
+                  ;; planner
+                  (tcl-param :server 'planner :slot 'CommNavigationObjects.PlannerParams.ID :value goalid)
+                  (tcl-param :server 'planner :slot 'CommNavigationObjects.PlannerParams.DELETEGOAL)
+                  (tcl-param :server 'planner :slot 'CommNavigationObjects.PlannerParams.PLANNERMODE :value 'PATHNAV)
+                  (tcl-param :server 'planner :slot 'COMMIT)
+
+                  (tcl-state :server 'mapper :state "BuildCurrMap")
+                  (tcl-state :server 'planner :state "PathPlanning")
+                  (tcl-state :server 'corridornavclient :state "MoveRobot")
+                  (tcl-state :server 'purepursuit :state "MoveRobot")
+                  (tcl-state :server 'cdl :state "MoveRobot")
+            	  (update-robot-state :sub-state "PATH-NAV")
+                  '(SUCCESS ())))))))
+
+|#
+
+
+(define-tcb (gotoTest ?location)
+	(module "navPathClient")
+
+
+		(action (
+			(format t "===========================================> navpathclient gotoTest ~s ~%" '?location)
+
+          
+
+		))
+
+)
+
+(define-tcb (gotoLocation ?location)
+	(module "navPathClient")
+
+
+		(action (
+
+			(let* ((current-symbolic-location (get-value (tcl-kb-query :key '(is-a) :value '( (is-a robot) )) 'current-symbolic-position))
+				   (robot-current-room-name (get-value (tcl-kb-query :key '(is-a)  :value '((is-a robot))) 'current-room))
+                   (robot-room (tcl-kb-query :key '(is-a name) :value `((is-a room)(name ,robot-current-room-name))))
+                   (velocity-travelling (get-value (tcl-kb-query :key '(is-a)  :value '((is-a robot))) 'velocity-travelling))
+                   (goalid nil)
+			  	  )
+
+				(format t "===========================================> navpath gotoLocation ~s ~%" '?location)
+				(format t "===========================================> current-symbolic-location ~s ~%" current-symbolic-location)
+
+
+	          	(tcl-activate-event :name 'evt-cdlgoal
+	                  :handler 'handler-cdl
+	                  :server 'cdl
+	                  :service 'goalEvent
+	                  :mode 'continuous)
+
+          	    (setf goalid (get-value (tcl-kb-query :key '(is-a) :value '((is-a robot))) 'goalid))
+                (setf goalid (+ goalid 1))
+                (format t "GoalID: ~s~%" goalid)
+                (tcl-kb-update :key '(is-a) :value `((is-a robot)(goalid ,goalid)))
+
+	            (tcl-state :server 'mapper  :state "Neutral")
+	            (tcl-param :server 'mapper :slot 'CommNavigationObjects.MapperParams.CURPARAMETER 
+	                             :value (append (get-value robot-room 'size) 
+	                                            (get-value robot-room 'offset)
+	                                            (list goalid)))	   
+	            (tcl-param :server 'mapper :slot 'CommNavigationObjects.MapperParams.CURLOADLTM)
+	            (tcl-param :server 'mapper :slot 'COMMIT)
+	            (tcl-state :server 'mapper :state "BuildCurrMap")
+
+	            (tcl-param :server 'navPath :slot 'COMMNAVIGATIONOBJECTS.CORRIDORNAVIGATIONCLIENTPARAMS.SET_GOAL :value `(,current-symbolic-location ?location))
+				
+				(tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ID :value goalid)
+                (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.TRANSVEL :value (first velocity-travelling))
+                (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ROTVEL :value (second velocity-travelling))
+	            ;(tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETSTRATEGY     :value 'APPROACH_HALT)
+	            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETSTRATEGY     :value 'PATH_NAV)
+	            ;(tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALMODE     :value 'PLANNER)
+	            ;(tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALMODE     :value 'PLANNER_PATH_NAV)
+	            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALMODE     :value 'PATH_NAV)
+	            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.LOOKUPTABLE  :value 'DEFAULT)
+	            (tcl-param :server 'cdl :slot 'COMMIT)
+	            (tcl-state :server 'cdl :state "MoveRobot")
+
+	            (update-robot-state :sub-state "PATH-NAV")
+
+            	'(SUCCESS ())            
+            )
+		))
+)
+
+(define-event-handler (handler-cdl)
+  (action (
+            (format t "=========================>>> GOAL REACHED HANDLER location ~s ~%~%" '?location)
+            (cond 
+              ((equal (tcl-event-message) "(reached)")
+                (format t "=========================>>> GOAL REACHED !!! ~%")
+                (tcl-state :server 'cdl :state "Neutral")
+                (tcl-state :server 'mapper :state "Neutral")
+                ;(tcl-state :server 'planner :state "Neutral")
+                (tcl-kb-update 
+                  :key '(is-a) 
+                  :value '(
+                           (is-a robot)
+                           (current-symbolic-position ?location)))
+                (tcl-abort)
+                '(SUCCESS ()))))))
+
+
+(define-tcb (acquireInitialSymbolicLocation)
+	(module "navPathClient")
+		(action (
+
+			(let* (
+				   (current-symbolic-location (get-value (tcl-kb-query :key '(is-a) :value '( (is-a robot) )) 'current-symbolic-position))
+			  	  )
+
+			(format t "===========================================> current-symbolic-location ~s ~%" current-symbolic-location)
+
+			(tcl-param :server 'navPath :slot 'COMMNAVIGATIONOBJECTS.CORRIDORNAVIGATIONCLIENTPARAMS.ACQ_INIT_NODE :value `(,current-symbolic-location))
+			)
+		))
+)
+
+

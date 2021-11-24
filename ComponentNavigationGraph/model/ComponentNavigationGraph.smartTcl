@@ -1,0 +1,22 @@
+(define-tcb (sendNavPath ?path)
+  (module "navPath")
+  (action (
+            (format t "=========================>>> sendPath ~s ~%" '?path)
+              (tcl-send :server 'navPath
+                        :service 'sendPath 
+                        :param '?path
+              )
+		  )
+  )
+)
+
+(define-tcb (queryShortestPath ?from ?to)
+  (module "navPath")
+  (action (
+            (format t "=========================>>> queryShortestPath from: ~s to: ~s ~%" '?from '?to)
+			(tcl-query :server 'navPath 
+				       :service 'queryShortestPath 
+				       :request '(?from ?to))
+		  )
+  )
+)

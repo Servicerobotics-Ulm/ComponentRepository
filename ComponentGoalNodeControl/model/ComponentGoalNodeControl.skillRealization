@@ -1,0 +1,14 @@
+SkillRealizationModel {
+	CoordinationModuleRealization navPathClient coordModuleDef DomainRobotFleetNavigation.navPathClient uses {
+		CommNavigationObjects.CdlCoordinationService intsName cdl
+		CommNavigationObjects.MapperCoordinationService intsName mapper
+		CommNavigationObjects.PlannerCoordinationService intsName planner
+		DomainRobotFleetNavigation.NavPathClientCoordinationService intsName navPath
+	}
+	 
+	{
+		SkillRealization goto {
+			action () 
+		}
+	}
+}

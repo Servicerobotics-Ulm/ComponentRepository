@@ -129,6 +129,7 @@ int EditorTask::on_execute() {
     bool wasWaypoint = false;
     int lastSelectedId;
     bool lastShowWaypoints = true;
+    struct XY { double x; double y; };
     while (robot->step(timeStep) != -1) {
         if(firstRun) {
             cout << AnsiCodes::GREEN_FOREGROUND + " Webots simulation started" + AnsiCodes::RESET << endl;
@@ -173,7 +174,6 @@ int EditorTask::on_execute() {
         // Locations and Stations
         //////////////////////////
 
-        struct XY { double x; double y; };
         unordered_map<int, XY> station_id_to_xy;
         int count = locations->getCount();
         int count2 = stations->getCount();
@@ -182,7 +182,14 @@ int EditorTask::on_execute() {
         updateStrings.push_back("(kb-delete :key '(is-a) :value '((is-a location)) )");
         updateStrings.push_back("(kb-delete :key '(is-a) :value '((is-a station)) )");
 
-        // possible problem: stations position/orientation can change a little bit by loading/unloading
+        // problem: each timestep
+        //          stations position change a little bit by gravity and wheels
+        //          => station's waypoint position changes too
+        //          => WaypointConnection parameter change
+        //          => proto regeneration of WaypointConnection very often
+        //          => very slow
+        // solution: round station position to mm
+        // problem:
         //    rounded values can change too (if the real values are close to .5 mm)
         //    all locations/stations are updated (deleted and added to knowledge base)
         //    during this update time, other components may read missing data
@@ -222,7 +229,7 @@ int EditorTask::on_execute() {
                 name = "Station"+to_string(stationId);
                 int waypointId = station->getField("waypointId")->getSFInt32();
                 if(waypointId >= 0) {
-                    XY _xy = {.x=locationPose.x, .y=locationPose.y};
+                    XY _xy = {.x=round(locationPose.x * 1000) / 1000, .y=round(locationPose.y * 1000) / 1000};
                     station_id_to_xy[waypointId] = _xy;
                 }
                 updateStrings.push_back(
@@ -257,16 +264,16 @@ int EditorTask::on_execute() {
                 "    (name " + name + ")"
                 "    (approach-type (" + approachType + "))"
                 "    (approach-region-pose ("
-                + to_string((int)round(locationPose.x * 1000)) + " "
-                + to_string((int)round(locationPose.y * 1000)) + " 0))"
-                "    (approach-region-dist " + to_string((int)round(radius * 1000)) + ")"
-                "    (orientation-region (angle-absolute "+to_string((int)round(locationPose.heading/M_PI*180))+"))"
+                + to_string(lround(locationPose.x * 1000)) + " "
+                + to_string(lround(locationPose.y * 1000)) + " 0))"
+                "    (approach-region-dist " + to_string(lround(radius * 1000)) + ")"
+                "    (orientation-region (angle-absolute "+to_string(lround(locationPose.heading/M_PI*180))+"))"
                 + (smallerRadius != 0.0 ? (
                     "    (approach-exact-pose ("
-                    + to_string((int)round(locationPose.x * 1000)) + " "
-                    + to_string((int)round(locationPose.y * 1000)) + " 0))"
-                    "    (approach-exact-dist " + to_string((int)round(smallerRadius * 1000)) + ")"
-                    "    (orientation-exact (angle-absolute "+to_string((int)round(locationPose.heading/M_PI*180))+"))"
+                    + to_string(lround(locationPose.x * 1000)) + " "
+                    + to_string(lround(locationPose.y * 1000)) + " 0))"
+                    "    (approach-exact-dist " + to_string(lround(smallerRadius * 1000)) + ")"
+                    "    (orientation-exact (angle-absolute "+to_string(lround(locationPose.heading/M_PI*180))+"))"
                     "    (approach-exact-safetycl 0)"
                 ): "") +
                 "    (backward-dist 500)"
@@ -297,27 +304,29 @@ int EditorTask::on_execute() {
                 waypointsField->removeMF(i);
                 continue;
             }
-            const double *coord = node->getField("translation")->getSFVec3f();
-            XY _xy = {.x=coord[0], .y=coord[1]};
             int id = node->getField("id")->getSFInt32();
             if(id_to_xy.count(id) > 0) {
                 cerr << "ERROR: double " << id << " waypoint deleted" << endl;
                 waypointsField->removeMF(i);
                 continue;
             }
+
+            XY _xy;
             if(station_id_to_xy.count(id) > 0) {
-                XY oldXY = _xy;
                 _xy = station_id_to_xy[id];
-                if(oldXY.x != _xy.x || oldXY.y != _xy.y) {
-                    const double xyz[3] = {_xy.x, _xy.y, 0};
-                    node->getField("translation")->setSFVec3f(xyz);
-                }
+                const double xyz[3] = {_xy.x, _xy.y, 0};
+                node->getField("translation")->setSFVec3f(xyz);
                 station_id_to_xy.erase(id);
+            } else {
+                const double *coord = node->getField("translation")->getSFVec3f();
+                _xy = {.x=coord[0], .y=coord[1]};
             }
             id_to_xy[id] = _xy;
             if(showWaypoints != lastShowWaypoints)
                 node->getField("showWaypoints")->setSFBool(showWaypoints);
         }
+        if(showWaypoints != lastShowWaypoints)
+            cout << "change showWaypoints to " << showWaypoints << endl;
 
         for(auto wp:station_id_to_xy) {
             int id= wp.first;
@@ -328,16 +337,16 @@ int EditorTask::on_execute() {
                 "  translation "+to_string(_xy.x)+" "+to_string(_xy.y)+" 0\n"
                 "  width "+to_string(defaultWidth)+"\n"
                 "}";
+            cout << "Import Waypoint id  " << id << " for Station" << endl;
             waypointsField->importMFNodeFromString(-1, s);
         }
-
         struct waypointConnection { int startId; int endId; double width;};
         vector<waypointConnection> waypointConnections;
         count = waypointConnectionsField->getCount();
         for (int i = count; i--;) {
             Node *node = waypointConnectionsField->getMFNode(i);
             if(node->getTypeName() != WAYPOINTCONNECTION) {
-                cerr << "ERROR: wrong type " << node->getTypeName() << " in WaypointConnections removed" << endl;
+                cout << "ERROR: wrong type " << node->getTypeName() << " in WaypointConnections removed" << endl;
                 waypointConnectionsField->removeMF(i);
                 continue;
             }
@@ -347,7 +356,7 @@ int EditorTask::on_execute() {
                .width = node->getField("width")->getSFFloat()
             };
             if(id_to_xy.count(w.startId) == 0 || id_to_xy.count(w.endId) == 0) {
-                cerr << "ERROR: missing ids " << w.startId << " " << w.endId << " waypointConnection deleted" << endl;
+                cout << "ERROR: missing ids " << w.startId << " " << w.endId << " waypointConnection deleted" << endl;
                 waypointConnectionsField->removeMF(i);
                 continue;
             }

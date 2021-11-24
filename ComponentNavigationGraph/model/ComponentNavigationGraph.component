@@ -1,0 +1,20 @@
+ComponentDefinition ComponentNavigationGraph logo "/ComponentNavigationGraph/model/logo.png"
+{
+InputPort NavPathServiceIn implements DomainRobotFleetNavigation.NavPathService { 
+	}
+	InputHandler NavPathServiceInHandler triggeredFrom NavPathServiceIn { }
+AnswerPort ShortestPathRequestServiceAnsw implements DomainRobotFleetNavigation.ShortestPathRequestService {
+	}
+	RequestHandler ShortestPathRequestServiceAnswHandler triggeredFrom ShortestPathRequestServiceAnsw {
+	}
+	AnswerPort NodeStatusUpdateServiceAnsw implements DomainRobotFleetNavigation.NodeStatusUpdateService {
+	}
+	RequestHandler NodeStatusUpdateServiceAnswHandler triggeredFrom NodeStatusUpdateServiceAnsw {
+	}
+CoordinationSlavePort CoordinationPort implements DomainRobotFleetNavigation.NavPathCoordinationService
+	{
+		with sendPath realizedBy NavPathServiceIn
+		with queryShortestPath realizedBy ShortestPathRequestServiceAnsw
+		SkillRealizationsRef navPath 
+	}
+}

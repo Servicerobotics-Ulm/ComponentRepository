@@ -1,0 +1,30 @@
+ComponentDefinition ComponentGoalNodeControl logo "/ComponentGoalNodeControl/model/logo.png"
+{
+InputPort BaseStateServiceIn implements CommBasicObjects.BaseStateService {
+	}
+	RequestPort ShortestPathRequestServiceReq implements DomainRobotFleetNavigation.ShortestPathRequestService {
+	}
+	RequestPort NodeStatusUpdateServiceReq implements DomainRobotFleetNavigation.NodeStatusUpdateService {
+	}
+	Activity GoalNodeControl
+	{
+		InputPortLink BaseStateServiceIn {
+			oversamplingOk undersamplingOk
+		}
+		ActivationConstraints {
+			configurable=true minActFreq = 2.0 Hz maxActFreq = 10.0 Hz
+		}
+		
+		DefaultTrigger PeriodicTimer 4.0 Hz;
+	}
+	OutputPort PlannerGoalServiceOut implements CommNavigationObjects.PlannerGoalService realizedBy GoalNodeControl {
+	}
+	
+	CoordinationSlavePort CoordinationPort implements DomainRobotFleetNavigation.NavPathClientCoordinationService {
+		SkillRealizationsRef navPathClient
+	}
+	
+	ComponentParameters ComponentGoalNodeControl slave CoordinationPort
+OutputPort CorridorNavigationNextGoalOut implements CommNavigationObjects.CorridorNavigationNextGoal realizedBy GoalNodeControl {
+	}
+}

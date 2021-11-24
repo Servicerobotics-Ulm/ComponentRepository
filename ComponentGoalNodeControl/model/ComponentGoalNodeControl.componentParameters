@@ -1,0 +1,10 @@
+ComponentParameter ComponentGoalNodeControl component ComponentGoalNodeControl
+{
+	ParameterSetInstance CommNavigationObjects.CorridorNavigationClientParams {
+		TriggerInstance SET_GOAL active
+	}
+	
+	InternalParameter GoalNodeControl {
+		freeStrategy: InlineEnumeration{CURRENT;PREVIOUS} = CURRENT
+	}
+}
