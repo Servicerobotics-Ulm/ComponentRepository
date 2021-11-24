@@ -496,12 +496,9 @@
     ;;filter all special events not belonging to external stuff!
     (cond
       ((equal server 'TIMER)
-       (setf event (communication *SMARTSOFT* (list 'special 'special server 'event 'generate (list 'TIMER 'TIMER server service (append (list mode) param))))))
+       (setf event (communication *SMARTSOFT* (list 'special 'special server 'event 'generate (list 'TIMER 'TIMER server service mode param)))))
       (T ;;all other stuff uses the regular event generation methods
-       (setf event (communication *SMARTSOFT* (list 'special 'special server 'event 'generate (list module module-inst server service 
-         (append (list mode) (if (atom param )
-                               (list param) 
-                               param))))))))
+       (setf event (communication *SMARTSOFT* (list 'special 'special server 'event 'generate (list module module-inst server service mode param))))))
     (cond
       ((null (communication *SMARTSOFT* (list 'special 'special server 'event 'activate (list event))))
        (format t "Error activating Event -->destroy it~%")

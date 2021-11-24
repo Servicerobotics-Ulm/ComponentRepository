@@ -69,9 +69,9 @@ void CompHandler::onShutdown()
 
 
 #if defined (__GNUC__) && defined(__unix__)
-extern "C" char* command(char* ciType, char* ciInstance, char* compType, char* compInstance, char* service, char* param)
+extern "C" char* command(char* ciType, char* ciInstance, char* compType, char* compInstance, char* service, char* param, char* eventMode)
 #elif defined (WIN32) || defined (WIN64)
-extern "C" __declspec(dllexport) char* command(char* ciType, char* ciInstance, char* compType, char* compInstance, char* service, char* param)
+extern "C" __declspec(dllexport) char* command(char* ciType, char* ciInstance, char* compType, char* compInstance, char* service, char* param, char* eventMode)
 #endif
 {
 	//the buffer will be freed on the lisp side
@@ -86,13 +86,14 @@ extern "C" __declspec(dllexport) char* command(char* ciType, char* ciInstance, c
 	std::cout<<"ComponentInstance: "<<compInstance<<std::endl;
 	std::cout<<"Service: "<<service<<std::endl;
 	std::cout<<"Param: "<<param<<std::endl;
+	std::cout<<"EventMode: "<<eventMode<<std::endl;
 	std::cout<<"============================"<<std::endl;
 #endif
 
 	std::map<std::string,ComponentTCLSequencerCore::CiFunctions>::const_iterator it = COMP->ciMap.find(ciType);
 	if (it != COMP->ciMap.end())
 	{
-		result = it->second.switchCiFunction(ciInstance,compType,compInstance,service,param);
+		result = it->second.switchCiFunction(ciInstance,compType,compInstance,service,param,eventMode);
 	} else {
 		result = "(error (no module))";
 	}
