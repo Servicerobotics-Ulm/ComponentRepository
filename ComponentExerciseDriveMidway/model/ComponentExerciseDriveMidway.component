@@ -1,0 +1,12 @@
+ComponentDefinition ComponentExerciseDriveMidway 
+{
+	Activity RobotTask
+	{
+		InputPortLink  LaserServiceIn { oversamplingOk undersamplingOk }
+	DefaultTrigger PeriodicTimer 10.0 Hz
+	}
+	InputPort LaserServiceIn implements CommBasicObjects.LaserService {
+	}
+	OutputPort NavigationVelocityServiceOut implements CommNavigationObjects.NavigationVelocityService realizedBy RobotTask {
+	}
+}

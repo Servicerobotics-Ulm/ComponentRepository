@@ -220,6 +220,10 @@ void ParamUpdateHandler::loadParameter(SmartACE::SmartIniParameter &parameter)
 		{
 			globalState.webots.cameraName = commitState.webots.cameraName;
 		}
+		if(parameter.getDouble("webots", "frequency", commitState.webots.frequency))
+		{
+			globalState.webots.frequency = commitState.webots.frequency;
+		}
 		if(parameter.getString("webots", "rangeFinderName", commitState.webots.rangeFinderName))
 		{
 			globalState.webots.rangeFinderName = commitState.webots.rangeFinderName;

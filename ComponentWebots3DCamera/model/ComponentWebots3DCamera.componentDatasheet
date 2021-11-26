@@ -3,11 +3,11 @@ ComponentDatasheet ComponentWebots3DCamera
 	BaseURI "http://www.servicerobotik-ulm.de"
 	ShortDescription "
 
-Universal Camera and RangeFinder (depth camera) device in the Webots simulator, delivering both color images and range images.
+Delivers color images and/or range images from an Camera and RangeFinder (depth camera) device in the Webots simulator.
 
 The images are made each Webots timeStep, at the same time. Range distances are measured in meters (see Time of Flight (ToF)).
 
-How a new Camera can be added to Webots:
+How a new Camera and RangeFinder can be added to Webots:
 * Add a new Robot, set its controller to '&lt;extern&gt;' and supervisor TRUE
 * Add the Camera and RangeFinder in children of the robot
 * give same names in webots and in parameter <a href=\"#internal-parameter-webots\">'webots'</a>
@@ -29,6 +29,10 @@ Robot {
   ]
 }
 ```
+
+If you don't need the range images, don't add the RangeFinder in Webots and set rangeFinderName = \"none\" in parameter <a href=\"#internal-parameter-webots\">'webots'</a>.
+
+If you don't need the color images, don't add the Camera in Webots and set cameraName = \"none\" in parameter <a href=\"#internal-parameter-webots\">'webots'</a>.
 
 other similar components:
 

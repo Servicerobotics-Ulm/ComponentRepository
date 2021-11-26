@@ -1,0 +1,9 @@
+SkillRealizationModel {
+	CoordinationModuleRealization FleetManagerMod coordModuleDef DomainRobotFleet.FleetManager uses {
+		DomainRobotFleet.FleetManagerCoordinationService intsName fleetManager
+	} {
+		SkillRealization dummy {
+			action () 
+		}
+	}
+}

@@ -88,6 +88,7 @@ int ImageTask::on_exit() {
 }
 int ImageTask::on_execute() {
     ParameterStateStruct params = COMP->getParameters();
+    int timeStep = 1000/params.getWebots().getFrequency()+0.5;
 
     // ********** robot ***********
     string name = params.getWebots().getRobotName();
@@ -103,15 +104,19 @@ int ImageTask::on_execute() {
 
     // *********** camera *************
     name = params.getWebots().getCameraName();
-    Camera *camera = robot->getCamera(name);
-    if (!camera) {
+    bool isCamera = name!="none";
+    Camera *camera = isCamera ? robot->getCamera(name) : NULL;
+    if (isCamera && !camera) {
         cerr << "Webots Camera '" << name << "' not found" << endl;
         return -1;
     }
-    unsigned int width = camera->getWidth();
-    unsigned int height = camera->getHeight();
-    double fieldOfView = camera->getFov();
-    cout << "Camera '" << name << "' width " << width << " height " << height << " fieldOfView " << fieldOfView << endl;
+    unsigned int width = isCamera ? camera->getWidth() : 0;
+    unsigned int height = isCamera ? camera->getHeight() : 0;
+    double fieldOfView = isCamera ? camera->getFov() : 0.7854;
+    if(isCamera)
+        cout << "Camera '" << name << "' width " << width << " height " << height << " fieldOfView " << fieldOfView << endl;
+    else
+        cout << "no Camera" << endl;
     // *colorData = new unsigned char[...]
     unsigned char colorData[width * height * 3];
     DomainVision::CommVideoImage colorImage;
@@ -130,18 +135,22 @@ int ImageTask::on_execute() {
 
     // ************ rangeFinder ************
     name = params.getWebots().getRangeFinderName();
-    RangeFinder *rangeFinder = robot->getRangeFinder(name);
+    bool isRangeFinder = name!="none";
+    RangeFinder *rangeFinder = isRangeFinder ? robot->getRangeFinder(name) : NULL;
     if (!rangeFinder) {
         cerr << "Webots RangeFinder '" << name << "' not found" << endl;
         return -1;
     }
-    int width2 = rangeFinder->getWidth();
-    int height2 = rangeFinder->getHeight();
-    double fieldOfView2 = rangeFinder->getFov();
-    double minRange = rangeFinder->getMinRange();
-    double maxRange = rangeFinder->getMaxRange();
-    cout << "RangeFinder '" << name << "' width " << width2 << " height " << height2 << " fieldOfView " << fieldOfView2
+    int width2 = isRangeFinder ? rangeFinder->getWidth() : 0;
+    int height2 = isRangeFinder ? rangeFinder->getHeight() : 0;
+    double fieldOfView2 = isRangeFinder ? rangeFinder->getFov() : 0.7854;
+    double minRange = isRangeFinder ? rangeFinder->getMinRange() : 0.01;
+    double maxRange = isRangeFinder ? rangeFinder->getMaxRange() : 1;
+    if(isRangeFinder)
+      cout << "RangeFinder '" << name << "' width " << width2 << " height " << height2 << " fieldOfView " << fieldOfView2
         << " minRange " << minRange << " maxRange " << maxRange << endl;
+    else
+        cout << "no RangeFinder" << endl;
     arma::mat intrinsic2 = arma::zeros(4, 4);
     intrinsic2(0, 0) = width2 / 2.0 / tan(fieldOfView2 / 2.0);
     intrinsic2(1, 1) = width2 / 2.0 / tan(fieldOfView2 / 2.0);
@@ -164,22 +173,22 @@ int ImageTask::on_execute() {
     int seqCount = 0;
     bool isCameraOn = false;
     Program program = Program::prNeutral;
-    // todo: parameter for time between two pushed images
-    //       (using robot->getBasicTimeStep() can be very slow)
-    while (robot->step(robot->getBasicTimeStep()) != -1) {
+    while (robot->step(timeStep) != -1) {
         Program program = newProgram;
         if (program == Program::prPushImage || (program == Program::prQueryOnly && isQueryImage)) {
             if (!isCameraOn) {
                 isCameraOn = true;
                 std::cout << "Enabling Camera" << std::endl;
-                camera->enable(robot->getBasicTimeStep());
-                rangeFinder->enable(robot->getBasicTimeStep());
+                if(isCamera)
+                  camera->enable(timeStep);
+                if(isRangeFinder)
+                  rangeFinder->enable(timeStep);
                 //wait one timeStep to get the valid image
-                if (robot->step(robot->getBasicTimeStep()) == -1)
+                if (robot->step(timeStep) == -1)
                     break;
             }
             // generate newestImage
-            const unsigned char *bgraData = camera->getImage();
+            const unsigned char *bgraData = isCamera ? camera->getImage() : NULL;
             for (int i = 0; i < width * height; i++) {
                 colorData[i * 3] = bgraData[i * 4 + 2];
                 colorData[i * 3 + 1] = bgraData[i * 4 + 1];
@@ -190,7 +199,8 @@ int ImageTask::on_execute() {
             depthImage.setSeq_count(seqCount);
             image->setSeq_count(seqCount);
             seqCount++;
-            const float *depthData = rangeFinder->getRangeImage();
+            const float emptyArray[0] = {};
+            const float *depthData = isRangeFinder ? rangeFinder->getRangeImage() : emptyArray;
             depthImage.setMin_distcance(params.getHardware_properties().getMin_distance());
             depthImage.setMax_distcance(params.getHardware_properties().getMax_distance());
             depthImage.set_distances(depthData, width2, height2);

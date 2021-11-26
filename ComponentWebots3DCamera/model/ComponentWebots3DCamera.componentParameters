@@ -4,10 +4,12 @@ ComponentParameter ComponentWebots3DCameraParams component ComponentWebots3DCame
 	{
 		/** the webots Camera and RangeFinder device must be in children of an extra robot with this name */
   		robotName : String = "kinect_v2"
-		/** the name of the Camera device */
+		/** the name of the Camera device in Webots, or "none" if not used */
   		cameraName : String = "kinect_v2_color"
-		/** the name of the RangeFinder device */
+		/** the name of the RangeFinder device, or "none" if not used */
   		rangeFinderName : String = "kinect_v2_range"
+  		/** how many images per second should be pushed; can't be higher than 1000/basicTimeStep of Webots WorldInfo */
+  		frequency : Double = 31.25
 	}
 	InternalParameter settings
 	{

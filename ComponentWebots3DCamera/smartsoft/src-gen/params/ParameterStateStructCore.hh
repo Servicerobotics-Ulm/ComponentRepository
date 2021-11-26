@@ -46,6 +46,7 @@ public:
 			 * here are the member definitions
 			 */
 			std::string cameraName;
+			double frequency;
 			std::string rangeFinderName;
 			std::string robotName;
 		
@@ -53,6 +54,7 @@ public:
 			// default constructor
 			webotsType() {
 				cameraName = "kinect_v2_color";
+				frequency = 31.25;
 				rangeFinderName = "kinect_v2_range";
 				robotName = "kinect_v2";
 			}
@@ -61,6 +63,7 @@ public:
 			 * here are the public getters
 			 */
 			inline std::string getCameraName() const { return cameraName; }
+			inline double getFrequency() const { return frequency; }
 			inline std::string getRangeFinderName() const { return rangeFinderName; }
 			inline std::string getRobotName() const { return robotName; }
 			
@@ -68,6 +71,7 @@ public:
 			{
 				os << "webots(";
 				os << "cameraName = " << cameraName; os << ", ";
+				os << "frequency = " << frequency; os << ", ";
 				os << "rangeFinderName = " << rangeFinderName; os << ", ";
 				os << "robotName = " << robotName;
 				os << ")\n";
@@ -367,6 +371,7 @@ public:
 		};
 		param["webots"] = nlohmann::json {
 			{"cameraName" , getWebots().getCameraName()},
+			{"frequency" , getWebots().getFrequency()},
 			{"rangeFinderName" , getWebots().getRangeFinderName()},
 			{"robotName" , getWebots().getRobotName()}
 		};

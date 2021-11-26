@@ -142,6 +142,8 @@ int GoalNodeControl::on_execute()
 			COMP->commCorridorNavigationGoal.setGoalX(COMP->path.front().getX());
 			COMP->commCorridorNavigationGoal.setGoalY(COMP->path.front().getY());
 
+			COMP->commCorridorNavigationGoal.setGoal_id(COMP->id);
+
 			COMP->corridorNavigationNextGoalOut->put(COMP->commCorridorNavigationGoal);
 
 		}
@@ -268,10 +270,9 @@ int GoalNodeControl::on_execute()
 						COMP->commCorridorNavigationGoal.setGoalX(COMP->path.front().getX());
 						COMP->commCorridorNavigationGoal.setGoalY(COMP->path.front().getY());
 
+						COMP->commCorridorNavigationGoal.setGoal_id(COMP->id);
 
 						std::cout << "PUT 1: " << this->prevNode.getId() << " -> " << COMP->path.front().getId() << std::endl;
-
-
 
 						COMP->corridorNavigationNextGoalOut->put(COMP->commCorridorNavigationGoal);
 					}
@@ -286,6 +287,8 @@ int GoalNodeControl::on_execute()
 
 						COMP->commCorridorNavigationGoal.setGoalX(this->prevNode.getX());
 						COMP->commCorridorNavigationGoal.setGoalY(this->prevNode.getY());
+
+						COMP->commCorridorNavigationGoal.setGoal_id(COMP->id);
 
 						COMP->corridorNavigationNextGoalOut->put(COMP->commCorridorNavigationGoal);
 					}

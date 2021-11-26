@@ -97,9 +97,8 @@ Field* create_group(int place, string def_name, Supervisor *robot) {
 
 int EditorTask::on_execute() {
     if (!COMP->getParameters().getGeneral().getEnableEditor()) {
-
         cout << " \033[0;32mEditor disabled\033[0m" << endl;
-        return 0;
+        return -1;
     }
     string name = "Editor";
     char environment[256] = "WEBOTS_ROBOT_NAME=";

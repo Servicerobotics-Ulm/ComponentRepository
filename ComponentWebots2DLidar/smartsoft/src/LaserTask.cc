@@ -26,8 +26,6 @@
 //        Prittwitzstr. 10
 //        89075 Ulm (Germany)
 //
-//  This file is part of the "SmartLaserLMS100Server component".
-//
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
 //  License as published by the Free Software Foundation; either

@@ -592,8 +592,6 @@ int CdlTask::on_execute()
 						int startID,goalID;
 						pathNavGoal.getGoal(startX,startY,startID,goalXWorld,goalYWorld,goalID,1);
 
-
-
 						//std::cout<<"Robot pose x:"<<x/1000.0<<" y:"<<y/1000.0 <<" a:"<<a<<std::endl;
 						//std::cout<<"Start x:"<<startX<<" y:"<<startY<<" Goal x:"<<goalX<<" y:"<<goalY<<" width:"<<width<<std::endl;
 
@@ -615,10 +613,12 @@ int CdlTask::on_execute()
 							COMP->cdlLookup->setPathNavGoal(startXRobot*1000.0,startYRobot*1000.0,goalXRobot*1000.0,goalYRobot*1000.0);
 						}
 
-
-
-						approachFlag = true;
-
+						if (goalID == localState.getCommNavigationObjects().getCdlParameter().getID().getId()) {
+							approachFlag = true;
+						}
+						else {
+							approachFlag = false;
+						}
 
 					} else {
 						std::cout<<"Get update: "<<status<<std::endl;

@@ -7,11 +7,11 @@
 
 *Component Short Description:* 
 
-Universal Camera and RangeFinder (depth camera) device in the Webots simulator, delivering both color images and range images.
+Delivers color images and/or range images from an Camera and RangeFinder (depth camera) device in the Webots simulator.
 
 The images are made each Webots timeStep, at the same time. Range distances are measured in meters (see Time of Flight (ToF)).
 
-How a new Camera can be added to Webots:
+How a new Camera and RangeFinder can be added to Webots:
 * Add a new Robot, set its controller to '&lt;extern&gt;' and supervisor TRUE
 * Add the Camera and RangeFinder in children of the robot
 * give same names in webots and in parameter <a href="#internal-parameter-webots">'webots'</a>
@@ -33,6 +33,10 @@ Robot {
   ]
 }
 ```
+
+If you don't need the range images, don't add the RangeFinder in Webots and set rangeFinderName = "none" in parameter <a href="#internal-parameter-webots">'webots'</a>.
+
+If you don't need the color images, don't add the Camera in Webots and set cameraName = "none" in parameter <a href="#internal-parameter-webots">'webots'</a>.
 
 other similar components:
 
@@ -74,7 +78,7 @@ other similar components:
 ### basePushTimedClient
 
 *Documentation:*
-<p>Reads periodically the position etc. of the robot (if the camera is mounted on it): CommBasicObjects::CommBaseState
+<p>x Reads periodically the position etc. of the robot (if the camera is mounted on it): CommBasicObjects::CommBaseState
 </p>
 <p> Connect to port <a href="../ComponentWebotsMobileRobot#BaseStateServiceOut">BaseStateServiceOut of ComponentWebotsMobileRobot</a>
 </p>
@@ -174,14 +178,21 @@ other similar components:
 <td style="border:1px solid black; padding: 5px;"><b>cameraName</b></td>
 <td style="border:1px solid black; padding: 5px;">String</td>
 <td style="border:1px solid black; padding: 5px;">"kinect_v2_color"</td>
-<td style="border:1px solid black; padding: 5px;"><p>the name of the Camera device
+<td style="border:1px solid black; padding: 5px;"><p>the name of the Camera device in Webots, or "none" if not used
 </p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>rangeFinderName</b></td>
 <td style="border:1px solid black; padding: 5px;">String</td>
 <td style="border:1px solid black; padding: 5px;">"kinect_v2_range"</td>
-<td style="border:1px solid black; padding: 5px;"><p>the name of the RangeFinder device
+<td style="border:1px solid black; padding: 5px;"><p>the name of the RangeFinder device, or "none" if not used
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>frequency</b></td>
+<td style="border:1px solid black; padding: 5px;">Double</td>
+<td style="border:1px solid black; padding: 5px;">31.25</td>
+<td style="border:1px solid black; padding: 5px;"><p>how many images per second should be pushed; can't be higher than 1000/basicTimeStep of Webots WorldInfo
 </p></td>
 </tr>
 </table>

@@ -1,0 +1,18 @@
+ComponentDefinition ComponentAASBridge logo "/ComponentAASBridge/model/logo.png"
+{
+CoordinationSlavePort CoordinationPort implements DomainRobotFleet.FleetManagerCoordinationService
+	{
+		with fleetEvent realizedBy TaskEventOut
+		with fleetSend realizedBy TaskSendIn
+		SkillRealizationsRef FleetManagerMod
+	}
+Activity CommandActivity
+	{
+	}
+	OutputPort TaskEventOut implements CommBasicObjects.TaskEvent realizedBy CommandActivity {
+	}
+
+	InputPort TaskSendIn implements CommBasicObjects.TaskSend {
+	}
+InputHandler TaskSendInHandler triggeredFrom TaskSendIn { }
+}
