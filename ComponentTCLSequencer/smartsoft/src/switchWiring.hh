@@ -34,6 +34,6 @@
 
 #include <string>
 
-std::string switchWiring(const std::string& compnameTypename, const std::string& moduleInst, const std::string& compname, const std::string& service, const std::string& parameter, const std::string& eventMode);
+std::string switchWiring(const std::string& compnameTypename, const std::string& moduleInst, const std::string& compname, const std::string& service, const std::string& inString);
 
 #endif

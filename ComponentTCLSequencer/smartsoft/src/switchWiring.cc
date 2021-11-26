@@ -33,11 +33,11 @@
 #include "ComponentTCLSequencer.hh"
 #include <stdio.h>
 
-std::string switchWiring(const std::string& moduleInst, const std::string& compnameTypename, const std::string& compname, const std::string& service, const std::string& parameter, const std::string& eventMode)
+std::string switchWiring(const std::string& moduleInst, const std::string& compnameTypename, const std::string& compname, const std::string& service, const std::string& inString)
 {
 	std::ostringstream outString;
 
-	std::cout<<"switchWiring- moduleInst "<<moduleInst<<" compnameTypename: "<<compnameTypename<<" compname: "<<compname<<" service: "<<service<<" parameter: "<<parameter<<" eventMode: "<<eventMode<<std::endl;
+	std::cout<<"switchWiring- moduleInst "<<moduleInst<<" compnameTypename: "<<compnameTypename<<" compname: "<<compname<<" service: "<<service<<" inString: "<<inString<<std::endl;
 
 	// wiring connect
 	if(service == "CONNECT")
@@ -47,7 +47,7 @@ std::string switchWiring(const std::string& moduleInst, const std::string& compn
 		char *pointer = (char *)NULL;
 		char *param1  = (char *)NULL;
 
-		pointer = input = strdup(parameter.c_str());
+		pointer = input = strdup(inString.c_str());
 
 		// slaveComp
 		do
@@ -118,7 +118,7 @@ std::string switchWiring(const std::string& moduleInst, const std::string& compn
 		char *pointer = (char *)NULL;
 		char *param1  = (char *)NULL;
 
-		pointer = input = strdup(parameter.c_str());
+		pointer = input = strdup(inString.c_str());
 
 		// slaveComp
 		do

@@ -38,7 +38,7 @@
 #include "eventInterface.hh"
 
 
-std::string switchFetchEvents(const std::string& moduleInst, const std::string& componentName, const std::string& componentInstanceName, const std::string& service, const std::string& parameter, const std::string& eventMode)
+std::string switchFetchEvents(const std::string& moduleInst, const std::string& componentName, const std::string& componentInstanceName, const std::string& service, const std::string& inString)
 {
 //	static char outString[LISP_STRING];
 

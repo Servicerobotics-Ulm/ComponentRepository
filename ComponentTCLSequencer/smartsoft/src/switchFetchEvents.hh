@@ -35,6 +35,6 @@
 
 #include <string>
 
-std::string switchFetchEvents(const std::string& moduleInst, const std::string& compnameTypename, const std::string& compname, const std::string& service, const std::string& parameter, const std::string& eventMode);
+std::string switchFetchEvents(const std::string& moduleInst, const std::string& compnameTypename, const std::string& compname, const std::string& service, const std::string& inString);
 
 #endif
