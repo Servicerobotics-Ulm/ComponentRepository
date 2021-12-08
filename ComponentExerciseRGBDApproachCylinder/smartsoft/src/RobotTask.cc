@@ -72,38 +72,40 @@ int RobotTask::on_execute() {
     DomainVision::CommVideoImage colorImage = images.getColor_image();
     DomainVision::CommDepthImage depthImage = images.getDepth_image();
 
+    // convert CommVideoImage to OpenCV Mat
     cv::Mat rgb_mat(colorImage.get_height(), colorImage.get_width(), CV_8UC3, (void *)colorImage.get_data());
     cv::Mat bgr_mat;
     cv::cvtColor(rgb_mat, bgr_mat, cv::COLOR_RGB2BGR);
 
-    // 1m  <=>   (float)1.0   <=>   (int)1000
-    cv::Mat depth_float;
-    cv::Mat depth_int;
+    // convert CommDepthImage to OpenCV Mat
+    cv::Mat depth_mat;
 
     DomainVision::DepthFormatType depth_format = depthImage.getFormat();
     if (depth_format == DomainVision::DepthFormatType::UINT16) {
         cv::Mat int_mat(depthImage.getHeight(), depthImage.getWidth(), CV_16UC1, (void *)depthImage.get_distances_uint16());
-        depth_int = int_mat;
-        int_mat.convertTo(depth_float, CV_32FC1, 0.001);
+        int_mat.convertTo(depth_mat, CV_32FC1, 0.001);
     } else if (depth_format == DomainVision::DepthFormatType::FLOAT) {
         cv::Mat float_mat(depthImage.getHeight(), depthImage.getWidth(), CV_32FC1, (void *)depthImage.get_distances_float());
-        depth_float = float_mat;
-        float_mat.convertTo(depth_int, CV_16UC1, 1000);
+        depth_mat = float_mat;
     }
 
-    double vx = 0.0; // speed in x-axis direction (forward) [m/s]
-    double vy = 0.0; // speed in y-axis direction (left) [m/s]
+    double vx = 0.0; // speed in x-axis direction (forward) [m/s]    
     double v_rotate = 0.0; // turn speed (counterclockwise) [radians/s]
 
+    //************************************************
+    // use bgr_mat, depth_mat for processing.
+    // calculate vx, v_rotate based on images using OpenCV 4 functions
+    //************************************************
     // Start of your code
 
-    // calculate vx, vy, v_rotate based on images using OpenCV 4 functions
+
 
     // End of your code
+    //******************************************************
 
     CommBasicObjects::CommNavigationVelocity comNavVel;
-    comNavVel.set_vX(vx, 1); // meters per second
-    comNavVel.set_vY(vy, 1); // meters per second
+    comNavVel.set_vX(1.0, 1); // meters per second
+//    comNavVel.set_vY(0.0, 1); // meters per second
     comNavVel.set_omega(v_rotate);
     status = this->navigationVelocityServiceOutPut(comNavVel);
     if (status != Smart::SMART_OK) {
