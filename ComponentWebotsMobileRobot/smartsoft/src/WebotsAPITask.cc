@@ -52,6 +52,7 @@
 
 #include <webots/Node.hpp>
 #include <webots/Pen.hpp>
+#include <webots/utils/AnsiCodes.hpp>
 
 using namespace webots;
 
@@ -383,6 +384,8 @@ int WebotsAPITask::on_execute() {
                 keySpeedLevels = webotsRobot->getBasicTimeStep() / 2000.0;
             if (key == 'C') // reach max speed at once
                 keySpeedLevels = 1;
+            if(webotsMotors.size()==2)
+                ky = 0; // ignore sideways keys in case of differential drive
         }
         // start lock
         {
@@ -566,6 +569,11 @@ int WebotsAPITask::on_execute() {
                 }
             } else {
                 std::cout << "Speed control  v=" << std::setw(5) << targetSpeed[0] << " m/s (left=" << targetSpeed[1] << " m/s) " << std::setw(5) << targetSpeed[2] << " rad/s";
+            }
+            if(webotsMotors.size()==2 && targetSpeed[1] != 0.0) {
+                std::cerr << AnsiCodes::RED_FOREGROUND << " warning: impossible target speed vx=" << targetSpeed[0]
+                          << " vy=" << targetSpeed[1] << " for differential drive (vy must be zero as robot can't drive sideways)" << AnsiCodes::RESET << std::endl;
+                targetSpeed[0] = targetSpeed[1] = targetSpeed[2] = 0.0;
             }
             CommBasicObjects::CommBasePose basePose = COMP->robot->getBasePosition();
             double headingError = -basePose.get_base_azimuth() + newRealPose.heading;
