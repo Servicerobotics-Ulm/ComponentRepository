@@ -589,6 +589,8 @@ int WebotsAPITask::on_execute() {
                     targetSpeed[i] = -speedLimit[i];
             double maxSteps = 0;
             for (int i = 3; i--;) {
+                if(i==1 && webotsMotors.size()==2)
+                    continue; // this robot has no sideways acceleration
                 double stepsNeeded = abs(targetSpeed[i] - actualSpeed[i])
                     / (maxAcceleration[i] * (webotsRobot->getBasicTimeStep() / 1000.0));
                 if (stepsNeeded > maxSteps)
