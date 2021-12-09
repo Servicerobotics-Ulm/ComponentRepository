@@ -104,7 +104,7 @@ int RobotTask::on_execute() {
     //******************************************************
 
     CommBasicObjects::CommNavigationVelocity comNavVel;
-    comNavVel.set_vX(1.0, 1); // meters per second
+    comNavVel.set_vX(vx, 1); // meters per second
 //    comNavVel.set_vY(0.0, 1); // meters per second
     comNavVel.set_omega(v_rotate);
     status = this->navigationVelocityServiceOutPut(comNavVel);
