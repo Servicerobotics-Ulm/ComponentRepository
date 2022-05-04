@@ -17,6 +17,7 @@
 // --------------------------------------------------------------------------
 //
 //  Copyright (C) 2009-2017 Andreas Steck, Matthias Lutz
+//                     2021 Nayabrasul Shaik
 //
 //        lutz@hs-ulm.de
 //        shaik@hs-ulm.de
@@ -62,11 +63,9 @@ TrackingThread::TrackingThread(SmartACE::SmartComponent *comp)
 
 		goalCounter = 0;
 
-		std::string pt_data_files= "/home/shaik/SOFTWARE/smartsoft/repos/ComponentRepository/ComponentRealSensePersonTracker/smartsoft/src/3rdParty/data";
-		//std::string pt_data_files= COMP->getGlobalState().getSettings().getPt_data();
+		std::string pt_data_files= COMP->getGlobalState().getSettings().getPt_data();
 
 		COMP->ptModule=rs::person_tracking::person_tracking_video_module_factory::create_person_tracking_video_module(GetWC(pt_data_files.c_str()));
-		//	ptModule=rs::person_tracking::person_tracking_video_module_factory::create_person_tracking_video_module(GetWC(pt_data_files.c_str()));
 
 		// Enable Person Tracking module
 		COMP->ptModule->QueryConfiguration()->QueryTracking()->Enable();
@@ -660,13 +659,14 @@ void TrackingThread::SendTrackingGoalToServer(double _angle, double _distance, d
 	trackingGoal.set( _angle, _distance, _x, _y, _valid);
 	trackingGoal.setTrackingType(_type);
 	COMP->trackingGoalServer->put(trackingGoal);
-	std::cout << "RealSense Tracking goal(in m) x: " << _x << "; y: " << _y << std::endl;
+	std::cout << "RealSense Tracking goal(in m) x: " << _x << "; y: " << _y <<", goaltype : " <<_type<< std::endl;
 	}else if(_valid == false && _x ==0 && _y ==0)
 	{
 	trackingGoal.set( _angle, _distance, _x, _y, _valid);
 	trackingGoal.setTrackingType(_type);
+	std::cout<<"Sending tracking goal : "<<trackingGoal<<std::endl;
 	COMP->trackingGoalServer->put(trackingGoal);
-    std::cout << "RealSense Tracking False goal(in m) x: " << _x << "; y: " << _y << std::endl;
+	std::cout << "RealSense Tracking goal(in m) x: " << _x << "; y: " << _y <<", goaltype : " <<_type<< std::endl;
 	}
 }
 

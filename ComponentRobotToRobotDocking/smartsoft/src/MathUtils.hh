@@ -58,7 +58,7 @@ inline double linearapproximation(std::vector<Eigen::Vector2d> fxy, const double
 		// x < x_0 then y = 0.0
 		if((i == 0) && (x < curr_fxy[0]))
 		{
-			y = 0.0;
+			y = curr_fxy[1];
 			return y;
 		}else
 		{

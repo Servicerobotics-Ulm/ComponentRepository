@@ -8,8 +8,12 @@ Activity WorkerTask
 	Activity DataTask
 	{
 	}
-	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.SequencerHLCoordinationServer
 	{
+		with HLCommandResponseClient realizedBy sequencerSendServer
+		with HLCommandServer realizedBy sequencerEventServer
+		
+		SkillRealizationsRef webInterface
 	}
 	ComponentParameters ComponentWebInterfaceComissioning slave CoordinationPort
 	InputPort sequencerSendServer implements CommBasicObjects.SequnecerHLInterfaceSend {

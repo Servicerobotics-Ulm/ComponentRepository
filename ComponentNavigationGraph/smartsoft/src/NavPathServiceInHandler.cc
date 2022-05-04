@@ -278,7 +278,11 @@ void NavPathServiceInHandler::on_NavPathServiceIn(const DomainRobotFleetNavigati
 
 				boost::remove_edge(pathSegments[intersectionInformationList.front().segmentIndex].getRefNode1(),pathSegments[intersectionInformationList.front().segmentIndex].getRefNode2(), COMP->g);
 				std::cout << "remove from: " << pathSegments[intersectionInformationList.front().segmentIndex].getRefNode1() << "to: " << pathSegments[intersectionInformationList.front().segmentIndex].getRefNode2() << std::endl;
+				// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+				// 23-03-22
+				// Deleting here should have no consequences in contrast to the case of more than one intersection
 				pathSegments.erase(pathSegments.begin()+intersectionInformationList.front().segmentIndex);
+				// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 				id++;
 			}
@@ -287,7 +291,7 @@ void NavPathServiceInHandler::on_NavPathServiceIn(const DomainRobotFleetNavigati
 				std::cout << "TODO: More than one intersection!" << std::endl;
 
 				for (int k = 0; k < intersectionInformationList.size(); k++) {
-					std::cout << intersectionInformationList[k].segmentIndex << std::endl;
+					std::cout << intersectionInformationList[k].segmentIndex << "/" << intersectionInformationList[k].ix << "/" << intersectionInformationList[k].iy << std::endl;
 				}
 			//	std::swap(test[0], test[1]);
 			//	std::swap(intersectionInformationList[0], intersectionInformationList[1]);
@@ -302,7 +306,7 @@ void NavPathServiceInHandler::on_NavPathServiceIn(const DomainRobotFleetNavigati
 
 				std::cout << "after sort" << std::endl;
 				for (int k = 0; k < intersectionInformationList.size(); k++) {
-					std::cout << intersectionInformationList[k].segmentIndex << std::endl;
+					std::cout << intersectionInformationList[k].segmentIndex << "/" << intersectionInformationList[k].ix << "/" << intersectionInformationList[k].iy << std::endl;
 				}
 
 				std::cout << "for all the other segments:" << std::endl;
@@ -316,6 +320,8 @@ void NavPathServiceInHandler::on_NavPathServiceIn(const DomainRobotFleetNavigati
 					COMP->nodeMapInt.insert(std::make_pair(lid, newNode));
 
 
+					std::cout << "TIMO: REFNODE1: " << pathSegments[intersectionInformationList[k].segmentIndex].getNode1() << std::endl;
+					std::cout << "TIMO: REFNODE2: " << pathSegments[intersectionInformationList[k].segmentIndex].getNode2() << std::endl;
 
 
 					std::cout << "from: " << pathSegments[intersectionInformationList[k].segmentIndex].getRefNode1() << "to: " << lid << std::endl;
@@ -344,8 +350,21 @@ void NavPathServiceInHandler::on_NavPathServiceIn(const DomainRobotFleetNavigati
 
 					boost::remove_edge(pathSegments[intersectionInformationList[k].segmentIndex].getRefNode1(),pathSegments[intersectionInformationList[k].segmentIndex].getRefNode2(), COMP->g);
 					std::cout << "remove from: " << pathSegments[intersectionInformationList[k].segmentIndex].getRefNode1() << "to: " << pathSegments[intersectionInformationList[k].segmentIndex].getRefNode2() << std::endl;
-					pathSegments.erase(pathSegments.begin()+intersectionInformationList[k].segmentIndex);
 
+					// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+					// 23-03-22
+					// The following line was part of the initial implementation but can lead to wrong path connections
+					// Without this line here but at the end of the loop (again for all elements of the list) it seem to work. Hopefully this has no further consequences
+					//pathSegments.erase(pathSegments.begin()+intersectionInformationList[k].segmentIndex);
+					// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+				}
+				// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+				// 23-03-22
+				// We now erase the corresponding pathSegments only after the end of the previous loop!
+				// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+				for (int k = 0; k < intersectionInformationList.size(); k++) {
+					pathSegments.erase(pathSegments.begin()+intersectionInformationList[k].segmentIndex);
 				}
 
 				std::cout << "for the current segment:" << std::endl;
@@ -472,6 +491,7 @@ void NavPathServiceInHandler::on_NavPathServiceIn(const DomainRobotFleetNavigati
 	{
 		std::cout << "STATUS: " << COMP->nodeStatusMap[it->first] << std::endl;
 		COMP->nodeStatusMap.insert(std::make_pair(it->first, COMP->NodeStatus::FREE));
+		it->second.setReserved(false);
 	}
 
 	std::cout << "NavPath graph created!" << std::endl;

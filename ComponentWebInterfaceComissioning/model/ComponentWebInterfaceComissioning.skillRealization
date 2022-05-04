@@ -1,1 +1,9 @@
-SkillRealizationModel { }
+SkillRealizationModel {
+	CoordinationModuleRealization webInterface coordModuleDef CommBasicObjects.HLInterface
+	uses {
+		CommBasicObjects.SequencerHLCoordinationServer intsName web
+	}
+	{
+		
+	}
+}

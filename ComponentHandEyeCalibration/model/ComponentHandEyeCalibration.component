@@ -1,0 +1,21 @@
+ComponentDefinition ComponentHandEyeCalibration logo "/ComponentHandEyeCalibration/model/logo.png"
+{
+	/** Receives Current state of the manipulator */
+	InputPort MobileManipulatorStateServiceIn implements CommManipulatorObjects.MobileManipulatorStateService {
+	}
+	/** Receives RGB image */
+	InputPort RGBImagePushServiceIn implements DomainVision.RGBImagePushService {
+	}
+
+	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService
+	{
+		PublicOperationMode CommBasicObjects.BasicModes.Active { activates ( active ) } PrivateOperationMode active
+	}
+	ComponentParameters ComponentHandEyeCalibration slave CoordinationPort
+	Activity LivePreviewTask
+	{
+	}
+	/** Provides RGB image with detected pattern drawn on it */
+OutputPort RGBImagePushServiceOut implements DomainVision.RGBImagePushService realizedBy LivePreviewTask {
+	}
+}

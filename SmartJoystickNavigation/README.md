@@ -58,7 +58,7 @@
 
 
 
-## Component Parameters: SmartJoystickNavigationParameters
+## Component Parameters: SmartJoystickNavigationParams
 
 ### Internal Parameter: Settings
 

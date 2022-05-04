@@ -6,12 +6,14 @@ InputPort RealSenseClient implements DomainVision.RGBDImagePushService {
 	Activity TrackingThread
 	{
 		OperationModeBinding CoordinationPort.follow
-//		OperationModeBinding CoordinationPort.detect
 	}
+	/** Port providing the live images with current result annotated*/
 	OutputPort rgb_video_server implements DomainVision.RGBImagePushService realizedBy TrackingThread {
 	}
+	/** Port providing the pose of detected person infomation as CommTrackingGoal*/
 	OutputPort trackingGoalServer implements CommTrackingObjects.TrackingService realizedBy TrackingThread {
 	}
+	/** Port providing the event in case the tracking person is not found*/
 	OutputPort personLostEventServer implements CommTrackingObjects.PersonLostEventService realizedBy TrackingThread {
 	}
 	ComponentParameters ComponentRealSensePersonTrackerParams
@@ -19,5 +21,6 @@ InputPort RealSenseClient implements DomainVision.RGBDImagePushService {
 		PublicOperationMode CommTrackingObjects.TrackerModes.follow { activates ( follow ) } 
 		PublicOperationMode CommTrackingObjects.TrackerModes.detect { activates ( detect ) } 
 		PrivateOperationMode follow PrivateOperationMode detect
+		SkillRealizationsRef personFollowing
 	}
 }

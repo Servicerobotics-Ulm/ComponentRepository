@@ -2,10 +2,12 @@ ComponentParameter ComponentRealSensePersonTrackerParams component ComponentReal
 InternalParameter Settings {
 	withDebugWindow : Boolean = false
 	display_depth_image : Boolean = false
-	pt_data : String = "./data"
+	/** Path to the location of person tracking data*/
+	pt_data : String = "./"
 	}
 	
 ExtendedTrigger  PersonTofollow passive{
+	/** Id of the detected person to follow*/
 	id_to_follow : Int16 
 }
 	

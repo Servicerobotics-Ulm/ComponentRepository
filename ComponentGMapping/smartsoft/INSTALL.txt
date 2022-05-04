@@ -3,10 +3,18 @@ Installation of GMapping:
 This SmartSoft component uses GMapping from OpenSlam (revision 52).
 =======================================================================
 
-0) Install the deb package from the robotino debian repo
+0) Install the GMapping via debian package
 
-=======================================================================
-1) Installing gmapping in /opt
+	On Ubuntu 20.04
+
+		wget -qO - http://packages.openrobotino.org/keyFile | sudo apt-key add -
+		sudo su
+		echo "deb http://packages2.openrobotino.org focal main" > /etc/apt/sources.list.d/openrobotino.list
+		sudo apt install gmapping
+		
+	For other Ubuntu versions refer: https://wiki.openrobotino.org/index.php?title=Debrepository
+
+1) Installing GMapping from source 
 
     mkdir gmapping
     cd gmapping

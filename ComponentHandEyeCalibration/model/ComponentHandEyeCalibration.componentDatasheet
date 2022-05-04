@@ -1,0 +1,33 @@
+ComponentDatasheet ComponentHandEyeCalibration
+{
+	BaseURI "http://www.servicerobotik-ulm.de"
+	ShortDescription "
+Component receives images (containing the charuco pattern) and the corresponding manipulator poses and calculates the calibration parameters.
+This component uses the OpenCV's [calibrateHandEye](https://docs.opencv.org/4.x/d9/d0c/group__calib3d.html#gaebfc1c9f7434196a374c382abf43439b) function and OpenCV4 is required.
+
+
+### ChAruco pattern generator
+Easy way to generate the ChAruco pattern is using the link [https://calib.io/pages/camera-calibration-pattern-generator](https://calib.io/pages/camera-calibration-pattern-generator).
+Update component parameters with the values used for generating the pattern. smartsoft/data folder of the component contains default pattern and the corresponding values are used in component parameters.
+### Usage
+Step 1: Change the component state to Active.
+
+Step 2: Move the manipulator
+
+Step 3: Received image is visualized with detected pattern and origin, if the detected was correct press y or Y. Otherwise press n or N.
+
+Step 4: A minimum of 10 image is required to get the better results.
+
+Step 5: Finally press c or C and the calibration starts and gives the calibration result.
+
+"
+	DatasheetProperty Supplier {
+		value "Servicerobotics Ulm"
+	}
+	DatasheetProperty Homepage {
+		value "http://servicerobotik-ulm.de/components"
+	}
+	DatasheetProperty Purpose {
+		value "Hand Eye Calibration"
+	}
+}

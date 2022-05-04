@@ -197,7 +197,9 @@
     (format t "  is-job-on-time    : ~s ~%" (get-value robot 'is-job-on-time))
     (format t "  is-docked         : ~s ~%" (get-value robot 'is-docked))
     (format t "  box-loaded        : ~s ~%" (get-value robot 'box-loaded))
-    (format t "  is-parked         : ~s ~%" (get-value robot 'is-parked )))))
+    (format t "  is-parked         : ~s ~%" (get-value robot 'is-parked ))
+    (format t "  pos         : ~s ~%" (get-value robot 'pos ))
+    )))
 
 (defun show-locations ()
   (let ((obj-list     (tcl-kb-query-all :key '(is-a) :value '((is-a location)))))

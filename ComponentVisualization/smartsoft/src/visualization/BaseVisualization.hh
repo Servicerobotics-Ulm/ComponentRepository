@@ -45,9 +45,11 @@ private:
 	static const std::string id_robot_trajectory_orient;
 	static const std::string id_robot_trajectory_odom_pose;
 	static const std::string id_robot_trajectory_odom_orient;
+	static const std::string id_robot_future_trajectory_pose;
+	static const std::string id_robot_future_trajectory_orient;
 
 public:
-	BaseVisualization(CDisplayWindow3D& window3D, const std::string& identifier);
+	BaseVisualization(CDisplayWindow3D& window3D, const std::string& identifier, bool show_traj);
 	virtual ~BaseVisualization();
 
 	void displayBase(const CommBasicObjects::CommBaseState& pos);

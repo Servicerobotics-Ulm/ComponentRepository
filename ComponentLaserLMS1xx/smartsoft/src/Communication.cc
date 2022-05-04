@@ -70,11 +70,11 @@ int Communication::connect(){
 		return 1;
 	}
 	if(connector.connect(peer,server_addr)== -1){
-		std::cerr<<"Error on connect!"<<std::endl;
+		std::cerr<<"Error on connect!"<<", errno = " << errno<<std::endl;
                 connected = false;
 		return -1;
 	}else{
-		std::cout<<"Successfully connected to FleetCom!"<<std::endl;
+		std::cout<<"Successfully connected to Laser!"<<std::endl;
         	connected = true;
 	}
 	return 0;

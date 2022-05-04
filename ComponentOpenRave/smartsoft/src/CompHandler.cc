@@ -105,7 +105,7 @@ void CompHandler::onStartup()
 	// start each task individually.
 	//COMP->startAllTasks();
 	COMP->demonstrationTask->start();
-	COMP->eventActivity->start();
+	//COMP->eventActivity->start();
 
 	
 	// Start all timers. If you need manual control, use the content of this function to

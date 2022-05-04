@@ -1,5 +1,5 @@
 ################ Ubuntu 20.04 ######################################
-ComponentRealSensePersonTracker is based on person tracker library provided by Intel RealSense. 
+ComponentRealSensePersonTracker is using the person tracker library provided by Intel RealSense.
 Intel RealSense had stopped providing the updates for person tracking library and there is not official support for Ubuntu 20.04.
 Person tracking libraries from Ubuntu 16.04 are used to link with the component.
 
@@ -22,7 +22,7 @@ https://software.intel.com/sites/products/realsense/intro/getting_started.html
 
 
 ==========================================
-Since the realsence sdk is using opencv3.0, the most easy installation is installing everything from deb packages:
+Since the realsense sdk is using opencv3.0, the most easy installation is installing everything from deb packages:
 
 ==========================================
 COMMON

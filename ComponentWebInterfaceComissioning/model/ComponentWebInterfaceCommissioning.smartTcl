@@ -1,0 +1,82 @@
+(define-tcb (waitForCommand)
+  (module "HLInterface")
+  (action (
+            (format t "=========================>>> tcb-wait-for-webinterface-commands-event ~%")
+            (tcl-activate-event :name 'evt-webinterface
+                                :handler 'handler-robotino-webserver-command
+                                :server 'web 
+                                :service 'HLCommandServer
+                                :mode 'continuous))))
+
+(defvar *delivery-station-id* 3)
+
+#|
+(define-event-handler (handler-robotino-webserver-command)
+  (action (
+  	(let ((msg (read-from-string (tcl-event-message))))
+            (format t "=========================>>> HANDLER WEBSERVER COMMAND: ~s ~%~%" (tcl-event-message))
+            (cond
+	
+              ((equal (second msg) 'InitFollow)
+                 (format t "Prepare following person  ~%" )     
+                 (tcl-push-plan :plan '( (tcb-prepare-following ) )))
+
+              ((equal (second msg) 'FOLLOWPERSON)
+                 ; UpdateJob RobotFollow JOBID PRIORITY ROBOTID PERSONID
+                 (format t "Start following person no. ~s ~%" (sixth msg))
+                 ;(tcl-push-plan :plan `( (tcb-start-following ,(sixth msg) )))
+
+                 (tcl-push-plan :plan `( (personFollowing.followPerson ,(sixth msg) )))
+                 '(SUCCESS ())
+
+                 )
+
+              ;; GotoPosition
+              ((equal (second msg) 'GotoPosition)
+                (format t "GotoPosition: ~s ~%" (third msg))
+                (tcl-push-back-plan :plan `(
+                                        (tcb-approach-location ,*delivery-station-id*))))
+
+
+
+              ((equal (second msg) 'STOPFOLLOWPERSON)
+                 ; UpdateJob RobotStopFollow
+                 (format t "Stop following person ~%" )
+                 (tcl-push-plan :plan `( (personFollowing.stopPersonFollowing )))
+                 (tcl-abort)
+                 '(SUCCESS ())
+                 ;'(ERROR(RESTART))
+              )
+
+              ;;
+              (T
+                (format t "Error unknown command send to SmartTCL ~%"))
+                
+            )
+
+))))
+|#
+
+(define-event-handler (handler-robotino-webserver-command)
+  (action (
+  	(let ((msg (read-from-string (tcl-event-message))))
+            (format t "=========================>>> HANDLER WEBSERVER COMMAND: ~s ~%~%" (tcl-event-message))
+            (cond
+	
+              ((equal (second msg) 'FOLLOWPERSON)
+                 (format t "FollowPerson ~s ~%" (sixth msg))
+                 (tcl-push-plan :plan `( (personFollowing.follow ,(sixth msg))))
+                 )
+
+              ((equal (second msg) 'STOPFOLLOWPERSON)
+                 (format t "Stop FollowPerson ~%" )
+                 (tcl-push-plan :plan `( (personFollowing.stop)))
+                 (tcl-abort)
+              )
+
+              (T
+                (format t "Error unknown command send to SmartTCL ~%"))
+                
+            )
+
+))))

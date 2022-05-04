@@ -102,7 +102,7 @@ void OpenRave::syncManipulator()
 		do
 		{
 			Smart::StatusCode status = COMP->mobileManipulatorStateQueryServiceReq->query(commVoid, manipulatorState);
-			cout <<__FILE__ <<" "<<__LINE__<<std::endl;
+			//cout <<__FILE__ <<" "<<__LINE__<<std::endl;
 
 			if (status != Smart::SMART_OK)
 			{

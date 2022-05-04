@@ -133,24 +133,19 @@ void ImageVisualization::displayDepthImage(DomainVision::CommDepthImage& image) 
 	std::stringstream str_dimension;
 	str_dimension << "Depth Image : "<< image.getWidth()<<" x "<<image.getHeight();
 
+	double max_distance = image.getMax_distcance();  // in millimeters
+	double min_distance = image.getMin_distcance();  // in millimeters
 	if(depth_format==DomainVision::DepthFormatType::UINT16)
 	{
 		const uint16_t* depth_data_uint16 = image.get_distances_uint16();
 		cv::Mat original_depth_image(cv::Size(image_width, image_height), CV_16UC1, (void*)depth_data_uint16, cv::Mat::AUTO_STEP);
 
-		//convert to CV_8UC1 format, opencv supports  equalization, colormap only for CV_8UC1, CV_8UC3
-		cv::Mat reduced_depth_image;
-		cv::convertScaleAbs(original_depth_image, reduced_depth_image, 0.03);
+		cv::minMaxIdx(original_depth_image, &min_distance, &max_distance);
+		cv::Mat adjusted_depth_image;
+		original_depth_image.convertTo(adjusted_depth_image,CV_8UC1, 255 / (max_distance-min_distance), -min_distance);
+		cv::convertScaleAbs(original_depth_image, adjusted_depth_image, 255 / max_distance);
 
-		//histogram equalization
-		cv::Mat equalized_depth_image;
-		cv::equalizeHist( reduced_depth_image, equalized_depth_image );
-
-		//apply colormap
-		cv::Mat colormapped_depth_image;
-		cv::applyColorMap(equalized_depth_image, colormapped_depth_image,  cv::ColormapTypes::COLORMAP_JET);
-
-		mrpt::img::CImage depthImage(colormapped_depth_image, mrpt::img::SHALLOW_COPY);
+		mrpt::img::CImage depthImage(adjusted_depth_image, mrpt::img::SHALLOW_COPY);
 		m_image_window->showImage(depthImage);
 
 	}else if (depth_format==DomainVision::DepthFormatType::FLOAT)
@@ -159,18 +154,12 @@ void ImageVisualization::displayDepthImage(DomainVision::CommDepthImage& image) 
 
 		cv::Mat original_depth_image(cv::Size(image_width, image_height), CV_32FC1, (void*)depth_data_float, cv::Mat::AUTO_STEP);
 
-		//convert to CV_8UC1 format, opencv supports  equalization, colormap only for CV_8UC1, CV_8UC3
-		cv::Mat reduced_depth_image;
-		cv::convertScaleAbs(original_depth_image, reduced_depth_image);
+		cv::minMaxIdx(original_depth_image, &min_distance, &max_distance);
+		cv::Mat adjusted_depth_image;
+		original_depth_image.convertTo(adjusted_depth_image,CV_8UC1, 255 / (max_distance-min_distance), -min_distance);
+		cv::convertScaleAbs(original_depth_image, adjusted_depth_image, 255 / max_distance);
 
-		//histogram equalization
-		cv::Mat equalized_depth_image;
-		cv::equalizeHist( reduced_depth_image, equalized_depth_image );
-
-		//apply colormap
-		cv::Mat colormapped_depth_image;
-		cv::applyColorMap(equalized_depth_image, colormapped_depth_image,  cv::ColormapTypes::COLORMAP_JET);
-		mrpt::img::CImage depthImage(colormapped_depth_image, mrpt::img::SHALLOW_COPY);
+		mrpt::img::CImage depthImage(adjusted_depth_image, mrpt::img::SHALLOW_COPY);
 		m_image_window->showImage(depthImage);
 	}else
 	{

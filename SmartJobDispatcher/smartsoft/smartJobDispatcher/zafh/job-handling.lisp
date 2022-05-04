@@ -59,8 +59,8 @@
           ;; goto-position - OK
           ((string-equal push-job-type "GotoPosition")
             ;(multiple-value-bind (position-id) (values (read-from-string (cdr (assoc 'position-id push-job))))
-            (multiple-value-bind (position-id) (values (cdr (assoc 'position-id push-job)))
-              (format t "Goto Position: ~s ~%" position-id)
+            (multiple-value-bind (position-id nav-type) (values (cdr (assoc 'position-id push-job)) (cdr (assoc 'nav-type push-job)))
+              (format t "Goto Position: ~s ~s ~%" position-id nav-type)
               (tcl-kb-update :key '(is-a id) :value `(
                                    (is-a job) 
                                    (id ,job-id) 
@@ -72,12 +72,13 @@
                                    (robotid ,(if (equal push-job-robotid -1) nil push-job-robotid))
 				    (manual-assigned ,(if (equal push-job-robotid -1) nil T))
                                    (goal-pose ,position-id)
+                                   (nav-type ,nav-type)
                                    (type ,(read-from-string push-job-type))
                                    (raw-msg ,request)))))
           
           ((string-equal push-job-type "RobotCommissioning")
-              (multiple-value-bind (commissioningrobotid from-box-station-id from-box-belt to-station-id to-belt order-items job-part)
-              (values (cdr (assoc 'commissioning-robot-id push-job)) (cdr (assoc 'from-box-station-id push-job)) (cdr (assoc 'from-box-station-belt push-job)) (cdr (assoc 'to-station-id push-job)) (cdr (assoc 'to-station-belt push-job)) (cdr (assoc 'order-items push-job)) (read-from-string (string-downcase (string (cdr (assoc 'job-part push-job))))))
+              (multiple-value-bind (commissioningrobotid from-box-station-id from-box-belt docking-waypoint to-station-id to-belt order-items job-part)
+              (values (cdr (assoc 'commissioning-robot-id push-job)) (cdr (assoc 'from-box-station-id push-job)) (cdr (assoc 'from-box-station-belt push-job)) (cdr (assoc 'docking-waypoint push-job)) (cdr (assoc 'to-station-id push-job)) (cdr (assoc 'to-station-belt push-job)) (cdr (assoc 'order-items push-job)) (read-from-string (string-downcase (string (cdr (assoc 'job-part push-job))))))
                                    
               (format t "Timo: RobotCommissioning from Robot: ~s to Station ~s Belt ~s ~%" commissioningrobotid to-station-id to-belt)
               (tcl-kb-update :key '(is-a id) :value `(
@@ -95,6 +96,7 @@
                                    (manual-assigned ,(if (equal push-job-robotid -1) nil T))
                                    (commissioning-robot ,commissioningrobotid)
                                    (start-location ,from-box-station-id) (start-belt ,from-box-belt)
+                                   (docking-waypoint ,docking-waypoint)
                                    (end-location ,to-station-id) (end-belt ,to-belt)
                                    (raw-msg ,request)
                                    ;;[Timo]
@@ -103,6 +105,82 @@
                                    ))))
                                    ;;TODO NEEDS TO BE IMPLEMENTED 
                                    ;;(commission-order ,((lambda () (setf tmp nil) (loop for (a b) on (nthcdr 10 request) by #'cddr do (push (list a b) tmp)) tmp)))))))
+          ((string-equal push-job-type "DeliverFromTo")
+              (multiple-value-bind (from-station-id from-belt to-station-id to-belt nav-type)
+                                   (values (cdr (assoc 'from-station-id push-job)) (cdr (assoc 'from-station-belt push-job)) (cdr (assoc 'to-station-id push-job)) 
+                                   (cdr (assoc 'to-station-belt push-job)) (cdr (assoc 'nav-type push-job)))
+              (format t "Deliver from Station: ~s Belt: ~s to Station ~s Belt ~s ~%" from-station-id from-belt to-station-id to-belt)
+              (tcl-kb-update :key '(is-a id) :value `(
+                                   (is-a job) 
+                                   (id ,job-id) 
+                                   (state NOTSTARTED)
+                                   (error-state NOERROR) 
+                                   (priority ,push-job-priority)
+                                   ;(robots (,(if (equal push-job-robotid -1) nil `(,push-job-robotid))))
+                                   (robotid ,(if (equal push-job-robotid -1) nil push-job-robotid))
+                                   (manual-assigned ,(if (equal push-job-robotid -1) nil T))
+                                   (start-station ,from-station-id) (start-belt ,from-belt)
+                                   (end-station ,to-station-id) (end-belt ,to-belt)
+                                   (nav-type ,nav-type)
+                                   (type ,(read-from-string push-job-type))
+                                   (raw-msg ,request)))))
+                                   
+                                   
+          ((string-equal push-job-type "CollectFrom")
+              (multiple-value-bind (from-station-id from-belt nav-type)
+                                   (values (cdr (assoc 'from-station-id push-job)) (cdr (assoc 'from-station-belt push-job))
+                                   (cdr (assoc 'nav-type push-job)))
+              ;(format t "Deliver from Station: ~s Belt: ~s to Station ~s Belt ~s ~%" from-station-id from-belt to-station-id to-belt)
+              (tcl-kb-update :key '(is-a id) :value `(
+                                   (is-a job) 
+                                   (id ,job-id) 
+                                   (state NOTSTARTED)
+                                   (error-state NOERROR) 
+                                   (priority ,push-job-priority)
+                                   ;(robots (,(if (equal push-job-robotid -1) nil `(,push-job-robotid))))
+                                   (robotid ,(if (equal push-job-robotid -1) nil push-job-robotid))
+                                   (manual-assigned ,(if (equal push-job-robotid -1) nil T))
+                                   (start-station ,from-station-id) (start-belt ,from-belt)
+                                   ;(end-station ,to-station-id) (end-belt ,to-belt)
+                                   (nav-type ,nav-type)
+                                   (type ,(read-from-string push-job-type))
+                                   (raw-msg ,request)))))
+                                   
+                                   
+            ((string-equal push-job-type "DeliverTo")
+              (multiple-value-bind (to-station-id to-belt nav-type)
+                                   (values (cdr (assoc 'to-station-id push-job)) 
+                                   (cdr (assoc 'to-station-belt push-job)) (cdr (assoc 'nav-type push-job)))
+              ;(format t "Deliver from Station: ~s Belt: ~s to Station ~s Belt ~s ~%" from-station-id from-belt to-station-id to-belt)
+              (tcl-kb-update :key '(is-a id) :value `(
+                                   (is-a job) 
+                                   (id ,job-id) 
+                                   (state NOTSTARTED)
+                                   (error-state NOERROR) 
+                                   (priority ,push-job-priority)
+                                   ;(robots (,(if (equal push-job-robotid -1) nil `(,push-job-robotid))))
+                                   (robotid ,(if (equal push-job-robotid -1) nil push-job-robotid))
+                                   (manual-assigned ,(if (equal push-job-robotid -1) nil T))
+                                   ;(start-station ,from-station-id) (start-belt ,from-belt)
+                                   (end-station ,to-station-id) (end-belt ,to-belt)
+                                   (nav-type ,nav-type)
+                                   (type ,(read-from-string push-job-type))
+                                   (raw-msg ,request)))))                                                                    
+                                   
+                                   
+            ((string-equal push-job-type "FollowPerson")
+              (format t "FollowPerson job ~%")
+              (tcl-kb-update :key '(is-a id) :value `(
+                                   (is-a job) 
+                                   (id ,job-id) 
+                                   (state NOTSTARTED)
+                                   (error-state NOERROR) 
+                                   (priority ,push-job-priority)
+                                   ;(robots (,(if (equal push-job-robotid -1) nil `(,push-job-robotid))))
+                                   (robotid ,(if (equal push-job-robotid -1) nil push-job-robotid))
+                                   (manual-assigned ,(if (equal push-job-robotid -1) nil T))
+                                   (type ,(read-from-string push-job-type))
+                                   (raw-msg ,request))))
 
 
             (T

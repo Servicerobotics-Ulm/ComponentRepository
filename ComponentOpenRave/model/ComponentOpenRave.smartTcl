@@ -218,6 +218,16 @@
   )
 )
 
+(define-rule (gotoTCPOR_NoPath)
+  (tcb (gotoTCPOR ?tcp))
+  (return-value (ERROR (NO PATH)))
+  (action (
+            (format t "=========================>>> RULE: (ERROR (NO PATH)) gotoTCPOR ~%")
+            (tcl-delete-plan)
+            '(ERROR (NO PATH))
+          )
+  )
+)
  (define-event-handler (handler-planner)
   (action (
             (format t "=========================>>> HANDLER PLANNER ~s ~%~%" (tcl-event-message))
@@ -249,17 +259,17 @@
               
                 ((equal (tcl-event-message) "(NO PATH FOUND)")
                   (format t "=========================>>> NO PATH FOUND !!! ~%")   
-                  (tcl-state :server 'openrave :state "Neutral")
-                  (let* ((obj (tcl-kb-query :key '(is-a status) :value '((is-a object)(status IN_GRIPPER))))
-                         (obj-id (get-value obj 'id)))
-                    (cond
-                      ((not (null obj))
-                        (tcl-param :server 'openrave :slot 'OPENRAVE_RELEASEOBJ :value obj-id)
-                        (tcl-kb-update :key '(is-a id) 
-                          :value `(
-                                    (is-a OBJECT)
-                                    (id ,obj-id)
-                                    (status NOT_GRASPABLE))))))
+                  (tcl-state :server 'cs_trajPlanning :state "Neutral")
+                  ;(let* ((obj (tcl-kb-query :key '(is-a status) :value '((is-a object)(status IN_GRIPPER))))
+                  ;       (obj-id (get-value obj 'id)))
+                    ;(cond
+                     ; ((not (null obj))
+                      ;  (tcl-param :server 'cs_trajPlanning :slot 'OPENRAVE_RELEASEOBJ :value obj-id)
+                       ; (tcl-kb-update :key '(is-a id) 
+                        ;  :value `(
+                         ;           (is-a OBJECT)
+                          ;          (id ,obj-id)
+                           ;         (status NOT_GRASPABLE))))))
                   (tcl-abort)
                   '(ERROR (NO PATH)))))))  
 
@@ -326,17 +336,55 @@
 )
 
 
-
-(define-tcb (gotoTCPURRel ?tcp-relative)
+(define-tcb (gotoTCPUR 'relative-obj ?obj-id)
   (module "manipulationPlannerModule")
-  (action ((format t "=========================>>> gotoTCPURRel~%" '?tcp-relative)
+  (rules (rule-tcb-grasp-object-real-failed 
+          rule-tcb-grasp-object-real-direct-collision-failed
+          ;; rule-tcb-grasp-object-real-ik-solution-failed ;; this seems to be inconsistent because the referenced rule is associated with move-manipulator but move-manpiulator is not a child of this tcb! 
+          ;; rule-tcb-grasp-object-real-success ;; not required because SUCCESS and no different actions are performed
+           rule-tcb-grasp-object-real-success-empty))
+  (action (
+           (format t "=========================>>> tcb-grasp-object real-direct ~%")
+           (format t "obj-id ~a ~%" '?obj-id)
+           (let* ((obj (tcl-kb-query :key '(is-a id) :value '((is-a object)(id ?obj-id))))
+                  (obj-class (tcl-kb-query :key '(is-a type) 
+                                           :value `((is-a object-class)(type ,(get-value obj 'type)))))
+                  (rack (tcl-kb-query :key '(is-a id ) 
+                                      :value `((is-a rack)(id ,(get-value obj-class 'rack-id)))))
+                  (relative-pre-grasp-pose (get-value rack 'pre-grasp-pose))
+
+                  ;(relative-grasp-pose (list (* (first relative-pre-grasp-pose ) -1)  (* (second relative-pre-grasp-pose ) -1)  (* (third relative-pre-grasp-pose ) -1)  0 0 0 )))                  
+                  (relative-grasp-pose (list (* (- (first relative-pre-grasp-pose ) 0.01) -1)  (* (second relative-pre-grasp-pose ) -1)  (* (third relative-pre-grasp-pose ) -1)  0 0 0 )))
+
+	         (print "Direct relative-grasp-pose: ")
+	         (print relative-grasp-pose)
+
+                 (tcl-activate-event :name 'evt-traj 
+                                  :handler 'handler-manipulator
+                                  :server 'cs_trajExecution
+                                  :service 'manipulatorevent 
+                                  :mode 'continuous)
+
+
+                 (tcl-push-plan :plan `(
+                           	             (open) 
+                                         ;(tcb-manipulator-pose-tcp ,(get-value rack 'pull-out-pose) direct)
+                                         (gotoTCPUR 'relative-pose ,relative-grasp-pose)
+                                         (close)
+                                        ))))))
+
+
+
+(define-tcb (gotoTCPUR 'relative-pose ?pose)
+  (module "manipulationPlannerModule")
+  (action ((format t "=========================>>> gotoTCPUR 'relative-pose~%" '?pose)
              
            (let ((tcp nil))
               (setf tcp (rest(first(rest (tcl-query :server 'cs_trajExecution :service 'manipulatorstate)))))
               (format t "TCP pose query: ~s ~%" tcp)
-              (format t "TCP relative: ~s ~%" '?tcp-relative)
+              (format t "TCP relative: ~s ~%" '?pose)
               ;;TODO this only use a translation tranformation the relative angles are ignored!!
-              (setf tcp (append (transformPoseToPoint (first tcp) (second tcp) (third tcp) (fourth tcp) (fifth tcp) (sixth tcp) (first '?tcp-relative) (second '?tcp-relative) (third '?tcp-relative)) `(,(fourth tcp),(fifth tcp),(sixth tcp))))
+              (setf tcp (append (transformPoseToPoint (first tcp) (second tcp) (third tcp) (fourth tcp) (fifth tcp) (sixth tcp) (first '?pose) (second '?pose) (third '?pose)) `(,(fourth tcp),(fifth tcp),(sixth tcp))))
               (format t "new TCP pose: ~s ~%" tcp)
               (tcl-push-plan :plan `((gotoTCPUR ,tcp)))
             )

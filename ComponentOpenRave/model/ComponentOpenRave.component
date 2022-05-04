@@ -36,6 +36,7 @@ ComponentDefinition ComponentOpenRave logo "/ComponentOpenRave/model/logo.png"
 	{
 		InputPortLink MobileManipulatorStateServiceIn { oversamplingOk undersamplingOk }
 		InputPortLink GripperStateServiceIn { oversamplingOk undersamplingOk }
+	DefaultTrigger PeriodicTimer 1.0 Hz
 	}
 
 	InputHandler ManipulatorEventServiceInHandler triggeredFrom ManipulatorEventServiceIn {}

@@ -21,10 +21,19 @@ InputPort BaseStateServiceIn implements CommBasicObjects.BaseStateService {
 	}
 	
 	CoordinationSlavePort CoordinationPort implements DomainRobotFleetNavigation.NavPathClientCoordinationService {
+		with queryClosestFreeNode realizedBy ClosestFreeNodeServiceAnsw
 		SkillRealizationsRef navPathClient
 	}
 	
 	ComponentParameters ComponentGoalNodeControl slave CoordinationPort
 OutputPort CorridorNavigationNextGoalOut implements CommNavigationObjects.CorridorNavigationNextGoal realizedBy GoalNodeControl {
+	}
+
+	AnswerPort ClosestFreeNodeServiceAnsw implements DomainRobotFleetNavigation.ClosestFreeNodeService {
+	}
+
+	RequestHandler ClosestFreeNodeServiceAnswHandler triggeredFrom ClosestFreeNodeServiceAnsw activeQueue {
+	}
+	RequestPort ClosestFreeNodeServiceReq implements DomainRobotFleetNavigation.ClosestFreeNodeService {
 	}
 }

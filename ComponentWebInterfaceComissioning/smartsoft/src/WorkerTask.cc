@@ -39,13 +39,15 @@ int WorkerTask::on_entry()
 {
 
 	connections = 0;
-	std::cout << "Starting server..." << std::endl;
+	std::cout << "Starting the server..." << std::endl;
 
 	if(server_addr.set(COMP->getGlobalState().getSettings().getWorkerServerPort()) == -1){
 		error("Error on set!");
+		std::cout << "Erron no : " <<errno << std::endl;
 		return 1;
 	}
 	if(acceptor.open(server_addr) == -1){
+		std::cout << "Erron no : " <<errno << std::endl;
 		error("Error on open!");
 		return 1;
 	}
@@ -58,6 +60,7 @@ int WorkerTask::on_execute()
 {
 	std::cout << "Waiting for request..." << std::endl;
 	if (acceptor.accept(peer) == -1){
+		std::cout << "Erron no : " <<errno << std::endl;
 		error( "Error on accept!");
 	}else{
 		std::cout << "Request accepted" << std::endl;

@@ -14,5 +14,5 @@ ComponentDefinition SmartJoystickNavigation {
 	OutputPort NavVelServiceOut implements CommNavigationObjects.NavigationVelocityService realizedBy JoystickNavTask { 
 	}
 
-	ComponentParameters SmartJoystickNavigationParameters slave CoordinationPort;
+	ComponentParameters SmartJoystickNavigationParams slave CoordinationPort;
 }

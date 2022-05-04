@@ -165,7 +165,7 @@ int VisTask::on_execute()
 {
 	// this method is triggered periodically with period time 100 ms
 	SmartACE::SmartGuard g(lock);
-	viewer->spinOnce (100);
+	viewer->spinOnce (30);
 
 	return 0;
 }

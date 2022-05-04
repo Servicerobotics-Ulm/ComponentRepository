@@ -80,7 +80,7 @@ public:
 	DetectionTask(SmartACE::SmartComponent *comp);
 	virtual ~DetectionTask();
 	
-	void findContainer(const cv::Mat& image, std::vector<Box>& boxes);
+
 	void findRectangles(const cv::Mat& image_rgb, std::vector<Box>& boxes, float ratio_deviation_factor, float max_box_cosine);
 	void eraseWrongShelfLevelBoxes(std::vector<Box>& boxes);
 	void eraseDuplicates(std::vector<Box>& boxes);

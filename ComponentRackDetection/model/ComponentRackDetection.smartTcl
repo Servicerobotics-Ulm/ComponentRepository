@@ -205,6 +205,28 @@
                                 (stack-growing-offset 0)
                                 (speech "RATIOPHARM ASS"))))   
 
+                   ((equal (first obj) 'WHITE-BOX-CUBE)
+                    (format t "Store WHITE-BOX-CUBE ~%")
+                    (setf (nth 8 obj) (/ (nth 8 obj) 1000)) ;x surface pose
+                    (setf (nth 9 obj) (/ (nth 9 obj) 1000)) ;y surface pose
+                    (setf (nth 10 obj) (/ (nth 10 obj) 1000)) ;z surface pose
+                    (tcl-kb-update 
+                      :key '(is-a id) 
+                      :value `(
+                                (is-a OBJECT)
+                                (id ,id)
+                                (envid ,envId)
+                                (status GRASPABLE)
+                                (stacked-into nil)
+                                (capacity 0)
+                                (contains 0)
+                                (size-height 65)
+                                (type WHITE-BOX-CUBE)
+                                (cleanup TRASH)
+                                (pose ,(rest obj))
+                                (stacking-offset 0)
+                                (stack-growing-offset 0)
+                                (speech "WHITE-BOX-CUBE")))) 
 
 	          ((equal (first obj) 'CHOCO)
                     (format t "Store CHOCO ~%")

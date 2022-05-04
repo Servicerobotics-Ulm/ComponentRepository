@@ -65,6 +65,7 @@ LaserDockingTask::LaserDockingTask(SmartACE::SmartComponent *comp)
 }
 LaserDockingTask::~LaserDockingTask() 
 {
+	delete _driver;
 	std::cout << "destructor LaserDockingTask\n";
 }
 
@@ -99,6 +100,7 @@ void LaserDockingTask::getPCLCloudFromScan(const CommBasicObjects::CommMobileLas
 			cloud->points[i].z = 0.0;
 		}
 
+	std::cout << "PointCloud Height : " << cloud->height << "   x    Width : " << cloud->width <<std::endl;
 }
 
 
@@ -135,7 +137,8 @@ bool LaserDockingTask::detectRobot(const CommBasicObjects::CommMobileLaserScan& 
 	//	cloud.points[17].getVector3fMap () << 2.000000f, -3.000000f, 0.0f;
 
 
-	COMP->visTask->showPointCloud(cloud, "cloud");
+	//show the laser scan cloud in Blue
+	COMP->visTask->showPointCloud(cloud, "cloud", 0, 0, 255);
 
 
 	//filter away due to workspace!!
@@ -144,7 +147,7 @@ bool LaserDockingTask::detectRobot(const CommBasicObjects::CommMobileLaserScan& 
 	pcl::PassThrough<pcl::PointXYZ> pass;
 	pass.setInputCloud (cloud);
 	pass.setFilterFieldName ("x");
-	pass.setFilterLimits (0.0, 2.0);
+	pass.setFilterLimits (0.0, 5.0);
 	pass.filter (*cloud_filtered);
 
 	pass.setInputCloud (cloud_filtered);
@@ -152,7 +155,8 @@ bool LaserDockingTask::detectRobot(const CommBasicObjects::CommMobileLaserScan& 
 	pass.setFilterLimits (-1.0, 1.0);
 	pass.filter (*cloud_filtered);
 
-	COMP->visTask->showPointCloud(cloud_filtered, "filtered_cloud", 0,0,255);
+	//show the part of laser scan near the robot in yellow
+	COMP->visTask->showPointCloud(cloud_filtered, "filtered_cloud", 255,255,0);
 
 	//filter away due to workspace!!
 	// point cloud instance for the result
@@ -172,7 +176,8 @@ bool LaserDockingTask::detectRobot(const CommBasicObjects::CommMobileLaserScan& 
 	// do filtering
 	radius_outlier_removal.filter (*cloud_cleaned);
 
-	COMP->visTask->showPointCloud(cloud_cleaned, "cloud_cleaned", 0,255,0);
+	//show the part of laser scan used for circle estimation in white
+	COMP->visTask->showPointCloud(cloud_cleaned, "cloud_cleaned", 255,255,255);
 
 
 	if(cloud_cleaned->size()>10){
@@ -181,7 +186,9 @@ bool LaserDockingTask::detectRobot(const CommBasicObjects::CommMobileLaserScan& 
 		// Create a shared 2d circle model pointer directly
 		pcl::SampleConsensusModelCircle2D<pcl::PointXYZ>::Ptr model (new pcl::SampleConsensusModelCircle2D<pcl::PointXYZ> (cloud_filtered));
 
-		model->setRadiusLimits(0.10,0.35);
+		float max_radius = 0.5;
+		float min_radius = 0.10;
+		model->setRadiusLimits(min_radius, max_radius);
 
 
 		// Create the RANSAC object
@@ -191,7 +198,7 @@ bool LaserDockingTask::detectRobot(const CommBasicObjects::CommMobileLaserScan& 
 
 		// Algorithm tests
 		result = sac.computeModel ();
-//		std::cout<<"Result: "<<result<<std::endl;
+		std::cout<<"RANSAC Result: "<<result<<std::endl;
 
 		std::vector<int> sample;
 		sac.getModel (sample);
@@ -222,13 +229,26 @@ bool LaserDockingTask::detectRobot(const CommBasicObjects::CommMobileLaserScan& 
 		finalCoeffs.values[0] = coeff_refined[0];
 		finalCoeffs.values[1] = coeff_refined[1];
 		finalCoeffs.values[2] = coeff_refined[2];
-		COMP->visTask->showCircle(finalCoeffs,"coeff_refined");
-		result = true;
 
+		COMP->visTask->showCircle(finalCoeffs,"coeff_refined");
+
+		float detected_robot_radius = coeff_refined[2];
+		std::cout << "Estimated Circle Radius : " << detected_robot_radius << std::endl;
+
+
+		// model->setRadiusLimits is not effective, so verifying the resultant radius
+		if((detected_robot_radius <= max_radius)&& (detected_robot_radius >= min_radius))
+		{
 		SmartACE::SmartGuard g(goalLock);
 		trackingGoal.clear();
 		trackingGoal.push_back(finalCoeffs.values[0]);
 		trackingGoal.push_back(finalCoeffs.values[1]);
+		result = true;
+		}else
+		{
+		result = false;
+		std::cout<<"Estimated Circle radius is not with in the limits!"<<std::endl;
+		}
 
 	} else {
 		std::cout<<"To few points to search for Circle!"<<std::endl;
@@ -310,7 +330,7 @@ int LaserDockingTask::on_execute()
 						laserDockingTimerId = COMP->getComponentImpl()->getTimerManager()->scheduleTimer(this,NULL, sec+msec);
 					}
 
-					std::cout<<"[LaserDockingTask::on_execute()] Warning no Station visible!"<<std::endl;
+					std::cout<<"[LaserDockingTask::on_execute()] Warning no Robot visible!"<<std::endl;
 					status = COMP->stateSlave->release("LaserDocking");
 					return 0;
 				}

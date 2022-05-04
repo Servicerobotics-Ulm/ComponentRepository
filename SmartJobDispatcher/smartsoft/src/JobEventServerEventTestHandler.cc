@@ -67,6 +67,8 @@ bool JobEventServerEventTestHandler::testEvent(
 
 	bool result = false;
 
+	std::cout <<__FUNCTION__ << "      paramater: " << p.getMsg() << std::endl;
+		std::cout <<__FUNCTION__ << "      state: " << s.getRobotTarget() << std::endl;
 	//use event param to dispatch messages to correct robot sequencer
 	if(p.getMsg().compare(s.getRobotTarget()) == 0)
 	{
@@ -74,5 +76,6 @@ bool JobEventServerEventTestHandler::testEvent(
 		result = true;
 	}
 
+	std::cout <<__FUNCTION__ << "         RESULT: " << result << std::endl;
 	return result;
 }

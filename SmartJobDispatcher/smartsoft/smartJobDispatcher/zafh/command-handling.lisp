@@ -46,6 +46,10 @@
     (format t "[handleCommand] found command type: ~s~%" command-type)
 
     (cond
+    	  ((string-equal command-type "get-positions")
+    	  	(format t "get-positions~%")
+    	  	(send-command-to-all-robots '(getPosition))
+    	  )
           ((string-equal command-type "replace-positions")
             (format t "replace-positions found~%")
             (cond

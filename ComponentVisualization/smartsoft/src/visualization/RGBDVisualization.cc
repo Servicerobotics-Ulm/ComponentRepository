@@ -144,7 +144,15 @@ void RGBDVisualization::displayImage(DomainVision::CommRGBDImage& rgbd_image)
 		double sensor_x = sensor_pose.getPosition().getX() / 1000, sensor_y = sensor_pose.getPosition().getY() / 1000, sensor_z = sensor_pose.getPosition().getZ() / 1000;
 
 		mrpt::poses::CPose3D mrpt_sensorPose(sensor_x, sensor_y, sensor_z,sensor_yaw, sensor_pitch, sensor_roll);
-		//mrpt::poses::CPose3D mrpt_sensor_pose =
+		CommBasicObjects::CommBasePose robot_pose = rgbd_image.getBase_state().getBasePose();
+
+		double robot_pose_yaw = robot_pose.get_base_azimuth(), robot_pose_pitch = robot_pose.get_base_elevation(), robot_pose_roll = robot_pose.get_base_roll();
+	    double robot_pose_x = robot_pose.get_x() / 1000, robot_pose_y = robot_pose.get_y() / 1000, robot_pose_z = robot_pose.get_z() / 1000;
+
+		mrpt::poses::CPose3D mrpt_robotPose(robot_pose_x, robot_pose_y, robot_pose_z,robot_pose_yaw, robot_pose_pitch, robot_pose_roll);
+		mrpt::poses::CPose3D mrpt_sensor_world_pose = mrpt_robotPose + mrpt_sensorPose;
+
+		// create pointcloud in sensor frame
 		createColorPointCloud (vec_points, &comm_color_image, &comm_depth_image);
 #ifdef WITH_MRPT_2_0_VERSION
 		opengl::COpenGLScene::Ptr & ptrScene = window3D.get3DSceneAndLock();
@@ -153,14 +161,14 @@ void RGBDVisualization::displayImage(DomainVision::CommRGBDImage& rgbd_image)
 		{
 			opengl::CPointCloudColoured::Ptr cloud = std::dynamic_pointer_cast<opengl::CPointCloudColoured>(ptrScene->getByName(identifier + "_cloud"));
 			cloud->clear();
-			cloud->setPose(mrpt_sensorPose);
+			cloud->setPose(mrpt_sensor_world_pose); // show pointcloud in world frame
 			//set points to cloud
 			for(const ColPoint3d current_pont : vec_points)
 			{
 				cloud->push_back(current_pont.x, current_pont.y, current_pont.z, current_pont.r, current_pont.g, current_pont.b);
 			}
 			mrpt::opengl::CSetOfObjects::Ptr gl_origin = std::dynamic_pointer_cast<opengl::CSetOfObjects>(ptrScene->getByName(identifier + "_camera_origin"));
-			gl_origin->setPose(mrpt_sensorPose);
+			gl_origin->setPose(mrpt_sensor_world_pose); // show sensor frame in world frame
 		}
 #else
 		opengl::COpenGLScenePtr & ptrScene = window3D.get3DSceneAndLock();
@@ -335,6 +343,11 @@ void RGBDVisualization::createColorPointCloud (std::vector<ColPoint3d>& points, 
 
 	float x_in_m, y_in_m, z_in_m;
 
+	double max_distance = comm_depth_image->getMax_distcance()/1000.0;  // in meters
+	double min_distance = comm_depth_image->getMin_distcance()/1000.0;  // in meters
+
+	double max_distance_sq = max_distance * max_distance;
+	double min_distance_sq = min_distance * min_distance;
 	for (uint32_t depth_row = 0; depth_row < depth_height ; ++depth_row){//along y
 //		if(depth_row%2==0)
 //			continue;
@@ -365,16 +378,19 @@ void RGBDVisualization::createColorPointCloud (std::vector<ColPoint3d>& points, 
 
 
 			if(isinf(x_in_m) || isinf(z_in_m) || isinf(y_in_m)){
-				x_in_m = 10.0;
-				y_in_m = 10.0;
-				z_in_m = 10.0;
+				continue;
 			}
 			if(x_in_m != x_in_m || y_in_m != y_in_m || z_in_m != z_in_m){
-				x_in_m = 10.0;
-				y_in_m = 10.0;
-				z_in_m = 10.0;
+				continue;
 			}
 
+			//dont show points correspond to distance greater than maximum distance supported by camera
+			//dont show points correspond to distance less than minimum distance supported by camera
+			double current_diustance_sq = (x_in_m * x_in_m) + (y_in_m * y_in_m) + (z_in_m * z_in_m);
+			if((current_diustance_sq > max_distance_sq) || (current_diustance_sq < min_distance_sq))
+			{
+				continue;
+			}
 
             //find color pixel for the given x, y, z
 			uint32_t rgb_pixel_row = depth_row;

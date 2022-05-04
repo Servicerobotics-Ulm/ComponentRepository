@@ -51,9 +51,11 @@ const std::string BaseVisualization::id_robot_trajectory_pose = "_traj_pose";
 const std::string BaseVisualization::id_robot_trajectory_orient = "_traj_orient";
 const std::string BaseVisualization::id_robot_trajectory_odom_pose = "_traj_odom_pose";
 const std::string BaseVisualization::id_robot_trajectory_odom_orient = "_traj_odom_orient";
+const std::string BaseVisualization::id_robot_future_trajectory_pose = "_future_traj_position";
+const std::string BaseVisualization::id_robot_future_trajectory_orient = "_future_traj_orient";
 
 
-BaseVisualization::BaseVisualization(CDisplayWindow3D& window3D, const std::string& identifier) :
+BaseVisualization::BaseVisualization(CDisplayWindow3D& window3D, const std::string& identifier, bool show_traj) :
 	AbstractVisualization(window3D, identifier) {
 #ifdef WITH_MRPT_2_0_VERSION
 	opengl::COpenGLScene::Ptr &ptrScene = window3D.get3DSceneAndLock();
@@ -79,35 +81,39 @@ BaseVisualization::BaseVisualization(CDisplayWindow3D& window3D, const std::stri
 		robotText2->setColor(0, 0, 0);
 		ptrScene->insert(robotText2);
 
+		show_trajectory = show_traj;
 
 		//plot trajectory of robot pose and robot odometry pose
-		if(true){//create trajectory objects
+		if(show_trajectory){//create trajectory objects
 
 			{// create objects for showing base pose and orientation
-				opengl::CPointCloudColoured::Ptr particles = opengl::CPointCloudColoured::Create();
-				particles->setName(identifier+id_robot_trajectory_pose);
-				particles->setPointSize(3);
-				ptrScene->insert(particles);
-				//std::cout << "r_pose = "<<particles->getName()<<std::endl;
+				opengl::CPointCloudColoured::Ptr estimated_positions = opengl::CPointCloudColoured::Create();
+				estimated_positions->setName(identifier+id_robot_trajectory_pose);
+				estimated_positions->setPointSize(3);
+				ptrScene->insert(estimated_positions);
 
-				opengl::CSetOfLines::Ptr particleLines = opengl::CSetOfLines::Create();
-				particleLines->setName(identifier+id_robot_trajectory_orient);
-				particleLines->setColor(0, 1, 0, 0.4);
-				ptrScene->insert(particleLines);
-				//std::cout << "r_orient = "<<particleLines->getName()<<std::endl;
+				opengl::CSetOfLines::Ptr estimated_orientations = opengl::CSetOfLines::Create();
+				estimated_orientations->setName(identifier+id_robot_trajectory_orient);
+				estimated_orientations->setColor(0, 1, 0, 0.4);
+				ptrScene->insert(estimated_orientations);
 			}
 			{// create objects for showing Odometry pose and orientation
-				opengl::CPointCloudColoured::Ptr particles = opengl::CPointCloudColoured::Create();
-				particles->setName(identifier+id_robot_trajectory_odom_pose);
-				particles->setPointSize(3);
-				ptrScene->insert(particles);
-				//std::cout << "odom_pose = "<<particles->getName()<<std::endl;
+				opengl::CPointCloudColoured::Ptr odometry_positions = opengl::CPointCloudColoured::Create();
+				odometry_positions->setName(identifier+id_robot_trajectory_odom_pose);
+				odometry_positions->setPointSize(3);
+				ptrScene->insert(odometry_positions);
 
-				opengl::CSetOfLines::Ptr particleLines = opengl::CSetOfLines::Create();
-				particleLines->setName(identifier+id_robot_trajectory_odom_orient);
-				particleLines->setColor(1, 0, 0, 0.4);
-				ptrScene->insert(particleLines);
-				//std::cout << "odom_orient = "<<particleLines->getName()<<std::endl;
+				opengl::CSetOfLines::Ptr odometry_orientations = opengl::CSetOfLines::Create();
+				odometry_orientations->setName(identifier+id_robot_trajectory_odom_orient);
+				odometry_orientations->setColor(1, 0, 0, 0.4);
+				ptrScene->insert(odometry_orientations);
+			}
+			{// showing the robot future path based on current pose and current velocities
+				opengl::CPointCloudColoured::Ptr future_positions = opengl::CPointCloudColoured::Create();
+				future_positions->setName(identifier+id_robot_future_trajectory_pose);
+				future_positions->setPointSize(5);
+				future_positions->setColor(1, 1, 0, 0.4);
+				ptrScene->insert(future_positions);
 			}
 		}
 	}
@@ -156,7 +162,7 @@ BaseVisualization::~BaseVisualization() {
 		opengl::CText::Ptr label2 = std::dynamic_pointer_cast<opengl::CText>(ptrScene->getByName(identifier + id_robot_label2_obj));
 		ptrScene->removeObject(label2);
 
-		if(true){//remove trajectory objects
+		if(show_trajectory){//remove trajectory objects
 
 			{//remove pose objects
 				opengl::CPointCloudColoured::Ptr pose_obj = std::dynamic_pointer_cast<opengl::CPointCloudColoured>(ptrScene->getByName(identifier + id_robot_trajectory_pose));
@@ -172,6 +178,11 @@ BaseVisualization::~BaseVisualization() {
 
 				opengl::CSetOfLines::Ptr orient_obj = std::dynamic_pointer_cast<opengl::CSetOfLines>(ptrScene->getByName(identifier + id_robot_trajectory_odom_orient));
 				ptrScene->removeObject(orient_obj);
+			}
+
+			{//remove future tarjectory objects
+				opengl::CPointCloudColoured::Ptr pose_obj = std::dynamic_pointer_cast<opengl::CPointCloudColoured>(ptrScene->getByName(identifier + id_robot_future_trajectory_pose));
+				ptrScene->removeObject(pose_obj);
 			}
 		}
 
@@ -229,11 +240,11 @@ void BaseVisualization::displayBase(const CommBasicObjects::CommBaseState& pos) 
 
 
 	labelString << "pose: x=" << pose_x << ", y=" << pose_y << ", a=" << pose_azimuth;
-	std::string sLabel1 = labelString.str();
+	std::string esitmated_pose_label = labelString.str();
 
 	labelString.str("");
 	labelString << "Odom pose: x=" << odom_x << ", y=" << odom_y << ", a=" << odom_azimuth;
-	std::string sLabel2 = labelString.str();
+	std::string odometry_pose_label = labelString.str();
 
 #ifdef WITH_MRPT_2_0_VERSION
 	opengl::COpenGLScene::Ptr &ptrScene = window3D.get3DSceneAndLock();
@@ -247,11 +258,11 @@ void BaseVisualization::displayBase(const CommBasicObjects::CommBaseState& pos) 
 
 		opengl::CText::Ptr label1 = std::dynamic_pointer_cast<opengl::CText>(ptrScene->getByName(identifier + id_robot_label1_obj));
 		label1->setPose(poseLabel1);
-		label1->setString(sLabel1);
+		label1->setString(esitmated_pose_label);
 
 		opengl::CText::Ptr label2 = std::dynamic_pointer_cast<opengl::CText>(ptrScene->getByName(identifier + id_robot_label2_obj));
 		label2->setPose(poseLabel2);
-		label2->setString(sLabel2);
+		label2->setString(odometry_pose_label);
 
 		if(show_trajectory){
 			double r = 0.1;
@@ -261,7 +272,7 @@ void BaseVisualization::displayBase(const CommBasicObjects::CommBaseState& pos) 
 			if(pose_traj_obj)
 			pose_traj_obj->push_back(p.get_x(1.0), p.get_y(1.0), p.get_z(1.0), 0, 1, 0);
 			else
-							std::cout << "r pose obj not available" <<std::endl;
+							std::cout << "robot pose obj not available" <<std::endl;
 			}
 
 			{//add current robot orientation
@@ -271,7 +282,7 @@ void BaseVisualization::displayBase(const CommBasicObjects::CommBaseState& pos) 
 									p.get_x(1.0) + r * cos(p.get_azimuth()),
 									p.get_y(1.0) + r * sin(p.get_azimuth()), p.get_z(1.0));
 			else
-							std::cout << "r orient obj not available" <<std::endl;
+							std::cout << "robot orient obj not available" <<std::endl;
 			}
 
 			{//add current odometry position
@@ -293,6 +304,55 @@ void BaseVisualization::displayBase(const CommBasicObjects::CommBaseState& pos) 
 			}
 
 
+		//show predicted path based on current pose and current velocity
+			{
+				//std::cout << "vel: " << pos.get_base_velocity().getVX() << ", " <<pos.get_base_velocity().getVY() << "," << pos.get_base_velocity().getVZ()<< "  :::   "
+				//		                 << pos.get_base_velocity().getWX() << ", " <<pos.get_base_velocity().getWY() << "," << pos.get_base_velocity().getWZ() <<std::endl;
+				double vx = pos.getBaseVelocity().get_vX(1.0);
+				double vy = pos.getBaseVelocity().get_vY(1.0);
+				double omega = pos.getBaseVelocity().getWZ();
+
+				double v = sqrt(vx*vx + vy*vy);
+
+				double v_by_omega = v/omega;
+
+
+				double current_pose_x = p.get_x(1.0);
+				double current_pose_y = p.get_y(1.0);
+				double current_pose_azimuth = p.get_azimuth();
+
+
+
+				opengl::CPointCloudColoured::Ptr vel_obj = std::dynamic_pointer_cast<opengl::CPointCloudColoured>(ptrScene->getByName(identifier + id_robot_future_trajectory_pose));
+				if(vel_obj)
+				vel_obj->clear();
+
+				opengl::CSetOfLines::Ptr orient_obj = std::dynamic_pointer_cast<opengl::CSetOfLines>(ptrScene->getByName(identifier + id_robot_future_trajectory_orient));
+				if(orient_obj)
+				orient_obj->clear();
+
+
+				double delta_t = 5/10.0;
+				double prev_pose_x, prev_pose_y, prev_pose_az;
+
+				prev_pose_x = current_pose_x;
+				prev_pose_y = current_pose_y;
+				prev_pose_az = current_pose_azimuth;
+
+                for(unsigned int i =1; i<=10; ++i)
+                {
+                	double next_pose_x = prev_pose_x - (v_by_omega)*sin(prev_pose_az) + (v_by_omega)*sin(prev_pose_az+ omega*delta_t);
+                	double next_pose_y = prev_pose_y + (v_by_omega)*cos(prev_pose_az) - (v_by_omega)*cos(prev_pose_az+ omega*delta_t);
+                	double next_pose_azimuth = prev_pose_az + omega*delta_t;
+
+                	prev_pose_x = next_pose_x;
+                	prev_pose_y = next_pose_y;
+                	prev_pose_az = next_pose_azimuth;
+
+                	if(vel_obj)
+                	vel_obj->push_back(next_pose_x, next_pose_y, 0, 1, 1, 0);
+		}
+			}
 		}
 
 	}

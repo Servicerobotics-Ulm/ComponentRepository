@@ -259,9 +259,9 @@ void VisualizationHelper::displayMap(map_t* map) {
 	opengl::COpenGLScene::Ptr &ptrScene = grid3D->get3DSceneAndLock();
 	{
 		opengl::CSetOfObjects::Ptr ptrObjs = opengl::CSetOfObjects::Create();
-		gridMap.getAs3DObject(ptrObjs);
-
-		ptrScene->insert(ptrObjs);
+		//gridMap.getAs3DObject(ptrObjs);
+		//ptrScene->insert(ptrObjs);
+		ptrScene->insert(gridMap.getVisualization());
 	}
 	grid3D->unlockAccess3DScene();
 	grid3D->forceRepaint();

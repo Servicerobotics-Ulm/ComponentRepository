@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:componentDefinition="http://www.eclipse.org/smartmdsd/component/componentDefinition" xmlns:componentParameter="http://www.eclipse.org/smartmdsd/component/componentParameter" xmlns:coordinationExtension="http://www.eclipse.org/smartmdsd/component/coordinationExtension" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:diagram="http://www.eclipse.org/sirius/diagram/1.1.0" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xsi:schemaLocation="http://www.eclipse.org/sirius/description/1.1.0 http://www.eclipse.org/sirius/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/style/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description/style">
-  <viewpoint:DAnalysis uid="_SWYuAFR5Eemg6e3Hpjf7Ww" selectedViews="_ScfWAFR5Eemg6e3Hpjf7Ww" version="14.3.0.201909031200">
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:componentDefinition="http://www.eclipse.org/smartmdsd/component/componentDefinition" xmlns:componentParameter="http://www.eclipse.org/smartmdsd/component/componentParameter" xmlns:coordinationExtension="http://www.eclipse.org/smartmdsd/component/coordinationExtension" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:diagram="http://www.eclipse.org/sirius/diagram/1.1.0" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.3/notation" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xsi:schemaLocation="http://www.eclipse.org/sirius/description/1.1.0 http://www.eclipse.org/sirius/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/style/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description/style">
+  <viewpoint:DAnalysis uid="_SWYuAFR5Eemg6e3Hpjf7Ww" selectedViews="_ScfWAFR5Eemg6e3Hpjf7Ww" version="14.3.1.202003261200">
     <semanticResources>model/ComponentKinectV2Server.component</semanticResources>
     <semanticResources>model/ComponentKinectV2Server.componentDocumentation</semanticResources>
     <semanticResources>model/ComponentKinectV2Server.componentParameters</semanticResources>
@@ -25,7 +25,7 @@
     <semanticResources>platform:/plugin/org.eclipse.smartmdsd.xtext.base.stateMachine/componentLifecycle/ComponentLifecycle.automaton</semanticResources>
     <ownedViews xmi:type="viewpoint:DView" uid="_ScfWAFR5Eemg6e3Hpjf7Ww">
       <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']"/>
-      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_Sc6MwFR5Eemg6e3Hpjf7Ww" name="ComponentKinectV2Server" repPath="#_Sc3wgFR5Eemg6e3Hpjf7Ww" changeId="8f94f542-63c9-4bdc-b522-e5441c27aee1">
+      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_Sc6MwFR5Eemg6e3Hpjf7Ww" name="ComponentKinectV2Server" repPath="#_Sc3wgFR5Eemg6e3Hpjf7Ww" changeId="ba5b17cf-29a7-4c70-9ca8-5e3f8d315835">
         <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']"/>
         <target xmi:type="componentDefinition:ComponentDefModel" href="model/ComponentKinectV2Server.component#/"/>
       </ownedRepresentationDescriptors>
@@ -384,7 +384,7 @@
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='InputPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_7qGG0FR5Eemg6e3Hpjf7Ww" name="imagePushNewestServer" tooltipText="OutputPort" incomingEdges="_7qK_UFR5Eemg6e3Hpjf7Ww" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_7qGG0FR5Eemg6e3Hpjf7Ww" name="RGBDImageQueryServiceOut" tooltipText="OutputPort" incomingEdges="_7qK_UFR5Eemg6e3Hpjf7Ww" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="componentDefinition:OutputPort" href="model/ComponentKinectV2Server.component#//@component/@elements.3"/>
         <semanticElements xmi:type="componentDefinition:OutputPort" href="model/ComponentKinectV2Server.component#//@component/@elements.3"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
@@ -406,7 +406,7 @@
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@borderedNodeMappings[name='AnswerPortNode']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_Kv2lAFR6Eemg6e3Hpjf7Ww" name="colorImagePushNewestServer" tooltipText="OutputPort" incomingEdges="_KwCyQFR6Eemg6e3Hpjf7Ww" width="3" height="3" resizeKind="NSEW">
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_Kv2lAFR6Eemg6e3Hpjf7Ww" name="RGBImagePushServiceOut" tooltipText="OutputPort" incomingEdges="_KwCyQFR6Eemg6e3Hpjf7Ww" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="componentDefinition:OutputPort" href="model/ComponentKinectV2Server.component#//@component/@elements.6"/>
         <semanticElements xmi:type="componentDefinition:OutputPort" href="model/ComponentKinectV2Server.component#//@component/@elements.6"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
@@ -535,7 +535,7 @@
           <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.smartmdsd.sirius.component.design/description/component.odesign#//@ownedViewpoints[name='ComponentDefinitionViewpoint']/@ownedRepresentations[name='ComponentDefinitionDiagram']/@defaultLayer/@containerMappings[name='ComponentContainer']/@subContainerMappings[name='ComponentModesContainer']/@subContainerMappings[name='PrivateOperationModeContainer']"/>
         </ownedDiagramElements>
       </ownedDiagramElements>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_P5B0YNsREeqKUvwBs9TSRg" name="CoordinationPort" tooltipText="ComponentParameters" outgoingEdges="_P5zQcNsREeqKUvwBs9TSRg">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_P5B0YNsREeqKUvwBs9TSRg" name="ComponentParameters" tooltipText="ComponentParameters" outgoingEdges="_P5zQcNsREeqKUvwBs9TSRg">
         <target xmi:type="componentParameter:ComponentParametersRef" href="model/ComponentKinectV2Server.component#//@component/@elements.10"/>
         <semanticElements xmi:type="componentParameter:ComponentParametersRef" href="model/ComponentKinectV2Server.component#//@component/@elements.10"/>
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>

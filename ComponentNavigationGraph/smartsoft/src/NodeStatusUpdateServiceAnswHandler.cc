@@ -67,6 +67,7 @@ void NodeStatusUpdateServiceAnswHandler::handleQuery(const Smart::QueryIdPtr &id
 			if (COMP->nodeStatusMap[request.getId()] == COMP->NodeStatus::FREE) {
 				//COMP->nodeStatusMap.insert(std::make_pair(request.getId(), 1));
 				COMP->nodeStatusMap[request.getId()] = COMP->NodeStatus::RESERVED;
+				COMP->nodeMapInt[request.getId()].setReserved(true);
 				answer.setSuccess(true);
 			}
 			else if (COMP->nodeStatusMap[request.getId()] == COMP->NodeStatus::RESERVED) {
@@ -76,6 +77,7 @@ void NodeStatusUpdateServiceAnswHandler::handleQuery(const Smart::QueryIdPtr &id
 		else if (request.getType() == DomainRobotFleetNavigation::StatusUpdateType::FREENODE) {
 			//COMP->nodeStatusMap.insert(std::make_pair(request.getId(), 0));
 			COMP->nodeStatusMap[request.getId()] = COMP->NodeStatus::FREE;
+			COMP->nodeMapInt[request.getId()].setReserved(false);
 			answer.setSuccess(true);
 		}
 	guard.release();

@@ -222,10 +222,7 @@ int ImageTask::on_execute()
 
 				}else
 				{
-				DomainVision::CommVideoImage colorImage(image->getColor_image().get_width(),image->getColor_image().get_height(), DomainVision::FormatType::RGB24);
-				colorImage.set_data(image->getColor_image().get_data());
-				colorImage.set_sequence_counter(image->getSeq_count());
-				COMP->rGBImagePushServiceOut->put(colorImage);
+				COMP->rGBImagePushServiceOut->put(image->getColor_image());
 				}
 
 				DomainVision::CommDepthImage depthImage = image->getDepth_image();

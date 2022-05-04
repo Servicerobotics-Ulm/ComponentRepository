@@ -15,6 +15,11 @@ CoordinationSlavePort CoordinationPort implements DomainRobotFleetNavigation.Nav
 	{
 		with sendPath realizedBy NavPathServiceIn
 		with queryShortestPath realizedBy ShortestPathRequestServiceAnsw
+		with queryClosestFreeNode realizedBy ClosestFreeNodeServiceAnsw
 		SkillRealizationsRef navPath 
+	}
+AnswerPort ClosestFreeNodeServiceAnsw implements DomainRobotFleetNavigation.ClosestFreeNodeService {
+	}
+	RequestHandler ClosestFreeNodeServiceAnswHandler triggeredFrom ClosestFreeNodeServiceAnsw {
 	}
 }

@@ -20,7 +20,7 @@
   	(format t "moveptu test new called !!!!!! ~%")
             '(SUCCESS ()))))
 
-(define-tcb (ptuModule-moveptu ?location ?nmbr)
+(define-tcb (moveptu ?location ?nmbr)
   (module "ptuModule")
   (priority 99)
   (precondition  (equal '(ptu) (first (get-value (tcl-kb-query :key '(is-a name) :value '( (is-a location) (name ?location))) 'obj-recog-poses))))
@@ -30,7 +30,7 @@
                    (obj-recog-ptu-poses (second (get-value location 'obj-recog-poses)))
                    (obj-recog-ptu-pose (nth '?nmbr obj-recog-ptu-poses)))         
               (tcl-activate-event :name 'lala 
-                                  :handler 'ptuModule-handler-ptu
+                                  :handler 'handler-ptu
                                   :server 'ptu_cs
                                   :service 'ptuevent 
                                   :mode 'continuous)
@@ -41,7 +41,7 @@
                         :param `(absolute ,(first obj-recog-ptu-pose) ,(second obj-recog-ptu-pose))))
             '(SUCCESS ()))))
 
-(define-event-handler (ptuModule-handler-ptu)
+(define-event-handler (handler-ptu)
   (module "ptuModule")
   (action (
             (format t "=========================>>> ptuModule: HANDLER PTU: ~s ~%~%" (tcl-event-message))

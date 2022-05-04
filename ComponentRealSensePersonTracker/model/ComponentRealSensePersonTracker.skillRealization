@@ -1,0 +1,19 @@
+SkillRealizationModel { 
+	CoordinationModuleRealization personFollowing coordModuleDef CommTrackingObjects.PersonFollowingModule
+	uses {
+		CommTrackingObjects.TrackerCoordinateService intsName persontracker
+		DomainVision.VisionCoordinationService intsName kinect
+		CommNavigationObjects.CdlCoordinationService intsName cdl
+	}
+	{
+		SkillRealization detectPersons {
+			action ()
+		}
+		SkillRealization stopPersonFollowing {
+			action ()
+		}
+		SkillRealization followPerson {
+			action ()
+		}
+	}
+}

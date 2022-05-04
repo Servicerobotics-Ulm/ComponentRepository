@@ -46,6 +46,7 @@
 #include <pcl/filters/passthrough.h>
 #include <pcl/surface/concave_hull.h>
 #include <pcl/filters/voxel_grid.h>
+#include <pcl/filters/passthrough.h>
 
 #include <pcl/io/pcd_io.h>
 
@@ -59,6 +60,7 @@
 #include <opencv4/opencv2/imgproc/types_c.h>
 #include <mrpt/math/include/mrpt/math/TLine3D.h>
 
+#include "EulerTransformationMatrices.hh"
 using namespace cv;
 using namespace std;
 
@@ -159,7 +161,7 @@ int DetectionTask::on_execute()
 
 	vHelper.setPointManipulator(_pointManipulator);
 
-	cv::Mat rgb_matrix = cv::Mat((int)current_video_image.getParameter().height, (int)current_video_image.getParameter().width, CV_8UC3, const_cast< unsigned char*>(current_video_image.get_data()));
+	cv::Mat rgb_matrix = cv::Mat(current_video_image.get_height(), current_video_image.get_width(), CV_8UC3, const_cast< unsigned char*>(current_video_image.get_data()));
 
 	COMP->point_cloud = _pointManipulator.createColoredPointCloud(&current_video_image, false);
 
@@ -227,7 +229,7 @@ int DetectionTask::on_execute()
 
 		int box_counter5 = boxes.size();
 		eraseNanPoses(boxes);
-		cout << "[DetectionTask] eraseFarRectangles deleted " << box_counter5 - boxes.size() << " candidates" << endl;
+		cout << "[DetectionTask] eraseNanPoses deleted " << box_counter5 - boxes.size() << " candidates" << endl;
 
 		int box_counter6 = boxes.size();
 		// TODO: Uncomment and use corresponding range filter parameters
@@ -275,7 +277,7 @@ int DetectionTask::on_execute()
 
 	int box_counter5 = boxes.size();
 	eraseNanPoses(boxes);
-	cout << "[DetectionTask] eraseFarRectangles deleted " << box_counter5 - boxes.size() << " candidates" << endl;
+	cout << "[DetectionTask] eraseNanPoses deleted " << box_counter5 - boxes.size() << " candidates" << endl;
 
 	DomainVision::CommVideoImage tmp_current_video_image = rgbd_image.getColor_image();
 	vHelper.show_box_image(&tmp_current_video_image, boxes);
@@ -437,9 +439,12 @@ void DetectionTask::setDetectedObjects(std::vector<Box>& boxes) {
 		box.setId(boxes[i].getId());
 
 
+		if(COMP->getGlobalState().getGeneral().getVerbose()== true)
+		{
 		cout << "[DetectionTask] visible sites:" << endl;
 		cout << "    side ID: " <<  boxes[i].getVisibleSides()[0] << " , length: " << _searched_obj.sides[boxes[i].getVisibleSides()[0]] << endl;
 		cout << "    side ID: " <<  boxes[i].getVisibleSides()[1] << " , length: " << _searched_obj.sides[boxes[i].getVisibleSides()[1]] << endl;
+		}
 
 
 		if (boxes[i].getVisibleSides()[0] == 0 && boxes[i].getVisibleSides()[1] == 1){
@@ -457,6 +462,11 @@ void DetectionTask::setDetectedObjects(std::vector<Box>& boxes) {
 		}
 
 		//box.setPose(boxes[i].getObjCenterPose());
+		if(COMP->getGlobalState().getGeneral().getVerbose()== true)
+		{
+			std::cout << __FUNCTION__ << " Box id: " << boxes[i].getId() << ", Updated Pose: "<<box.getPose() << std::endl;
+			std::cout << __FUNCTION__ << " Box id: " << boxes[i].getId() << ", Updated surface Pose: "<<boxes[i].getSurfacePose() << std::endl;
+		}
 		box.setSurfacePose(boxes[i].getSurfacePose());
 		box.setObjectClass(_searched_obj.object_type);
 
@@ -671,7 +681,7 @@ double DetectionTask::angle(Point pt1, Point pt2, Point pt0) {
  * The function expects the usage of a vacuum gripper with a diameter i.e. 10 cm and checks,
  * if the box is close to a wall. Since the gripper can not reach it then.
  * A point is defined some cm above the midpoint of the boxes surface pose.
- * Around this point all points with a defined radius (dependet on gripper) are found by a KD-tree
+ * Around this point all points with a defined radius (dependent on gripper) are found by a KD-tree
  * The boxes surface plane is defined some cm above the real one and the rectangular distance from
  * the point to the plane is calculated. If this distance is small (i.e. 5 mm) it is likely, that
  * there is an object / wall close to the box.
@@ -825,7 +835,10 @@ void DetectionTask::calcRectPose(vector<Box>& boxes) {
 
 			if (boxes[i].getPointCloud()->size() < 50) {
 				_deleted_boxes.resize(_deleted_boxes.size() + 1);
+				if(COMP->getGlobalState().getGeneral().getVerbose()== true)
+				{
 				std::cout << "Deleting box, because point cloud is too small" << std::endl;
+				}
 				std::move(boxes.begin() + i , boxes.begin() + i + 1, _deleted_boxes.end() - 1);
 
 				boxes.erase(boxes.begin() + i);
@@ -859,7 +872,7 @@ void DetectionTask::calcRectPose(vector<Box>& boxes) {
 			//TPose3D tmp = pose.asTPose();
 			plane.getAsPose3D(tmp);
 			std::cout << "Box Plane pose : "<< tmp.x << ", "<< tmp.y << ", "<< tmp.z<<", "
-										<< tmp.yaw << ", "<< tmp.pitch << ", "<< tmp.roll<< std::endl;
+										<< tmp.yaw *180.0/M_PI<< ", "<< tmp.pitch*180.0/M_PI << ", "<< tmp.roll*180.0/M_PI<< std::endl;
 			// old:
 			// plane.getAsPose3D(pose);
 			//---------------
@@ -873,7 +886,10 @@ void DetectionTask::calcRectPose(vector<Box>& boxes) {
 
 			} catch (...) {
 				_deleted_boxes.resize(_deleted_boxes.size() + 1);
+				if(COMP->getGlobalState().getGeneral().getVerbose()== true)
+				{
 				std::cout << "Deleting box, because point cloud is too small" << std::endl;
+				}
 				std::move(boxes.begin() + i , boxes.begin() + i + 1, _deleted_boxes.end() - 1);
 
 				boxes.erase(boxes.begin() + i);
@@ -890,7 +906,7 @@ void DetectionTask::calcRectPose(vector<Box>& boxes) {
 			bool found_valid_xyz = false;
 
 			//sometimes there is no x,y,z value for a specific RGB point available
-			//increase / decrease row and col values to find a valide point cloud value
+			//increase / decrease row and col values to find a valid point cloud value
 			for(int i = 0; i < 5; i++){
 				uint32_t r = center.y + i, c = center.x + i;
 				uint32_t r_neg = center.y - i, c_neg = center.x - i;
@@ -918,7 +934,7 @@ void DetectionTask::calcRectPose(vector<Box>& boxes) {
 			pose.setYawPitchRoll(tmp.yaw, tmp.pitch, tmp.roll);
 
 			boxes[i].setSurfacePose(pose);
-		    std::cout << " plane cpose : " <<pose.asString() << std::endl;
+		    std::cout << "i = " <<i <<", Box Surface pose : " <<pose.asString() << std::endl;
 		}
 	}
 }
@@ -943,7 +959,10 @@ void DetectionTask::eraseWrongShelfLevelBoxes(vector<Box>& boxes) {
 		if (boxes[i].getSurfacePose().z() < shelfHeightMin || boxes[i].getSurfacePose().z() > shelfHeightMax ) {
 			std::cout << "box surfacepose: " <<  boxes[i].getSurfacePose()  << std::endl;
 			_deleted_boxes.resize(_deleted_boxes.size() + 1);
-			std::cout << "--> Deleting box point 0: " << boxes[i].getPoints()[0] << std::endl;
+			if(COMP->getGlobalState().getGeneral().getVerbose()== true)
+			{
+				std::cout << __FUNCTION__ <<" --> Deleting box point 0: " << boxes[i].getPoints()[0] << std::endl;
+			}
 			std::move(boxes.begin() + i , boxes.begin() + i + 1, _deleted_boxes.end() - 1);
 
 			boxes.erase(boxes.begin() + i);
@@ -1072,7 +1091,10 @@ void DetectionTask::eraseWrongLenthRecangles(vector<Box>& boxes,
 			box_cloud->points[corner_point_idxs[c]].r = 250;
 			box_cloud->points[corner_point_idxs[c]].g = 0;
 			box_cloud->points[corner_point_idxs[c]].b = 0;
+			if(COMP->getGlobalState().getGeneral().getVerbose()== true)
+			{
 			cout << "Corner point: " << corner_point_idxs[c] << " , " << box_cloud->points[corner_point_idxs[c]] << endl;
+			}
 			corner_points.push_back(mrpt::poses::CPoint3D(box_cloud->points[corner_point_idxs[c]].x, box_cloud->points[corner_point_idxs[c]].y, box_cloud->points[corner_point_idxs[c]].z));
 		}
 
@@ -1110,8 +1132,11 @@ void DetectionTask::eraseWrongLenthRecangles(vector<Box>& boxes,
 		std::vector<double>::iterator long_side_it = std::find(point_dists_bak.begin(), point_dists_bak.end(), point_dists[3]);
 		int long_side_index = std::distance(point_dists_bak.begin(), long_side_it);
 
+		if(COMP->getGlobalState().getGeneral().getVerbose()== true)
+		{
 		std::cout << "==> short side index:" << short_side_index << std::endl;
 		std::cout << "==> long side index:" << long_side_index << std::endl;
+		}
 
 		mrpt::poses::CPoint3D midpoint_short_side;
 
@@ -1154,10 +1179,13 @@ void DetectionTask::eraseWrongLenthRecangles(vector<Box>& boxes,
 ///////////////////////////////////////////////////
 
 
+		if(COMP->getGlobalState().getGeneral().getVerbose()== true)
+		{
 		std::cout << "-----------------------------------" << std::endl;
 		std::cout << "measured sites: " << std::endl;
 		std::cout << "    " << rect_side_length1 << " , " << rect_side_length2 << std::endl;
 
+		}
 
 		int fitting_sides = 0;
 		vector<int> visible_side_ids;
@@ -1185,6 +1213,8 @@ void DetectionTask::eraseWrongLenthRecangles(vector<Box>& boxes,
 		}
 
 
+		if(COMP->getGlobalState().getGeneral().getVerbose()== true)
+		{
 		cout << "deviation factor: " << deviation_factor << endl;
 		cout << "searched sides: " << _searched_obj.sides[0] << ", " << _searched_obj.sides[1] << ", " << _searched_obj.sides[2] << endl;
 		cout << "max deviations: " << max_deviations[0] << ", " << max_deviations[1] << ", " << max_deviations[2] << endl;
@@ -1197,6 +1227,7 @@ void DetectionTask::eraseWrongLenthRecangles(vector<Box>& boxes,
 			}
 		}
 		cout << "" << endl;
+		}
 
 
 		float smallest_delta = 100000;
@@ -1205,18 +1236,27 @@ void DetectionTask::eraseWrongLenthRecangles(vector<Box>& boxes,
 		summed_deltas.resize(3);
 
 		for (int j = 0; j < 3; j++) {
+			if(COMP->getGlobalState().getGeneral().getVerbose()== true)
+			{
 			cout << "" << endl;
+			}
 			for (int k = 0; k < 3; k++) {
 				if(j == k ){
 					summed_deltas[j].push_back(1000);
+					if(COMP->getGlobalState().getGeneral().getVerbose()== true)
+					{
 					cout << "  " << summed_deltas[j][summed_deltas[j].size() - 1];
+					}
 
 					continue;
 				}
 
 				summed_deltas[j].push_back(real_deltas[0][j] + real_deltas[1][k]);
+				if(COMP->getGlobalState().getGeneral().getVerbose()== true)
+				{
 
 				cout << "  " << summed_deltas[j][summed_deltas[j].size() - 1];
+				}
 
 				if(smallest_delta > summed_deltas[j][k]){
 					smallest_delta = summed_deltas[j][k];
@@ -1225,18 +1265,27 @@ void DetectionTask::eraseWrongLenthRecangles(vector<Box>& boxes,
 				}
 			}
 		}
+		if(COMP->getGlobalState().getGeneral().getVerbose()== true)
+		{
 		cout << "" << endl;
+		}
 
 
 
 		if (visible_side_id1 < 0 || visible_side_id2 < 0 || smallest_delta > 1.0) {
 			_deleted_boxes.resize(_deleted_boxes.size() + 1);
+			if(COMP->getGlobalState().getGeneral().getVerbose()== true)
+			{
 			std::cout << "--> Deleting box point 0: " << boxes[i].getPoints()[0]<< std::endl;
+			}
 			std::move(boxes.begin() + i, boxes.begin() + i + 1,	_deleted_boxes.end() - 1);
 
 			boxes.erase(boxes.begin() + i);
 			i--;
+			if(COMP->getGlobalState().getGeneral().getVerbose()== true)
+			{
 			std::cout << "Deleted Box point 0: " << _deleted_boxes[_deleted_boxes.size() - 1].getPoints()[0] << std::endl;
+			}
 			continue;
 		}
 
@@ -1246,9 +1295,12 @@ void DetectionTask::eraseWrongLenthRecangles(vector<Box>& boxes,
 
 		boxes[i].setVisibleSides(visible_side_id1, visible_side_id2);
 
+		if(COMP->getGlobalState().getGeneral().getVerbose()== true)
+		{
 		cout << "set visible sites:" << endl;
 		cout << "    side ID: " <<  boxes[i].getVisibleSides()[0] << " , length: " << _searched_obj.sides[boxes[i].getVisibleSides()[0]] << endl;
 		cout << "    side ID: " <<  boxes[i].getVisibleSides()[1] << " , length: " << _searched_obj.sides[boxes[i].getVisibleSides()[1]] << endl;
+		}
 
 
 	}
@@ -1399,7 +1451,10 @@ void DetectionTask::eraseNanPoses(vector<Box>& boxes) {
 				|| isnan(boxes[i].getSurfacePose().roll())) {
 
 			_deleted_boxes.resize(_deleted_boxes.size() + 1);
+			if(COMP->getGlobalState().getGeneral().getVerbose()== true)
+			{
 			std::cout << "--> Deleting box point 0: " << boxes[i].getPoints()[0] << std::endl;
+			}
 			std::move(boxes.begin() + i , boxes.begin() + i + 1, _deleted_boxes.end() - 1);
 
 			boxes.erase(boxes.begin() + i);
@@ -1418,7 +1473,10 @@ void DetectionTask::eraseEmptyRectangles(vector<Box>& boxes) {
 		if (boxes[i].getPointCloud()->size() < 50) {
 
 			_deleted_boxes.resize(_deleted_boxes.size() + 1);
+			if(COMP->getGlobalState().getGeneral().getVerbose()== true)
+			{
 			std::cout << "--> Deleting box point 0: " << boxes[i].getPoints()[0] << "cloud size: " << boxes[i].getPointCloud()->size() << std::endl;
+			}
 			std::move(boxes.begin() + i , boxes.begin() + i + 1, _deleted_boxes.end() - 1);
 
 			boxes.erase(boxes.begin() + i);
@@ -1447,7 +1505,7 @@ void DetectionTask::eraseFarRectangles(vector<Box>& boxes) {
 		ptfilter.filter(indices_x);
 
 		// indexes all points of cloud that have x between the two values
-		pcl::IndicesConstPtr indices_rem = ptfilter.getRemovedIndices();
+		//pcl::IndicesConstPtr indices_rem = ptfilter.getRemovedIndices();
 
 		// if too many points (50%) are not inside the distance range,
 		// the whole box is expected to be not inside the correct distance
@@ -1465,7 +1523,7 @@ void DetectionTask::eraseFarRectangles(vector<Box>& boxes) {
 			ptfilter.filter(indices_y);
 
 			// indexes all points of cloud that have x between the two values
-			pcl::IndicesConstPtr indices_rem_y = ptfilter.getRemovedIndices();
+			//pcl::IndicesConstPtr indices_rem_y = ptfilter.getRemovedIndices();
 
 			// if too many points (50%) are not inside the distance range,
 			// the whole box is expected to be not inside the correct distance
@@ -1644,117 +1702,6 @@ void DetectionTask::createPointClouds(DomainVision::CommVideoImage* color_image,
 
 		boxes[i].setPointCloud(box_cloud);
 	}
-}
-
-void DetectionTask::findContainer(const Mat& image, vector<Box>& boxes) {
-	boxes.clear();
-
-	int thresh = 20;
-	int N = 10;
-	RNG rng(12345);
-
-	Mat pyr, timg, gray0(Size(image.cols, image.rows), CV_8U), gray;
-
-	// down-scale and upscale the image to filter out the noise
-	pyrDown(image, pyr, Size(image.cols / 2, image.rows / 2));
-	pyrUp(pyr, timg, image.size());
-
-	vector<vector<Point> > contours;
-
-	int ch[] = { 0, 0 };
-
-	mixChannels(&timg, 1, &gray0, 1, ch, 1);
-
-	// try several threshold levels
-	for (int l = 0; l < N; l++) {
-		Canny(gray0, gray, thresh * (l / 2), thresh * l, 5);
-		dilate(gray, gray, Mat(), Point(-1, -1));
-
-		findContours(gray, contours, RETR_LIST, CHAIN_APPROX_SIMPLE);
-
-		vector<Point> approx;
-
-		// test each contour
-		for (size_t i = 0; i < contours.size(); i++) {
-			approxPolyDP(Mat(contours[i]), approx,
-					arcLength(Mat(contours[i]), true) * 0.02, true);
-
-			double contour_area = fabs(contourArea(Mat(approx)));
-
-			//if (approx.size() == 4 && contour_area > 1500 && contour_area < (image.cols * image.rows) / 5 && isContourConvex(Mat(approx))) {
-			if (contour_area > 1500
-					&& contour_area < (image.cols * image.rows) / 2) {
-				double maxCosine = 0;
-
-				for (int j = 2; j < 5; j++) {
-					// find the maximum cosine of the angle between joint edges
-					double cosine = fabs(
-							angle(approx[j % 4], approx[j - 2], approx[j - 1]));
-					maxCosine = MAX(maxCosine, cosine);
-				}
-
-				if (maxCosine < 0.3) {
-					Scalar color = Scalar(rng.uniform(0, 255),
-							rng.uniform(0, 255), rng.uniform(0, 255));
-					drawContours(timg, contours, i, color, -1);	//, 2, 8, hierarchy, 0, Point() );
-				}
-			}
-		}
-	}
-
-	///////////
-	// now find drawn contours as rectangles with gaussian blur + difference
-	// --> contour segmentations get lost
-
-	N = 5;
-
-	mixChannels(&timg, 1, &gray0, 1, ch, 1);
-	Mat previous = gray0;
-
-	// try several threshold levels
-	for (int l = 0; l < N; l++) {
-
-		/////////////////////////
-		// Gaussian + Difference
-
-		Mat gaussian;
-		GaussianBlur(previous, gaussian, Size(3, 3), 20);
-		Mat gray = previous - gaussian;
-		previous = gaussian;
-
-		findContours(gray, contours, RETR_LIST, CHAIN_APPROX_SIMPLE);
-
-		vector<Point> approx;
-
-		// test each contour
-		for (size_t i = 0; i < contours.size(); i++) {
-			approxPolyDP(Mat(contours[i]), approx,
-					arcLength(Mat(contours[i]), true) * 0.02, true);
-
-			double contour_area = fabs(contourArea(Mat(approx)));
-
-			if (approx.size() == 4 && contour_area > 1500
-					&& contour_area < (image.cols * image.rows) / 5) {
-				//if ( contour_area > 1500 && contour_area < (image.cols * image.rows) / 2 ) {
-				double maxCosine = 0;
-
-				for (int j = 2; j < 5; j++) {
-					// find the maximum cosine of the angle between joint edges
-					double cosine = fabs(
-							angle(approx[j % 4], approx[j - 2], approx[j - 1]));
-					maxCosine = MAX(maxCosine, cosine);
-				}
-
-				if (maxCosine < 0.3) {
-					boxes.push_back(Box());
-					boxes.back().setPoints(approx);
-
-				}
-			}
-		}
-	}
-
-	cout << ">>> Container candidates found: " << boxes.size() << endl;
 }
 
 /*
@@ -1967,9 +1914,9 @@ void DetectionTask::rearrangePose(vector<Box>& boxes){
 		///////////////////////////////////////
 		// Rotate the pose with x into the object
 
-		// Rotate to make pose x axis to plane normal (ZYX Konvention)
+		// Rotate to make pose x axis to plane normal (ZYX Convention)
 		pose += mrpt::poses::CPose3D(0, 0, 0, 0, 1.57079, 0);
-		// Should also be 1.57079, but then the delta velues are too small,
+		// Should also be 1.57079, but then the delta values are too small,
 		// which results in inaccurate positions. Hence only 1.45.
 		pose += mrpt::poses::CPose3D(0, 0, 0, 0, 0, -1.45);
 
@@ -1988,6 +1935,11 @@ void DetectionTask::rearrangePose(vector<Box>& boxes){
 		double dist1 = point1.distanceTo(sensor_origin);
 		double dist2 = point2.distanceTo(sensor_origin);
 
+		if(COMP->getGlobalState().getGeneral().getVerbose()== true)
+		{
+			std::cout << __FUNCTION__ << " Box id: dist1 " << dist1  << std::endl;
+			std::cout << __FUNCTION__ << " Box id: dist2 " << dist2  << std::endl;
+		}
 		// check, whether the box coordinate frame is rotated correctly
 		// by checking the distance to sensor frame origin.
 		if(dist1 < dist2){
@@ -2000,7 +1952,7 @@ void DetectionTask::rearrangePose(vector<Box>& boxes){
 		////////////////////////////////////////
 		// Todo its the same code like in eraseWrongLenthRecangles --> should not be repeated/executed twice
 		// find surface cloud corner points
-		// points with the highes distance to the rect center are the corner points
+		// points with the highest distance to the rect center are the corner points
 
 		pcl::PointCloud<pcl::PointXYZRGB>::Ptr box_cloud = boxes[i].getPointCloud();
 		mrpt::math::TPoint3D box_midpoint(boxes[i].getSurfacePose().x(), boxes[i].getSurfacePose().y(), boxes[i].getSurfacePose().z());
@@ -2055,18 +2007,21 @@ void DetectionTask::rearrangePose(vector<Box>& boxes){
 			box_cloud->points[corner_point_idxs[c]].r = 250;
 			box_cloud->points[corner_point_idxs[c]].g = 0;
 			box_cloud->points[corner_point_idxs[c]].b = 0;
+			if(COMP->getGlobalState().getGeneral().getVerbose()== true)
+			{
 			cout << "Corner point: " << corner_point_idxs[c] << " , " << box_cloud->points[corner_point_idxs[c]] << endl;
+			}
 			corner_points.push_back(mrpt::poses::CPoint3D(box_cloud->points[corner_point_idxs[c]].x, box_cloud->points[corner_point_idxs[c]].y, box_cloud->points[corner_point_idxs[c]].z));
 		}
 
 		////////////////////////////////////////////////////
 
 		///////////////////////////////////////////////////
-		//calculate the side lengthes
+		//calculate the side lengths
 
 		std::vector<double> point_dists;
 		//calculate the distances from each corner point to each other
-		//the longest two are the diagonal lines of the rectangel
+		//the longest two are the diagonal lines of the rectangle
 		point_dists.push_back(corner_points[0].distance3DTo( corner_points[1].x(), corner_points[1].y(), corner_points[1].z()));
 		point_dists.push_back(corner_points[0].distance3DTo( corner_points[2].x(), corner_points[2].y(), corner_points[2].z()));
 		point_dists.push_back(corner_points[0].distance3DTo( corner_points[3].x(), corner_points[3].y(), corner_points[3].z()));
@@ -2076,16 +2031,30 @@ void DetectionTask::rearrangePose(vector<Box>& boxes){
 
 		std::vector<double> point_dists_bak(point_dists);
 
+		if(COMP->getGlobalState().getGeneral().getVerbose()== true)
+		{
 		for (int d = 0 ; d < point_dists.size(); d++){
 			std::cout << "==> point dist (unsorted): " << point_dists[d] << std::endl;
+		}
 		}
 
 		//sort the distances (smallest ist index 0)
 		std::sort(point_dists.begin(), point_dists.end());
 
+		if(COMP->getGlobalState().getGeneral().getVerbose()== true)
+		{
+			for (int d = 0 ; d < point_dists.size(); d++){
+				std::cout << "Debug ==> point dist (sorted): " << point_dists[d] << std::endl;
+			}
+		}
 
 		float rect_side_length1 = point_dists[1]; //longer of the short sides because edges of the surface cloud are cut
 		float rect_side_length2 = point_dists[3]; //longer of the long sides because edges of the surface cloud are cut
+		if(COMP->getGlobalState().getGeneral().getVerbose()== true)
+		{
+			std::cout << "rect_side_length1: " << rect_side_length1<< std::endl;
+			std::cout << "rect_side_length2: " << rect_side_length2<< std::endl;
+		}
 
 		std::vector<double>::iterator short_side_it = std::find(point_dists_bak.begin(), point_dists_bak.end(), point_dists[1]);
 		int short_side_index = std::distance(point_dists_bak.begin(), short_side_it);
@@ -2093,8 +2062,11 @@ void DetectionTask::rearrangePose(vector<Box>& boxes){
 		std::vector<double>::iterator long_side_it = std::find(point_dists_bak.begin(), point_dists_bak.end(), point_dists[3]);
 		int long_side_index = std::distance(point_dists_bak.begin(), long_side_it);
 
+		if(COMP->getGlobalState().getGeneral().getVerbose()== true)
+		{
 		std::cout << "==> short side index:" << short_side_index << std::endl;
 		std::cout << "==> long side index:" << long_side_index << std::endl;
+		}
 
 		mrpt::poses::CPoint3D z_target_3d;
 
@@ -2182,6 +2154,29 @@ void DetectionTask::rearrangePose(vector<Box>& boxes){
 
 		} else if (pose.roll() < -1.65){
 			pose = pose + mrpt::poses::CPose3D(0, 0, 0, 0, 0, -1 * M_PI);
+		}
+
+
+		// Yaw should be positive for visible face of the box
+		if (pose.yaw() < -80*M_PI/180){
+			pose = pose + mrpt::poses::CPose3D(0, 0, 0, M_PI, 0, 0);
+		}
+
+
+
+		arma::mat H;
+		H.set_size(4, 4);
+        EulerTransformationMatrices::create_zyx_matrix(pose.yaw(), pose.pitch(), pose.roll(), H);
+
+        // H(0,0) H(1,0) H(2,0) is x-axis of box relative to robot frame
+        // e.g. if x-axis is going straight downwards it will be
+        // H(0,0) = 0 H(1,0) = 0 H(2,0)=-1
+        // is x-axis of plane going upwards relative to robot frame?
+        if(H(2,0) > 0.0){
+        	// rotate by azimuth=180 degrees -> x-axis is going down now
+        	// -> pick always from above, never from below the surface
+			pose = pose + mrpt::poses::CPose3D(0, 0, 0, M_PI, 0, 0);
+			EulerTransformationMatrices::create_zyx_matrix(pose.yaw(), pose.pitch(), pose.roll(), H);
 		}
 
 		boxes[i].setSurfacePose(pose);

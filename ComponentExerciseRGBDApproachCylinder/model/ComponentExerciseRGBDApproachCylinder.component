@@ -1,0 +1,13 @@
+ComponentDefinition ComponentExerciseRGBDApproachCylinder 
+{
+	Activity RobotTask
+	{
+		InputPortLink   RGBDImagePushServiceIn { oversamplingOk undersamplingOk }
+	DefaultTrigger PeriodicTimer 10.0 Hz
+	}
+
+	OutputPort NavigationVelocityServiceOut implements CommNavigationObjects.NavigationVelocityService realizedBy RobotTask {
+	}
+InputPort RGBDImagePushServiceIn implements DomainVision.RGBDImagePushService {
+	}
+}

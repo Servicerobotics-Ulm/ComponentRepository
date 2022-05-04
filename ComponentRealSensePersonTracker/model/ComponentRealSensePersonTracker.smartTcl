@@ -1,0 +1,163 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; tcb-follow-person
+
+;   (execute '(tcb-stop-follow-person))
+
+(define-tcb (stopPersonFollowingold)
+  (module "PersonFollowingModule")
+  (action (
+            (format t "=========================>>> tcb-stop-follow-person ~%")
+            (let* ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot))))
+                   (person-tracking-type (get-value robot 'person-tracking-type)))
+              (if (equal person-tracking-type 'RGBD)
+                (tcl-state :server 'kinect :state "Neutral")))
+            (tcl-state :server 'cdl :state "Neutral")
+            (tcl-state :server 'persontracker :state "Neutral")
+            '(SUCCESS ())
+            )))
+
+
+;   (execute '(tcb-detect-persons))
+
+(define-tcb (detectPersons)
+  (module "PersonFollowingModule")
+  (action (
+            (format t "=========================>>> detect-persons ~%")
+            (let* ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot))))
+                   (person-tracking-type (get-value robot 'person-tracking-type)))
+              (if (equal person-tracking-type 'RGBD)
+                (tcl-state :server 'kinect :state "PushImage")))
+            (tcl-state :server 'persontracker :state "detect")
+            '(SUCCESS ())))
+  (abort-action (
+                  (format t "=========================>>> ABORT TCB-DETECT-PERSON ~%~%~%")
+                  (let* ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot))))
+                    (person-tracking-type (get-value robot 'person-tracking-type)))
+                    (if (equal person-tracking-type 'RGBD)
+                      (tcl-state :server 'kinect :state "Neutral")))
+                  (tcl-state :server 'persontracker :state "Neutral"))))
+
+
+;   (execute '(tcb-follow-person 1 0))
+
+; (tcl-param :server 'persontracker :slot 'COMMTRACKINGOBJECTS.TRACKINGPARAM.FOLLOW_RESET :value `( 2000 0))
+
+(define-tcb (followPersonold ?id)
+  (module "PersonFollowingModule")
+  (action (
+            (let* ((robot (tcl-kb-query :key '(is-a)  :value '((is-a robot))))
+                  (velocity-following (get-value robot 'velocity-following))
+                  ;(cur-pose (tcl-query :server 'base :service 'pose))
+                  (person-tracking-type (get-value robot 'person-tracking-type))
+                  (person-tracking-dist (get-value robot 'person-tracking-dist))
+                  ;(relative-pose nil)
+                  )
+
+              (format t "=========================>>> tcb-follow-person~%")
+
+            ;; CDL
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETSTRATEGY :value 'FOLLOW)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALMODE :value 'PERSON)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.FREEBEHAVIOR :value 'ACTIVATE)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.LOOKUPTABLE :value 'DEFAULT)
+;            (tcl-param :server 'cdl :slot 'LOOKUPTABLE  :value 'SECOND)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.APPROACHDIST :value person-tracking-dist)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.TRANSVEL :value (first velocity-following))
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ROTVEL :value (second velocity-following))
+            (tcl-param :server 'cdl :slot 'COMMIT)
+
+            ;; LASER PERSON TRACKER
+            (tcl-param :server 'persontracker :slot 'COMMTRACKINGOBJECTS.TRACKINGPARAM.SET_MAX_COV :value '(640 0))
+
+            ;;calculate relative position out of the global one!
+            ;(setf relative-pose (inverseComposeFrom2D (/ (first cur-pose) 1000) (/ (second cur-pose) 1000) (third cur-pose) ?x ?y))
+            ;(format t "current-robot-pose: ~s relative-pose: ~s~%" cur-pose relative-pose)
+;            (tcl-param :server 'persontracker :slot 'COMMTRACKINGOBJECTS.TRACKINGPARAM.FOLLOW_RESET :value `( ,(round (* 1000 (first relative-pose))) ,(round (* 1000 (second relative-pose)))))
+            (if (equal person-tracking-type 'RGBD)
+              (tcl-state :server 'kinect :state "PushImage"))
+            (tcl-state :server 'persontracker :state "follow")
+            (tcl-state :server 'cdl :state "MoveRobot"))
+            '(SUCCESS ())))
+  (abort-action (
+                  (format t "=========================>>> ABORT TCB-FOLLOW-PERSON ~%~%~%")
+                  (let* ((robot (tcl-kb-query :key '(is-a) :value '((is-a robot))))
+                    (person-tracking-type (get-value robot 'person-tracking-type)))
+                    (if (equal person-tracking-type 'RGBD)
+                      (tcl-state :server 'kinect :state "Neutral")))
+                  (tcl-state :server 'cdl :state "Neutral")
+                  (tcl-state :server 'persontracker :state "Neutral")))
+
+
+  )
+
+
+(define-tcb (follow ?id)
+  (module "PersonFollowingModule")
+  (action (
+            (let* ((robot (tcl-kb-query :key '(is-a)  :value '((is-a robot))))
+                  (velocity-following (get-value robot 'velocity-following))
+                  (person-tracking-type (get-value robot 'person-tracking-type))
+                  (person-tracking-dist (get-value robot 'person-tracking-dist))
+                  )
+
+            (format t "=========================>>> follow~%")
+
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.SETSTRATEGY :value 'FOLLOW)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.GOALMODE :value 'PERSON)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.FREEBEHAVIOR :value 'ACTIVATE)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.LOOKUPTABLE :value 'DEFAULT)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.APPROACHDIST :value person-tracking-dist)
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.TRANSVEL :value (first velocity-following))
+            (tcl-param :server 'cdl :slot 'CommNavigationObjects.CdlParameter.ROTVEL :value (second velocity-following))
+            (tcl-param :server 'cdl :slot 'COMMIT)
+
+            (tcl-param :server 'persontracker :slot 'COMMTRACKINGOBJECTS.TRACKINGPARAM.SET_MAX_COV :value '(640 0))
+            (tcl-param :server 'persontracker :slot 'COMMIT)
+
+	            (tcl-state :server 'kinect :state "PushImage")
+	            (tcl-state :server 'persontracker :state "follow")
+	            (tcl-state :server 'cdl :state "MoveRobot")
+            )
+            
+            '(SUCCESS ())
+  ))
+)
+
+(define-tcb (stop)
+  (module "PersonFollowingModule")
+  (action (
+            (format t "=========================>>> stop ~%")
+
+            ;; IMPORTANT: First set persontracker to Neutral then camera
+			(tcl-state :server 'persontracker :state "Neutral")
+            (tcl-state :server 'kinect :state "Neutral")
+            (tcl-state :server 'cdl :state "Neutral")
+            
+            '(SUCCESS ())
+   ))
+)
+
+(define-tcb (setF)
+  (module "PersonFollowingModule")
+  (action (
+            (format t "=========================>>> setFollow ~%")
+
+            (tcl-state :server 'persontracker :state "follow")
+            
+            '(SUCCESS ())
+   ))
+)
+
+(define-tcb (setN)
+  (module "PersonFollowingModule")
+  (action (
+            (format t "=========================>>> setNeutral~%")
+
+            (tcl-state :server 'persontracker :state "Neutral")
+            
+            '(SUCCESS ())
+   ))
+)
+
+

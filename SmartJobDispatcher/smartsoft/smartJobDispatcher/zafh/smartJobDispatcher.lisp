@@ -436,20 +436,34 @@
           
           
           (send-job `(PushJob ,(get-value job 'type) ,(get-value job 'id) ,(get-value job 'priority) 
-            ,(get-value job 'robotid) ,(get-value job 'goal-pose)) (get-value job 'robotid))
+            ,(get-value job 'robotid) ,(get-value job 'goal-pose) ,(get-value job 'nav-type)) (get-value job 'robotid))
         )
         
         ((equal (get-value job 'type) 'RobotCommissioning)
 
           (send-job `(PushJob ,(get-value job 'type) ,(get-value job 'id) ,(get-value job 'priority) Manipulation 
-          ,(get-value job 'robotid) ,(get-value job 'commissioning-robot) ,(get-value job 'commission-order)) 
+          ,(get-value job 'robotid) ,(get-value job 'commissioning-robot) ,(get-value job 'commission-order) ,(get-value job 'docking-waypoint)) 
           (get-value job 'commissioning-robot))
 
           (send-job `(PushJob ,(get-value job 'type) ,(get-value job 'id) ,(get-value job 'priority) Transportation 
           ,(get-value job 'robotid) ,(get-value job 'commissioning-robot) ,(get-value job 'start-location) 
-          ,(get-value job 'start-belt) ,(get-value job 'end-location) ,(get-value job 'end-belt) 
+          ,(get-value job 'start-belt) ,(get-value job 'docking-waypoint) ,(get-value job 'end-location) ,(get-value job 'end-belt) 
           ,(get-value job 'commission-order)) (get-value job 'robotid))
         )
+                ((equal (get-value job 'type) 'DeliverFromTo)
+          (send-job `(PushJob ,(get-value job 'type) ,(get-value job 'id) ,(get-value job 'priority) ,(get-value job 'robotid) ,(get-value job 'start-station) ,(get-value job 'start-belt) ,(get-value job 'end-station) ,(get-value job 'end-belt) ,(get-value job 'nav-type)) (get-value job 'robotid)))
+          
+          
+                          ((equal (get-value job 'type) 'CollectFrom)
+          (send-job `(PushJob ,(get-value job 'type) ,(get-value job 'id) ,(get-value job 'priority) ,(get-value job 'robotid) ,(get-value job 'start-station) ,(get-value job 'start-belt) ,(get-value job 'nav-type)) (get-value job 'robotid)))
+          
+          
+                          ((equal (get-value job 'type) 'DeliverTo)
+          (send-job `(PushJob ,(get-value job 'type) ,(get-value job 'id) ,(get-value job 'priority) ,(get-value job 'robotid) ,(get-value job 'end-station) ,(get-value job 'end-belt) ,(get-value job 'nav-type)) (get-value job 'robotid)))
+          
+
+                  ((equal (get-value job 'type) 'FollowPerson)
+          (send-job `(PushJob ,(get-value job 'type) ,(get-value job 'id) ,(get-value job 'priority) ,(get-value job 'robotid)) (get-value job 'robotid)))
         
         (T 
           (format t "[Timo] Unkown job type!~%")
@@ -574,7 +588,14 @@
         ;ParkRobot
         ;RobotCommissioning
 ;;        (tcl-send :server 'highlevelcommand :service 'result :param (format nil "JobInfo robotinoid:~d jobid:~d state:~d" (get-value job 'robotid) (get-value job 'id) (get-value job 'state) )))))))
-          (tcl-send :server 'highlevelcommand :service 'result :param (encode-msg `((msg-type . "state-change-msg") (update . ((type . "job-state-change") (robot-id . ,(get-value job 'robotid)) (job-id . ,(get-value job 'id)) (state . ,(get-value job 'state)) (error-state . "NOERROR")))))))))))
+          ; Timo 28-03-22: Added life-cycle-state
+          ;(tcl-send :server 'highlevelcommand :service 'result :param (encode-msg `((msg-type . "state-change-msg") (update . ((type . "job-state-change") (robot-id . ,(get-value job 'robotid)) (job-id . ,(get-value job 'id)) (state . ,(get-value job 'state)) (error-state . "NOERROR"))))))
+          
+          (tcl-send :server 'highlevelcommand :service 'result :param (encode-msg `((msg-type . "state-change-msg") (update . ((type . "job-state-change") (robot-id . ,(get-value job 'robotid)) (job-id . ,(get-value job 'id)) (state . ,(get-value job 'state)) (error-state . "NOERROR") (life-cycle-state . ,(get-value job 'life-cycle-state)))))))
+         
+          
+          
+          )))))
 
 
 (defun send-job-error-change-to-fleet-com (job)
@@ -701,7 +722,11 @@
             (fleet-type ,(tenth request))
             (sub-state ,(nth 10 request))
             (current-symbolic-position ,(nth 11 request))
-            (is-job-on-time ,(nth 12 request)) ))
+            (is-job-on-time ,(nth 12 request)) 
+            (pos ,(nth 13 request))
+            ))
+      	;(format t "TIMO STATE IS ~s ~%" (get-value(tcl-kb-update :key '(is-a name) :value `((is-a robot)(name ,(second request)))) 'state))
+      	(format t "TIMO STATE IS ~s ~%" (fifth request))
       )
 	
       ((equal (first request) 'AddRequest)
