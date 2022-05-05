@@ -140,8 +140,8 @@ COMP -> movePTUSendServiceOut->send(data);
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>robotName</b></td>
 <td style="border:1px solid black; padding: 5px;">String</td>
-<td style="border:1px solid black; padding: 5px;">"PTU"</td>
-<td style="border:1px solid black; padding: 5px;"><p>the PTU must be in children of an extra robot with this name, controller "&lt;extern&gt;" and supervisor TRUE
+<td style="border:1px solid black; padding: 5px;">"PanTiltUnit"</td>
+<td style="border:1px solid black; padding: 5px;"><p>the controller name of PanTiltUnit.proto
 </p></td>
 </tr>
 </table>

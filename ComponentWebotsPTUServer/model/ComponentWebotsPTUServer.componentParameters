@@ -1,8 +1,8 @@
 ComponentParameter ComponentWebotsPTUServerParams component ComponentWebotsPTUServer
 {
 	InternalParameter webots {
-		/** the PTU must be in children of an extra robot with this name, controller "&lt;extern&gt;" and supervisor TRUE */
-  		robotName : String = "PTU"
+		/** the controller name of PanTiltUnit.proto */
+  		robotName : String = "PanTiltUnit"
 	}
 	ParameterSetInstance DomainPTU.PTUParameter {
 		ParameterInstance ACCELERATION_PAN {

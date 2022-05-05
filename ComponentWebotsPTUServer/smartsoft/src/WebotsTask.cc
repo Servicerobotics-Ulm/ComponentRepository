@@ -139,6 +139,14 @@ int WebotsTask::on_execute() {
         std::cerr << "Webots Robot '" << name << "' not found" << std::endl;
         return -1;
     }
+    Node *node = robot->getSelf();
+    Field *panRotation = node->getField("panRotation");
+    Field *tiltRotation = node->getField("tiltRotation");
+    if(!panRotation || !tiltRotation) {
+        std::cerr << "field panRotation or tiltRotation not found (is it PanTiltUnit.proto ?)" << std::endl;
+        return -1;
+    }
+    std::cout << "\033[0;32mConnected\033[0m" << std::endl;
 
     panMinStop = -2.77;
     panMaxStop = 2.77;
@@ -213,11 +221,14 @@ int WebotsTask::on_execute() {
                 diff = diff > 0 ? maxDiff : -maxDiff;
             tiltPosition = tiltPosition + diff;
             posReached = abs(panPosition - panTargetPosition) < 0.002 && abs(tiltPosition - tiltTargetPosition) < 0.002;
-            // todo: change these to parameters or args from robot
-            const double panRotation[4] = {0, 1, 0, panPosition};
-            robot->getFromDef("PanRotate")->getField("rotation")->setSFRotation(panRotation);
-            const double tiltRotation[4] = {0, 0, -1, tiltPosition};
-            robot->getFromDef("TiltRotate")->getField("rotation")->setSFRotation(tiltRotation);
+
+            const double* oldPanRotation = panRotation -> getSFRotation();
+            const double newPanRotation[4] = {oldPanRotation[0], oldPanRotation[1], oldPanRotation[2], panPosition};
+            panRotation->setSFRotation(newPanRotation);
+
+            const double* oldTiltRotation = tiltRotation -> getSFRotation();
+            const double newTiltRotation[4] = {oldTiltRotation[0], oldTiltRotation[1], oldTiltRotation[2], tiltPosition};
+            tiltRotation->setSFRotation(newTiltRotation);
         }
         if (posReached)
             waitTillPosReached.notify_all();
