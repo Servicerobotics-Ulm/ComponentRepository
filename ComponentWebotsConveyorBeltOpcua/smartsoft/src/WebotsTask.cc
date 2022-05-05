@@ -203,11 +203,11 @@ int WebotsTask::on_execute() {
         int stationNr = stations->getCount();
         while(stationNr--) {
           stationNode = stations->getMFNode(stationNr);
-          webots::Field *idField = stationNode->getField("id");
+          webots::Field *idField = stationNode->getField("name");
           if(idField==NULL) {
-            std::cerr << (stationNr+1) << ". children in Editor Stations is wrong (has no id field)"
+            std::cerr << (stationNr+1) << ". children in Editor Stations is wrong (has no name field)"
                 << std::endl;
-          } else if(idField->getSFInt32() == stationId)
+          } else if(idField->getSFString() == to_string(stationId))
               break;
         }
         string nameVector = "";
