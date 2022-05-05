@@ -132,6 +132,20 @@ COMP->navigationVelocityServiceOut->send(navigationVelocity);
 - [SmartPioneerBaseServer](../SmartPioneerBaseServer)
 - [SmartGazeboBaseServer](../SmartGazeboBaseServer)
 
+### keyboard control:
+
+* set [internal parameter webots](#internal-parameter-webots) keyboardControl to true
+* click in graphical window of webots (to select one of several mobile robots, click on it)
+* press <kbd>X</kbd> or <kbd>C</kbd> to turn on acceleration mode or fixed speed mode (the robot will now stop moving on its own, waiting for you to press a key)
+* press <kbd>W</kbd> or <kbd>&#8593;</kbd> to move forwards
+* press <kbd>S</kbd> or <kbd>&#8595;</kbd> to move backwards
+* press <kbd>A</kbd> or <kbd>&#8592;</kbd> to rotate left (counterclockwise)
+* press <kbd>D</kbd> or <kbd>&#8594;</kbd> to rotate right (clockwise)
+* press <kbd>Q</kbd> to move sideways left (not possible for robots with only 2 wheels)
+* press <kbd>E</kbd> to move sideways left (not possible for robots with only 2 wheels)
+* to stop the robot in acceleration mode, press <kbd>SPACE</kbd>
+* press <kbd>Y</kbd> to turn off acceleration mode/fixed speed mode (the robot can now move on its own again)
+
 
 
 ## Component-Datasheet Properties
@@ -299,10 +313,7 @@ COMP->navigationVelocityServiceOut->send(navigationVelocity);
 <td style="border:1px solid black; padding: 5px;"><b>keyboardControl</b></td>
 <td style="border:1px solid black; padding: 5px;">Boolean</td>
 <td style="border:1px solid black; padding: 5px;">true</td>
-<td style="border:1px solid black; padding: 5px;"><p>if true, the following keys are enabled:
- <ul><li>Y key: robot moves itself (no keyboard movement, default).</li>
- <li>X key: accelerate robot by arrow or WASD keys (QE sideways, press space to stop).</li>
- <li>C key: move robot by arrow or WASD keys (QE sideways).</li></ul>
+<td style="border:1px solid black; padding: 5px;"><p>see keyboard control above
 </p>
 <p></p></td>
 </tr>

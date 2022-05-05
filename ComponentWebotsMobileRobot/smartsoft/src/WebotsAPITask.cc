@@ -52,6 +52,7 @@
 
 #include <webots/Node.hpp>
 #include <webots/Pen.hpp>
+#include <webots/utils/AnsiCodes.hpp>
 
 using namespace webots;
 
@@ -383,6 +384,8 @@ int WebotsAPITask::on_execute() {
                 keySpeedLevels = webotsRobot->getBasicTimeStep() / 2000.0;
             if (key == 'C') // reach max speed at once
                 keySpeedLevels = 1;
+            if(webotsMotors.size()==2)
+                ky = 0; // ignore sideways keys in case of differential drive
         }
         // start lock
         {
@@ -567,6 +570,17 @@ int WebotsAPITask::on_execute() {
             } else {
                 std::cout << "Speed control  v=" << std::setw(5) << targetSpeed[0] << " m/s (left=" << targetSpeed[1] << " m/s) " << std::setw(5) << targetSpeed[2] << " rad/s";
             }
+            if(std::isnan(targetSpeed[0]) || std::isnan(targetSpeed[1]) || std::isnan(targetSpeed[2])) {
+                std::cerr << AnsiCodes::RED_FOREGROUND << " warning: not a number speed vx=" << targetSpeed[0]
+                          << " vy=" << targetSpeed[1] << " vOmega=" << targetSpeed[2] << AnsiCodes::RESET << std::endl;
+                targetSpeed[0] = targetSpeed[1] = targetSpeed[2] = 0.0;
+            }
+            if(webotsMotors.size()==2 && targetSpeed[1] != 0.0) {
+                std::cerr << AnsiCodes::RED_FOREGROUND << " warning: impossible target speed vx=" << targetSpeed[0]
+                          << " vy=" << targetSpeed[1] << " for differential drive (vy must be zero as robot can't drive sideways)" << AnsiCodes::RESET << std::endl;
+                targetSpeed[0] = targetSpeed[1] = targetSpeed[2] = 0.0;
+            }
+
             CommBasicObjects::CommBasePose basePose = COMP->robot->getBasePosition();
             double headingError = -basePose.get_base_azimuth() + newRealPose.heading;
             headingError += 4 * M_PI;
@@ -589,6 +603,8 @@ int WebotsAPITask::on_execute() {
                     targetSpeed[i] = -speedLimit[i];
             double maxSteps = 0;
             for (int i = 3; i--;) {
+                if(i==1 && webotsMotors.size()==2)
+                    continue; // this robot has no sideways acceleration
                 double stepsNeeded = abs(targetSpeed[i] - actualSpeed[i])
                     / (maxAcceleration[i] * (webotsRobot->getBasicTimeStep() / 1000.0));
                 if (stepsNeeded > maxSteps)

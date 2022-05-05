@@ -128,6 +128,20 @@ COMP->navigationVelocityServiceOut->send(navigationVelocity);
 - [SmartPioneerBaseServer](../SmartPioneerBaseServer)
 - [SmartGazeboBaseServer](../SmartGazeboBaseServer)
 
+### keyboard control:
+
+* set [internal parameter webots](#internal-parameter-webots) keyboardControl to true
+* click in graphical window of webots (to select one of several mobile robots, click on it)
+* press <kbd>X</kbd> or <kbd>C</kbd> to turn on acceleration mode or fixed speed mode (the robot will now stop moving on its own, waiting for you to press a key)
+* press <kbd>W</kbd> or <kbd>&#8593;</kbd> to move forwards
+* press <kbd>S</kbd> or <kbd>&#8595;</kbd> to move backwards
+* press <kbd>A</kbd> or <kbd>&#8592;</kbd> to rotate left (counterclockwise)
+* press <kbd>D</kbd> or <kbd>&#8594;</kbd> to rotate right (clockwise)
+* press <kbd>Q</kbd> to move sideways left (not possible for robots with only 2 wheels)
+* press <kbd>E</kbd> to move sideways left (not possible for robots with only 2 wheels)
+* to stop the robot in acceleration mode, press <kbd>SPACE</kbd>
+* press <kbd>Y</kbd> to turn off acceleration mode/fixed speed mode (the robot can now move on its own again)
+
 "
 	DatasheetProperty MarketName {
 		value "Webots mobile robot"
