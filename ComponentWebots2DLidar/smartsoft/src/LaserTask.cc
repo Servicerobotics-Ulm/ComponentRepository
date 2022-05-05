@@ -85,9 +85,6 @@ int LaserTask::on_entry() {
             webotsLidar->enable(webotsRobot->getBasicTimeStep());
             webotsLidar->enablePointCloud();
             std::cout << "Device #" << i << " called " << lidarName << " is a lidar." << std::endl;
-            // set Webots sensor's properties to SmartMDSD model
-            // useful doc:
-            // http://servicerobotik-ulm.de/drupal/doxygen/components_commrep/classCommBasicObjects_1_1CommMobileLaserScan.html
             horizontalResolution = webotsLidar->getHorizontalResolution();
             numberValidPoints = webotsLidar->getNumberOfPoints();
             double hfov_deg = webotsLidar->getFov() * 180 / M_PI;
@@ -132,12 +129,13 @@ int LaserTask::on_entry() {
     std::cout << "-----------------------------------------------------------------" << std::endl;
     std::cout << std::setw(40) << "Laser Parameters" << std::endl;
     std::cout << "-----------------------------------------------------------------" << std::endl;
-    std::cout << std::setw(25) << "Number of rays" << " = " << opening_angle / resolution << std::endl;
-    std::cout << std::setw(25) << "Horizontal Field of View" << " = " << opening_angle << " degrees" << std::endl;
-    std::cout << std::setw(25) << "Angle resolution" << " = " << resolution << " degrees" << std::endl;
-    std::cout << std::setw(25) << "Start_angle" << " = " << -0.5 * opening_angle << std::endl;
-    std::cout << std::setw(25) << "Max distance" << " = " << min_range / 1000.0 << " meters" << std::endl;
-    std::cout << std::setw(25) << "Min distance" << " = " << max_range / 1000.0 << " meters" << std::endl;
+    std::cout << std::setw(25) << "Angle resolution = " << resolution << " degrees" << std::endl;
+    std::cout << std::setw(25) << "Horizontal Field of View = " << opening_angle << " degrees" << std::endl;
+    std::cout << std::setw(25) << "Number of rays = " << (opening_angle / resolution + 1) << std::endl;
+    std::cout << std::setw(25) << "Start_angle = " << -0.5 * opening_angle << std::endl;
+    std::cout << std::setw(25) << "End_angle = " << 0.5 * opening_angle << std::endl;
+    std::cout << std::setw(25) << "Min distance = " << min_range / 1000.0 << " meters" << std::endl;
+    std::cout << std::setw(25) << "Max distance = " << max_range / 1000.0 << " meters" << std::endl;
     std::cout << "-----------------------------------------------------------------" << std::endl;
 
     lastTimeStep = CommBasicObjects::CommTimeStamp::now();
@@ -155,9 +153,20 @@ int LaserTask::on_entry() {
  *      but in smartsoft the opening_angle is set to 120 degrees, some points at the left/right side are not returned.
  *      resolution can be reduced too.
  *
- * note: webots calculates the number of rays = opening_angle / resolution,
- *       but real lidar (e.g. Sick LMS 200) and smartsoft use 1 + opening_angle / resolution
- *       e.g. opening_angle = 180, resolution = 0.5 => max. number data points = 361
+ * ray angles should be
+ *   -opening_angle/2
+ *   -opening_angle/2  + 1*resolution
+ *   -opening_angle/2 + 2*resolution
+ *   ...
+ *   +opening_angle/2 - 2*resolution
+ *   +opening_angle/2 - 1*resolution
+ *   +opening_angle/2
+ *
+ * => opening_angle/resolution must be a integer (whole number)
+ *
+ * opening_angle = 180, resolution = 0.5 => max. number data points = 361
+ * => webots horizontalResolution must be set to 1+(opening_angle/resolution)
+ * (note: webots inbuild lidars often use opening_angle/resolution as formula)
  *
  * what happens if there is no obstacle between minRange and maxRange of the lidar ray?
  *   webots will return infinity as distance (even in case obstacle < minRange)
@@ -178,12 +187,13 @@ int LaserTask::on_execute() {
             allData[i] = _allData[allScans - 1 - i] * M_TO_MM / length_unit;
         double ranger_opening_angle = webotsLidar->getFov() / M_PI * 180;
 
-        if (COMP->getGlobalState().getScanner().getVerbose())
-            std::cout << "set scan parameters\n";
+        const int rangerScans = 1 + std::round(ranger_opening_angle / resolution);
 
-        const int desiredScans = 1 + opening_angle / resolution;
-        const int rangerScans = 1 + ranger_opening_angle / resolution;
-
+        // if resolution of webots lidar is higher than resolution in parameters,
+        // only use a part of data points
+        // e.g. resolution lidar = 0.25 degrees
+        //      resolution parameter = 0.5 degrees
+        //      => only use every 2. data point
         int fewerScans = rangerScans;
         if (fewerScans > allScans)
             fewerScans = allScans;
@@ -191,15 +201,18 @@ int LaserTask::on_execute() {
         for (int i = 0; i < fewerScans; i++)
             fewerData[i] = allData[i * allScans / fewerScans];
 
+        const int desiredScans = 1 + std::round(opening_angle / resolution);
+
+        // if opening angle of webots lidar is higher than opening angle in parameters,
+        // only use a part of data points
+        // e.g. only use 70 out of 100 points:
+        // use only [15..85[ from [0..100[
+
         const int firstScanIndex = (rangerScans - desiredScans) * 0.5;
         int lastScanIndex = rangerScans - firstScanIndex;
 
         if (lastScanIndex > fewerScans)
             lastScanIndex = fewerScans;
-
-        if (COMP->getGlobalState().getScanner().getVerbose()) {
-            std::cout << "Read scans: " << fewerScans << "\n";
-        }
 
         int num_valid_points = 0;
         for (int i = firstScanIndex; i < lastScanIndex; ++i) {
@@ -208,9 +221,9 @@ int LaserTask::on_execute() {
                 ++num_valid_points;
             }
         }
-        if (COMP->getGlobalState().getScanner().getVerbose())
-            std::cout << "valid_points:" << num_valid_points << " allScans:" << allScans << " desiredScans:"
-                << desiredScans << " rangerScans:" << rangerScans << " resolution:" << resolution << std::endl;
+        if (COMP->getGlobalState().getScanner().getVerbose()) {
+//            std::cout << num_valid_points << " of " << desiredScans << " are valid" << std::endl;
+        }
 
         // webots is updating the physics world only every timeStep,
         // so scanning was done last timeStep
@@ -241,20 +254,18 @@ int LaserTask::on_execute() {
 
         bool scan_is_valid = false;
 
-        if (COMP->getGlobalState().getScanner().getVerbose())
-            std::cout << "[LaserTask] set base state\n";
-
         // read base state from base server
         if (COMP->getGlobalState().getBase_manipulator().getOn_base()) {
             Smart::StatusCode status = COMP->baseStateServiceIn->getUpdate(base_state);
             if (status == Smart::SMART_OK) {
                 scan_is_valid = true;
 
-                if (COMP->getGlobalState().getScanner().getVerbose()) {
+/*                if (COMP->getGlobalState().getScanner().getVerbose()) {
                     //std::cout << base_state << "\n";
                     std::cout << "Odom from Base State : " << base_state.get_base_raw_position() << std::endl;
-                    std::cout << "POse from Base State : " << base_state.get_base_position() << std::endl;
+                    std::cout << "Pose from Base State : " << base_state.get_base_position() << std::endl;
                 }
+*/
             } else {
                 std::cerr << "[LaserTask] WARNING: failed to get current base state ("
                     << Smart::StatusCodeConversion(status) << "), pushing invalid scan" << std::endl;
@@ -327,8 +338,6 @@ int LaserTask::on_execute() {
         //////////////////////////
         // send scan to clients
         //////////////////////////
-        if (COMP->getGlobalState().getScanner().getVerbose())
-            std::cout << "[LaserTask] send scan to clients\n";
 
         if (COMP->getGlobalState().getServices().getActivate_push_newest()) {
             Smart::StatusCode push_status = COMP->laserServiceOut->put(scan);
