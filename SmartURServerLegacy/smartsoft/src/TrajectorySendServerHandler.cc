@@ -50,7 +50,9 @@
 #include "UniversalRobotic.hh"
 #include "SmartURServerLegacy.hh"
 
-TrajectorySendServerHandler::TrajectorySendServerHandler(Smart::InputSubject<CommManipulatorObjects::CommManipulatorTrajectory> *subject, const int &prescaleFactor)
+#include <iostream>
+
+TrajectorySendServerHandler::TrajectorySendServerHandler(Smart::InputSubject<CommManipulatorObjects::CommManipulationTrajectory> *subject, const int &prescaleFactor)
 :	TrajectorySendServerHandlerCore(subject, prescaleFactor)
 {
 	std::cout << "constructor TrajectorySendServerHandler\n";
@@ -60,7 +62,7 @@ TrajectorySendServerHandler::~TrajectorySendServerHandler()
 	std::cout << "destructor TrajectorySendServerHandler\n";
 }
 
-void TrajectorySendServerHandler::on_trajectorySendServer(const CommManipulatorObjects::CommManipulatorTrajectory &input)
+void TrajectorySendServerHandler::on_trajectorySendServer(const CommManipulatorObjects::CommManipulationTrajectory &input)
 {
 	// ------------------------------------------------
 	// check if activated. If not, do nothing with the

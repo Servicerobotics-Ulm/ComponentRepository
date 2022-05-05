@@ -204,7 +204,7 @@ void UniversalRobotic::calibrate()
 	tcsetattr(kfd, TCSANOW, &cooked);
 }
 
-void UniversalRobotic::performTrajectory(const CommManipulatorObjects::CommManipulatorTrajectory &trajectory)
+void UniversalRobotic::performTrajectory(const CommManipulatorObjects::CommManipulationTrajectory &trajectory)
 {
 	std::cout<<"GO"<<std::endl;
 	// first apply global parameters
@@ -300,6 +300,7 @@ void UniversalRobotic::getCurrentState(CommManipulatorObjects::CommManipulatorSt
 	double yaw,pitch,roll; //converted euler angles
 
 	EulerTransformationMatrices::normalize_angle_axis(data->cartesianInfo.rx, data->cartesianInfo.ry, data->cartesianInfo.rz, angle_axis_rot_angle, nx, ny,nz);
+	std::cout << "rx,y,z :"<<data->cartesianInfo.rx << ", "<< data->cartesianInfo.ry << ", "<<data->cartesianInfo.rz<<std::endl;
 
 	EulerTransformationMatrices::angle_axis_to_euler_angels_ZYX(nx, ny, nz, angle_axis_rot_angle, yaw, pitch, roll);
 
@@ -484,7 +485,7 @@ UniversalRobotic::UniversalRobotic()
 	goal_reached = false;
 }
 
-void UniversalRobotic::performTrajectoryJointAngles(const CommManipulatorObjects::CommManipulatorTrajectory& trajectory)
+void UniversalRobotic::performTrajectoryJointAngles(const CommManipulatorObjects::CommManipulationTrajectory& trajectory)
 {
 	std::cout<<"UniversalRobotic::performTrajectoryJointAngles"<<std::endl;
 	if (trajectory.get_trajectory_size() > 0 && trajectory.get_joint_count() == manipulator->getJointCount())
@@ -570,7 +571,7 @@ void UniversalRobotic::sendProgram(const std::string& program){
 	manipulator->sendProgram(program);
 }
 
-void UniversalRobotic::performTrajectoryPoseTCP(const CommManipulatorObjects::CommManipulatorTrajectory& trajectory)
+void UniversalRobotic::performTrajectoryPoseTCP(const CommManipulatorObjects::CommManipulationTrajectory& trajectory)
 {
 	target_pose.clear();
 	target_joint_angles.clear();
@@ -580,7 +581,7 @@ void UniversalRobotic::performTrajectoryPoseTCP(const CommManipulatorObjects::Co
 	arma::mat tcp_robot;
 	double x, y, z, azimuth, elevation, roll;
 
-	trajectory.get_pose_TCP_robot(x, y, z, azimuth, elevation, roll, 0.001); // get pose in mm
+	trajectory.get_first_pose_TCP_robot(x, y, z, azimuth, elevation, roll, 0.001); // get pose in mm
 
 	EulerTransformationMatrices::create_zyx_matrix(x, y, z, azimuth, elevation, roll, tcp_robot);
 

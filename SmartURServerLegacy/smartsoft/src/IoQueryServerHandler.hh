@@ -52,8 +52,8 @@ class IoQueryServerHandler : public IoQueryServerHandlerCore
 {
 protected:
 public:
-	IoQueryServerHandler(Smart::IQueryServerPattern<CommBasicObjects::CommIOValues, CommBasicObjects::CommIOValues>* server);
-	virtual ~IoQueryServerHandler();
-	virtual void handleQuery(const Smart::QueryIdPtr &id, const CommBasicObjects::CommIOValues& request);
+	IoQueryServerHandler(IQueryServer *server);
+	virtual ~IoQueryServerHandler() = default;
+	virtual void handleQuery(const QueryId &id, const CommBasicObjects::CommIOValues& request);
 };
 #endif

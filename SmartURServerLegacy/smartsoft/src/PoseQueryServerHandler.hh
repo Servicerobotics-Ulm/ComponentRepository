@@ -47,15 +47,14 @@
 		
 #include "PoseQueryServerHandlerCore.hh"
 
-#include <CommBasicObjects/CommBaseState.hh>
 
 class PoseQueryServerHandler : public PoseQueryServerHandlerCore
 {
 protected:
 	CommBasicObjects::CommBaseState default_baseState;
 public:
-	PoseQueryServerHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorState>* server);
-	virtual ~PoseQueryServerHandler();
-	virtual void handleQuery(const Smart::QueryIdPtr &id, const CommBasicObjects::CommVoid& request);
+	PoseQueryServerHandler(IQueryServer *server);
+	virtual ~PoseQueryServerHandler() = default;
+	virtual void handleQuery(const QueryId &id, const CommBasicObjects::CommVoid& request);
 };
 #endif

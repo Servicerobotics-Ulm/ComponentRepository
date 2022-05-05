@@ -48,13 +48,8 @@
 
 #include "UniversalRobotic.hh"
 
-IoQueryServerHandler::IoQueryServerHandler(Smart::IQueryServerPattern<CommBasicObjects::CommIOValues, CommBasicObjects::CommIOValues>* server)
+IoQueryServerHandler::IoQueryServerHandler(IQueryServer *server)
 :	IoQueryServerHandlerCore(server)
-{
-	
-}
-
-IoQueryServerHandler::~IoQueryServerHandler()
 {
 	
 }

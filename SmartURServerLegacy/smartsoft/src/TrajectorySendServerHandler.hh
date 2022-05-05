@@ -51,10 +51,10 @@
 class TrajectorySendServerHandler  : public TrajectorySendServerHandlerCore
 {		
 public:
-	TrajectorySendServerHandler(Smart::InputSubject<CommManipulatorObjects::CommManipulatorTrajectory> *subject, const int &prescaleFactor=1);
+	TrajectorySendServerHandler(Smart::InputSubject<CommManipulatorObjects::CommManipulationTrajectory> *subject, const int &prescaleFactor=1);
 	virtual ~TrajectorySendServerHandler();
 	
-	virtual void on_trajectorySendServer(const CommManipulatorObjects::CommManipulatorTrajectory &input);
+	virtual void on_trajectorySendServer(const CommManipulatorObjects::CommManipulationTrajectory &input);
 };
 
 #endif

@@ -64,7 +64,7 @@
 // communication 0bjects
 #include <CommManipulatorObjects/CommManipulatorState.hh>
 #include <CommManipulatorObjects/CommManipulatorEventState.hh>
-#include <CommManipulatorObjects/CommManipulatorTrajectory.hh>
+#include <CommManipulatorObjects/CommManipulationTrajectory.hh>
 
 #include "driver/URManipulator.hh"
 
@@ -206,7 +206,7 @@ public:
 	 *
 	 * @param trajectory The trajectory which should be performed
 	 */
-	void performTrajectory(const CommManipulatorObjects::CommManipulatorTrajectory &trajectory);
+	void performTrajectory(const CommManipulatorObjects::CommManipulationTrajectory &trajectory);
 
 	/**
 	 * Reads the current state if possible from the UniversalRobotic. If it is not possible
@@ -269,9 +269,9 @@ private:
 
 	void adjustTrajectory(std::list<TrajElement>& trajectory);
 
-	void performTrajectoryJointAngles(const CommManipulatorObjects::CommManipulatorTrajectory& trajectory);
+	void performTrajectoryJointAngles(const CommManipulatorObjects::CommManipulationTrajectory& trajectory);
 
-	void performTrajectoryPoseTCP(const CommManipulatorObjects::CommManipulatorTrajectory& trajectory);
+	void performTrajectoryPoseTCP(const CommManipulatorObjects::CommManipulationTrajectory& trajectory);
 
 	void checkState(std::shared_ptr<PrimaryAndSecondaryClientInterfaceParser::ClientInterfaceData> data);
 
