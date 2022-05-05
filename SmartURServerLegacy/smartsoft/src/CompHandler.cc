@@ -50,14 +50,14 @@
 #include <CommBasicObjects/CommDigitalInputEventParameter.hh>
 #include <CommBasicObjects/CommDigitalInputEventResult.hh>
 #include <CommBasicObjects/CommDigitalInputEventState.hh>
+#include <CommBasicObjects/CommIOValues.hh>
+#include <CommManipulatorObjects/CommManipulationTrajectory.hh>
 #include <CommManipulatorObjects/CommManipulatorEventParameter.hh>
 #include <CommManipulatorObjects/CommManipulatorEventResult.hh>
 #include <CommManipulatorObjects/CommManipulatorEventState.hh>
-#include <CommManipulatorObjects/CommManipulatorId.hh>
-#include <CommManipulatorObjects/CommManipulatorRequestScan3d.hh>
-#include <CommManipulatorObjects/CommManipulatorTrajectory.hh>
+#include <CommManipulatorObjects/CommMobileManipulatorPrograms.hh>
 #include <CommManipulatorObjects/CommMobileManipulatorState.hh>
-#include <CommManipulatorObjects/CommScanEventState.hh>
+
 #include <CommBasicObjects/CommVoid.hh>
 
 #include "UniversalRobotic.hh"

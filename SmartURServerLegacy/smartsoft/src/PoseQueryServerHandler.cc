@@ -49,7 +49,7 @@
 
 #include "UniversalRobotic.hh"
 
-PoseQueryServerHandler::PoseQueryServerHandler(Smart::IQueryServerPattern<CommBasicObjects::CommVoid, CommManipulatorObjects::CommMobileManipulatorState>* server)
+PoseQueryServerHandler::PoseQueryServerHandler(IQueryServer *server)
 :	PoseQueryServerHandlerCore(server)
 {
 	CommBasicObjects::CommBasePose default_base_position;
@@ -72,12 +72,6 @@ PoseQueryServerHandler::PoseQueryServerHandler(Smart::IQueryServerPattern<CommBa
 
 	default_baseState.set_base_position(default_base_position);
 	default_baseState.set_base_velocity(zero_velocity);
-
-}
-
-PoseQueryServerHandler::~PoseQueryServerHandler()
-{
-
 }
 
 
