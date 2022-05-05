@@ -4,7 +4,7 @@ ComponentParameter ComponentWebots component ComponentWebots
 		/** The webots simulator will load this world file (path and filename of an .wbt file). */
 		WorldPath:String = "$SMART_ROOT_ACE/repos/DataRepository/webots/worlds/ConveyorBeltIntralogistic.wbt"
 		
-		/** enable editor to edit locations, stations, paths etc. ? */
-		enableEditor : Boolean = false		
+		/** is Editor node present in world file ? */
+		isEditorPresent : Boolean = false		
 	}
 }

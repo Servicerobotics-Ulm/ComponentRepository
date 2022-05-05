@@ -11,4 +11,8 @@ Activity EditorTask
 	}
 OutputPort NavPathServiceOut implements DomainRobotFleetNavigation.NavPathService realizedBy EditorTask {
 	}
+InputPort BaseStateServiceIn implements CommBasicObjects.BaseStateService {
+	}
+InputPort CurrGridMapPushServiceIn implements CommNavigationObjects.CurrGridMapPushService {
+	}
 }
