@@ -156,20 +156,22 @@ int DockingTask::on_execute() {
         if (selected)
             continue;
 */
-        std::cout << " minDistance " << minDistance << " Calculating Nearest station" << std::endl;
+        std::cout << "   ***\n   ***\nminDistance " << minDistance << " Calculating Nearest station" << std::endl;
         for(int i=stations->getCount(); i--;) {
           webots::Node *station = stations->getMFNode(i);
-          webots::Node *node = station->getFromProtoDef("DockingPoint");
-          if (node == NULL) {
-            std::cerr << (i+1) << ". children in Editor Stations is wrong (has no DEF DockingPoint inside proto)" << std::endl;
-            if (program == prDocking) {
-              sendEvent(CommRobotinoObjects::RobotinoDockingEventType::LASER_DOCKING_ERROR);
-            }
-            else {
-            	sendEvent(CommRobotinoObjects::RobotinoDockingEventType::UN_DOCKING_ERROR);
-            }
-           return 1; // stop thread
+          webots::Field* locations = station->getField("Locations");
+
+          if(!locations || !locations->getCount()) {
+              std::cerr << (i+1) << ". children in Stations is wrong (has no or empty Locations field)" << station->getTypeName() << std::endl;
+              if (program == prDocking) {
+                sendEvent(CommRobotinoObjects::RobotinoDockingEventType::LASER_DOCKING_ERROR);
+              }
+              else {
+                  sendEvent(CommRobotinoObjects::RobotinoDockingEventType::UN_DOCKING_ERROR);
+              }
+             return 1; // stop thread
           }
+          webots::Node *node = locations->getMFNode(0);
           const double *position = node->getPosition();
           const double *orientation = node->getOrientation();
           double relativ[3];
@@ -189,35 +191,36 @@ int DockingTask::on_execute() {
           sendEvent(CommRobotinoObjects::RobotinoDockingEventType::LASER_DOCKING_ERROR);
           program = prNeutral;
         } else {
-          Pose2D poseDocking = getNodePose(bestDocking);
-          Pose2D pose2 = getNodePose(bestStation);
+          Pose2D undockingPose = getNodePose(bestDocking);
+          Pose2D stationPose = getNodePose(bestStation);
           // how docking is done: (undocking is reverse)
-          // 1) mobile robot drives near to a point half a meter in front of station (called 'undocking point') by other components/behavior
+          // 1) mobile robot drives near to a point in front of station (half a meter space to station, called 'undocking point') by other components/behavior
           // 2) state is changed to laserDocking or irDocking (prDocking)
-          // 3) drive a few millimeters in front of station (called 'docking point') by this component
+          // 3) drive exactly to a point in front of station (a view millimeters space to station, called 'docking point') by this component
           // (docking drives from actual mobile robot position to docking point. undocking drives to undocking point)
           // station center point and docking point are directly read from webots
           // the undocking point is calculated based on them:
 
-          //            old pose2        poseDocking          new pose2
-          // station center point      docking point    undocking point
+          //          stationPose        dockingPose         undockingPose
           //                |                  |                  |
-          //                X------------------X------------------X
-          //                0                  0.774              0.774*1.6
-          pose2.x += (poseDocking.x - pose2.x) * 1.6;
-          pose2.y += (poseDocking.y - pose2.y) * 1.6;
-          // robot heading must be opposite direction to docking station heading
-          pose2.heading += M_PI;
-          poseDocking.heading = pose2.heading;
+          //                +------------------+------------------+
+          //                0m                 0.775m             1.24m   distance to station center point
+
+          // todo: add docking pose as Location in Station
+          Pose2D dockingPose;
+          dockingPose.x = stationPose.x + cos(stationPose.heading) * 0.775;
+          dockingPose.y = stationPose.y + sin(stationPose.heading) * 0.775;
+          dockingPose.heading = stationPose.heading + M_PI;
           if (program == prDocking) {
-            targetPose = poseDocking;
+            targetPose = dockingPose;
             sendEvent(CommRobotinoObjects::RobotinoDockingEventType::LASER_DOCKING_NOT_DONE);
           } else {
-            targetPose = pose2;
+            targetPose = undockingPose;
             sendEvent(CommRobotinoObjects::RobotinoDockingEventType::UN_DOCKING_NOT_DONE);
           }
-          std::cout << "point half a meter in front of station x:" << pose2.x << " y:" << pose2.y << " heading:" << pose2.heading << std::endl;
-          std::cout << "point directly in front of station x:" << poseDocking.x << " y:" << poseDocking.y << " heading:" << poseDocking.heading << std::endl;
+          std::cout << "center point of station:" << stationPose.x << " y:" << stationPose.y << " heading:" << stationPose.heading << std::endl;
+          std::cout << "point half a meter in front of station x:" << undockingPose.x << " y:" << undockingPose.y << " heading:" << undockingPose.heading << std::endl;
+          std::cout << "point directly in front of station x:" << dockingPose.x << " y:" << dockingPose.y << " heading:" << dockingPose.heading << std::endl;
         }
         programCounter = 1;
       }
