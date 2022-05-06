@@ -238,7 +238,7 @@
             (tcl-state :server 'mpsdocking :state "UnDocking"))))
             
             
-(define-tcb (tcb-mps-station-unload-belts ?stationid)
+(define-tcb (tcb-mps-station-unload ?stationid)
   (module "MPSModule")
   (abort-action ( (format t "=========================>>> ABORT ACTION tcb-mps-station-unload-belts~%")
                   (tcl-state :server 'BELT :state "Neutral")))
