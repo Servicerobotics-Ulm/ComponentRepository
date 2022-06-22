@@ -15,19 +15,12 @@
 	make -j4
 	sudo make install
 
-	install gtsam  (recommended)
-	# Add PPA
-	sudo add-apt-repository ppa:borglab/gtsam-release-4.0
-	sudo apt update  # not necessary since Bionic
-	# Install:
-	sudo apt install libgtsam-dev libgtsam-unstable-dev
 
 2)Build and install rtab-map form source:
 
 	git clone https://github.com/introlab/rtabmap.git rtabmap
 	cd rtabmap/build
 	cmake ..
-	cmake -DGTSAM_BUILD_WITH_MARCH_NATIVE=OFF -DGTSAM_USE_SYSTEM_EIGEN=ON
 	make -j4
 	sudo make install
 	
