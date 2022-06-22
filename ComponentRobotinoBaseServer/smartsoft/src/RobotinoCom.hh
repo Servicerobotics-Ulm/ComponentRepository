@@ -39,7 +39,19 @@ public:
 	 * @brief Default constructor
 	 */
 	RobotinoCom() :
-		Com("SmartRobotinoBaseServer")
+// api2/Com connectToServer(true) wirf Exception "The connection has been refused."
+// Benutzen Sie den Konstruktor
+//
+// Com(const char* name, bool multiThreadedSerialization, bool localIPCEnabled)
+//
+// also
+//
+// Com("mycom",true,false)
+//
+// Dann werden nur TCP sockets benutzt, so dass auch der normale Nutzer Zugriff hat. Ansonsten werden local sockets (files) benutzt und das braucht root Rechte.
+
+//		Com("SmartRobotinoBaseServer")
+		Com("SmartRobotinoBaseServer", true, false)
 	{
 	}
 

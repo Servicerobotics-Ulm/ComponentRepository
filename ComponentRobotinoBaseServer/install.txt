@@ -1,0 +1,18 @@
+# to compile ComponentRobotinoBaseServer, the API for Robotino must be installed: (Ubuntu 20.04)
+
+# see https://wiki.openrobotino.org/index.php?title=Debrepository
+
+wget -qO - http://packages.openrobotino.org/keyFile | sudo apt-key add -
+
+sudo su
+echo "deb http://packages2.openrobotino.org focal main" > /etc/apt/sources.list.d/openrobotino.list
+exit
+
+# see https://wiki.openrobotino.org/index.php?title=Install_daemons_v3
+
+sudo apt update
+sudo apt install robotino-api2 robotino-dev
+
+# on the Robotino itself, install daemons too:
+# sudo apt install robotino-daemons
+
