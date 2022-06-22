@@ -7,11 +7,6 @@
 
 *Component Short Description:* The SmartJobDispatcher component coordinates a fleet of individual robots operated as autonomous agents.
 
-## Component Documentation
-<p></p>
-<p> The SmartJobDispatcher component coordinates a fleet of individual robots operated as autonomous agents.
-</p>
-<p></p>
 
 ## Component-Datasheet Properties
 
