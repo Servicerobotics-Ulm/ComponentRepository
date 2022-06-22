@@ -48,43 +48,35 @@ int RobotTask::on_entry()
 
 int RobotTask::on_execute()
 {
-
+	double translational_velocity = 0.0; // drive forward speed [mm/s]
+	double rotational_velocity    = 0.0; // rotate counterclockwise speed [radians/s]
+	CommBasicObjects::CommMobileLaserScan laserServiceInObject;
 	Smart::StatusCode status;
 
 	// create a laser communication object and read it from the input port
-	CommBasicObjects::CommMobileLaserScan laserServiceInObject;
 	status = this->laserServiceInGetUpdate(laserServiceInObject);
-
 	if(status != Smart::SMART_OK) {
 		std::cerr << "Getting laser scan failed: " << status << std::endl;
-		sleep(2);
-		return 0;
+	} else {
+		// we got the laser scan and we now call our algorithm
+		// it takes the laser scan as input and calculates translational and rotational velocities
+		std::cout << "laserServiceInGetUpdate: " << status << std::endl;
+		SimpleAvoid::runCycle(laserServiceInObject, translational_velocity, rotational_velocity);
 	}
-
-	// we got the laser scan and we now call our algorithm
-	// it takes the laser scan as input and calculates translational and rotational velocities
-	double translational_velocity =0;
-	double rotational_velocity    =0;
-
-	SimpleAvoid::runCycle(laserServiceInObject,translational_velocity,rotational_velocity);
 
 	// we now fill the communication object for the velocities and
 	// we write the communication object to the output port
 	CommBasicObjects::CommNavigationVelocity comNavVel;
-	Smart::StatusCode status_nav;
 
 	comNavVel.set_vX(translational_velocity, 0.001);
 	comNavVel.set_omega(rotational_velocity);
 
-	std::cout << "translational v : " << translational_velocity	<< std::endl;
-	std::cout << "rotational v    : " << rotational_velocity	<< std::endl;
+	std::cout << "translational_velocity : " << translational_velocity	<< std::endl;
+	std::cout << "rotational_velocity    : " << rotational_velocity	<< std::endl;
 
-	status_nav = this->navigationVelocityServiceOutPut(comNavVel);
-
-	if(status_nav != Smart::SMART_OK) {
-		std::cerr << status << std::endl;
-		std::cout << "Some Error in the Conection as status is not ok " << std::endl;
-		sleep(1);
+	status = this->navigationVelocityServiceOutPut(comNavVel);
+	if(status != Smart::SMART_OK) {
+		std::cerr << "Writing velocity failed: " << status << std::endl;
 	} else {
 		std::cout << "Updating Velocity " << comNavVel << std::endl;
 	}
