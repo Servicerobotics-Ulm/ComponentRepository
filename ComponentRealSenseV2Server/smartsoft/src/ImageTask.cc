@@ -82,6 +82,8 @@ void ImageTask::startCapturing() {
 	if (COMP->smart_rs_device != NULL) {
 		COMP->smart_rs_device->startVideo();
 
+	} else {
+		std::cout << "[Image Task] ERROR: startCapturing() but smart_rs_device is NULL)" << std::endl;
 	}
 	if (COMP->getGlobalState().getSettings().getDebug_info()) {
 		std::cout << "[Image Task] Start capturing\n";
@@ -103,6 +105,7 @@ void ImageTask::stopCapturing() {
 
 int ImageTask::on_entry()
 {
+
 	ParameterStateStruct global_state = COMP->getGlobalState();
 
 	// Calculate size of the ring_buffer
@@ -140,6 +143,7 @@ int ImageTask::on_entry()
 
 //	COMP->smart_rs_device = new RealSenSeWrapper(color_width, color_height, color_framerate,
 //	                                             depth_width, depth_height, depth_framerate);
+	SmartACE::SmartGuard guard(COMP->RealSenseMutex);
 	COMP->smart_rs_device = new RealSenSeWrapper(color_width, color_height, color_framerate,
 				                                 depth_width, depth_height, depth_framerate,
 				                                 device_serial_number, base_line);
