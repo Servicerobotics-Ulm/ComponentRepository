@@ -384,12 +384,22 @@
 (define-tcb (tcb-manual-load)
   (module "MPSModule")
   (action (
-    (format t "=========================>>> Press any key...~%")
+    (format t "=========================>>> Press any key for manual load...~%")
     (read)
-    (update-robot-state :box-loaded 1)
+    ;(update-robot-state :box-loaded 1)
     '(SUCCESS ())
   ))
-)                    
+)
+
+(define-tcb (tcb-manual-unload)
+  (module "MPSModule")
+  (action (
+    (format t "=========================>>> Press any key for manual unload...~%")
+    (read)
+    ;(update-robot-state :box-loaded 1)
+    '(SUCCESS ())
+  ))
+)                       
 
 
 
