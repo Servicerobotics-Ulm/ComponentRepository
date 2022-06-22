@@ -1,0 +1,109 @@
+ComponentDatasheet ComponentVisualization
+{
+	BaseURI "http://www.servicerobotik-ulm.de"
+	ShortDescription "
+
+Displays a visualization of a mobile robot position and path, current or long term map, distance laser, color or depth image, 3D-model from images etc. 
+
+See also [User Guide for the Visualization Component](https://wiki.servicerobotik-ulm.de/tutorials:guide-visualization-of-communication-objects:start)
+
+Often this ComponentVisualization has no links to other Components in the System, but it can connect to other Components during runtime: 
+
+1) in the termial of ComponentVisualization, enter the number 0 to choose 'connect'
+2) enter the number of what you want to display, e.g. 0 for BasePose_push_client (see list below)
+3) enter the number of Component/Port you want to display
+4) output is in another window with icon 'MRPT' and title 'SmartVisualization'
+
+You can do this again to add another thing to the output window, or you can remove things by entering the number 1 to choose 'disconnect' etc.
+It can display a base position of a mobile robot, its map, 3 lasers, etc. at the same time.
+But it can't connect two things of same type at the same time, e.g. after connecting one mobile robot by (0) BasePose_push_client, disconnect it before connecting the second one.
+(ComponentWebots can display multiple mobile robots, but is not as powerful)
+
+## ( 0) BasePose_push_client
+Shows estimated position from a mobile robot like ComponentWebotsMobileRobot, ComponentRobotinoBaseServer etc. (not from SmartPlannerBreathFirstSearch)
+* blue cylinder/arrow = present position/heading (localization) in world frame
+* yellow dots = future positions (based on actual speed/rotation)
+* green line = past path (localization) 
+* red line = past path (odometry only)
+
+## ( 1) GridMap_push_client
+Shows the current map from SmartMapperGridMap:
+* white = free cell
+* blue = inflated (grown) circles or crosses around present obstacles 
+* black = past obstacles (from mapping etc.)
+* red = can't be deleted
+* gray = unknown area 
+
+## ( 2) Laser1_push_client
+Shows where a obstacle is hit from a laser (a rotating lidar with one horizontal layer of rays)
+* green dot = position of reflection in world frame
+
+## ( 3) Laser2_push_client
+like above, but second laser
+
+## ( 4) Laser3_push_client
+like above, but third laser
+
+## ( 5) PersonDetection_query_client
+
+## ( 6) UltraSonic_push_client
+
+## ( 7) Infrared_push_client
+
+## ( 8) LTM_query_client
+LTM = Long Term Map from SmartMapperGridMap
+* white = free cell
+* black = past obstacles (from mapping etc.)
+* red = can't be deleted
+* gray = unknown area 
+
+## ( 9) RGB_image_push_client
+Shows color (RGB) image from a camera like ComponentWebots3DCamera, ComponentKinectV2Server, ComponentRealSenseV2Server etc.
+in a window 'Color Image' or 'RGB Image'.
+
+## (10) RGBD_push_client
+Uses both color (RGB) and depth image from a camera. Shows a colorful 3D-model.
+If the camera is mounted on a mobile robot, the model is relative to the mobile robot frame, but not the world frame.
+
+## (11) Depth_image_push_client
+Shows a depth image from a depth camera in a window 'Depth Image'. Distance is represented by shades of gray, black=minimum distance of camera, white=maximum distance of camera.  
+
+## (12) MarkerDetectionList_client
+
+## (13) ParticleFilterInfo_client
+
+## (14) PlannerGoal_client
+
+## (15) VisualLocalizationMap_client
+
+## (16) PlannerWavefrontGridMap_client
+Shows a map with color-coded directions from SmartPlannerBreathFirstSearch only:
+What is the fastest path from the actual mobile robot position to one of the goal cells if you move from one cell to horizontal/vertical adjacent cells only? 
+The algorithm starts at the goal cells and paints adjacent cells with a color for the correct direction until it finds the actual mobile robot cell. 
+To find the path from a cell (pixel) to the next one towards the goal, look at its color.
+* <span style=\"background-color: rgb(0, 0, 255)\">&nbsp;&nbsp;&nbsp;</span> goal cell
+* <span style=\"background-color: rgb(64, 128, 128)\">&nbsp;&nbsp;&nbsp;</span> first part of path (see below)
+* <span style=\"background-color: rgb(0, 0, 0)\">&nbsp;&nbsp;&nbsp;</span> obstacle
+* <span style=\"background-color: rgb(255, 255, 255)\">&nbsp;&nbsp;&nbsp;</span> free
+* <span style=\"background-color: rgb(64, 64, 64)\">&nbsp;&nbsp;&nbsp;</span> growing obstacle (see below)
+* <span style=\"background-color: rgb(128, 64, 64)\">&nbsp;&nbsp;&nbsp;</span> towards goal in -y direction
+* <span style=\"background-color: rgb(128, 96, 96)\">&nbsp;&nbsp;&nbsp;</span> towards goal in +x direction
+* <span style=\"background-color: rgb(128, 160, 160)\">&nbsp;&nbsp;&nbsp;</span> towards goal in +y direction 
+* <span style=\"background-color: rgb(128, 192, 192)\">&nbsp;&nbsp;&nbsp;</span> towards goal in -x direction
+
+Note to **growing obstacle**: assume the robot as a point, but grow (inflate) obstacles by robot size, e.g. instead of checking a circular robot of radius 0.3 radius hitting a wall, make the wall surface 0.3m thicker in all directions and check if the middle point of the robot is hitting these 'grown' wall cells.
+
+Note to **first part of path**: a combination of one horizontal and one vertical movement, move diagonal instead if it is free. 
+
+"
+	DatasheetProperty Supplier {
+		value "Servicerobotics Ulm"
+	}
+	DatasheetProperty Homepage {
+		value "https://wiki.servicerobotik-ulm.de/directory:collection"
+	}
+	DatasheetProperty Purpose {
+		value "Displays a visualization of a mobile robot position and path, current or long term map, distance laser, color or depth image, 3D-model from images etc."
+	}
+}
+
