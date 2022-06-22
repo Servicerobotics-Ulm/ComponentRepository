@@ -176,7 +176,8 @@
 
 (define-tcb (freeCurrentWaypoint)
 	(module "navPathClient")
-  (action (
+		(action (
+
 			(let* ((current-waypoint (get-value (tcl-kb-query :key '(is-a) :value '( (is-a robot) )) 'current-waypoint))
 			  	  )
 
@@ -210,6 +211,7 @@
                 (tcl-state :server 'cdl :state "Neutral")
                 (tcl-state :server 'mapper :state "Neutral")
                 ;(tcl-state :server 'planner :state "Neutral")
+                
                 (tcl-kb-update 
                   :key '(is-a) 
                   :value '(
@@ -217,6 +219,7 @@
                            (current-waypoint ?location)))
                            
                 (format t "CURRENT WAYPOINT ~s ~%" (get-value (tcl-kb-query :key '(is-a) :value '((is-a robot))) 'current-waypoint))
+                           
                 (tcl-abort)
                 '(SUCCESS ()))))))
 
@@ -235,6 +238,7 @@
 			)
 		))
 )
+
 (define-tcb (queryClosestFreeNode ?x ?y => ?node ?xl ?yl)
   (module "navPathClient")
   (action (
@@ -317,5 +321,6 @@
 			
 		))
 )
+
 
 

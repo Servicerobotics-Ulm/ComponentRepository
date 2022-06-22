@@ -72,6 +72,8 @@ void TriggerHandler::handleCommNavigationObjects_CorridorNavigationClientParams_
 	// implement the trigger behavior here. Be aware, if you must use blocking calls here, please set this
 	// trigger as active in the model. For an active trigger an active queue will be generated internally 
 	// (transparent for the usage here). Thus an active trigger will be called within a separate task scope.
+
+
 	// This is currently used to set the goalid
 	COMP->id = pose;
 }
@@ -84,8 +86,9 @@ void TriggerHandler::handleCommNavigationObjects_CorridorNavigationClientParams_
 void TriggerHandler::handleCommNavigationObjects_CorridorNavigationClientParams_REL_ALL_NODES_BUT(const unsigned int &pose)
 {
 	// implement the trigger behavior here. Be aware, if you must use blocking calls here, please set this
-	// trigger as active in the model. For an active trigger an active queue will be generated internally 
+	// trigger as active in the model. For an active trigger an active queue will be generated internally
 	// (transparent for the usage here). Thus an active trigger will be called within a separate task scope.
+
 	std::cout << "Release Node: " << pose << std::endl;
 
 	DomainRobotFleetNavigation::CommNodeStatusUpdateRequest statReq;
@@ -152,9 +155,8 @@ void TriggerHandler::handleCommNavigationObjects_CorridorNavigationClientParams_
 
 	COMP->commCorridorNavigationGoal = goal;
 
-
-
 	COMP->id++;
+
 	guard.release();
 }
 void TriggerHandler::handleCommNavigationObjects_CorridorNavigationClientParams_SET_GOAL_FROM_NODE(const unsigned int &startNode, const unsigned int &goalPose)
