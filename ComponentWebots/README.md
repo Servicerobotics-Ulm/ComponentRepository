@@ -190,10 +190,16 @@ It was tested with VMWare Workstation Player 15 (both non-commercial and PRO ver
 You need at least 8 MB Ram and a good graphics card on your computer.
 In the settings of the virtual machine, give it at least 4 GB Ram, 512 MB graphics memory and turn on graphics card acceleration. OpenGl is required by webots to run fast.
 
-If your computer has not a very good graphics card, webots may run slowly in the virtual machine. The simulation speed should be near to '1.00x' at the top of the webots window. If it is below, you can speed things up: 
+If your computer has not a very good graphics card, webots may run slowly in the virtual machine. The simulation speed should be near to '1.00x' at the top of the webots window. If it is below, you can speed up graphics:
+* make the graphics window smaller (if graphics window height and width is halved, the speed is 4 times faster)
+* webots menu > Tools > Preferences > OpenGL > Disable shadows
 * webots window, at the left side is the Scene Tree, first entry is WorldInfo, double click on it, it expands, now click on basicTimeStep, double the value from 32 to 64 or again to 128. This will speed up the simulation but makes it less accurate as changes are done less frequently. [[2]](https://cyberbotics.com/doc/guide/the-scene-tree) [[3]](https://www.cyberbotics.com/doc/reference/glossary)
 * you can reduce here the value FPS too (frames per second, how often graphics is done)
 * turn off/on graphics rendering by pressing the cube button or pressing CTRL+4
+
+Known Bugs:
+* VirtualBox does not OpenGL, making Webots graphics very slow (use VMWare Player instead)
+* a lidar in Webots sometimes does not detect distances at left/right side correct. this bug happens if VMWare Player is startet from Linux (use Windows instead) 
 
 ##### Shared Folders
 
