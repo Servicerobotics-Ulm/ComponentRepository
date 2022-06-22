@@ -134,8 +134,8 @@ COMP->navigationVelocityServiceOut->send(navigationVelocity);
 
 ### keyboard control:
 
-* set [internal parameter webots](#internal-parameter-webots) keyboardControl to true
-* click in graphical window of webots (to select one of several mobile robots, click on it)
+* set [internal parameter webots](#internal-parameter-webots) keyboardControl to true (default in most Systems)
+* click on the robot in the graphical window
 * press <kbd>X</kbd> or <kbd>C</kbd> to turn on acceleration mode or fixed speed mode (the robot will now stop moving on its own, waiting for you to press a key)
 * press <kbd>W</kbd> or <kbd>&#8593;</kbd> to move forwards
 * press <kbd>S</kbd> or <kbd>&#8595;</kbd> to move backwards
@@ -145,6 +145,8 @@ COMP->navigationVelocityServiceOut->send(navigationVelocity);
 * press <kbd>E</kbd> to move sideways left (not possible for robots with only 2 wheels)
 * to stop the robot in acceleration mode, press <kbd>SPACE</kbd>
 * press <kbd>Y</kbd> to turn off acceleration mode/fixed speed mode (the robot can now move on its own again)
+
+If your robot is not reacting to keyboard, it is not selected probably or keyboard is not turned on. Click again on the robot in the graphical window to select the robot and graphical window, then press <kbd>X</kbd> to turn on keyboard control, then hold <kbd>W</kbd> to move the robot forwards.
 
 
 
