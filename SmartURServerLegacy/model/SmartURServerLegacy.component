@@ -1,14 +1,3 @@
-/**
- * The SmartURServerLegacy component is the device driver component for Universal Robots (UR) manipulators, with a UR Software version older then: . 
- *
- * The component enables the usage of UR manipulators UR5 together with other software components.
- * The component provides services for the usage of the manipulators on different abstraction levels. 
- * Individual joint control e.g. moving planned trajectories can be used.
- * 
- * The component provides skills for all its provided capabilities, enabling an easy and fast development of robotic behavior task. 
- * 
- */
-
 ComponentDefinition SmartURServerLegacy logo "/SmartURServerLegacy/model/logo.png"
 {
 		InputPort trajectorySendServer implements CommManipulatorObjects.ManipulationTrajectoryService {}
@@ -43,6 +32,7 @@ ComponentDefinition SmartURServerLegacy logo "/SmartURServerLegacy/model/logo.pn
 		with ioquery realizedBy ioQueryServer
 		with ioevent realizedBy digitalInputEventServer
 		with trajectory realizedBy trajectorySendServer
+		
 		PrivateOperationMode demonstration;
 		PrivateOperationMode trajectory;
 		PublicOperationMode CommManipulatorObjects.ManipulatorStates.Demonstration {
@@ -54,5 +44,4 @@ ComponentDefinition SmartURServerLegacy logo "/SmartURServerLegacy/model/logo.pn
 		SkillRealizationsRef UR
 	}
 	ComponentParameters SmartURServerLegacy slave CoordinationPort
-
 }
