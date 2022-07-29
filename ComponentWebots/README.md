@@ -19,7 +19,7 @@ Example:
     ComponentParameterInstance ComponentWebots refinesParamStruct ComponentWebots {
         ParameterRefinement General{
             WorldPath = "/the/path/to/my/folder/MyWorldName.wbt"
-		    isEditorPresent = false
+            isEditorPresent = false
         }
     }
 ```
@@ -45,7 +45,7 @@ DEF Locations Group
 DEF Stations Group
 DEF Waypoints Group
 DEF WaypointConnections Group
-DEF MobileRobotsPoses
+DEF MobileRobotsPoses Group
 ```
 
 (if you don't see the Scene Tree on the left side of Webots, press <kbd>CTRL</kbd>+<kbd>J</kbd> to reset the layout)

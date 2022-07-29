@@ -203,10 +203,16 @@ int EditorTask::on_execute() {
     bool isDisplayClear;
     bool firstRunMap = true;
     unsigned char *gridMap;
+    int errorMsgCounter=0;
     while (robot->step(timeStep) != -1) {
         if (firstRun) {
             cout << AnsiCodes::GREEN_FOREGROUND + " Webots simulation started" + AnsiCodes::RESET << endl;
         }
+
+        /////////////////////////////
+        // map
+        /////////////////////////////
+
         int mapNumber = CHECK_FIELD(proto->getField("mapNumber"))->getSFInt32();
         int mapCount = CHECK_FIELD(proto->getField("maps"))->getCount();
         if (std::chrono::duration<double>(system_clock::now() - lastUpdateTimeMap).count() > 3.0 || firstRun) {
@@ -284,12 +290,17 @@ int EditorTask::on_execute() {
                 // size of map must not change during one run
                 map.get_parameter(id, is_valid, time, xOffsetMM, yOffsetMM, xOffsetCells, yOffsetCells, cellSizeMM,
                     xSizeMM, ySizeMM, xSizeCells, ySizeCells);
-                if (xSizeCells > 0 && ySizeCells > 0) {
-                    if (xSizeCells != display->getWidth() || ySizeCells != display->getHeight()) {
-                        cerr << "ERROR: please edit worldfile: Editor { mapWidth " << xSizeCells << " mapHeight "
-                            << ySizeCells << "} " << endl;
-                        return 1;
-                    }
+//                cout << __LINE__ << xSizeCells << " x " << ySizeCells << " " << is_valid << endl;
+                if(xSizeCells<=0 || ySizeCells<=0)
+                	;
+                else if (xSizeCells != display->getWidth() || ySizeCells != display->getHeight()) {
+                	errorMsgCounter--;
+                	if(errorMsgCounter<0) {
+                      cerr << "ERROR: please edit worldfile: Editor { mapWidth " << xSizeCells << " mapHeight "
+                          << ySizeCells << "} " << endl;
+                      errorMsgCounter=100;
+                	}
+                } else {
                     float xmin = (float) xOffsetMM / 1000.0;
                     float ymin = (float) yOffsetMM / 1000.0;
                     float xmax = (float) (xOffsetMM + xSizeMM) / 1000.0;
@@ -382,6 +393,11 @@ int EditorTask::on_execute() {
             display->fillRectangle(0, 0, display->getWidth(), display->getHeight());
         }
         wasDisplayClear = isDisplayClear;
+
+        ////////////////////////////////
+        // MobileRobotPoses
+        ////////////////////////////////
+
         int showMobileRobotPosesNumber = CHECK_FIELD(proto->getField("showMobileRobotsPoses"))->getSFString()[0] - '0';
         if (showMobileRobotPosesNumber < 0 || showMobileRobotPosesNumber > 3) {
             cerr << "wrong showMobileRobotsPoses" << endl;
@@ -535,9 +551,6 @@ int EditorTask::on_execute() {
                         for (int i = robotComponents.size(); i--;) {
                             string s1 = robotComponents[i];
                             string s2 = x.componentName;
-//                            s2 = "ComponentRobotinoBaseServer_Robotino_2";
-                            cout << "VirtualTwin: " << s1 << " " << s2 << " " << s2.substr(0, s1.length()) << " "
-                                << (s2.substr(0, s1.length()) == s1) << endl;
                             if (s2.substr(0, s1.length()) == s1) {
                                 string s3 = "  " + robotVirtualTwin[i] + " {}\n";
                                 int number = x.componentName[x.componentName.length() - 1] - '0';
@@ -715,6 +728,7 @@ int EditorTask::on_execute() {
         //////////////////////////
         // Locations and Stations
         //////////////////////////
+
         unordered_map<int, XY> location_id_to_xy;
         vector<string> updateStrings;
 
@@ -836,6 +850,22 @@ int EditorTask::on_execute() {
                 COMP->commKBQueryReq->query(kbReq, kbResp);
             }
         }
+
+        ////////////////////////////////////
+        // VirtualTwin update pose / id / waypoint_id
+        ////////////////////////////////////
+
+        if(firstRun) {
+            string s = "(execute '(localizationModInst.localizationSetRobotPose 1 0 0))";
+            cout << __LINE__ << " " << s << endl;
+            CommBasicObjects::CommKBRequest kbReq;
+            CommBasicObjects::CommKBResponse kbResp;
+            kbReq.setRequest(s);
+            COMP->commKBQueryReq->query(kbReq, kbResp);
+            cout << __LINE__ << " " << kbResp << endl;
+        }
+
+
         ////////////////////////////////////
         // Waypoints and WaypointConnections
         ////////////////////////////////////
