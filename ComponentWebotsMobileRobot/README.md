@@ -82,7 +82,6 @@ ParameterRefinement Webots {
 	distanceToRobotCentre = [0.386, 0.386, 0.386, 0.386]
 	heading = [0, 0, 0, 0]
 	maxAcceleration = [1.0, 1.0, 5.0]
-	keyboardControl = true	
 }
 ```
 
@@ -134,19 +133,18 @@ COMP->navigationVelocityServiceOut->send(navigationVelocity);
 
 ### keyboard control:
 
-* set [internal parameter webots](#internal-parameter-webots) keyboardControl to true (default in most Systems)
-* click on the robot in the graphical window
-* press <kbd>X</kbd> or <kbd>C</kbd> to turn on acceleration mode or fixed speed mode (the robot will now stop moving on its own, waiting for you to press a key)
+* click on the robot in the graphical window to select it
 * press <kbd>W</kbd> or <kbd>&#8593;</kbd> to move forwards
 * press <kbd>S</kbd> or <kbd>&#8595;</kbd> to move backwards
 * press <kbd>A</kbd> or <kbd>&#8592;</kbd> to rotate left (counterclockwise)
 * press <kbd>D</kbd> or <kbd>&#8594;</kbd> to rotate right (clockwise)
-* press <kbd>Q</kbd> to move sideways left (not possible for robots with only 2 wheels)
-* press <kbd>E</kbd> to move sideways left (not possible for robots with only 2 wheels)
-* to stop the robot in acceleration mode, press <kbd>SPACE</kbd>
-* press <kbd>Y</kbd> to turn off acceleration mode/fixed speed mode (the robot can now move on its own again)
+* press <kbd>Q</kbd> to move sideways left
+* press <kbd>E</kbd> to move sideways right
+* press <kbd>SPACE</kbd> to stop
+* don't press any key to allow the robot to move on its own (default)
+* or press <kbd>C</kbd> to turn on cruise control: slowly change the speed by pressing a movement key, and keep that speed if no key is pressed (press <kbd>X</kbd> to turn off cruise control)
 
-If your robot is not reacting to keyboard, it is not selected probably or keyboard is not turned on. Click again on the robot in the graphical window to select the robot and graphical window, then press <kbd>X</kbd> to turn on keyboard control, then hold <kbd>W</kbd> to move the robot forwards.
+Note that as long as cruise control is active, the robot is not able to move on its own (e.g. approach a given location).
 
 
 
@@ -310,14 +308,6 @@ If your robot is not reacting to keyboard, it is not selected probably or keyboa
 <td style="border:1px solid black; padding: 5px;">[1.0, 1.0, 5.0]</td>
 <td style="border:1px solid black; padding: 5px;"><p>the max. acceleration front [m/s], sideways [m/s], rotation [radians/s]
 </p></td>
-</tr>
-<tr>
-<td style="border:1px solid black; padding: 5px;"><b>keyboardControl</b></td>
-<td style="border:1px solid black; padding: 5px;">Boolean</td>
-<td style="border:1px solid black; padding: 5px;">true</td>
-<td style="border:1px solid black; padding: 5px;"><p>see keyboard control above
-</p>
-<p></p></td>
 </tr>
 </table>
 
