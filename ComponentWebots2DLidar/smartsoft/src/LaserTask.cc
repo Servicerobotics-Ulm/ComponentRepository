@@ -53,6 +53,26 @@
 
 #include <iostream>
 
+// from https://stackoverflow.com/questions/154536/encode-decode-urls-in-c
+std::string url_encode(const std::string &value) {
+    std::ostringstream escaped;
+    escaped.fill('0');
+    escaped << std::hex;
+    for (std::string::const_iterator i = value.begin(), n = value.end(); i != n; ++i) {
+        std::string::value_type c = (*i);
+        // Keep alphanumeric and other accepted characters intact
+        if (std::isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
+            escaped << c;
+            continue;
+        }
+        // Any other characters are percent-encoded
+        escaped << std::uppercase;
+        escaped << '%' << std::setw(2) << int((unsigned char) c);
+        escaped << std::nouppercase;
+    }
+    return escaped.str();
+}
+
 LaserTask::LaserTask(SmartACE::SmartComponent *comp) :
     LaserTaskCore(comp) {
     std::cout << "constructor LaserTask\n";
@@ -68,8 +88,8 @@ LaserTask::~LaserTask() {
 
 int LaserTask::on_entry() {
     std::string robotName = COMP->getParameters().getWebots().getRobotName();
-    char environment[256] = "WEBOTS_ROBOT_NAME=";
-    putenv(strcat(environment, robotName.c_str()));
+    char environment[256] = "WEBOTS_CONTROLLER_URL=";
+    putenv(strcat(environment, url_encode(robotName).c_str()));
     std::cout << "\033[0;32mConnect to webots robot with name '" << robotName << "' ...\033[0m" << std::endl;
     webotsRobot = new webots::Robot();
     if (!webotsRobot) {

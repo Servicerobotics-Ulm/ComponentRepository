@@ -18,13 +18,15 @@
 					<folderInfo id="cdt.managedbuild.config.gnu.exe.release.162725026." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.exe.release.1565223537" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.exe.release">
 							<targetPlatform id="cdt.managedbuild.target.gnu.platform.exe.release.438662334" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.exe.release"/>
-							<builder buildPath="${workspace_loc:/ComponentWebotsPTUServer}/smartsoft/build" id="org.eclipse.smartmdsd.ui.smartmdsd.builder.1322780768" superClass="org.eclipse.smartmdsd.ui.smartmdsd.builder"/>
+							<builder buildPath="${workspace_loc:/ComponentWebotsPTUServer}/smartsoft/build" id="org.eclipse.smartmdsd.ui.smartmdsd.builder.1322780768" keepEnvironmentInBuildfile="false" name="SmartMDSD Builder" superClass="org.eclipse.smartmdsd.ui.smartmdsd.builder"/>
 							<tool id="cdt.managedbuild.tool.gnu.archiver.base.889552429" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.422800013" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release">
 								<option id="gnu.cpp.compiler.exe.release.option.optimization.level.1872344129" name="Optimization Level" superClass="gnu.cpp.compiler.exe.release.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
 								<option defaultValue="gnu.cpp.compiler.debugging.level.none" id="gnu.cpp.compiler.exe.release.option.debugging.level.154894965" name="Debug Level" superClass="gnu.cpp.compiler.exe.release.option.debugging.level" useByScannerDiscovery="false" valueType="enumerated"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.include.paths.768297517" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${ACE_ROOT}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SMART_ROOT_ACE}/include/Armadillo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SMART_ROOT_ACE}/include/TransformationMatrices&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${SMART_ROOT_ACE}/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${SMART_ROOT_ACE}/include/SmartSoft_CD_API&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${SMART_ROOT_ACE}/include/AceSmartSoftKernel&quot;"/>
@@ -33,13 +35,13 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ComponentWebotsPTUServer/smartsoft/src-gen}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WEBOTS_HOME}/include/controller/cpp&quot;"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.dialect.std.893884165" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.dialect.std.893884165" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.2081039419" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.exe.release.5548732" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.release">
 								<option defaultValue="gnu.c.optimization.level.most" id="gnu.c.compiler.exe.release.option.optimization.level.559689490" name="Optimization Level" superClass="gnu.c.compiler.exe.release.option.optimization.level" useByScannerDiscovery="false" valueType="enumerated"/>
 								<option defaultValue="gnu.c.debugging.level.none" id="gnu.c.compiler.exe.release.option.debugging.level.1831332969" name="Debug Level" superClass="gnu.c.compiler.exe.release.option.debugging.level" useByScannerDiscovery="false" valueType="enumerated"/>
-								<option id="gnu.c.compiler.option.dialect.std.221713668" superClass="gnu.c.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.c.compiler.dialect.default" valueType="enumerated"/>
+								<option id="gnu.c.compiler.option.dialect.std.221713668" name="Language standard" superClass="gnu.c.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.c.compiler.dialect.default" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1113147196" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.release.455478117" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.release"/>
@@ -82,14 +84,15 @@
 								<option defaultValue="gnu.cpp.compiler.debugging.level.max" id="gnu.cpp.compiler.exe.debug.option.debugging.level.1671444444" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" useByScannerDiscovery="false" valueType="enumerated"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.include.paths.1487507027" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${ACE_ROOT}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SMART_ROOT_ACE}/include/Armadillo&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SMART_ROOT_ACE}/include/TransformationMatrices&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${SMART_ROOT_ACE}/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${SMART_ROOT_ACE}/include/SmartSoft_CD_API&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${SMART_ROOT_ACE}/include/AceSmartSoftKernel&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${SMART_ROOT_ACE}/include/AceSmartSoftKernel/middlewareMapping&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ComponentWebotsPTUServer/smartsoft/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ComponentWebotsPTUServer/smartsoft/src-gen}&quot;"/>
-									<listOptionValue builtIn="false" value="/usr/include/mrpt/hwdrivers/include"/>
-									<listOptionValue builtIn="false" value="&quot;${SMART_ROOT_ACE}/include/TransformationMatrices&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${WEBOTS_HOME}/include/controller/cpp&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.257995602" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>

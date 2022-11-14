@@ -635,7 +635,7 @@ int PoseUpdateActivity::on_execute() {
 
 // ********** robot ***********
     std::string name = params.getWebots().getRobotName();
-    char environment[256] = "WEBOTS_ROBOT_NAME=";
+    char environment[256] = "WEBOTS_CONTROLLER_URL=";
     putenv(strcat(environment, name.c_str()));
     std::cout << " \033[0;32mConnect to webots robot with name '" << name << "' ...\033[0m" << std::endl;
     Supervisor *robot = new Supervisor();
