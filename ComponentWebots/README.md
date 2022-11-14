@@ -7,7 +7,7 @@
 
 *Component Short Description:* 
 
-Videos [1](https://www.youtube.com/watch?v=wykpdKlzwuE) and [2](https://www.youtube.com/watch?v=YrkvbOH4svI). For developers, see also the [Developer Documentation](smartsoft/README.md).
+Videos [1](https://www.youtube.com/watch?v=wykpdKlzwuE) and [2](https://www.youtube.com/watch?v=YrkvbOH4svI). For developers, see also the [Developer Documentation](DEVELOPER.md).
 
 This component starts the [Webots](https://cyberbotics.com) simulator.
  
