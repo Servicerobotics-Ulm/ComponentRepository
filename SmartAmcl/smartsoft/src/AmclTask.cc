@@ -81,7 +81,6 @@
 #else
 #endif
 
-
 AmclTask::AmclTask(SmartACE::SmartComponent *comp) 
 :	AmclTaskCore(comp)
 {
@@ -142,6 +141,31 @@ int AmclTask::on_execute()
 		std::cerr << "[AMCL] laser client " << status << "\n";
 		ACE_OS::sleep(ACE_Time_Value(0,250000));
 		return 0;
+	}
+
+	if(init_automatic) {
+	    init_automatic = false;
+        double x, y, a;
+        CommBasicObjects::CommBasePose basePos = scan.get_base_state().get_base_position();
+        x = basePos.get_x(1.0);
+        y = basePos.get_y(1.0);
+        a = pi_to_pi(basePos.get_base_azimuth());
+        std::cout << "init (automatic): " << x << " " << y << " " << a << std::endl;
+        // code from TriggerHandler.cc
+	    SmartACE::SmartRecursiveGuard pfGuard(COMP->PFMutex);
+	    {
+	        pf_vector_t pf_init_pose_mean = pf_vector_zero();
+	        pf_init_pose_mean.v[0] = x;
+	        pf_init_pose_mean.v[1] = y;
+	        pf_init_pose_mean.v[2] = a;
+	        pf_matrix_t pf_init_pose_cov = pf_matrix_zero();
+	        pf_init_pose_cov.m[0][0] = COMP->getGlobalState().getGeneral().getInitial_cov_xx();
+	        pf_init_pose_cov.m[1][1] = COMP->getGlobalState().getGeneral().getInitial_cov_yy();
+	        pf_init_pose_cov.m[2][2] = COMP->getGlobalState().getGeneral().getInitial_cov_aa();
+	        pf_init(COMP->pf_, pf_init_pose_mean, pf_init_pose_cov);
+	        COMP->pf_init_ = false;
+	    }
+	    pfGuard.release();
 	}
 
 	///////////////////////////////////////////
@@ -625,6 +649,7 @@ int AmclTask::init(const std::string& mapFilename) {
 		COMP->pf_->pop_err = localState.getFilter().getKld_err();
 		COMP->pf_->pop_z = localState.getFilter().getKld_z();
 
+		init_automatic = localState.getGeneral().getInitalizationType() == ParameterStateStruct::GeneralType::initalizationTypeType::AUTOMATIC;
 
 		if(localState.getGeneral().getInitalizationType() == ParameterStateStruct::GeneralType::initalizationTypeType::INI_POSE){
 			// Initialize the filter
@@ -636,6 +661,7 @@ int AmclTask::init(const std::string& mapFilename) {
 			pf_init_pose_cov.m[0][0] = localState.getGeneral().getInitial_cov_xx();
 			pf_init_pose_cov.m[1][1] = localState.getGeneral().getInitial_cov_yy();
 			pf_init_pose_cov.m[2][2] = localState.getGeneral().getInitial_cov_aa();
+      std::cout << "init (INI_POSE): " << pf_init_pose_mean.v[0] << " " << pf_init_pose_mean.v[1] << " " << pf_init_pose_mean.v[2] << std::endl;
 			pf_init(COMP->pf_, pf_init_pose_mean, pf_init_pose_cov);
 
 		} else if (localState.getGeneral().getInitalizationType() == ParameterStateStruct::GeneralType::initalizationTypeType::GLOBAL){

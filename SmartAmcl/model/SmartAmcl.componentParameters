@@ -66,9 +66,9 @@ ComponentParameter SmartAmclParams component SmartAmcl
 	}
 	
 	InternalParameter General{
-		
+	   /** INI_POSE: use initial_x/y/a. FILE_POSE: use initPoseFileName. GLOBAL: robot could start anywhere in map. AUTOMATIC: init from webots worldfile */
 		initalizationType: InlineEnumeration {
-			INI_POSE FILE_POSE GLOBAL
+			INI_POSE FILE_POSE GLOBAL AUTOMATIC
 			} = INI_POSE
 		initPoseFileName : String = "/tmp/lastRobotPose.txt"
 		

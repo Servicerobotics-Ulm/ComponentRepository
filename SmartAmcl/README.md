@@ -308,7 +308,8 @@
 <td style="border:1px solid black; padding: 5px;"><b>initalizationType</b></td>
 <td style="border:1px solid black; padding: 5px;">InlineEnumeration</td>
 <td style="border:1px solid black; padding: 5px;">INI_POSE</td>
-<td style="border:1px solid black; padding: 5px;"></td>
+<td style="border:1px solid black; padding: 5px;"><p>INI_POSE: use initial_x/y/a. FILE_POSE: use initPoseFileName. GLOBAL: robot could start anywhere in map. AUTOMATIC: init from webots worldfile
+</p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>initPoseFileName</b></td>

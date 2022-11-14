@@ -76,6 +76,7 @@ private:
 //	AMCLLaser* laser_;
 	bool laser_update_;
 	bool push_vis_data;
+	bool init_automatic;
 
 	pf_vector_t pf_odom_pose_;
 
