@@ -54,6 +54,7 @@
 #include <ctime>
 #include <chrono>
 #include <unistd.h>
+#include <thread>
 
 // see ComponentVisualization CurMapTask.hh
 #define MAPPER_FREE          0
@@ -80,981 +81,1238 @@ using namespace std::chrono;
 #define CHECK_FIELD(x) checkField((x), __LINE__)
 
 // e.g. node->getField("rotation")->getSFRotation() will crash with an segmentation fault if the node has not an field called "rotation"
+// => CHECK_FIELD(node->getField("rotation"))->getSFRotation() will print line number before crashing
 Field* checkField(Field *f, int lineNumber) {
-    if (!f)
-        cerr << "missing getField in line " << lineNumber << endl;
-    return f;
+  if (!f)
+    cerr << "missing getField in line " << lineNumber << endl;
+  return f;
 }
 
 struct Pose2D {
-    double x, y, heading;
+  double x, y, heading;
 };
 
 // the webots node must have coordinate system x=front, y=left, z=up.
 // webots WorldInfo.coordinateSystem must be ENU. (copied from ComponentWebotsMpsDocking)
 Pose2D getNodePose(Node *node) {
-    const double *position = node->getPosition();
-    const double *orientation = node->getOrientation();
-    Pose2D pose = { position[0], position[1], atan2(orientation[3], orientation[0]) };
-    return pose;
+  const double *position = node->getPosition();
+  const double *orientation = node->getOrientation();
+  Pose2D pose = { position[0], position[1], atan2(orientation[3], orientation[0]) };
+  return pose;
 }
 
 EditorTask::EditorTask(SmartACE::SmartComponent *comp) :
-    EditorTaskCore(comp) {
-    cout << "constructor EditorTask\n";
+            EditorTaskCore(comp) {
+  cout << "constructor EditorTask\n";
 }
 
 EditorTask::~EditorTask() {
-    cout << "destructor EditorTask\n";
+  cout << "destructor EditorTask\n";
 }
 
 int EditorTask::on_entry() {
-    return 0;
+  return 0;
 }
 
 // get heading from a webots node (world must have NUE coordinate system, node must have z-axis up => standing upright, not falling)
 // (ComponentWebotsRobotArm helper functions would be better, but are more code)
 double getHeadingFromWebotsNode(Node *node) {
-    const double *matrix = node->getOrientation();
-    return atan2(matrix[3], matrix[0]);
+  const double *matrix = node->getOrientation();
+  return atan2(matrix[3], matrix[0]);
 }
 
 Field* create_group(int place, string def_name, Supervisor *robot) {
-    Node *node = robot->getFromDef(def_name);
-    if (!node) {
-        CHECK_FIELD(robot->getRoot()->getField("children"))->importMFNodeFromString(place,
-            "DEF " + def_name + " Group {}");
-        node = robot->getFromDef(def_name);
+  Node *node = robot->getFromDef(def_name);
+  if (!node) {
+    CHECK_FIELD(robot->getRoot()->getField("children"))->importMFNodeFromString(place, "DEF " + def_name + " Group {}");
+    node = robot->getFromDef(def_name);
+  }
+  return node->getField("children");
+}
+
+vector<string> getComponentList(string service) {
+  vector<string> v;
+  SmartACE::NSKeyType searchPattern;
+  searchPattern.names[SmartACE::NSKeyType::SERVICE_NAME] = ACE_TEXT(service.c_str());
+  ACE_Unbounded_Queue<SmartACE::NSKeyType> searchResult = SmartACE::NAMING::instance()->getEntriesForMatchingPattern(searchPattern);
+  for (ACE_Unbounded_Queue_Iterator<SmartACE::NSKeyType> iter(searchResult); !iter.done(); iter.advance()) {
+    SmartACE::NSKeyType *comp = 0;
+    iter.next(comp);
+    v.push_back(comp->names[SmartACE::NSKeyType::COMP_NAME].c_str());
+  }
+  return v;
+}
+
+double minusPiToPi(double radians) {
+  while(radians <= -M_PI)
+    radians += 2*M_PI;
+  while(radians > M_PI)
+    radians -= 2*M_PI;
+  return radians;
+}
+
+// from ConsoleTask.cc (SmartRobotConsole)
+#ifndef LISP_SEPARATOR
+#define LISP_SEPARATOR " ()\"\n"
+#define LISP_STRING    1000
+#endif
+SmartACE::CommParameterRequest lispParamToParameterRequest(std::string lispString) {
+    SmartACE::CommParameterRequest parameterRequest;
+    char *param1  = (char *)NULL;
+    char *input  = (char *)NULL;
+    input = strdup(lispString.c_str());
+    //find tag, the first element in parameter string
+    do {
+        param1 = strsep(&input,LISP_SEPARATOR);
+    } while ((param1 != NULL) && (strlen(param1)==0));
+    if(param1 == NULL)
+        return parameterRequest;
+//    std::cout << "tag: " << param1 << std::endl;
+    parameterRequest.setTag(param1);
+    //find all other parameters
+    int index = 1;
+    while(input != NULL){
+        //find next parameter value
+        do {
+            param1 = strsep(&input,LISP_SEPARATOR);
+        } while ((param1 != NULL) && (strlen(param1)==0));
+        if(param1 != NULL) {
+            char indexStr[255];
+            sprintf(indexStr,"%d",index);
+//            std::cout << "[" << indexStr << "] = " << param1 << std::endl;
+            parameterRequest.setString(indexStr, param1);
+            index++;
+        }
     }
-    return node->getField("children");
+    return parameterRequest;
+}
+
+mutex sendLocalizationMutex;
+condition_variable sendLocalizationCondVar;
+string sendLocalizationStr;
+string sendLocalizationComponent;
+bool sendLocalizationReady = false;
+
+void sendLocalizationExecute() {
+  string parameterString;
+  string localizationComponent;
+  while(true) {
+    {
+      unique_lock<std::mutex> lock(sendLocalizationMutex);
+      while(!sendLocalizationReady)
+        sendLocalizationCondVar.wait(lock);
+      parameterString = sendLocalizationStr;
+      localizationComponent = sendLocalizationComponent;
+      sendLocalizationReady = false;
+    }
+    // note that the Behavior is changing the mainstate of SmartAmcl too:
+    // BehaviorHospitalNavigation/model/startUp.smartTcl:
+    // (execute '(localizationModInst.tcb-activate-localization))
+    // (execute `(navigation.approachLocation,locations-var))
+    // (execute '(localizationModInst.tcb-deactivate-localization))
+    // => both Behavior (ComponentTclSequencer) and ComponentWebots write the mainstate (write-write conflict)
+    // => it is not guaranteed that the state is Neutral when the parameters are send (race condition)
+    // if only the Behavior is allowed to change the mainstate, there would be no conflict and race condition
+    // => components should not be allowed to call setWaitState
+    // => components must not call trigger which require state to be at neutral
+    // => use service ports instead or make trigger work in any state
+
+    // to enable stateMaster/paramMaster: add to model/*.componentArch: CoordinationMasterPort CoordinationMaster implements CommBasicObjects.DefaultCoordinationService;
+
+    COMP->stateMaster->setWaitState("Neutral", localizationComponent);
+    SmartACE::CommParameterRequest parameterRequest;
+    SmartACE::CommParameterResponse parameterResponse;
+    Smart::StatusCode status;
+    parameterRequest = lispParamToParameterRequest(parameterString);
+    status = COMP->paramMaster->sendParameterWait(parameterRequest, parameterResponse, localizationComponent);
+//    cout << __LINE__ << " " << parameterString << " " << status << endl;
+    COMP->stateMaster->setWaitState("Active", localizationComponent);
+    // don't send faster than 10 times per second
+    this_thread::sleep_for(100ms);
+
+  }
 }
 
 int EditorTask::on_execute() {
-    if (!COMP->getParameters().getGeneral().getIsEditorPresent()) {
-        cout << " \033[0;32mEditor is not present\033[0m" << endl;
-        return -1;
-    }
-    string name = "Editor";
-    char environment[256] = "WEBOTS_ROBOT_NAME=";
-    putenv(strcat(environment, name.c_str()));
-    cout << AnsiCodes::GREEN_FOREGROUND + " Editor is present: Connect to webots robot with name '" << name
-        << "' ..." + AnsiCodes::RESET << endl;
-    Supervisor *robot = new Supervisor();
-    if (!robot) {
-        cerr << "Webots Robot '" << name << "' not found" << endl;
-        return -1;
-    }
-    int timeStep = (int) robot->getBasicTimeStep();
-    Keyboard *keyboard = robot->getKeyboard();
-    keyboard->enable(timeStep);
-    create_group(4, "Locations", robot);
-    create_group(5, "Stations", robot);
-    create_group(6, "Waypoints", robot);
-    create_group(7, "WaypointConnections", robot);
-    create_group(8, "MobileRobotsPoses", robot);
-    Node *proto = robot->getSelf();
-    if (!proto || proto->getTypeName() != "Editor") {
-        cerr << "Webots Editor not found" << endl;
-        return -1;
-    }
-    vector<string> last_updateStrings;
-    bool firstRun = true;
-    int lastKey = -1;
-    bool wasWaypoint = false;
-    int lastSelectedId;
-    bool lastShowWaypoints = true;
-    struct XY {
-        double x;
-        double y;
-    };
-    struct XY_mm {
-        int x;
-        int y;
-    };
-    clock_t cpuTime = clock();
-    auto lastUpdateTime = system_clock::now();
-    auto lastUpdateTimeMap = system_clock::now();
-    auto lastMapTime = system_clock::now();
-    auto lastTrailTime = system_clock::now();
-    struct SERVICE_TYPE {
-        string componentName;
-        string serviceName;
-        bool connected;
-        Pose2D pose;
-        Pose2D odometrie;
-        Pose2D v;
-        Smart::IPushClientPattern<CommBasicObjects::CommBaseState> *service;
-        int trailIndex;
-        int trailLength;
-        vector<XY_mm> trailPoints;
-    };
-    vector<SERVICE_TYPE> services;
-    vector<Smart::IPushClientPattern<CommBasicObjects::CommBaseState>*> baseStateServiceIn;
 
-    struct MAP_SERVER_TYPE {
-        string componentName = "";
-        string serviceName = "";
-        bool connected = false;
-    };
-    MAP_SERVER_TYPE oldMapServer;
-    bool showMobileRobotPoses = false;
-    Display *display = robot->getDisplay("display");
-    bool wasDisplayClear = false;
-    bool isDisplayClear;
-    bool firstRunMap = true;
-    unsigned char *gridMap;
-    int errorMsgCounter=0;
-    while (robot->step(timeStep) != -1) {
-        if (firstRun) {
-            cout << AnsiCodes::GREEN_FOREGROUND + " Webots simulation started" + AnsiCodes::RESET << endl;
-        }
+  if (!COMP->getParameters().getGeneral().getIsEditorPresent()) {
+    cout << " \033[0;32mEditor is not present\033[0m" << endl;
+    return -1;
+  }
+  string name = "Editor";
+  char environment[256] = "WEBOTS_CONTROLLER_URL=";
+  putenv(strcat(environment, name.c_str()));
+  cout << AnsiCodes::GREEN_FOREGROUND + " Editor is present: Connect to webots robot with name '" << name << "' ..." + AnsiCodes::RESET << endl;
+  Supervisor *robot = new Supervisor();
+  if (!robot) {
+    cerr << "Webots Robot '" << name << "' not found" << endl;
+    return -1;
+  }
+  int timeStep = (int) robot->getBasicTimeStep();
+  Keyboard *keyboard = robot->getKeyboard();
+  keyboard->enable(timeStep);
+  create_group(4, "Locations", robot);
+  create_group(5, "Stations", robot);
+  create_group(6, "Waypoints", robot);
+  create_group(7, "WaypointConnections", robot);
+  create_group(8, "MobileRobotsPoses", robot);
+  create_group(9, "Localizations", robot);
+  Node *proto = robot->getSelf();
+  if (!proto || proto->getTypeName() != "Editor") {
+    cerr << "Webots Editor not found" << endl;
+    return -1;
+  }
+  vector<string> last_updateStrings;
+  bool firstRun = true;
+  int lastKey = -1;
+  bool wasWaypoint = false;
+  int lastSelectedId;
+  bool lastShowWaypoints = true;
+  struct XY {
+    double x;
+    double y;
+  };
+  struct XY_mm {
+    int x;
+    int y;
+  };
+  clock_t cpuTime = clock();
+  auto lastUpdateTime = system_clock::now();
+  auto lastUpdateTimeMap = system_clock::now();
+  auto lastMapTime = system_clock::now();
+  auto lastTrailTime = system_clock::now();
+  auto lastWaypointsTime = system_clock::now();
+  string lastWaypointsString = "";
+  struct ROBOT_TYPE {
+    string baseComponent;
+    Smart::IPushClientPattern<CommBasicObjects::CommBaseState> *baseService;
+    Smart::ISendClientPattern<CommBasicObjects::CommBasePositionUpdate> *updateService;
+    string localizationComponent; // full component name
+    bool isConnected; // true = updateService is connected to a base
+    bool useLocalizationService; // true=use localizationComponent, false=use baseComponent
+    bool INITIALPOSE_requires_neutral;
+    string realRobotType; // same as Localization.proto field "type"
+    Pose2D localization; // last value of Localization.proto fields translation/rotation
+    Pose2D odometrie;
+    Pose2D v; // velocity
+    int trailIndex;
+    int trailLength;
+    vector<XY_mm> trailPoints;
+    double manualMoveTime; // last simulation time of manual movement of Localization
+    std::vector<double> covMatrix;
+  };
+  const int trailSize = 1000;
+  vector<ROBOT_TYPE> robots;
+  vector<string> localizationComponents;
 
-        /////////////////////////////
-        // map
-        /////////////////////////////
+  struct MAP_SERVER_TYPE {
+    string componentName = "";
+    string serviceName = "";
+    bool connected = false;
+  };
+  MAP_SERVER_TYPE mapServer;
+  string oldMapType = "";
+  string oldMapComponent = "";
+  vector<string> mapComponentNames;
 
-        int mapNumber = CHECK_FIELD(proto->getField("mapNumber"))->getSFInt32();
-        int mapCount = CHECK_FIELD(proto->getField("maps"))->getCount();
-        if (std::chrono::duration<double>(system_clock::now() - lastUpdateTimeMap).count() > 3.0 || firstRun) {
-            lastUpdateTimeMap = system_clock::now();
-            vector<string> maps;
-            SmartACE::NSKeyType searchPattern;
-            searchPattern.names[SmartACE::NSKeyType::PATTERN_NAME] = ACE_TEXT("Push");
-            searchPattern.names[SmartACE::NSKeyType::COMMOBJ1_NAME] = ACE_TEXT("CommNavigationObjects::CommGridMap");
-            ACE_Unbounded_Queue<SmartACE::NSKeyType> searchResult =
-                SmartACE::NAMING::instance()->getEntriesForMatchingPattern(searchPattern);
-            for (ACE_Unbounded_Queue_Iterator<SmartACE::NSKeyType> iter(searchResult); !iter.done(); iter.advance()) {
-                SmartACE::NSKeyType *comp = 0;
-                iter.next(comp);
-                string s = comp->names[SmartACE::NSKeyType::COMP_NAME].c_str();
-                string s2 = comp->names[SmartACE::NSKeyType::SERVICE_NAME].c_str();
-                maps.push_back(s + " " + s2);
-            }
-            sort(maps.begin(), maps.end());
-            while (mapCount < maps.size()) {
-                CHECK_FIELD(proto->getField("maps"))->insertMFString(-1, "");
-                mapCount++;
-            }
-            while (mapCount > maps.size()) {
-                CHECK_FIELD(proto->getField("maps"))->removeMF(-1);
-                mapCount--;
-            }
-            for (int i = 0; i < maps.size(); i++)
-                CHECK_FIELD(proto->getField("maps"))->setMFString(i, to_string(i + 1) + ") " + maps[i]);
+  bool showMobileRobotPoses = false;
+  int displayWidth = -1;
+  int displayHeight = -1;
+  Display *display = NULL;
+  int displayCounter = 0;
+  unsigned char *gridMap = NULL;
+  CommNavigationObjects::CommGridMap map;
+  Field *posesField = CHECK_FIELD(robot->getFromDef("MobileRobotsPoses")->getField("children"));
+  Field *localizationsField = CHECK_FIELD(robot->getFromDef("Localizations")->getField("children"));
+
+  std::thread sendLocalizationThread(sendLocalizationExecute);
+  if(robot->step(timeStep) == -1)
+    return 1;
+  while (robot->step(timeStep) != -1) {
+    if (firstRun) {
+      cout << AnsiCodes::GREEN_FOREGROUND + " Webots simulation started" + AnsiCodes::RESET << endl;
+      CHECK_FIELD(proto->getField("stopSimulation"))->setSFBool(false);
+    }
+    if(!firstRun && CHECK_FIELD(proto->getField("stopSimulation"))->getSFBool()) {
+      cout << AnsiCodes::GREEN_FOREGROUND + "stopSimulation " + AnsiCodes::RESET << endl;
+      for (int i = posesField->getCount(); i--;)
+        posesField->getMFNode(i)->remove();
+      for (int i = localizationsField->getCount(); i--;) {
+        Node* node = localizationsField->getMFNode(i);
+        if(CHECK_FIELD(node->getField("componentName"))->getSFString().find("ComponentWebotsMobileRobot")==0)
+          node->remove();
+      }
+      showMobileRobotPoses = false;
+      for (auto &x : robots)
+        x.trailLength = 0;
+      if (display != NULL) {
+        CHECK_FIELD(proto->getField("display"))->getMFNode(0)->remove();
+        display = NULL;
+      }
+      robot->simulationResetPhysics();
+      robot->simulationSetMode(Supervisor::SIMULATION_MODE_PAUSE);
+      continue;
+    }
+
+    /////////////////////////////
+    // map
+    /////////////////////////////
+
+    string mapType = CHECK_FIELD(proto->getField("mapType"))->getSFString();
+    string mapComponent = CHECK_FIELD(proto->getField("mapComponent"))->getSFString();
+
+    if(firstRun || oldMapType != mapType || oldMapComponent != mapComponent) {
+      if (mapServer.connected) {
+        cout << "map disconnect " << mapServer.componentName << " " << mapServer.serviceName << endl;
+        COMP->currGridMapPushServiceIn->unsubscribe();
+        COMP->currGridMapPushServiceIn->disconnect();
+        mapServer.connected = false;
+      }
+      if(mapType=="Current") {
+        mapServer.serviceName = "CurrMapOut";
+      } else if(mapType=="LongTerm") {
+        mapServer.serviceName = "LtmQueryServer";
+      } else if(mapType=="Planner") {
+        mapServer.serviceName = "CurrGridMapPushServiceOut";
+      } else {
+        mapServer.serviceName = "";
+      }
+      if(oldMapType != mapType) {
+        mapComponentNames.clear();
+        if(mapServer.serviceName!="") {
+          SmartACE::NSKeyType searchPattern;
+          string s = mapServer.serviceName;
+          searchPattern.names[SmartACE::NSKeyType::SERVICE_NAME] = ACE_TEXT(s.c_str());
+          ACE_Unbounded_Queue<SmartACE::NSKeyType> searchResult = SmartACE::NAMING::instance()->getEntriesForMatchingPattern(searchPattern);
+          for (ACE_Unbounded_Queue_Iterator<SmartACE::NSKeyType> iter(searchResult); !iter.done(); iter.advance()) {
+            SmartACE::NSKeyType *comp = 0;
+            iter.next(comp);
+            mapComponentNames.push_back(comp->names[SmartACE::NSKeyType::COMP_NAME].c_str());
+          }
         }
-        MAP_SERVER_TYPE newMapServer;
-        if (mapNumber > 0 && mapNumber <= mapCount) {
-            string s = CHECK_FIELD(proto->getField("maps"))->getMFString(mapNumber - 1);
-            char s1[1024];
-            char s2[1024];
-            char s3[1024];
-            int res = sscanf(s.c_str(), "%s %s %s", s1, s2, s3);
-            if (res == 3) {
-                newMapServer.componentName = s2;
-                newMapServer.serviceName = s3;
-            }
+        sort(mapComponentNames.begin(), mapComponentNames.end());
+        Field* f=CHECK_FIELD(proto->getField("mapComponentNames"));
+        for(int i=f->getCount(); i--;)
+          f->removeMF(i);
+        for(auto x:mapComponentNames)
+          f->insertMFString(-1, x);
+      }
+      mapServer.componentName="";
+      for(auto x:mapComponentNames)
+        if(x.substr(x.length()-mapComponent.length())==mapComponent) {
+          mapServer.componentName=x;
+          break;
         }
-        // if newMapServer differs from oldMapServer, disconnect from old
-        if (oldMapServer.componentName != newMapServer.componentName
-            || oldMapServer.serviceName != newMapServer.serviceName) {
-            if (oldMapServer.connected) {
-                cout << "disconnect " << oldMapServer.componentName << " " << oldMapServer.serviceName << endl;
-                COMP->currGridMapPushServiceIn->unsubscribe();
-                COMP->currGridMapPushServiceIn->disconnect();
-            }
-        } else if (oldMapServer.connected)
-            newMapServer.connected = true;
-        if (!newMapServer.connected && newMapServer.componentName != "") {
-            cout << "map connect " << newMapServer.componentName << " " << newMapServer.serviceName << endl;
-            Smart::StatusCode status = COMP->currGridMapPushServiceIn->connect(newMapServer.componentName,
-                newMapServer.serviceName);
-            if (status == Smart::SMART_OK) {
-                newMapServer.connected = true;
-                COMP->currGridMapPushServiceIn->subscribe(1);
-            } else {
-                cout << "error " << status << endl;
-                ACE_OS::sleep(ACE_Time_Value(0, 500000));
-            }
+      if(mapServer.componentName!="") {
+        cout << "map connect " << mapType << " " << mapServer.componentName << " " << mapServer.serviceName << endl;
+        Smart::StatusCode status;
+        if(mapType=="LongTerm")
+          status = COMP->longTermGridMapQueryServiceReq->connect(mapServer.componentName, mapServer.serviceName);
+        else
+          status = COMP->currGridMapPushServiceIn->connect(mapServer.componentName, mapServer.serviceName);
+        if (status == Smart::SMART_OK) {
+          mapServer.connected = true;
+          // maybe update more often in case LongTerm map could change during runtime
+          if(mapType=="LongTerm") {
+            CommNavigationObjects::CommGridMapRequest mapRequest;
+            mapRequest.set_parameter(0, 0, 0, 10000, 10000, true, 30);
+            status = COMP->longTermGridMapQueryServiceReq->query(mapRequest, map);
+            if(status != Smart::SMART_OK)
+              cout << "longTermGridMapQueryServiceReq " << status << endl;
+          } else
+            COMP->currGridMapPushServiceIn->subscribe(1);
+        } else {
+          cout << "error " << status << endl;
+          ACE_OS::sleep(ACE_Time_Value(0, 500000));
         }
-        oldMapServer = newMapServer;
-        if (std::chrono::duration<double>(system_clock::now() - lastMapTime).count() > 0.1) {
-            lastMapTime = system_clock::now();
-            CommNavigationObjects::CommGridMap map;
-            isDisplayClear = true;
-            if (newMapServer.connected && COMP->currGridMapPushServiceIn->getUpdate(map) == Smart::SMART_OK) {
-                // see ComponentVisualization/smartsoft/src/visualization/GridMapVisualization.cc displayGridMap()
-                bool is_valid = false;
-                timeval time;
-                uint32_t id, cellSizeMM, xSizeMM, ySizeMM, xSizeCells, ySizeCells;
-                int xOffsetMM, yOffsetMM, xOffsetCells, yOffsetCells;
-                // size of map must not change during one run
-                map.get_parameter(id, is_valid, time, xOffsetMM, yOffsetMM, xOffsetCells, yOffsetCells, cellSizeMM,
-                    xSizeMM, ySizeMM, xSizeCells, ySizeCells);
-//                cout << __LINE__ << xSizeCells << " x " << ySizeCells << " " << is_valid << endl;
-                if(xSizeCells<=0 || ySizeCells<=0)
-                	;
-                else if (xSizeCells != display->getWidth() || ySizeCells != display->getHeight()) {
-                	errorMsgCounter--;
-                	if(errorMsgCounter<0) {
-                      cerr << "ERROR: please edit worldfile: Editor { mapWidth " << xSizeCells << " mapHeight "
-                          << ySizeCells << "} " << endl;
-                      errorMsgCounter=100;
-                	}
+      }
+      oldMapType = mapType;
+      oldMapComponent = mapComponent;
+    }
+    if (std::chrono::duration<double>(system_clock::now() - lastMapTime).count() > 0.1) {
+      lastMapTime = system_clock::now();
+      bool removeDisplay = true;
+      if(mapServer.connected && (mapType=="LongTerm" || COMP->currGridMapPushServiceIn->getUpdate(map) == Smart::SMART_OK)) {
+        // see ComponentVisualization/smartsoft/src/visualization/GridMapVisualization.cc displayGridMap()
+        bool is_valid = false;
+        timeval time;
+        uint32_t id, cellSizeMM, xSizeMM, ySizeMM, xSizeCells, ySizeCells;
+        int xOffsetMM, yOffsetMM, xOffsetCells, yOffsetCells;
+        // size of map must not change during one run
+        map.get_parameter(id, is_valid, time, xOffsetMM, yOffsetMM, xOffsetCells, yOffsetCells, cellSizeMM, xSizeMM, ySizeMM, xSizeCells, ySizeCells);
+        // cout << __LINE__ << " " << xSizeCells << " x " << ySizeCells << " " << is_valid << endl;
+        float xmin = (float) xOffsetMM / 1000.0;
+        float ymin = (float) yOffsetMM / 1000.0;
+        float xmax = (float) (xOffsetMM + xSizeMM) / 1000.0;
+        float ymax = (float) (yOffsetMM + ySizeMM) / 1000.0;
+        if (xSizeCells > 0 && ySizeCells > 0) {
+          removeDisplay = false;
+          // webots can't change display width/height during runtime => remove and create new if needed
+          if (xSizeCells != displayWidth || ySizeCells != displayHeight || !display) {
+            displayWidth = xSizeCells;
+            displayHeight = ySizeCells;
+            if (display != NULL) {
+              CHECK_FIELD(proto->getField("display"))->getMFNode(0)->remove();
+              display = NULL;
+            }
+            displayCounter++;
+            string displayName = "display" + to_string(displayCounter);
+            string s = "Display {"
+                "  name \"" + displayName + "\""
+                "  translation " + to_string((xmax + xmin) / 2) + " " + to_string((ymax + ymin) / 2) + " 0.005"
+                "  width " + to_string(displayWidth) + "  height " + to_string(displayHeight) + "  children ["
+                "    Shape {"
+                "     isPickable FALSE"
+                "     castShadows FALSE"
+                "     appearance PBRAppearance {"
+                "       baseColorMap ImageTexture {"
+                "         filtering 0"
+                "       }"
+                "       metalness 0"
+                "       roughness 1"
+                "     }"
+                "     geometry Plane {"
+                "       size " + to_string(xmax - xmin) + " " + to_string(ymax - ymin) +
+                "     }"
+                "   }"
+                " ]"
+                "}";
+            CHECK_FIELD(proto->getField("display"))->importMFNodeFromString(0, s);
+            display = robot->getDisplay(displayName);
+            if (gridMap != NULL)
+              delete gridMap;
+            gridMap = new unsigned char[xSizeCells * ySizeCells * 4];
+            for (int i = xSizeCells * ySizeCells * 4; i--;) {
+              gridMap[i] = 0;
+            }
+          }
+          bool isPlanner = mapType == "Planner";
+          int color;
+          for (int y = 0; y < ySizeCells; y++) {
+            for (int x = 0; x < xSizeCells && x < xSizeCells; x++) {
+              uint8_t cell = map.get_cells(x, ySizeCells - 1 - y);
+              unsigned char red = 0, green = 0, blue = 0, alpha = 255;
+              if (isPlanner) {
+                // path planned by planner is blue
+                if ((cell >= 8 && cell <= 15) || cell == PLANNER_GOAL || cell == PLANNER_START) {
+                  blue = 255;
+                } else if (cell == PLANNER_OBSTACLE) {
+                  red = green = blue = 255;
+                } else if (cell == PLANNER_GROWING) {
+                  red = green = blue = 64;
+                } else if (cell == PLANNER_FREE) {
+                  alpha = 0;
+                } else if (cell == PLANNER_EAST) {
+                  red = 128;
+                } else if (cell == PLANNER_WEST) {
+                  red = 255;
+                } else if (cell == PLANNER_NORTH) {
+                  green = 128;
+                } else if (cell == PLANNER_SOUTH) {
+                  green = 255;
+                } else if (cell == 99) { // special value: planner default
+                  red = 64;
+                  green = blue = 128;
                 } else {
-                    float xmin = (float) xOffsetMM / 1000.0;
-                    float ymin = (float) yOffsetMM / 1000.0;
-                    float xmax = (float) (xOffsetMM + xSizeMM) / 1000.0;
-                    float ymax = (float) (yOffsetMM + ySizeMM) / 1000.0;
-                    if (firstRunMap) {
-                        firstRunMap = false;
-                        gridMap = new unsigned char[xSizeCells * ySizeCells * 4];
-                        for (int i = xSizeCells * ySizeCells * 4; i--;) {
-                            gridMap[i] = 0;
-                        }
-                        const double translation[3] = { (xmax + xmin) / 2, (ymax + ymin) / 2, 0.005 };
-                        CHECK_FIELD(proto->getField("translation"))->setSFVec3f(translation);
-                        const double size[2] = { xmax - xmin, ymax - ymin };
-                        CHECK_FIELD(proto->getField("size"))->setSFVec2f(size);
-                    }
-                    bool isPlanner = newMapServer.componentName.find("Planner") != string::npos;
-                    int color;
-                    for (int y = 0; y < ySizeCells; y++) {
-                        for (int x = 0; x < xSizeCells && x < xSizeCells; x++) {
-                            uint8_t cell = map.get_cells(x, ySizeCells - 1 - y);
-                            unsigned char red = 0, green = 0, blue = 0, alpha = 0xff;
-                            if (isPlanner) {
-                                if (cell >= 8 && cell <= 15) { // path planned by planner
-                                    red = 64;
-                                    green = 128;
-                                    blue = 128;
-                                } else if (cell == PLANNER_OBSTACLE) {
-                                    red = green = blue = alpha;
-                                } else if (cell == PLANNER_GROWING) {
-                                    red = green = blue = 64;
-                                } else if (cell == PLANNER_GOAL) {
-                                    blue = alpha;
-                                } else if (cell == PLANNER_START) {
-                                    green = alpha;
-                                } else if (cell == PLANNER_FREE) {
-                                    alpha = 0;
-                                } else if (cell == PLANNER_NORTH) {
-                                    red = 128;
-                                    green = blue = 64;
-                                } else if (cell == PLANNER_WEST) {
-                                    red = 128;
-                                    green = blue = 96;
-                                } else if (cell == PLANNER_SOUTH) {
-                                    red = 128;
-                                    green = blue = 160;
-                                } else if (cell == PLANNER_EAST) {
-                                    red = 128;
-                                    green = blue = 192;
-                                } else if (cell == 99) { // special value: planner default
-                                    red = 64;
-                                    green = blue = 128;
-                                } else {
-                                    std::cerr << "line error: " << __LINE__ << " " << cell << " " << x << " " << y
-                                        << endl;
-                                    return -1;
-                                }
-                            } else {
-                                if (cell >= 0 && cell <= 127) {
-                                    alpha = 0;
-                                } else if (cell == MAPPER_OBSTACLE) {
-                                    red = green = blue = alpha;
-                                } else if (cell == MAPPER_GROWING) {
-                                    blue = alpha;
-                                } else if (cell == MAPPER_UNDELETABLE) {
-                                    red = alpha;
-                                } else if (cell == MAPPER_UNKNOWN) {
-                                    red = green = blue = 0x80;
-                                } else {
-                                    std::cerr << "line error: " << __LINE__ << " " << cell << " " << x << " " << y
-                                        << endl;
-                                    return -1;
-                                }
-                            }
-                            int i = x * 4 + y * 4 * xSizeCells;
-                            gridMap[i++] = blue;
-                            gridMap[i++] = green;
-                            gridMap[i++] = red;
-                            gridMap[i++] = alpha;
-                        }
-                    }
-                    ImageRef *imageRef = display->imageNew(xSizeCells, ySizeCells, gridMap, Display::BGRA);
-                    display->imagePaste(imageRef, 0, 0, false);
-                    display->imageDelete(imageRef);
-                    isDisplayClear = false;
+                  std::cerr << "map pixel error: " << __LINE__ << " " << cell << " " << x << " " << y << endl;
+                  return -1;
                 }
-            }
-        }
-        if (isDisplayClear && !wasDisplayClear) {
-            display->setAlpha(0.0);
-            display->fillRectangle(0, 0, display->getWidth(), display->getHeight());
-        }
-        wasDisplayClear = isDisplayClear;
-
-        ////////////////////////////////
-        // MobileRobotPoses
-        ////////////////////////////////
-
-        int showMobileRobotPosesNumber = CHECK_FIELD(proto->getField("showMobileRobotsPoses"))->getSFString()[0] - '0';
-        if (showMobileRobotPosesNumber < 0 || showMobileRobotPosesNumber > 3) {
-            cerr << "wrong showMobileRobotsPoses" << endl;
-            return 1;
-        }
-        bool lastShowMobileRobotPoses = showMobileRobotPoses;
-        showMobileRobotPoses = showMobileRobotPosesNumber;
-        // remove MobileRobotPose.proto nodes at firstRun or if they don't have an connected service
-        Field *posesField = CHECK_FIELD(robot->getFromDef("MobileRobotsPoses")->getField("children"));
-        for (int i = posesField->getCount(); i--;) {
-            Node *pose = posesField->getMFNode(i);
-            Field *nameField = pose->getField("name");
-            bool found = false;
-            if (nameField && showMobileRobotPoses && !firstRun) {
-                string name = nameField->getSFString();
-                for (SERVICE_TYPE x : services)
-                    if (x.connected && x.componentName == name)
-                        found = true;
-            }
-            if (!found || pose->getTypeName() != "MobileRobotPose")
-                pose->remove();
-        }
-        // update list of services if showMobileRobotPoses changed or turned on and 3 seconds since last update
-        if (lastShowMobileRobotPoses != showMobileRobotPoses
-            || (showMobileRobotPoses
-                && std::chrono::duration<double>(system_clock::now() - lastUpdateTime).count() > 3.0)) {
-            lastUpdateTime = system_clock::now();
-            vector<string> newServerNames;
-            vector<string> newServiceNames;
-            if (showMobileRobotPoses) {
-                SmartACE::NSKeyType searchPattern;
-                searchPattern.names[SmartACE::NSKeyType::PATTERN_NAME] = ACE_TEXT("Push");
-//                searchPattern.names[SmartACE::NSKeyType::SERVICE_NAME] = ACE_TEXT("BaseStateServiceOut");
-                searchPattern.names[SmartACE::NSKeyType::COMMOBJ1_NAME] = ACE_TEXT("CommBasicObjects::CommBaseState");
-                ACE_Unbounded_Queue<SmartACE::NSKeyType> searchResult =
-                    SmartACE::NAMING::instance()->getEntriesForMatchingPattern(searchPattern);
-                for (ACE_Unbounded_Queue_Iterator<SmartACE::NSKeyType> iter(searchResult); !iter.done();
-                    iter.advance()) {
-                    SmartACE::NSKeyType *comp = 0;
-                    iter.next(comp);
-                    string s = comp->names[SmartACE::NSKeyType::COMP_NAME].c_str();
-                    newServerNames.push_back(s);
-                    string s2 = comp->names[SmartACE::NSKeyType::SERVICE_NAME].c_str();
-                    newServiceNames.push_back(s2);
+              } else {
+                if (cell >= 0 && cell <= 127) {
+                  alpha = 0;
+                } else if (cell == MAPPER_OBSTACLE) {
+                  red = green = blue = alpha;
+                } else if (cell == MAPPER_GROWING) {
+                  blue = alpha;
+                } else if (cell == MAPPER_UNDELETABLE) {
+                  red = alpha;
+                } else if (cell == MAPPER_UNKNOWN) {
+                  red = green = blue = 0x80;
+                } else {
+                  std::cerr << "line error: " << __LINE__ << " " << cell << " " << x << " " << y << endl;
+                  return -1;
                 }
+              }
+              int i = x * 4 + y * 4 * xSizeCells;
+              gridMap[i++] = blue;
+              gridMap[i++] = green;
+              gridMap[i++] = red;
+              gridMap[i++] = alpha;
             }
-            // e.g. newServerNames = robot1, robot2
-            //      services.name =          robot2, robot3
-            // => robot1: add to services. robot2: do nothing. robot3: disconnect.
-
-            // disconnect
-            for (int i = services.size(); i--;) {
-                bool found = false;
-                for (auto x : newServerNames)
-                    if (services[i].componentName == x) {
-                        found = true;
-                        break;
-                    }
-                if (!found) {
-                    cout << "disconnect " << services[i].componentName << " " << services[i].serviceName << endl;
-                    services[i].service->unsubscribe();
-                    services[i].service->disconnect();
-                    delete services[i].service;
-                    services.erase(services.begin() + i);
-                    // next timeStep() loop will delete the MobileRobotsPoses.proto
-                }
-            }
-            // add to services
-            for (int i = newServerNames.size(); i--;) {
-                bool found = false;
-                for (auto const &x : services) {
-                    if (newServerNames[i] == x.componentName) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    cout << "found new " << newServerNames[i] << endl;
-                    SERVICE_TYPE newService;
-                    newService.componentName = newServerNames[i];
-                    newService.serviceName = newServiceNames[i];
-                    newService.service = new SmartACE::PushClient<CommBasicObjects::CommBaseState>(
-                    COMP->getComponentImpl());
-                    newService.connected = false;
-                    services.push_back(newService);
-                }
-            }
+          }
+          ImageRef *imageRef = display->imageNew(xSizeCells, ySizeCells, gridMap, Display::BGRA);
+          display->imagePaste(imageRef, 0, 0, false);
+          display->imageDelete(imageRef);
         }
-        // connect and update services
-        if (showMobileRobotPoses) {
-            // iterate by reference to enable change
-            for (auto &x : services) {
-                if (!x.connected) {
-                    cout << "connecting to: " << x.componentName << " " << x.serviceName << endl;
-                    Smart::StatusCode status = x.service->connect(x.componentName, x.serviceName);
-                    if (status != Smart::SMART_OK) {
-                        cout << "error  " << status << endl;
-                        ACE_OS::sleep(ACE_Time_Value(0, 500000));
-                    } else {
-                        x.connected = true;
-                        status = x.service->subscribe(1);
-                        if (status != Smart::SMART_OK) {
-                            cout << "error  " << status << endl;
-                        }
-                    }
-                }
-                if (x.connected) {
-                    CommBasicObjects::CommBaseState base_state;
-                    Smart::StatusCode status = x.service->getUpdate(base_state);
-                    if (status != Smart::SMART_OK) {
-                        std::cout << x.componentName << " " << x.serviceName << " getUpdate(base_state) error "
-                            << status << std::endl;
-                        x.pose.heading = NAN;
-                    } else {
-                        CommBasicObjects::CommBasePose pose = base_state.get_base_raw_position();
-                        x.odometrie = { pose.get_x(1.0), pose.get_y(1.0), pose.get_base_azimuth() };
-                        pose = base_state.get_base_position();
-                        x.pose = { pose.get_x(1.0), pose.get_y(1.0), pose.get_base_azimuth() };
-                        CommBasicObjects::CommBaseVelocity v = base_state.getBaseVelocity();
-                        x.v = { v.get_vX(1.0), v.get_vY(1.0), v.getWZ() };
-                    }
-                }
-            }
-        }
-        const int trailSize = 1000;
-        // change MobileRobotPose nodes
-        if (showMobileRobotPoses) {
-            for (auto &x : services) {
-                if (x.connected && !isnan(x.pose.heading)) {
-                    int i;
-                    for (i = posesField->getCount(); i--;)
-                        if (CHECK_FIELD(posesField->getMFNode(i)->getField("name"))->getSFString() == x.componentName)
-                            break;
-                    // missing MobileRobotPose node
-                    if (i == -1) {
-                        string s = "MobileRobotPose {\n"
-                            " name \"" + x.componentName + "\"\n"
-                            " trailPoints [";
-                        for (int i = trailSize; i--;)
-                            s += "0 0 0 ";
-                        s += "]\n"
-                            " trailIndex [0 1";
-                        for (int i = 2; i < trailSize; i++)
-                            s += " -1";
-                        s += " 0]\n";
-                        // todo: add real macy base server
-                        vector<string> robotComponents = { "ComponentRMPBaseServer", "ComponentRobotinoBaseServer",
-                            "SmartPioneerBaseServer" };
-                        vector<string> robotVirtualTwin = { "VirtualTwinLarry", "VirtualTwinRobotino",
-                            "VirtualTwinPioneer", "VirtualTwinMacy" };
-                        for (int i = robotComponents.size(); i--;) {
-                            string s1 = robotComponents[i];
-                            string s2 = x.componentName;
-                            if (s2.substr(0, s1.length()) == s1) {
-                                string s3 = "  " + robotVirtualTwin[i] + " {}\n";
-                                int number = x.componentName[x.componentName.length() - 1] - '0';
-                                if (number >= 0 && number <= 9
-                                    && x.componentName[x.componentName.length() - 2] == '_') {
-                                    s3 += "  VirtualTwinNumber {\n"
-                                        "   url [\"textures/TextToPNG/" + to_string(number) + ".png\"]\n"
-                                        "  }\n";
-                                }
-                                s += " children [\n" + s3 + " ]\n";
-                            }
-                        }
-                        s += "}";
-                        x.trailPoints.resize(trailSize);
-                        x.trailLength = 0;
-                        posesField->importMFNodeFromString(-1, s);
-                        i = posesField->getCount() - 1;
-                    }
-                    Node *pose = posesField->getMFNode(i);
-                    if (!pose) {
-                        cerr << "ERROR " << __LINE__ << " " << i << endl;
-                        return 1;
-                    }
-                    const double trans[3] = { x.pose.x, x.pose.y, 0 };
-                    CHECK_FIELD(pose->getField("translationLocation"))->setSFVec3f(trans);
-                    const double rot[4] = { 0.0, 0.0, 1.0, x.pose.heading };
-                    CHECK_FIELD(pose->getField("rotationLocation"))->setSFRotation(rot);
-                    const double trans2[3] = { x.odometrie.x, x.odometrie.y, 0 };
-                    CHECK_FIELD(pose->getField("translationOdometry"))->setSFVec3f(trans2);
-                    const double rot2[4] = { 0.0, 0.0, 1.0, x.odometrie.heading };
-                    CHECK_FIELD(pose->getField("rotationOdometry"))->setSFRotation(rot2);
-                    if (x.pose.heading == NAN || x.odometrie.heading == NAN) {
-                        cerr << "is NAN: " << x.pose.heading << " " << x.odometrie.heading << endl;
-                    }
-                    CHECK_FIELD(pose->getField("velocityForward"))->setSFFloat(x.v.x);
-                    CHECK_FIELD(pose->getField("velocityLeft"))->setSFFloat(x.v.y);
-                    CHECK_FIELD(pose->getField("velocityRotation"))->setSFFloat(x.v.heading);
-                    CHECK_FIELD(pose->getField("transparencyOdometry"))->setSFFloat(
-                        showMobileRobotPosesNumber >= 3 ? 0.5 : 1.0);
-                    double showRoute = showMobileRobotPosesNumber >= 2;
-                    CHECK_FIELD(pose->getField("transparencyTrail"))->setSFFloat(showRoute ? 0.5 : 1.0);
-                    if (!showRoute)
-                        x.trailLength = 0;
-                    if (showRoute) {
-                        int trailx = round(x.pose.x * 1000), traily = round(x.pose.y * 1000);
-                        const double trailPoint[3] = { trailx / 1000.0, traily / 1000.0, 0.0 };
-                        XY_mm trailPoint_xy = { trailx, traily };
-                        auto timeDuration = std::chrono::duration<double>(system_clock::now() - lastTrailTime).count();
-                        if (x.trailLength == 0) {
-                            x.trailPoints[0] = trailPoint_xy;
-                            x.trailPoints[1] = trailPoint_xy;
-                            x.trailIndex = 1;
-                            for (int i = 0; i < 2; i++)
-                                CHECK_FIELD(pose->getField("trailPoints"))->setMFVec3f(i, trailPoint);
-                            for (int i = 0; i < trailSize; i++)
-                                CHECK_FIELD(pose->getField("trailIndex"))->setMFInt32(i, (i > 1 ? -1 : i));
-                            x.trailLength = 2;
-                        } else if (timeDuration > 0.1
-                            && (x.trailPoints[x.trailIndex].x != trailx || x.trailPoints[x.trailIndex].y != traily)) {
-                            lastTrailTime = system_clock::now();
-                            x.trailIndex = (x.trailIndex + 1) % trailSize;
-                            x.trailPoints[x.trailIndex] = trailPoint_xy;
-                            CHECK_FIELD(pose->getField("trailPoints"))->setMFVec3f(x.trailIndex, trailPoint);
-                            CHECK_FIELD(pose->getField("trailIndex"))->setMFInt32(x.trailIndex, x.trailIndex);
-                            if (x.trailLength < trailSize - 1)
-                                x.trailLength++;
-                            else {
-                                int i = (x.trailIndex + 1) % trailSize;
-                                CHECK_FIELD(pose->getField("trailIndex"))->setMFInt32(i, -1);
-                            }
-                        }
-                    }
-                    double vx = x.v.x, vy = x.v.y;
-                    double v = sqrt(vx * vx + vy * vy);
-                    if (fabs(v) < 0.001)
-                        showRoute = false;
-                    CHECK_FIELD(pose->getField("transparencyRoute"))->setSFFloat(showRoute ? 0.5 : 1.0);
-                    if (showRoute) {
-                        double vrot = x.v.heading;
-                        double heading = x.pose.heading + atan2(vy, vx);
-                        double routeTotalTime = 5.0;
-                        // time points 0s, 0.5s, ... 4.5s, 5s
-                        int nrTimePoints = 11;
-                        Pose2D poses[nrTimePoints];
-                        if (fabs(vrot) < 0.00001) {
-                            // very small rotation: straight line
-                            for (int i = 0; i < nrTimePoints; i++) {
-                                double t = routeTotalTime / (nrTimePoints - 1) * i;
-                                poses[i].x = cos(heading) * t * v;
-                                poses[i].y = sin(heading) * t * v;
-                            }
-                        } else {
-                            // constant v => travel on circle with radius r
-                            // vrot = alpha / t
-                            // distance traveled = v*t = r*alpha
-                            // => r = v*t/alpha = v/vrot
-                            double r = v / fabs(vrot);
-                            // go from robot to circle center: turn by 90 degrees, go forward by distance r
-                            heading += M_PI / 2 * (vrot > 0 ? 1 : -1);
-                            Pose2D center = { r * cos(heading), r * sin(heading), 0.0 };
-                            // go from circle center to robot: turn by 180 degrees
-                            heading += M_PI;
-                            for (int i = 0; i < nrTimePoints; i++) {
-                                double t = routeTotalTime / (nrTimePoints - 1) * i;
-                                double alpha = heading + vrot * t;
-                                // point on circle
-                                poses[i].x = center.x + r * cos(alpha);
-                                poses[i].y = center.y + r * sin(alpha);
-                            }
-                        }
-                        Field *routeField = CHECK_FIELD(pose->getField("route"));
-                        for (int i = 0; i < nrTimePoints - 1; i++) {
-                            //        poses[i+1]
-                            //        +
-                            //       ***
-                            //      *****
-                            //     ***+***
-                            //        poses[i]
-                            double x1 = poses[i].x, y1 = poses[i].y, x2 = poses[i + 1].x, y2 = poses[i + 1].y;
-                            double dx = x2 - x1, dy = y2 - y1;
-                            // vector v = triangle base side
-                            // (-y, x) is right-hand orthogonal to (x,y)
-                            double vx = -dy, vy = dx;
-                            // change length of v to 0.1m
-                            double coef = 0.1 / sqrt(vx * vx + vy * vy);
-                            vx *= coef;
-                            vy *= coef;
-                            const double p0[3] = { x1 + vx, y1 + vy, 0.0 };
-                            const double p1[3] = { x1 - vx, y1 - vy, 0.0 };
-                            const double p2[3] = { x2, y2, 0.0 };
-                            routeField->setMFVec3f(i * 3 + 0, p0);
-                            routeField->setMFVec3f(i * 3 + 1, p1);
-                            routeField->setMFVec3f(i * 3 + 2, p2);
-                        }
-                    }
-                }
-            }
-        }
-        Node *selectedNode = robot->getSelected();
-        const string LOCATION = "Location";
-        const string STATION = "Station";
-        const string WAYPOINT = "Waypoint";
-        const string WAYPOINTCONNECTION = "WaypointConnection";
-        string selectedType = "";
-        if (selectedNode) {
-            selectedType = selectedNode->getTypeName();
-            if (selectedType != LOCATION && selectedType != STATION && selectedType != WAYPOINT
-                && selectedType != WAYPOINTCONNECTION)
-                selectedType = "";
-        }
-        int key = keyboard->getKey();
-        if ((key == '-' || key == 7) && selectedType != "") {
-            // deleting nodes and reading them from a supervisor can crash
-            selectedNode->remove(); // next timeStep() will remove connections with missing id's and update ComponentNavigationGraph
-            continue;
-        }
-        bool showWaypoints = CHECK_FIELD(proto->getField("showWaypoints"))->getSFBool();
-        double defaultWidth = CHECK_FIELD(proto->getField("defaultWaypointWidth"))->getSFFloat();
-        if (key == '/' && (selectedType == WAYPOINT || selectedType == WAYPOINTCONNECTION)) {
-            CHECK_FIELD(selectedNode->getField("width"))->setSFFloat(defaultWidth);
-        }
-        Field *stations = CHECK_FIELD(robot->getFromDef("Stations")->getField("children"));
-        Field *waypointsField = CHECK_FIELD(robot->getFromDef("Waypoints")->getField("children"));
-        Field *waypointConnectionsField = CHECK_FIELD(robot->getFromDef("WaypointConnections")->getField("children"));
-        /*      user has to stop simulation himself during editing, at least if he deletes something
-         // if user deletes a station, a supervisor function call to read stations could crash
-         // => don't do it if Editor or something inside is selected
-         Node *selected = robot->getSelected();
-         while (selected != NULL && selected != proto)
-         selected = selected->getParentNode();
-         if (selected)
-         continue;
-         */
-
-        //////////////////////////
-        // Locations and Stations
-        //////////////////////////
-
-        unordered_map<int, XY> location_id_to_xy;
-        vector<string> updateStrings;
-
-        updateStrings.push_back("(kb-delete :key '(is-a) :value '((is-a location)) )");
-        updateStrings.push_back("(kb-delete :key '(is-a) :value '((is-a station)) )");
-        updateStrings.push_back("(kb-delete :key '(is-a) :value '((is-a rack)) )");
-
-        // problem: each timestep
-        //          stations position change a little bit by gravity and wheels
-        //          => station's waypoint position changes too
-        //          => WaypointConnection parameter change
-        //          => proto regeneration of WaypointConnection very often
-        //          => very slow
-        // solution: round station position to mm
-        // problem:
-        //    rounded values can change too (if the real values are close to .5 mm)
-        //    all locations/stations are updated (deleted and added to knowledge base)
-        //    during this update time, other components may read missing data
-        //    (solution: make it possible to update knowledgebase atomically)
-
-        // count from last to first may help to prevent crash after ->remove (access array-entries behind deleted entry may be undefined)
-        for (int i = stations->getCount() - 1; i >= -1; i--) {
-            Field *locations;
-            string stationName = "";
-            if (i == -1) {
-                locations = CHECK_FIELD(robot->getFromDef("Locations")->getField("children"));
-            } else {
-                Node *station = stations->getMFNode(i);
-                locations = CHECK_FIELD(station->getField("Locations"));
-                Field *dataField = CHECK_FIELD(station->getField("data"));
-                Field *nameField = CHECK_FIELD(station->getField("name"));
-                if (!locations || !locations->getCount() || !dataField || !nameField) {
-                    cerr << (i + 1) << ". children in Stations removed (has no or empty Locations/data/name field)"
-                        << station->getTypeName() << endl;
-                    station->remove();
-                    continue;
-                }
-                string data = "";
-                for (int j = 0; j < dataField->getCount(); j++)
-                    data += " " + dataField->getMFString(j);
-                // todo: allow multiple whitespace between "is-a" and "station"
-                string dataLowercase = data;
-                for (auto &c : dataLowercase)
-                    c = tolower(c);
-                bool isStation = dataLowercase.find("is-a station") != string::npos;
-                stationName = nameField->getSFString();
-                Node *firstLocation = locations->getMFNode(0);
-                int waypointId = CHECK_FIELD(firstLocation->getField("waypointId"))->getSFInt32();
-                string locationName = CHECK_FIELD(firstLocation->getField("name"))->getSFString();
-                updateStrings.push_back(
-                    "(kb-update"
-                        " :key '(is-a id)"
-                        " :value '("
-                        " (id " + stationName + ")"
-                        " (" + (isStation ? "approach-location" : "location-id") + " " + locationName + ")"
-                        + (waypointId < 0 ? "" : (" (approach-waypoint " + to_string(waypointId) + ")")) + data + "))");
-            }
-            for (int j = locations->getCount(); j--;) {
-                Pose2D locationPose;
-                double radius, smallerRadius;
-                Node *node = locations->getMFNode(j);
-                Pose2D pose = getNodePose(node);
-                pose.x = round(pose.x * 1000) / 1000;
-                pose.y = round(pose.y * 1000) / 1000;
-                int waypointId = CHECK_FIELD(node->getField("waypointId"))->getSFInt32();
-                if (waypointId >= 0) {
-                    XY _xy = { .x = pose.x, .y = pose.y };
-                    location_id_to_xy[waypointId] = _xy;
-                }
-                locationPose = getNodePose(node);
-                string name = CHECK_FIELD(node->getField("name"))->getSFString();
-                radius = CHECK_FIELD(node->getField("radius"))->getSFFloat();
-                smallerRadius = CHECK_FIELD(node->getField("smallerRadius"))->getSFFloat();
-                string approachType;
-                if (smallerRadius == 0)
-                    approachType = "region";
-                else if (smallerRadius > 0)
-                    approachType = "exact";
-                else
-                    approachType = "halt-point";
-                updateStrings.push_back(
-                    "(kb-update"
-                        " :key '(is-a name)"
-                        " :value '("
-                        " (is-a location)"
-                        " (name " + name + ")"
-                        " (approach-type (" + approachType + "))"
-                        " (approach-region-pose (" + to_string(lround(pose.x * 1000)) + " "
-                        + to_string(lround(pose.y * 1000)) + " 0))"
-                            " (approach-region-dist " + to_string(lround(radius * 1000))
-                        + ")"
-//                            " (orientation-region (angle-absolute " + to_string(lround(pose.heading / M_PI * 180))
-                            " (orientation-region (position "
-                        + to_string(lround(pose.x * 1000 + cos(pose.heading) * 10000)) + " "
-                        + to_string(lround(pose.y * 1000 + sin(pose.heading) * 10000)) + "))"
-                        + (smallerRadius != 0.0 ?
-                            (" (approach-exact-pose (" + to_string(lround(pose.x * 1000)) + " "
-                                + to_string(lround(pose.y * 1000)) + " 0))"
-                                    " (approach-exact-dist " + to_string(lround(smallerRadius * 1000))
-                                + ")"
-//                                    " (orientation-exact (angle-absolute "
-//                                + to_string(lround(pose.heading / M_PI * 180)) + "))"
-                                    " (orientation-exact (position "
-                                + to_string(lround(pose.x * 1000 + cos(pose.heading) * 10000)) + " "
-                                + to_string(lround(pose.y * 1000 + sin(pose.heading) * 10000)) + "))"
-                                    " (approach-exact-safetycl 0)") :
-                            "") + ")) ");
-            }
-        }
-
-        if (updateStrings != last_updateStrings) {
-            cout << "Locations or Stations updated: " << updateStrings.size() << " lines" << endl;
-            last_updateStrings = updateStrings;
-            for (string s : updateStrings) {
-                cout << s << endl;
-                CommBasicObjects::CommKBRequest kbReq;
-                CommBasicObjects::CommKBResponse kbResp;
-                kbReq.setRequest(s);
-                COMP->commKBQueryReq->query(kbReq, kbResp);
-            }
-        }
-
-        ////////////////////////////////////
-        // VirtualTwin update pose / id / waypoint_id
-        ////////////////////////////////////
-
-        if(firstRun) {
-            string s = "(execute '(localizationModInst.localizationSetRobotPose 1 0 0))";
-            cout << __LINE__ << " " << s << endl;
-            CommBasicObjects::CommKBRequest kbReq;
-            CommBasicObjects::CommKBResponse kbResp;
-            kbReq.setRequest(s);
-            COMP->commKBQueryReq->query(kbReq, kbResp);
-            cout << __LINE__ << " " << kbResp << endl;
-        }
-
-
-        ////////////////////////////////////
-        // Waypoints and WaypointConnections
-        ////////////////////////////////////
-
-        // https://www.modernescpp.com/index.php/hash-tables
-        unordered_map<int, XY> id_to_xy;
-
-        int count = waypointsField->getCount();
-        for (int i = count; i--;) {
-            Node *node = waypointsField->getMFNode(i);
-            if (node->getTypeName() != WAYPOINT) {
-                cerr << "ERROR: wrong type " << node->getTypeName() << " in Waypoints removed" << endl;
-                waypointsField->removeMF(i);
-                continue;
-            }
-            int id = CHECK_FIELD(node->getField("id"))->getSFInt32();
-            if (id_to_xy.count(id) > 0) {
-                cerr << "ERROR: double " << id << " waypoint deleted" << endl;
-                waypointsField->removeMF(i);
-                continue;
-            }
-
-            XY _xy;
-            if (location_id_to_xy.count(id) > 0) {
-                _xy = location_id_to_xy[id];
-                const double xyz[3] = { _xy.x, _xy.y, 0 };
-                CHECK_FIELD(node->getField("translation"))->setSFVec3f(xyz);
-                location_id_to_xy.erase(id);
-            } else {
-                const double *coord = CHECK_FIELD(node->getField("translation"))->getSFVec3f();
-                _xy.x = coord[0];
-                _xy.y = coord[1];
-            }
-            id_to_xy[id] = _xy;
-            if (showWaypoints != lastShowWaypoints)
-                CHECK_FIELD(node->getField("showWaypoints"))->setSFBool(showWaypoints);
-        }
-        if (showWaypoints != lastShowWaypoints)
-            cout << "change showWaypoints to " << showWaypoints << endl;
-
-        for (auto wp : location_id_to_xy) {
-            int id = wp.first;
-            XY _xy = wp.second;
-            id_to_xy[id] = _xy;
-            string s = "Waypoint {\n"
-                "  id " + to_string(id) + "\n"
-                "  translation " + to_string(_xy.x) + " " + to_string(_xy.y) + " 0\n"
-                "  width " + to_string(defaultWidth) + "\n"
-                "}";
-            cout << "Import Waypoint id  " << id << " from Location" << endl;
-            waypointsField->importMFNodeFromString(-1, s);
-        }
-        struct waypointConnection {
-            int startId;
-            int endId;
-            double width;
-        };
-        vector<waypointConnection> waypointConnections;
-        count = waypointConnectionsField->getCount();
-        for (int i = count; i--;) {
-            Node *node = waypointConnectionsField->getMFNode(i);
-            if (node->getTypeName() != WAYPOINTCONNECTION) {
-                cout << "ERROR: wrong type " << node->getTypeName() << " in WaypointConnections removed" << endl;
-                waypointConnectionsField->removeMF(i);
-                continue;
-            }
-            waypointConnection w = { .startId = CHECK_FIELD(node->getField("startId"))->getSFInt32(), .endId =
-            CHECK_FIELD(node->getField("endId"))->getSFInt32(), .width =
-            CHECK_FIELD(node->getField("width"))->getSFFloat() };
-            if (id_to_xy.count(w.startId) == 0 || id_to_xy.count(w.endId) == 0) {
-                cout << "ERROR: missing ids " << w.startId << " " << w.endId << " waypointConnection deleted" << endl;
-                waypointConnectionsField->removeMF(i);
-                continue;
-            }
-            waypointConnections.push_back(w);
-            const double startCoord[2] = { id_to_xy[w.startId].x, id_to_xy[w.startId].y };
-            CHECK_FIELD(node->getField("startCoord"))->setSFVec2f(startCoord);
-            const double endCoord[2] = { id_to_xy[w.endId].x, id_to_xy[w.endId].y };
-            CHECK_FIELD(node->getField("endCoord"))->setSFVec2f(endCoord);
-            // if showWaypoints was changed in Editor.proto by user, update it in all Waypoint.proto
-            if (showWaypoints != lastShowWaypoints)
-                CHECK_FIELD(node->getField("showWaypoints"))->setSFBool(showWaypoints);
-        }
-
-        bool isWaypoint = selectedType == WAYPOINT;
-        bool isConnection = selectedType == WAYPOINTCONNECTION;
-
-        int selectedId;
-        if (isWaypoint) {
-            selectedId = CHECK_FIELD(selectedNode->getField("id"))->getSFInt32();
-            double x = id_to_xy[selectedId].x;
-            double y = id_to_xy[selectedId].y;
-            const double redColor[3] = { 1.0, 0.0, 0.0 };
-            const double greenColor[3] = { 0.0, 1.0, 0.0 };
-            bool isError = false;
-            for (auto p : id_to_xy) {
-                if (p.first != selectedId
-                    && sqrt(pow(x - p.second.x, 2) + pow(y - p.second.y, 2)) < defaultWidth * 0.9999) {
-                    isError = true;
-                    break;
-                }
-            }
-            CHECK_FIELD(selectedNode->getField("color"))->setSFColor(isError ? redColor : greenColor);
-        }
-        bool addConnection = false;
-        int startId, endId;
-// insert key == 6
-        if ((key == '+' || key == 6) && lastKey == -1) {
-            int id = 0;
-            double x = 0.0;
-            double y = 0.0;
-            if (isWaypoint) {
-                id = selectedId;
-                x = id_to_xy[id].x + defaultWidth;
-                y = id_to_xy[id].y;
-            }
-            id++;
-            while (id_to_xy.count(id) > 0)
-                id++;
-            string s = "Waypoint {\n"
-                "  id " + to_string(id) + "\n"
-                "  translation " + to_string(x) + " " + to_string(y) + " 0\n"
-                "  width " + to_string(defaultWidth) + "\n"
-                "}";
-            waypointsField->importMFNodeFromString(-1, s);
-            if (isWaypoint) {
-                addConnection = true;
-                startId = selectedId;
-                endId = id;
-            }
-        }
-// * key pressed and a Waypoint was selected and now new Waypoint is selected
-        if (key == '*' && isWaypoint && wasWaypoint && lastSelectedId != selectedId) {
-            bool isDouble = false;
-            for (waypointConnection con : waypointConnections)
-                if (con.startId == lastSelectedId || con.startId == selectedId)
-                    if (con.endId == lastSelectedId || con.endId == selectedId)
-                        isDouble = true;
-            if (!isDouble) {
-                addConnection = true;
-                startId = lastSelectedId;
-                endId = selectedId;
-            }
-        }
-        if (addConnection) {
-            waypointConnectionsField->importMFNodeFromString(-1, "WaypointConnection {\n"
-                "startId " + to_string(startId) + "\n"
-                "endId " + to_string(endId) + "\n"
-                "startCoord " + to_string(id_to_xy[startId].x) + " " + to_string(id_to_xy[startId].y) + "\n"
-                "endCoord " + to_string(id_to_xy[endId].x) + " " + to_string(id_to_xy[endId].y) + "\n"
-                "width " + to_string(defaultWidth) + "\n"
-                "}");
-        }
-        // send data to knowledge base only after release of space key or at first run
-        if ((lastKey == ' ' and key == -1) || firstRun) {
-            std::vector<DomainRobotFleetNavigation::CommPath> navPath;
-            int counter = 1;
-            for (waypointConnection con : waypointConnections) {
-                DomainRobotFleetNavigation::CommPath path;
-                std::vector<DomainRobotFleetNavigation::CommNode> nodes;
-                DomainRobotFleetNavigation::CommNode startNode, endNode;
-                startNode.setId(con.startId);
-                startNode.setX(id_to_xy[con.startId].x);
-                startNode.setY(id_to_xy[con.startId].y);
-                endNode.setId(con.endId);
-                endNode.setX(id_to_xy[con.endId].x);
-                endNode.setY(id_to_xy[con.endId].y);
-                nodes.push_back(startNode);
-                nodes.push_back(endNode);
-                path.setNode(nodes);
-                path.setDirection(0);
-                path.setWidth(con.width);
-                path.setId(counter);
-                navPath.push_back(path);
-                counter++;
-            }
-            DomainRobotFleetNavigation::CommNavPath _navPath;
-            _navPath.setPath(navPath);
-            COMP->navPathServiceOut->send(_navPath);
-        }
-        wasWaypoint = isWaypoint;
-        lastSelectedId = selectedId;
-        lastKey = key;
-        lastShowWaypoints = showWaypoints;
-        firstRun = false;
+      }
+//      cout << __LINE__ << " " << removeDisplay << " " << display << " " << displayWidth << "x" << displayHeight << endl;
+      if (removeDisplay && display != NULL) {
+        CHECK_FIELD(proto->getField("display"))->getMFNode(0)->remove();
+        display = NULL;
+      }
     }
-    return 0;
+
+    ////////////////////////////////
+    // MobileRobotPoses / Localizations
+    ////////////////////////////////
+
+    int showMobileRobotPosesNumber = CHECK_FIELD(proto->getField("showMobileRobotsPoses"))->getSFString()[0] - '0';
+    if (showMobileRobotPosesNumber < 0 || showMobileRobotPosesNumber > 3) {
+      cerr << "wrong showMobileRobotsPoses" << endl;
+      return 1;
+    }
+    bool lastShowMobileRobotPoses = showMobileRobotPoses;
+    showMobileRobotPoses = showMobileRobotPosesNumber; // implicit conversion to bool
+    // delete protos, variables and disconnect
+    if(!showMobileRobotPoses && lastShowMobileRobotPoses) {
+      cout << "showMobileRobotPoses turned off" << endl;
+      for(ROBOT_TYPE &r:robots) {
+        cout << "disconnect " << r.baseComponent  << " and " << r.localizationComponent << endl;
+        r.baseService->unsubscribe();
+        r.baseService->disconnect();
+        delete r.baseService;
+        if(r.isConnected) {
+          if(!r.useLocalizationService)
+            r.updateService->disconnect();
+        }
+        delete r.updateService;
+      }
+      for(int i=posesField->getCount(); i--;)
+        posesField->getMFNode(i)->remove();
+      for(int i=localizationsField->getCount(); i--;)
+        localizationsField->getMFNode(i)->remove();
+      robots.clear();
+    }
+    // create MobileRobotPose protos, variables and connect BaseStateServiceOut
+    if(showMobileRobotPoses && !lastShowMobileRobotPoses) {
+      cout << "showMobileRobotPoses turned on" << endl;
+      vector<string> baseComponents = getComponentList("BaseStateServiceOut");
+      sort(baseComponents.begin(), baseComponents.end());
+      localizationComponents = getComponentList("LocalizationEventServiceOut");
+      sort(localizationComponents.begin(), localizationComponents.end());
+      robots.clear();
+      for(int i=posesField->getCount(); i--;)
+        posesField->getMFNode(i)->remove();
+      for(string baseComponent:baseComponents) {
+        size_t found = baseComponent.find("_");
+        string firstName = baseComponent;
+        string lastName = "";
+        if(found!=string::npos) {
+          firstName = baseComponent.substr(0, found);
+          lastName = baseComponent.substr(found+1);
+        }
+        string localizationComponent="";
+        for(string l:localizationComponents) {
+          size_t found = l.find("_");
+          string firstName2 = l;
+          string lastName2 = "";
+          if(found!=string::npos){
+            firstName2 = l.substr(0, found);
+            lastName2 = l.substr(found+1);
+          }
+          if(lastName == lastName2) {
+            localizationComponent=l;
+            if(firstName2=="SmartAmcl")
+              break;
+          }
+        }
+        ROBOT_TYPE r;
+        r.baseComponent = baseComponent;
+        r.baseService = new SmartACE::PushClient<CommBasicObjects::CommBaseState>(
+            COMP->getComponentImpl());
+        cout << "connecting to: " << r.baseComponent << " BaseStateServiceOut" << endl;
+        Smart::StatusCode status = r.baseService->connect(r.baseComponent, "BaseStateServiceOut");
+        if (status != Smart::SMART_OK) {
+          cout << "error connect" << status << endl;
+        } else {
+          status = r.baseService->subscribe(1);
+          if (status != Smart::SMART_OK) {
+            cout << "error subscribe" << status << endl;
+          }
+        }
+        r.localizationComponent = localizationComponent;
+        r.isConnected = false;
+        r.useLocalizationService = r.localizationComponent != "";
+        r.updateService = new SmartACE::SendClient<CommBasicObjects::CommBasePositionUpdate>(COMP->getComponentImpl());
+        r.localization = {0, 0, 0};
+        r.manualMoveTime = robot->getTime() - 9999.0;
+        // TODO: add macy
+        vector<string> realBases = { "ComponentRMPBaseServer", "ComponentRobotinoBaseServer", "SmartPioneerBaseServer" };
+        vector<string> robotTypes = { "Larry", "Robotino", "Pioneer" };
+        r.realRobotType = "";
+        for(int i=realBases.size(); i--;)
+          if(firstName==realBases[i])
+            r.realRobotType = robotTypes[i];
+        r.trailPoints.resize(trailSize);
+        r.trailLength = 0;
+        posesField->importMFNodeFromString(-1,
+          "MobileRobotPose {\n"
+          "  baseComponent \"" + r.baseComponent + "\"\n"
+          "}");
+        robots.push_back(r);
+      }
+    }
+
+    // read and write Localization.proto, connect and send if needed
+    vector<string> localizationsFieldNames;
+    for(int i=0; i<localizationsField->getCount(); i++) {
+      Node *node=localizationsField->getMFNode(i);
+      localizationsFieldNames.push_back(CHECK_FIELD(node->getField("baseComponent"))->getSFString());
+    }
+    for (int i=0; i<robots.size(); i++) {
+      ROBOT_TYPE &r = robots[i];
+      int j;
+      for(j=localizationsFieldNames.size(); j--;)
+        if(localizationsFieldNames[j] == r.baseComponent)
+          break;
+      if(j!=-1) {
+        Node *node = localizationsField->getMFNode(j);
+        Pose2D oldPose = r.localization;
+        const double *coord = CHECK_FIELD(node->getField("translation"))->getSFVec3f();
+        const double *rotat = CHECK_FIELD(node->getField("rotation"))->getSFRotation();
+        double heading = rotat[3];
+        // rotation should have form 0 0 1 heading, but maybe it is 0 0 -1 -heading
+        if (rotat[2] < 0)
+          heading = -heading;
+        Pose2D newPose = { x:coord[0], y:coord[1], heading };
+//        cout << __LINE__ << " " << robot->getTime() << " " << i << " " << j << " " << r.baseComponent << " " << coord[0] << " " << newPose.x << endl;
+        // if the field is changed, a user has manually changed it (or first loop) => update localization
+        if (fabs(newPose.x-oldPose.x)>0.001 || fabs(newPose.y-oldPose.y)>0.001 ||
+            (fabs(newPose.heading-oldPose.heading)>0.001 && fabs(newPose.heading-oldPose.heading)<(2*M_PI-0.001))) {
+          r.localization = newPose;
+          r.manualMoveTime = robot->getTime();
+//          cout << __LINE__ << " "
+//            << newPose.x << " (" << (newPose.x-oldPose.x) << ") "
+//            << newPose.y << " (" << (newPose.y-oldPose.y) << ") "
+//            << newPose.heading << " (" << (newPose.heading-oldPose.heading) << ")" << endl;
+          bool useLocalizationService = CHECK_FIELD(node->getField("service"))->getSFString().find("localizationComponent")==0;
+          string localizationComponent = CHECK_FIELD(node->getField("localizationComponent"))->getSFString();
+          r.INITIALPOSE_requires_neutral = CHECK_FIELD(node->getField("INITIALPOSE_requires_neutral"))->getSFBool();
+          string foundComponent = "";
+          for(string s:localizationComponents)
+            if(s.substr(s.length()-localizationComponent.length())==localizationComponent) {
+              foundComponent = s;
+              break;
+            }
+          if(r.isConnected && useLocalizationService!=r.useLocalizationService) {
+            if(!r.useLocalizationService) {
+              cout << "disconnect " << r.baseComponent << " (LocalizationUpdateServiceIn)" << endl;
+              r.updateService->disconnect();
+            }
+            r.isConnected=false;
+          }
+          r.localizationComponent = foundComponent;
+          r.useLocalizationService = useLocalizationService;
+          if(!r.isConnected && !r.useLocalizationService) {
+            cout << "connecting to: " << r.baseComponent << " LocalizationUpdateServiceIn" << endl;
+            Smart::StatusCode status = r.updateService->connect(r.baseComponent, "LocalizationUpdateServiceIn");
+            if (status != Smart::SMART_OK) {
+              cout << "error connect" << status << endl;
+            }
+            r.isConnected=true;
+          }
+          if(r.useLocalizationService) {
+            string parameterString = "COMMLOCALIZATIONOBJECTS.LOCALIZATIONPARAMETER.INITIALPOSE("
+                +to_string((int)(newPose.x*1000))+")("+to_string((int)(newPose.y*1000))+")("+to_string(newPose.heading)+")";
+            if(r.INITIALPOSE_requires_neutral) {
+              // sendLocalizationExecute() is an extra thread to
+              // * change mainState to Neutral in SmartAmcl (setWaitState(...))
+              // * call trigger INITIALPOSE in SmartAmcl
+              // * change mainState to Active in SmartAmcl
+              // there was an deadlock if the simulator is stopped, a localization position is changed and simulator is run again:
+              // ComponentWebots setWaitState() is waiting for SmartAmcl to change mainstate to "Neutral",
+              // SmartAmcl is waiting for release of substate "active",
+              // AmclTask is probably waiting for some data from ComponentWebotsMobileRobot/ComponentWebots2DLaser,
+              // ComponentWebotsMobileRobot/ComponentWebots2DLaser is waiting for next timestep in robot->step(...)
+              // Webots is waiting for ComponentWebots to call robot->step(...) to go to next timestep
+              // ComponentWebots setWaitState() is waiting ...
+              lock_guard<std::mutex> lock(sendLocalizationMutex);
+              sendLocalizationStr = parameterString;
+              sendLocalizationComponent = r.localizationComponent;
+              sendLocalizationReady = true;
+              sendLocalizationCondVar.notify_one();
+            } else {
+              SmartACE::CommParameterRequest parameterRequest;
+              SmartACE::CommParameterResponse parameterResponse;
+              Smart::StatusCode status;
+              parameterRequest = lispParamToParameterRequest(parameterString);
+              status = COMP->paramMaster->sendParameterWait(parameterRequest, parameterResponse, localizationComponent);
+            }
+          } else {
+            CommBasicObjects::CommBasePositionUpdate posUpdate;
+            CommBasicObjects::CommBasePose newBasePose;
+            newBasePose.set_x(newPose.x, 1.0);
+            newBasePose.set_y(newPose.y, 1.0);
+            newBasePose.set_base_azimuth(newPose.heading);
+            newBasePose.setCovMatrix(r.covMatrix);
+            posUpdate.set_corrected_position(newBasePose);
+            CommBasicObjects::CommBasePose oldBasePose;
+            oldBasePose.set_x(oldPose.x, 1.0);
+            oldBasePose.set_y(oldPose.y, 1.0);
+            oldBasePose.set_base_azimuth(oldPose.heading);
+            posUpdate.set_old_position(oldBasePose);
+            Smart::StatusCode status = r.updateService->send(posUpdate);
+            if(status != Smart::SMART_OK)
+              cout << "error send CommBasePositionUpdate " << status << endl;
+          }
+        }
+      }
+    }
+
+    // remove old and create new Localization in same order as MobileRobotPoses and robots
+    if(showMobileRobotPoses && !lastShowMobileRobotPoses) {
+      for(int i=localizationsField->getCount(); i--;)
+        localizationsField->getMFNode(i)->remove();
+      for(int i=0; i<robots.size(); i++) {
+        ROBOT_TYPE &r = robots[i];
+        string compNames="";
+        for(string s:localizationComponents)
+          compNames += "\""+s+"\"\n";
+        localizationsField->importMFNodeFromString(-1,
+          "Localization {\n"
+          "  baseComponent \"" + r.baseComponent + "\"\n"
+          "  service \""+(r.useLocalizationService ? "localizationComponent" : "baseComponent") + "\"\n"
+          "  localizationComponent \"" + r.localizationComponent + "\"\n"
+          "  localizationComponentNames ["+compNames+"]\n"
+          "  translation 0 0 0\n"
+          "  rotation 0 0 1 0\n"
+          "  type \"" + r.realRobotType + "\"\n"
+          "}");
+      }
+    }
+
+    // get baseState and change MobileRobotPose.proto and Localization.proto position
+    if (showMobileRobotPoses) {
+      for(int i=0; i<robots.size(); i++) {
+        ROBOT_TYPE &r = robots[i];
+        Pose2D oldPose = r.localization;
+        Pose2D newPose = r.localization;
+        CommBasicObjects::CommBaseState base_state;
+        Smart::StatusCode status = r.baseService->getUpdate(base_state);
+        if (status != Smart::SMART_OK) {
+          std::cout << r.baseComponent << " getUpdate(base_state) error " << status << std::endl;
+        } else {
+          CommBasicObjects::CommBasePose pose = base_state.get_base_raw_position();
+          r.odometrie = { pose.get_x(1.0), pose.get_y(1.0), minusPiToPi(pose.get_base_azimuth()) };
+          pose = base_state.get_base_position();
+          r.covMatrix = base_state.getBasePose().getCovMatrixCopy();
+          newPose = { pose.get_x(1.0), pose.get_y(1.0), minusPiToPi(pose.get_base_azimuth()) };
+          CommBasicObjects::CommBaseVelocity v = base_state.getBaseVelocity();
+          r.v = { v.get_vX(1.0), v.get_vY(1.0), v.getWZ() };
+        }
+        Node *pose = posesField->getMFNode(i);
+        if (!pose) {
+          cerr << "ERROR line " << __LINE__ << " " << i << endl;
+          return 1;
+        }
+        const double trans[3] = { newPose.x, newPose.y, 0 };
+        CHECK_FIELD(pose->getField("translationLocation"))->setSFVec3f(trans);
+        const double rot[4] = { 0.0, 0.0, 1.0, newPose.heading };
+        CHECK_FIELD(pose->getField("rotationLocation"))->setSFRotation(rot);
+        Node *node = localizationsField->getMFNode(i);
+        if(!node) {
+          cout << "ERROR line " << __LINE__ << endl;
+          return 1;
+        }
+
+        // if a user manually moves localization, only overwrite it after 3 seconds
+        if ((robot->getTime() - r.manualMoveTime) > 3.0) {
+          // write-write-conflict:
+          // if both user and supervisor change same field in same timestep then reading this field at next timestep shows buffered value from supervisor
+          // => user input is overwritten, supervisor is unaware of this
+          // => don't write it each timeStep
+          // (this gets much worse if user executes only one timestep as even if robot stands still, localization may send new position)
+          // (this works best if in real time mode and user moves robot by SHIFT+left mouse button and robot stands still)
+          // to solve this issue:
+          // * raise issue in webots to add a supervisor function to detect user input or to guarantee user overwrites supervisor at next timestep
+          // * or don't use same field for user input and supervisor output of robot localization, but how?
+          // maybe move localization by a motor / balljoint (supervisor does not directly write translation field, but moves it by moving the robot)
+          // => but then it needs physics => gravity would affect it
+          // or user manually stops supervisor to write the field
+          // or if Localization is selected by user, supervisor must not write it => real robot movement not visible if selected (add green cross again)
+          if (fabs(newPose.x-oldPose.x)>0.001 || fabs(newPose.y-oldPose.y)>0.001 ||
+              (fabs(newPose.heading-oldPose.heading)>0.001 && fabs(newPose.heading-oldPose.heading)<(2*M_PI-0.001))) {
+//            cout << __LINE__ << " "
+//              << newPose.x << " (" << (newPose.x-oldPose.x) << ") "
+//              << newPose.y << " (" << (newPose.y-oldPose.y) << ") "
+//              << newPose.heading << " (" << (newPose.heading-oldPose.heading) << ")" << endl;
+            CHECK_FIELD(node->getField("translation"))->setSFVec3f(trans);
+            CHECK_FIELD(node->getField("rotation"))->setSFRotation(rot);
+            r.localization = newPose;
+          }
+        }
+        const double trans2[3] = { r.odometrie.x, r.odometrie.y, 0 };
+        CHECK_FIELD(pose->getField("translationOdometry"))->setSFVec3f(trans2);
+        const double rot2[4] = { 0.0, 0.0, 1.0, r.odometrie.heading };
+        CHECK_FIELD(pose->getField("rotationOdometry"))->setSFRotation(rot2);
+        CHECK_FIELD(pose->getField("velocityForward"))->setSFFloat(r.v.x);
+        CHECK_FIELD(pose->getField("velocityLeft"))->setSFFloat(r.v.y);
+        CHECK_FIELD(pose->getField("velocityRotation"))->setSFFloat(r.v.heading);
+        if(r.covMatrix.size()==9) {
+          const double cov[3] = { r.covMatrix[0*3+0], r.covMatrix[1*3+1], r.covMatrix[2*3+2] };
+          CHECK_FIELD(pose->getField("covMatrixDiagonal"))->setSFVec3f(cov);
+        }
+        CHECK_FIELD(pose->getField("transparencyOdometry"))->setSFFloat(showMobileRobotPosesNumber >= 3 ? 0.5 : 1.0);
+        Field* trailField = CHECK_FIELD(pose->getField("trailPoints"));
+        double showRoute = showMobileRobotPosesNumber >= 2;
+        if (!showRoute) {
+          while(trailField->getCount()>0)
+            trailField->removeMF(0);
+          r.trailLength = 0;
+        }
+        if (showRoute) {
+          if(trailField->getCount()==0)
+            trailField->importMFNodeFromString(0, "TrailPoints {}");
+          int trailx = round(r.localization.x * 1000), traily = round(r.localization.y * 1000);
+          Node* trailNode = trailField->getMFNode(0);
+          const double trailPoint[3] = { trailx / 1000.0, traily / 1000.0, 0.0 };
+          XY_mm trailPoint_xy = { trailx, traily };
+          auto timeDuration = std::chrono::duration<double>(system_clock::now() - lastTrailTime).count();
+          if (r.trailLength == 0) {
+            r.trailPoints[0] = trailPoint_xy;
+            r.trailPoints[1] = trailPoint_xy;
+            r.trailIndex = 1;
+            for (int i = 0; i < 2; i++)
+              CHECK_FIELD(trailNode->getField("point"))->setMFVec3f(i, trailPoint);
+            for (int i = 0; i < trailSize; i++)
+              CHECK_FIELD(trailNode->getField("coordIndex"))->setMFInt32(i, (i > 1 ? -1 : i));
+            r.trailLength = 2;
+          } else if (timeDuration > 0.1 && (r.trailPoints[r.trailIndex].x != trailx || r.trailPoints[r.trailIndex].y != traily)) {
+            lastTrailTime = system_clock::now();
+            r.trailIndex = (r.trailIndex + 1) % trailSize;
+            r.trailPoints[r.trailIndex] = trailPoint_xy;
+            CHECK_FIELD(trailNode->getField("point"))->setMFVec3f(r.trailIndex, trailPoint);
+            CHECK_FIELD(trailNode->getField("coordIndex"))->setMFInt32(r.trailIndex, r.trailIndex);
+            if (r.trailLength < trailSize - 1)
+              r.trailLength++;
+            else {
+              int i = (r.trailIndex + 1) % trailSize;
+              CHECK_FIELD(trailNode->getField("coordIndex"))->setMFInt32(i, -1);
+            }
+          }
+        }
+        double vx = r.v.x, vy = r.v.y;
+        double v = sqrt(vx * vx + vy * vy);
+        if (fabs(v) < 0.001)
+          showRoute = false;
+        CHECK_FIELD(pose->getField("transparencyRoute"))->setSFFloat(showRoute ? 0.5 : 1.0);
+        if (showRoute) {
+          double vrot = r.v.heading;
+          double heading = r.localization.heading + atan2(vy, vx);
+          double routeTotalTime = 5.0;
+          // time points 0s, 0.5s, ... 4.5s, 5s
+          int nrTimePoints = 11;
+          Pose2D poses[nrTimePoints];
+          if (fabs(vrot) < 0.00001) {
+            // very small rotation: straight line
+            for (int i = 0; i < nrTimePoints; i++) {
+              double t = routeTotalTime / (nrTimePoints - 1) * i;
+              poses[i].x = cos(heading) * t * v;
+              poses[i].y = sin(heading) * t * v;
+            }
+          } else {
+            // constant v => travel on circle with radius r
+            // vrot = alpha / t
+            // distance traveled = v*t = r*alpha
+            // => r = v*t/alpha = v/vrot
+            double r = v / fabs(vrot);
+            // go from robot to circle center: turn by 90 degrees, go forward by distance r
+            heading += M_PI / 2 * (vrot > 0 ? 1 : -1);
+            Pose2D center = { r * cos(heading), r * sin(heading), 0.0 };
+            // go from circle center to robot: turn by 180 degrees
+            heading += M_PI;
+            for (int i = 0; i < nrTimePoints; i++) {
+              double t = routeTotalTime / (nrTimePoints - 1) * i;
+              double alpha = heading + vrot * t;
+              // point on circle
+              poses[i].x = center.x + r * cos(alpha);
+              poses[i].y = center.y + r * sin(alpha);
+            }
+          }
+          Field *routeField = CHECK_FIELD(pose->getField("route"));
+          for (int i = 0; i < nrTimePoints - 1; i++) {
+            //        poses[i+1]
+            //        +
+            //       ***
+            //      *****
+            //     ***+***
+            //        poses[i]
+            double x1 = poses[i].x, y1 = poses[i].y, x2 = poses[i + 1].x, y2 = poses[i + 1].y;
+            double dx = x2 - x1, dy = y2 - y1;
+            // vector v = triangle base side
+            // (-y, x) is right-hand orthogonal to (x,y)
+            double vx = -dy, vy = dx;
+            // change length of v to 0.1m
+            double coef = 0.1 / sqrt(vx * vx + vy * vy);
+            vx *= coef;
+            vy *= coef;
+            const double p0[3] = { x1 + vx, y1 + vy, 0.0 };
+            const double p1[3] = { x1 - vx, y1 - vy, 0.0 };
+            const double p2[3] = { x2, y2, 0.0 };
+            routeField->setMFVec3f(i * 3 + 0, p0);
+            routeField->setMFVec3f(i * 3 + 1, p1);
+            routeField->setMFVec3f(i * 3 + 2, p2);
+          }
+        }
+      }
+    }
+
+
+    ////////////////////////////////
+
+    Node *selectedNode = robot->getSelected();
+    const string LOCATION = "Location";
+    const string STATION = "Station";
+    const string WAYPOINT = "Waypoint";
+    const string WAYPOINTCONNECTION = "WaypointConnection";
+    string selectedType = "";
+    if (selectedNode) {
+      selectedType = selectedNode->getTypeName();
+      if (selectedType != LOCATION && selectedType != STATION && selectedType != WAYPOINT && selectedType != WAYPOINTCONNECTION)
+        selectedType = "";
+    }
+    int key = keyboard->getKey();
+    if ((key == '-' || key == 7) && selectedType != "") {
+      // deleting nodes and reading them from a supervisor can crash
+      selectedNode->remove(); // next timeStep() will remove connections with missing id's and update ComponentNavigationGraph
+      continue;
+    }
+    bool showWaypoints = CHECK_FIELD(proto->getField("showWaypoints"))->getSFBool();
+    double defaultWidth = CHECK_FIELD(proto->getField("defaultWaypointWidth"))->getSFFloat();
+    if (key == '/' && (selectedType == WAYPOINT || selectedType == WAYPOINTCONNECTION)) {
+      CHECK_FIELD(selectedNode->getField("width"))->setSFFloat(defaultWidth);
+    }
+    Field *stations = CHECK_FIELD(robot->getFromDef("Stations")->getField("children"));
+    Field *waypointsField = CHECK_FIELD(robot->getFromDef("Waypoints")->getField("children"));
+    Field *waypointConnectionsField = CHECK_FIELD(robot->getFromDef("WaypointConnections")->getField("children"));
+//     user has to stop simulation himself during editing, at least if he deletes something
+//     // if user deletes a station, a supervisor function call to read stations could crash
+//     // => don't do it if Editor or something inside is selected
+//     Node *selected = robot->getSelected();
+//     while (selected != NULL && selected != proto)
+//     selected = selected->getParentNode();
+//     if (selected)
+//     continue;
+
+    //////////////////////////
+    // Locations and Stations
+    //////////////////////////
+    unordered_map<int, XY> location_id_to_xy;
+    vector<string> updateStrings;
+
+    updateStrings.push_back("(kb-delete :key '(is-a) :value '((is-a location)) )");
+    updateStrings.push_back("(kb-delete :key '(is-a) :value '((is-a station)) )");
+    updateStrings.push_back("(kb-delete :key '(is-a) :value '((is-a rack)) )");
+
+    // problem: each timestep
+    //          stations position change a little bit by gravity and wheels
+    //          => station's waypoint position changes too
+    //          => WaypointConnection parameter change
+    //          => proto regeneration of WaypointConnection very often
+    //          => very slow
+    // solution: round station position to mm
+    // problem:
+    //    rounded values can change too (if the real values are close to .5 mm)
+    //    all locations/stations are updated (deleted and added to knowledge base)
+    //    during this update time, other components may read missing data
+    //    (solution: make it possible to update knowledgebase atomically)
+
+    // count from last to first may help to prevent crash after ->remove (access array-entries behind deleted entry may be undefined)
+    for (int i = stations->getCount() - 1; i >= -1; i--) {
+      Field *locations;
+      string stationName = "";
+      if (i == -1) {
+        locations = CHECK_FIELD(robot->getFromDef("Locations")->getField("children"));
+      } else {
+        Node *station = stations->getMFNode(i);
+        locations = CHECK_FIELD(station->getField("Locations"));
+        Field *dataField = CHECK_FIELD(station->getField("data"));
+        Field *nameField = CHECK_FIELD(station->getField("name"));
+        if (!locations || !locations->getCount() || !dataField || !nameField) {
+          cerr << (i + 1) << ". children in Stations removed (has no or empty Locations/data/name field)" << station->getTypeName() << endl;
+          station->remove();
+          continue;
+        }
+        string data = "";
+        for (int j = 0; j < dataField->getCount(); j++)
+          data += " " + dataField->getMFString(j);
+        // to-do: allow multiple whitespace between "is-a" and "station"
+        string dataLowercase = data;
+        for (auto &c : dataLowercase)
+          c = tolower(c);
+        bool isStation = dataLowercase.find("is-a station") != string::npos;
+        stationName = nameField->getSFString();
+        Node *firstLocation = locations->getMFNode(0);
+        int waypointId = CHECK_FIELD(firstLocation->getField("waypointId"))->getSFInt32();
+        string locationName = CHECK_FIELD(firstLocation->getField("name"))->getSFString();
+        updateStrings.push_back(
+            "(kb-update"
+            " :key '(is-a id)"
+            " :value '("
+            " (id " + stationName + ")"
+            " (" + (isStation ? "approach-location" : "location-id") + " " + locationName + ")"
+            + (waypointId < 0 ? "" : (" (approach-waypoint " + to_string(waypointId) + ")")) + data + "))");
+      }
+      for (int j = locations->getCount(); j--;) {
+        Pose2D locationPose;
+        double radius, smallerRadius;
+        Node *node = locations->getMFNode(j);
+        Pose2D pose = getNodePose(node);
+        pose.x = round(pose.x * 1000) / 1000;
+        pose.y = round(pose.y * 1000) / 1000;
+        int waypointId = CHECK_FIELD(node->getField("waypointId"))->getSFInt32();
+        if (waypointId >= 0) {
+          XY _xy = { .x = pose.x, .y = pose.y };
+          location_id_to_xy[waypointId] = _xy;
+        }
+        locationPose = getNodePose(node);
+        string name = CHECK_FIELD(node->getField("name"))->getSFString();
+        radius = CHECK_FIELD(node->getField("radius"))->getSFFloat();
+        smallerRadius = CHECK_FIELD(node->getField("smallerRadius"))->getSFFloat();
+        string approachType;
+        if (smallerRadius == 0)
+          approachType = "region";
+        else if (smallerRadius > 0)
+          approachType = "exact";
+        else
+          approachType = "halt-point";
+        updateStrings.push_back(
+            "(kb-update"
+            " :key '(is-a name)"
+            " :value '("
+            " (is-a location)"
+            " (name " + name + ")"
+            " (approach-type (" + approachType + "))"
+            " (approach-region-pose (" + to_string(lround(pose.x * 1000)) + " " + to_string(lround(pose.y * 1000)) + " 0))"
+            " (approach-region-dist " + to_string(lround(radius * 1000))
+            + ")"
+            //                            " (orientation-region (angle-absolute " + to_string(lround(pose.heading / M_PI * 180))
+            " (orientation-region (position " + to_string(lround(pose.x * 1000 + cos(pose.heading) * 10000)) + " "
+            + to_string(lround(pose.y * 1000 + sin(pose.heading) * 10000)) + "))"
+            + (smallerRadius != 0.0 ?
+                (" (approach-exact-pose (" + to_string(lround(pose.x * 1000)) + " " + to_string(lround(pose.y * 1000)) + " 0))"
+                    " (approach-exact-dist " + to_string(lround(smallerRadius * 1000))
+                    + ")"
+                    //                                    " (orientation-exact (angle-absolute "
+                    //                                + to_string(lround(pose.heading / M_PI * 180)) + "))"
+                    " (orientation-exact (position " + to_string(lround(pose.x * 1000 + cos(pose.heading) * 10000)) + " "
+                    + to_string(lround(pose.y * 1000 + sin(pose.heading) * 10000)) + "))"
+                    " (approach-exact-safetycl 0)") :
+                    "") + ")) ");
+      }
+    }
+
+    if (updateStrings != last_updateStrings) {
+      cout << "Locations or Stations updated: " << updateStrings.size() << " lines" << endl;
+      last_updateStrings = updateStrings;
+      for (string s : updateStrings) {
+        cout << s << endl;
+        CommBasicObjects::CommKBRequest kbReq;
+        CommBasicObjects::CommKBResponse kbResp;
+        kbReq.setRequest(s);
+        COMP->commKBQueryReq->query(kbReq, kbResp);
+      }
+    }
+
+    ////////////////////////////////////
+    // Waypoints and WaypointConnections
+    ////////////////////////////////////
+
+    // https://www.modernescpp.com/index.php/hash-tables
+    unordered_map<int, XY> id_to_xy;
+
+    int count = waypointsField->getCount();
+    for (int i = count; i--;) {
+      Node *node = waypointsField->getMFNode(i);
+      if (node->getTypeName() != WAYPOINT) {
+        cerr << "ERROR: wrong type " << node->getTypeName() << " in Waypoints removed" << endl;
+        waypointsField->removeMF(i);
+        continue;
+      }
+      int id = CHECK_FIELD(node->getField("id"))->getSFInt32();
+      if (id_to_xy.count(id) > 0) {
+        cerr << "ERROR: double " << id << " waypoint deleted" << endl;
+        waypointsField->removeMF(i);
+        continue;
+      }
+
+      XY _xy;
+      if (location_id_to_xy.count(id) > 0) {
+        _xy = location_id_to_xy[id];
+        const double xyz[3] = { _xy.x, _xy.y, 0 };
+        CHECK_FIELD(node->getField("translation"))->setSFVec3f(xyz);
+        location_id_to_xy.erase(id);
+      } else {
+        const double *coord = CHECK_FIELD(node->getField("translation"))->getSFVec3f();
+        _xy.x = coord[0];
+        _xy.y = coord[1];
+      }
+      id_to_xy[id] = _xy;
+      if (showWaypoints != lastShowWaypoints)
+        CHECK_FIELD(node->getField("showWaypoints"))->setSFBool(showWaypoints);
+    }
+    if (showWaypoints != lastShowWaypoints)
+      cout << "change showWaypoints to " << showWaypoints << endl;
+
+    for (auto wp : location_id_to_xy) {
+      int id = wp.first;
+      XY _xy = wp.second;
+      id_to_xy[id] = _xy;
+      string s = "Waypoint {\n"
+          "  id " + to_string(id) + "\n"
+          "  translation " + to_string(_xy.x) + " " + to_string(_xy.y) + " 0\n"
+          "  width " + to_string(defaultWidth) + "\n"
+          "}";
+      cout << "Import Waypoint id  " << id << " from Location" << endl;
+      waypointsField->importMFNodeFromString(-1, s);
+    }
+    struct waypointConnection {
+      int startId;
+      int endId;
+      double width;
+    };
+    vector<waypointConnection> waypointConnections;
+    count = waypointConnectionsField->getCount();
+    for (int i = count; i--;) {
+      Node *node = waypointConnectionsField->getMFNode(i);
+      if (node->getTypeName() != WAYPOINTCONNECTION) {
+        cout << "ERROR: wrong type " << node->getTypeName() << " in WaypointConnections removed" << endl;
+        waypointConnectionsField->removeMF(i);
+        continue;
+      }
+      waypointConnection w = { .startId = CHECK_FIELD(node->getField("startId"))->getSFInt32(), .endId =
+          CHECK_FIELD(node->getField("endId"))->getSFInt32(), .width =
+              CHECK_FIELD(node->getField("width"))->getSFFloat() };
+      if (id_to_xy.count(w.startId) == 0 || id_to_xy.count(w.endId) == 0) {
+        cout << "ERROR: missing ids " << w.startId << " " << w.endId << " waypointConnection deleted" << endl;
+        waypointConnectionsField->removeMF(i);
+        continue;
+      }
+      waypointConnections.push_back(w);
+      const double startCoord[2] = { id_to_xy[w.startId].x, id_to_xy[w.startId].y };
+      CHECK_FIELD(node->getField("startCoord"))->setSFVec2f(startCoord);
+      const double endCoord[2] = { id_to_xy[w.endId].x, id_to_xy[w.endId].y };
+      CHECK_FIELD(node->getField("endCoord"))->setSFVec2f(endCoord);
+      // if showWaypoints was changed in Editor.proto by user, update it in all Waypoint.proto
+      if (showWaypoints != lastShowWaypoints)
+        CHECK_FIELD(node->getField("showWaypoints"))->setSFBool(showWaypoints);
+    }
+
+    bool isWaypoint = selectedType == WAYPOINT;
+    bool isConnection = selectedType == WAYPOINTCONNECTION;
+
+    int selectedId;
+    if (isWaypoint) {
+      selectedId = CHECK_FIELD(selectedNode->getField("id"))->getSFInt32();
+      double x = id_to_xy[selectedId].x;
+      double y = id_to_xy[selectedId].y;
+      const double redColor[3] = { 1.0, 0.0, 0.0 };
+      const double greenColor[3] = { 0.0, 1.0, 0.0 };
+      bool isError = false;
+      for (auto p : id_to_xy) {
+        if (p.first != selectedId && sqrt(pow(x - p.second.x, 2) + pow(y - p.second.y, 2)) < defaultWidth * 0.9999) {
+          isError = true;
+          break;
+        }
+      }
+      CHECK_FIELD(selectedNode->getField("color"))->setSFColor(isError ? redColor : greenColor);
+    }
+    bool addConnection = false;
+    int startId, endId;
+    // insert key == 6
+    if ((key == '+' || key == 6) && lastKey == -1) {
+      int id = 0;
+      double x = 0.0;
+      double y = 0.0;
+      if (isWaypoint) {
+        id = selectedId;
+        x = id_to_xy[id].x + defaultWidth;
+        y = id_to_xy[id].y;
+      }
+      id++;
+      while (id_to_xy.count(id) > 0)
+        id++;
+      string s = "Waypoint {\n"
+          "  id " + to_string(id) + "\n"
+          "  translation " + to_string(x) + " " + to_string(y) + " 0\n"
+          "  width " + to_string(defaultWidth) + "\n"
+          "}";
+      waypointsField->importMFNodeFromString(-1, s);
+      if (isWaypoint) {
+        addConnection = true;
+        startId = selectedId;
+        endId = id;
+      }
+    }
+    // * key pressed and a Waypoint was selected and now new Waypoint is selected
+    if (key == '*' && isWaypoint && wasWaypoint && lastSelectedId != selectedId) {
+      bool isDouble = false;
+      for (waypointConnection con : waypointConnections)
+        if (con.startId == lastSelectedId || con.startId == selectedId)
+          if (con.endId == lastSelectedId || con.endId == selectedId)
+            isDouble = true;
+      if (!isDouble) {
+        addConnection = true;
+        startId = lastSelectedId;
+        endId = selectedId;
+      }
+    }
+    if (addConnection) {
+      waypointConnectionsField->importMFNodeFromString(-1, "WaypointConnection {\n"
+          "startId " + to_string(startId) + "\n"
+          "endId " + to_string(endId) + "\n"
+          "startCoord " + to_string(id_to_xy[startId].x) + " " + to_string(id_to_xy[startId].y) + "\n"
+          "endCoord " + to_string(id_to_xy[endId].x) + " " + to_string(id_to_xy[endId].y) + "\n"
+          "width " + to_string(defaultWidth) + "\n"
+          "}");
+    }
+
+    bool waypointsChanged = false;
+    if (firstRun || std::chrono::duration<double>(system_clock::now() - lastWaypointsTime).count() > 1.0) {
+      lastWaypointsTime = system_clock::now();
+      string s = robot->getFromDef("Waypoints")->exportString();
+      waypointsChanged = lastWaypointsString != s;
+      lastWaypointsString = s;
+    }
+
+    // send data to knowledge base only after release of space key or at first run or check change each second
+    if ((lastKey == ' ' and key == -1) || firstRun || waypointsChanged) {
+      std::vector<DomainRobotFleetNavigation::CommPath> navPath;
+      int counter = 1;
+      for (waypointConnection con : waypointConnections) {
+        DomainRobotFleetNavigation::CommPath path;
+        std::vector<DomainRobotFleetNavigation::CommNode> nodes;
+        DomainRobotFleetNavigation::CommNode startNode, endNode;
+        startNode.setId(con.startId);
+        startNode.setX(id_to_xy[con.startId].x);
+        startNode.setY(id_to_xy[con.startId].y);
+        endNode.setId(con.endId);
+        endNode.setX(id_to_xy[con.endId].x);
+        endNode.setY(id_to_xy[con.endId].y);
+        nodes.push_back(startNode);
+        nodes.push_back(endNode);
+        path.setNode(nodes);
+        path.setDirection(0);
+        path.setWidth(con.width);
+        path.setId(counter);
+        navPath.push_back(path);
+        counter++;
+      }
+      DomainRobotFleetNavigation::CommNavPath _navPath;
+      _navPath.setPath(navPath);
+      Smart::StatusCode status = COMP->navPathServiceOut->send(_navPath);
+      cout << "send " << waypointConnections.size() << " WaypointConnections: " << status << endl;
+    }
+
+    wasWaypoint = isWaypoint;
+    lastSelectedId = selectedId;
+    lastKey = key;
+    lastShowWaypoints = showWaypoints;
+    firstRun = false;
+  }
+  return 0;
 }
 
 int EditorTask::on_exit() {
-    return 0;
+  return 0;
 }

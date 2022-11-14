@@ -1,18 +1,14 @@
 ComponentDefinition ComponentWebots logo "/ComponentWebots/model/logo.png"
 {
-	RequestPort CommKBQueryReq implements CommBasicObjects.CommKBQuery {
-	}	
-	CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService
-	{
+    Activity EditorTask { }
+    InputPort BaseStateServiceIn implements CommBasicObjects.BaseStateService { }
+    InputPort CurrGridMapPushServiceIn implements CommNavigationObjects.CurrGridMapPushService { }
+    RequestPort CommKBQueryReq implements CommBasicObjects.CommKBQuery { }
+    OutputPort NavPathServiceOut implements DomainRobotFleetNavigation.NavPathService realizedBy EditorTask { }
+    OutputPort LocalizationUpdateServiceOut implements CommNavigationObjects.LocalizationUpdateService realizedBy EditorTask { }
+    CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService { }
+    ComponentParameters ComponentWebots slave CoordinationPort
+    RequestPort LongTermGridMapQueryServiceReq implements CommNavigationObjects.LongTermGridMapQueryService {
 	}
-	ComponentParameters ComponentWebots slave CoordinationPort
-Activity EditorTask
-	{
-	}
-OutputPort NavPathServiceOut implements DomainRobotFleetNavigation.NavPathService realizedBy EditorTask {
-	}
-InputPort BaseStateServiceIn implements CommBasicObjects.BaseStateService {
-	}
-InputPort CurrGridMapPushServiceIn implements CommNavigationObjects.CurrGridMapPushService {
-	}
+	CoordinationMasterPort CoordinationMaster implements CommBasicObjects.DefaultCoordinationService;
 }

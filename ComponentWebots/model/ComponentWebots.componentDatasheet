@@ -3,6 +3,8 @@ ComponentDatasheet ComponentWebots
 	BaseURI "http://www.servicerobotik-ulm.de"
 	ShortDescription "
 
+Videos [1](https://www.youtube.com/watch?v=wykpdKlzwuE) and [2](https://www.youtube.com/watch?v=YrkvbOH4svI). For developers, see also the [Developer Documentation](smartsoft/README.md).
+
 This component starts the [Webots](https://cyberbotics.com) simulator.
  
 If another webots simulator is already running, this component will ask to end it first before starting the new one, because two simulations could make the computer very slow.
@@ -21,7 +23,11 @@ Example:
 ```
 ### Editor
 
-The Editor can add, move, change and delete Locations, Stations or Waypoints. The Editor can show a map and the position and path of simulated or real mobile robots in the simulation.  
+The Editor can 
+* add, move, change and delete Locations, Stations or Waypoints
+* show a map (from Mapper or Planner) of one robot
+* show the position and movement path of all robots
+* set the position of a robot (directly for simulated robots, localization for real robots)
 
 To turn on the editor:
 * in system > model > *.systemParam, change the parameter 'isEditorPresent = true'
@@ -34,6 +40,9 @@ Editor {
 }
 ```
 
+In the System, connect ComponentWebots to ComponentKB (or ComponentKB_Master in case of a master-slave system). The other connections are done by ComponentWebots itself.
+
+
 The Editor will add/use these Groups in the [Scene Tree](https://cyberbotics.com/doc/guide/the-scene-tree):
 
 ```
@@ -42,13 +51,14 @@ DEF Stations Group
 DEF Waypoints Group
 DEF WaypointConnections Group
 DEF MobileRobotsPoses Group
+DEF RealRobots Group
 ```
 
 (if you don't see the Scene Tree on the left side of Webots, press <kbd>CTRL</kbd>+<kbd>J</kbd> to reset the layout)
  
 A **Location** is shown by a cross on the floor. A mobile robot can find a path to a goal Location by using its map and avoid obstacles by using its sensors.
 
-To add an Location:
+To add a Location:
 * double click on the Group 'Locations'
 * click on 'children'
 * right-click 'Add New'
@@ -57,7 +67,7 @@ To add an Location:
 Double click on the newly added Location, enter an unique name.
 
 To move an Location:
-* click on the cross, press <kdb>shift</kdb> while moving it with the mouse [(moving a solid object)](https://cyberbotics.com/doc/guide/the-3d-window#moving-a-solid-object)
+* click on the cross and press <kdb>shift</kdb> while moving it with the mouse [(moving a solid object)](https://cyberbotics.com/doc/guide/the-3d-window#moving-a-solid-object)
 * to rotate it, use the blue curved arrow
 * or edit its translation/rotation values in the Scene Tree
 
@@ -69,12 +79,22 @@ Fields of the Location:
 * *smallerRadius* : after *radius* distance is reached and if *smallerRadius* is greater than zero then move again to *smallerRadius* distance
 * *waypointId* : If this number is 0 or greater, generate a Waypoint with this *waypointId* and at same position than this Location. If this Location is moved, the generated Waypoint is moved too. 
 
-A **Station** can be
+To add a Station:
+* double click on the Group 'Stations'
+* click on 'children'
+* right-click 'Add New'
+* select one of these:
+
+* A-Frame
+* AssemblyWorkstation
+* CrateStation
+* InclinedShelf
+* ManualStation (brown cross on floor)
 * OPC_UA_Station
 * RollerConveyorStation
-* A-Frame
-* InclinedShelf
-* CrateStation
+
+Picture with all kinds of **Station** (from left to right): 
+![EditorMap](./textures/Stations.png)
 
 Fields of the Station:
 * *name* : The name of the Station. OPC_UA_Station and RollerConveyorStation should have a positive number as a name.
@@ -82,7 +102,9 @@ Fields of the Station:
 * *data* : These additional data strings of the Station are automatically written into the knowledge base. 
 * *port* : (OPC_UA_Station only) Default port for OPC UA communication is 4840. Each OPC_UA_Station must have an different port number e.g. 4840 4841 ... [List](https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers). port -1 disables communication. Changing the port restarts the OPC UA program.
 
-To select a Location of a Station in the graphics window, click on the Location twice: the first click selects the Station, the second one the Location.
+To select a Location of a Station in the graphics window, click on the Location twice: the first click selects the Station, the second click selects the Location.
+
+If you added a Station outside the DEF Stations Group, it will not be detected and its Location not listed. To fix this, cut and paste it into 'children' of the DEF Stations Group instead.
 
 **Waypoints** can be connected by one-way **WaypointConnections**. Mobile robots can travel on these connections between waypoints, avoiding other robots. Robots can use intersections of two connections too. Connections are one-way only, e.g. if there is a connection from A to B, there can't be a direct connection from B to A. A selected Waypoint is red if it is too close to other Waypoints. The length of a connection can be counted by the green arrow stripes: one dark green stripe each meter. (The gray floor tiles in Lab/THU worlds have exactly 0.5 meter size) 
 
@@ -91,128 +113,71 @@ Keys used in the graphics window of Webots:
 * <kbd>Del</kbd> or <kbd>-</kbd> : delete the selected Waypoint or WaypointConnection
 * <kbd>*</kbd> : while pressing this key and selecting a new Waypoint, a new connection from the old selected Waypoint to the new one is created
 * <kbd>/</kbd> : while pressing this key and selecting a Waypoint or WaypointConnection, the defaultWaypointWidth of the Editor is applied to it
-* <kbd>space</kbd> : send changes in Waypoints or WaypointsConnections to the navigation system (not required for changes of Locations or Stations)
 
+To delete a OPC_UA_Station during runtime:
+* pause the simulation
+* use Scene Tree (left side of Webots) to delete the station
+* unpause the simulation
 
 Fields of the Editor:
-* *defaultWaypointWidth* : The diameter of newly added Waypoints or the width of newly added WaypointConnections (in meters). To apply this value to an existing Waypoint/WaypointConnection, select it while pressing the <kbd>/</kbd> key.
+* *showMobileRobotsPoses* : can be set to show the position and movement path of real or simulated robots
+* *mapType* : Current (map with currently seen obstacles) or LongTerm or Planner or none
+* *mapComponent* : select the first entry from *mapComponentNames* which ends with this value (e.g. if mapComponentNames has entries \"SmartMapperGridMap_1\" \"SmartMapperGridMap_2\" \"SmartMapperGridMap_3\", then \"GridMap_2\" or \"2\" selects the second entry, and \"GridMap_1\" or \"1\" or \"\" selects the first entry)
+* *mapComponentNames* : alphabetically sorted list of components who generate *mapType*
 * *showWaypoints* : if set to false, all Waypoints and WaypointConnections are invisible
-* *showMobileRobotsPoses* : can be set to show the position and movement of real or simulated robots (see below)
-* *mapWidth* / *mapHeight* : the size of the map in pixels (pixels are the points of an image, in this case a 5cm x 5cm part of a map)
-* *maps* : a numbered list of maps
-* *mapNumber* : shows this map if the number is in *maps* (below is a picture of a map: blue pixels show the area where the robot center point can't go)
+* *defaultWaypointWidth* : The diameter of newly added Waypoints or the width of newly added WaypointConnections (in meters). To apply this value to an existing Waypoint/WaypointConnection, select it while pressing the <kbd>/</kbd> key.
+* *stopSimulation* : set this value to 'TRUE' before saving the world (it removes the map, MobileRobotsPoses and velocities to make the save files smaller)
 
-![EditorMap](./textures/EditorMap.png)
+Example of a map (Current) from SmartMapperGridMap (blue pixels show the area where the robot center point can't go):
 
-To enable the **map**, the parameter *mapWidth* and *mapHeight* must be added to the *.wbt file:
+![EditorMap](./textures/Mapper.png)
 
-```
-Editor {
-  mapWidth 1000
-  mapHeight 400
-}
-```
+Example of a map (Planner) from SmartPlannerBreadthFirstSearch: 
 
-If a system is started with wrong or missing parameters, the map can't be shown (it is not possible to change a Webots Display size at runtime), and ComponentWebots will print an error message showing how to add the correct parameters in the *.wbt file.
+![EditorMap](./textures/PathPlannerMap.png)
+
+Colors of the path planner map:
+* blue = path or goal area
+* red/green = move in X/Y axis direction of world (light color=+axis, dark color=-axis)
+* white = obstacle (from loaded map)
+* dark grey = 'growing' obstacle (from laser)
+
+If the robot is inactive, the map could be invisible or not updated. The map will be visible again if the robot has to move to some place.
 
 **MobileRobotsPoses**
-* A green cross on the floor shows the localisation position of the robot (using a map, cameras/lidar etc.).
-* 10 blue triangles on the floor shows where the robot is moving to in 0.5 seconds, 1 second, 1.5 seconds ... 5 seconds.
-* A red cross on the floor shows the odometry position (using only the wheel rotations).
-* A simple transparent model with of a real robot is shown in the simulation. The real robots Larry/Robotino/Pioneer component name must start with ComponentRMPBaseServer/ComponentRobotinoBaseServer/SmartPioneerBaseServer. The middle part of the component can be any string, e.g. '_Larry'. If at the end of the component name is '_0' or '_1' or  ... '_9', that red number is shown on top of the model.      
+* blue route: The future movement is shown by 10 blue triangles (using the current speed, 0.5 seconds per triangle). The past movement is shown by a blue line.
+* red odometry: A red cross on the floor shows the odometry position (the driven distance etc. is measured by sensors for the wheel rotatation)
 
-Be careful if you delete things during runtime. Deleting a OPC_UA_Station during runtime could crash, better stop the simulation, delete the station by using the Scene Tree on the left side of Webots, and start the simulation again. Don't use the Scene Tree to delete a waypoint/connection/location. It is save to delete these during runtime by selecting it and pressing the <kbd>-<kbd> in the graphical window.
+**Localizations**
+The Localization is the estimated position of a robot, based on odometry (wheel rotation sensors), a laser or depth camera to see the environment, and a map of the environment.
+Note that the true position of a simulated robot can be seen in the simulation and not in the real world, and the true position of a real robot can be seen in the real world and not in the simulation.
+For simulated robots (ComponentWebotsMobileRobot), the true robot is visible in the simulation and the Localization is a green cross on the floor.
+For real robots (ComponentRobotinoBaseServer/ComponentRMPBaseServer/SmartPioneerBaseServer), the true robot is not visible in the simulation and the Localization is a cylinder or box with same size as the robot.
+If at the end of the component name is '_0' or '_1' or  ... '_9', that red number is shown on top of the model.
 
-If you save a world with Larry, sometimes it's robot arm pose will be reset. To fix this bug, copy from an old world file with Larry the 'hidden' positions/rotations of Larry to the actual one. 
+**different ways to set the estimated position (Localization) of a robot**
+* set in System model/*.systemParam > SmartAmcl* > General > initialType = INI_POSE and initial_x/y/a on position [meters] and heading [radians] OR
+* in the System's Behavior, add in startUp.smartTcl \"(execute '(localizationModInst.localizationSetRobotPose x y heading))\" (x y are position numbers in meters, heading is in radians) OR
+* click on the Localization in the 3D window and press shift and left mouse button to move it to the correct position or click on the curved/straight arrows to rotate/slide (red=x-axis, green=y, blue=z) OR
+* click on the Localization in the Scene Tree on the left side, edit the first two numbers of 'translation' [meters] and the last of 'rotation' [radians] OR
+* edit the System's webots worldfile (*.wbt) like this:
 
-#### How to install Webots in Linux (Ubuntu 20.04)
+	DEF Localizations Group {
+		children [
+			Localization {
+				baseComponent \"SmartAmcl_1\"
+				translation 0 -2 0
+				rotation 0 0 1 0
+			}
+		]
+	}
 
-if webots was already installed, deinstall the old version first:
+For simulated robots, it is better to move the robot and not its Localization (the green cross on the floor).
 
-```
-sudo dpkg -r webots
-```
+If you save a world with Larry, sometimes it's robot arm pose will be reset. To fix this bug, copy-paste from another world file with Larry the 'hidden' positions/rotations of Larry.
 
-go to [https://cyberbotics.com/](https://cyberbotics.com/)
+Note that the laser of the real Robotino3 needs half a minute to start, only after that time the initial position will be shown correctly.
 
-click on 'Download', download [webots_2022a_amd64.deb](https://github.com/cyberbotics/webots/releases/download/R2022a/webots_2022a_amd64.deb) into your Downloads-folder, then do:
-
-```
-sudo apt install ~/Downloads/webots_2022a_amd64.deb
-```
-
-Add to your ~/.profile:
-
-```
-export WEBOTS_HOME=/usr/local/webots
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$WEBOTS_HOME/lib/controller
-```
-
-#### Add Webots library and include path to an component project
-
-Add to component's smartsoft/CMakeLists.txt the following lines:
-
-```
-INCLUDE_DIRECTORIES($ENV{WEBOTS_HOME}/include/controller/cpp)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} $ENV{WEBOTS_HOME}/lib/controller/libCppController.so)
-```
-
-Then do:
-- right click on Component in Project Explorer
-- properties
-- expand 'C/C++ General'
-- Paths and Symbols
-- includes
-- GNU C++
-- Add...<br>
-  <code>${WEBOTS_HOME}/include/controller/cpp</code>
-- rebuild index (e.g. by closing and opening this project)
-
-#### Other Webots components
-
-- [ComponentWebotsMobileRobot](../ComponentWebotsMobileRobot)
-- [ComponentWebots2DLidar](../ComponentWebots2DLidar)
-- [ComponentWebots3DCamera](../ComponentWebots3DCamera)
-- [ComponentWebotsURServer](../ComponentWebotsURServer)
-- [ComponentWebotsPTUServer](../ComponentWebotsPTUServer)
-- [ComponentWebotsConveyorBeltOpcua](../ComponentWebotsConveyorBeltOpcua)
-- [ComponentWebotsMpsDocking](../ComponentWebotsMpsDocking)
-
-#### Webots in the Virtual machine
-
-It is best to start the virtual machine with VMWare Player in Windows. [[1]](https://www.cyberbotics.com/doc/guide/general-bugs#virtualization)
-It was tested with VMWare Workstation Player 15 (both non-commercial and PRO version).
-
-You need at least 8 MB Ram and a good graphics card on your computer.
-In the settings of the virtual machine, give it at least 4 GB Ram, 512 MB graphics memory and turn on graphics card acceleration. OpenGl is required by webots to run fast.
-
-If your computer has not a very good graphics card, webots may run slowly in the virtual machine. The simulation speed should be near to '1.00x' at the top of the webots window. If it is below, you can speed up graphics:
-* make the graphics window smaller (if graphics window height and width is halved, the speed is 4 times faster)
-* webots menu > Tools > Preferences > OpenGL > Disable shadows
-* webots window, at the left side is the Scene Tree, first entry is WorldInfo, double click on it, it expands, now click on basicTimeStep, double the value from 32 to 64 or again to 128. This will speed up the simulation but makes it less accurate as changes are done less frequently. [[2]](https://cyberbotics.com/doc/guide/the-scene-tree) [[3]](https://www.cyberbotics.com/doc/reference/glossary)
-* you can reduce here the value FPS too (frames per second, how often graphics is done)
-* turn off/on graphics rendering by pressing the cube button or pressing CTRL+4
-
-Known Bugs:
-* VirtualBox does not OpenGL, making Webots graphics very slow (use VMWare Player instead)
-* a lidar in Webots sometimes does not detect distances at left/right side correct. this bug happens if VMWare Player is startet from Linux (use Windows instead) 
-
-##### Shared Folders
-
-If you want to share files among virtual machine and the host computer, enable the shared folders [[5]](https://www.vmware.com/support/ws5/doc/ws_running_shared_folders.html). If it does not work, execute this command in the virtual machine (don't add this to an login-script):
-
-
-```
-sudo vmhgfs-fuse .host:/ /mnt/hgfs/ -o allow_other -o uid=1000
-```
-
-##### Gazebo in the virtual machine
-
-If you want to start Gazebo directly from the virtual machine's console, do the following line first:
-
-```
-export SVGA_VGPU10=0
-```
 "
 	DatasheetProperty Supplier {
 		value "Servicerobotics Ulm"
