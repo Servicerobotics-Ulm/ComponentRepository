@@ -131,7 +131,9 @@ If your computer has not a very good graphics card, webots may run slowly in the
 
 Known Bugs:
 * VirtualBox does not support OpenGL, making Webots graphics very slow (use VMWare Player instead)
-* a lidar in Webots sometimes does not detect distances at left/right side correct. this bug happens if VMWare Player is startet from Linux (use Windows instead) 
+* a lidar in Webots sometimes does not detect distances at left/right side correct. this bug happens if VMWare Player is startet from Linux (use Windows instead)
+* if System\*/model/\*.target HostAddress is set to 'localhost', then the System Menu "menu-stop" does not close all terminals: right-click on the x-term symbol on the left side of ubuntu and select 'Quit xx windows' to close them manually
+* if System\*/model/\*.target HostAddress is set to the hostname of a computer (e.g. 'ubuntu'), then the System Menu "menu-stop" does close all terminals, but Webots graphics is very slow in the virtual machine => in the virtual machine, use 'localhost'
 
 ##### Shared Folders
 
