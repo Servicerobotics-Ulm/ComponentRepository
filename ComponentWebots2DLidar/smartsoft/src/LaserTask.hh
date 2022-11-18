@@ -67,8 +67,6 @@
 #define UNIT_FACTOR 100.0  // value is expressed in 0.01 degree units
 #define SHORT_LIMIT 65535  // max value
 #define MEASURE_UNIT 1.0   // set the internal length unit of the scan in mm
-#define NEAR_OBSTACLE 400  // in mm (from ComponentLaserObstacleAvoid of SmartMDSD)
-#define FAR_OBSTACLE 700   // in mm (from ComponentLaserObstacleAvoid of SmartMDSD)
 
 class LaserTask  : public LaserTaskCore
 {

@@ -162,92 +162,46 @@ int LaserTask::on_entry() {
     return 0;
 }
 
-/* value                              webots                       smartsoft
- * horizontal field of view           getFov() [radians]           opening_angle [degrees]
- * number of horizontal points        getHorizontalResolution()    -
- * angle between 2 horizontal points  -                            resolution [degrees]
- *
- * If in smartsoft these values are smaller than the correspondent values in webots,
- * only this part of the scanned points are returned.
- * e.g. if in webots the Lidar has a horizontal field of view of 3.14 radians
- *      but in smartsoft the opening_angle is set to 120 degrees, some points at the left/right side are not returned.
- *      resolution can be reduced too.
- *
- * ray angles should be
- *   -opening_angle/2
- *   -opening_angle/2  + 1*resolution
- *   -opening_angle/2 + 2*resolution
- *   ...
- *   +opening_angle/2 - 2*resolution
- *   +opening_angle/2 - 1*resolution
- *   +opening_angle/2
- *
- * => opening_angle/resolution must be a integer (whole number)
- *
- * opening_angle = 180, resolution = 0.5 => max. number data points = 361
- * => webots horizontalResolution must be set to 1+(opening_angle/resolution)
- * (note: webots inbuild lidars often use opening_angle/resolution as formula)
- *
- * what happens if there is no obstacle between minRange and maxRange of the lidar ray?
- *   webots will return infinity as distance (even in case obstacle < minRange)
- *   smartsoft will handle this data point as 'invalid', removing this point from CommMobileLaserScan
- *   (get_scan_angle(i) returns the angle of an data point, 0=front of lidar, pi/2=left of lidar, 3*pi/2=right of lidar, 0<=angle<2*pi)
- *
- * In webots scan points are from left to right, but in smartsoft from right to left ordered.
- *
- * In webots distances are floating point numbers in m, but in smartsoft lidar distances are unsigned short (16 bit) in mm
- * (=> max. distance 65535 mm, you can set length_unit to e.g. 10 to change from mm to cm so lidar has bigger maxRange but less accuracy)
- */
 int LaserTask::on_execute() {
     while (webotsRobot->step(webotsRobot->getBasicTimeStep()) != -1) {
-        const int allScans = webotsLidar->getHorizontalResolution();
-        const float *_allData = webotsLidar->getRangeImage();
-        float allData[allScans];
-        for (int i = allScans; i--;)
-            allData[i] = _allData[allScans - 1 - i] * M_TO_MM / length_unit;
-        double ranger_opening_angle = webotsLidar->getFov() / M_PI * 180;
-
-        const int rangerScans = 1 + std::round(ranger_opening_angle / resolution);
-
-        // if resolution of webots lidar is higher than resolution in parameters,
-        // only use a part of data points
-        // e.g. resolution lidar = 0.25 degrees
-        //      resolution parameter = 0.5 degrees
-        //      => only use every 2. data point
-        int fewerScans = rangerScans;
-        if (fewerScans > allScans)
-            fewerScans = allScans;
-        float fewerData[fewerScans];
-        for (int i = 0; i < fewerScans; i++)
-            fewerData[i] = allData[i * allScans / fewerScans];
-
-        const int desiredScans = 1 + std::round(opening_angle / resolution);
-
-        // if opening angle of webots lidar is higher than opening angle in parameters,
-        // only use a part of data points
-        // e.g. only use 70 out of 100 points:
-        // use only [15..85[ from [0..100[
-
-        const int firstScanIndex = (rangerScans - desiredScans) * 0.5;
-        int lastScanIndex = rangerScans - firstScanIndex;
-
-        if (lastScanIndex > fewerScans)
-            lastScanIndex = fewerScans;
-
-        int num_valid_points = 0;
-        for (int i = firstScanIndex; i < lastScanIndex; ++i) {
-            int dist = fewerData[i];
-            if (dist >= min_range && dist <= max_range) {
-                ++num_valid_points;
+        const int inputSize = webotsLidar->getHorizontalResolution();
+        const float *inputData = webotsLidar->getRangeImage();
+        double inputAngle = webotsLidar->getFov() / M_PI * 180.0;
+        const int outputSize = 1 + std::round(opening_angle / resolution);
+        double outputAngle = opening_angle;
+        for(int runTwice=0; runTwice<2; runTwice++) {
+          int validPoints=0;
+          for(int i=0; i<outputSize; i++) {
+            double pos = ((double)i)/(outputSize-1); // 0.0=rightmost entry in outputData ... 1.0=left
+            // webots orders scan points from left to right, but smartsoft from right to left
+            pos = 1.0-2.0*pos; // -1.0=left ... 1.0=right
+            pos = pos * outputAngle; // => degrees
+            pos = pos / inputAngle; // -1.0=first entry in inputData, +1.0=last
+            int index = std::round((pos+1.0)/2.0*(inputSize-1));
+            if(index>=0 && index<inputSize) {
+//            In webots distances are floating point numbers [m], but in smartsoft lidar distances are unsigned short (16 bit) [mm]
+//            (=> max. distance 65535 mm, you can set length_unit to e.g. 10 to change from mm to cm so lidar has bigger maxRange but less accuracy)
+              double dist = inputData[index]*1000; // m -> mm
+//            what happens if there is no obstacle between minRange and maxRange of the lidar ray?
+//            webots will return infinity as distance (even in case obstacle < minRange)
+//            smartsoft will handle this data point as 'invalid', removing this point from CommMobileLaserScan
+//            (get_scan_angle(i) returns the angle of an data point, 0=front of lidar, pi/2=left of lidar, 3*pi/2=right of lidar, 0<=angle<2*pi)
+              if(dist >= min_range && dist <= max_range) {
+                if(runTwice==1) {
+                  scan.set_scan_index(validPoints, i);
+                  scan.set_scan_integer_distance(validPoints, dist / length_unit);
+                  scan.set_scan_intensity(validPoints, 0);
+                }
+                validPoints++;
+              }
             }
-        }
-        if (COMP->getGlobalState().getScanner().getVerbose()) {
-//            std::cout << num_valid_points << " of " << desiredScans << " are valid" << std::endl;
+          }
+          if(runTwice==0)
+            scan.set_scan_size(validPoints);
         }
 
         // webots is updating the physics world only every timeStep,
         // so scanning was done last timeStep
-
         scan.set_scan_time_stamp(lastTimeStep);
         lastTimeStep = CommBasicObjects::CommTimeStamp::now();
 
@@ -256,20 +210,7 @@ int LaserTask::on_execute() {
         scan.set_scan_double_field_of_view(-0.5 * opening_angle, resolution);
         scan.set_min_distance(min_range);
         scan.set_max_distance(max_range);
-        scan.set_max_scan_size(desiredScans);
-        scan.set_scan_size(num_valid_points);
-
-        int valid_point_index = 0;
-        for (int i = firstScanIndex; i < lastScanIndex; ++i) {
-            const unsigned int dist = fewerData[i];
-            if (dist >= min_range && dist <= max_range) {
-                //this line will cut of the starting beam if the component is configures to provide smaller scans (less opening angle)
-                scan.set_scan_index(valid_point_index, i - firstScanIndex);
-                scan.set_scan_integer_distance(valid_point_index, dist);
-                scan.set_scan_intensity(valid_point_index, 0);
-                ++valid_point_index;
-            }
-        }
+        scan.set_max_scan_size(outputSize);
         scan.set_scan_valid(true);
 
         bool scan_is_valid = false;
@@ -279,13 +220,6 @@ int LaserTask::on_execute() {
             Smart::StatusCode status = COMP->baseStateServiceIn->getUpdate(base_state);
             if (status == Smart::SMART_OK) {
                 scan_is_valid = true;
-
-/*                if (COMP->getGlobalState().getScanner().getVerbose()) {
-                    //std::cout << base_state << "\n";
-                    std::cout << "Odom from Base State : " << base_state.get_base_raw_position() << std::endl;
-                    std::cout << "Pose from Base State : " << base_state.get_base_position() << std::endl;
-                }
-*/
             } else {
                 std::cerr << "[LaserTask] WARNING: failed to get current base state ("
                     << Smart::StatusCodeConversion(status) << "), pushing invalid scan" << std::endl;
