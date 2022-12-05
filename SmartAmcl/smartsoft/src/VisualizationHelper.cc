@@ -251,7 +251,7 @@ void VisualizationHelper::displayMap(map_t* map) {
 		}
 	}
 
-#ifdef WITH_MRPT_2_0_VERSION
+#if defined WITH_MRPT_2_0_VERSION && defined WITH_MRPT_2_4_VERSION
 	mrpt::img::CImage image;
     image.setFromMatrix(m, true);
     //image.flipVertical();
@@ -262,6 +262,20 @@ void VisualizationHelper::displayMap(map_t* map) {
 		//gridMap.getAs3DObject(ptrObjs);
 		//ptrScene->insert(ptrObjs);
 		ptrScene->insert(gridMap.getVisualization());
+	}
+	grid3D->unlockAccess3DScene();
+	grid3D->forceRepaint();
+#elif defined WITH_MRPT_2_0_VERSION && !defined WITH_MRPT_2_4_VERSION
+	mrpt::img::CImage image;
+    image.setFromMatrix(m, true);
+    //image.flipVertical();
+    gridMap.loadFromBitmap(image, scale, mrpt::math::TPoint2D(x, y));
+	opengl::COpenGLScene::Ptr &ptrScene = grid3D->get3DSceneAndLock();
+	{
+		opengl::CSetOfObjects::Ptr ptrObjs = opengl::CSetOfObjects::Create();
+		gridMap.getAs3DObject(ptrObjs);
+		ptrScene->insert(ptrObjs);
+		//ptrScene->insert(gridMap.getVisualization());
 	}
 	grid3D->unlockAccess3DScene();
 	grid3D->forceRepaint();
