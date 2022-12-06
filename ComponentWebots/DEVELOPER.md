@@ -71,10 +71,10 @@ sudo dpkg -r webots
 
 go to [https://cyberbotics.com/](https://cyberbotics.com/)
 
-click on 'Download', download [webots_2022b_amd64.deb](https://github.com/cyberbotics/webots/releases/download/R2022b/webots_2022b_amd64.deb) into your Downloads-folder, then do:
+click on 'Download', download [webots_2023a_amd64.deb](https://github.com/cyberbotics/webots/releases/download/R2023a/webots_2023a_amd64.deb) into your Downloads-folder, then do:
 
 ```
-sudo apt install ~/Downloads/webots_2022b_amd64.deb
+sudo apt install ~/Downloads/webots_2023a_amd64.deb
 ```
 
 Add to your ~/.profile:
@@ -83,6 +83,8 @@ Add to your ~/.profile:
 export WEBOTS_HOME=/usr/local/webots
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$WEBOTS_HOME/lib/controller
 ```
+
+After starting webots, in menu "Overlays" check (turn on) the 3 boxes "Hide all Camera Overlays" and "Hide all RangeFinder Overlays" and "Hide all Display Overlays".
 
 #### Add Webots library and include path to an component project
 
@@ -121,6 +123,8 @@ It was tested with VMWare Workstation Player 15 (both non-commercial and PRO ver
 
 You need at least 8 MB Ram and a good graphics card on your computer.
 In the settings of the virtual machine, give it at least 4 GB Ram, 512 MB graphics memory and turn on graphics card acceleration. OpenGl is required by webots to run fast.
+
+At the first run of webots, it will automatically turn off shadows and reduce texture quality to medium. Select 'Tools' > 'Preferences...' > 'OpenGl' > 'Texture Quality' to 'High'.
 
 If your computer has not a very good graphics card, webots may run slowly in the virtual machine. The simulation speed should be near to '1.00x' at the top of the webots window. If it is below, you can speed up graphics:
 * make the graphics window smaller (if graphics window height and width is halved, the speed is 4 times faster)
