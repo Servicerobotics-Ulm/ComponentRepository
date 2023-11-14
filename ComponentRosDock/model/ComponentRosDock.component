@@ -1,0 +1,63 @@
+ComponentDefinition ComponentRosDock logo "/ComponentRosDock/model/logo.png"
+{
+	Activity DockActivity
+	{
+		InputPortLink BaseStateServiceIn { oversamplingOk undersamplingOk }
+
+		MixedPortROSLink dock_action_goal
+		MixedPortROSLink dock_action_result
+		OperationModeBinding CoordinationPort.dock;
+		DefaultTrigger PeriodicTimer 1.0 Hz
+	}
+
+	MixedPortROS twist_sub
+	
+	Activity UndockActivity
+	{
+		InputPortLink BaseStateServiceIn { oversamplingOk undersamplingOk }
+
+		MixedPortROSLink undock_action_goal
+		MixedPortROSLink undock_action_result
+
+		OperationModeBinding CoordinationPort.unDock;
+		DefaultTrigger PeriodicTimer 1.0 Hz
+	}
+	InputPort BaseStateServiceIn implements CommBasicObjects.BaseStateService {
+	}
+	InputPort LaserServiceIn implements CommBasicObjects.LaserService {
+	}
+	OutputPort NavigationVelocityServiceOut implements CommNavigationObjects.NavigationVelocityService realizedBy ForwardActivity {
+	}
+	
+	OutputPort RobotDockingEventServiceOut implements CommNavigationObjects.RobotDockingEventService  realizedBy DockActivity {
+	}
+	
+	CoordinationSlavePort CoordinationPort implements CommNavigationObjects.RobotDockingCoordinationService
+	{
+		PrivateOperationMode dock;
+		PrivateOperationMode unDock;
+		
+		PublicOperationMode CommNavigationObjects.RobotDockingStates.Docking { activates ( dock ) }
+		PublicOperationMode CommNavigationObjects.RobotDockingStates.UnDocking { activates ( unDock ) }
+		
+		with dockingEvent realizedBy RobotDockingEventServiceOut
+	}
+	
+	MixedPortROS undock_action_goal
+	MixedPortROS dock_action_goal
+	MixedPortROS dock_action_result
+	
+	Activity ForwardActivity
+	{
+		MixedPortROSLink twist_sub
+		InputPortLink LaserServiceIn { oversamplingOk undersamplingOk }
+		MixedPortROSLink laser_pub
+		MixedPortROSLink charging_pub
+		DefaultTrigger PeriodicTimer 1.0 Hz
+	}
+	
+	ComponentParameters ComponentRosDock slave CoordinationPort
+MixedPortROS undock_action_result
+	MixedPortROS laser_pub
+MixedPortROS charging_pub
+}

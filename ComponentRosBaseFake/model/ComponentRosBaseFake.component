@@ -1,0 +1,14 @@
+ComponentDefinition ComponentRosBaseFake logo "/ComponentRosBaseFake/model/logo.png"
+{
+Activity BaseFakeActivity
+	{
+		InputPortLink NavigationVelocityServiceIn { oversamplingOk undersamplingOk }
+		MixedPortROSLink twist_pub
+	DefaultTrigger PeriodicTimer 1.0 Hz
+	}
+	InputPort NavigationVelocityServiceIn implements CommNavigationObjects.NavigationVelocityService {
+	}
+	OutputPort BaseStateServiceOut implements CommBasicObjects.BaseStateService realizedBy BaseFakeActivity {
+	}
+	MixedPortROS twist_pub
+}
