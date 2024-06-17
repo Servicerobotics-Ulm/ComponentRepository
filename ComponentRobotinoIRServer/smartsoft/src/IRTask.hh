@@ -57,7 +57,19 @@ using namespace rec::robotino::api2;
 class MyCom : public Com
 {
 public:
-	MyCom() : Com( "SmartRobotinoIRserver")
+  /* Com( "SmartRobotinoIRserver") :
+   *    Throws an error and prints "The connection has been refused."
+   *    if started on robotino without root/sudo.
+   *    (api2/Com connectToServer(true) throws exception "The connection has been refused.")
+   *    (uses local sockets (files), requiring root)
+   *
+   *  Com(const char* name, bool multiThreadedSerialization, bool localIPCEnabled)
+   *     e.g. Com("SmartRobotinoIRserver", true, false)
+   *     uses TCP sockets, not requiring root
+   *
+   *  same issue in /ComponentRobotinoBaseServer/smartsoft/src/RobotinoCom.hh
+   */
+	MyCom() : Com( "SmartRobotinoIRserver", true, false)
 	{
 	}
 
