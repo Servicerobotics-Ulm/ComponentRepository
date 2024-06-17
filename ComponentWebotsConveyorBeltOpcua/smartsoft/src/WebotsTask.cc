@@ -254,7 +254,20 @@ int WebotsTask::on_execute() {
           waitTime = t + params.getRobot().getIgnore_station_communication_unload_time_sec();
         else {
           string callResult;
-          if (station.connect(urlVector, nameVector) != OPCUA::StatusCode::ALL_OK)
+
+          OPCUA::StatusCode opcuaStatus;
+          std::cout << "station_addr=" << urlVector << " name=" << nameVector << std::endl;
+          try {
+            opcuaStatus = station.connect(urlVector, nameVector);
+          }
+          catch(const std::system_error& e) {
+            std::cout << "Caught system_error with code "
+              "[" << e.code() << "] meaning "
+              "[" << e.what() << "]" << std::endl;
+          }
+
+          if(opcuaStatus != OPCUA::StatusCode::ALL_OK)
+//          if (station.connect(urlVector, nameVector) != OPCUA::StatusCode::ALL_OK)
             isError = true;
           else if (isLoad) {
             if (station.callStart_unloading(timeOut, callResult) != OPCUA::StatusCode::ALL_OK
