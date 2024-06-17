@@ -41,6 +41,25 @@
 ; cffi
 (require "cffi")
 
+;; ComponentTCLSequencer => id-robot nil
+;; ComponentTCLSequencer_1 => id-robot 1
+;; ComponentTCLSequencer_2 => id-robot 2
+(defvar id-robot nil)
+
+;; if id-robot is set (see above), returns a tcl signature inclusive this number,
+;; e.g. MPS_1.tcb-mps-station-dock : 
+;; (realize-tcb (dockToMPSStation ?stationId ?beltId)
+;;	(action (
+;;		(tcl-push-back-plan :plan 
+;;         `( ( ,(add-id-robot 'MPS.tcb-mps-station-dock) ?stationId ?beltId) )))))                      
+
+(defun add-id-robot (tcl-signature)
+  (let* ( (instring (string tcl-signature))
+          (dot (position #\. instring :test #'equalp)))
+    (if (and id-robot dot)
+      (read-from-string (concatenate 'string (subseq instring 0 dot) "_" (write-to-string id-robot) (subseq instring dot)))       
+      tcl-signature
+    )))
 
 ;; compile and load
 (defun compile-and-load-smarttcl ( &optional (tcl-prefix "") (lispinterface-prefix "") (pre-component-startup-function nil pre-component-startup-function-supplied-p) 
@@ -64,9 +83,6 @@
 
   (compile-file (format nil "~asmartTCL/defs.lisp" tcl-prefix))
   (load (format nil "~asmartTCL/defs.fasl" tcl-prefix))
-
-
-
 
   (setf *LISP-INTERFACE-PREFIX* lispinterface-prefix)
   (if (equal lispinterface-prefix "")
@@ -113,7 +129,16 @@
 
   (compile-file (format nil "~asmartTCL/decode-msg.lisp" tcl-prefix))
   (load (format nil "~asmartTCL/decode-msg.fasl" tcl-prefix))
-
+ 
+  (let* 
+        ;((str "/tmp/SystemRobotinosStations.deployment/ComponentTCLSequencer_1_data/load-deployment-scenario.lisp")
+        ((str (namestring *LOAD-TRUENAME*))
+         (pos1 (search "_data" str :from-end t))
+         (pos2 (search "_" str :from-end t :end2 pos1))
+         (pos3 (search "/" str :from-end t :end2 pos2)))
+    (if (and pos1 pos2 pos3 (> pos2 pos3))
+      (setq id-robot (parse-integer str :start (1+ pos2) :end pos1 :junk-allowed t))))
+  (format t "~%id-robot ~A~%" id-robot)    
 
   (format t "~%~%")
   (format t " ------------------------------- ~%")
