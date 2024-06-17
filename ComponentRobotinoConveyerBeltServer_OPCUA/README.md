@@ -102,14 +102,30 @@
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>object_name</b></td>
 <td style="border:1px solid black; padding: 5px;">String</td>
-<td style="border:1px solid black; padding: 5px;">"MPS"</td>
-<td style="border:1px solid black; padding: 5px;"></td>
+<td style="border:1px solid black; padding: 5px;">"ProductionStation"</td>
+<td style="border:1px solid black; padding: 5px;"><p>used for raspberry pi pixtend server
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>rootObjectPath</b></td>
+<td style="border:1px solid black; padding: 5px;">String</td>
+<td style="border:1px solid black; padding: 5px;">"Server/CPX-E-CEC-C1-PN/Resources/Application/Programs/PLC_PRG"</td>
+<td style="border:1px solid black; padding: 5px;"><p>used for Festo CPX-E-CEC-C1-PN server
+</p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>server_address</b></td>
 <td style="border:1px solid black; padding: 5px;">String</td>
-<td style="border:1px solid black; padding: 5px;">["NULL_NOT_USED", "opc.tcp://10.36.34.241:4840", "opc.tcp://10.36.32.125:4840"]</td>
-<td style="border:1px solid black; padding: 5px;"></td>
+<td style="border:1px solid black; padding: 5px;">["NULL_NOT_USED", "opc.tcp://10.36.32.189:4840", "opc.tcp://10.36.32.190:4840", "NULL_NOT_USED", "PASSIVE_STATION"]</td>
+<td style="border:1px solid black; padding: 5px;"><p>station0, station1, ... type: NULL_NOT_USED or PASSIVE_STATION or opc.tcp://ip:port
+</p></td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding: 5px;"><b>is_pixtend</b></td>
+<td style="border:1px solid black; padding: 5px;">String</td>
+<td style="border:1px solid black; padding: 5px;">["1", "0", "1", "1", "1"]</td>
+<td style="border:1px solid black; padding: 5px;"><p>is the station using an raspberry pi pixtend server (1) or Festo CPX-E-CEC-C1-PN server (0) ?
+</p></td>
 </tr>
 </table>
 
@@ -126,58 +142,53 @@
 <th style="border:1px solid black; padding: 5px;"><i>Attribute Description</i></th>
 </tr>
 <tr>
-<td style="border:1px solid black; padding: 5px;"><b>station_communication_delay_sec</b></td>
-<td style="border:1px solid black; padding: 5px;">UInt32</td>
-<td style="border:1px solid black; padding: 5px;">0</td>
-<td style="border:1px solid black; padding: 5px;"></td>
-</tr>
-<tr>
-<td style="border:1px solid black; padding: 5px;"><b>station_communication_delay_usec</b></td>
-<td style="border:1px solid black; padding: 5px;">UInt32</td>
-<td style="border:1px solid black; padding: 5px;">500000</td>
-<td style="border:1px solid black; padding: 5px;"></td>
-</tr>
-<tr>
 <td style="border:1px solid black; padding: 5px;"><b>belt_time_out_sec</b></td>
 <td style="border:1px solid black; padding: 5px;">UInt32</td>
 <td style="border:1px solid black; padding: 5px;">10</td>
-<td style="border:1px solid black; padding: 5px;"></td>
+<td style="border:1px solid black; padding: 5px;"><p>timeout in seconds (load a box)
+</p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>unload_motor_direction</b></td>
 <td style="border:1px solid black; padding: 5px;">Float</td>
 <td style="border:1px solid black; padding: 5px;">1</td>
-<td style="border:1px solid black; padding: 5px;"></td>
+<td style="border:1px solid black; padding: 5px;"><p>robotino belt motor (unload a box): 1=normal -1=inverse
+</p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>load_motor_direction</b></td>
 <td style="border:1px solid black; padding: 5px;">Float</td>
 <td style="border:1px solid black; padding: 5px;">1</td>
-<td style="border:1px solid black; padding: 5px;"></td>
+<td style="border:1px solid black; padding: 5px;"><p>robotino belt motor (load a box): 1=normal -1=inverse
+</p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>signal_loading_dout</b></td>
 <td style="border:1px solid black; padding: 5px;">Int16</td>
 <td style="border:1px solid black; padding: 5px;">6</td>
-<td style="border:1px solid black; padding: 5px;"></td>
+<td style="border:1px solid black; padding: 5px;"><p>signal loading process with DOUT high (DOUT number in case >=0, otherwise (-1) disabled)
+</p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>signal_unloading_dout</b></td>
 <td style="border:1px solid black; padding: 5px;">Int16</td>
 <td style="border:1px solid black; padding: 5px;">7</td>
-<td style="border:1px solid black; padding: 5px;"></td>
+<td style="border:1px solid black; padding: 5px;"><p>"signal unloading process with DOUT high (DOUT number in case >=0, otherwise (-1) disabled)"
+</p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>signal_error_dout</b></td>
 <td style="border:1px solid black; padding: 5px;">Int16</td>
 <td style="border:1px solid black; padding: 5px;">5</td>
-<td style="border:1px solid black; padding: 5px;"></td>
+<td style="border:1px solid black; padding: 5px;"><p>signal error ack with DOUT high
+</p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>manual_load_dout</b></td>
 <td style="border:1px solid black; padding: 5px;">Int16</td>
 <td style="border:1px solid black; padding: 5px;">5</td>
-<td style="border:1px solid black; padding: 5px;"></td>
+<td style="border:1px solid black; padding: 5px;"><p>signal manual Load or UnLoad with DOUT high
+</p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>ack_pressed_din</b></td>
@@ -192,63 +203,16 @@
 <td style="border:1px solid black; padding: 5px;"></td>
 </tr>
 <tr>
-<td style="border:1px solid black; padding: 5px;"><b>trans_read_din</b></td>
-<td style="border:1px solid black; padding: 5px;">UInt16</td>
-<td style="border:1px solid black; padding: 5px;">3</td>
-<td style="border:1px solid black; padding: 5px;"></td>
-</tr>
-<tr>
-<td style="border:1px solid black; padding: 5px;"><b>dock_complete_dout</b></td>
-<td style="border:1px solid black; padding: 5px;">UInt16</td>
-<td style="border:1px solid black; padding: 5px;">0</td>
-<td style="border:1px solid black; padding: 5px;"></td>
-</tr>
-<tr>
 <td style="border:1px solid black; padding: 5px;"><b>ignore_station_communication</b></td>
 <td style="border:1px solid black; padding: 5px;">Boolean</td>
 <td style="border:1px solid black; padding: 5px;">false</td>
-<td style="border:1px solid black; padding: 5px;"></td>
+<td style="border:1px solid black; padding: 5px;"><p>with true the communication with the station is disabled
+</p></td>
 </tr>
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>ignore_station_communication_unload_time_sec</b></td>
 <td style="border:1px solid black; padding: 5px;">Int32</td>
 <td style="border:1px solid black; padding: 5px;">4</td>
-<td style="border:1px solid black; padding: 5px;"></td>
-</tr>
-<tr>
-<td style="border:1px solid black; padding: 5px;"><b>NoOf_FallingEdge_Load</b></td>
-<td style="border:1px solid black; padding: 5px;">UInt16</td>
-<td style="border:1px solid black; padding: 5px;">8</td>
-<td style="border:1px solid black; padding: 5px;"></td>
-</tr>
-<tr>
-<td style="border:1px solid black; padding: 5px;"><b>FallingEdge_PW_Load_mSec</b></td>
-<td style="border:1px solid black; padding: 5px;">UInt32</td>
-<td style="border:1px solid black; padding: 5px;">100</td>
-<td style="border:1px solid black; padding: 5px;"></td>
-</tr>
-<tr>
-<td style="border:1px solid black; padding: 5px;"><b>NoOf_FallingEdge_Unload</b></td>
-<td style="border:1px solid black; padding: 5px;">UInt16</td>
-<td style="border:1px solid black; padding: 5px;">4</td>
-<td style="border:1px solid black; padding: 5px;"></td>
-</tr>
-<tr>
-<td style="border:1px solid black; padding: 5px;"><b>FallingEdge_PW_Unload_mSec</b></td>
-<td style="border:1px solid black; padding: 5px;">UInt32</td>
-<td style="border:1px solid black; padding: 5px;">100</td>
-<td style="border:1px solid black; padding: 5px;"></td>
-</tr>
-<tr>
-<td style="border:1px solid black; padding: 5px;"><b>LoadProcess_TimeOutSec</b></td>
-<td style="border:1px solid black; padding: 5px;">UInt32</td>
-<td style="border:1px solid black; padding: 5px;">60</td>
-<td style="border:1px solid black; padding: 5px;"></td>
-</tr>
-<tr>
-<td style="border:1px solid black; padding: 5px;"><b>UnloadProcess_TimeOutSec</b></td>
-<td style="border:1px solid black; padding: 5px;">UInt32</td>
-<td style="border:1px solid black; padding: 5px;">60</td>
 <td style="border:1px solid black; padding: 5px;"></td>
 </tr>
 </table>

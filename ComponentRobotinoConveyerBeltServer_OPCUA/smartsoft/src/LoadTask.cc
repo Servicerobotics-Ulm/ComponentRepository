@@ -91,162 +91,173 @@ void LoadTask::setAbortFlag ()
 	abortFlag = true;
 }
 
-int LoadTask::on_execute()
-{
-	// this method is called from an outside loop,
-	// hence, NEVER use an infinite loop (like "while(1)") here inside!!!
-	// also do not use blocking calls which do not result from smartsoft kernel
-	
-	Smart::StatusCode status;
-	OPCUA::StatusCode opcuaStatus;
-	CommRobotinoObjects::RobotinoConveyerBeltEventState eventState;
+int LoadTask::on_execute() {
+    // this method is called from an outside loop,
+    // hence, NEVER use an infinite loop (like "while(1)") here inside!!!
+    // also do not use blocking calls which do not result from smartsoft kernel
 
-	status = COMP->stateSlave->acquire("load");
-	COMP->stateSlave->release("load");
+    Smart::StatusCode status;
+    OPCUA::StatusCode opcuaStatus;
+    CommRobotinoObjects::RobotinoConveyerBeltEventState eventState;
+    bool isPixtend;
+    std::string callResult;
 
-	std::cout<<"[LoadTask]: start..."<<std::endl;
+    status = COMP->stateSlave->acquire("load");
+    COMP->stateSlave->release("load");
+    std::cout << "[LoadTask]: start..." << std::endl;
+    if (status != Smart::SMART_OK) {
+        std::cout << " [LoadTask] acquire state: " << Smart::StatusCodeConversion(status) << std::endl;
+    } else {
+        COMP->triggerLoad.acquire();
 
-	if (status == Smart::SMART_OK)
-	{
-		COMP->triggerLoad.acquire();
+        ParameterStateStruct localState = COMP->getGlobalState();
+        float loadDirection = localState.getRobot().getLoad_motor_direction();
+        std::cout << "load direction:" << loadDirection << std::endl;
+        bool signalLoading = (localState.getRobot().getSignal_loading_dout() >= 0);
+        int station_id = localState.getCommRobotinoObjects().getRobotinoConveyerParameter().getSetStationID().getId();
+        std::string station_addr;
 
-		ParameterStateStruct localState = COMP->getGlobalState();
-		float loadDirection = localState.getRobot().getLoad_motor_direction();
-		bool signalLoading = (localState.getRobot().getSignal_loading_dout()>=0);
-		int station_id = localState.getCommRobotinoObjects().getRobotinoConveyerParameter().getSetStationID().getId();
-		std::string station_addr;
+        std::list<std::string> isPixtendList = localState.getOPCUAstatic().getIs_pixtend();
+        if (station_id >= 0 && station_id < isPixtendList.size()) {
+            std::list<std::string>::iterator it = isPixtendList.begin();
+            std::advance(it, station_id);
+            isPixtend = *it == "1";
+        } else
+            isPixtend = true;
 
-		std::list<std::string> stationsList = localState.getOPCUAstatic().getServer_address();
-		std::vector<std::string> stationsVector{ std::begin(stationsList), std::end(stationsList)};
+        std::list<std::string> stationsList = localState.getOPCUAstatic().getServer_address();
+        std::vector<std::string> stationsVector { std::begin(stationsList), std::end(stationsList) };
 
+        if (station_id >= 0 && station_id < stationsVector.size()) {
+            station_addr = stationsVector.at(station_id);
 
-		if(station_id >= 0 && station_id < stationsVector.size()){
-			station_addr = stationsVector.at(station_id);
+            //this is a hack to use one station with different communication types
+            //in this case it is used for unloading only!!!
+            if (station_addr[0] == '!') {
+                std::cout << "Overwrite passiveStation!" << std::endl;
+                //remove the char in this case
+                station_addr.erase(0, 1);
+            }
+            std::cout << "[LoadTask] station id: " << station_id << " station_addr: " << station_addr << " is_pixtend:" << isPixtend << std::endl;
+        } else {
+            std::cout << "ERROR invalid station id: " << station_id << " - stationsVector size: " << stationsVector.size() << std::endl;
+            station_addr = "opc.tcp://0.0.0.0:4840";
+        }
 
-			//this is a hack to use one station with different communication types
-			//in this case it is used for unloading only!!!
-			if(station_addr[0] == '!'){
-				std::cout<<"Overwrite passiveStation!"<<std::endl;
-				//remove the char in this case
-				station_addr.erase(0,1);
-			}
+        if (queryDigitalInput(box_present_bit) == true) {
+            eventState.set(CommRobotinoObjects::RobotinoConveyerBeltEventType::CONVEYER_BELT_LOAD_ERROR_BOX_ADREADY_PRSESENT);
+            COMP->robotinoConveyerBeltEventOut->put(eventState);
+            std::cout << "[LoadTask] ERROR: loading triggered - box already on the belt!" << std::endl;
+            COMP->commPowerOutputSendOut->send(CommRobotinoObjects::CommRobotinoPowerOutputValue(0));
+        } else {
+            //1. Connect to Station
+            bool communicationError = false;
+            if (localState.getRobot().getIgnore_station_communication()) {
+                std::cout << "[LoadTask] ERROR: ignore_station_communication is true" << std::endl;
+                communicationError = true;
+            } else {
+                if (isPixtend) {
+                    opcuaStatus = stationPixtend.connect(station_addr, localState.getOPCUAstatic().getObject_name());
+                } else {
+                    opcuaStatus = stationCpx.connect(station_addr, localState.getOPCUAstatic().getRootObjectPath(), 1);
+                }
+                if (opcuaStatus != OPCUA::StatusCode::ALL_OK)
+                    communicationError = true;
+                std::cout << "connect: " << opcuaStatus << std::endl;
+            }
+            if (!communicationError) {
+                //this sleep might help the OPC server to sort things
+                ACE_OS::sleep(ACE_Time_Value(1, 0));
+                //2. Check if Station is ready?
+                std::cout << "[LoadTask] loading" << std::endl;
 
-			std::cout<<"[LoadTask] station id: "<<station_id<<" station_addr: "<<station_addr<<std::endl;
-		} else
-		{
-			std::cout<<"ERROR invalid station id: "<<station_id<<" - stationsVector size: "<<stationsVector.size()<<std::endl;
-			station_addr = "opc.tcp://0.0.0.0:4840";
-		}
+                //3. Command Station to send the Box
+                if (isPixtend) {
+                    stationPixtend.setLED_YELLOW(true);
+                    stationPixtend.setLED_GREEN(true);
+                    opcuaStatus = stationPixtend.callStart_unloading(10, callResult);
+                    std::cout << "[LoadTask] stationPixtend.callStart_unloading - status: " << opcuaStatus << " callresult:  " << callResult << std::endl;
+                    if (opcuaStatus != OPCUA::StatusCode::ALL_OK || callResult != "UNLOADING_STARTED") {
+                        stationPixtend.callStop_unloading(1, callResult);
+                        communicationError = true;
+                    }
+                } else {
+                    stationCpx.setLED_YELLOW(true);
+                    stationCpx.setLED_GREEN(true);
+                    stationCpx.setMotor_timeout(10);
+                    stationCpx.setStart_unloading(true);
+                    bool unloadingstatus = stationCpx.getStart_unloading();
+                    std::cout << "unloadingstatus: " << unloadingstatus << std::endl;
+                }
+            }
+            if (!communicationError) {
+                if (signalLoading == true) {
+                    queryDigitalOutput(load_signal_bit, true);
+                }
+                for (int counter = 0; counter < localState.getRobot().getBelt_time_out_sec() * 10; counter++) {
+                    //sleep till the box is loaded
+                    COMP->commPowerOutputSendOut->send(CommRobotinoObjects::CommRobotinoPowerOutputValue(-50.0 * loadDirection));
+                    ACE_OS::sleep(ACE_Time_Value(0, 100000));
+                    bool boxPresent = queryDigitalInput(box_present_bit);
+                    ACE_OS::sleep(ACE_Time_Value(0, 1000));
+                    bool boxPresent2 = queryDigitalInput(box_present_bit);
+                    ACE_OS::sleep(ACE_Time_Value(0, 1000));
+                    bool boxPresent3 = queryDigitalInput(box_present_bit);
+                    std::cout << boxPresent << " " << boxPresent2 << " " << boxPresent3 << std::endl;
+                    if (boxPresent && boxPresent2 && boxPresent3) {
+                        std::cout << "[LoadTask] Box found" << std::endl;
+                        // one more second to move the box
+                        ACE_OS::sleep(ACE_Time_Value(0, 1000000));
+                        std::cout << "[LoadTask] Box found --> break" << std::endl;
+                        break;
+                    }
+                    if (getAbortFlag() == true) {
+                        std::cout << "[LoadTask] Abort Loop!" << std::endl;
+                        break;
+                    }
+                }
+                COMP->commPowerOutputSendOut->send(CommRobotinoObjects::CommRobotinoPowerOutputValue(0.0));
+                if (signalLoading == true) {
+                    queryDigitalOutput(load_signal_bit, false);
+                }
 
-		if (queryDigitalInput(box_present_bit)==true){
-			eventState.set(CommRobotinoObjects::RobotinoConveyerBeltEventType::CONVEYER_BELT_LOAD_ERROR_BOX_ADREADY_PRSESENT);
-			COMP->robotinoConveyerBeltEventOut->put(eventState);
-			std::cout<<"[LoadTask] ERROR: loading triggered - box already on the belt!"<<std::endl;
-			COMP->commPowerOutputSendOut->send(CommRobotinoObjects::CommRobotinoPowerOutputValue(0));
-		} else {
-			//1. Connect to Station
-			opcuaStatus = beltClient.connect(station_addr,localState.getOPCUAstatic().getObject_name());
-			std::cout<<"connect: "<<opcuaStatus<<std::endl;
+                //4. Send Station box received
+                if (isPixtend) {
+                    stationPixtend.setLED_YELLOW(false);
+                    opcuaStatus = stationPixtend.callStop_unloading(1, callResult);
+                } else {
+                    stationCpx.setLED_YELLOW(false);
+                    opcuaStatus = stationCpx.setStop_unloading(true);
+                    callResult = (std::string) stationCpx.getMethod_result();
+                }
+                std::cout << "[LoadTask] Stop_unloading - status: " << opcuaStatus << " callresult:  " << callResult << std::endl;
 
-			//TODO
-			//this sleep might help the OPC server to sort things
-			ACE_OS::sleep(ACE_Time_Value(1,0));
-			//TODO
-			//2. Check if Station is ready?
-
-			if (localState.getRobot().getIgnore_station_communication() || opcuaStatus == OPCUA::StatusCode::ALL_OK)//Trans_ready is the signal from Transport Station
-			{
-				std::cout<<"[LoadTask] loading"<<std::endl;//assuming the programm cycle time is 1ms
-
-				unsigned int counter = 0;
-
-				//3. Command Station to send the Box
-				std::string callResult;
-				auto opc_statusCode = beltClient.callStart_unloading(10,callResult);
-				std::cout<<"[loadTask] beltClient.callStart_unloading - status: "<<opc_statusCode<<" callresult:  "<<callResult<<std::endl;
-
-				if(opc_statusCode != OPCUA::StatusCode::ALL_OK || callResult != "UNLOADING_STARTED"){
-					std::cout<<"[loadTask] OPC CALL failed or returned error --> call stop and break."<<std::endl;
-					beltClient.callStop_unloading(1,callResult);
-
-					eventState.set(CommRobotinoObjects::RobotinoConveyerBeltEventType::CONVEYER_BELT_LOAD_ERROR_NO_RESPONSE_FROM_STATION);
-					COMP->robotinoConveyerBeltEventOut->put(eventState);
-					COMP->commPowerOutputSendOut->send(CommRobotinoObjects::CommRobotinoPowerOutputValue(0.0));
-
-				} else {
-					//the normal case
-
-					if(signalLoading == true){
-						queryDigitalOutput(load_signal_bit,true);
-					}
-
-					while(counter <(localState.getRobot().getBelt_time_out_sec()*10))
-					{
-						//sleep till the box is loaded
-						COMP->commPowerOutputSendOut->send(CommRobotinoObjects::CommRobotinoPowerOutputValue(50.0*loadDirection));
-						ACE_OS::sleep(ACE_Time_Value(0,100000));
-						counter++;
-
-						if(queryDigitalInput(box_present_bit)==true){
-							unsigned int counter2 = 0;
-							std::cout<<"[LoadTask] Box found"<<std::endl;
-							while(counter2<10)
-							{
-								COMP->commPowerOutputSendOut->send(CommRobotinoObjects::CommRobotinoPowerOutputValue(50.0*loadDirection));
-								ACE_OS::sleep(ACE_Time_Value(0,100000));
-								counter2++;
-							}
-							std::cout<<"[LoadTask] Box found --> break"<<std::endl;
-							break;
-						}
-
-
-						if(getAbortFlag() == true){
-							std::cout<<"[LoadTask] Abort Loop!"<<std::endl;
-							break;
-						}
-					}
-
-					COMP->commPowerOutputSendOut->send(CommRobotinoObjects::CommRobotinoPowerOutputValue(0.0));
-					if(signalLoading == true){
-						queryDigitalOutput(load_signal_bit,false);
-					}
-
-					//4. Send Station box received
-					opc_statusCode = beltClient.callStop_unloading(1,callResult);
-					std::cout<<"[loadTask] beltClient.callStop_unloading - status: "<<opc_statusCode<<" callresult:  "<<callResult<<std::endl;
-
-					if (queryDigitalInput(box_present_bit)==true){
-						eventState.set(CommRobotinoObjects::RobotinoConveyerBeltEventType::CONVEYER_BELT_LOAD_DONE);
-						COMP->robotinoConveyerBeltEventOut->put(eventState);
-						std::cout<<"[LoadTask] Load EVENT CONVEYER_BELT_LOAD_DONE FIRED!"<<std::endl;
-					} else {
-						eventState.set(CommRobotinoObjects::RobotinoConveyerBeltEventType::CONVEYER_BELT_LOAD_ERROR_NO_BOX_LOADED);
-						COMP->robotinoConveyerBeltEventOut->put(eventState);
-						std::cout<<"[LoadTask] ERROR BOX LOADED FAILED!"<<std::endl;
-					}
-				}
-			} else {
-				eventState.set(CommRobotinoObjects::RobotinoConveyerBeltEventType::CONVEYER_BELT_LOAD_ERROR_NO_RESPONSE_FROM_STATION);
-				COMP->robotinoConveyerBeltEventOut->put(eventState);
-
-				std::cout<<"[loadTask] ERROR: No trans ready from Station!"<<std::endl;
-				COMP->commPowerOutputSendOut->send(CommRobotinoObjects::CommRobotinoPowerOutputValue(0.0));
-			}
-
-
-			//5. Disconnect from Station
-			beltClient.disconnect();
-		}
-	}// if (status == Smart::SMART_OK) <<<---- status = state->acquire("moverobot");
-	 else {
-			std::cout<<" [LoadTask] acquire state: "<<Smart::StatusCodeConversion(status)<<std::endl;
-	}
-
-	std::cout<<"[LoadTask]: ...stop"<<std::endl;
-
-	// it is possible to return != 0 (e.g. when the task detects errors), then the outer loop breaks and the task stops
-	return 0;
+                if (queryDigitalInput(box_present_bit) == true) {
+                    eventState.set(CommRobotinoObjects::RobotinoConveyerBeltEventType::CONVEYER_BELT_LOAD_DONE);
+                    COMP->robotinoConveyerBeltEventOut->put(eventState);
+                    std::cout << "[LoadTask] Load EVENT CONVEYER_BELT_LOAD_DONE FIRED!" << std::endl;
+                } else {
+                    eventState.set(CommRobotinoObjects::RobotinoConveyerBeltEventType::CONVEYER_BELT_LOAD_ERROR_NO_BOX_LOADED);
+                    COMP->robotinoConveyerBeltEventOut->put(eventState);
+                    std::cout << "[LoadTask] ERROR BOX LOADED FAILED!" << std::endl;
+                }
+            }
+            COMP->commPowerOutputSendOut->send(CommRobotinoObjects::CommRobotinoPowerOutputValue(0.0));
+            if (communicationError) {
+                eventState.set(CommRobotinoObjects::RobotinoConveyerBeltEventType::CONVEYER_BELT_LOAD_ERROR_NO_RESPONSE_FROM_STATION);
+                COMP->robotinoConveyerBeltEventOut->put(eventState);
+                std::cout << "[LoadTask] ERROR: Can't connect to station or no box on station." << std::endl;
+            }
+            //5. Disconnect from Station
+            if (isPixtend)
+                stationPixtend.disconnect();
+            else
+                stationCpx.disconnect();
+        }
+    }
+    std::cout << "[LoadTask]: ...stop" << std::endl;
+    // it is possible to return != 0 (e.g. when the task detects errors), then the outer loop breaks and the task stops
+    return 0;
 }
 
 int LoadTask::on_exit()

@@ -16,6 +16,8 @@ ComponentDefinition ComponentRobotinoConveyerBeltServer_OPCUA logo "/ComponentRo
 	}
 	CoordinationSlavePort CoordinationPort implements CommRobotinoObjects.ConveyerBeltCoordinationService
 	{
+		SkillRealizationsRef mpsModRealization
+		
 		with loadevent realizedBy RobotinoConveyerBeltEventOut 
 		PublicOperationMode CommRobotinoObjects.ConveyerBeltModes.load { activates ( load ) } 
 		PublicOperationMode CommRobotinoObjects.ConveyerBeltModes.manualload { activates ( manualload ) } 
@@ -26,8 +28,8 @@ ComponentDefinition ComponentRobotinoConveyerBeltServer_OPCUA logo "/ComponentRo
 		PrivateOperationMode unload 
 		PrivateOperationMode load 
 		PrivateOperationMode manualunload 
-		PrivateOperationMode manualload
-	}
+		PrivateOperationMode manualload 
+	} 
 	ComponentParameters ComponentRobotinoConveyerBeltServer_OPCUA slave CoordinationPort
 	Activity ManualLoadTask
 	{
@@ -42,5 +44,13 @@ ComponentDefinition ComponentRobotinoConveyerBeltServer_OPCUA logo "/ComponentRo
 		DefaultTrigger PeriodicTimer 2.0 Hz
 	}
 	InputHandler DigitalInputEventHandler triggeredFrom CommDigitalInputEventIn { }
-OpcUaDeviceClient ProductionStation { deviceURI "opc.tcp://localhost:4840" opcuaXmlFile "/ComponentRobotinoConveyerBeltServer_OPCUA/model/ProductionStation.xml" }
+	OpcUaDeviceClient ProductionStation { 
+		deviceURI "opc.tcp://10.36.32.190:4840"		 
+		opcuaXmlFile "/ComponentRobotinoConveyerBeltServer_OPCUA/model/ProductionStation.xml"
+	}
+	OpcUaDeviceClient ProductionStationCPXECECC1PN { 
+		deviceURI "opc.tcp://10.36.32.189:4840" 
+		opcuaXmlFile "/ComponentRobotinoConveyerBeltServerOpcuaCPXECECC1PN/model/ProductionStationCPXECECC1PNNS.xml" 
+		rootObjectPath "Server/CPX-E-CEC-C1-PN/Resources/Application/Programs/PLC_PRG"
+	}		
 }

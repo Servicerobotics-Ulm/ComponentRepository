@@ -48,6 +48,8 @@
 
 #include "LoadTaskCore.hh"
 #include "OpcUaProductionStation.hh"
+#include "OpcUaProductionStationCPXECECC1PN.hh"
+
 
 class LoadTask  : public LoadTaskCore
 {
@@ -55,7 +57,8 @@ private:
 	unsigned int box_present_bit;
 	unsigned int load_signal_bit;
 
-	OPCUA::ProductionStation beltClient;
+	OPCUA::ProductionStation stationPixtend;
+	OPCUA::ProductionStationCPXECECC1PN stationCpx;
 
 	SmartACE::SmartRecursiveMutex abortLock;
 	bool abortFlag;
