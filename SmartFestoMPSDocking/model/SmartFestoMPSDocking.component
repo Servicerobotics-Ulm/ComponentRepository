@@ -1,0 +1,35 @@
+ComponentDefinition SmartFestoMPSDocking logo "/SmartFestoMPSDocking/model/logo.png"
+{
+InputPort irClient implements CommBasicObjects.MobileIRPush {
+	}
+	Activity IrDockingTask
+	{
+		DefaultTrigger PeriodicTimer 20.0 Hz
+	}
+	Activity LaserDockingTask
+	{
+	}
+	Activity UndockingTask
+	{
+	}
+	OutputPort navVelSendClient implements CommNavigationObjects.NavigationVelocityService realizedBy IrDockingTask {
+	}
+	InputPort laserClient implements CommBasicObjects.LaserService {
+	}
+	InputPort baseClient implements CommBasicObjects.BaseStateService {
+	}
+	OutputPort RobotinoDockingEventOut implements CommRobotinoObjects.RobotinoDockingEvent realizedBy IrDockingTask {
+	}
+	CoordinationSlavePort CoordinationPort implements CommRobotinoObjects.FestoMPSDockingCoordinationService
+	{
+		PublicOperationMode CommRobotinoObjects.FestoMpsDockingStates.LaserDocking { activates ( laserDocking ) } 
+		PublicOperationMode CommRobotinoObjects.FestoMpsDockingStates.IrDocking { activates ( irDocking ) }
+		PublicOperationMode CommRobotinoObjects.FestoMpsDockingStates.UnDocking { activates ( unDocking ) }
+		with dockingevent realizedBy RobotinoDockingEventOut
+		PrivateOperationMode irDocking 
+		PrivateOperationMode laserDocking PrivateOperationMode unDocking
+		SkillRealizationsRef MPS
+	}
+	
+	ComponentParameters SmartFestoMPSDocking slave CoordinationPort
+}

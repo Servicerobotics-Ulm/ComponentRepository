@@ -1,0 +1,126 @@
+ComponentParameter SmartFestoMPSDocking component SmartFestoMPSDocking
+{
+	
+	InternalParameter general {
+		verbose : Boolean = false
+	}
+	
+	InternalParameter python {
+		pythonScriptPath : String = "/opt/smartsoft/python"
+		pythonSysPath : String = "."
+	}
+	
+	InternalParameter docking {
+		deamonIP : String = "127.0.0.1"
+		useIR : Boolean = true
+		useLaser: Boolean = true
+		laserDocking_transVelX: Double = 0.2
+		laserDocking_transVelY: Double = 0.2
+		laserDocking_rotVel: Double = 20
+		
+		//"Distance from robot to Station the laserDocking will stop the robots movement."
+		//laserDocking_stopDistance: Double =  0.15 	
+		
+		irDocking_Left_IO:Int16 = 0
+    	irDocking_Center_IO:Int16 = 1
+		irDocking_Right_IO:Int16 = 2
+		
+		irDocking_transVelX : Double = 0.1
+		irDocking_transVelY: Double = 0.1
+		irDocking_rotVel: Double = 20
+		
+		//"Correction co-effiecient for the IR sensors"
+		irDocking_Left_AI1_Multiplier:Double = 100.0
+		irDocking_Center_AI2_Multiplier:Double = 100.0
+		irDocking_Right_AI3_Multiplier:Double = 100.0
+
+		irDocking_Left_AI1_Offset:Double = 0.0
+		irDocking_Center_AI2_Offset:Double = 0.0
+		irDocking_Right_AI3_Offset:Double = 0.0
+				
+		//"Distance from robot to Station the irDocking will stop the robots movement."
+		//irDocking_L1_move_X_dir : Double = 11.0//ir-dock-stop-dist-l1
+		//irDocking_L2_move_X_dir_min : Double = 9.0 //ir-dock-stop-dist-l2-min
+		//irDocking_L2_move_X_dir_max : Double = 9.5//ir-dock-stop-dist-l2-max
+		
+		irDocking_LsRs_Diff_Tollerance : Double = 0.25
+		irDocking_MinVel_Omega : Double = 5.0
+		irDocking_MinVel_X : Double = 44.0
+		irDocking_MinVel_Y : Double = 20.0
+		//irDocking_c_s_ZeroLevel : Double = 10.0 //ir-dock-center-sensor-zero
+		
+		//max_retroreflector_distance: Double = 1.2
+		//stationOffset1: Double = 0.08 //offset-left-reflector-to-1stBelt-center=0.20 ??? TODO
+		//stationOffset2: Double = 0.39//offs-bet-center-o-belts
+		//station_min_width: Double = 0.2 //min-station-width
+		//station_max_width: Double = 2.0//max-station-width
+		marker_min_num_scan_points: UInt32 = 3
+		marker_max_width: Double = 0.1
+		blob_min_num_scan_points: UInt32 = 2
+		station_width_delta: Double = 0.1
+		
+		laser_intensities_threshold : UInt8 = 60
+		
+		undocking_max_travel_distance : Double = 1.5
+	}
+	
+	ParameterSetInstance CommRobotinoObjects.RobotinoDockingParameter{
+		
+		ParameterInstance BELT_ID {
+			beltId = 0
+		}
+		
+		ParameterInstance NUM_BELTS {
+			numBelts = 1
+		}
+		
+		ParameterInstance STATION_ID {
+			stationID = 0
+		}
+		
+		TriggerInstance SAVE_BEFORE_DOCKING_POSE active
+		
+		ParameterInstance  min_station_width {
+			min_station_width = 0.2
+		}      
+		
+		ParameterInstance  max_station_width {
+			max_station_width = 2.0      
+       	} 
+       	
+  		ParameterInstance  offs_bet_center_o_belts  {
+  			offs_bet_center_o_belts = 0.39
+  		}
+  		
+  		ParameterInstance  offs_left_ref_to_1Belt_cent {
+  			offs_left_ref_to_1Belt_cent  = 0.08
+  		}
+  		
+  		ParameterInstance  ir_dock_stop_dist_l2_min {
+  			ir_dock_stop_dist_l2_min = 9.0
+  		}
+  		 
+		ParameterInstance  ir_dock_stop_dist_l2_max {
+			ir_dock_stop_dist_l2_max = 9.5
+		}
+		 
+		ParameterInstance  ir_dock_stop_dist_l1  {
+			ir_dock_stop_dist_l1 = 11.0
+		}
+		 
+		ParameterInstance  ir_dock_center_sensor_zero {
+			ir_dock_center_sensor_zero = 10.0
+		}
+		
+		ParameterInstance laser_dockstop_dist {
+			laser_dock_stop_dist = 0.28
+		}
+		
+		ParameterInstance max_reflector_dist{
+//			max_reflector_dist = 1.2
+			max_reflector_dist = 1.8
+		}
+		
+		
+	}
+}
