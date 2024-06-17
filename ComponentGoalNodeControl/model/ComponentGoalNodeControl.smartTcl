@@ -234,7 +234,12 @@
 
 			(format t "===========================================> current-waypoint ~s ~%" current-waypoint)
 
+				(if (not current-waypoint)
+					
+					(format t "current-waypoint is nil: Nothing to acquire ~%")
+					
 			(tcl-param :server 'navPathClient :slot 'COMMNAVIGATIONOBJECTS.CORRIDORNAVIGATIONCLIENTPARAMS.ACQ_INIT_NODE :value `(,current-waypoint))
+				)
 			)
 		))
 )
