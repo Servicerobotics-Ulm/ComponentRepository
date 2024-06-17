@@ -613,19 +613,22 @@ int WebotsAPITask::on_execute() {
         ") heading=" << std::setw(6) << basePose.get_base_azimuth() <<
         " rad (" << headingError << ")" << std::endl;
 
-    for (int i = 3; i--;)
-      if (controlSpeed[i] > maxVel[i])
-        controlSpeed[i] = maxVel[i];
-      else if (controlSpeed[i] < -maxVel[i])
-        controlSpeed[i] = -maxVel[i];
+    double maxSpeedScale=1;
+    for(int i = 3; i--;) {
+      double x=fabs(controlSpeed[i])/maxVel[i];
+      if(x>maxSpeedScale)
+        maxSpeedScale=x;
+    }
+    for(int i = 3; i--;)
+      controlSpeed[i]/=maxSpeedScale;
     double maxSteps = 0;
     for (int i = 3; i--;) {
       if(i==1 && isDifferentialDrive)
         continue; // this robot has no sideways acceleration
-        double stepsNeeded = abs(controlSpeed[i] - actualSpeed[i])
-                      / (maxAcceleration[i] * (webotsRobot->getBasicTimeStep() / 1000.0));
-        if (stepsNeeded > maxSteps)
-          maxSteps = stepsNeeded;
+      double stepsNeeded = abs(controlSpeed[i] - actualSpeed[i])
+                    / (maxAcceleration[i] * (webotsRobot->getBasicTimeStep() / 1000.0));
+      if (stepsNeeded > maxSteps)
+        maxSteps = stepsNeeded;
     }
     if (maxSteps < 1)
       maxSteps = 1;
