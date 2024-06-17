@@ -48,6 +48,7 @@
 #include <webots/utils/AnsiCodes.hpp>
 #include <webots/Display.hpp>
 #include <webots/ImageRef.hpp>
+#include <webots/Field.hpp>
 #include <unordered_map>
 
 #include <iostream>
@@ -239,6 +240,7 @@ int EditorTask::on_execute() {
     cout << " \033[0;32mEditor is not present\033[0m" << endl;
     return -1;
   }
+  Smart::StatusCode status;
   string name = "Editor";
   char environment[256] = "WEBOTS_CONTROLLER_URL=";
   putenv(strcat(environment, name.c_str()));
@@ -282,6 +284,7 @@ int EditorTask::on_execute() {
   auto lastMapTime = system_clock::now();
   auto lastTrailTime = system_clock::now();
   auto lastWaypointsTime = system_clock::now();
+  auto lastLidarTime = system_clock::now();
   string lastWaypointsString = "";
   struct ROBOT_TYPE {
     string baseComponent;
@@ -315,7 +318,18 @@ int EditorTask::on_execute() {
   string oldMapComponent = "";
   vector<string> mapComponentNames;
 
+  struct LIDAR_SERVER_TYPE {
+    string componentName = "";
+    string serviceName = "LaserServiceOut";
+    string commObjName = "CommBasicObjects::CommMobileLaserScan";
+    bool connected = false;
+    long int updateCount=-123;
+  };
+  LIDAR_SERVER_TYPE lidarServer;
+  string oldLaserComponent = "this string is probably not used";
+
   bool showMobileRobotPoses = false;
+
   int displayWidth = -1;
   int displayHeight = -1;
   Display *display = NULL;
@@ -324,6 +338,8 @@ int EditorTask::on_execute() {
   CommNavigationObjects::CommGridMap map;
   Field *posesField = CHECK_FIELD(robot->getFromDef("MobileRobotsPoses")->getField("children"));
   Field *localizationsField = CHECK_FIELD(robot->getFromDef("Localizations")->getField("children"));
+  Field *lidarPoints = proto->getField("lidarPoints");
+  Field *lidarColors = proto->getField("lidarColors");
 
   std::thread sendLocalizationThread(sendLocalizationExecute);
   if(robot->step(timeStep) == -1)
@@ -394,18 +410,17 @@ int EditorTask::on_execute() {
         Field* f=CHECK_FIELD(proto->getField("mapComponentNames"));
         for(int i=f->getCount(); i--;)
           f->removeMF(i);
-        for(auto x:mapComponentNames)
+        for(auto &x:mapComponentNames)
           f->insertMFString(-1, x);
       }
       mapServer.componentName="";
-      for(auto x:mapComponentNames)
+      for(auto &x:mapComponentNames)
         if(x.substr(x.length()-mapComponent.length())==mapComponent) {
           mapServer.componentName=x;
           break;
         }
       if(mapServer.componentName!="") {
         cout << "map connect " << mapType << " " << mapServer.componentName << " " << mapServer.serviceName << endl;
-        Smart::StatusCode status;
         if(mapType=="LongTerm")
           status = COMP->longTermGridMapQueryServiceReq->connect(mapServer.componentName, mapServer.serviceName);
         else
@@ -586,70 +601,87 @@ int EditorTask::on_execute() {
     // create MobileRobotPose protos, variables and connect BaseStateServiceOut
     if(showMobileRobotPoses && !lastShowMobileRobotPoses) {
       cout << "showMobileRobotPoses turned on" << endl;
-      vector<string> baseComponents = getComponentList("BaseStateServiceOut");
-      sort(baseComponents.begin(), baseComponents.end());
+      /* BUG:
+       * SmartACE::NSKeyType::SERVICE_NAME is port name
+       * different port names for same service CommBasicObjects.BaseStateService
+       * ComponentRMPBaseServer: basePositionServer
+       * ComponentRobotinoBaseServer: BaseStateServiceOut
+       * SmartGazeboBaseServer: BaseStateServiceOut
+       * ComponentPlayerStageSimulator: BaseStateServiceOut
+       * SmartPioneerBaseServer: BasePositionOut
+       * ComponentWebotsMobileRobot: BaseStateServiceOut
+       *
+       * TODO: fix this bug (in SmartAce or by renaming ports)
+       *  (renaming ports does affect systems using them)
+       */
       localizationComponents = getComponentList("LocalizationEventServiceOut");
       sort(localizationComponents.begin(), localizationComponents.end());
       robots.clear();
       for(int i=posesField->getCount(); i--;)
         posesField->getMFNode(i)->remove();
-      for(string baseComponent:baseComponents) {
-        size_t found = baseComponent.find("_");
-        string firstName = baseComponent;
-        string lastName = "";
-        if(found!=string::npos) {
-          firstName = baseComponent.substr(0, found);
-          lastName = baseComponent.substr(found+1);
-        }
-        string localizationComponent="";
-        for(string l:localizationComponents) {
-          size_t found = l.find("_");
-          string firstName2 = l;
-          string lastName2 = "";
-          if(found!=string::npos){
-            firstName2 = l.substr(0, found);
-            lastName2 = l.substr(found+1);
+      string portNames[3] = {"BaseStateServiceOut", "basePositionServer", "BasePositionOut"};
+      for(int i=0; i<3; i++) {
+        string portName = portNames[i];
+        vector<string> baseComponents = getComponentList(portNames[i]);
+        sort(baseComponents.begin(), baseComponents.end());
+        for(string baseComponent:baseComponents) {
+          size_t found = baseComponent.find("_");
+          string firstName = baseComponent;
+          string lastName = "";
+          if(found!=string::npos) {
+            firstName = baseComponent.substr(0, found);
+            lastName = baseComponent.substr(found+1);
           }
-          if(lastName == lastName2) {
-            localizationComponent=l;
-            if(firstName2=="SmartAmcl")
-              break;
+          string localizationComponent="";
+          for(string l:localizationComponents) {
+            size_t found = l.find("_");
+            string firstName2 = l;
+            string lastName2 = "";
+            if(found!=string::npos){
+              firstName2 = l.substr(0, found);
+              lastName2 = l.substr(found+1);
+            }
+            if(lastName == lastName2) {
+              localizationComponent=l;
+              if(firstName2=="SmartAmcl")
+                break;
+            }
           }
-        }
-        ROBOT_TYPE r;
-        r.baseComponent = baseComponent;
-        r.baseService = new SmartACE::PushClient<CommBasicObjects::CommBaseState>(
-            COMP->getComponentImpl());
-        cout << "connecting to: " << r.baseComponent << " BaseStateServiceOut" << endl;
-        Smart::StatusCode status = r.baseService->connect(r.baseComponent, "BaseStateServiceOut");
-        if (status != Smart::SMART_OK) {
-          cout << "error connect" << status << endl;
-        } else {
-          status = r.baseService->subscribe(1);
+          ROBOT_TYPE r;
+          r.baseComponent = baseComponent;
+          r.baseService = new SmartACE::PushClient<CommBasicObjects::CommBaseState>(
+              COMP->getComponentImpl());
+          cout << "connecting to: " << r.baseComponent << " " << portName << endl;
+          status = r.baseService->connect(r.baseComponent, portName);
           if (status != Smart::SMART_OK) {
-            cout << "error subscribe" << status << endl;
+            cout << "error connect" << status << endl;
+          } else {
+            status = r.baseService->subscribe(1);
+            if (status != Smart::SMART_OK) {
+              cout << "error subscribe" << status << endl;
+            }
           }
+          r.localizationComponent = localizationComponent;
+          r.isConnected = false;
+          r.useLocalizationService = r.localizationComponent != "";
+          r.updateService = new SmartACE::SendClient<CommBasicObjects::CommBasePositionUpdate>(COMP->getComponentImpl());
+          r.localization = {0, 0, 0};
+          r.manualMoveTime = robot->getTime() - 9999.0;
+          // TODO: add macy
+          vector<string> realBases = { "ComponentRMPBaseServer", "ComponentRobotinoBaseServer", "SmartPioneerBaseServer" };
+          vector<string> robotTypes = { "Larry", "Robotino", "Pioneer" };
+          r.realRobotType = "";
+          for(int i=realBases.size(); i--;)
+            if(firstName==realBases[i])
+              r.realRobotType = robotTypes[i];
+          r.trailPoints.resize(trailSize);
+          r.trailLength = 0;
+          posesField->importMFNodeFromString(-1,
+            "MobileRobotPose {\n"
+            "  baseComponent \"" + r.baseComponent + "\"\n"
+            "}");
+          robots.push_back(r);
         }
-        r.localizationComponent = localizationComponent;
-        r.isConnected = false;
-        r.useLocalizationService = r.localizationComponent != "";
-        r.updateService = new SmartACE::SendClient<CommBasicObjects::CommBasePositionUpdate>(COMP->getComponentImpl());
-        r.localization = {0, 0, 0};
-        r.manualMoveTime = robot->getTime() - 9999.0;
-        // TODO: add macy
-        vector<string> realBases = { "ComponentRMPBaseServer", "ComponentRobotinoBaseServer", "SmartPioneerBaseServer" };
-        vector<string> robotTypes = { "Larry", "Robotino", "Pioneer" };
-        r.realRobotType = "";
-        for(int i=realBases.size(); i--;)
-          if(firstName==realBases[i])
-            r.realRobotType = robotTypes[i];
-        r.trailPoints.resize(trailSize);
-        r.trailLength = 0;
-        posesField->importMFNodeFromString(-1,
-          "MobileRobotPose {\n"
-          "  baseComponent \"" + r.baseComponent + "\"\n"
-          "}");
-        robots.push_back(r);
       }
     }
 
@@ -705,7 +737,7 @@ int EditorTask::on_execute() {
           r.useLocalizationService = useLocalizationService;
           if(!r.isConnected && !r.useLocalizationService) {
             cout << "connecting to: " << r.baseComponent << " LocalizationUpdateServiceIn" << endl;
-            Smart::StatusCode status = r.updateService->connect(r.baseComponent, "LocalizationUpdateServiceIn");
+            status = r.updateService->connect(r.baseComponent, "LocalizationUpdateServiceIn");
             if (status != Smart::SMART_OK) {
               cout << "error connect" << status << endl;
             }
@@ -734,7 +766,6 @@ int EditorTask::on_execute() {
             } else {
               SmartACE::CommParameterRequest parameterRequest;
               SmartACE::CommParameterResponse parameterResponse;
-              Smart::StatusCode status;
               parameterRequest = lispParamToParameterRequest(parameterString);
               status = COMP->paramMaster->sendParameterWait(parameterRequest, parameterResponse, localizationComponent);
             }
@@ -751,7 +782,7 @@ int EditorTask::on_execute() {
             oldBasePose.set_y(oldPose.y, 1.0);
             oldBasePose.set_base_azimuth(oldPose.heading);
             posUpdate.set_old_position(oldBasePose);
-            Smart::StatusCode status = r.updateService->send(posUpdate);
+            status = r.updateService->send(posUpdate);
             if(status != Smart::SMART_OK)
               cout << "error send CommBasePositionUpdate " << status << endl;
           }
@@ -774,8 +805,8 @@ int EditorTask::on_execute() {
           "  service \""+(r.useLocalizationService ? "localizationComponent" : "baseComponent") + "\"\n"
           "  localizationComponent \"" + r.localizationComponent + "\"\n"
           "  localizationComponentNames ["+compNames+"]\n"
-          "  translation 0 0 0\n"
-          "  rotation 0 0 1 0\n"
+          "  translation "+to_string(r.localization.x)+" "+to_string(r.localization.y)+" 0\n"
+          "  rotation 0 0 1 "+to_string(r.localization.heading)+"\n"
           "  type \"" + r.realRobotType + "\"\n"
           "}");
       }
@@ -788,7 +819,7 @@ int EditorTask::on_execute() {
         Pose2D oldPose = r.localization;
         Pose2D newPose = r.localization;
         CommBasicObjects::CommBaseState base_state;
-        Smart::StatusCode status = r.baseService->getUpdate(base_state);
+        status = r.baseService->getUpdate(base_state);
         if (status != Smart::SMART_OK) {
           std::cout << r.baseComponent << " getUpdate(base_state) error " << status << std::endl;
         } else {
@@ -1154,7 +1185,7 @@ int EditorTask::on_execute() {
     if (showWaypoints != lastShowWaypoints)
       cout << "change showWaypoints to " << showWaypoints << endl;
 
-    for (auto wp : location_id_to_xy) {
+    for (auto &wp : location_id_to_xy) {
       int id = wp.first;
       XY _xy = wp.second;
       id_to_xy[id] = _xy;
@@ -1209,7 +1240,7 @@ int EditorTask::on_execute() {
       const double redColor[3] = { 1.0, 0.0, 0.0 };
       const double greenColor[3] = { 0.0, 1.0, 0.0 };
       bool isError = false;
-      for (auto p : id_to_xy) {
+      for (auto &p : id_to_xy) {
         if (p.first != selectedId && sqrt(pow(x - p.second.x, 2) + pow(y - p.second.y, 2)) < defaultWidth * 0.9999) {
           isError = true;
           break;
@@ -1300,8 +1331,99 @@ int EditorTask::on_execute() {
       }
       DomainRobotFleetNavigation::CommNavPath _navPath;
       _navPath.setPath(navPath);
-      Smart::StatusCode status = COMP->navPathServiceOut->send(_navPath);
+      status = COMP->navPathServiceOut->send(_navPath);
       cout << "send " << waypointConnections.size() << " WaypointConnections: " << status << endl;
+    }
+
+    //////////
+    // Laser
+    //////////
+
+    string lidarComponent = CHECK_FIELD(proto->getField("lidarComponent"))->getSFString();
+    if (lidarComponent != oldLaserComponent) {
+      // new or changed component name ending => disconnect old and connect new if possible
+      oldLaserComponent = lidarComponent;
+      if (lidarServer.connected) {
+        cout << "lidar disconnect " << lidarServer.componentName << endl;
+        COMP->laserServiceIn->unsubscribe();
+        COMP->laserServiceIn->disconnect();
+        lidarServer.connected = false;
+      }
+      SmartACE::NSKeyType searchPattern;
+      searchPattern.names[SmartACE::NSKeyType::COMMOBJ1_NAME] = ACE_TEXT(lidarServer.commObjName.c_str());
+      searchPattern.names[SmartACE::NSKeyType::SERVICE_NAME] = ACE_TEXT(lidarServer.serviceName.c_str());
+      vector<string> lidarComponentNames;
+      ACE_Unbounded_Queue<SmartACE::NSKeyType> searchResult = SmartACE::NAMING::instance()->getEntriesForMatchingPattern(searchPattern);
+      for (ACE_Unbounded_Queue_Iterator<SmartACE::NSKeyType> iter(searchResult); !iter.done(); iter.advance()) {
+        SmartACE::NSKeyType *comp = 0;
+        iter.next(comp);
+        lidarComponentNames.push_back(comp->names[SmartACE::NSKeyType::COMP_NAME].c_str());
+      }
+      sort(lidarComponentNames.begin(), lidarComponentNames.end());
+      lidarServer.componentName = "";
+      for (auto &x : lidarComponentNames)
+        if (x.substr(x.length() - lidarComponent.length()) == lidarComponent) {
+          lidarServer.componentName = x;
+          break;
+        }
+      if (lidarServer.componentName != "") {
+        status = COMP->laserServiceIn->connect(lidarServer.componentName, lidarServer.serviceName);
+        COMP->laserServiceIn->subscribe();
+        cout << "lidar connect " << lidarServer.componentName << " " << status << endl;
+        if (status == Smart::SMART_OK) {
+          lidarServer.connected = true;
+        }
+      }
+    }
+    if(lidarServer.connected) {
+      CommBasicObjects::CommMobileLaserScan scan;
+      status=COMP->laserServiceIn->getUpdate(scan);
+      if (std::chrono::duration<double>(system_clock::now() - lastLidarTime).count() > 0.1 &&
+          status == Smart::SMART_OK && scan.is_scan_valid() &&
+          lidarServer.updateCount!=scan.getCurrentUpdateCount()) {
+        lastLidarTime = system_clock::now();
+        lidarServer.updateCount = scan.getCurrentUpdateCount();
+        int numLidarPoints = lidarPoints->getCount();
+        int maxScanSize = scan.get_max_scan_size();
+//        if(numLidarPoints!=maxScanSize) {
+//          cout << "maxScanSize=" << maxScanSize << endl;
+//          while(numLidarPoints>maxScanSize) {
+//            lidarPoints->removeMF(0);
+//            lidarColors->removeMF(0);
+//            numLidarPoints--;
+//          }
+//          while(numLidarPoints<maxScanSize) {
+//            const double zeroValues[3] = {0.0, 0.0, 0.0};
+//            lidarColors->insertMFColor(0, zeroValues);
+//            lidarPoints->insertMFVec3f(0, zeroValues);
+//            numLidarPoints++;
+//          }
+//        }
+        int numScans = scan.get_scan_size();
+        for (int i = 0; i < numLidarPoints; ++i) {
+          double x, y, z;
+          // memory leak in webots if points are inserted/removed at runtime every loop => use constant size instead
+          // todo: make all points invisible if scan is empty or lidar is turned off
+          if(i<numScans)
+            scan.get_scan_cartesian_3dpoint_world(i, x, y, z, 1);
+          else {
+            x=y=z=999+i;
+          }
+          const double point[3] = {x, y, z};
+          const double colors[2][3] = {{1.0, 0.0, 0.0}, {1.0, 1.0, 0.0}};
+          // see SmartFestoMPSDocking parameter docking.max_reflector_dist
+          int laser_intensities_threshold = 60;
+          // see SmartFestoMPSDocking parameter CommRobotinoObjects.RobotinoDockingParameter.max_reflector_dist
+          // double max_reflector_dist = 1.2;
+          double max_reflector_dist = 999.0;
+          // normal lidar points are red (color=0)
+          // reflector foil at distance ca. 1m will be yellow (color=1)
+          int color = (scan.get_scan_intensity(i) > laser_intensities_threshold) &&
+            (scan.get_scan_distance(i, 1) < max_reflector_dist);
+          lidarPoints->setMFVec3f(i, point);
+          lidarColors->setMFColor(i, colors[color]);
+        }
+      }
     }
 
     wasWaypoint = isWaypoint;

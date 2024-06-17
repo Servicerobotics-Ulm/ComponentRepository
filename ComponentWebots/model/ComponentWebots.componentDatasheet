@@ -122,11 +122,13 @@ To delete a OPC_UA_Station during runtime:
 Fields of the Editor:
 * *showMobileRobotsPoses* : can be set to show the position and movement path of real or simulated robots
 * *mapType* : Current (map with currently seen obstacles) or LongTerm or Planner or none
-* *mapComponent* : select the first entry from *mapComponentNames* which ends with this value (e.g. if mapComponentNames has entries \"SmartMapperGridMap_1\" \"SmartMapperGridMap_2\" \"SmartMapperGridMap_3\", then \"GridMap_2\" or \"2\" selects the second entry, and \"GridMap_1\" or \"1\" or \"\" selects the first entry)
+* *mapComponent* : enter here the ending of the component name to diplay its map, e.g. if in mapComponentNames are 'MapComponent_1' and 'MapComponent_2', enter '2' or '_2' or 'MapComponent_2' for the second one  
 * *mapComponentNames* : alphabetically sorted list of components who generate *mapType*
 * *showWaypoints* : if set to false, all Waypoints and WaypointConnections are invisible
 * *defaultWaypointWidth* : The diameter of newly added Waypoints or the width of newly added WaypointConnections (in meters). To apply this value to an existing Waypoint/WaypointConnection, select it while pressing the <kbd>/</kbd> key.
 * *stopSimulation* : set this value to 'TRUE' before saving the world (it removes the map, MobileRobotsPoses and velocities to make the save files smaller)
+* *lidarComponent*: name ending of the lidar component to display, e.g. '_2' (to turn the lidar display off, enter 'off')
+* *lidarPointHeight*: third value is height lidar points above ground in meters. choose a different height than the simulated lidars or a simulated lidar would detect these points as obstacles
 
 Example of a map (Current) from SmartMapperGridMap (blue pixels show the area where the robot center point can't go):
 

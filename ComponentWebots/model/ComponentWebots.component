@@ -9,6 +9,8 @@ ComponentDefinition ComponentWebots logo "/ComponentWebots/model/logo.png"
     CoordinationSlavePort CoordinationPort implements CommBasicObjects.DefaultCoordinationService { }
     ComponentParameters ComponentWebots slave CoordinationPort
     RequestPort LongTermGridMapQueryServiceReq implements CommNavigationObjects.LongTermGridMapQueryService {
-	}
-	CoordinationMasterPort CoordinationMaster implements CommBasicObjects.DefaultCoordinationService;
+    }
+    CoordinationMasterPort CoordinationMaster implements CommBasicObjects.DefaultCoordinationService;
+    InputPort LaserServiceIn implements CommBasicObjects.LaserService {
+    }
 }
