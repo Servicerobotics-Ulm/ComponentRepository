@@ -1,6 +1,15 @@
 ComponentDatasheet ComponentRealSensePersonTracker
 {	BaseURI "http://www.servicerobotik-ulm.de"
-	ShortDescription "Person following using Real Sense Person Tracking Library"
+	ShortDescription "
+Person following using Real Sense Person Tracking Library
+
+Note: After 'Run Code Generation' is made for this Component, change the code in smartsoft/src-gen/params/ParamUpdateHandler.cc like this:
+<pre>
+    else if (tag == \"PERSONTOFOLLOW\")
+    {
+      answer.setResponse(SmartACE::ParamResponseType::OK);
+</pre>"
+
 	DatasheetProperty Supplier {
 		value "Servicerobotics Ulm"
 	}

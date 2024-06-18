@@ -5,7 +5,15 @@
 
 <img src="model/ComponentRobotinoBaseServerComponentDefinition.jpg" alt="ComponentRobotinoBaseServer-ComponentImage" width="1000">
 
-*Component Short Description:* TODO: add short description for ComponentRobotinoBaseServer datasheet
+*Component Short Description:* 
+Robotino 3 or 4 from Festo is a mobile robot with omnidrive wheels.
+
+Note: After 'Run Code Generation' is made for this Component, change the code in smartsoft/src-gen/params/ParamUpdateHandler.cc like this:
+<pre>
+    else if (tag == "SET_RELAY")
+    {
+      answer.setResponse(SmartACE::ParamResponseType::OK);
+</pre>
 
 
 ## Component-Datasheet Properties

@@ -5,7 +5,15 @@
 
 <img src="model/ComponentRealSensePersonTrackerComponentDefinition.jpg" alt="ComponentRealSensePersonTracker-ComponentImage" width="1000">
 
-*Component Short Description:* Person following using Real Sense Person Tracking Library
+*Component Short Description:* 
+Person following using Real Sense Person Tracking Library
+
+Note: After 'Run Code Generation' is made for this Component, change the code in smartsoft/src-gen/params/ParamUpdateHandler.cc like this:
+<pre>
+    else if (tag == "PERSONTOFOLLOW")
+    {
+      answer.setResponse(SmartACE::ParamResponseType::OK);
+</pre>
 
 
 ## Component-Datasheet Properties
@@ -41,7 +49,6 @@
 *Documentation:*
 
 
-
 ### rgb_video_server
 
 *Documentation:*
@@ -61,8 +68,6 @@
 *Documentation:*
 <p>Port providing the event in case the tracking person is not found
 </p>
-
-
 
 
 
