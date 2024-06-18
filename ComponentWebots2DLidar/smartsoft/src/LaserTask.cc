@@ -99,6 +99,7 @@ int LaserTask::on_entry() {
     webotsLidar = NULL;
     for (int i = 0; i < webotsRobot->getNumberOfDevices(); i++) {
         webots::Device *webotsDevice = webotsRobot->getDeviceByIndex(i);
+        std::cout << "Device " << i << " name=" << webotsDevice->getName() << " type=" << webotsDevice->getNodeType() << std::endl;
         if (webotsDevice->getNodeType() == webots::Node::LIDAR) {
             std::string lidarName = webotsDevice->getName();
             webotsLidar = webotsRobot->getLidar(lidarName);

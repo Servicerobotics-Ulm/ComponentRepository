@@ -270,7 +270,7 @@ Note that as long as cruise control is active, the robot is not able to move on 
 <tr>
 <td style="border:1px solid black; padding: 5px;"><b>robotName</b></td>
 <td style="border:1px solid black; padding: 5px;">String</td>
-<td style="border:1px solid black; padding: 5px;">"Robotino 3"</td>
+<td style="border:1px solid black; padding: 5px;">"Robotino3"</td>
 <td style="border:1px solid black; padding: 5px;"><p>name of robot
 </p></td>
 </tr>
