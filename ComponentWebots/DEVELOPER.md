@@ -71,10 +71,10 @@ sudo dpkg -r webots
 
 go to [https://cyberbotics.com/](https://cyberbotics.com/)
 
-click on 'Download', download [webots_2023a_amd64.deb](https://github.com/cyberbotics/webots/releases/download/R2023a/webots_2023a_amd64.deb) into your Downloads-folder, then do:
+click on 'Download', download [webots_2023b_amd64.deb](https://github.com/cyberbotics/webots/releases/download/R2023a/webots_2023b_amd64.deb) into your Downloads-folder, then do:
 
 ```
-sudo apt install ~/Downloads/webots_2023a_amd64.deb
+sudo apt install ~/Downloads/webots_2023b_amd64.deb
 ```
 
 Add to your ~/.profile:
