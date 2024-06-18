@@ -64,7 +64,7 @@ std::string url_encode(const std::string &value) {
   for (std::string::const_iterator i = value.begin(), n = value.end(); i != n; ++i) {
     std::string::value_type c = (*i);
     // Keep alphanumeric and other accepted characters intact
-    if (std::isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
+    if (std::isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~' || c == ' ') {
       escaped << c;
       continue;
     }
@@ -180,7 +180,7 @@ int WebotsAPITask::on_execute() {
   char environment[256] = "WEBOTS_CONTROLLER_URL=";
   putenv(strcat(environment, url_encode(webotsRobotName).c_str()));
 
-  std::cout << " \033[0;32mConnect to webots robot with name '" << webotsRobotName << "' ...\033[0m" << std::endl;
+  std::cout << " \033[0;32mConnect to webots robot with name '" << webotsRobotName << "' ('" <<  url_encode(webotsRobotName) << "')...\033[0m" << std::endl;
   webotsRobot = new Supervisor();
   if (!webotsRobot) {
     std::cout << "not found, fatal error" << std::endl;
